@@ -177,6 +177,9 @@ GRAY  = "#888780"
 BG    = "#f9f9f7"
 PANEL = "#ffffff"
 
+# One background shade per era (matches order of ERA_DEFS)
+ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a"]
+
 def plot_results(
     reg_seasons: list[str], reg_pcts: list[float],
     po_seasons: list[str], po_pcts: list[float],
@@ -230,11 +233,23 @@ def plot_results(
     zp = np.polyfit(x[po_mask], po_pcts_arr[po_mask], 1)
     ax1.plot(x, np.poly1d(zp)(x), "--", color=GREEN, linewidth=1.4, alpha=0.5)
 
-    # Shade COVID seasons
+    # Shade era boundaries (rule-change eras), labeled above the plot area
+    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+        era_idx = [i for i, s in enumerate(reg_seasons) if y1 <= label_to_year(s) <= y2]
+        if not era_idx:
+            continue
+        ax1.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
+                    alpha=0.08, color=era_color, zorder=0)
+        if min(era_idx) > 0:
+            ax1.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
+        mid = (min(era_idx) + max(era_idx)) / 2
+        ax1.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+
+    # Shade COVID seasons (drawn on top of era shading)
     covid_idx = [i for i, s in enumerate(reg_seasons) if s in COVID_SEASONS]
     if covid_idx:
         ax1.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5,
-                    alpha=0.12, color=RED)
+                    alpha=0.12, color=RED, zorder=1)
 
     ax1.set_title("Regular season vs playoffs: home win % per season",
                   fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
