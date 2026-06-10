@@ -16,8 +16,9 @@ NBA.com. The first run takes 2-4 minutes (one API call per season/type, with a
 polite 1s pause between calls); subsequent runs use the cache and finish almost
 instantly.
 
-The script saves `nba_home_court_advantage.png`, `nba_home_court_advantage_rest.png`,
-and `nba_home_court_advantage_rest_playoffs.png`, and displays each figure.
+The script saves `nba_home_court_advantage.png` plus six "why is it declining"
+prototype charts (regular season + playoffs versions of the rest, altitude,
+and time-zone analyses below), and displays each figure.
 
 ## Output
 
@@ -52,6 +53,36 @@ are dropped since there's no prior playoff game to compute rest from.
 2. **Home win % by rest differential** — home win % split by whether the home
    team, away team, or neither had more rest, with trend lines for the two
    "more rested" groups.
+
+### `nba_home_court_advantage_altitude.png` / `..._altitude_playoffs.png`
+
+Tests whether visiting teams are specifically disadvantaged at the NBA's two
+high-elevation arenas (Denver, 5,280 ft; Utah, 4,226 ft), for the regular
+season and playoffs respectively. Teams are matched on `TEAM_NAME` (stable
+across the dataset, unlike the Jazz's `UTH` -> `UTA` abbreviation change).
+
+1. **Road win % by season** — visiting-team win % at Denver, Utah, and the
+   league average everywhere else, with trend lines.
+2. **Road win % by era** — the same, averaged within each rule-change era.
+
+Note: team quality is a major confound here (e.g. road teams won more at
+Denver than average during the Nuggets' weak late-90s teams), so this is a
+rough first look rather than a clean isolation of an altitude effect.
+
+### `nba_home_court_advantage_timezone.png` / `..._timezone_playoffs.png`
+
+Tests whether visiting teams are disadvantaged by crossing time zones, for
+the regular season and playoffs respectively. Each franchise is mapped to a
+time zone (`TEAM_TIMEZONES`, 0 = Eastern through 3 = Pacific, ignoring DST),
+and each game is grouped by how many zones the visiting team crossed.
+
+1. **Road win % by season** — visiting-team win % for 0/1/2/3 zones crossed,
+   with trend lines.
+2. **Road win % by era** — the same, averaged within each rule-change era.
+
+The altitude and time-zone charts share a generic plotting function,
+`plot_category_road_win_analysis()`, and a generic era-bucketing helper,
+`bucket_stats_by_era()`.
 
 ## Tests
 

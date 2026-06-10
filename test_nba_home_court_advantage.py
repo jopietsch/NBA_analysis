@@ -1,5 +1,6 @@
 import os
 
+import numpy as np
 import pandas as pd
 import pytest
 
@@ -364,7 +365,7 @@ class TestComputeAltitudeStats:
         assert calls == [2019, 2021]
 
 
-class TestComputeAltitudeEraAverages:
+class TestBucketStatsByEra:
     def test_buckets_seasons_into_eras_and_averages(self):
         # 83–84 -> 1984 and 93–94 -> 1994 both fall in the 1984–94 era
         seasons = ["83–84", "93–94"]
@@ -374,7 +375,7 @@ class TestComputeAltitudeEraAverages:
             "other":           [40.0, 40.0],
         }
 
-        era_avgs, era_labels = nba.compute_altitude_era_averages(seasons, stats)
+        era_avgs, era_labels = nba.bucket_stats_by_era(seasons, stats)
 
         i = era_labels.index("1984–94")
         assert era_avgs["Denver Nuggets"][i] == 40.0
@@ -386,6 +387,109 @@ class TestComputeAltitudeEraAverages:
         assert era_avgs["Denver Nuggets"][j] == 0
         assert era_avgs["Utah Jazz"][j] == 0
         assert era_avgs["other"][j] == 0
+
+    def test_handles_nan_values_in_a_series(self):
+        seasons = ["83–84", "93–94"]
+        stats = {"x": [30.0, np.nan]}
+
+        era_avgs, era_labels = nba.bucket_stats_by_era(seasons, stats)
+
+        i = era_labels.index("1984–94")
+        assert era_avgs["x"][i] == 30.0  # NaN excluded from the average
+
+
+class TestFetchTimezoneData:
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_timezone_data(2024, "Regular Season") is None
+
+    def test_returns_none_for_empty_dataframe(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        pd.DataFrame(columns=["GAME_ID", "TEAM_NAME", "MATCHUP", "WL"]).to_csv(
+            nba.cache_path(2024, "Regular Season"), index=False
+        )
+        assert nba.fetch_timezone_data(2024, "Regular Season") is None
+
+    def test_computes_zones_crossed_and_drops_unknown_teams(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+
+        # G1: Boston (Eastern, 0) hosts LA Lakers (Pacific, 3) -> 3 zones, home wins
+        # G2: Boston (Eastern, 0) hosts Denver (Mountain, 2) -> 2 zones, away wins
+        # G3: a team not in TEAM_TIMEZONES -> dropped entirely
+        df = pd.DataFrame({
+            "GAME_ID":   ["G1", "G1", "G2", "G2", "G3", "G3"],
+            "TEAM_NAME": ["Boston Celtics", "Los Angeles Lakers",
+                          "Boston Celtics", "Denver Nuggets",
+                          "Boston Celtics", "Globetrotters"],
+            "MATCHUP":   ["BOS vs. LAL", "LAL @ BOS",
+                          "BOS vs. DEN", "DEN @ BOS",
+                          "BOS vs. GLB", "GLB @ BOS"],
+            "WL":        ["W", "L", "L", "W", "W", "L"],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+        result = nba.fetch_timezone_data(2024, "Regular Season")
+
+        assert len(result) == 2
+        result = result.sort_values("TZ_DIFF").reset_index(drop=True)
+        assert result.loc[0, "TZ_DIFF"] == 2
+        assert result.loc[0, "AWAY_WIN"] == 1  # Denver won at Boston
+        assert result.loc[1, "TZ_DIFF"] == 3
+        assert result.loc[1, "AWAY_WIN"] == 0  # Lakers lost at Boston
+
+
+class TestFetchTimezoneDataFromRealCache:
+    def test_returns_expected_columns_for_real_season(self, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
+
+        result = nba.fetch_timezone_data(1985, "Regular Season")
+
+        assert result is not None
+        assert list(result.columns) == ["TZ_DIFF", "AWAY_WIN"]
+        assert len(result) > 0
+        assert result["AWAY_WIN"].isin([0, 1]).all()
+        assert result["TZ_DIFF"].between(0, 3).all()
+
+
+class TestComputeTimezoneStats:
+    def test_aggregates_road_win_pct_by_zones_crossed(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "TZ_DIFF":  [0, 0, 1, 2, 3, 3],
+                "AWAY_WIN": [1, 0, 1, 0, 1, 1],
+            })
+
+        monkeypatch.setattr(nba, "fetch_timezone_data", fake_fetch)
+        seasons, stats = nba.compute_timezone_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        assert stats["0"] == [50.0]
+        assert stats["1"] == [100.0]
+        assert stats["2"] == [0.0]
+        assert stats["3"] == [100.0]
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_timezone_data", lambda year, season_type: None)
+
+        seasons, stats = nba.compute_timezone_stats(2023, 2025, "Regular Season")
+
+        assert seasons == []
+        for values in stats.values():
+            assert values == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+
+        def fake_fetch(year, season_type):
+            calls.append(year)
+            return None
+
+        monkeypatch.setattr(nba, "fetch_timezone_data", fake_fetch)
+        nba.compute_timezone_stats(2019, 2021, "Playoffs", skip_years={2020})
+
+        assert calls == [2019, 2021]
 
 
 class TestFetchAllSeasons:
