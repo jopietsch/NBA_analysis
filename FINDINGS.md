@@ -147,7 +147,7 @@ the dataset. Shot quality at the arc is not a home court advantage.
 
 ---
 
-## 9. Playoff Series Structure
+## 8. Playoff Series Structure
 
 Playoff game IDs encode the game number within each series (last digit of GAME_ID),
 allowing home win % to be tracked across G1–G7 pooled over all seasons.
@@ -187,7 +187,7 @@ broader secular decline seen in the era analysis.
 
 ---
 
-## 10. Win Margin Trends
+## 9. Win Margin Trends
 
 Point margin data (PLUS_MINUS) is unavailable in the NBA.com game logs before the
 1995–96 season, so this analysis covers 1995–96 through 2024–25.
@@ -221,7 +221,7 @@ playoffs across most of the dataset.
 
 ---
 
-## 11. Competitive Balance and Parity
+## 10. Competitive Balance and Parity
 
 Team-level win% disparity — measured as the per-season standard deviation of franchise
 win percentages — quantifies how unequal the league is in any given year. A high
@@ -247,7 +247,7 @@ reducible to a simple story about competitive balance.
 
 ---
 
-## 12. Travel Distance
+## 11. Travel Distance
 
 Away team travel distance (haversine miles from the visitor's home arena to the
 game arena) is available for every game in the dataset — no new API calls required,
@@ -275,7 +275,7 @@ Travel distance is not a driver of the long-run decline in home court advantage.
 
 ---
 
-## 8. Summary
+## 12. Summary
 
 Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the playoff decline steeper than the

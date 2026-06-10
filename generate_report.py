@@ -376,11 +376,11 @@ def _section_shot_zones(s, sections):
 def _section_series_breakdown(s, sections):
     return [
         PageBreak(),
-        *_section_header("9. Playoff Series Structure", s, sections),
+        *_section_header("8. Playoff Series Structure", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_series_breakdown.png",
-            "Figure 9. Home win % by game number within playoff series. "
+            "Figure 8. Home win % by game number within playoff series. "
             "Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. "
             "Right: G1–G7 home win % split by era (six lines, era-colored).",
         ),
@@ -390,11 +390,11 @@ def _section_series_breakdown(s, sections):
 def _section_margin(s, sections):
     return [
         PageBreak(),
-        *_section_header("10. Win Margin Trends", s, sections),
+        *_section_header("9. Win Margin Trends", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_margin.png",
-            "Figure 10. Home team point margin per season. "
+            "Figure 9. Home team point margin per season. "
             "Left: mean margin for all games (regular season and playoffs) with trend lines. "
             "Center: mean margin split by home wins vs. losses (regular season). "
             "Right: era-bucketed average margin, regular season vs. playoffs.",
@@ -405,7 +405,7 @@ def _section_margin(s, sections):
 def _section_parity(s, sections):
     return [
         PageBreak(),
-        *_section_header("11. Competitive Balance and Parity", s, sections),
+        *_section_header("10. Competitive Balance and Parity", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_parity.png",
@@ -421,11 +421,11 @@ def _section_parity(s, sections):
 def _section_travel(s, sections):
     return [
         PageBreak(),
-        *_section_header("12. Travel Distance", s, sections),
+        *_section_header("11. Travel Distance", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_travel.png",
-            "Figure 12. Home win % by away team travel distance (regular season). "
+            "Figure 11. Home win % by away team travel distance (regular season). "
             "Left: per-season home win % for each distance bucket with trend lines. "
             "Right: era-averaged home win % by distance bucket.",
         ),
@@ -447,7 +447,7 @@ def _section_summary(s, sections):
     cw = [CONTENT_W * f for f in (0.06, 0.33, 0.31, 0.30)]
     return [
         PageBreak(),
-        *_section_header("8. Summary", s, sections),
+        *_section_header("12. Summary", s, sections),
         Spacer(1, 0.1 * inch),
         _table(rank_data, cw),
         Spacer(1, 0.3 * inch),
