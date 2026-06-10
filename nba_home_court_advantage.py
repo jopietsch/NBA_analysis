@@ -7,6 +7,7 @@ Data source: NBA.com via the nba_api package
   - Covers 1983-84 through 2024-25
 """
 
+import os
 import time
 import pandas as pd
 import numpy as np
@@ -29,6 +30,9 @@ SKIP_PLAYOFF_YEARS = {2020}
 # Seasons with limited/no fans (COVID) — highlighted in the chart
 COVID_SEASONS = {"19-20", "20-21"}
 
+# Raw game logs are cached here as CSVs to avoid re-fetching from NBA.com
+CACHE_DIR = "cache"
+
 
 def season_str(end_year: int) -> str:
     """2024 -> '2023-24'  (NBA API format)"""
@@ -40,6 +44,11 @@ def short_label(end_year: int) -> str:
     return f"{str(end_year - 1)[-2:]}–{str(end_year)[-2:]}"
 
 
+def cache_path(end_year: int, season_type: str) -> str:
+    season = season_str(end_year)
+    return os.path.join(CACHE_DIR, f"{season}_{season_type.replace(' ', '_')}.csv")
+
+
 def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
     """
     Pull every game log for one season/type, keep only home games,
@@ -49,18 +58,29 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
     MATCHUP field looks like  'BOS vs. MIA'  (vs. = home)
     and for away games        'BOS @ MIA'    (@ = away).
     WL is 'W' or 'L'.
+
+    Game logs are cached as CSVs under CACHE_DIR so repeat runs don't
+    re-fetch from NBA.com.
     """
     season = season_str(end_year)
-    try:
-        finder = leaguegamefinder.LeagueGameFinder(
-            season_nullable=season,
-            season_type_nullable=season_type,
-            timeout=60,
-        )
-        df = finder.get_data_frames()[0]
-    except Exception as e:
-        print(f"    ERROR fetching {season} {season_type}: {e}")
-        return None
+    path = cache_path(end_year, season_type)
+
+    if os.path.exists(path):
+        df = pd.read_csv(path)
+    else:
+        try:
+            finder = leaguegamefinder.LeagueGameFinder(
+                season_nullable=season,
+                season_type_nullable=season_type,
+                timeout=60,
+            )
+            df = finder.get_data_frames()[0]
+        except Exception as e:
+            print(f"    ERROR fetching {season} {season_type}: {e}")
+            return None
+
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        df.to_csv(path, index=False)
 
     if df.empty:
         return None
