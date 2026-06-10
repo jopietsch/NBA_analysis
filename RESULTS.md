@@ -170,9 +170,34 @@ All data from cache/ — same source as the plots above.
    2018–22               0.1461         56.2%
    2023–25               0.1496         55.6%
 
-   ► A positive r = higher disparity ↔ higher home advantage — weaker road teams
-     lose more away from home when the talent gap between franchises is larger.
-   ► Correlation is not statistically significant after the shared time trend.
+   ► Near-zero, non-significant correlation — parity (team win% disparity)
+     does not independently predict home court advantage across seasons.
+     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
+     home win % was already declining, and fell in 2002–04 while home win %
+     ticked back up. The two series do not move in lockstep.
+
+─── 7. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ────────────
+   Does home court advantage vary by game number within a series (G1–G7)?
+   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
+
+     Game   N games   Home win %    vs. G1
+   ──────  ────────  ───────────  ────────
+       G1       494        69.2%         —
+       G2       497        72.0%   +2.8 pp
+       G3       494        55.7%  -13.6 pp
+       G4       486        55.3%  -13.9 pp
+       G5       412        74.8%   +5.5 pp
+       G6       312        55.8%  -13.5 pp
+       G7       183        64.5%   -4.7 pp
+
+   Chi-square test (H0: home win % uniform across all game numbers):
+   χ²(6) = 80.40,  p = <0.001  ***
+
+   Weighted OLS trend across game numbers: -0.99 pp/game  (p = 0.580  )
+   (Positive = home win % rises as the series goes deeper)
+
+   ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
+     G7 n = 183 games (series that went to 7)
 
 ════════════════════════════════════════════════════════════════════════
 

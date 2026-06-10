@@ -100,12 +100,18 @@ def build_game_dataset() -> pd.DataFrame:
             merged[diffs.columns] = diffs
             merged["margin"] = merged["PLUS_MINUS_home"]
 
+            if is_playoff:
+                gid_str = merged["GAME_ID"].apply(lambda x: str(int(float(x))))
+                merged["game_in_series"] = gid_str.str[-1].astype(int).astype(float)
+            else:
+                merged["game_in_series"] = np.nan
+
             chunks.append(merged[[
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff",
-                "margin",
+                "margin", "game_in_series",
             ]])
 
     if not chunks:
@@ -517,6 +523,72 @@ def run_parity_correlation(
         print(f"     parity hypothesis. Effect is significant but era is a dominant confound.")
 
 
+# ── Analysis 7: Playoff series structure ─────────────────────────────────────
+
+def run_series_breakdown(df: pd.DataFrame) -> None:
+    from scipy.stats import chi2_contingency
+
+    po = df[df["is_playoff"] == 1].dropna(subset=["game_in_series"]).copy()
+    po["game_in_series"] = po["game_in_series"].astype(int)
+    po = po[po["game_in_series"].between(1, 7)]
+
+    _section("7. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER")
+    print("   Does home court advantage vary by game number within a series (G1–G7)?")
+    print("   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).\n")
+
+    wins_by_game  : dict[int, int] = {}
+    total_by_game : dict[int, int] = {}
+    g1_pct: float | None = None
+
+    print(f"   {'Game':>6}  {'N games':>8}  {'Home win %':>11}  {'vs. G1':>8}")
+    print(f"   {'─'*6}  {'─'*8}  {'─'*11}  {'─'*8}")
+
+    for gnum in range(1, 8):
+        sub = po[po["game_in_series"] == gnum]
+        if sub.empty:
+            continue
+        n    = len(sub)
+        wins = int(sub["home_win"].sum())
+        pct  = 100.0 * wins / n
+        wins_by_game[gnum]  = wins
+        total_by_game[gnum] = n
+        if g1_pct is None:
+            g1_pct = pct
+        diff   = pct - g1_pct
+        diff_s = f"{diff:+.1f} pp" if diff != 0 else "—"
+        print(f"   {'G'+str(gnum):>6}  {n:>8,}  {pct:>10.1f}%  {diff_s:>8}")
+
+    game_nums = sorted(wins_by_game)
+
+    if len(game_nums) >= 2:
+        table = [[wins_by_game[g], total_by_game[g] - wins_by_game[g]] for g in game_nums]
+        chi2_stat, p_chi, dof, _ = chi2_contingency(table)
+        p_chi_s = "<0.001" if p_chi < 0.001 else f"{p_chi:.3f}"
+        print(f"\n   Chi-square test (H0: home win % uniform across all game numbers):")
+        print(f"   χ²({dof}) = {chi2_stat:.2f},  p = {p_chi_s}  {_stars(p_chi).strip()}")
+
+    rows = pd.DataFrame({
+        "game_num": game_nums,
+        "home_pct": [100.0 * wins_by_game[g] / total_by_game[g] for g in game_nums],
+        "n":        [float(total_by_game[g]) for g in game_nums],
+    })
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m = smf.ols("home_pct ~ game_num", data=rows, weights=rows["n"]).fit()
+    coef = m.params["game_num"]
+    pval = m.pvalues["game_num"]
+    pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+    print(f"\n   Weighted OLS trend across game numbers: {coef:+.2f} pp/game  "
+          f"(p = {pval_s}  {_stars(pval).strip()})")
+    print(f"   (Positive = home win % rises as the series goes deeper)")
+
+    if 7 in total_by_game and g1_pct is not None:
+        g7_pct  = 100.0 * wins_by_game[7] / total_by_game[7]
+        g7_diff = g7_pct - g1_pct
+        print(f"\n   ► G7 home win % = {g7_pct:.1f}%  (vs. G1 = {g1_pct:.1f}%, diff = {g7_diff:+.1f} pp)")
+        print(f"     G7 n = {total_by_game[7]:,} games (series that went to 7)")
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -550,6 +622,7 @@ def run() -> None:
         run_differential_analysis(df)
         run_margin_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
+        run_series_breakdown(df)
 
         print("\n" + "═" * _W + "\n")
 

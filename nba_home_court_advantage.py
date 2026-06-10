@@ -1021,6 +1021,101 @@ def compute_parity_stats(
     return seasons, std_devs
 
 
+# ── Playoff series structure analysis ────────────────────────────────────────
+
+def fetch_series_data(end_year: int) -> pd.DataFrame | None:
+    """
+    Load cached playoffs game log and derive game-within-series number from
+    GAME_ID (last digit), series key (second-to-last two digits), and
+    HOME_WIN from WL. Returns home-rows-only with columns
+    ['GAME_ID', 'game_in_series', 'series_key', 'HOME_WIN'].
+    """
+    df = _load_game_log(end_year, "Playoffs")
+    if df is None:
+        return None
+
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
+    if home.empty:
+        return None
+
+    # GAME_ID may be int64 in cache; str(int(float(x))) handles int, float, str
+    game_id = home["GAME_ID"].apply(lambda x: str(int(float(x))))
+    home = home.copy()
+    home["game_in_series"] = game_id.str[-1].astype(int)
+    home["series_key"]     = game_id.str[-3:-1]
+    home["HOME_WIN"]       = (home["WL"] == "W").astype(int)
+
+    return home[["GAME_ID", "game_in_series", "series_key", "HOME_WIN"]]
+
+
+def compute_series_stats(
+    start_year: int, end_year: int, skip_years: set[int] = frozenset(),
+) -> tuple[list[int], list[float], list[int]]:
+    """
+    Home win % and game count per game-within-series number (1–7), pooled
+    across all seasons. Returns (game_numbers, home_win_pcts, game_counts).
+    """
+    wins  = {g: 0 for g in range(1, 8)}
+    total = {g: 0 for g in range(1, 8)}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_series_data(year)
+        if g is None or g.empty:
+            continue
+        for gnum, win in zip(g["game_in_series"], g["HOME_WIN"]):
+            if 1 <= gnum <= 7:
+                wins[gnum]  += int(win)
+                total[gnum] += 1
+
+    game_nums = [g for g in range(1, 8) if total[g] > 0]
+    win_pcts  = [100.0 * wins[g] / total[g] for g in game_nums]
+    counts    = [total[g] for g in game_nums]
+    return game_nums, win_pcts, counts
+
+
+def compute_series_stats_by_era(
+    start_year: int, end_year: int, skip_years: set[int] = frozenset(),
+) -> dict[str, dict[int, float]]:
+    """
+    Home win % per game-within-series number split by era.
+    Returns {era_label: {game_num: home_win_pct}}.
+    Game numbers with fewer than 5 games in an era are excluded.
+    """
+    era_wins  = {e[0]: {g: 0 for g in range(1, 8)} for e in ERA_DEFS}
+    era_total = {e[0]: {g: 0 for g in range(1, 8)} for e in ERA_DEFS}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        era_label = next(
+            (lbl for lbl, y1, y2, _ in ERA_DEFS if y1 <= year <= y2), None
+        )
+        if era_label is None:
+            continue
+
+        g = fetch_series_data(year)
+        if g is None or g.empty:
+            continue
+
+        for gnum, win in zip(g["game_in_series"], g["HOME_WIN"]):
+            if 1 <= gnum <= 7:
+                era_wins[era_label][gnum]  += int(win)
+                era_total[era_label][gnum] += 1
+
+    result: dict[str, dict[int, float]] = {}
+    for era_label in era_wins:
+        pcts = {
+            g: 100.0 * era_wins[era_label][g] / era_total[era_label][g]
+            for g in range(1, 8)
+            if era_total[era_label][g] >= 5
+        }
+        if pcts:
+            result[era_label] = pcts
+    return result
+
+
 def plot_differential_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,
@@ -1260,6 +1355,80 @@ def plot_parity_analysis(
     plt.show()
 
 
+def plot_series_breakdown(
+    game_nums: list[int],
+    home_win_pcts: list[float],
+    game_counts: list[int],
+    era_data: dict[str, dict[int, float]],
+    overall_po_pct: float,
+) -> None:
+    """
+    2-panel chart: home win % by game-within-series number.
+
+    Panel 1: bar chart of overall home win % by G1–G7, sample size labels,
+             reference line at the overall playoff home win average.
+    Panel 2: G1–G7 home win % per era (one line per era, era-colored).
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Playoff Series Structure — Home Win % by Game Number",
+                 fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Data: NBA.com  |  Playoffs 1983–84 through 2024–25  |  2020 bubble excluded  |  "
+             "G1/G2 at higher seed; G3/G4 at lower seed (2-2-1-1-1 format)",
+             ha="center", fontsize=9, color=GRAY)
+
+    # Panel 1: overall bar chart
+    x     = np.arange(len(game_nums))
+    xlbls = [f"G{g}" for g in game_nums]
+    bars  = ax1.bar(x, home_win_pcts, color=GREEN, width=0.6, zorder=2,
+                    edgecolor="white", linewidth=0.8)
+    ax1.axhline(overall_po_pct, color=GRAY, linewidth=1.5, linestyle="--",
+                label=f"Overall playoff avg ({overall_po_pct:.1f}%)", zorder=3)
+    for bar, pct, count in zip(bars, home_win_pcts, game_counts):
+        ax1.text(bar.get_x() + bar.get_width() / 2, pct + 0.6,
+                 f"{pct:.1f}%", ha="center", va="bottom", fontsize=8.5,
+                 color=GREEN, fontweight="bold")
+        ax1.text(bar.get_x() + bar.get_width() / 2, 1,
+                 f"n={count:,}", ha="center", va="bottom", fontsize=7, color=GRAY)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(xlbls, fontsize=10)
+    ax1.set_ylim(0, 85)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("Home win %", fontsize=10)
+    ax1.set_title("Home win % by game within series (all eras)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Panel 2: by-era lines
+    for (era_label, _, _, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+        pcts = era_data.get(era_label, {})
+        if not pcts:
+            continue
+        gx = sorted(pcts.keys())
+        gy = [pcts[g] for g in gx]
+        ax2.plot([g - 1 for g in gx], gy, color=era_color, linewidth=2,
+                 label=era_label, marker="o", markersize=5,
+                 markeredgecolor="white", markeredgewidth=0.8)
+
+    ax2.axhline(overall_po_pct, color=GRAY, linewidth=1.2, linestyle="--", alpha=0.6,
+                label=f"Overall avg ({overall_po_pct:.1f}%)")
+    ax2.set_xticks(range(7))
+    ax2.set_xticklabels([f"G{g}" for g in range(1, 8)], fontsize=10)
+    ax2.set_ylim(30, 90)
+    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax2.set_ylabel("Home win %", fontsize=10)
+    ax2.set_title("Home win % by game number, per era",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax2.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd",
+               title="Era", title_fontsize=8)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_series_breakdown.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
 # ── Shot-zone analysis ────────────────────────────────────────────────────────
 # LeagueDashTeamShotLocations column names for each shot zone's FGA.
 # RA = Restricted Area, PITP = Paint In The Paint (non-RA), MR = Mid-Range,
@@ -1482,6 +1651,15 @@ def main() -> None:
 
     parity_seasons, parity_std = compute_parity_stats(START_YEAR, END_YEAR, SeasonType.regular)
     plot_parity_analysis(parity_seasons, parity_std, reg_seasons, reg_pcts)
+
+    game_nums, series_pcts, game_counts = compute_series_stats(
+        START_YEAR, END_YEAR, skip_years=SKIP_PLAYOFF_YEARS
+    )
+    era_series_data = compute_series_stats_by_era(
+        START_YEAR, END_YEAR, skip_years=SKIP_PLAYOFF_YEARS
+    )
+    overall_po_pct = float(np.mean(po_pcts)) if po_pcts else 60.0
+    plot_series_breakdown(game_nums, series_pcts, game_counts, era_series_data, overall_po_pct)
 
     print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")
     reg_zone_seasons, reg_zone_stats = compute_shot_zone_stats(START_YEAR, END_YEAR, SeasonType.regular)

@@ -1038,6 +1038,99 @@ class TestComputeMarginStats:
         assert calls == [2019, 2021]
 
 
+class TestFetchSeriesData:
+    def _write_playoffs_csv(self, tmp_path, df):
+        df.to_csv(nba.cache_path(2024, "Playoffs"), index=False)
+
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_series_data(2024) is None
+
+    def test_derives_game_in_series_from_game_id(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID":  [42300101, 42300107],
+            "MATCHUP":  ["BOS vs. MIA", "BOS vs. MIA"],
+            "WL":       ["W", "L"],
+        })
+        self._write_playoffs_csv(tmp_path, df)
+
+        result = nba.fetch_series_data(2024)
+
+        assert result is not None
+        assert sorted(result["game_in_series"].tolist()) == [1, 7]
+
+    def test_filters_to_home_games_only(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID":  [42300101, 42300101, 42300102, 42300102],
+            "MATCHUP":  ["BOS vs. MIA", "MIA @ BOS", "MIA vs. BOS", "BOS @ MIA"],
+            "WL":       ["W", "L", "L", "W"],
+        })
+        self._write_playoffs_csv(tmp_path, df)
+
+        result = nba.fetch_series_data(2024)
+
+        assert result is not None
+        assert len(result) == 2  # only the two "vs." (home) rows
+
+    def test_returns_expected_columns(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID":  [42300101],
+            "MATCHUP":  ["BOS vs. MIA"],
+            "WL":       ["W"],
+        })
+        self._write_playoffs_csv(tmp_path, df)
+
+        result = nba.fetch_series_data(2024)
+
+        assert result is not None
+        assert set(result.columns) == {"GAME_ID", "game_in_series", "series_key", "HOME_WIN"}
+        assert result.iloc[0]["HOME_WIN"] == 1  # W → home win
+        assert result.iloc[0]["series_key"] == "10"  # str[-3:-1] of "42300101"
+
+
+class TestComputeSeriesStats:
+    def test_aggregates_home_win_pct_by_game_number(self, monkeypatch):
+        def fake_fetch(year):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "game_in_series": [1, 1, 2, 7],
+                "HOME_WIN":       [1, 0, 1, 1],
+                "series_key":     ["01", "01", "01", "01"],
+                "GAME_ID":        [42300101, 42300101, 42300102, 42300107],
+            })
+
+        monkeypatch.setattr(nba, "fetch_series_data", fake_fetch)
+        game_nums, win_pcts, counts = nba.compute_series_stats(2023, 2025)
+
+        assert 1 in game_nums
+        assert 2 in game_nums
+        assert 7 in game_nums
+        idx1 = game_nums.index(1)
+        assert win_pcts[idx1] == pytest.approx(50.0)   # 1 win / 2 games
+        assert counts[idx1] == 2
+        idx7 = game_nums.index(7)
+        assert win_pcts[idx7] == pytest.approx(100.0)  # 1 win / 1 game
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_series_data", lambda year: None)
+        game_nums, win_pcts, counts = nba.compute_series_stats(2023, 2025)
+        assert game_nums == []
+        assert win_pcts == []
+        assert counts == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "fetch_series_data",
+                            lambda year: calls.append(year) or None)
+        nba.compute_series_stats(2019, 2021, skip_years={2020})
+        assert 2020 not in calls
+        assert calls == [2019, 2021]
+
+
 class TestComputeParityStats:
     def test_computes_season_win_pct_std_dev(self, tmp_path, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))

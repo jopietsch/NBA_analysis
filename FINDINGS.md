@@ -147,7 +147,47 @@ the dataset. Shot quality at the arc is not a home court advantage.
 
 ---
 
-## 9. Win Margin Trends
+## 9. Playoff Series Structure
+
+Playoff game IDs encode the game number within each series (last digit of GAME_ID),
+allowing home win % to be tracked across G1–G7 pooled over all seasons.
+
+### Higher-seed home games dominate; the alternating pattern is striking
+
+The data reveals a sharp alternating structure. Higher-seed home games (G1, G2, G5)
+see home win percentages of roughly 69–75%, while lower-seed home games (G3, G4, G6)
+cluster tightly at 55–56% — barely above even. The G3/G4/G6 figure is only modestly
+above 50% and reflects that the lower seed's home advantage is almost completely
+offset by the quality gap between the opponents.
+
+A chi-square test strongly rejects uniform home win % across game numbers
+(χ²(6) = 80.40, p < 0.001). The variation is not random — it is structurally
+determined by which team is at home, not by series pressure or fatigue effects.
+
+### G7 is notably lower than G1/G2
+
+Game 7 — the highest-stakes home game in sports — shows a win % of approximately
+65%, meaningfully below G1 (69%) and G2 (72%). The small G7 sample (183 games)
+limits inference, but the gap is consistent with the idea that opponent quality is
+highest in games 7 (only the best road teams force a Game 7), partly offsetting the
+home court advantage.
+
+There is no significant linear trend across game numbers — the pattern is not a
+simple "home advantage fades as the series gets deeper." The dominant structure is
+the alternating host pattern, not a narrative about pressure or momentum.
+
+### Implications for the overall decline
+
+The strong G3/G4/G6 separation means that changes in which team hosts which games
+(format changes in 1985, 2003, 2014) materially affect the aggregate playoff home
+win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
+in round 1 and Finals matchups, which mechanically compressed the overall playoff
+home win % figure — an effect that overlaps with but cannot fully explain the
+broader secular decline seen in the era analysis.
+
+---
+
+## 10. Win Margin Trends
 
 Point margin data (PLUS_MINUS) is unavailable in the NBA.com game logs before the
 1995–96 season, so this analysis covers 1995–96 through 2024–25.

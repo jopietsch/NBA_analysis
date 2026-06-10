@@ -93,35 +93,35 @@ game logs via groupby.
 (`42300137` = game 7). 100% derivable from existing cached game logs.
 
 ### Data Layer (`nba_home_court_advantage.py`)
-- [ ] `fetch_series_data(end_year)` — load cached playoffs CSV, derive `game_in_series = GAME_ID.str[-1].astype(int)`, `series_key = GAME_ID.str[-3:-1]`, `HOME_WIN = (WL == 'W').astype(int)`; filter to home rows only
-- [ ] `compute_series_stats(start_year, end_year, skip_years)` — per-game-number home win % averaged across seasons; return (game_numbers, home_win_pcts, game_counts)
-- [ ] `compute_series_stats_by_era(start_year, end_year, skip_years)` — same split by era label
+- [x] `fetch_series_data(end_year)` — load cached playoffs CSV, derive `game_in_series = GAME_ID.str[-1].astype(int)`, `series_key = GAME_ID.str[-3:-1]`, `HOME_WIN = (WL == 'W').astype(int)`; filter to home rows only
+- [x] `compute_series_stats(start_year, end_year, skip_years)` — per-game-number home win % averaged across seasons; return (game_numbers, home_win_pcts, game_counts)
+- [x] `compute_series_stats_by_era(start_year, end_year, skip_years)` — same split by era label
 - No new cache files
 
 ### `build_game_dataset` change (`nba_home_court_regression.py`)
-- [ ] Add `game_in_series` column — last digit of GAME_ID for playoff rows; `NaN` for regular season rows
+- [x] Add `game_in_series` column — last digit of GAME_ID for playoff rows; `NaN` for regular season rows
 
 ### Tests (`test_nba_home_court_advantage.py`)
-- [ ] `TestFetchSeriesData::test_derives_game_in_series_from_game_id` — synthetic df with known GAME_IDs (`42300101` = G1, `42300137` = G7); assert last digit parsed correctly
-- [ ] `TestFetchSeriesData::test_filters_to_home_games_only`
-- [ ] `TestFetchSeriesData::test_returns_expected_columns`
-- [ ] `TestFetchSeriesData::test_returns_none_when_cache_missing`
-- [ ] `TestComputeSeriesStats::test_aggregates_home_win_pct_by_game_number`
-- [ ] `TestComputeSeriesStats::test_skip_years_param_excludes_years`
-- [ ] `TestComputeSeriesStats::test_skips_years_with_no_data`
+- [x] `TestFetchSeriesData::test_derives_game_in_series_from_game_id` — synthetic df with known GAME_IDs (`42300101` = G1, `42300137` = G7); assert last digit parsed correctly
+- [x] `TestFetchSeriesData::test_filters_to_home_games_only`
+- [x] `TestFetchSeriesData::test_returns_expected_columns`
+- [x] `TestFetchSeriesData::test_returns_none_when_cache_missing`
+- [x] `TestComputeSeriesStats::test_aggregates_home_win_pct_by_game_number`
+- [x] `TestComputeSeriesStats::test_skip_years_param_excludes_years`
+- [x] `TestComputeSeriesStats::test_skips_years_with_no_data`
 
 ### Statistical Analysis (`nba_home_court_regression.py`)
-- [ ] `run_series_breakdown(df)` — table: game # | N games | home win % | vs. G1 difference; chi-square test for uniformity across G1–G7; OLS linear trend across game numbers
+- [x] `run_series_breakdown(df)` — table: game # | N games | home win % | vs. G1 difference; chi-square test for uniformity across G1–G7; OLS linear trend across game numbers
 
 ### Plot (`nba_home_court_advantage.py`)
-- [ ] `plot_series_breakdown(game_nums, home_win_pcts, game_counts, era_data)` → `nba_home_court_series_breakdown.png`
+- [x] `plot_series_breakdown(game_nums, home_win_pcts, game_counts, era_data)` → `nba_home_court_series_breakdown.png`
   - Panel 1: bar chart of home win % by game number (G1–G7) with sample size annotations; horizontal reference line at overall playoff home win %
   - Panel 2: G1–G7 home win % per era (6 lines, era-colored using ERA_COLORS)
 
 ### PDF Integration
-- [ ] Add `## 9. Playoff Series Structure` section to `FINDINGS.md`
-- [ ] Add `_section_series_breakdown(s, sections)` function to `generate_report.py`
-- [ ] Add `story += _section_series_breakdown(s, sections)` call in `build_report()` (place after era-lines section)
+- [x] Add `## 9. Playoff Series Structure` section to `FINDINGS.md`
+- [x] Add `_section_series_breakdown(s, sections)` function to `generate_report.py`
+- [x] Add `story += _section_series_breakdown(s, sections)` call in `build_report()` (place after era-lines section)
 
 ---
 
@@ -261,7 +261,7 @@ _appendix_results
 |----------|------|-------|------------|------|-------------|-----|
 | B: Margin | ✅ | ✅ | ✅ | ✅ | ✅* | ✅ |
 | C: Parity | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| A: Series | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| A: Series | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | E: Travel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | D: Attend | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | F: Refs   | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
