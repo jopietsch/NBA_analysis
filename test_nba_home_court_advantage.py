@@ -529,6 +529,230 @@ class TestComputeTimezoneStats:
         assert calls == [2019, 2021]
 
 
+class TestMergeHomeAwayRows:
+    def test_returns_none_when_no_home_rows(self):
+        df = pd.DataFrame({
+            "GAME_ID": ["G1"], "MATCHUP": ["BOS @ MIA"], "WL": ["W"],
+        })
+        assert nba._merge_home_away_rows(df) is None
+
+    def test_returns_none_when_no_away_rows(self):
+        df = pd.DataFrame({
+            "GAME_ID": ["G1"], "MATCHUP": ["BOS vs. MIA"], "WL": ["W"],
+        })
+        assert nba._merge_home_away_rows(df) is None
+
+    def test_returns_none_for_empty_dataframe(self):
+        df = pd.DataFrame(columns=["GAME_ID", "MATCHUP", "WL"])
+        assert nba._merge_home_away_rows(df) is None
+
+    def test_merges_home_and_away_on_game_id(self):
+        df = pd.DataFrame({
+            "GAME_ID": ["G1", "G1"],
+            "MATCHUP": ["BOS vs. MIA", "MIA @ BOS"],
+            "WL":      ["W",           "L"],
+        })
+        result = nba._merge_home_away_rows(df)
+        assert result is not None
+        assert len(result) == 1
+        assert result.iloc[0]["WL_home"] == "W"
+        assert result.iloc[0]["WL_away"] == "L"
+
+
+class TestAddRestDays:
+    def test_handles_empty_dataframe(self):
+        df = pd.DataFrame(columns=["TEAM_ID", "GAME_DATE"])
+        result = nba._add_rest_days(df)
+        assert result.empty
+        assert "REST" in result.columns
+
+    def test_first_game_has_nan_rest(self):
+        df = pd.DataFrame({
+            "TEAM_ID":   [1],
+            "GAME_DATE": ["2024-01-01"],
+        })
+        result = nba._add_rest_days(df)
+        assert pd.isna(result.iloc[0]["REST"])
+
+    def test_back_to_back_is_zero_rest(self):
+        df = pd.DataFrame({
+            "TEAM_ID":   [1, 1],
+            "GAME_DATE": ["2024-01-01", "2024-01-02"],
+        })
+        result = nba._add_rest_days(df).sort_values("GAME_DATE").reset_index(drop=True)
+        assert result.iloc[1]["REST"] == 0
+
+    def test_one_day_gap_is_one_rest(self):
+        df = pd.DataFrame({
+            "TEAM_ID":   [1, 1],
+            "GAME_DATE": ["2024-01-01", "2024-01-03"],
+        })
+        result = nba._add_rest_days(df).sort_values("GAME_DATE").reset_index(drop=True)
+        assert result.iloc[1]["REST"] == 1
+
+    def test_rest_computed_per_team(self):
+        df = pd.DataFrame({
+            "TEAM_ID":   [1, 2, 1],
+            "GAME_DATE": ["2024-01-01", "2024-01-01", "2024-01-02"],
+        })
+        result = nba._add_rest_days(df).sort_values(["TEAM_ID", "GAME_DATE"]).reset_index(drop=True)
+        # Team 1, second game: 1 day later = 0 rest (back-to-back)
+        team1 = result[result["TEAM_ID"] == 1].reset_index(drop=True)
+        assert team1.iloc[1]["REST"] == 0
+        # Team 2 has only one game: NaN
+        team2 = result[result["TEAM_ID"] == 2].reset_index(drop=True)
+        assert pd.isna(team2.iloc[0]["REST"])
+
+
+class TestFetchDifferentialData:
+    def _write_game_log(self, tmp_path, df):
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_differential_data(2024, "Regular Season") is None
+
+    def test_returns_none_for_empty_dataframe(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        pd.DataFrame(columns=["GAME_ID", "MATCHUP", "WL"]).to_csv(
+            nba.cache_path(2024, "Regular Season"), index=False
+        )
+        assert nba.fetch_differential_data(2024, "Regular Season") is None
+
+    def test_returns_none_when_only_away_rows(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID": ["G1"], "MATCHUP": ["BOS @ MIA"],
+            "PF": [20], "FGM": [35], "FGA": [80],
+            "FG3M": [8], "FG3A": [20], "FTM": [10], "FTA": [15],
+        })
+        self._write_game_log(tmp_path, df)
+        assert nba.fetch_differential_data(2024, "Regular Season") is None
+
+    def test_computes_correct_differentials(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Home: FGM=40, FGA=80, FG3M=10, FG3A=20, FTM=15, FTA=20, PF=20
+        # Away: FGM=35, FGA=80, FG3M=8,  FG3A=20, FTM=10, FTA=15, PF=22
+        df = pd.DataFrame({
+            "GAME_ID": ["G1",        "G1"],
+            "MATCHUP": ["BOS vs. MIA", "MIA @ BOS"],
+            "PF":      [20,           22],
+            "FGM":     [40,           35],
+            "FGA":     [80,           80],
+            "FG3M":    [10,            8],
+            "FG3A":    [20,           20],
+            "FTM":     [15,           10],
+            "FTA":     [20,           15],
+            "WL":      ["W",         "L"],
+        })
+        self._write_game_log(tmp_path, df)
+
+        result = nba.fetch_differential_data(2024, "Regular Season")
+        assert result is not None
+        assert len(result) == 1
+        row = result.iloc[0]
+        assert row["foul_diff"] == pytest.approx(-2.0)
+        assert row["fg_pct_diff"] == pytest.approx(100 * (40/80 - 35/80))
+        assert row["efg_pct_diff"] == pytest.approx(100 * (45/80 - 39/80))
+        assert row["tpa_rate_diff"] == pytest.approx(0.0)
+        assert row["fg3_pct_diff"] == pytest.approx(100 * (10/20 - 8/20))
+        assert row["ft_pct_diff"] == pytest.approx(100 * (15/20 - 10/15))
+
+    def test_zero_fg3a_becomes_nan_not_zero(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID": ["G1",           "G1"],
+            "MATCHUP": ["BOS vs. MIA",  "MIA @ BOS"],
+            "PF":      [20,             22],
+            "FGM":     [40,             35],
+            "FGA":     [80,             80],
+            "FG3M":    [0,               0],
+            "FG3A":    [0,               0],   # no 3s attempted by either team
+            "FTM":     [15,             10],
+            "FTA":     [20,             15],
+            "WL":      ["W",            "L"],
+        })
+        self._write_game_log(tmp_path, df)
+
+        result = nba.fetch_differential_data(2024, "Regular Season")
+        assert result is not None
+        assert pd.isna(result.iloc[0]["fg3_pct_diff"])
+
+
+class TestFetchShotZones:
+    def _path(self, tmp_path, end_year=2024, season_type="Regular Season", location="Home"):
+        fname = f"shot_zones_{nba.season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv"
+        return tmp_path / fname
+
+    def test_returns_none_for_truly_empty_file(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        self._path(tmp_path).write_text("")
+        assert nba.fetch_shot_zones(2024, "Regular Season", "Home") is None
+
+    def test_returns_none_for_empty_dataframe_csv(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        pd.DataFrame().to_csv(self._path(tmp_path), index=False)
+        assert nba.fetch_shot_zones(2024, "Regular Season", "Home") is None
+
+    def test_returns_none_and_caches_sentinel_on_api_error(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
+
+        from nba_api.stats.endpoints import leaguedashteamshotlocations
+
+        class FailingEndpoint:
+            def __init__(self, **kwargs):
+                raise RuntimeError("boom")
+
+        monkeypatch.setattr(leaguedashteamshotlocations, "LeagueDashTeamShotLocations", FailingEndpoint)
+
+        result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
+        assert result is None
+        assert self._path(tmp_path).exists()  # sentinel file written
+
+        # Second call reads the sentinel and skips the API entirely
+        result2 = nba.fetch_shot_zones(2024, "Regular Season", "Home")
+        assert result2 is None
+
+    def test_returns_none_and_caches_sentinel_on_empty_api_result(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
+
+        from nba_api.stats.endpoints import leaguedashteamshotlocations
+
+        class EmptyEndpoint:
+            def __init__(self, **kwargs):
+                pass
+            def get_data_frames(self):
+                return [pd.DataFrame()]
+
+        monkeypatch.setattr(leaguedashteamshotlocations, "LeagueDashTeamShotLocations", EmptyEndpoint)
+
+        result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
+        assert result is None
+        assert self._path(tmp_path).exists()
+
+    def test_loads_valid_cached_csv(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "TEAM_ID":   [1, 2],
+            "TEAM_NAME": ["Boston Celtics", "Miami Heat"],
+            "FGA_RA":    [1000, 900],
+            "FGA_NON_RA": [300, 250],
+            "FGA_MR":    [400, 350],
+            "FGA_LC3":   [200, 180],
+            "FGA_RC3":   [210, 190],
+            "FGA_ATB3":  [500, 450],
+            "FGA_BC":    [5, 3],
+        })
+        df.to_csv(self._path(tmp_path), index=False)
+
+        result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
+        assert result is not None
+        assert len(result) == 2
+        assert list(result["TEAM_NAME"]) == ["Boston Celtics", "Miami Heat"]
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)
