@@ -373,6 +373,21 @@ def _section_shot_zones(s, sections):
     ]
 
 
+def _section_margin(s, sections):
+    return [
+        PageBreak(),
+        *_section_header("9. Win Margin Trends", s, sections),
+        Spacer(1, 0.1 * inch),
+        _chart(
+            "nba_home_court_margin.png",
+            "Figure 9. Home team point margin per season. "
+            "Left: mean margin for all games (regular season and playoffs) with trend lines. "
+            "Center: mean margin split by home wins vs. losses (regular season). "
+            "Right: era-bucketed average margin, regular season vs. playoffs.",
+        ),
+    ]
+
+
 def _section_summary(s, sections):
     rank_data = [
         ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
@@ -444,6 +459,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     story += _section_rest(s, sections)
     story += _section_differentials(s, sections)
     story += _section_shot_zones(s, sections)
+    story += _section_margin(s, sections)
     story += _section_summary(s, sections)
     story += _appendix_results(s)
 

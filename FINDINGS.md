@@ -147,6 +147,40 @@ the dataset. Shot quality at the arc is not a home court advantage.
 
 ---
 
+## 9. Win Margin Trends
+
+Point margin data (PLUS_MINUS) is unavailable in the NBA.com game logs before the
+1995–96 season, so this analysis covers 1995–96 through 2024–25.
+
+### The decline is not about wins getting closer
+
+The overall home-team point margin in the regular season has declined
+significantly (−0.055 pts per year, p < 0.001) — but the mechanism is
+surprising. Home wins are actually getting **larger**, not smaller
+(+0.041 pts/yr, p < 0.001). What is driving the decline is that home losses
+are getting worse: the average home loss margin has grown by −0.083 pts/yr
+(p < 0.001). Home teams are losing more games, and when they lose, they lose
+by more.
+
+This rules out one intuitive explanation for the win-rate decline — that games
+at home are simply becoming more competitive and flipping the coin. Instead,
+the pattern is more polarized: when the home team is good enough to win, they
+win convincingly; but they drop more games outright.
+
+### Playoffs show a different pattern
+
+In the playoffs, the all-game margin shows no significant trend (+0.002 pts/yr,
+not significant). But like the regular season, both win margins (+0.152 pts/yr,
+p < 0.001) and loss margins (−0.076 pts/yr, p < 0.05) are growing in magnitude.
+Playoff games are increasingly bimodal — blowouts in both directions are more
+common than they were in the 1990s, yet the net margin is unchanged.
+
+The regular-season mean margin (+2.80 pts) is lower than the playoff mean
+(+4.36 pts), consistent with the higher overall home win percentage in the
+playoffs across most of the dataset.
+
+---
+
 ## 8. Summary
 
 Home court advantage has declined substantially in both the regular season and

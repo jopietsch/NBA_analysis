@@ -959,6 +959,85 @@ class TestFetchShotZones:
         assert list(result["TEAM_NAME"]) == ["Boston Celtics", "Miami Heat"]
 
 
+class TestFetchMarginData:
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_margin_data(2024, "Regular Season") is None
+
+    def test_returns_none_for_empty_dataframe(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        pd.DataFrame(columns=["MATCHUP", "WL", "PLUS_MINUS"]).to_csv(
+            nba.cache_path(2024, "Regular Season"), index=False
+        )
+        assert nba.fetch_margin_data(2024, "Regular Season") is None
+
+    def test_extracts_home_rows_and_renames_column(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "MATCHUP":    ["BOS vs. MIA", "MIA @ BOS", "LAL vs. GSW", "GSW @ LAL"],
+            "WL":         ["W",           "L",          "L",           "W"],
+            "PLUS_MINUS": [12,            -12,          -5,             5],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+        result = nba.fetch_margin_data(2024, "Regular Season")
+
+        assert result is not None
+        assert len(result) == 2
+        assert list(result.columns) == ["margin", "WL"]
+        assert sorted(result["margin"].tolist()) == [-5, 12]
+
+    def test_returns_none_when_no_home_games(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "MATCHUP": ["BOS @ MIA"], "WL": ["W"], "PLUS_MINUS": [10],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+        assert nba.fetch_margin_data(2024, "Regular Season") is None
+
+
+class TestComputeMarginStats:
+    def test_aggregates_means_per_season(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "margin": [10.0, 8.0, -4.0, -6.0],
+                "WL":     ["W",  "W",  "L",  "L"],
+            })
+
+        monkeypatch.setattr(nba, "fetch_margin_data", fake_fetch)
+        seasons, stats = nba.compute_margin_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        assert stats["all_games_mean"]   == [pytest.approx(2.0)]
+        assert stats["home_wins_mean"]   == [pytest.approx(9.0)]
+        assert stats["home_losses_mean"] == [pytest.approx(-5.0)]
+        assert stats["std_dev"][0] > 0
+
+    def test_std_dev_is_positive(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_margin_data", lambda year, s: (
+            pd.DataFrame({"margin": [5.0, -3.0, 10.0], "WL": ["W", "L", "W"]})
+            if year == 2024 else None
+        ))
+        _, stats = nba.compute_margin_stats(2024, 2024, "Regular Season")
+        assert stats["std_dev"][0] > 0
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_margin_data", lambda year, s: None)
+        seasons, stats = nba.compute_margin_stats(2023, 2025, "Regular Season")
+        assert seasons == []
+        for values in stats.values():
+            assert values == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "fetch_margin_data",
+                            lambda year, s: calls.append(year) or None)
+        nba.compute_margin_stats(2019, 2021, "Playoffs", skip_years={2020})
+        assert calls == [2019, 2021]
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)

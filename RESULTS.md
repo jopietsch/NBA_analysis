@@ -114,6 +114,39 @@ All data from cache/ — same source as the plots above.
    Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
 
 
+─── 5. WIN MARGIN TRENDS  (home team point differential per game) ──────
+   Positive = home team winning by more.
+   Trend = OLS slope (change per season year).
+
+   Regular season  (N = 34,311 games)
+
+   Era             All games    Home wins  Home losses
+   ───────────────────────────────────────────────────
+   1984–94                 —            —            —
+   1995–01             +3.05       +11.60        -9.71
+   2002–04             +3.62       +11.66        -9.00
+   2005–17             +3.00       +11.70        -9.78
+   2018–22             +1.95       +12.16       -11.20
+   2023–25             +2.11       +12.83       -11.31
+   ───────────────────────────────────────────────────
+   Trend/yr        -0.055***    +0.041***    -0.083***
+
+   Playoffs  (N = 2,272 games)
+
+   Era             All games    Home wins  Home losses
+   ───────────────────────────────────────────────────
+   1984–94                 —            —            —
+   1995–01             +3.87       +10.92        -9.42
+   2002–04             +4.43       +11.38        -8.10
+   2005–17             +4.48       +12.43        -9.85
+   2018–22             +4.30       +13.90       -10.55
+   2023–25             +4.58       +14.97       -10.00
+   ───────────────────────────────────────────────────
+   Trend/yr        +0.002       +0.152***    -0.076  *
+
+   ► Overall reg-season mean margin: +2.80 pts.
+   ► Overall playoff mean margin:    +4.36 pts.
+
 ════════════════════════════════════════════════════════════════════════
 
 ```

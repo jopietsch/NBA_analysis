@@ -955,6 +955,48 @@ def compute_differential_stats(
     return seasons, stats
 
 
+def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Per-home-game point margin from the cached game log.
+    PLUS_MINUS for a home row equals home_pts − away_pts exactly.
+    Returns a DataFrame with columns ['margin', 'WL']; None if no data.
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
+    if home.empty:
+        return None
+    return home[["PLUS_MINUS", "WL"]].rename(columns={"PLUS_MINUS": "margin"})
+
+
+def compute_margin_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season home team point-differential statistics."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "all_games_mean": [], "home_wins_mean": [], "home_losses_mean": [], "std_dev": [],
+    }
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_margin_data(year, season_type)
+        if g is None or g.empty:
+            continue
+
+        seasons.append(short_label(year))
+        stats["all_games_mean"].append(g["margin"].mean())
+        wins   = g[g["WL"] == "W"]
+        losses = g[g["WL"] == "L"]
+        stats["home_wins_mean"].append(  wins["margin"].mean()   if len(wins)   else np.nan)
+        stats["home_losses_mean"].append(losses["margin"].mean() if len(losses) else np.nan)
+        stats["std_dev"].append(g["margin"].std())
+
+    return seasons, stats
+
+
 def plot_differential_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,
@@ -1012,6 +1054,101 @@ def plot_differential_analysis(
 
     plt.tight_layout()
     output_path = "nba_home_court_advantage_differentials.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
+def plot_margin_analysis(
+    reg_seasons: list[str], reg_stats: dict,
+    po_seasons: list[str], po_stats: dict,
+) -> None:
+    """
+    3-panel chart: has the home team's point margin compressed alongside the
+    decline in home win percentage?
+
+    Panel 1: mean all-game margin per season (reg + playoffs) with trend lines.
+    Panel 2: mean win-only vs loss-only margin per season (regular season).
+    Panel 3: era-bucketed bar chart of mean margin, reg vs playoffs.
+    """
+    x = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22, 7))
+    fig.suptitle("Home Team Point Margin — Are Wins Getting Closer?",
+                 fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Data: NBA.com  |  Positive = home team winning by more  |  1983-84 through 2024-25",
+             ha="center", fontsize=9, color=GRAY)
+
+    # Panel 1: all-game mean margin per season (reg + playoffs aligned)
+    y_reg = np.array(reg_stats["all_games_mean"], dtype=float)
+    y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "all_games_mean")
+
+    for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
+        mask = ~np.isnan(y)
+        ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
+        if mask.sum() >= 2:
+            z = np.polyfit(x[mask], y[mask], 1)
+            ax1.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.8, alpha=0.9, zorder=3)
+
+    _shade_eras(ax1, reg_seasons, label_y=None)
+    ax1.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.set_title("Mean margin per season (all games)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax1.set_ylabel("Home point margin (home − away pts)", fontsize=10)
+    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Panel 2: win-only vs loss-only margin per season (regular season)
+    y_wins   = np.array(reg_stats["home_wins_mean"],   dtype=float)
+    y_losses = np.array(reg_stats["home_losses_mean"], dtype=float)
+
+    for y, color, label in [
+        (y_wins,   BLUE, "Home wins"),
+        (y_losses, RED,  "Home losses"),
+    ]:
+        mask = ~np.isnan(y)
+        ax2.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
+        if mask.sum() >= 2:
+            z = np.polyfit(x[mask], y[mask], 1)
+            ax2.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.8, alpha=0.9, zorder=3)
+
+    _shade_eras(ax2, reg_seasons, label_y=None)
+    ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax2.set_xticks(x[::tick_step])
+    ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax2.set_title("Win/loss margin by season (regular season)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax2.set_ylabel("Home point margin (home − away pts)", fontsize=10)
+    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Panel 3: era-bucketed bar chart (reg vs playoff mean all-game margin)
+    reg_era, era_labels = bucket_stats_by_era(reg_seasons, {"reg": reg_stats["all_games_mean"]})
+    po_era,  _          = bucket_stats_by_era(po_seasons,  {"po":  po_stats["all_games_mean"]})
+
+    xi = np.arange(len(era_labels))
+    w  = 0.35
+    bars1 = ax3.bar(xi - w / 2, reg_era["reg"], width=w, color=BLUE,  label="Regular season", zorder=2)
+    bars2 = ax3.bar(xi + w / 2, po_era["po"],   width=w, color=GREEN, label="Playoffs",        zorder=2)
+    for bars, color in [(bars1, BLUE), (bars2, GREEN)]:
+        for bar in bars:
+            h  = bar.get_height()
+            va = "bottom" if h >= 0 else "top"
+            ax3.text(bar.get_x() + bar.get_width() / 2, h + (0.1 if h >= 0 else -0.1),
+                     f"{h:+.1f}", ha="center", va=va, fontsize=7.5, color=color)
+
+    ax3.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax3.set_xticks(xi)
+    ax3.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=9)
+    ax3.set_title("Mean margin by era",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax3.set_ylabel("Home point margin (home − away pts)", fontsize=10)
+    ax3.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    plt.tight_layout()
+    output_path = "nba_home_court_margin.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.show()
@@ -1230,6 +1367,12 @@ def main() -> None:
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
     plot_differential_analysis(reg_diff_seasons, reg_diff_stats, po_diff_seasons, po_diff_stats)
+
+    reg_margin_seasons, reg_margin_stats = compute_margin_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    po_margin_seasons, po_margin_stats = compute_margin_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_margin_analysis(reg_margin_seasons, reg_margin_stats, po_margin_seasons, po_margin_stats)
 
     print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")
     reg_zone_seasons, reg_zone_stats = compute_shot_zone_stats(START_YEAR, END_YEAR, SeasonType.regular)

@@ -98,12 +98,14 @@ def build_game_dataset() -> pd.DataFrame:
 
             diffs = nba._compute_box_differentials(merged)
             merged[diffs.columns] = diffs
+            merged["margin"] = merged["PLUS_MINUS_home"]
 
             chunks.append(merged[[
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff",
+                "margin",
             ]])
 
     if not chunks:
@@ -384,6 +386,69 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis 5: Win margin trends ────────────────────────────────────────────
+
+def run_margin_analysis(df: pd.DataFrame) -> None:
+    COL_W   = 13
+    columns = [
+        ("All games",   None, "margin"),
+        ("Home wins",   1,    "margin"),
+        ("Home losses", 0,    "margin"),
+    ]
+
+    _section("5. WIN MARGIN TRENDS  (home team point differential per game)")
+    print("   Positive = home team winning by more.")
+    print("   Trend = OLS slope (change per season year).\n")
+
+    for season_label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        n = len(sub.dropna(subset=["margin"]))
+        print(f"   {season_label}  (N = {n:,} games)\n")
+
+        header  = f"   {'Era':<12}" + "".join(f"{lbl:>{COL_W}}" for lbl, _, _ in columns)
+        divider = f"   {'─'*12}" + "─" * (COL_W * len(columns))
+        print(header)
+        print(divider)
+
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_rows = sub[(sub["year"] >= y1) & (sub["year"] <= y2)]
+            row = f"   {era_label:<12}"
+            for _, win_flag, col in columns:
+                if win_flag is None:
+                    vals = era_rows[col].dropna()
+                else:
+                    vals = era_rows.loc[era_rows["home_win"] == win_flag, col].dropna()
+                row += f"{vals.mean():>+{COL_W}.2f}" if len(vals) else f"{'—':>{COL_W}}"
+            print(row)
+
+        print(divider)
+        trend_row = f"   {'Trend/yr':<12}"
+        for _, win_flag, col in columns:
+            data = (
+                sub[["year", col]].dropna()
+                if win_flag is None
+                else sub.loc[sub["home_win"] == win_flag, ["year", col]].dropna()
+            )
+            if len(data) < 10:
+                trend_row += f"{'—':>{COL_W}}"
+                continue
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m = smf.ols(f"{col} ~ year", data=data).fit()
+            coef = m.params["year"]
+            pval = m.pvalues["year"]
+            trend_row += f"{coef:>+{COL_W - 3}.3f}{_stars(pval)}"
+        print(trend_row)
+        print()
+
+    reg_mean = df.loc[df["is_playoff"] == 0, "margin"].mean()
+    po_mean  = df.loc[df["is_playoff"] == 1, "margin"].mean()
+    print(f"   ► Overall reg-season mean margin: {reg_mean:+.2f} pts.")
+    print(f"   ► Overall playoff mean margin:    {po_mean:+.2f} pts.")
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -407,6 +472,7 @@ def run() -> None:
         run_stability_analysis(df)
         run_factor_summary(df)
         run_differential_analysis(df)
+        run_margin_analysis(df)
 
         print("\n" + "═" * _W + "\n")
 
