@@ -15,6 +15,19 @@ The gap between the two has nearly closed in recent seasons.
 The 2020 bubble season (neutral-site playoffs) is excluded from playoff stats.
 COVID seasons are flagged in the charts and regression as an anomaly.
 
+### The trend is statistically unambiguous
+
+OLS regression of per-season home win % on year confirms the decline is real and
+precisely measured. The regular season falls at roughly **−0.25 pp per year**
+(p < 0.001, R² = 0.73) — a total drop of more than 10 percentage points over
+the 41-year dataset. The playoffs fall at **−0.20 pp per year** (p = 0.009),
+though with more year-to-year volatility (R² = 0.16).
+
+Within individual eras the season count is too small for reliable slope estimates,
+but the overall trajectory is one of the strongest trends in the dataset. The
+regularity of the decline — not a one-time step but a persistent drift — points
+to systemic forces rather than a single rule change.
+
 ---
 
 ## 2. Era and Format Period Analysis
@@ -133,17 +146,21 @@ Shot zone data is available from 1996–97 onward via NBA.com's
 
 Paint access (restricted area + non-RA combined) shows the clearest pattern:
 home teams have historically taken a higher share of shots from the paint —
-the most efficient shots in basketball — and that gap is closing. This is
-consistent with both the eFG% narrowing and the foul differential trend: road
-teams are accessing the paint more freely than they used to.
+the most efficient shots in basketball — and that gap is closing. OLS confirms
+this trend is highly significant: **−0.037 pp/yr** (p < 0.001) in the regular
+season. Road teams are accessing the paint more freely than they used to, which
+is consistent with both the eFG% narrowing and the foul differential trend.
 
 Road teams consistently take a higher share of mid-range shots — the least
-efficient shot type in modern basketball. This gap has been relatively stable,
-suggesting that even as the paint advantage closes, road teams are still being
-pushed away from the basket more often.
+efficient shot type in modern basketball. This gap is also narrowing
+(**+0.024 pp/yr**, p < 0.001 in the regular season) as both home and road teams
+have shifted toward the 3-point line and away from the mid-range, but road teams
+have historically been pushed there more often and are now less disadvantaged.
 
 Corner 3 and above-break 3 show no systematic home/road difference throughout
-the dataset. Shot quality at the arc is not a home court advantage.
+the dataset. Shot quality at the arc is not a home court advantage. A modest
+positive trend in above-break 3 (+0.013 pp/yr, p = 0.054) is at the boundary
+of significance and may reflect recent noise rather than a structural shift.
 
 ---
 

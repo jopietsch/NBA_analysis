@@ -13,7 +13,36 @@ All data from cache/ — same source as the plots above.
 
   Building game-level dataset from cache... 51,089 game rows (50,094 with complete features).
 
-─── 1. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ───
+─── 1. THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ─────────────────
+   OLS of per-season home win % on year (season-level, not game-level).
+   Formally tests the multi-decade trend and measures per-era slopes.
+
+   Regular season  (42 seasons, 1984–2025)
+   Overall: -0.251 pp/yr  (p = <0.001  ***,  R² = 0.733,  total change: -10.3 pp)
+
+   Era              N   Slope pp/yr         p     
+   ────────────  ────  ────────────  ────────  ───
+   1984–94         11        -0.506     0.024    *
+   1995–01          7        +0.229     0.464     
+   2002–04          3        +1.135     0.584     
+   2005–17         13        -0.180     0.030    *
+   2018–22          5        -1.191     0.074     
+   2023–25          3        -1.800     0.354     
+
+   Playoffs  (41 seasons, 1984–2025)
+   Overall: -0.200 pp/yr  (p = 0.009  **,  R² = 0.164,  total change: -8.2 pp)
+
+   Era              N   Slope pp/yr         p     
+   ────────────  ────  ────────────  ────────  ───
+   1984–94         11        +0.234     0.684     
+   1995–01          7        +0.312     0.823     
+   2002–04          3        +6.398     0.230     
+   2005–17         13        -0.445     0.301     
+   2018–22          4        -2.155     0.425     
+   2023–25          3        -1.190     0.063     
+
+
+─── 2. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ───
    Outcome: home_win. Baseline home win %: 60.3%.
    McFadden R² is analogous to OLS R² but typical values are much smaller;
    the ΔR² column shows how much each block adds over the previous model.
@@ -45,7 +74,7 @@ All data from cache/ — same source as the plots above.
    ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
    ► Rest, altitude, and time zone together add the remaining 44%.
 
-─── 2. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ──────
+─── 3. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ──────
    Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
    Stable coefficients → those factors didn't drive the post-2014 change.
 
@@ -64,7 +93,7 @@ All data from cache/ — same source as the plots above.
    ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
    ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
 
-─── 3. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ─────────────────
+─── 4. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ─────────────────
    Bivariate logistic regression — each factor tested independently.
    N regular season: 47,215   N playoffs: 2,879
 
@@ -83,7 +112,7 @@ All data from cache/ — same source as the plots above.
      Only 107 coast-to-coast playoff games exist across 42 seasons
      (5,676 regular-season) — too sparse for reliable playoff inference.
 
-─── 4. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) 
+─── 5. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) 
    Negative foul diff = refs call fewer fouls on the home team.
    Trend = OLS slope (change per season year); pp = percentage points.
 
@@ -114,7 +143,36 @@ All data from cache/ — same source as the plots above.
    Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
 
 
-─── 5. WIN MARGIN TRENDS  (home team point differential per game) ──────
+─── 6. SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ──────
+   Positive = home team takes a higher share of FGA from that zone.
+   Trend = OLS slope (change per season year). Data from 1996–97 onward.
+
+   Regular season  (N = 29 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.28             -1.24             +0.16             -0.20
+   2002–04                  +1.18             -1.24             +0.29             -0.23
+   2005–17                  +1.26             -1.19             +0.12             -0.19
+   2018–22                  +0.55             -0.77             +0.18             +0.04
+   2023–25                  +0.37             -0.77             +0.20             +0.21
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.037***         +0.024***         -0.000            +0.013  *
+
+   Playoffs  (N = 28 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.72             -1.70             +0.44             -0.46
+   2002–04                  +2.08             -1.82             +0.10             -0.36
+   2005–17                  +1.78             -1.50             +0.10             -0.39
+   2018–22                  +0.72             -1.62             +0.48             +0.42
+   2023–25                  +1.58             -1.42             +0.26             -0.41
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.030            +0.007            -0.000            +0.024   
+
+
+─── 7. WIN MARGIN TRENDS  (home team point differential per game) ──────
    Positive = home team winning by more.
    Trend = OLS slope (change per season year).
 
@@ -147,7 +205,7 @@ All data from cache/ — same source as the plots above.
    ► Overall reg-season mean margin: +2.80 pts.
    ► Overall playoff mean margin:    +4.36 pts.
 
-─── 6. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ────────────────────
+─── 8. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ────────────────────
    Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
    Parity = std dev of all-team win percentages for the season.
 
@@ -176,7 +234,7 @@ All data from cache/ — same source as the plots above.
      home win % was already declining, and fell in 2002–04 while home win %
      ticked back up. The two series do not move in lockstep.
 
-─── 7. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ────────────
+─── 9. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ────────────
    Does home court advantage vary by game number within a series (G1–G7)?
    G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
 
@@ -199,7 +257,7 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
      G7 n = 183 games (series that went to 7)
 
-─── 8. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ──────────
+─── 10. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────
    Distance = haversine miles from away team's home arena to game arena.
    Does longer travel reduce the visiting team's winning odds?
 

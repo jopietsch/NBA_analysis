@@ -179,7 +179,57 @@ def _clean(name: str, era_ref: str, fmt_ref: str) -> str:
     )
 
 
-# ── Analysis 1: Sequential decomposition (regular season) ─────────────────────
+# ── Analysis 1: Overall decline ───────────────────────────────────────────────
+
+def run_decline_trend(df: pd.DataFrame) -> None:
+    """OLS home_win_pct ~ year at the season level — formally tests the decline."""
+    _section("1. THE OVERALL DECLINE — IS IT STATISTICALLY REAL?")
+    print("   OLS of per-season home win % on year (season-level, not game-level).")
+    print("   Formally tests the multi-decade trend and measures per-era slopes.\n")
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        by_year = sub.groupby("year")["home_win"].mean() * 100
+        rows = pd.DataFrame({"year": by_year.index.astype(int), "pct": by_year.values})
+        if is_po:
+            rows = rows[~rows["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        if len(rows) < 3:
+            continue
+
+        yr_min, yr_max = int(rows["year"].min()), int(rows["year"].max())
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m_full = smf.ols("pct ~ year", data=rows).fit()
+
+        coef  = m_full.params["year"]
+        pval  = m_full.pvalues["year"]
+        pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+        total = coef * (yr_max - yr_min)
+
+        print(f"   {ctx_label}  ({len(rows)} seasons, {yr_min}–{yr_max})")
+        print(f"   Overall: {coef:+.3f} pp/yr  "
+              f"(p = {pval_s}  {_stars(pval).strip()},  R² = {m_full.rsquared:.3f},  "
+              f"total change: {total:+.1f} pp)\n")
+
+        print(f"   {'Era':<12}  {'N':>4}  {'Slope pp/yr':>12}  {'p':>8}  {'':3}")
+        print(f"   {'─'*12}  {'─'*4}  {'─'*12}  {'─'*8}  {'─'*3}")
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_rows = rows[(rows["year"] >= y1) & (rows["year"] <= y2)]
+            n = len(era_rows)
+            if n < 3:
+                print(f"   {era_label:<12}  {n:>4}  {'(too few)':>12}")
+                continue
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m_era = smf.ols("pct ~ year", data=era_rows).fit()
+            c = m_era.params["year"]
+            p = m_era.pvalues["year"]
+            p_s = "<0.001" if p < 0.001 else f"{p:.3f}"
+            print(f"   {era_label:<12}  {n:>4}  {c:>+12.3f}  {p_s:>8}  {_stars(p)}")
+        print()
+
+
+# ── Analysis 2: Sequential decomposition (regular season) ─────────────────────
 
 def run_sequential_decomposition(df: pd.DataFrame) -> None:
     era_ref = nba.ERA_DEFS[0][0]   # "1984–94"
@@ -187,7 +237,7 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     n = len(reg)
     p_bar = reg["home_win"].mean()
 
-    _section(f"1. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = {n:,} games)")
+    _section(f"2. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = {n:,} games)")
     print(f"   Outcome: home_win. Baseline home win %: {p_bar * 100:.1f}%.")
     print(f"   McFadden R² is analogous to OLS R² but typical values are much smaller;")
     print(f"   the ΔR² column shows how much each block adds over the previous model.")
@@ -252,7 +302,7 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
 # ── Analysis 2: Pre/post-2014 coefficient stability (regular season) ──────────
 
 def run_stability_analysis(df: pd.DataFrame) -> None:
-    _section("2. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only)")
+    _section("3. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only)")
     print("   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?")
     print("   Stable coefficients → those factors didn't drive the post-2014 change.\n")
 
@@ -305,7 +355,7 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     re = df[df["is_playoff"] == 0].dropna(subset=["rest_diff", "tz_diff"])
     po = df[df["is_playoff"] == 1].dropna(subset=["rest_diff", "tz_diff"])
 
-    _section("3. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
+    _section("4. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
     print(f"   Bivariate logistic regression — each factor tested independently.")
     print(f"   N regular season: {len(re):,}   N playoffs: {len(po):,}\n")
 
@@ -359,7 +409,7 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
                   "3P% (pp)", "FT% (pp)"]
     COL_W = 14
 
-    _section("4. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
+    _section("5. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
     print("   Negative foul diff = refs call fewer fouls on the home team.")
     print("   Trend = OLS slope (change per season year); pp = percentage points.\n")
 
@@ -400,7 +450,71 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
         print()
 
 
-# ── Analysis 5: Win margin trends ────────────────────────────────────────────
+# ── Analysis 6: Shot zone differentials ──────────────────────────────────────
+
+def run_shot_zone_analysis(
+    reg_seasons: list, reg_stats: dict,
+    po_seasons:  list, po_stats:  dict,
+) -> None:
+    """OLS trend for each shot zone differential — parallel to run_differential_analysis."""
+    zone_labels = {
+        "paint":    "Paint (RA+Non-RA)",
+        "midrange": "Mid-Range",
+        "corner3":  "Corner 3",
+        "above3":   "Above Break 3",
+    }
+    COL_W = 18
+
+    _section("6. SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA)")
+    print("   Positive = home team takes a higher share of FGA from that zone.")
+    print("   Trend = OLS slope (change per season year). Data from 1996–97 onward.\n")
+
+    for season_label, seasons, stats in [
+        ("Regular season", reg_seasons, reg_stats),
+        ("Playoffs",       po_seasons,  po_stats),
+    ]:
+        if not seasons:
+            continue
+
+        years = [nba.label_to_year(s) for s in seasons]
+        col_keys = list(zone_labels.keys())
+        col_display = list(zone_labels.values())
+
+        print(f"   {season_label}  (N = {len(seasons)} seasons)\n")
+        header  = f"   {'Era':<12}" + "".join(f"{lbl:>{COL_W}}" for lbl in col_display)
+        divider = f"   {'─'*12}" + "─" * (COL_W * len(col_keys))
+        print(header)
+        print(divider)
+
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_idx = [i for i, y in enumerate(years) if y1 <= y <= y2]
+            if not era_idx:
+                continue
+            row = f"   {era_label:<12}"
+            for key in col_keys:
+                vals = [stats[key][i] for i in era_idx if not np.isnan(stats[key][i])]
+                row += f"{np.mean(vals):>+{COL_W}.2f}" if vals else f"{'—':>{COL_W}}"
+            print(row)
+
+        print(divider)
+        trend_row = f"   {'Trend/yr':<12}"
+        for key in col_keys:
+            pairs = [(y, v) for y, v in zip(years, stats[key]) if not np.isnan(v)]
+            if len(pairs) < 3:
+                trend_row += f"{'—':>{COL_W}}"
+                continue
+            tdf = pd.DataFrame(pairs, columns=["year", "val"])
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m = smf.ols("val ~ year", data=tdf).fit()
+            c    = m.params["year"]
+            pval = m.pvalues["year"]
+            trend_row += f"{c:>+{COL_W - 3}.3f}{_stars(pval)}"
+        print(trend_row)
+        print()
+
+
+# ── Analysis 7: Win margin trends ─────────────────────────────────────────────
 
 def run_margin_analysis(df: pd.DataFrame) -> None:
     COL_W   = 13
@@ -410,7 +524,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
         ("Home losses", 0,    "margin"),
     ]
 
-    _section("5. WIN MARGIN TRENDS  (home team point differential per game)")
+    _section("7. WIN MARGIN TRENDS  (home team point differential per game)")
     print("   Positive = home team winning by more.")
     print("   Trend = OLS slope (change per season year).\n")
 
@@ -471,7 +585,7 @@ def run_parity_correlation(
 ) -> None:
     from scipy import stats as scipy_stats
 
-    _section("6. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE")
+    _section("8. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE")
     print("   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.")
     print("   Parity = std dev of all-team win percentages for the season.\n")
 
@@ -540,7 +654,7 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
     po["game_in_series"] = po["game_in_series"].astype(int)
     po = po[po["game_in_series"].between(1, 7)]
 
-    _section("7. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER")
+    _section("9. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER")
     print("   Does home court advantage vary by game number within a series (G1–G7)?")
     print("   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).\n")
 
@@ -603,11 +717,11 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
     """Bivariate table: does haversine travel distance predict home win?"""
     full = df.dropna(subset=["distance_miles"])
     if full.empty:
-        _section("8. TRAVEL DISTANCE — AWAY TEAM FLIGHT MILES")
+        _section("10. TRAVEL DISTANCE — AWAY TEAM FLIGHT MILES")
         print("   No distance data available in this dataset.")
         return
 
-    _section("8. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES")
+    _section("10. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES")
     print("   Distance = haversine miles from away team's home arena to game arena.")
     print("   Does longer travel reduce the visiting team's winning odds?\n")
 
@@ -673,10 +787,19 @@ def run() -> None:
         reg_seasons_sorted = sorted(reg_pcts_by_season)
         reg_pcts_sorted    = [reg_pcts_by_season[s] for s in reg_seasons_sorted]
 
+        reg_zone_seasons, reg_zone_stats = nba.compute_shot_zone_stats(
+            nba.START_YEAR, nba.END_YEAR, "Regular Season"
+        )
+        po_zone_seasons, po_zone_stats = nba.compute_shot_zone_stats(
+            nba.START_YEAR, nba.END_YEAR, "Playoffs", skip_years=nba.SKIP_PLAYOFF_YEARS
+        )
+
+        run_decline_trend(df)
         run_sequential_decomposition(df)
         run_stability_analysis(df)
         run_factor_summary(df)
         run_differential_analysis(df)
+        run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
         run_margin_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_series_breakdown(df)
