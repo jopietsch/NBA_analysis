@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Key files
+
+- `FINDINGS.md` — narrative interpretation; stable, edit by hand when understanding changes
+- `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
+
 ## Commands
 
 ```bash

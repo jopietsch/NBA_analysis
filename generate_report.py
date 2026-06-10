@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate a PDF report of the NBA home court advantage analysis.
-Run after nba_home_court_advantage.py — all PNGs must already exist.
+Run after nba_home_court_advantage.py — all PNGs and RESULTS.md must exist.
 
     python3 generate_report.py
 """
@@ -19,6 +19,7 @@ from reportlab.platypus import (
     KeepTogether,
     PageBreak,
     Paragraph,
+    Preformatted,
     SimpleDocTemplate,
     Spacer,
     Table,
@@ -34,6 +35,8 @@ MID    = "#666666"
 BLUE   = "#1f77b4"
 GREEN  = "#2ca02c"
 ACCENT = BLUE
+
+RESULTS_PATH = "RESULTS.md"
 
 
 # ── Style sheet ───────────────────────────────────────────────────────────────
@@ -80,13 +83,19 @@ def _styles():
             textColor=colors.HexColor(MID),
             spaceAfter=5,
         ),
+        "code": ParagraphStyle(
+            "code", parent=base["Code"],
+            fontSize=6.5, leading=9,
+            textColor=colors.HexColor(DARK),
+            fontName="Courier",
+            spaceAfter=0,
+        ),
     }
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _img(path, width=None):
-    """Load a PNG and scale to `width` preserving aspect ratio."""
     if not os.path.exists(path):
         return Paragraph(f"[Missing image: {path}]", _styles()["note"])
     if width is None:
@@ -105,30 +114,46 @@ def _hr():
 
 
 def _table(data, col_widths, header_rows=1):
-    """Build a styled table with a blue header row."""
     style = [
-        ("BACKGROUND",    (0, 0), (-1, header_rows - 1), colors.HexColor(ACCENT)),
-        ("TEXTCOLOR",     (0, 0), (-1, header_rows - 1), colors.white),
-        ("FONTNAME",      (0, 0), (-1, header_rows - 1), "Helvetica-Bold"),
-        ("FONTSIZE",      (0, 0), (-1, -1), 9),
-        ("ROWBACKGROUNDS",(0, header_rows), (-1, -1),
+        ("BACKGROUND",     (0, 0), (-1, header_rows - 1), colors.HexColor(ACCENT)),
+        ("TEXTCOLOR",      (0, 0), (-1, header_rows - 1), colors.white),
+        ("FONTNAME",       (0, 0), (-1, header_rows - 1), "Helvetica-Bold"),
+        ("FONTSIZE",       (0, 0), (-1, -1), 9),
+        ("ROWBACKGROUNDS", (0, header_rows), (-1, -1),
          [colors.HexColor("#f7f7f5"), colors.white]),
-        ("GRID",          (0, 0), (-1, -1), 0.5, colors.HexColor("#dddddd")),
-        ("TOPPADDING",    (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
-        ("LEFTPADDING",   (0, 0), (-1, -1), 6),
-        ("RIGHTPADDING",  (0, 0), (-1, -1), 6),
+        ("GRID",           (0, 0), (-1, -1), 0.5, colors.HexColor("#dddddd")),
+        ("TOPPADDING",     (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING",  (0, 0), (-1, -1), 5),
+        ("LEFTPADDING",    (0, 0), (-1, -1), 6),
+        ("RIGHTPADDING",   (0, 0), (-1, -1), 6),
     ]
     return Table(data, colWidths=col_widths, style=TableStyle(style))
 
 
 def _chart(path, caption_text, width=None):
-    """Return a KeepTogether block: image + caption."""
     return KeepTogether([
         _img(path, width=width),
         Spacer(1, 4),
         Paragraph(caption_text, _styles()["caption"]),
     ])
+
+
+def _results_text() -> str:
+    """Read RESULTS.md and return the raw regression output (strips markdown fences)."""
+    if not os.path.exists(RESULTS_PATH):
+        return "[RESULTS.md not found — run nba_home_court_advantage.py first]"
+    with open(RESULTS_PATH) as f:
+        lines = f.readlines()
+    # Strip the header lines and ```code fences, keep the content
+    content = []
+    in_block = False
+    for line in lines:
+        if line.strip() == "```":
+            in_block = not in_block
+            continue
+        if in_block:
+            content.append(line.rstrip("\n"))
+    return "\n".join(content)
 
 
 # ── Report sections ──────────────────────────────────────────────────────────
@@ -159,7 +184,8 @@ def _cover(s):
             "1. The Decline &nbsp;&nbsp; 2. Era and Format Period Analysis &nbsp;&nbsp; "
             "3. Per-Era Trend Lines &nbsp;&nbsp; 4. What Explains the Decline? &nbsp;&nbsp; "
             "5. Rest and Schedule Balance &nbsp;&nbsp; 6. Box-Score Differentials &nbsp;&nbsp; "
-            "7. Shot Zone Analysis &nbsp;&nbsp; 8. Summary",
+            "7. Shot Zone Analysis &nbsp;&nbsp; 8. Summary &nbsp;&nbsp; "
+            "Appendix A: Full Regression Output",
             s["body"],
         ),
         PageBreak(),
@@ -200,7 +226,7 @@ def _section_era(s):
     side_by_side = Table(
         [[era_img, format_img]],
         colWidths=[CONTENT_W * 0.5, CONTENT_W * 0.5],
-        style=TableStyle([("ALIGN", (0, 0), (-1, -1), "CENTER"),
+        style=TableStyle([("ALIGN",  (0, 0), (-1, -1), "CENTER"),
                           ("VALIGN", (0, 0), (-1, -1), "TOP")]),
     )
     return [
@@ -215,7 +241,7 @@ def _section_era(s):
         ),
         Paragraph(
             "Home court advantage has declined in nearly every successive era in both the regular "
-            "season and the playoffs. The steepest drops are in the 2018–22 and 2023–25 eras. "
+            "season and the playoffs. The steepest drops are in the most recent eras. "
             "The format-period panel shows that the 2014 Finals shift from a 2-3-2 to a 2-2-1-1-1 "
             "series structure coincided with a sharp fall in playoff home win %, though isolating "
             "format effects from the broader secular trend is difficult.",
@@ -262,67 +288,51 @@ def _section_era_lines(s):
 
 
 def _section_regression(s):
-    r2_data = [
-        ["Factor added",              "McFadden R²", "ΔR²",     "% of fit"],
-        ["Era only",                  "0.0028",      "+0.0028",  "55.8%"],
-        ["+ Rest differential",       "0.0036",      "+0.0008",  "16.3%"],
-        ["+ Altitude (DEN / UTA)",    "0.0049",      "+0.0012",  "24.9%"],
-        ["+ Time zone diff",          "0.0050",      "+0.0001",   "2.0%"],
-        ["+ COVID flag",              "0.0050",      "+0.0000",   "1.0%"],
-    ]
-    factor_data = [
-        ["Factor",                        "Reg-season effect", "Sig.",    "Playoff effect",   "Sig."],
-        ["Rest (per day of advantage)",   "+1.5 pp",           "***",     "+2.3 pp",          "*"  ],
-        ["Altitude — Denver / Utah home", "+8.2 pp",           "***",     "−1.8 pp",          "n.s."],
-        ["Time zone diff (per zone)",     "−0.4 pp",           "n.s.",    "+1.2 pp",          "n.s."],
-    ]
-    cw1 = [CONTENT_W * f for f in (0.44, 0.17, 0.17, 0.22)]
-    cw2 = [CONTENT_W * f for f in (0.38, 0.17, 0.10, 0.22, 0.13)]
     return [
         PageBreak(),
         Paragraph("4. What Explains the Decline?", s["h1"]),
         _hr(),
         Paragraph(
-            "A game-level logistic regression (outcome: home win, N = 47,215 regular-season "
-            "games) decomposes the decline into measurable factors: era dummies, rest "
-            "differential, altitude (Denver/Utah), time-zone differential, and a COVID flag.",
+            "A game-level logistic regression (outcome: home win) decomposes the decline into "
+            "measurable factors: era dummies, rest differential, altitude (Denver/Utah), "
+            "time-zone differential, and a COVID flag. Full tables are in Appendix A.",
             s["body"],
         ),
-        Paragraph("Sequential R² decomposition", s["h2"]),
+        Paragraph("Era dominates the model fit", s["h2"]),
         Paragraph(
-            "Adding predictors one block at a time reveals which factors account for the most "
-            "variance. McFadden R² is the logistic analogue of OLS R²; typical values are much "
-            "smaller than OLS and the ΔR² column is the relevant comparison.",
+            "Adding predictors one block at a time — era first, then rest, altitude, time zone, "
+            "and COVID — shows that era dummies alone account for the majority of total model fit. "
+            "The structural multi-decade decline is not explained by rest, altitude, or travel; "
+            "those factors add incremental explanatory power on top of a trend that spans every "
+            "rule-change era.",
             s["body"],
         ),
-        _table(r2_data, cw1),
-        Spacer(1, 0.08 * inch),
+        Paragraph("Rest, altitude, and time zone", s["h2"]),
         Paragraph(
-            "Era alone accounts for 56% of total model fit. The structural multi-decade decline "
-            "is not explained by rest, altitude, or travel — those factors add incremental "
-            "explanatory power on top of an underlying trend that spans every rule-change era.",
+            "<b>Rest</b> matters in both the regular season and the playoffs. The effect is larger "
+            "in the playoffs — higher stakes amplify fatigue. When the home team has more rest than "
+            "the road team, the home win probability rises; the reverse is also true.",
             s["body"],
         ),
-        Paragraph("Factor effects (bivariate logistic regressions)", s["h2"]),
-        _table(factor_data, cw2),
-        Spacer(1, 0.08 * inch),
         Paragraph(
-            "<b>Rest</b> matters in both contexts and the effect is larger in the playoffs "
-            "(+2.3 pp/day vs +1.5 pp/day), consistent with higher stakes amplifying fatigue. "
-            "<b>Altitude</b> at Denver and Utah carries a large regular-season edge (+8.2 pp) "
-            "that disappears in the playoffs, where team quality confounds it. "
-            "<b>Time zone</b> shows no statistically significant effect in either context — "
-            "there are too few coast-to-coast playoff matchups (107 across 42 seasons) for "
-            "reliable inference.",
+            "<b>Altitude</b> at Denver and Utah carries a significant home edge in the regular "
+            "season but the effect disappears in the playoffs. Team quality is a confound: "
+            "when those franchises are strong enough to host playoff games, their opponents are "
+            "also strong, masking the altitude effect.",
             s["body"],
         ),
-        Paragraph("Pre/post-2014 coefficient stability", s["h2"]),
         Paragraph(
-            "Splitting the sample at the 2014 Finals format change confirms a real level shift: "
-            "the baseline home-win probability dropped by 4.7 pp after 2014 (intercept: +0.463 "
-            "pre-2014 vs +0.270 post-2014, N = 32,975 / 14,240 games). "
-            "The coefficients on rest, altitude, and time zone are broadly stable across the "
-            "split, indicating those factors did not drive the post-2014 decline.",
+            "<b>Time zone differences</b> show no statistically significant effect in either "
+            "context. There are too few coast-to-coast playoff matchups across 42 seasons for "
+            "reliable inference, and the regular-season effect is also not significant.",
+            s["body"],
+        ),
+        Paragraph("Pre/post-2014 level shift", s["h2"]),
+        Paragraph(
+            "Splitting the sample at the 2014 Finals format change confirms a real drop in the "
+            "overall home-win probability after 2014. The coefficients on rest, altitude, and "
+            "time zone are broadly stable across the split — those factors did not drive the "
+            "post-2014 decline.",
             s["body"],
         ),
     ]
@@ -364,34 +374,35 @@ def _section_differentials(s):
         Paragraph(
             "The most direct evidence for why home court advantage has declined comes from "
             "box-score differentials — home team minus away team per game, averaged by season. "
-            "Solid lines are regular season; dashed lines are playoffs.",
+            "Solid lines are regular season; dashed lines are playoffs. "
+            "For era-by-era averages and OLS trend values, see Appendix A.",
             s["body"],
         ),
         Paragraph("Foul differential (top left)", s["h2"]),
         Paragraph(
-            "In 1984–94, home teams were called for 1.23 fewer fouls per game than road teams "
-            "in the regular season (−1.58 in the playoffs). By 2023–25 that gap has shrunk to "
-            "−0.20 (regular season) and −0.70 (playoffs). Trend: +0.023 fouls/yr in the regular "
-            "season (p &lt; 0.001) and +0.020/yr in the playoffs (p &lt; 0.01). "
-            "Referees are calling the game more neutrally over time — this is likely the single "
-            "most important mechanism behind the decline.",
+            "In the early era, home teams were called for substantially fewer fouls per game than "
+            "road teams — a gap that existed in both the regular season and the playoffs. "
+            "That advantage has shrunk dramatically over 40 years and is now a fraction of what it "
+            "was. The trend is highly significant in both contexts. "
+            "Referees are calling the game more neutrally — this is likely the single most "
+            "important mechanism behind the decline.",
             s["body"],
         ),
         Paragraph("eFG% differential (top middle)", s["h2"]),
         Paragraph(
-            "The home team's effective field goal percentage advantage (which weights 3-pointers "
-            "at 1.5×) has narrowed from +1.56 pp in 1984–94 to +0.97 pp in 2023–25 (regular "
-            "season). Trend: −0.015 pp/yr (p &lt; 0.001). This reflects both the narrowing foul "
-            "advantage and the convergence of shot selection between home and road teams.",
+            "Home teams used to shoot meaningfully more efficiently than road teams (weighted to "
+            "give 3-pointers 1.5× the value of 2-pointers). That shooting edge has narrowed "
+            "significantly in the regular season over the dataset. This reflects both the narrowing "
+            "foul advantage — fewer free throws for the home team — and a broader convergence in "
+            "shot quality between home and road teams.",
             s["body"],
         ),
         Paragraph("3PA rate differential (top right)", s["h2"]),
         Paragraph(
-            "Early in the dataset, road teams took proportionally fewer 3-point attempts than "
-            "home teams. As the 3-point revolution normalized high-volume shooting league-wide, "
-            "that gap has closed completely — road teams now take roughly the same share of 3s "
-            "as home teams at the same venue. Trend: +0.017 pp/yr (p &lt; 0.001). Shot selection "
-            "is no longer a meaningful home court edge.",
+            "Road teams used to take proportionally fewer 3-point attempts than home teams at the "
+            "same venue. As the 3-point revolution normalized high-volume shooting league-wide, "
+            "that difference has closed completely. Shot selection is no longer a meaningful home "
+            "court edge — road teams now arrive with the same offensive game plan as the home team.",
             s["body"],
         ),
         Spacer(1, 0.1 * inch),
@@ -420,18 +431,17 @@ def _section_shot_zones(s):
         Paragraph("Paint — Restricted Area + Non-RA (top left)", s["h2"]),
         Paragraph(
             "Home teams have historically gotten a disproportionately higher share of their shots "
-            "from the paint — the most efficient shots in basketball. That gap was 2–3 percentage "
-            "points in the late 1990s and has shrunk to roughly 0.5–1 pp today. This is consistent "
-            "with the narrowing eFG% and foul differentials: road teams are accessing the paint "
-            "more freely than they used to.",
+            "from the paint — the most efficient shots in basketball. That gap has shrunk "
+            "substantially since the late 1990s. This is consistent with both the eFG% narrowing "
+            "and the foul differential trend: road teams are accessing the paint more freely.",
             s["body"],
         ),
         Paragraph("Mid-range (top right)", s["h2"]),
         Paragraph(
-            "Road teams consistently take a higher share of mid-range shots (~1–1.5 pp more) — "
-            "the least efficient shot type in modern basketball. This gap has been relatively "
-            "stable, suggesting that even as the paint advantage closes, road teams are still "
-            "being pushed away from the basket more often.",
+            "Road teams consistently take a higher share of mid-range shots — the least efficient "
+            "shot type in modern basketball. This gap has been relatively stable, suggesting that "
+            "even as the paint advantage closes, road teams are still being pushed away from the "
+            "basket more often.",
             s["body"],
         ),
         Paragraph("Corner 3 and above-break 3 (bottom panels)", s["h2"]),
@@ -452,27 +462,27 @@ def _section_shot_zones(s):
 
 def _section_summary(s):
     data = [
-        ["Rank", "Factor",                       "Regular season",        "Playoffs"          ],
-        ["1",    "Era (structural decline)",      "−8.9 pp over 40 yr",   "Larger decline"    ],
-        ["2",    "Foul diff (refs more neutral)", "+0.023 fouls/yr ***",   "+0.020 fouls/yr **"],
-        ["3",    "Altitude — DEN / UTA",          "+8.2 pp ***",           "Not significant"   ],
-        ["4",    "eFG% edge shrinking",           "−0.015 pp/yr ***",      "Smaller decline"   ],
-        ["5",    "Rest differential",             "+1.5 pp/day ***",       "+2.3 pp/day *"     ],
-        ["6",    "3PA rate convergence",          "+0.017 pp/yr ***",      "+0.031 pp/yr *"    ],
-        ["7",    "Paint access (shot zones)",     "Declining (1996– )",    "Noisy"             ],
-        ["8",    "Time zone",                     "Not significant",        "Not significant"   ],
+        ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
+        ["1",    "Era (structural decline)",       "Dominant — majority of fit", "Larger decline"     ],
+        ["2",    "Foul diff (refs more neutral)",  "Significant, *** trend",   "Significant, ** trend"],
+        ["3",    "Altitude — DEN / UTA",           "Significant, ***",         "Not significant"      ],
+        ["4",    "eFG% edge shrinking",            "Significant, *** trend",   "Smaller decline"      ],
+        ["5",    "Rest differential",              "Significant, ***",         "Larger effect, *"     ],
+        ["6",    "3PA rate convergence",           "Significant, *** trend",   "Significant, * trend" ],
+        ["7",    "Paint access (shot zones)",      "Declining (1996– )",       "Noisy"                ],
+        ["8",    "Time zone",                      "Not significant",          "Not significant"      ],
     ]
-    cw = [CONTENT_W * f for f in (0.07, 0.35, 0.29, 0.29)]
+    cw = [CONTENT_W * f for f in (0.06, 0.33, 0.31, 0.30)]
     return [
         PageBreak(),
         Paragraph("8. Summary", s["h1"]),
         _hr(),
         Paragraph(
-            "Home court advantage has declined by roughly 8–9 percentage points in the regular "
-            "season and 10–12 pp in the playoffs over the past 40 years. The decline is "
-            "structural — it spans every rule-change era and accounts for 56% of all explained "
-            "variance in the logistic regression model. The mechanisms, in order of statistical "
-            "strength:",
+            "Home court advantage has declined substantially in both the regular season and the "
+            "playoffs over the past 40 years, with the playoff decline steeper than the regular "
+            "season. The decline is structural — it spans every rule-change era and the era effect "
+            "accounts for the majority of variance explained by the regression model. "
+            "The mechanisms, in order of statistical strength:",
             s["body"],
         ),
         _table(data, cw),
@@ -490,12 +500,30 @@ def _section_summary(s):
         Spacer(1, 0.3 * inch),
         _hr(),
         Paragraph(
-            "Data: NBA.com via nba_api. Analysis covers 1983–84 through 2024–25 (51,089 games). "
+            "Data: NBA.com via nba_api. Analysis covers 1983–84 through 2024–25. "
             "Shot zone data available from 1996–97. "
-            "Logistic regression uses McFadden R²; marginal effects reported as "
-            "coef × p̄ × (1−p̄) × 100 (pp at the mean).",
+            "Logistic regression uses McFadden R²; marginal effects at the mean. "
+            "See Appendix A for full tables and coefficient values.",
             s["note"],
         ),
+    ]
+
+
+def _appendix_results(s):
+    text = _results_text()
+    return [
+        PageBreak(),
+        Paragraph("Appendix A: Full Regression Output", s["h1"]),
+        _hr(),
+        Paragraph(
+            "Auto-generated by <code>nba_home_court_regression.py</code> each time the analysis "
+            "is run. Contains the sequential R² decomposition, pre/post-2014 coefficient stability "
+            "check, bivariate factor significance table, and foul/shooting differential trends "
+            "by era.",
+            s["body"],
+        ),
+        Spacer(1, 0.1 * inch),
+        Preformatted(text, s["code"]),
     ]
 
 
@@ -522,6 +550,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     story += _section_differentials(s)
     story += _section_shot_zones(s)
     story += _section_summary(s)
+    story += _appendix_results(s)
 
     doc.build(story)
     print(f"Saved → {output_path}")

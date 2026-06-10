@@ -1,141 +1,98 @@
-# NBA Home Court Advantage — Key Findings
+# NBA Home Court Advantage — Findings
 
-Analysis covers 1983-84 through 2024-25. All data from NBA.com via `nba_api`.
-Regression uses game-level logistic regression (outcome: home win). McFadden R² reported.
+Narrative interpretation of the analysis. For the actual regression tables and
+coefficient values, see `RESULTS.md` (auto-generated each run).
 
 ---
 
 ## The Decline
 
-Home court advantage has been falling for 40 years in both the regular season and playoffs, but the drop is steeper in the playoffs.
+Home court advantage has been falling for 40 years in both the regular season
+and the playoffs, with the playoff decline steeper than the regular-season one.
+The gap between the two has nearly closed in recent seasons.
 
-| Context        | ~1984–94 home win % | ~2023–25 home win % | Change |
-|----------------|---------------------|---------------------|--------|
-| Regular season | ~65%                | ~56–57%             | −8–9 pp |
-| Playoffs       | ~68–70%             | ~57–59%             | −10–12 pp |
-
-The 2020 NBA bubble (all neutral-site games) is excluded from playoff stats. COVID seasons (2019-20, 2020-21) are flagged as anomalies.
+The 2020 bubble season (neutral-site playoffs) is excluded from playoff stats.
+COVID seasons are flagged in the charts and regression as an anomaly.
 
 ---
 
-## What Explains It (Regular Season)
+## What Explains It
 
-Sequential R² decomposition — each block added to the previous model:
+A game-level logistic regression (outcome: home win) with era dummies, rest
+differential, altitude, time-zone differential, and a COVID flag shows that:
 
-| Factor added      | Explains (% of total model fit) |
-|-------------------|---------------------------------|
-| Era (structural)  | **56%** |
-| Rest differential | 16% |
-| Altitude (DEN/UTA)| 25% |
-| Time zone diff    | 2% |
-| COVID flag        | 1% |
+**Era (structural decline) dominates.** The era dummies account for the majority
+of total model fit. The decline is not explained by rest, altitude, or travel —
+it is a structural trend that has unfolded across every rule-change era.
 
-**The era effect dominates.** The structural decline across eras is not explained by rest, altitude, or travel — it is a real, independent trend, likely driven by changes in officiating, player travel conditions, and broader league parity.
+**Rest matters in both contexts, more so in the playoffs.** When the home team
+has more rest than the road team, home win probability rises. The per-day effect
+is larger in the playoffs than in the regular season — higher stakes amplify
+fatigue. Rest explains a meaningful share of model fit on top of the era effect.
 
----
+**Altitude is real in the regular season, absent in the playoffs.** Denver and
+Utah carry a significant home edge in the regular season. In the playoffs the
+effect disappears — team quality is a confound when those franchises are strong
+enough to host playoff games.
 
-## Factor-by-Factor: What Matters and How Much
+**Time zone differences are not significant in either context.** There are too
+few coast-to-coast playoff matchups across 42 seasons for reliable inference,
+and the regular-season effect is also not significant.
 
-### 1. Era (Structural Decline) — Most Important
-- Net decline: **−8.9 percentage points** from 1984–94 → 2023–25.
-- Each successive era shows a statistically significant further decline (all p < 0.001).
-- Accounts for 56% of the variance explained by the full model.
-
-### 2. Rest Differential — Significant in Both Contexts
-
-| Context        | Effect per day of rest advantage | Significance |
-|----------------|----------------------------------|--------------|
-| Regular season | +1.5 pp                          | *** |
-| Playoffs       | +2.3 pp                          | * |
-
-When the home team has more rest, they win more often — and the effect is larger in the playoffs. Schedule balance matters more when the stakes are higher.
-
-### 3. Altitude (Denver / Utah) — Regular Season Only
-
-| Context        | Effect        | Significance |
-|----------------|---------------|--------------|
-| Regular season | **+8.2 pp**   | *** |
-| Playoffs       | −1.8 pp (n.s.)| not sig. |
-
-High-elevation arenas (Nuggets and Jazz) carry a significant disadvantage for road teams in the regular season. The effect disappears in the playoffs — team strength confounds it (when Denver is good, they host better opponents).
-
-### 4. Time Zone Differences — Not Significant
-
-| Context        | Effect per zone crossed | Significance |
-|----------------|-------------------------|--------------|
-| Regular season | −0.4 pp                 | not sig. |
-| Playoffs       | +1.2 pp                 | not sig. |
-
-Time zone travel does not show a statistically reliable effect in either context. There are only ~107 coast-to-coast playoff matchups across 42 seasons — too sparse for reliable inference.
+**The post-2014 level shift is confirmed.** Splitting the sample at the 2014
+Finals format change shows the overall home-win probability dropped significantly
+after 2014. Coefficients on rest, altitude, and time zone are broadly stable
+across the split — those factors did not drive the post-2014 decline.
 
 ---
 
-## Mechanism: Why Is Home Court Advantage Shrinking?
+## Mechanisms: Why Is Home Court Advantage Shrinking?
 
-The box-score differential analysis (home minus away, per game) reveals three converging trends:
+Three box-score differentials (home minus away) show statistically significant
+trends over time:
 
-### Foul Differential — Referees Are Calling It More Evenly
+**Foul differential — referees are calling the game more neutrally.**
+Home teams were called for substantially fewer fouls per game in the early era
+than they are today, in both the regular season and the playoffs. This is the
+single strongest mechanism. The trend is highly significant in both contexts.
 
-| Era     | Home team foul advantage (fewer fouls called) |
-|---------|-----------------------------------------------|
-| 1984–94 | −1.23 fouls/game (regular season); −1.58 (playoffs) |
-| 2023–25 | −0.20 fouls/game (regular season); −0.70 (playoffs) |
+**eFG% differential — the home shooting edge is shrinking.**
+Home teams used to shoot meaningfully more efficiently than road teams. That
+gap has narrowed significantly in the regular season. This reflects both the
+foul trend (fewer free throws for the home team) and convergence in shot quality.
 
-Trend: **+0.023 fouls/yr** (regular season, p < 0.001), **+0.020 fouls/yr** (playoffs, p < 0.01).
+**3PA rate differential — shot selection has converged.**
+Road teams used to take proportionally fewer 3-point attempts than home teams.
+As the 3-point revolution normalized high-volume shooting league-wide, that
+difference has closed. Shot selection is no longer a meaningful home court edge.
 
-Home teams used to get called for far fewer fouls than road teams. That gap has nearly closed in the regular season and roughly halved in the playoffs. This is likely the single most important mechanism — refs are less influenced by crowd noise today than they were 40 years ago.
-
-### eFG% Differential — Home Shooting Edge Is Shrinking
-
-| Era     | Home eFG% advantage |
-|---------|---------------------|
-| 1984–94 | +1.56 pp (regular season); +1.47 pp (playoffs) |
-| 2023–25 | +0.97 pp (regular season); +1.19 pp (playoffs) |
-
-Trend: **−0.015 pp/yr** (regular season, p < 0.001).
-
-Home teams used to shoot significantly more efficiently than road teams. That edge is narrowing — probably partly driven by the foul differential (fewer free throws for home teams) and partly by better road team preparation.
-
-### 3-Point Attempt Rate — Shot Selection Is Converging
-
-| Era     | Home 3PA-rate advantage (home 3PA/FGA − away 3PA/FGA) |
-|---------|--------------------------------------------------------|
-| 1984–94 | −0.35 pp (road teams took proportionally more 3s) |
-| 2023–25 | +0.37 pp (now reversed — home teams take slightly more) |
-
-Trend: **+0.017 pp/yr** (regular season, p < 0.001), **+0.031 pp/yr** (playoffs, p < 0.05).
-
-In the early era, road teams took relatively more 3-pointers — likely a function of being forced into harder shots by home-court pressure. As the 3-point revolution normalized high-volume 3-point shooting league-wide, both home and away teams now take similar rates. The shot-selection disadvantage for road teams has been eliminated.
-
-### FG% and FT% Differentials — Smaller Story
-
-FG% differential (not eFG%) is also narrowing (−0.020 pp/yr, p < 0.001), consistent with the eFG% finding. FT% differential shows no significant trend in either direction — not a meaningful factor.
+FG% (unweighted) is also narrowing. FT% and 3P% show no significant trend.
 
 ---
 
-## Shot Zone Analysis (Since ~1996-97)
+## Shot Zone Analysis
 
-Using `LeagueDashTeamShotLocations` data (restricted area, non-RA paint, mid-range, corner 3, above-break 3):
+Paint access (restricted area + non-RA combined) shows the clearest pattern:
+home teams have historically taken a higher share of shots from the paint —
+the most efficient shots in basketball — and that gap is closing. This is
+consistent with both the eFG% narrowing and the foul differential trend.
 
-**Paint access gap is closing:** Home teams used to have a 2–3 pp higher share of shots from the paint (combined RA + non-RA) compared to road teams in the same game. By the 2020s, that gap has shrunk to roughly 0.5–1 pp. This is consistent with both the eFG% narrowing (paint shots are the highest-efficiency shots) and the foul differential trend (getting to the paint means drawing fouls).
+Road teams consistently take a higher share of mid-range shots, but that gap
+is relatively stable. Corner 3 and above-break 3 show no systematic home/road
+difference throughout the dataset.
 
-**Mid-range:** Road teams consistently take a higher share of mid-range shots (~1–1.5 pp more), a less efficient shot type. This gap has not changed dramatically — road teams are still being pushed to worse spots, just less so in recent years.
-
-**Corner 3 and above-break 3:** No systematic home/road difference; both lines hover near zero. Shot location at the 3-point line is not a meaningful home court advantage.
+Shot zone data is only available from ~1996-97 onward.
 
 ---
 
-## Summary Ranking: Most to Least Important
+## Summary
 
-| Rank | Factor | Regular Season | Playoffs |
-|------|--------|---------------|----------|
-| 1 | **Structural era decline** | Very large (−8.9 pp over 40 yr) | Very large |
-| 2 | **Foul differential** (refs more neutral) | Large, highly significant | Large, highly significant |
-| 3 | **Altitude** (DEN/UTA) | +8.2 pp, highly significant | Not significant |
-| 4 | **eFG% edge shrinking** | Significant decline trend | Smaller decline |
-| 5 | **Rest differential** | +1.5 pp/day | +2.3 pp/day (larger!) |
-| 6 | **3PA rate convergence** | Significant trend | Significant trend |
-| 7 | **Paint access** (shot zones) | Declining but limited history | Noisy |
-| 8 | **Time zone** | Not significant | Not significant |
+The core story: home court advantage has eroded because **referees call the game
+more neutrally** than they did 40 years ago, **home teams no longer generate a
+disproportionate paint-access or shooting edge**, and **the 3-point revolution
+has equalized shot selection** between home and road teams. Rest matters but
+cannot explain the secular decline. Altitude is real in the regular season.
+Time-zone travel is not a significant factor.
 
-The core story: home court advantage has eroded because **referees call the game more neutrally** than they did 40 years ago, **home teams no longer generate a disproportionate shooting edge**, and **road teams have adopted the same shot profile** (especially 3-point volume) as home teams. The structural shift across eras accounts for more than half of all explained variance; rest, altitude, and travel are secondary effects.
+For specific coefficient values, effect sizes, significance levels, and era
+breakdowns, see `RESULTS.md`.

@@ -22,7 +22,8 @@ runs use the cache and finish almost instantly.
 
 Use `MPLBACKEND=Agg` to suppress display windows and generate PNGs only.
 
-See `FINDINGS.md` for a summary of the key statistical results.
+See `FINDINGS.md` for narrative interpretation and `RESULTS.md` for the full
+regression tables (auto-generated each run, never edit manually).
 
 ## Output
 
@@ -76,9 +77,44 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains eight sections: The Decline, Era and Format Period Analysis, Per-Era Trend Lines,
-What Explains the Decline (regression tables), Rest and Schedule Balance, Box-Score Differentials,
-Shot Zone Analysis, and a Summary table.
+The report contains eight sections plus an appendix: The Decline, Era and Format Period Analysis,
+Per-Era Trend Lines, What Explains the Decline (narrative), Rest and Schedule Balance, Box-Score
+Differentials, Shot Zone Analysis, Summary, and Appendix A (full regression tables from RESULTS.md
+rendered verbatim). The narrative sections have no hardcoded numbers; Appendix A is the authoritative
+source for coefficient values and significance levels.
+
+## Updating FINDINGS.md
+
+`FINDINGS.md` is the narrative interpretation — edited by hand when understanding changes.
+`RESULTS.md` is auto-generated each run — never edit manually.
+
+Before updating `FINDINGS.md`, verify outputs are current and then revise the narrative
+to match the latest data. Use this prompt with Claude Code:
+
+```
+Before updating FINDINGS.md, verify that the analysis outputs are current:
+
+1. Check that RESULTS.md and all PNG files exist and were modified more recently
+   than nba_home_court_advantage.py and nba_home_court_regression.py.
+   Use: stat -f "%m %N" RESULTS.md *.png nba_home_court_advantage.py nba_home_court_regression.py
+   If any output is older than the source files, stop and say so — the analysis
+   must be re-run first: MPLBACKEND=Agg python3 nba_home_court_advantage.py
+
+2. Read RESULTS.md in full to understand the current numbers, significance levels,
+   and era-by-era breakdowns.
+
+3. Read the current FINDINGS.md.
+
+4. Update FINDINGS.md to reflect the current analysis. Rules:
+   - No specific coefficient values, R² values, or percentage points — those
+     belong in RESULTS.md and go stale. Reference RESULTS.md for specifics.
+   - Use qualitative language: "significant", "dominant", "narrowing", "no effect".
+   - Describe the direction and relative magnitude of each effect.
+   - Keep the existing section structure unless the findings genuinely warrant
+     a new section.
+   - If anything in the current RESULTS.md contradicts what FINDINGS.md says,
+     update the narrative to match.
+```
 
 ## Tests
 
