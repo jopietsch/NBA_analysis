@@ -3,3 +3,5 @@ __pycache__/
 .coverage
 cache/
 nba_home_court_advantage.png
+nba_home_court_advantage_rest.png
+nba_home_court_advantage_rest_playoffs.png

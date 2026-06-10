@@ -164,6 +164,101 @@ class TestFetchSeasonHomePct:
         assert not os.path.exists(nba.cache_path(2024, "Regular Season"))
 
 
+class TestFetchRestData:
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_rest_data(2024, "Regular Season") is None
+
+    def test_returns_none_for_empty_dataframe(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        pd.DataFrame(columns=["TEAM_ID", "GAME_ID", "GAME_DATE", "MATCHUP", "WL"]).to_csv(
+            nba.cache_path(2024, "Regular Season"), index=False
+        )
+        assert nba.fetch_rest_data(2024, "Regular Season") is None
+
+    def test_computes_rest_days_and_drops_unknown_first_games(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+
+        # G1 (Jan 1): A (home) vs C  -- both teams' first game, dropped
+        # G2 (Jan 2): B (home) vs D  -- both teams' first game, dropped
+        # G3 (Jan 3): A (home) vs B  -- A rested 1 day, B rested 0 days (back-to-back)
+        df = pd.DataFrame({
+            "TEAM_ID":   [1,   3,   2,   4,   1,   2],
+            "GAME_ID":   ["G1", "G1", "G2", "G2", "G3", "G3"],
+            "GAME_DATE": ["2024-01-01", "2024-01-01", "2024-01-02", "2024-01-02",
+                          "2024-01-03", "2024-01-03"],
+            "MATCHUP":   ["A vs. C", "C @ A", "B vs. D", "D @ B", "A vs. B", "B @ A"],
+            "WL":        ["W", "L", "W", "L", "L", "W"],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+        result = nba.fetch_rest_data(2024, "Regular Season")
+
+        assert len(result) == 1
+        row = result.iloc[0]
+        assert row["REST_home"] == 1
+        assert row["REST_away"] == 0
+        assert row["REST_DIFF"] == 1
+        assert row["HOME_WIN"] == 0  # A (home) lost G3
+
+
+class TestFetchRestDataFromRealCache:
+    def test_returns_expected_columns_for_real_season(self, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
+
+        result = nba.fetch_rest_data(1985, "Regular Season")
+
+        assert result is not None
+        assert list(result.columns) == ["REST_home", "REST_away", "REST_DIFF", "HOME_WIN"]
+        assert len(result) > 0
+        assert result["HOME_WIN"].isin([0, 1]).all()
+
+
+class TestComputeRestStats:
+    def test_aggregates_b2b_rates_and_win_pct_by_rest(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "REST_home":  [0, 1, 2, 0],
+                "REST_away":  [1, 1, 0, 0],
+                "REST_DIFF":  [-1, 0, 2, 0],
+                "HOME_WIN":   [0, 1, 1, 1],
+            })
+
+        monkeypatch.setattr(nba, "fetch_rest_data", fake_fetch)
+        seasons, stats = nba.compute_rest_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        assert stats["b2b_home_pct"] == [50.0]  # 2 of 4 rows have REST_home == 0
+        assert stats["b2b_away_pct"] == [50.0]  # 2 of 4 rows have REST_away == 0
+
+        assert stats["win_home_more_rest"] == [100.0]  # REST_DIFF > 0: row 3 (HOME_WIN=1)
+        assert stats["win_equal_rest"]     == [100.0]  # REST_DIFF == 0: rows 2,4 (HOME_WIN=1,1)
+        assert stats["win_away_more_rest"] == [0.0]    # REST_DIFF < 0: row 1 (HOME_WIN=0)
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_rest_data", lambda year, season_type: None)
+
+        seasons, stats = nba.compute_rest_stats(2023, 2025, "Regular Season")
+
+        assert seasons == []
+        for values in stats.values():
+            assert values == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+
+        def fake_fetch(year, season_type):
+            calls.append(year)
+            return None
+
+        monkeypatch.setattr(nba, "fetch_rest_data", fake_fetch)
+        nba.compute_rest_stats(2019, 2021, "Playoffs", skip_years={2020})
+
+        assert calls == [2019, 2021]
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)
