@@ -161,25 +161,17 @@ def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]
         label = short_label(year)
 
         # Regular season
-        print(f"  {label} regular season ... ", end="", flush=True)
         pct = fetch_season_home_pct(year, SeasonType.regular)
         if pct is not None:
             reg_seasons.append(label)
             reg_pcts.append(pct)
-            print(f"{pct:.1f}%")
-        else:
-            print("no data")
 
         # Playoffs
         if year not in SKIP_PLAYOFF_YEARS:
-            print(f"  {label} playoffs      ... ", end="", flush=True)
             pct_po = fetch_season_home_pct(year, "Playoffs")
             if pct_po is not None:
                 po_seasons.append(label)
                 po_pcts.append(pct_po)
-                print(f"{pct_po:.1f}%")
-            else:
-                print("no data")
 
     print(f"\nRegular season: {len(reg_seasons)} seasons fetched")
     print(f"Playoffs:       {len(po_seasons)} seasons fetched")
@@ -187,20 +179,26 @@ def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]
     return reg_seasons, reg_pcts, po_seasons, po_pcts
 
 
+def _compute_period_averages(
+    period_defs: list,
+    reg_seasons: list[str], reg_pcts: list[float],
+    po_seasons: list[str], po_pcts: list[float],
+) -> tuple[list[float], list[float], list[str]]:
+    reg_avg, po_avg = [], []
+    for _, y1, y2, _ in period_defs:
+        rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
+        pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
+        reg_avg.append(round(np.mean(rv), 1) if rv else 0)
+        po_avg.append( round(np.mean(pv), 1) if pv else 0)
+    return reg_avg, po_avg, [p[0] for p in period_defs]
+
+
 def compute_era_averages(
     reg_seasons: list[str], reg_pcts: list[float],
     po_seasons: list[str], po_pcts: list[float],
 ) -> tuple[list[float], list[float], list[str]]:
     """Average regular-season and playoff home win % within each era."""
-    era_reg_avg, era_po_avg = [], []
-    for _, y1, y2, _ in ERA_DEFS:
-        rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
-        pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
-        era_reg_avg.append(round(np.mean(rv), 1) if rv else 0)
-        era_po_avg.append( round(np.mean(pv), 1) if pv else 0)
-
-    era_labels_short = [e[0] for e in ERA_DEFS]
-    return era_reg_avg, era_po_avg, era_labels_short
+    return _compute_period_averages(ERA_DEFS, reg_seasons, reg_pcts, po_seasons, po_pcts)
 
 
 def compute_playoff_format_averages(
@@ -208,15 +206,7 @@ def compute_playoff_format_averages(
     po_seasons: list[str], po_pcts: list[float],
 ) -> tuple[list[float], list[float], list[str]]:
     """Average regular-season and playoff home win % within each playoff-format period."""
-    format_reg_avg, format_po_avg = [], []
-    for _, y1, y2, _ in PLAYOFF_FORMAT_PERIODS:
-        rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
-        pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
-        format_reg_avg.append(round(np.mean(rv), 1) if rv else 0)
-        format_po_avg.append( round(np.mean(pv), 1) if pv else 0)
-
-    format_labels_short = [p[0] for p in PLAYOFF_FORMAT_PERIODS]
-    return format_reg_avg, format_po_avg, format_labels_short
+    return _compute_period_averages(PLAYOFF_FORMAT_PERIODS, reg_seasons, reg_pcts, po_seasons, po_pcts)
 
 
 # ── Plot ──────────────────────────────────────────────────────────────────────
@@ -229,6 +219,72 @@ PANEL = "#ffffff"
 
 # One background shade per era (matches order of ERA_DEFS)
 ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
+
+
+def _shade_eras(ax: plt.Axes, seasons: list[str]) -> None:
+    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+        era_idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
+        if not era_idx:
+            continue
+        ax.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5, alpha=0.08, color=era_color, zorder=0)
+        if min(era_idx) > 0:
+            ax.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
+        mid = (min(era_idx) + max(era_idx)) / 2
+        ax.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+
+
+def _annotate_bars(ax: plt.Axes, bars, color: str) -> None:
+    for bar in bars:
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
+                f"{bar.get_height():.1f}%",
+                ha="center", va="bottom", fontsize=7.5, color=color)
+
+
+def _plot_season_era_panel(
+    ax: plt.Axes,
+    seasons: list[str],
+    pcts: list[float],
+    color: str,
+    title: str,
+    format_markers: bool = False,
+) -> None:
+    x = np.arange(len(seasons))
+    tick_step = max(1, len(seasons) // 14)
+    pt_colors = [RED if s in COVID_SEASONS else color for s in seasons]
+
+    ax.plot(x, pcts, color=color, linewidth=2, zorder=2)
+    ax.scatter(x, pcts, c=pt_colors, s=40, zorder=3, edgecolors="white", linewidths=0.8)
+
+    pcts_arr = np.array(pcts, dtype=float)
+    _shade_eras(ax, seasons)
+
+    for (_, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+        era_idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
+        if len(era_idx) >= 2:
+            era_x = np.array(era_idx)
+            ze = np.polyfit(era_x, pcts_arr[era_x], 1)
+            ax.plot(era_x, np.poly1d(ze)(era_x), "--", color=era_color, linewidth=1.8, alpha=0.8)
+
+    covid_idx = [i for i, s in enumerate(seasons) if s in COVID_SEASONS]
+    if covid_idx:
+        ax.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5, alpha=0.12, color=RED, zorder=1)
+
+    if format_markers:
+        for change_year, change_label in PLAYOFF_FORMAT_CHANGES:
+            idx = next((i for i, s in enumerate(seasons) if label_to_year(s) == change_year), None)
+            if idx is None:
+                continue
+            ax.axvline(idx - 0.5, color="#444444", linestyle="-.", linewidth=1, alpha=0.6, zorder=1)
+            ax.text(idx - 0.4, 79, change_label, rotation=90, ha="left", va="top",
+                    fontsize=6.5, color="#444444", linespacing=1.2)
+
+    ax.set_title(title, fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax.set_xticks(x[::tick_step])
+    ax.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax.set_ylim(45, 80)
+    ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax.set_ylabel("Home win %", fontsize=10)
+
 
 def plot_results(
     reg_seasons: list[str], reg_pcts: list[float],
@@ -286,16 +342,7 @@ def plot_results(
     ax1.plot(x, np.poly1d(zp)(x), "--", color=GREEN, linewidth=1.4, alpha=0.5)
 
     # Shade era boundaries (rule-change eras), labeled above the plot area
-    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
-        era_idx = [i for i, s in enumerate(reg_seasons) if y1 <= label_to_year(s) <= y2]
-        if not era_idx:
-            continue
-        ax1.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
-                    alpha=0.08, color=era_color, zorder=0)
-        if min(era_idx) > 0:
-            ax1.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
-        mid = (min(era_idx) + max(era_idx)) / 2
-        ax1.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+    _shade_eras(ax1, reg_seasons)
 
     # Shade COVID seasons (drawn on top of era shading)
     covid_idx = [i for i, s in enumerate(reg_seasons) if s in COVID_SEASONS]
@@ -338,98 +385,18 @@ def plot_results(
 
     # ── Panel 2: playoffs only, with a trend line per era ────────────────────
     ax3 = fig.add_subplot(gs[1, 1:3])
-    xp = np.arange(len(po_seasons))
-    pt_colors_po = [RED if s in COVID_SEASONS else GREEN for s in po_seasons]
-
-    ax3.plot(xp, po_pcts, color=GREEN, linewidth=2, zorder=2)
-    ax3.scatter(xp, po_pcts, c=pt_colors_po, s=40, zorder=3,
-                edgecolors="white", linewidths=0.8)
-
-    po_pcts_arr2 = np.array(po_pcts, dtype=float)
-
-    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
-        era_idx = [i for i, s in enumerate(po_seasons) if y1 <= label_to_year(s) <= y2]
-        if not era_idx:
-            continue
-
-        ax3.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
-                    alpha=0.08, color=era_color, zorder=0)
-        if min(era_idx) > 0:
-            ax3.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
-        mid = (min(era_idx) + max(era_idx)) / 2
-        ax3.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
-
-        # Per-era trend line
-        if len(era_idx) >= 2:
-            era_x = np.array(era_idx)
-            ze = np.polyfit(era_x, po_pcts_arr2[era_x], 1)
-            ax3.plot(era_x, np.poly1d(ze)(era_x), "--", color=era_color, linewidth=1.8, alpha=0.8)
-
-    # Shade COVID seasons (drawn on top of era shading)
-    covid_idx_po = [i for i, s in enumerate(po_seasons) if s in COVID_SEASONS]
-    if covid_idx_po:
-        ax3.axvspan(min(covid_idx_po) - 0.5, max(covid_idx_po) + 0.5,
-                    alpha=0.12, color=RED, zorder=1)
-
-    # Mark playoff format/scheduling changes (distinct from the rule-change
-    # era shading: dash-dot vertical lines, labeled near the top of the panel)
-    for change_year, change_label in PLAYOFF_FORMAT_CHANGES:
-        idx = next((i for i, s in enumerate(po_seasons) if label_to_year(s) == change_year), None)
-        if idx is None:
-            continue
-        ax3.axvline(idx - 0.5, color="#444444", linestyle="-.", linewidth=1, alpha=0.6, zorder=1)
-        ax3.text(idx - 0.4, 79, change_label, rotation=90, ha="left", va="top",
-                 fontsize=6.5, color="#444444", linespacing=1.2)
-
-    ax3.set_title("Playoffs: home win % per season, with a trend line per era",
-                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    tick_step_po = max(1, len(po_seasons) // 14)
-    ax3.set_xticks(xp[::tick_step_po])
-    ax3.set_xticklabels(po_seasons[::tick_step_po], rotation=45, ha="right", fontsize=8)
-    ax3.set_ylim(45, 80)
-    ax3.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax3.set_ylabel("Home win %", fontsize=10)
+    _plot_season_era_panel(
+        ax3, po_seasons, po_pcts, GREEN,
+        "Playoffs: home win % per season, with a trend line per era",
+        format_markers=True,
+    )
 
     # ── Panel 3: regular season only, with a trend line per era ──────────────
     ax4 = fig.add_subplot(gs[2, 1:3])
-    pt_colors_reg = [RED if s in COVID_SEASONS else BLUE for s in reg_seasons]
-
-    ax4.plot(x, reg_pcts, color=BLUE, linewidth=2, zorder=2)
-    ax4.scatter(x, reg_pcts, c=pt_colors_reg, s=40, zorder=3,
-                edgecolors="white", linewidths=0.8)
-
-    reg_pcts_arr = np.array(reg_pcts, dtype=float)
-
-    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
-        era_idx = [i for i, s in enumerate(reg_seasons) if y1 <= label_to_year(s) <= y2]
-        if not era_idx:
-            continue
-
-        ax4.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
-                    alpha=0.08, color=era_color, zorder=0)
-        if min(era_idx) > 0:
-            ax4.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
-        mid = (min(era_idx) + max(era_idx)) / 2
-        ax4.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
-
-        # Per-era trend line
-        if len(era_idx) >= 2:
-            era_x = np.array(era_idx)
-            ze = np.polyfit(era_x, reg_pcts_arr[era_x], 1)
-            ax4.plot(era_x, np.poly1d(ze)(era_x), "--", color=era_color, linewidth=1.8, alpha=0.8)
-
-    # Shade COVID seasons (drawn on top of era shading)
-    if covid_idx:
-        ax4.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5,
-                    alpha=0.12, color=RED, zorder=1)
-
-    ax4.set_title("Regular season: home win % per season, with a trend line per era",
-                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax4.set_xticks(x[::tick_step])
-    ax4.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax4.set_ylim(45, 80)
-    ax4.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax4.set_ylabel("Home win %", fontsize=10)
+    _plot_season_era_panel(
+        ax4, reg_seasons, reg_pcts, BLUE,
+        "Regular season: home win % per season, with a trend line per era",
+    )
 
     # ── Panel 4: era grouped bar chart ────────────────────────────────────────
     ax2 = fig.add_subplot(gs[3, 0:2])
@@ -438,11 +405,8 @@ def plot_results(
     bars1 = ax2.bar(xi - w/2, era_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
     bars2 = ax2.bar(xi + w/2, era_po_avg,  width=w, color=GREEN, label="Playoffs",        zorder=2)
 
-    for bar in list(bars1) + list(bars2):
-        clr = BLUE if bar in bars1 else GREEN
-        ax2.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                 f"{bar.get_height():.1f}%",
-                 ha="center", va="bottom", fontsize=7.5, color=clr)
+    _annotate_bars(ax2, bars1, BLUE)
+    _annotate_bars(ax2, bars2, GREEN)
 
     ax2.set_xticks(xi)
     ax2.set_xticklabels(era_labels_short, rotation=30, ha="right", fontsize=9)
@@ -458,11 +422,8 @@ def plot_results(
     bars5_reg = ax5.bar(xf - w/2, format_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
     bars5_po  = ax5.bar(xf + w/2, format_po_avg,  width=w, color=GREEN, label="Playoffs",        zorder=2)
 
-    for bar in list(bars5_reg) + list(bars5_po):
-        clr = BLUE if bar in bars5_reg else GREEN
-        ax5.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                 f"{bar.get_height():.1f}%",
-                 ha="center", va="bottom", fontsize=7.5, color=clr)
+    _annotate_bars(ax5, bars5_reg, BLUE)
+    _annotate_bars(ax5, bars5_po, GREEN)
 
     ax5.set_xticks(xf)
     ax5.set_xticklabels(format_labels_short, rotation=30, ha="right", fontsize=9)
@@ -522,6 +483,16 @@ def _merge_home_away_rows(df: pd.DataFrame) -> pd.DataFrame | None:
     return merged
 
 
+def _add_rest_days(df: pd.DataFrame) -> pd.DataFrame:
+    """Add a REST column: days since each team's previous game minus 1 (0 = back-to-back)."""
+    df = df.copy()
+    df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
+    df = df.sort_values(["TEAM_ID", "GAME_DATE"])
+    df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
+    df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
+    return df
+
+
 def bucket_stats_by_era(seasons: list[str], stats: dict) -> tuple[dict, list[str]]:
     """
     Average each per-season stat series within each rule-change era
@@ -555,11 +526,7 @@ def fetch_rest_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     if df is None:
         return None
 
-    df = df.copy()
-    df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
-    df = df.sort_values(["TEAM_ID", "GAME_DATE"])
-    df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
-    df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
+    df = _add_rest_days(df)
 
     merged = _merge_home_away_rows(df)
     if merged is None:

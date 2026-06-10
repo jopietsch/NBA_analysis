@@ -57,11 +57,7 @@ def build_game_dataset() -> pd.DataFrame:
             if df is None:
                 continue
 
-            df = df.copy()
-            df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
-            df = df.sort_values(["TEAM_ID", "GAME_DATE"])
-            df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
-            df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
+            df = nba._add_rest_days(df)
 
             merged = nba._merge_home_away_rows(df)
             if merged is None:
