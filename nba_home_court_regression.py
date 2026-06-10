@@ -96,22 +96,8 @@ def build_game_dataset() -> pd.DataFrame:
             merged["tz_diff"] = (home_tz - away_tz).abs().astype("float64")
             merged.loc[home_tz.isna() | away_tz.isna(), "tz_diff"] = np.nan
 
-            fg3a_home = merged["FG3A_home"].replace(0, np.nan)
-            fg3a_away = merged["FG3A_away"].replace(0, np.nan)
-            fta_home  = merged["FTA_home"].replace(0, np.nan)
-            fta_away  = merged["FTA_away"].replace(0, np.nan)
-            merged["foul_diff"]     = merged["PF_home"] - merged["PF_away"]
-            merged["fg_pct_diff"]   = 100 * (merged["FGM_home"] / merged["FGA_home"]
-                                             - merged["FGM_away"] / merged["FGA_away"])
-            merged["efg_pct_diff"]  = 100 * (
-                (merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
-                - (merged["FGM_away"] + 0.5 * merged["FG3M_away"]) / merged["FGA_away"])
-            merged["tpa_rate_diff"] = 100 * (merged["FG3A_home"] / merged["FGA_home"]
-                                             - merged["FG3A_away"] / merged["FGA_away"])
-            merged["fg3_pct_diff"]  = 100 * (merged["FG3M_home"] / fg3a_home
-                                             - merged["FG3M_away"] / fg3a_away)
-            merged["ft_pct_diff"]   = 100 * (merged["FTM_home"]  / fta_home
-                                             - merged["FTM_away"]  / fta_away)
+            diffs = nba._compute_box_differentials(merged)
+            merged[diffs.columns] = diffs
 
             chunks.append(merged[[
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",

@@ -303,41 +303,21 @@ def _draw_season_overview(
                     fontsize=8, color=GRAY)
 
 
-def _draw_era_bars(
+def _draw_paired_bars(
     ax: plt.Axes,
-    era_reg_avg: list[float], era_po_avg: list[float], era_labels_short: list[str],
+    reg_avg: list[float], po_avg: list[float], labels: list[str], title: str,
 ) -> None:
-    xi = np.arange(len(era_labels_short))
+    xi = np.arange(len(labels))
     w = 0.35
-    bars1 = ax.bar(xi - w/2, era_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
-    bars2 = ax.bar(xi + w/2, era_po_avg,  width=w, color=GREEN, label="Playoffs",        zorder=2)
+    bars1 = ax.bar(xi - w/2, reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
+    bars2 = ax.bar(xi + w/2, po_avg,  width=w, color=GREEN, label="Playoffs",        zorder=2)
     _annotate_bars(ax, bars1, BLUE)
     _annotate_bars(ax, bars2, GREEN)
     ax.set_xticks(xi)
-    ax.set_xticklabels(era_labels_short, rotation=30, ha="right", fontsize=9)
+    ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=9)
     ax.set_ylim(50, 70)
     ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax.set_title("Regular season vs playoffs\nhome win % by era",
-                 fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
-    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-
-def _draw_format_bars(
-    ax: plt.Axes,
-    format_reg_avg: list[float], format_po_avg: list[float], format_labels_short: list[str],
-) -> None:
-    xf = np.arange(len(format_labels_short))
-    w = 0.35
-    bars1 = ax.bar(xf - w/2, format_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
-    bars2 = ax.bar(xf + w/2, format_po_avg,  width=w, color=GREEN, label="Playoffs",        zorder=2)
-    _annotate_bars(ax, bars1, BLUE)
-    _annotate_bars(ax, bars2, GREEN)
-    ax.set_xticks(xf)
-    ax.set_xticklabels(format_labels_short, rotation=30, ha="right", fontsize=9)
-    ax.set_ylim(50, 70)
-    ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax.set_title("Regular season vs playoffs\nhome win % by playoff format period",
-                 fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+    ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
 
@@ -438,11 +418,13 @@ def plot_results(
 
     # ── Panel 4: era grouped bar chart ────────────────────────────────────────
     ax2 = fig.add_subplot(gs[3, 0:2])
-    _draw_era_bars(ax2, era_reg_avg, era_po_avg, era_labels_short)
+    _draw_paired_bars(ax2, era_reg_avg, era_po_avg, era_labels_short,
+                      "Regular season vs playoffs\nhome win % by era")
 
     # ── Panel 5: home win % by playoff-format period ──────────────────────────
     ax5 = fig.add_subplot(gs[3, 2:4])
-    _draw_format_bars(ax5, format_reg_avg, format_po_avg, format_labels_short)
+    _draw_paired_bars(ax5, format_reg_avg, format_po_avg, format_labels_short,
+                      "Regular season vs playoffs\nhome win % by playoff format period")
 
     # Footnote: explain what each era represents
     era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
@@ -487,10 +469,12 @@ def plot_results(
               "Regular season: home win % per season, with a trend line per era"),
           (14, 6))
     _save("nba_home_court_advantage_era_bars.png",
-          lambda ax: _draw_era_bars(ax, era_reg_avg, era_po_avg, era_labels_short),
+          lambda ax: _draw_paired_bars(ax, era_reg_avg, era_po_avg, era_labels_short,
+                                       "Regular season vs playoffs\nhome win % by era"),
           (10, 6))
     _save("nba_home_court_advantage_format_bars.png",
-          lambda ax: _draw_format_bars(ax, format_reg_avg, format_po_avg, format_labels_short),
+          lambda ax: _draw_paired_bars(ax, format_reg_avg, format_po_avg, format_labels_short,
+                                       "Regular season vs playoffs\nhome win % by playoff format period"),
           (10, 6))
 
 
@@ -549,6 +533,18 @@ def bucket_stats_by_era(seasons: list[str], stats: dict) -> tuple[dict, list[str
 
     era_labels_short = [e[0] for e in ERA_DEFS]
     return era_avgs, era_labels_short
+
+
+def _align_to_seasons(
+    ref_seasons: list[str], target_seasons: list[str],
+    target_stats: dict, key: str,
+) -> np.ndarray:
+    """Align a per-season stat series to a reference season list, filling gaps with NaN."""
+    lookup = {s: i for i, s in enumerate(target_seasons)}
+    return np.array(
+        [target_stats[key][lookup[s]] if s in lookup else np.nan for s in ref_seasons],
+        dtype=float,
+    )
 
 
 # ── Rest-day analysis (prototype) ──────────────────────────────────────────
@@ -899,6 +895,27 @@ def compute_timezone_stats(
 
 # ── Box-score differential analysis ──────────────────────────────────────────
 
+def _compute_box_differentials(merged: pd.DataFrame) -> pd.DataFrame:
+    """Home-minus-away box-score differentials for fouls and shooting."""
+    fg3a_home = merged["FG3A_home"].replace(0, np.nan)
+    fg3a_away = merged["FG3A_away"].replace(0, np.nan)
+    fta_home  = merged["FTA_home"].replace(0, np.nan)
+    fta_away  = merged["FTA_away"].replace(0, np.nan)
+    return pd.DataFrame({
+        "foul_diff":     merged["PF_home"] - merged["PF_away"],
+        "fg_pct_diff":   100 * (merged["FGM_home"] / merged["FGA_home"]
+                                - merged["FGM_away"] / merged["FGA_away"]),
+        "efg_pct_diff":  100 * ((merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
+                                - (merged["FGM_away"] + 0.5 * merged["FG3M_away"]) / merged["FGA_away"]),
+        "tpa_rate_diff": 100 * (merged["FG3A_home"] / merged["FGA_home"]
+                                - merged["FG3A_away"] / merged["FGA_away"]),
+        "fg3_pct_diff":  100 * (merged["FG3M_home"] / fg3a_home
+                                - merged["FG3M_away"] / fg3a_away),
+        "ft_pct_diff":   100 * (merged["FTM_home"]  / fta_home
+                                - merged["FTM_away"]  / fta_away),
+    })
+
+
 def fetch_differential_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-game home-minus-away differentials for fouls and shooting efficiency
@@ -908,29 +925,10 @@ def fetch_differential_data(end_year: int, season_type: str) -> pd.DataFrame | N
     df = _load_game_log(end_year, season_type)
     if df is None:
         return None
-
     merged = _merge_home_away_rows(df)
     if merged is None:
         return None
-
-    fg3a_home = merged["FG3A_home"].replace(0, np.nan)
-    fg3a_away = merged["FG3A_away"].replace(0, np.nan)
-    fta_home  = merged["FTA_home"].replace(0, np.nan)
-    fta_away  = merged["FTA_away"].replace(0, np.nan)
-
-    return pd.DataFrame({
-        "foul_diff":    merged["PF_home"] - merged["PF_away"],
-        "fg_pct_diff":  100 * (merged["FGM_home"] / merged["FGA_home"]
-                               - merged["FGM_away"] / merged["FGA_away"]),
-        "efg_pct_diff": 100 * ((merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
-                               - (merged["FGM_away"] + 0.5 * merged["FG3M_away"]) / merged["FGA_away"]),
-        "tpa_rate_diff": 100 * (merged["FG3A_home"] / merged["FGA_home"]
-                                - merged["FG3A_away"] / merged["FGA_away"]),
-        "fg3_pct_diff": 100 * (merged["FG3M_home"] / fg3a_home
-                               - merged["FG3M_away"] / fg3a_away),
-        "ft_pct_diff":  100 * (merged["FTM_home"]  / fta_home
-                               - merged["FTM_away"]  / fta_away),
-    })
+    return _compute_box_differentials(merged)
 
 
 def compute_differential_stats(
@@ -969,16 +967,6 @@ def plot_differential_analysis(
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    # Align playoff data to the regular-season x-axis (same approach as panel 1)
-    po_by_season = {s: i for i, s in enumerate(po_seasons)}
-
-    def _aligned(key: str) -> np.ndarray:
-        return np.array(
-            [po_stats[key][po_by_season[s]] if s in po_by_season else np.nan
-             for s in reg_seasons],
-            dtype=float,
-        )
-
     panels = [
         ("foul_diff",     "Foul differential (home PF − away PF)",
          "Fouls per game",    "negative = refs call fewer fouls on home team"),
@@ -1003,7 +991,7 @@ def plot_differential_analysis(
 
     for ax, (key, title, ylabel, note) in zip(axes.flat, panels):
         y_reg = np.array(reg_stats[key], dtype=float)
-        y_po  = _aligned(key)
+        y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, key)
 
         for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
             mask = ~np.isnan(y)
@@ -1170,15 +1158,6 @@ def plot_shot_zone_analysis(
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    po_by_season = {s: i for i, s in enumerate(po_seasons)}
-
-    def _aligned(zone: str) -> np.ndarray:
-        return np.array(
-            [po_stats[zone][po_by_season[s]] if s in po_by_season else np.nan
-             for s in reg_seasons],
-            dtype=float,
-        )
-
     fig, axes = plt.subplots(2, 2, figsize=(16, 10))
     fig.suptitle("Shot Zone Differentials: Home vs Road — Are Away Teams Getting Better Looks?",
                  fontsize=14, fontweight="bold", y=0.99, color="#2c2c2a")
@@ -1189,7 +1168,7 @@ def plot_shot_zone_analysis(
     for ax, (zone, label) in zip(axes.flat, SHOT_ZONE_LABELS.items()):
         color = SHOT_ZONE_COLORS[zone]
         y_reg = np.array(reg_stats[zone], dtype=float)
-        y_po  = _aligned(zone)
+        y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, zone)
 
         for y, lcolor, llabel in [(y_reg, color, "Regular season"),
                                    (y_po, color, "Playoffs")]:

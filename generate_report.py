@@ -198,6 +198,14 @@ def _chart(path, caption_text, width=None):
     ])
 
 
+def _section_header(title: str, s: dict, sections: dict) -> list:
+    return [
+        Paragraph(title, s["h1"]),
+        _hr(),
+        *_md_to_flowables(sections.get(title, ""), s),
+    ]
+
+
 def _results_text() -> str:
     """Read RESULTS.md and return the raw regression output (strips markdown fences)."""
     if not os.path.exists(RESULTS_PATH):
@@ -258,9 +266,7 @@ def _cover(s, sections):
 
 def _section_decline(s, sections):
     return [
-        Paragraph("1. The Decline", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("1. The Decline", ""), s),
+        *_section_header("1. The Decline", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_season.png",
@@ -281,9 +287,7 @@ def _section_era(s, sections):
                           ("VALIGN", (0, 0), (-1, -1), "TOP")]),
     )
     return [
-        Paragraph("2. Era and Format Period Analysis", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("2. Era and Format Period Analysis", ""), s),
+        *_section_header("2. Era and Format Period Analysis", s, sections),
         Spacer(1, 0.1 * inch),
         KeepTogether([
             side_by_side,
@@ -300,9 +304,7 @@ def _section_era(s, sections):
 
 def _section_era_lines(s, sections):
     return [
-        Paragraph("3. Per-Era Trend Lines", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("3. Per-Era Trend Lines", ""), s),
+        *_section_header("3. Per-Era Trend Lines", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_regular_era.png",
@@ -321,18 +323,14 @@ def _section_era_lines(s, sections):
 def _section_regression(s, sections):
     return [
         PageBreak(),
-        Paragraph("4. What Explains the Decline?", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("4. What Explains the Decline?", ""), s),
+        *_section_header("4. What Explains the Decline?", s, sections),
     ]
 
 
 def _section_rest(s, sections):
     return [
         PageBreak(),
-        Paragraph("5. Rest and Schedule Balance", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("5. Rest and Schedule Balance", ""), s),
+        *_section_header("5. Rest and Schedule Balance", s, sections),
         _chart(
             "nba_home_court_advantage_rest.png",
             "Figure 5. Regular-season rest analysis. "
@@ -350,9 +348,7 @@ def _section_rest(s, sections):
 def _section_differentials(s, sections):
     return [
         PageBreak(),
-        Paragraph("6. Box-Score Differentials", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("6. Box-Score Differentials", ""), s),
+        *_section_header("6. Box-Score Differentials", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_differentials.png",
@@ -366,9 +362,7 @@ def _section_differentials(s, sections):
 def _section_shot_zones(s, sections):
     return [
         PageBreak(),
-        Paragraph("7. Shot Zone Analysis", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("7. Shot Zone Analysis", ""), s),
+        *_section_header("7. Shot Zone Analysis", s, sections),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_shot_zones.png",
@@ -394,9 +388,7 @@ def _section_summary(s, sections):
     cw = [CONTENT_W * f for f in (0.06, 0.33, 0.31, 0.30)]
     return [
         PageBreak(),
-        Paragraph("8. Summary", s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get("8. Summary", ""), s),
+        *_section_header("8. Summary", s, sections),
         Spacer(1, 0.1 * inch),
         _table(rank_data, cw),
         Spacer(1, 0.3 * inch),
