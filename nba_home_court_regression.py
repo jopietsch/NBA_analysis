@@ -311,15 +311,16 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     p_po = po["home_win"].mean()
 
     factors = [
-        ("rest_diff",     "Rest diff (per day)      "),
-        ("altitude_home", "Altitude home (DEN/UTA)  "),
+        ("rest_diff",     "Rest diff (per day)"),
+        ("altitude_home", "Altitude home (DEN/UTA)"),
         ("tz_diff",       "Time zone diff (per zone)"),
     ]
+    LW = 28  # label column width
 
-    print(f"   {'Factor':<28}  {'── Regular season ──':^26}  {'──── Playoffs ────':^26}")
-    print(f"   {'':28}  {'log-odds':>8}  {'≈pp':>5}  {'p':>8}  {'':3}  "
+    print(f"   {'Factor':<{LW}}  {'── Regular season ──':^26}  {'──── Playoffs ────':^26}")
+    print(f"   {'':^{LW}}  {'log-odds':>8}  {'≈pp':>5}  {'p':>8}  {'':3}  "
           f"{'log-odds':>8}  {'≈pp':>5}  {'p':>8}  {'':3}")
-    print(f"   {'─'*28}  {'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}  "
+    print(f"   {'─'*LW}  {'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}  "
           f"{'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}")
 
     with warnings.catch_warnings():
@@ -331,7 +332,7 @@ def run_factor_summary(df: pd.DataFrame) -> None:
             c_po, p_po_ = m_po.params[raw], m_po.pvalues[raw]
             pv_re = "<0.001" if p_re_ < 0.001 else f"{p_re_:.3f}"
             pv_po = "<0.001" if p_po_ < 0.001 else f"{p_po_:.3f}"
-            print(f"   {label}  {c_re:+8.3f}  {_pp(c_re, p_re):+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
+            print(f"   {label:<{LW}}  {c_re:+8.3f}  {_pp(c_re, p_re):+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
                   f"{c_po:+8.3f}  {_pp(c_po, p_po):+5.1f}  {pv_po:>8}  {_stars(p_po_)}")
 
     # Coast-to-coast playoff game count for context
@@ -354,7 +355,7 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
                   "fg3_pct_diff", "ft_pct_diff"]
     col_labels = ["Foul diff", "FG% (pp)", "eFG% (pp)", "3PA rate (pp)",
                   "3P% (pp)", "FT% (pp)"]
-    COL_W = 13
+    COL_W = 14
 
     _section("4. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
     print("   Negative foul diff = refs call fewer fouls on the home team.")

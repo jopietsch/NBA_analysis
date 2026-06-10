@@ -3,10 +3,15 @@
 Generate a PDF report of the NBA home court advantage analysis.
 Run after nba_home_court_advantage.py — all PNGs and RESULTS.md must exist.
 
+Narrative prose is read from FINDINGS.md (## sections). Charts and tables are
+injected by the section functions below. To update report text, edit FINDINGS.md.
+
     python3 generate_report.py
 """
 
 import os
+import re
+from datetime import datetime
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
@@ -33,10 +38,10 @@ CONTENT_W = PAGE_W - 2 * MARGIN
 DARK   = "#2c2c2a"
 MID    = "#666666"
 BLUE   = "#1f77b4"
-GREEN  = "#2ca02c"
 ACCENT = BLUE
 
-RESULTS_PATH = "RESULTS.md"
+FINDINGS_PATH = "FINDINGS.md"
+RESULTS_PATH  = "RESULTS.md"
 
 
 # ── Style sheet ───────────────────────────────────────────────────────────────
@@ -93,7 +98,52 @@ def _styles():
     }
 
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
+# ── FINDINGS.md parser ────────────────────────────────────────────────────────
+
+def _parse_findings(path=FINDINGS_PATH) -> dict[str, str]:
+    """Return {heading: body} for each ## section in FINDINGS.md."""
+    if not os.path.exists(path):
+        return {}
+    with open(path) as f:
+        content = f.read()
+    sections = {}
+    for part in re.split(r'^## ', content, flags=re.MULTILINE)[1:]:
+        newline = part.find('\n')
+        heading = part[:newline].strip()
+        body = part[newline:].strip()
+        body = re.sub(r'\n?---\s*$', '', body).strip()
+        sections[heading] = body
+    return sections
+
+
+def _md_inline(text: str) -> str:
+    """Convert inline markdown to reportlab XML markup."""
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+    text = re.sub(r'\*([^*\n]+?)\*', r'<i>\1</i>', text)
+    text = re.sub(r'`([^`]+)`', r'<font name="Courier">\1</font>', text)
+    return text
+
+
+def _md_to_flowables(text: str, s: dict) -> list:
+    """Convert a FINDINGS.md section body to a list of reportlab flowables."""
+    flowables = []
+    for block in re.split(r'\n{2,}', text):
+        block = block.strip()
+        if not block:
+            continue
+        if block.startswith('### '):
+            flowables.append(Paragraph(_md_inline(block[4:]), s['h2']))
+        elif block.startswith('- '):
+            for line in block.splitlines():
+                if line.startswith('- '):
+                    flowables.append(Paragraph('• ' + _md_inline(line[2:]), s['body']))
+        else:
+            joined = ' '.join(ln.strip() for ln in block.splitlines() if ln.strip())
+            flowables.append(Paragraph(_md_inline(joined), s['body']))
+    return flowables
+
+
+# ── Layout helpers ────────────────────────────────────────────────────────────
 
 def _img(path, width=None):
     if not os.path.exists(path):
@@ -144,9 +194,7 @@ def _results_text() -> str:
         return "[RESULTS.md not found — run nba_home_court_advantage.py first]"
     with open(RESULTS_PATH) as f:
         lines = f.readlines()
-    # Strip the header lines and ```code fences, keep the content
-    content = []
-    in_block = False
+    content, in_block = [], False
     for line in lines:
         if line.strip() == "```":
             in_block = not in_block
@@ -156,9 +204,16 @@ def _results_text() -> str:
     return "\n".join(content)
 
 
-# ── Report sections ──────────────────────────────────────────────────────────
+# ── Report sections ───────────────────────────────────────────────────────────
 
-def _cover(s):
+def _cover(s, sections):
+    toc_data = []
+    for heading in sections:
+        parts = heading.split('. ', 1)
+        if len(parts) == 2 and parts[0].isdigit():
+            toc_data.append([parts[0] + '.', parts[1]])
+    toc_data.append(['A.', 'Appendix: Full Regression Output'])
+
     return [
         Spacer(1, 1.2 * inch),
         Paragraph("NBA Home Court Advantage", s["cover_title"]),
@@ -170,46 +225,22 @@ def _cover(s):
             "Data: NBA.com via nba_api  ·  1983–84 through 2024–25  ·  51,089 games",
             s["cover_sub"],
         ),
+        Paragraph(
+            f"Generated {datetime.now().strftime('%B %d, %Y at %H:%M')}",
+            s["cover_sub"],
+        ),
         Spacer(1, 0.8 * inch),
-        Paragraph(
-            "This report examines how home court advantage has changed over four decades of "
-            "NBA basketball, quantifies the size of the decline, and investigates the statistical "
-            "mechanisms behind it — including officiating patterns, shooting efficiency, shot "
-            "selection, rest, altitude, and travel.",
-            s["body"],
-        ),
-        Spacer(1, 0.2 * inch),
         Paragraph("Contents", s["h2"]),
-        Paragraph(
-            "1. The Decline &nbsp;&nbsp; 2. Era and Format Period Analysis &nbsp;&nbsp; "
-            "3. Per-Era Trend Lines &nbsp;&nbsp; 4. What Explains the Decline? &nbsp;&nbsp; "
-            "5. Rest and Schedule Balance &nbsp;&nbsp; 6. Box-Score Differentials &nbsp;&nbsp; "
-            "7. Shot Zone Analysis &nbsp;&nbsp; 8. Summary &nbsp;&nbsp; "
-            "Appendix A: Full Regression Output",
-            s["body"],
-        ),
+        _table(toc_data, [CONTENT_W * 0.08, CONTENT_W * 0.92], header_rows=0),
         PageBreak(),
     ]
 
 
-def _section_decline(s):
+def _section_decline(s, sections):
     return [
         Paragraph("1. The Decline", s["h1"]),
         _hr(),
-        Paragraph(
-            "Home court advantage in the NBA has been falling for 40 years. In the 1984–94 era "
-            "home teams won roughly 65% of regular-season games. Today that figure sits at 56–57%. "
-            "The decline is even steeper in the playoffs: from roughly 68–70% in the early era to "
-            "57–59% in recent seasons.",
-            s["body"],
-        ),
-        Paragraph(
-            "The chart below shows home win percentage per season for both the regular season "
-            "(blue) and playoffs (green), with overall trend lines and background shading marking "
-            "each rule-change era. COVID-impacted seasons (2019–20 and 2020–21) are highlighted "
-            "in red. The 2020 bubble playoffs — all neutral-site games — are excluded.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("1. The Decline", ""), s),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_season.png",
@@ -220,7 +251,7 @@ def _section_decline(s):
     ]
 
 
-def _section_era(s):
+def _section_era(s, sections):
     era_img    = _img("nba_home_court_advantage_era_bars.png",    width=CONTENT_W * 0.49)
     format_img = _img("nba_home_court_advantage_format_bars.png", width=CONTENT_W * 0.49)
     side_by_side = Table(
@@ -232,21 +263,7 @@ def _section_era(s):
     return [
         Paragraph("2. Era and Format Period Analysis", s["h1"]),
         _hr(),
-        Paragraph(
-            "The NBA has gone through six distinct rule-change eras since 1984, each affecting "
-            "pace, defense, and officiating. The bar charts below show average home win % within "
-            "each era (left) and within each of the four playoff-format periods defined by the "
-            "1985, 2003, and 2014 Finals scheduling changes (right).",
-            s["body"],
-        ),
-        Paragraph(
-            "Home court advantage has declined in nearly every successive era in both the regular "
-            "season and the playoffs. The steepest drops are in the most recent eras. "
-            "The format-period panel shows that the 2014 Finals shift from a 2-3-2 to a 2-2-1-1-1 "
-            "series structure coincided with a sharp fall in playoff home win %, though isolating "
-            "format effects from the broader secular trend is difficult.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("2. Era and Format Period Analysis", ""), s),
         Spacer(1, 0.1 * inch),
         KeepTogether([
             side_by_side,
@@ -261,17 +278,11 @@ def _section_era(s):
     ]
 
 
-def _section_era_lines(s):
+def _section_era_lines(s, sections):
     return [
         Paragraph("3. Per-Era Trend Lines", s["h1"]),
         _hr(),
-        Paragraph(
-            "Fitting a separate trend line within each era reveals that the decline is not a "
-            "smooth drift — there are periods of relative stability and periods of sharper change. "
-            "Playoff home court advantage has consistently exceeded the regular-season figure but "
-            "has converged dramatically in recent years.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("3. Per-Era Trend Lines", ""), s),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_regular_era.png",
@@ -287,71 +298,21 @@ def _section_era_lines(s):
     ]
 
 
-def _section_regression(s):
+def _section_regression(s, sections):
     return [
         PageBreak(),
         Paragraph("4. What Explains the Decline?", s["h1"]),
         _hr(),
-        Paragraph(
-            "A game-level logistic regression (outcome: home win) decomposes the decline into "
-            "measurable factors: era dummies, rest differential, altitude (Denver/Utah), "
-            "time-zone differential, and a COVID flag. Full tables are in Appendix A.",
-            s["body"],
-        ),
-        Paragraph("Era dominates the model fit", s["h2"]),
-        Paragraph(
-            "Adding predictors one block at a time — era first, then rest, altitude, time zone, "
-            "and COVID — shows that era dummies alone account for the majority of total model fit. "
-            "The structural multi-decade decline is not explained by rest, altitude, or travel; "
-            "those factors add incremental explanatory power on top of a trend that spans every "
-            "rule-change era.",
-            s["body"],
-        ),
-        Paragraph("Rest, altitude, and time zone", s["h2"]),
-        Paragraph(
-            "<b>Rest</b> matters in both the regular season and the playoffs. The effect is larger "
-            "in the playoffs — higher stakes amplify fatigue. When the home team has more rest than "
-            "the road team, the home win probability rises; the reverse is also true.",
-            s["body"],
-        ),
-        Paragraph(
-            "<b>Altitude</b> at Denver and Utah carries a significant home edge in the regular "
-            "season but the effect disappears in the playoffs. Team quality is a confound: "
-            "when those franchises are strong enough to host playoff games, their opponents are "
-            "also strong, masking the altitude effect.",
-            s["body"],
-        ),
-        Paragraph(
-            "<b>Time zone differences</b> show no statistically significant effect in either "
-            "context. There are too few coast-to-coast playoff matchups across 42 seasons for "
-            "reliable inference, and the regular-season effect is also not significant.",
-            s["body"],
-        ),
-        Paragraph("Pre/post-2014 level shift", s["h2"]),
-        Paragraph(
-            "Splitting the sample at the 2014 Finals format change confirms a real drop in the "
-            "overall home-win probability after 2014. The coefficients on rest, altitude, and "
-            "time zone are broadly stable across the split — those factors did not drive the "
-            "post-2014 decline.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("4. What Explains the Decline?", ""), s),
     ]
 
 
-def _section_rest(s):
+def _section_rest(s, sections):
     return [
         PageBreak(),
         Paragraph("5. Rest and Schedule Balance", s["h1"]),
         _hr(),
-        Paragraph(
-            "Each team's rest days are computed from the cached game logs as days between "
-            "consecutive games minus one (0 = back-to-back, 1 = one rest day, etc.). "
-            "The charts below show back-to-back rates for home and away teams over time, "
-            "and home win % split by which team had more rest. When the home team is more "
-            "rested the advantage is larger; when the away team is more rested the advantage "
-            "shrinks significantly.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("5. Rest and Schedule Balance", ""), s),
         _chart(
             "nba_home_court_advantage_rest.png",
             "Figure 5. Regular-season rest analysis. "
@@ -366,45 +327,12 @@ def _section_rest(s):
     ]
 
 
-def _section_differentials(s):
+def _section_differentials(s, sections):
     return [
         PageBreak(),
         Paragraph("6. Box-Score Differentials", s["h1"]),
         _hr(),
-        Paragraph(
-            "The most direct evidence for why home court advantage has declined comes from "
-            "box-score differentials — home team minus away team per game, averaged by season. "
-            "Solid lines are regular season; dashed lines are playoffs. "
-            "For era-by-era averages and OLS trend values, see Appendix A.",
-            s["body"],
-        ),
-        Paragraph("Foul differential (top left)", s["h2"]),
-        Paragraph(
-            "In the early era, home teams were called for substantially fewer fouls per game than "
-            "road teams — a gap that existed in both the regular season and the playoffs. "
-            "That advantage has shrunk dramatically over 40 years and is now a fraction of what it "
-            "was. The trend is highly significant in both contexts. "
-            "Referees are calling the game more neutrally — this is likely the single most "
-            "important mechanism behind the decline.",
-            s["body"],
-        ),
-        Paragraph("eFG% differential (top middle)", s["h2"]),
-        Paragraph(
-            "Home teams used to shoot meaningfully more efficiently than road teams (weighted to "
-            "give 3-pointers 1.5× the value of 2-pointers). That shooting edge has narrowed "
-            "significantly in the regular season over the dataset. This reflects both the narrowing "
-            "foul advantage — fewer free throws for the home team — and a broader convergence in "
-            "shot quality between home and road teams.",
-            s["body"],
-        ),
-        Paragraph("3PA rate differential (top right)", s["h2"]),
-        Paragraph(
-            "Road teams used to take proportionally fewer 3-point attempts than home teams at the "
-            "same venue. As the 3-point revolution normalized high-volume shooting league-wide, "
-            "that difference has closed completely. Shot selection is no longer a meaningful home "
-            "court edge — road teams now arrive with the same offensive game plan as the home team.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("6. Box-Score Differentials", ""), s),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_differentials.png",
@@ -415,41 +343,12 @@ def _section_differentials(s):
     ]
 
 
-def _section_shot_zones(s):
+def _section_shot_zones(s, sections):
     return [
         PageBreak(),
         Paragraph("7. Shot Zone Analysis", s["h1"]),
         _hr(),
-        Paragraph(
-            "Using NBA.com's LeagueDashTeamShotLocations endpoint (available from 1996–97 onward), "
-            "each season's home and road shot-zone distributions are compared. Each panel shows the "
-            "home-minus-road difference in the share of field goal attempts from that zone "
-            "(positive = home teams take a higher proportion from that location). "
-            "A trend toward zero means home and road teams are converging in shot location.",
-            s["body"],
-        ),
-        Paragraph("Paint — Restricted Area + Non-RA (top left)", s["h2"]),
-        Paragraph(
-            "Home teams have historically gotten a disproportionately higher share of their shots "
-            "from the paint — the most efficient shots in basketball. That gap has shrunk "
-            "substantially since the late 1990s. This is consistent with both the eFG% narrowing "
-            "and the foul differential trend: road teams are accessing the paint more freely.",
-            s["body"],
-        ),
-        Paragraph("Mid-range (top right)", s["h2"]),
-        Paragraph(
-            "Road teams consistently take a higher share of mid-range shots — the least efficient "
-            "shot type in modern basketball. This gap has been relatively stable, suggesting that "
-            "even as the paint advantage closes, road teams are still being pushed away from the "
-            "basket more often.",
-            s["body"],
-        ),
-        Paragraph("Corner 3 and above-break 3 (bottom panels)", s["h2"]),
-        Paragraph(
-            "No systematic home/road difference in 3-point shot location. Both lines hover near "
-            "zero throughout the dataset. Shot quality at the arc is not a home court advantage.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("7. Shot Zone Analysis", ""), s),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_shot_zones.png",
@@ -460,8 +359,8 @@ def _section_shot_zones(s):
     ]
 
 
-def _section_summary(s):
-    data = [
+def _section_summary(s, sections):
+    rank_data = [
         ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
         ["1",    "Era (structural decline)",       "Dominant — majority of fit", "Larger decline"     ],
         ["2",    "Foul diff (refs more neutral)",  "Significant, *** trend",   "Significant, ** trend"],
@@ -477,26 +376,9 @@ def _section_summary(s):
         PageBreak(),
         Paragraph("8. Summary", s["h1"]),
         _hr(),
-        Paragraph(
-            "Home court advantage has declined substantially in both the regular season and the "
-            "playoffs over the past 40 years, with the playoff decline steeper than the regular "
-            "season. The decline is structural — it spans every rule-change era and the era effect "
-            "accounts for the majority of variance explained by the regression model. "
-            "The mechanisms, in order of statistical strength:",
-            s["body"],
-        ),
-        _table(data, cw),
-        Spacer(1, 0.15 * inch),
-        Paragraph(
-            "The core narrative: NBA home court advantage has eroded because <b>referees call the "
-            "game more neutrally</b> today than they did 40 years ago, <b>home teams no longer "
-            "generate a disproportionate paint-access or shooting edge</b>, and the <b>3-point "
-            "revolution has equalized shot selection</b> between home and road teams. Rest remains "
-            "a meaningful factor — particularly in the playoffs — but cannot explain the secular "
-            "decline. Altitude at Denver and Utah confers a real regular-season edge but is absent "
-            "in the playoffs. Time-zone travel shows no statistically reliable effect.",
-            s["body"],
-        ),
+        *_md_to_flowables(sections.get("8. Summary", ""), s),
+        Spacer(1, 0.1 * inch),
+        _table(rank_data, cw),
         Spacer(1, 0.3 * inch),
         _hr(),
         Paragraph(
@@ -510,20 +392,19 @@ def _section_summary(s):
 
 
 def _appendix_results(s):
-    text = _results_text()
     return [
         PageBreak(),
         Paragraph("Appendix A: Full Regression Output", s["h1"]),
         _hr(),
         Paragraph(
-            "Auto-generated by <code>nba_home_court_regression.py</code> each time the analysis "
-            "is run. Contains the sequential R² decomposition, pre/post-2014 coefficient stability "
-            "check, bivariate factor significance table, and foul/shooting differential trends "
-            "by era.",
+            "Auto-generated by <font name=\"Courier\">nba_home_court_regression.py</font> "
+            "each time the analysis is run. Contains the sequential R² decomposition, "
+            "pre/post-2014 coefficient stability check, bivariate factor significance table, "
+            "and foul/shooting differential trends by era.",
             s["body"],
         ),
         Spacer(1, 0.1 * inch),
-        Preformatted(text, s["code"]),
+        Preformatted(_results_text(), s["code"]),
     ]
 
 
@@ -531,6 +412,8 @@ def _appendix_results(s):
 
 def build_report(output_path="nba_home_court_advantage_report.pdf"):
     s = _styles()
+    sections = _parse_findings()
+
     doc = SimpleDocTemplate(
         output_path,
         pagesize=letter,
@@ -541,15 +424,15 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     )
 
     story = []
-    story += _cover(s)
-    story += _section_decline(s)
-    story += _section_era(s)
-    story += _section_era_lines(s)
-    story += _section_regression(s)
-    story += _section_rest(s)
-    story += _section_differentials(s)
-    story += _section_shot_zones(s)
-    story += _section_summary(s)
+    story += _cover(s, sections)
+    story += _section_decline(s, sections)
+    story += _section_era(s, sections)
+    story += _section_era_lines(s, sections)
+    story += _section_regression(s, sections)
+    story += _section_rest(s, sections)
+    story += _section_differentials(s, sections)
+    story += _section_shot_zones(s, sections)
+    story += _section_summary(s, sections)
     story += _appendix_results(s)
 
     doc.build(story)

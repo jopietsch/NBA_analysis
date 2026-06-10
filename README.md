@@ -77,19 +77,22 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains eight sections plus an appendix: The Decline, Era and Format Period Analysis,
-Per-Era Trend Lines, What Explains the Decline (narrative), Rest and Schedule Balance, Box-Score
-Differentials, Shot Zone Analysis, Summary, and Appendix A (full regression tables from RESULTS.md
-rendered verbatim). The narrative sections have no hardcoded numbers; Appendix A is the authoritative
-source for coefficient values and significance levels.
+The report contains eight sections plus an appendix. Narrative prose is read directly from
+`FINDINGS.md` — edit that file to update the report text. Charts are injected by `generate_report.py`
+at fixed positions within each section. Appendix A renders `RESULTS.md` verbatim and is the
+authoritative source for coefficient values and significance levels.
 
 ## Updating FINDINGS.md
 
-`FINDINGS.md` is the narrative interpretation — edited by hand when understanding changes.
+`FINDINGS.md` is the single source of truth for narrative prose — both the
+standalone document and the PDF report text are driven by it. It has eight
+numbered sections (matching the PDF) plus an appendix. Edit it when findings
+change, then regenerate the PDF with `python3 generate_report.py`.
+
 `RESULTS.md` is auto-generated each run — never edit manually.
 
-Before updating `FINDINGS.md`, verify outputs are current and then revise the narrative
-to match the latest data. Use this prompt with Claude Code:
+Before updating `FINDINGS.md`, verify outputs are current and then revise the
+narrative to match the latest data. Use this prompt with Claude Code:
 
 ```
 Before updating FINDINGS.md, verify that the analysis outputs are current:
@@ -106,14 +109,19 @@ Before updating FINDINGS.md, verify that the analysis outputs are current:
 3. Read the current FINDINGS.md.
 
 4. Update FINDINGS.md to reflect the current analysis. Rules:
+   - FINDINGS.md has eight ## sections numbered to match the PDF (e.g. "## 4. What
+     Explains the Decline?"). Do not rename or renumber sections — generate_report.py
+     looks them up by exact heading.
+   - ### subheadings within a section are rendered as sub-headers in the PDF.
    - No specific coefficient values, R² values, or percentage points — those
      belong in RESULTS.md and go stale. Reference RESULTS.md for specifics.
    - Use qualitative language: "significant", "dominant", "narrowing", "no effect".
    - Describe the direction and relative magnitude of each effect.
-   - Keep the existing section structure unless the findings genuinely warrant
-     a new section.
    - If anything in the current RESULTS.md contradicts what FINDINGS.md says,
      update the narrative to match.
+
+5. After editing FINDINGS.md, regenerate the PDF:
+   python3 generate_report.py
 ```
 
 ## Tests

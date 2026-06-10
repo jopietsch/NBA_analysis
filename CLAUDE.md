@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation; stable, edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 8 numbered `##` sections; drives the PDF report prose; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -92,7 +92,7 @@ Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentia
 
 ---
 
-**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Structure: cover, 8 sections (decline, era analysis, per-era trends, regression results, rest, differentials, shot zones, summary). Each section has descriptive text and one or more charts with captions. No data fetching — reads only the PNGs already on disk.
+**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
 
 ---
 
