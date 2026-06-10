@@ -240,6 +240,21 @@ class TestFetchRestData:
         assert row["HOME_WIN"] == 0  # A (home) lost G3
 
 
+    def test_returns_none_when_all_rest_is_nan(self, tmp_path, monkeypatch):
+        # All games are each team's first game so REST is NaN everywhere;
+        # after dropna the merged frame is empty and should return None.
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "TEAM_ID":   [1, 2],
+            "GAME_ID":   ["G1", "G1"],
+            "GAME_DATE": ["2024-01-01", "2024-01-01"],
+            "MATCHUP":   ["A vs. B", "B @ A"],
+            "WL":        ["W", "L"],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+        assert nba.fetch_rest_data(2024, "Regular Season") is None
+
+
 class TestFetchRestDataFromRealCache:
     def test_returns_expected_columns_for_real_season(self, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
@@ -475,6 +490,18 @@ class TestFetchTimezoneData:
         assert result.loc[1, "HOME_WIN"] == 1  # Boston beat the Lakers
 
 
+    def test_returns_none_when_all_teams_have_unknown_timezone(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID":   ["G1", "G1"],
+            "TEAM_NAME": ["Globetrotters", "Washington Generals"],
+            "MATCHUP":   ["GLB vs. WG", "WG @ GLB"],
+            "WL":        ["W", "L"],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+        assert nba.fetch_timezone_data(2024, "Regular Season") is None
+
+
 class TestFetchTimezoneDataFromRealCache:
     def test_returns_expected_columns_for_real_season(self, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
@@ -530,6 +557,15 @@ class TestComputeTimezoneStats:
 
 
 class TestMergeHomeAwayRows:
+    def test_returns_none_when_no_matching_game_ids(self):
+        # Home row for G1, away row for G2 — merge produces an empty DataFrame
+        df = pd.DataFrame({
+            "GAME_ID": ["G1",         "G2"],
+            "MATCHUP": ["BOS vs. MIA", "LAL @ PHX"],
+            "WL":      ["W",           "L"],
+        })
+        assert nba._merge_home_away_rows(df) is None
+
     def test_returns_none_when_no_home_rows(self):
         df = pd.DataFrame({
             "GAME_ID": ["G1"], "MATCHUP": ["BOS @ MIA"], "WL": ["W"],
@@ -679,6 +715,138 @@ class TestFetchDifferentialData:
         assert pd.isna(result.iloc[0]["fg3_pct_diff"])
 
 
+class TestComputeDifferentialStats:
+    def test_aggregates_means_per_season(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "foul_diff":    [-1.0, -2.0],
+                "fg_pct_diff":  [1.0,   3.0],
+                "efg_pct_diff": [1.5,   2.5],
+                "tpa_rate_diff":[0.1,   0.3],
+                "fg3_pct_diff": [0.5,   1.5],
+                "ft_pct_diff":  [0.2,   0.4],
+            })
+
+        monkeypatch.setattr(nba, "fetch_differential_data", fake_fetch)
+        seasons, stats = nba.compute_differential_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        assert stats["foul_diff"]    == [pytest.approx(-1.5)]
+        assert stats["fg_pct_diff"]  == [pytest.approx(2.0)]
+        assert stats["efg_pct_diff"] == [pytest.approx(2.0)]
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_differential_data", lambda year, s: None)
+        seasons, stats = nba.compute_differential_stats(2023, 2025, "Regular Season")
+        assert seasons == []
+        for v in stats.values():
+            assert v == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "fetch_differential_data",
+                            lambda year, s: calls.append(year) or None)
+        nba.compute_differential_stats(2019, 2021, "Playoffs", skip_years={2020})
+        assert calls == [2019, 2021]
+
+
+class TestZonePcts:
+    def _df(self):
+        return pd.DataFrame({
+            "TEAM_ID":    [1,    2],
+            "TEAM_NAME":  ["A", "B"],
+            "FGA_RA":     [100, 100],
+            "FGA_NON_RA": [50,   50],
+            "FGA_MR":     [80,   80],
+            "FGA_LC3":    [30,   30],
+            "FGA_RC3":    [20,   20],
+            "FGA_ATB3":   [120, 120],
+        })
+
+    def test_sums_across_teams_and_returns_percentages(self):
+        result = nba._zone_pcts(self._df())
+        total = (100+50+80+30+20+120) * 2  # 800 total shots
+        assert result["paint"]    == pytest.approx(100 * (100+50)*2 / total)
+        assert result["midrange"] == pytest.approx(100 * 80*2 / total)
+        assert result["corner3"]  == pytest.approx(100 * (30+20)*2 / total)
+        assert result["above3"]   == pytest.approx(100 * 120*2 / total)
+        assert sum(result.values()) == pytest.approx(100.0)
+
+    def test_returns_all_nan_when_total_fga_is_zero(self):
+        df = pd.DataFrame({"FGA_RA": [0], "FGA_NON_RA": [0],
+                           "FGA_MR": [0], "FGA_LC3": [0],
+                           "FGA_RC3": [0], "FGA_ATB3": [0]})
+        result = nba._zone_pcts(df)
+        assert all(np.isnan(v) for v in result.values())
+
+    def test_ignores_missing_columns(self):
+        df = pd.DataFrame({"FGA_RA": [100]})  # all other zone cols absent
+        result = nba._zone_pcts(df)
+        assert result["paint"] == pytest.approx(100.0)
+        assert result["midrange"] == pytest.approx(0.0)
+
+
+class TestComputeShotZoneStats:
+    def _make_zone_df(self):
+        return pd.DataFrame({
+            "FGA_RA": [400], "FGA_NON_RA": [100],
+            "FGA_MR": [200], "FGA_LC3": [50],
+            "FGA_RC3": [50], "FGA_ATB3": [200],
+        })
+
+    def test_computes_home_minus_road_differential(self, monkeypatch):
+        def fake_fetch(year, season_type, location):
+            if year != 2024:
+                return None
+            # Home: more paint shots; Road: fewer paint shots
+            if location == "Home":
+                return pd.DataFrame({
+                    "FGA_RA": [500], "FGA_NON_RA": [100],
+                    "FGA_MR": [200], "FGA_LC3": [50],
+                    "FGA_RC3": [50], "FGA_ATB3": [100],
+                })
+            return pd.DataFrame({
+                "FGA_RA": [300], "FGA_NON_RA": [100],
+                "FGA_MR": [200], "FGA_LC3": [50],
+                "FGA_RC3": [50], "FGA_ATB3": [300],
+            })
+
+        monkeypatch.setattr(nba, "fetch_shot_zones", fake_fetch)
+        seasons, stats = nba.compute_shot_zone_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        home_paint = 100 * 600 / 1000
+        road_paint = 100 * 400 / 1000
+        assert stats["paint"] == [pytest.approx(home_paint - road_paint)]
+
+    def test_skips_year_when_either_side_is_none(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_shot_zones", lambda year, s, loc: None)
+        seasons, stats = nba.compute_shot_zone_stats(2023, 2025, "Regular Season")
+        assert seasons == []
+        for v in stats.values():
+            assert v == []
+
+    def test_skips_year_when_zone_pcts_contain_nan(self, monkeypatch):
+        # Both Home and Road return all-zero FGA → _zone_pcts returns NaN
+        monkeypatch.setattr(nba, "fetch_shot_zones",
+                            lambda year, s, loc: pd.DataFrame({
+                                "FGA_RA": [0], "FGA_NON_RA": [0],
+                                "FGA_MR": [0], "FGA_LC3": [0],
+                                "FGA_RC3": [0], "FGA_ATB3": [0],
+                            }))
+        seasons, stats = nba.compute_shot_zone_stats(2023, 2025, "Regular Season")
+        assert seasons == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "fetch_shot_zones",
+                            lambda year, s, loc: calls.append(year) or None)
+        nba.compute_shot_zone_stats(2019, 2021, "Playoffs", skip_years={2020})
+        assert 2020 not in calls
+
+
 class TestFetchShotZones:
     def _path(self, tmp_path, end_year=2024, season_type="Regular Season", location="Home"):
         fname = f"shot_zones_{nba.season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv"
@@ -731,6 +899,44 @@ class TestFetchShotZones:
         result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
         assert result is None
         assert self._path(tmp_path).exists()
+
+    def test_fetches_from_api_flattens_multiindex_and_caches(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
+
+        from nba_api.stats.endpoints import leaguedashteamshotlocations
+
+        tuples = [
+            ("", "TEAM_ID"), ("", "TEAM_NAME"),
+            ("Restricted Area", "FGA"), ("In The Paint (Non-RA)", "FGA"),
+            ("Mid-Range", "FGA"), ("Left Corner 3", "FGA"),
+            ("Right Corner 3", "FGA"), ("Above the Break 3", "FGA"),
+            ("Backcourt", "FGA"),
+        ]
+        multi_df = pd.DataFrame(
+            [[1, "Boston Celtics", 1000, 300, 400, 200, 210, 500, 5]],
+            columns=pd.MultiIndex.from_tuples(tuples),
+        )
+
+        class FakeEndpoint:
+            def __init__(self, **kwargs):
+                pass
+            def get_data_frames(self):
+                return [multi_df]
+
+        monkeypatch.setattr(leaguedashteamshotlocations, "LeagueDashTeamShotLocations", FakeEndpoint)
+
+        result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
+        assert result is not None
+        assert "FGA_RA" in result.columns
+        assert "FGA_ATB3" in result.columns
+        assert result.iloc[0]["FGA_RA"] == 1000
+        assert self._path(tmp_path).exists()  # cached with flat columns
+
+        # Second call hits cache, not API
+        result2 = nba.fetch_shot_zones(2024, "Regular Season", "Home")
+        assert result2 is not None
+        assert result2.iloc[0]["FGA_RA"] == 1000
 
     def test_loads_valid_cached_csv(self, tmp_path, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
