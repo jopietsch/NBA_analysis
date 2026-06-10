@@ -8,6 +8,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Run the full analysis (fetches data, generates PNGs, runs regression)
 MPLBACKEND=Agg python3 nba_home_court_advantage.py
 
+# Generate the PDF report (run after the above)
+python3 generate_report.py
+
 # Run tests
 python3 -m pytest
 
@@ -51,10 +54,13 @@ The project is two Python modules plus one test file:
 *Plot helpers (private):*
 - `_shade_eras(ax, seasons, label_y=46)` — draw era background shading + dividers; pass `label_y=None` to suppress text labels (used on non-win-% axes)
 - `_annotate_bars(ax, bars, color)` — label bar heights with % values
-- `_plot_season_era_panel(ax, seasons, pcts, color, title, format_markers=False)` — draw season-by-season line + per-era trend lines + era shading + COVID shading; used for the standalone playoff and regular-season panels
+- `_draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts)` — draws the season-by-season reg+playoff combined panel (used by both the combined figure and individual PNG)
+- `_draw_era_bars(ax, era_reg_avg, era_po_avg, era_labels_short)` — draws the era grouped bar chart panel
+- `_draw_format_bars(ax, format_reg_avg, format_po_avg, format_labels_short)` — draws the playoff-format-period grouped bar chart panel
+- `_plot_season_era_panel(ax, seasons, pcts, color, title, format_markers=False)` — draws season-by-season line + per-era trend lines + era shading + COVID shading; used for the standalone playoff and regular-season panels
 
 *Plotting functions:*
-- `plot_results(...)` — 5-panel main figure (season-by-season, per-era trend panels, grouped bar charts by era and playoff-format period)
+- `plot_results(...)` — saves the combined 5-panel `nba_home_court_advantage.png`, then saves each panel as an individual PNG: `_season`, `_playoffs_era`, `_regular_era`, `_era_bars`, `_format_bars`
 - `plot_rest_analysis(...)` — 2-panel back-to-back rate and rest-split home win %
 - `plot_category_road_win_analysis(...)` — generic 2-panel for altitude or timezone category comparisons
 - `plot_differential_analysis(...)` — 2×3 figure: foul diff, FG%, eFG%, 3PA rate, 3P%, FT% differentials over time (reg + playoffs aligned)
@@ -78,6 +84,10 @@ Four analyses printed to stdout:
 4. **Foul & shooting differentials by era** — OLS trend (change per season year) for each box-score differential, regular season and playoffs separately
 
 Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean).
+
+---
+
+**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Structure: cover, 8 sections (decline, era analysis, per-era trends, regression results, rest, differentials, shot zones, summary). Each section has descriptive text and one or more charts with captions. No data fetching — reads only the PNGs already on disk.
 
 ---
 
