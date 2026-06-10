@@ -95,14 +95,14 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
     return round(100 * wins / total, 1)
 
 
-# ── Era definitions ─────────────────────────────────────────────────────────
+# ── Era definitions ───────────────────────────────────────────────────────────
+# Eras are bounded by major NBA rule changes affecting pace/defense:
 ERA_DEFS = [
-    ("1983–92", 1984, 1992),
-    ("1992–98", 1993, 1998),
-    ("1999–04", 1999, 2004),
-    ("2005–13", 2005, 2013),
-    ("2014–19", 2014, 2019),
-    ("2020–26", 2021, 2025),
+    ("1984–94", 1984, 1994),  # Illegal defense rules (no zone defense)
+    ("1995–01", 1995, 2001),  # 1994 hand-checking restrictions; zone still illegal
+    ("2002–04", 2002, 2004),  # 2001: zone defense legalized, defensive 3-sec added
+    ("2005–17", 2005, 2017),  # 2004-05: perimeter hand-checking banned (pace-and-space era)
+    ("2018–25", 2018, 2025),  # 2017-18: freedom-of-movement / transition take-foul rules
 ]
 
 
@@ -139,7 +139,7 @@ def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]
         # Playoffs
         if year not in SKIP_PLAYOFF_YEARS:
             print(f"  {label} playoffs      ... ", end="", flush=True)
-            pct_po = fetch_season_home_pct(year, SeasonType.playoffs)
+            pct_po = fetch_season_home_pct(year, "Playoffs")
             if pct_po is not None:
                 po_seasons.append(label)
                 po_pcts.append(pct_po)
