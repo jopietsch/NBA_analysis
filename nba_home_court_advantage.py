@@ -131,6 +131,15 @@ PLAYOFF_FORMAT_CHANGES = [
     (2014, "'14: Finals →\n2-2-1-1-1"),
 ]
 
+# Playoff format "periods" — the spans of seasons between the format changes
+# above, used to bucket playoff home win % by which format was in effect.
+PLAYOFF_FORMAT_PERIODS = [
+    ("1984",     1984, 1984, "Best-of-5 R1, 2-2-1-1-1 Finals (alternating home court)"),
+    ("1985–02",  1985, 2002, "Best-of-5 R1, 2-3-2 Finals (home court by record)"),
+    ("2003–13",  2003, 2013, "Best-of-7 R1, 2-3-2 Finals"),
+    ("2014–25",  2014, 2025, "Best-of-7 R1, 2-2-1-1-1 Finals"),
+]
+
 
 def label_to_year(lbl: str) -> int:
     suffix = int(lbl.split("–")[1])
@@ -194,6 +203,22 @@ def compute_era_averages(
     return era_reg_avg, era_po_avg, era_labels_short
 
 
+def compute_playoff_format_averages(
+    reg_seasons: list[str], reg_pcts: list[float],
+    po_seasons: list[str], po_pcts: list[float],
+) -> tuple[list[float], list[float], list[str]]:
+    """Average regular-season and playoff home win % within each playoff-format period."""
+    format_reg_avg, format_po_avg = [], []
+    for _, y1, y2, _ in PLAYOFF_FORMAT_PERIODS:
+        rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
+        pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
+        format_reg_avg.append(round(np.mean(rv), 1) if rv else 0)
+        format_po_avg.append( round(np.mean(pv), 1) if pv else 0)
+
+    format_labels_short = [p[0] for p in PLAYOFF_FORMAT_PERIODS]
+    return format_reg_avg, format_po_avg, format_labels_short
+
+
 # ── Plot ──────────────────────────────────────────────────────────────────────
 BLUE  = "#378add"
 GREEN = "#1d9e75"
@@ -209,6 +234,7 @@ def plot_results(
     reg_seasons: list[str], reg_pcts: list[float],
     po_seasons: list[str], po_pcts: list[float],
     era_reg_avg: list[float], era_po_avg: list[float], era_labels_short: list[str],
+    format_reg_avg: list[float], format_po_avg: list[float], format_labels_short: list[str],
 ) -> None:
     """Build the 3-panel figure and save/show it."""
     plt.rcParams.update({
@@ -406,7 +432,7 @@ def plot_results(
     ax4.set_ylabel("Home win %", fontsize=10)
 
     # ── Panel 4: era grouped bar chart ────────────────────────────────────────
-    ax2 = fig.add_subplot(gs[3, 1:3])
+    ax2 = fig.add_subplot(gs[3, 0:2])
     xi = np.arange(len(era_labels_short))
     w  = 0.35
     bars1 = ax2.bar(xi - w/2, era_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
@@ -425,6 +451,26 @@ def plot_results(
     ax2.set_title("Regular season vs playoffs\nhome win % by era",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 5: home win % by playoff-format period ──────────────────────────
+    ax5 = fig.add_subplot(gs[3, 2:4])
+    xf = np.arange(len(format_labels_short))
+    bars5_reg = ax5.bar(xf - w/2, format_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
+    bars5_po  = ax5.bar(xf + w/2, format_po_avg,  width=w, color=GREEN, label="Playoffs",        zorder=2)
+
+    for bar in list(bars5_reg) + list(bars5_po):
+        clr = BLUE if bar in bars5_reg else GREEN
+        ax5.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
+                 f"{bar.get_height():.1f}%",
+                 ha="center", va="bottom", fontsize=7.5, color=clr)
+
+    ax5.set_xticks(xf)
+    ax5.set_xticklabels(format_labels_short, rotation=30, ha="right", fontsize=9)
+    ax5.set_ylim(50, 70)
+    ax5.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax5.set_title("Regular season vs playoffs\nhome win % by playoff format period",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+    ax5.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     # Footnote: explain what each era represents
     era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
@@ -845,9 +891,13 @@ def main() -> None:
     era_reg_avg, era_po_avg, era_labels_short = compute_era_averages(
         reg_seasons, reg_pcts, po_seasons, po_pcts
     )
+    format_reg_avg, format_po_avg, format_labels_short = compute_playoff_format_averages(
+        reg_seasons, reg_pcts, po_seasons, po_pcts
+    )
     plot_results(
         reg_seasons, reg_pcts, po_seasons, po_pcts,
         era_reg_avg, era_po_avg, era_labels_short,
+        format_reg_avg, format_po_avg, format_labels_short,
     )
 
     rest_seasons, rest_stats = compute_rest_stats(START_YEAR, END_YEAR, SeasonType.regular)

@@ -101,6 +101,43 @@ class TestComputeEraAverages:
         assert era_po_avg == [0] * len(nba.ERA_DEFS)
 
 
+class TestComputePlayoffFormatAverages:
+    def test_buckets_seasons_into_format_periods_and_averages(self):
+        reg_seasons = ["83–84", "84–85", "01–02", "02–03", "13–14"]
+        reg_pcts    = [65.0,    61.0,    63.0,    62.0,    57.0]
+        po_seasons  = ["83–84", "84–85", "01–02", "02–03", "13–14"]
+        po_pcts     = [70.0,    60.0,    66.0,    64.0,    58.0]
+
+        format_reg_avg, format_po_avg, format_labels = nba.compute_playoff_format_averages(
+            reg_seasons, reg_pcts, po_seasons, po_pcts
+        )
+
+        # 83–84 -> 1984 is its own period
+        i = format_labels.index("1984")
+        assert format_reg_avg[i] == 65.0
+        assert format_po_avg[i] == 70.0
+
+        # 84–85 -> 1985 and 01–02 -> 2002 both fall in 1985–02
+        i = format_labels.index("1985–02")
+        assert format_reg_avg[i] == 62.0
+        assert format_po_avg[i] == 63.0
+
+        # 02–03 -> 2003 falls in 2003–13
+        i = format_labels.index("2003–13")
+        assert format_reg_avg[i] == 62.0
+        assert format_po_avg[i] == 64.0
+
+        # 13–14 -> 2014 falls in 2014–25
+        i = format_labels.index("2014–25")
+        assert format_reg_avg[i] == 57.0
+        assert format_po_avg[i] == 58.0
+
+    def test_period_with_no_data_averages_to_zero(self):
+        format_reg_avg, format_po_avg, format_labels = nba.compute_playoff_format_averages([], [], [], [])
+        assert format_reg_avg == [0] * len(nba.PLAYOFF_FORMAT_PERIODS)
+        assert format_po_avg == [0] * len(nba.PLAYOFF_FORMAT_PERIODS)
+
+
 class TestFetchSeasonHomePct:
     def test_computes_home_win_pct_from_cache(self, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
