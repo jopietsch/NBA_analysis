@@ -24,7 +24,7 @@ and time-zone analyses below), and displays each figure.
 
 ### `nba_home_court_advantage.png`
 
-The figure has five panels:
+The figure has six panels:
 
 1. **Regular season vs playoffs** — home win % per season, with an overall
    trend line for each, era shading, and COVID-season highlighting.
@@ -38,6 +38,12 @@ The figure has five panels:
    season vs playoff home win % across each playoff-format period
    (`PLAYOFF_FORMAT_PERIODS`), i.e. the spans of seasons between the format
    changes marked in panel 2 (1984; 1985-2002; 2003-2013; 2014-2025).
+6. **Playoff vs. regular-season gap** — full-width line chart showing
+   (playoff home win % − regular-season home win %) per season, with format
+   change markers and era shading. Directly visualizes the key finding:
+   playoffs used to carry a noticeably larger home-court edge than the regular
+   season, and that gap has narrowed sharply since the 2014 Finals format
+   change.
 
 Eras are defined by major NBA rule changes affecting pace/defense (see
 `ERA_DEFS` in `nba_home_court_advantage.py` for sources). The 2020 bubble
