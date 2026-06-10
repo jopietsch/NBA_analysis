@@ -81,6 +81,7 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
 
         os.makedirs(CACHE_DIR, exist_ok=True)
         df.to_csv(path, index=False)
+        time.sleep(SLEEP_SEC)  # polite pause, only needed after a real API call
 
     if df.empty:
         return None
@@ -134,7 +135,6 @@ def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]
             print(f"{pct:.1f}%")
         else:
             print("no data")
-        time.sleep(SLEEP_SEC)
 
         # Playoffs
         if year not in SKIP_PLAYOFF_YEARS:
@@ -146,7 +146,6 @@ def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]
                 print(f"{pct_po:.1f}%")
             else:
                 print("no data")
-            time.sleep(SLEEP_SEC)
 
     print(f"\nRegular season: {len(reg_seasons)} seasons fetched")
     print(f"Playoffs:       {len(po_seasons)} seasons fetched")
@@ -196,17 +195,17 @@ def plot_results(
         "axes.axisbelow":     True,
     })
 
-    fig = plt.figure(figsize=(15, 13))
+    fig = plt.figure(figsize=(15, 9))
     fig.suptitle("NBA Home Court Advantage — A 40-Year Decline",
                  fontsize=18, fontweight="bold", y=0.98, color="#2c2c2a")
     fig.text(0.5, 0.955,
              "Data: NBA.com via nba_api  |  Regular season & playoffs  |  1983-84 through 2024-25",
              ha="center", fontsize=9, color=GRAY)
 
-    gs = fig.add_gridspec(2, 2, hspace=0.45, wspace=0.32,
-                          left=0.07, right=0.97, top=0.93, bottom=0.06)
+    gs = fig.add_gridspec(2, 4, hspace=0.5, wspace=0.32,
+                          left=0.07, right=0.97, top=0.91, bottom=0.08)
 
-    # ── Panel 1: season-by-season regular season line ───────────────────────
+    # ── Panel 1: season-by-season regular season vs playoffs ─────────────────
     ax1 = fig.add_subplot(gs[0, :])
     x = np.arange(len(reg_seasons))
     pt_colors = [RED if s in COVID_SEASONS else BLUE for s in reg_seasons]
@@ -215,9 +214,21 @@ def plot_results(
     ax1.scatter(x, reg_pcts, c=pt_colors, s=40, zorder=3,
                 edgecolors="white", linewidths=0.8)
 
-    # Trend line
+    # Playoffs, aligned to the same x positions (gap where no playoff data, e.g. 2020 bubble)
+    po_pct_by_season = dict(zip(po_seasons, po_pcts))
+    po_pcts_aligned = [po_pct_by_season.get(s, np.nan) for s in reg_seasons]
+    ax1.plot(x, po_pcts_aligned, color=GREEN, linewidth=2, zorder=2)
+    ax1.scatter(x, po_pcts_aligned, color=GREEN, s=40, zorder=3,
+                edgecolors="white", linewidths=0.8)
+
+    # Trend lines
     z = np.polyfit(x, reg_pcts, 1)
-    ax1.plot(x, np.poly1d(z)(x), "--", color=GRAY, linewidth=1.4, alpha=0.7)
+    ax1.plot(x, np.poly1d(z)(x), "--", color=BLUE, linewidth=1.4, alpha=0.5)
+
+    po_pcts_arr = np.array(po_pcts_aligned, dtype=float)
+    po_mask = ~np.isnan(po_pcts_arr)
+    zp = np.polyfit(x[po_mask], po_pcts_arr[po_mask], 1)
+    ax1.plot(x, np.poly1d(zp)(x), "--", color=GREEN, linewidth=1.4, alpha=0.5)
 
     # Shade COVID seasons
     covid_idx = [i for i, s in enumerate(reg_seasons) if s in COVID_SEASONS]
@@ -225,18 +236,20 @@ def plot_results(
         ax1.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5,
                     alpha=0.12, color=RED)
 
-    ax1.set_title("Regular season: home win % per season",
+    ax1.set_title("Regular season vs playoffs: home win % per season",
                   fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     ax1.set_xticks(x)
     ax1.set_xticklabels(reg_seasons, rotation=45, ha="right", fontsize=8)
-    ax1.set_ylim(49, 71)
+    ax1.set_ylim(45, 80)
     ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
     ax1.set_ylabel("Home win %", fontsize=10)
 
     handles1 = [
-        mpatches.Patch(color=BLUE, label="Home win %"),
-        mpatches.Patch(color=RED,  label="COVID-impacted seasons"),
-        plt.Line2D([0], [0], color=GRAY, linestyle="--", label="Trend line"),
+        mpatches.Patch(color=BLUE,  label="Regular season"),
+        mpatches.Patch(color=GREEN, label="Playoffs"),
+        mpatches.Patch(color=RED,   label="COVID-impacted seasons"),
+        plt.Line2D([0], [0], color=BLUE,  linestyle="--", alpha=0.5, label="Trend (regular season)"),
+        plt.Line2D([0], [0], color=GREEN, linestyle="--", alpha=0.5, label="Trend (playoffs)"),
     ]
     ax1.legend(handles=handles1, fontsize=9, loc="upper right",
                framealpha=0.85, edgecolor="#ddd")
@@ -256,7 +269,7 @@ def plot_results(
                      fontsize=8, color=GRAY)
 
     # ── Panel 2: era grouped bar chart ───────────────────────────────────────
-    ax2 = fig.add_subplot(gs[1, 0])
+    ax2 = fig.add_subplot(gs[1, 1:3])
     xi = np.arange(len(era_labels_short))
     w  = 0.35
     bars1 = ax2.bar(xi - w/2, era_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
@@ -275,32 +288,6 @@ def plot_results(
     ax2.set_title("Regular season vs playoffs\nhome win % by era",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    # ── Panel 3: playoff season-by-season line ───────────────────────────────
-    ax3 = fig.add_subplot(gs[1, 1])
-    xp = np.arange(len(po_seasons))
-    ax3.plot(xp, po_pcts, color=GREEN, linewidth=2, zorder=2)
-    ax3.scatter(xp, po_pcts, color=GREEN, s=35, zorder=3,
-                edgecolors="white", linewidths=0.8)
-
-    if len(xp) > 1:
-        zp = np.polyfit(xp, po_pcts, 1)
-        ax3.plot(xp, np.poly1d(zp)(xp), "--", color=GRAY, linewidth=1.4, alpha=0.7)
-
-    tick_step = max(1, len(po_seasons) // 12)
-    ax3.set_xticks(xp[::tick_step])
-    ax3.set_xticklabels(po_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax3.set_ylim(45, 80)
-    ax3.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax3.set_ylabel("Home win %", fontsize=10)
-    ax3.set_title("Playoffs: home win % per season\n(2020 bubble excluded)",
-                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
-
-    handles3 = [
-        mpatches.Patch(color=GREEN, label="Playoff home win %"),
-        plt.Line2D([0], [0], color=GRAY, linestyle="--", label="Trend line"),
-    ]
-    ax3.legend(handles=handles3, fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     # ── Save ──────────────────────────────────────────────────────────────────
     output_path = "nba_home_court_advantage.png"
