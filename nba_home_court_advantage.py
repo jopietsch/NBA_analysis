@@ -980,58 +980,6 @@ def main() -> None:
                         output_path="nba_home_court_advantage_rest_playoffs.png",
                         extra_subtitle="; first round each year dropped (no prior playoff game for rest calc)")
 
-    alt_seasons, alt_stats = compute_altitude_stats(START_YEAR, END_YEAR, SeasonType.regular)
-    plot_category_road_win_analysis(
-        alt_seasons, alt_stats,
-        category_order=["Denver Nuggets", "Utah Jazz", "other"],
-        colors=ALTITUDE_COLORS, labels=ALTITUDE_LABELS,
-        title="Do High-Altitude Arenas (Denver, Utah) Boost Home Court Advantage?",
-        season_label="Regular season",
-        output_path="nba_home_court_advantage_altitude.png",
-        road_win_desc="home win % = home team's win % at that arena",
-        y_label="Home win %",
-    )
-
-    po_alt_seasons, po_alt_stats = compute_altitude_stats(
-        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
-    )
-    plot_category_road_win_analysis(
-        po_alt_seasons, po_alt_stats,
-        category_order=["Denver Nuggets", "Utah Jazz", "other"],
-        colors=ALTITUDE_COLORS, labels=ALTITUDE_LABELS,
-        title="Do High-Altitude Arenas (Denver, Utah) Boost Home Court Advantage?",
-        season_label="Playoffs",
-        output_path="nba_home_court_advantage_altitude_playoffs.png",
-        road_win_desc="home win % = home team's win % at that arena",
-        y_label="Home win %",
-    )
-
-    tz_seasons, tz_stats = compute_timezone_stats(START_YEAR, END_YEAR, SeasonType.regular)
-    plot_category_road_win_analysis(
-        tz_seasons, tz_stats,
-        category_order=TZ_CATEGORIES,
-        colors=TZ_COLORS, labels=TZ_LABELS,
-        title="Does Crossing Time Zones Reduce Home Court Advantage?",
-        season_label="Regular season",
-        output_path="nba_home_court_advantage_timezone.png",
-        road_win_desc="home win % = home team's win %, grouped by time zones the visitor crossed",
-        y_label="Home win %",
-    )
-
-    po_tz_seasons, po_tz_stats = compute_timezone_stats(
-        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
-    )
-    plot_category_road_win_analysis(
-        po_tz_seasons, po_tz_stats,
-        category_order=TZ_CATEGORIES,
-        colors=TZ_COLORS, labels=TZ_LABELS,
-        title="Does Crossing Time Zones Reduce Home Court Advantage?",
-        season_label="Playoffs",
-        output_path="nba_home_court_advantage_timezone_playoffs.png",
-        road_win_desc="home win % = home team's win %, grouped by time zones the visitor crossed",
-        y_label="Home win %",
-    )
-
     import nba_home_court_regression
     nba_home_court_regression.run()
 

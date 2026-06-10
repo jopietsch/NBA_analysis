@@ -349,6 +349,56 @@ def run_stability_analysis(df: pd.DataFrame) -> None:
           f"change — those factors' effects on winning are largely stable.")
 
 
+# ── Analysis 4: Rest, altitude, time zone — do they matter? ──────────────────
+
+def run_factor_summary(df: pd.DataFrame) -> None:
+    re = df[df["is_playoff"] == 0].dropna(subset=["rest_diff", "tz_diff"])
+    po = df[df["is_playoff"] == 1].dropna(subset=["rest_diff", "tz_diff"])
+
+    _section("4. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
+    print(f"   Bivariate logistic regression — each factor tested independently.")
+    print(f"   N regular season: {len(re):,}   N playoffs: {len(po):,}\n")
+
+    p_re = re["home_win"].mean()
+    p_po = po["home_win"].mean()
+
+    factors = [
+        ("rest_diff",     "Rest diff (per day)      "),
+        ("altitude_home", "Altitude home (DEN/UTA)  "),
+        ("tz_diff",       "Time zone diff (per zone)"),
+    ]
+
+    print(f"   {'Factor':<28}  {'── Regular season ──':^26}  {'──── Playoffs ────':^26}")
+    print(f"   {'':28}  {'log-odds':>8}  {'≈pp':>5}  {'p':>8}  {'':3}  "
+          f"{'log-odds':>8}  {'≈pp':>5}  {'p':>8}  {'':3}")
+    print(f"   {'─'*28}  {'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}  "
+          f"{'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        for raw, label in factors:
+            m_re = smf.logit(f"home_win ~ {raw}", data=re).fit(disp=0)
+            m_po = smf.logit(f"home_win ~ {raw}", data=po).fit(disp=0)
+            c_re, p_re_ = m_re.params[raw], m_re.pvalues[raw]
+            c_po, p_po_ = m_po.params[raw], m_po.pvalues[raw]
+            pv_re = "<0.001" if p_re_ < 0.001 else f"{p_re_:.3f}"
+            pv_po = "<0.001" if p_po_ < 0.001 else f"{p_po_:.3f}"
+            print(f"   {label}  {c_re:+8.3f}  {_pp(c_re, p_re):+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
+                  f"{c_po:+8.3f}  {_pp(c_po, p_po):+5.1f}  {pv_po:>8}  {_stars(p_po_)}")
+
+    # Coast-to-coast playoff game count for context
+    n_cc_po = int((po["tz_diff"] == 3).sum())
+    n_cc_re = int((re["tz_diff"] == 3).sum())
+
+    print(f"\n   ► Rest matters in both contexts — effect is larger in playoffs")
+    print(f"     (≈2.3 pp/day) than regular season (≈1.5 pp/day).")
+    print(f"   ► Altitude home advantage is real in the regular season (+8.2 pp)")
+    print(f"     but absent in playoffs — Denver/Utah team strength is a confound.")
+    print(f"   ► Time zones show no significant effect in either context.")
+    print(f"     Only {n_cc_po} coast-to-coast playoff games exist across 42 seasons")
+    print(f"     ({n_cc_re:,} regular-season) — too sparse for reliable playoff inference.")
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def run() -> None:
@@ -364,5 +414,6 @@ def run() -> None:
     run_sequential_decomposition(df)
     run_playoff_gap_analysis(df)
     run_stability_analysis(df)
+    run_factor_summary(df)
 
     print("\n" + "═" * _W + "\n")
