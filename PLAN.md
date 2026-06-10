@@ -61,26 +61,26 @@ would explain the era coefficients independent of rule changes.
 game logs via groupby.
 
 ### Data Layer (`nba_home_court_advantage.py`)
-- [ ] `compute_parity_stats(start_year, end_year, season_type, skip_years)` — per-season std dev of team win%; no new fetch function or cache files
+- [x] `compute_parity_stats(start_year, end_year, season_type, skip_years)` — per-season std dev of team win%; no new fetch function or cache files
 
 ### Tests (`test_nba_home_court_advantage.py`)
-- [ ] `TestComputeParityStats::test_computes_season_win_pct_std_dev` — synthetic CSV with 4 teams of known win rates; assert std dev matches expected
-- [ ] `TestComputeParityStats::test_returns_empty_when_cache_missing`
-- [ ] `TestComputeParityStats::test_skips_years_in_skip_years`
+- [x] `TestComputeParityStats::test_computes_season_win_pct_std_dev`
+- [x] `TestComputeParityStats::test_returns_empty_when_cache_missing`
+- [x] `TestComputeParityStats::test_skips_years_in_skip_years`
 
 ### Statistical Analysis (`nba_home_court_regression.py`)
-- [ ] `run_parity_correlation(parity_seasons, parity_vals, reg_seasons, reg_pcts)` — Pearson/Spearman correlation; OLS `home_win_pct ~ parity_std_dev`; era-bucketed table of avg parity vs. avg home win %
-- [ ] Call `nba.compute_parity_stats(...)` at top of `run()` and pass results in
+- [x] `run_parity_correlation(parity_seasons, parity_vals, reg_seasons, reg_pcts)` — Pearson/Spearman correlation; OLS `home_win_pct ~ parity_std_dev`; era-bucketed table
+- [x] Call `nba.compute_parity_stats(...)` at top of `run()` and pass results in
 
 ### Plot (`nba_home_court_advantage.py`)
-- [ ] `plot_parity_analysis(parity_seasons, parity_vals, reg_seasons, reg_pcts)` → `nba_home_court_parity.png`
+- [x] `plot_parity_analysis(parity_seasons, parity_vals, reg_seasons, reg_pcts)` → `nba_home_court_parity.png`
   - Panel 1: dual-axis time series — home win % (left y) and win% std dev (right y) over seasons
   - Panel 2: scatter of parity std dev vs. home win %, one point per season, era-colored with OLS fit
 
 ### PDF Integration
-- [ ] Add `## 11. Competitive Balance and Parity` section to `FINDINGS.md`
-- [ ] Add `_section_parity(s, sections)` function to `generate_report.py`
-- [ ] Add `story += _section_parity(s, sections)` call in `build_report()`
+- [x] Add `## 11. Competitive Balance and Parity` section to `FINDINGS.md`
+- [x] Add `_section_parity(s, sections)` function to `generate_report.py`
+- [x] Add `story += _section_parity(s, sections)` call in `build_report()`
 
 ---
 
@@ -260,7 +260,7 @@ _appendix_results
 | Analysis | Data | Tests | Regression | Plot | FINDINGS.md | PDF |
 |----------|------|-------|------------|------|-------------|-----|
 | B: Margin | ✅ | ✅ | ✅ | ✅ | ✅* | ✅ |
-| C: Parity | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| C: Parity | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | A: Series | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | E: Travel | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
 | D: Attend | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |

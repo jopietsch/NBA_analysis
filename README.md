@@ -29,7 +29,7 @@ regression tables (auto-generated each run, never edit manually).
 
 ### PNG charts
 
-`nba_home_court_advantage.py` saves eleven PNG charts.
+`nba_home_court_advantage.py` saves twelve PNG charts.
 
 **Overview (combined and individual panels):**
 
@@ -59,16 +59,18 @@ Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS
 | `nba_home_court_advantage_differentials.png` | 2×3 figure: per-season home-minus-away differentials for foul rate, FG%, eFG%, 3PA rate, 3P%, FT% |
 | `nba_home_court_shot_zones.png` | 2×2 figure: per-season home-minus-road shot zone % differentials (paint, mid-range, corner 3, above-break 3); data from 1996-97 onward |
 | `nba_home_court_margin.png` | 3-panel figure: home team point margin over time (all games, wins/losses split, era bar chart) |
+| `nba_home_court_parity.png` | 2-panel figure: dual-axis time series of home win % and team win% std dev; era-colored scatter with OLS fit |
 
 ### Regression analysis (stdout)
 
-Five analyses printed to stdout:
+Six analyses printed to stdout:
 
 1. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
 2. **Pre/post-2014 coefficient stability** — whether rest/altitude/tz effects changed after the 2014 Finals format shift.
 3. **Factor significance** — bivariate logistic regression for rest, altitude (DEN/UTA), and time zone in regular season vs playoffs.
 4. **Foul & shooting differentials by era** — OLS trend per season year for each box-score differential, regular season and playoffs separately.
 5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with OLS trends; regular season and playoffs.
+6. **Competitive balance / parity** — Pearson/Spearman correlation and OLS: does team win% disparity predict home court advantage?
 
 ### PDF report
 
@@ -79,7 +81,7 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains nine sections plus an appendix. Narrative prose is read directly from
+The report contains ten sections plus an appendix. Narrative prose is read directly from
 `FINDINGS.md` — edit that file to update the report text. Charts are injected by `generate_report.py`
 at fixed positions within each section. Appendix A renders `RESULTS.md` verbatim and is the
 authoritative source for coefficient values and significance levels.
@@ -87,7 +89,7 @@ authoritative source for coefficient values and significance levels.
 ## Updating FINDINGS.md
 
 `FINDINGS.md` is the single source of truth for narrative prose — both the
-standalone document and the PDF report text are driven by it. It has nine
+standalone document and the PDF report text are driven by it. It has ten
 numbered sections (matching the PDF) plus an appendix. Edit it when findings
 change, then regenerate the PDF with `python3 generate_report.py`.
 

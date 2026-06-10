@@ -997,6 +997,30 @@ def compute_margin_stats(
     return seasons, stats
 
 
+def compute_parity_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], list[float]]:
+    """Per-season std dev of team win%, a measure of competitive balance (lower = more parity)."""
+    seasons: list[str] = []
+    std_devs: list[float] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None or df.empty:
+            continue
+
+        team_wins = df.groupby("TEAM_ID")["WL"].apply(lambda x: (x == "W").mean())
+        if len(team_wins) < 2:
+            continue
+
+        seasons.append(short_label(year))
+        std_devs.append(float(team_wins.std()))
+
+    return seasons, std_devs
+
+
 def plot_differential_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,
@@ -1149,6 +1173,88 @@ def plot_margin_analysis(
 
     plt.tight_layout()
     output_path = "nba_home_court_margin.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
+def plot_parity_analysis(
+    parity_seasons: list[str], parity_std: list[float],
+    reg_seasons: list[str], reg_pcts: list[float],
+) -> None:
+    """
+    2-panel chart: does competitive balance track with home court advantage?
+
+    Panel 1: dual-axis time series — home win % and team win% std dev over seasons.
+    Panel 2: scatter of parity std dev vs. home win %, era-colored with OLS fit.
+    """
+    parity_lookup = dict(zip(parity_seasons, parity_std))
+    y_parity = np.array([parity_lookup.get(s, np.nan) for s in reg_seasons], dtype=float)
+    y_reg    = np.array(reg_pcts, dtype=float)
+    x        = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+    fig.suptitle("Does Competitive Balance Explain the Decline in Home Court Advantage?",
+                 fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Data: NBA.com  |  Regular season  |  Parity = std dev of team win % per season  "
+             "(lower = more equal league)",
+             ha="center", fontsize=9, color=GRAY)
+
+    # Panel 1: dual-axis time series
+    _shade_eras(ax1, reg_seasons, label_y=None)
+    ax1.plot(x, y_reg, color=BLUE, linewidth=2, label="Home win %", zorder=2)
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("Home win %", color=BLUE, fontsize=10)
+    ax1.tick_params(axis="y", labelcolor=BLUE)
+    ax1.set_title("Home win % and competitive parity over time",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    ax1r = ax1.twinx()
+    mask_p = ~np.isnan(y_parity)
+    ax1r.plot(x, y_parity, color=RED, linewidth=2, label="Win% std dev", zorder=2, alpha=0.8)
+    if mask_p.sum() >= 2:
+        z = np.polyfit(x[mask_p], y_parity[mask_p], 1)
+        ax1r.plot(x, np.poly1d(z)(x), "--", color=RED, linewidth=1.4, alpha=0.5)
+    ax1r.set_ylabel("Team win% std dev\n(lower = more parity)", color=RED, fontsize=9)
+    ax1r.tick_params(axis="y", labelcolor=RED)
+
+    lines1, labs1 = ax1.get_legend_handles_labels()
+    lines2, labs2 = ax1r.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labs1 + labs2, fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Panel 2: scatter (one point per season), era-colored, with OLS fit
+    for s, px, py in zip(reg_seasons, y_parity, y_reg):
+        if np.isnan(px) or np.isnan(py):
+            continue
+        yr = label_to_year(s)
+        color = GRAY
+        for (_, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+            if y1 <= yr <= y2:
+                color = era_color
+                break
+        ax2.scatter(px, py, color=color, s=60, zorder=3, edgecolors="white", linewidths=0.8)
+
+    both_valid = ~np.isnan(y_parity) & ~np.isnan(y_reg)
+    if both_valid.sum() >= 2:
+        z_sc = np.polyfit(y_parity[both_valid], y_reg[both_valid], 1)
+        px_range = np.linspace(y_parity[both_valid].min(), y_parity[both_valid].max(), 100)
+        ax2.plot(px_range, np.poly1d(z_sc)(px_range), "--", color=GRAY, linewidth=1.8, alpha=0.7)
+
+    era_patches = [mpatches.Patch(color=c, label=e[0]) for e, c in zip(ERA_DEFS, ERA_COLORS)]
+    ax2.legend(handles=era_patches, fontsize=8, framealpha=0.85, edgecolor="#ddd",
+               title="Era", title_fontsize=8)
+    ax2.set_xlabel("Team win% std dev (parity)", fontsize=10)
+    ax2.set_ylabel("Home win %", fontsize=10)
+    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax2.set_title("Parity vs. home court advantage\n(one point per season)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_parity.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.show()
@@ -1373,6 +1479,9 @@ def main() -> None:
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
     plot_margin_analysis(reg_margin_seasons, reg_margin_stats, po_margin_seasons, po_margin_stats)
+
+    parity_seasons, parity_std = compute_parity_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    plot_parity_analysis(parity_seasons, parity_std, reg_seasons, reg_pcts)
 
     print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")
     reg_zone_seasons, reg_zone_stats = compute_shot_zone_stats(START_YEAR, END_YEAR, SeasonType.regular)

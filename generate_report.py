@@ -388,6 +388,22 @@ def _section_margin(s, sections):
     ]
 
 
+def _section_parity(s, sections):
+    return [
+        PageBreak(),
+        *_section_header("11. Competitive Balance and Parity", s, sections),
+        Spacer(1, 0.1 * inch),
+        _chart(
+            "nba_home_court_parity.png",
+            "Figure 10. Competitive balance and home court advantage. "
+            "Left: home win % (blue, left axis) and team win% std dev (red, right axis) "
+            "over time — lower std dev = more equal league. "
+            "Right: scatter of parity std dev vs. home win % per season, colored by era, "
+            "with OLS fit.",
+        ),
+    ]
+
+
 def _section_summary(s, sections):
     rank_data = [
         ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
@@ -460,6 +476,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     story += _section_differentials(s, sections)
     story += _section_shot_zones(s, sections)
     story += _section_margin(s, sections)
+    story += _section_parity(s, sections)
     story += _section_summary(s, sections)
     story += _appendix_results(s)
 

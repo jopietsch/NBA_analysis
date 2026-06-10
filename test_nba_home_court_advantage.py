@@ -1038,6 +1038,41 @@ class TestComputeMarginStats:
         assert calls == [2019, 2021]
 
 
+class TestComputeParityStats:
+    def test_computes_season_win_pct_std_dev(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # T1=3W/1L=75%, T2=2W/2L=50%, T3=1W/3L=25%, T4=0W/4L=0%
+        df = pd.DataFrame({
+            "TEAM_ID": [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4],
+            "WL": ["W", "W", "W", "L",
+                   "W", "W", "L", "L",
+                   "W", "L", "L", "L",
+                   "L", "L", "L", "L"],
+            "MATCHUP": ["A vs. B"] * 16,
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+        seasons, std_devs = nba.compute_parity_stats(2024, 2024, "Regular Season")
+
+        assert seasons == ["23–24"]
+        expected = np.std([0.75, 0.50, 0.25, 0.00], ddof=1)
+        assert std_devs[0] == pytest.approx(expected, rel=1e-5)
+
+    def test_returns_empty_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        seasons, std_devs = nba.compute_parity_stats(2024, 2024, "Regular Season")
+        assert seasons == []
+        assert std_devs == []
+
+    def test_skips_years_in_skip_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "_load_game_log",
+                            lambda year, s: calls.append(year) or None)
+        nba.compute_parity_stats(2019, 2021, "Playoffs", skip_years={2020})
+        assert 2020 not in calls
+        assert calls == [2019, 2021]
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)

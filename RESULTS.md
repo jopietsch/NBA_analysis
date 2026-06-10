@@ -147,6 +147,33 @@ All data from cache/ — same source as the plots above.
    ► Overall reg-season mean margin: +2.80 pts.
    ► Overall playoff mean margin:    +4.36 pts.
 
+─── 6. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ────────────────────
+   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
+   Parity = std dev of all-team win percentages for the season.
+
+   N = 42 seasons
+   Pearson r  = -0.066  (p = 0.676  )
+   Spearman ρ = -0.020  (p = 0.899  )
+
+   OLS: home_win_pct ~ parity_std_dev
+   Slope: -15.093 pp per unit std dev  (p = 0.676  )
+   R² = 0.0044
+
+   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
+
+   Era             Win% std dev    Home win %
+   ────────────  ──────────────  ────────────
+   1984–94               0.1551         65.0%
+   1995–01               0.1700         60.1%
+   2002–04               0.1393         61.1%
+   2005–17               0.1559         59.5%
+   2018–22               0.1461         56.2%
+   2023–25               0.1496         55.6%
+
+   ► A positive r = higher disparity ↔ higher home advantage — weaker road teams
+     lose more away from home when the talent gap between franchises is larger.
+   ► Correlation is not statistically significant after the shared time trend.
+
 ════════════════════════════════════════════════════════════════════════
 
 ```

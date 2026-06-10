@@ -181,6 +181,32 @@ playoffs across most of the dataset.
 
 ---
 
+## 11. Competitive Balance and Parity
+
+Team-level win% disparity — measured as the per-season standard deviation of franchise
+win percentages — quantifies how unequal the league is in any given year. A high
+standard deviation means a few teams dominate while others lose consistently; a low
+standard deviation means the field is compressed. The hypothesis was that salary-cap
+and draft-lottery mechanisms have compressed team quality, leaving the home team with
+less of a structural talent edge over any given road opponent.
+
+### Parity does not explain home court advantage
+
+The cross-season correlation between team win% disparity and home win % is near zero
+and statistically non-significant. Despite decades of changes to the league's
+competitive-balance mechanisms, the two series do not move together in any reliable
+way. The era-bucketed pattern is mixed: win% disparity actually **peaked** in the
+1995–01 era while home court advantage was already declining, then fell in 2002–04
+while home win % ticked back up slightly before continuing its descent.
+
+This rules out parity as a primary driver of the observed decline. The era coefficients
+in the regression model are not explained by the compression of team talent alone.
+Whatever the era effect captures — rule changes to pace and officiating, broader
+cultural and travel shifts, improvements in sports science for road teams — it is not
+reducible to a simple story about competitive balance.
+
+---
+
 ## 8. Summary
 
 Home court advantage has declined substantially in both the regular season and
