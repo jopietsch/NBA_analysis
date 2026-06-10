@@ -1025,6 +1025,9 @@ def main() -> None:
         road_win_desc="visiting team's win %, grouped by time zones crossed to reach the game",
     )
 
+    import nba_home_court_regression
+    nba_home_court_regression.run()
+
 
 if __name__ == "__main__":
     main()
