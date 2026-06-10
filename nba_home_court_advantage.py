@@ -755,8 +755,8 @@ ALTITUDE_LABELS = {
 def fetch_altitude_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-home-game result from the cached game log, tagged with whether the
-    home team plays at elevation (Denver, Utah). AWAY_WIN = 1 if the
-    visiting team won that game.
+    home team plays at elevation (Denver, Utah). HOME_WIN = 1 if the home
+    team won that game.
     """
     df = _load_game_log(end_year, season_type)
     if df is None:
@@ -766,15 +766,15 @@ def fetch_altitude_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     if home.empty:
         return None
 
-    home["AWAY_WIN"] = (home["WL"] == "L").astype(int)
+    home["HOME_WIN"] = (home["WL"] == "W").astype(int)
     home["ALTITUDE"] = home["TEAM_NAME"].isin(ALTITUDE_TEAMS)
-    return home[["TEAM_NAME", "AWAY_WIN", "ALTITUDE"]]
+    return home[["TEAM_NAME", "HOME_WIN", "ALTITUDE"]]
 
 
 def compute_altitude_stats(
     start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
 ) -> tuple[list[str], dict]:
-    """Per-season road (visiting-team) win % at each altitude city vs elsewhere."""
+    """Per-season home win % at each altitude city vs elsewhere."""
     seasons: list[str] = []
     stats: dict[str, list[float]] = {name: [] for name in ALTITUDE_TEAMS}
     stats["other"] = []
@@ -788,10 +788,10 @@ def compute_altitude_stats(
 
         seasons.append(short_label(year))
         other = g[~g["ALTITUDE"]]
-        stats["other"].append(100 * other["AWAY_WIN"].mean() if len(other) else np.nan)
+        stats["other"].append(100 * other["HOME_WIN"].mean() if len(other) else np.nan)
         for name in ALTITUDE_TEAMS:
             team_g = g[g["TEAM_NAME"] == name]
-            stats[name].append(100 * team_g["AWAY_WIN"].mean() if len(team_g) else np.nan)
+            stats[name].append(100 * team_g["HOME_WIN"].mean() if len(team_g) else np.nan)
 
     return seasons, stats
 
@@ -800,13 +800,16 @@ def plot_category_road_win_analysis(
     seasons: list[str], stats: dict, category_order: list[str],
     colors: dict, labels: dict, title: str, season_label: str,
     output_path: str, road_win_desc: str,
+    y_label: str = "Road (visiting team) win %",
 ) -> None:
     """
-    Generic 2-panel chart comparing visiting-team (road) win % across a set
-    of game categories (e.g. altitude city, time zones crossed).
+    Generic 2-panel chart comparing win % across a set of game categories
+    (e.g. altitude city, time zones crossed).
 
-    Panel 1: road win % per season for each category, with trend lines.
+    Panel 1: win % per season for each category, with trend lines.
     Panel 2: the same, averaged within each rule-change era.
+    y_label controls the axis label and panel titles (use "Home win %" for
+    altitude, "Road (visiting team) win %" for time-zone analysis).
     """
     x = np.arange(len(seasons))
     tick_step = max(1, len(seasons) // 14)
@@ -814,7 +817,7 @@ def plot_category_road_win_analysis(
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6), gridspec_kw={"width_ratios": [2, 1]})
     fig.suptitle(title, fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             f"Data: NBA.com  |  {season_label}  |  road win % = {road_win_desc}",
+             f"Data: NBA.com  |  {season_label}  |  {road_win_desc}",
              ha="center", fontsize=9, color=GRAY)
 
     # Panel 1: per-season trend
@@ -829,8 +832,8 @@ def plot_category_road_win_analysis(
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax1.set_ylabel("Road (visiting team) win %")
-    ax1.set_title("Road win % by season", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax1.set_ylabel(y_label)
+    ax1.set_title(f"{y_label} by season", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     # Panel 2: era-grouped bar chart
@@ -850,7 +853,7 @@ def plot_category_road_win_analysis(
     ax2.set_xticks(xi)
     ax2.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=8)
     ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax2.set_title("Road win % by era", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax2.set_title(f"{y_label} by era", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     ax2.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
@@ -922,14 +925,14 @@ def fetch_timezone_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     home_tz = merged["TEAM_NAME_home"].map(TEAM_TIMEZONES)
     away_tz = merged["TEAM_NAME_away"].map(TEAM_TIMEZONES)
     merged["TZ_DIFF"] = (home_tz - away_tz).abs().astype(int)
-    merged["AWAY_WIN"] = (merged["WL_home"] == "L").astype(int)
-    return merged[["TZ_DIFF", "AWAY_WIN"]]
+    merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
+    return merged[["TZ_DIFF", "HOME_WIN"]]
 
 
 def compute_timezone_stats(
     start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
 ) -> tuple[list[str], dict]:
-    """Per-season road (visiting-team) win % grouped by time zones crossed."""
+    """Per-season home win % grouped by time zones the visiting team crossed."""
     seasons: list[str] = []
     stats: dict[str, list[float]] = {cat: [] for cat in TZ_CATEGORIES}
 
@@ -943,7 +946,7 @@ def compute_timezone_stats(
         seasons.append(short_label(year))
         for cat in TZ_CATEGORIES:
             sub = g[g["TZ_DIFF"] == int(cat)]
-            stats[cat].append(100 * sub["AWAY_WIN"].mean() if len(sub) else np.nan)
+            stats[cat].append(100 * sub["HOME_WIN"].mean() if len(sub) else np.nan)
 
     return seasons, stats
 
@@ -982,10 +985,11 @@ def main() -> None:
         alt_seasons, alt_stats,
         category_order=["Denver Nuggets", "Utah Jazz", "other"],
         colors=ALTITUDE_COLORS, labels=ALTITUDE_LABELS,
-        title="Are Visiting Teams Disadvantaged by Altitude (Denver, Utah)?",
+        title="Do High-Altitude Arenas (Denver, Utah) Boost Home Court Advantage?",
         season_label="Regular season",
         output_path="nba_home_court_advantage_altitude.png",
-        road_win_desc="visiting team's win % at that arena",
+        road_win_desc="home win % = home team's win % at that arena",
+        y_label="Home win %",
     )
 
     po_alt_seasons, po_alt_stats = compute_altitude_stats(
@@ -995,10 +999,11 @@ def main() -> None:
         po_alt_seasons, po_alt_stats,
         category_order=["Denver Nuggets", "Utah Jazz", "other"],
         colors=ALTITUDE_COLORS, labels=ALTITUDE_LABELS,
-        title="Are Visiting Teams Disadvantaged by Altitude (Denver, Utah)?",
+        title="Do High-Altitude Arenas (Denver, Utah) Boost Home Court Advantage?",
         season_label="Playoffs",
         output_path="nba_home_court_advantage_altitude_playoffs.png",
-        road_win_desc="visiting team's win % at that arena",
+        road_win_desc="home win % = home team's win % at that arena",
+        y_label="Home win %",
     )
 
     tz_seasons, tz_stats = compute_timezone_stats(START_YEAR, END_YEAR, SeasonType.regular)
@@ -1006,10 +1011,11 @@ def main() -> None:
         tz_seasons, tz_stats,
         category_order=TZ_CATEGORIES,
         colors=TZ_COLORS, labels=TZ_LABELS,
-        title="Does Crossing Time Zones Hurt Visiting Teams?",
+        title="Does Crossing Time Zones Reduce Home Court Advantage?",
         season_label="Regular season",
         output_path="nba_home_court_advantage_timezone.png",
-        road_win_desc="visiting team's win %, grouped by time zones crossed to reach the game",
+        road_win_desc="home win % = home team's win %, grouped by time zones the visitor crossed",
+        y_label="Home win %",
     )
 
     po_tz_seasons, po_tz_stats = compute_timezone_stats(
@@ -1019,10 +1025,11 @@ def main() -> None:
         po_tz_seasons, po_tz_stats,
         category_order=TZ_CATEGORIES,
         colors=TZ_COLORS, labels=TZ_LABELS,
-        title="Does Crossing Time Zones Hurt Visiting Teams?",
+        title="Does Crossing Time Zones Reduce Home Court Advantage?",
         season_label="Playoffs",
         output_path="nba_home_court_advantage_timezone_playoffs.png",
-        road_win_desc="visiting team's win %, grouped by time zones crossed to reach the game",
+        road_win_desc="home win % = home team's win %, grouped by time zones the visitor crossed",
+        y_label="Home win %",
     )
 
     import nba_home_court_regression

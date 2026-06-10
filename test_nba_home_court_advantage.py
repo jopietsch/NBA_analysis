@@ -344,7 +344,7 @@ class TestFetchAltitudeData:
         df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
         assert nba.fetch_altitude_data(2024, "Regular Season") is None
 
-    def test_tags_altitude_teams_and_computes_away_win(self, tmp_path, monkeypatch):
+    def test_tags_altitude_teams_and_computes_home_win(self, tmp_path, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
         df = pd.DataFrame({
             "TEAM_NAME": ["Denver Nuggets", "Denver Nuggets", "Utah Jazz",   "Boston Celtics", "Boston Celtics"],
@@ -360,15 +360,15 @@ class TestFetchAltitudeData:
 
         den_rows = result[result["TEAM_NAME"] == "Denver Nuggets"]
         assert den_rows["ALTITUDE"].all()
-        assert sorted(den_rows["AWAY_WIN"].tolist()) == [0, 1]  # one home win, one home loss
+        assert sorted(den_rows["HOME_WIN"].tolist()) == [0, 1]  # one home win, one home loss
 
         uta_rows = result[result["TEAM_NAME"] == "Utah Jazz"]
         assert uta_rows["ALTITUDE"].all()
-        assert uta_rows["AWAY_WIN"].iloc[0] == 1  # home team (Jazz) lost
+        assert uta_rows["HOME_WIN"].iloc[0] == 0  # home team (Jazz) lost
 
         bos_rows = result[result["TEAM_NAME"] == "Boston Celtics"]
         assert not bos_rows["ALTITUDE"].any()
-        assert bos_rows["AWAY_WIN"].iloc[0] == 0  # home team (Celtics) won
+        assert bos_rows["HOME_WIN"].iloc[0] == 1  # home team (Celtics) won
 
 
 class TestFetchAltitudeDataFromRealCache:
@@ -378,22 +378,22 @@ class TestFetchAltitudeDataFromRealCache:
         result = nba.fetch_altitude_data(1985, "Regular Season")
 
         assert result is not None
-        assert list(result.columns) == ["TEAM_NAME", "AWAY_WIN", "ALTITUDE"]
+        assert list(result.columns) == ["TEAM_NAME", "HOME_WIN", "ALTITUDE"]
         assert len(result) > 0
-        assert result["AWAY_WIN"].isin([0, 1]).all()
+        assert result["HOME_WIN"].isin([0, 1]).all()
         # Utah Jazz (TEAM_NAME stayed constant despite the UTH -> UTA
         # abbreviation change) should be tagged as an altitude team
         assert result.loc[result["TEAM_NAME"] == "Utah Jazz", "ALTITUDE"].all()
 
 
 class TestComputeAltitudeStats:
-    def test_aggregates_road_win_pct_per_team_and_other(self, monkeypatch):
+    def test_aggregates_home_win_pct_per_team_and_other(self, monkeypatch):
         def fake_fetch(year, season_type):
             if year != 2024:
                 return None
             return pd.DataFrame({
                 "TEAM_NAME": ["Denver Nuggets", "Denver Nuggets", "Utah Jazz", "Boston Celtics", "Boston Celtics"],
-                "AWAY_WIN":  [0, 1, 1, 0, 1],
+                "HOME_WIN":  [1, 0, 1, 1, 0],
                 "ALTITUDE":  [True, True, True, False, False],
             })
 
@@ -495,9 +495,9 @@ class TestFetchTimezoneData:
         assert len(result) == 2
         result = result.sort_values("TZ_DIFF").reset_index(drop=True)
         assert result.loc[0, "TZ_DIFF"] == 2
-        assert result.loc[0, "AWAY_WIN"] == 1  # Denver won at Boston
+        assert result.loc[0, "HOME_WIN"] == 0  # Boston lost to Denver
         assert result.loc[1, "TZ_DIFF"] == 3
-        assert result.loc[1, "AWAY_WIN"] == 0  # Lakers lost at Boston
+        assert result.loc[1, "HOME_WIN"] == 1  # Boston beat the Lakers
 
 
 class TestFetchTimezoneDataFromRealCache:
@@ -507,20 +507,20 @@ class TestFetchTimezoneDataFromRealCache:
         result = nba.fetch_timezone_data(1985, "Regular Season")
 
         assert result is not None
-        assert list(result.columns) == ["TZ_DIFF", "AWAY_WIN"]
+        assert list(result.columns) == ["TZ_DIFF", "HOME_WIN"]
         assert len(result) > 0
-        assert result["AWAY_WIN"].isin([0, 1]).all()
+        assert result["HOME_WIN"].isin([0, 1]).all()
         assert result["TZ_DIFF"].between(0, 3).all()
 
 
 class TestComputeTimezoneStats:
-    def test_aggregates_road_win_pct_by_zones_crossed(self, monkeypatch):
+    def test_aggregates_home_win_pct_by_zones_crossed(self, monkeypatch):
         def fake_fetch(year, season_type):
             if year != 2024:
                 return None
             return pd.DataFrame({
                 "TZ_DIFF":  [0, 0, 1, 2, 3, 3],
-                "AWAY_WIN": [1, 0, 1, 0, 1, 1],
+                "HOME_WIN": [0, 1, 0, 1, 0, 0],
             })
 
         monkeypatch.setattr(nba, "fetch_timezone_data", fake_fetch)
@@ -528,9 +528,9 @@ class TestComputeTimezoneStats:
 
         assert seasons == ["23–24"]
         assert stats["0"] == [50.0]
-        assert stats["1"] == [100.0]
-        assert stats["2"] == [0.0]
-        assert stats["3"] == [100.0]
+        assert stats["1"] == [0.0]
+        assert stats["2"] == [100.0]
+        assert stats["3"] == [0.0]
 
     def test_skips_years_with_no_data(self, monkeypatch):
         monkeypatch.setattr(nba, "fetch_timezone_data", lambda year, season_type: None)
