@@ -13,4 +13,6 @@ nba_home_court_advantage_rest.png
 nba_home_court_advantage_rest_playoffs.png
 nba_home_court_advantage_differentials.png
 nba_home_court_shot_zones.png
+nba_home_court_margin.png
 *.pdf
+.DS_Store

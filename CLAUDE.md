@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 8 numbered `##` sections; drives the PDF report prose; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 9 numbered `##` sections; drives the PDF report prose; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -42,6 +42,7 @@ The project is two Python modules plus one test file:
 - `fetch_timezone_data(end_year, season_type)` — per-game home win tagged with TZ-diff
 - `fetch_differential_data(end_year, season_type)` — per-game home-minus-away box-score differentials: foul, FG%, eFG%, 3PA rate, 3P%, FT%
 - `fetch_shot_zones(end_year, season_type, location)` — team-level shot zone FGA totals from `LeagueDashTeamShotLocations` split by 'Home'/'Road'; columns flattened from API MultiIndex before caching
+- `fetch_margin_data(end_year, season_type)` — per-home-game point margin from cached game log; renames `PLUS_MINUS` → `margin`; no new cache files (PLUS_MINUS absent before 1995–96)
 
 *Shared low-level helpers:*
 - `_load_game_log(end_year, season_type)` — load cached game log CSV (one row per team per game)
@@ -56,6 +57,7 @@ The project is two Python modules plus one test file:
 - `compute_rest_stats(...)`, `compute_altitude_stats(...)`, `compute_timezone_stats(...)` — per-season stat series for each analysis
 - `compute_differential_stats(...)` — per-season mean home-minus-away box-score differentials
 - `compute_shot_zone_stats(...)` — per-season home-minus-road shot zone % differentials; calls `_zone_pcts()` internally
+- `compute_margin_stats(...)` — per-season dict of home point margin statistics: `all_games_mean`, `home_wins_mean`, `home_losses_mean`, `std_dev`
 - `bucket_stats_by_era(seasons, stats)` — average any per-season stats dict within each ERA_DEFS period
 - `_align_to_seasons(ref_seasons, target_seasons, target_stats, key)` — align a per-season stat series to a reference season list, filling gaps with NaN; used to overlay playoff data on the regular-season x-axis in plot functions
 
@@ -72,6 +74,7 @@ The project is two Python modules plus one test file:
 - `plot_category_road_win_analysis(...)` — generic 2-panel for altitude or timezone category comparisons
 - `plot_differential_analysis(...)` — 2×3 figure: foul diff, FG%, eFG%, 3PA rate, 3P%, FT% differentials over time (reg + playoffs aligned)
 - `plot_shot_zone_analysis(...)` — 2×2 figure: home-minus-road shot zone % differentials (paint, mid-range, corner 3, above-break 3)
+- `plot_margin_analysis(...)` — 3-panel figure: all-game margin over time, win/loss margin split, era bar chart → `nba_home_court_margin.png`
 
 `main()` runs the full pipeline and ends with `import nba_home_court_regression; nba_home_court_regression.run()` — the import is inside `main()` to avoid a circular import (regression module imports this one at module level).
 
@@ -83,18 +86,20 @@ The project is two Python modules plus one test file:
   - `home_win`, `year`, `is_playoff`, `era`, `format_period`, `covid`
   - `rest_diff`, `altitude_home`, `tz_diff`
   - `foul_diff`, `fg_pct_diff`, `efg_pct_diff`, `tpa_rate_diff`, `fg3_pct_diff`, `ft_pct_diff`
+  - `margin` — home team point differential (`PLUS_MINUS_home`); NaN before 1995–96
 
-Four analyses printed to stdout:
+Five analyses printed to stdout:
 1. **Sequential R² decomposition** (regular season only) — era → +rest → +altitude → +tz → +covid
 2. **Pre/post-2014 coefficient stability** — do rest/altitude/tz effects change after the Finals format shift?
 3. **Factor significance summary** — bivariate logistic regressions for rest/altitude/tz in regular season vs. playoffs side-by-side
 4. **Foul & shooting differentials by era** — OLS trend (change per season year) for each box-score differential, regular season and playoffs separately
+5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with OLS trends
 
 Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean).
 
 ---
 
-**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_section_header(title, s, sections)` returns the `[Paragraph, HR, prose]` preamble shared by all 8 section functions; `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
+**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_section_header(title, s, sections)` returns the `[Paragraph, HR, prose]` preamble shared by all 9 section functions; `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
 
 ---
 
