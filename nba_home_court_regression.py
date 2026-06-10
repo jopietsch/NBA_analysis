@@ -214,95 +214,10 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     print(f"   ► Rest, altitude, and time zone together add the remaining {100 - era_pct:.0f}%.")
 
 
-# ── Analysis 2: Playoff gap × format period ───────────────────────────────────
-
-def run_playoff_gap_analysis(df: pd.DataFrame) -> None:
-    from scipy import stats as scipy_stats
-
-    # "2003–13" is the period immediately before 2014, making the 2014–25
-    # interaction term a direct test of whether the format change mattered.
-    # (Using "1984" as reference is unstable — only one season, 79 playoff games.)
-    fmt_ref = nba.PLAYOFF_FORMAT_PERIODS[2][0]  # "2003–13"
-
-    _section("2. WHY DID THE PLAYOFF/REGULAR-SEASON GAP NARROW?")
-
-    # Descriptive table
-    print(f"\n   Raw home win % by playoff format period:\n")
-    print(f"   {'Period':<12}  {'Reg HW%':>7}  {'PO HW%':>7}  {'Gap':>7}  {'N reg':>7}  {'N po':>6}")
-    print(f"   {'─'*12}  {'─'*7}  {'─'*7}  {'─'*7}  {'─'*7}  {'─'*6}")
-    for label, y1, y2, _ in nba.PLAYOFF_FORMAT_PERIODS:
-        sub    = df[(df["year"] >= y1) & (df["year"] <= y2)]
-        reg_s  = sub[sub["is_playoff"] == 0]
-        po_s   = sub[sub["is_playoff"] == 1]
-        r_hw   = reg_s["home_win"].mean() * 100 if len(reg_s) else np.nan
-        p_hw   = po_s["home_win"].mean()  * 100 if len(po_s)  else np.nan
-        gap    = p_hw - r_hw if not (np.isnan(r_hw) or np.isnan(p_hw)) else np.nan
-        gap_s  = f"{gap:+.1f}pp" if not np.isnan(gap) else "  n/a"
-        print(f"   {label:<12}  {r_hw:7.1f}%  {p_hw:7.1f}%  {gap_s:>7}  {len(reg_s):>7,}  {len(po_s):>6,}")
-
-    # Per-season gap t-test: pre-2014 vs 2014+
-    season_hw = df.groupby(["year", "is_playoff"])["home_win"].mean() * 100
-    pivot = season_hw.unstack(level="is_playoff").rename(columns={0: "reg", 1: "po"})
-    pivot = pivot.dropna()
-    gaps  = pivot["po"] - pivot["reg"]
-    pre_gaps  = gaps[gaps.index <  2014]
-    post_gaps = gaps[gaps.index >= 2014]
-    t_stat, p_ttest = scipy_stats.ttest_ind(pre_gaps, post_gaps)
-
-    print(f"\n   Per-season gap (playoff HW% − reg HW%) — pre-2014 vs post-2014:\n")
-    print(f"   {'Period':<15}  {'N seasons':>9}  {'Mean gap':>9}  {'Std dev':>8}")
-    print(f"   {'─'*15}  {'─'*9}  {'─'*9}  {'─'*8}")
-    print(f"   {'Pre-2014':<15}  {len(pre_gaps):>9}  {pre_gaps.mean():>+8.1f}pp  {pre_gaps.std():>7.1f}pp")
-    print(f"   {'2014–2025':<15}  {len(post_gaps):>9}  {post_gaps.mean():>+8.1f}pp  {post_gaps.std():>7.1f}pp")
-    pval_s = "<0.001" if p_ttest < 0.001 else f"{p_ttest:.3f}"
-    print(f"\n   Two-sample t-test: t = {t_stat:.2f},  p = {pval_s}  {_stars(p_ttest).strip()}")
-    print(f"   ► The gap shrank by {pre_gaps.mean() - post_gaps.mean():.1f} pp on average after 2014.")
-
-    # Interaction logistic regression — format_period without era controls to
-    # avoid collinearity (both variables capture the same time dimension).
-    # Reference period: "2003–13" (immediately before the 2014 format change),
-    # making the 2014–25 interaction a direct pre/post test.
-    complete = df.dropna(subset=["rest_diff", "tz_diff"])
-    n        = len(complete)
-    p_bar    = complete["home_win"].mean()
-    fpr      = f"C(format_period, Treatment('{fmt_ref}'))"
-    formula  = (
-        f"home_win ~ {fpr} + is_playoff + {fpr}:is_playoff"
-        f" + rest_diff + altitude_home + tz_diff + covid"
-    )
-
-    print(f"\n   Interaction model: is_playoff × format_period  (N = {n:,})")
-    print(f"   Controls: rest, altitude, tz, COVID.  No era — era and format_period are")
-    print(f"   collinear (both time-based); dropping era isolates the format period signal.")
-    print(f"   Reference period: {fmt_ref}  (immediately before the 2014 change).\n")
-    print(f"   {'Term':<44}  {'log-odds':>8}  {'≈pp':>6}  {'p':>8}  {'':>3}")
-    print(f"   {'─'*44}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
-
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        m = smf.logit(formula, data=complete).fit(disp=0)
-
-    for name in m.params.index:
-        if "is_playoff" not in name:
-            continue
-        coef   = m.params[name]
-        pval   = m.pvalues[name]
-        label  = _clean(name, nba.ERA_DEFS[0][0], fmt_ref)
-        pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
-        print(f"   {label:<44}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  {pval_s:>8}  {_stars(pval)}")
-
-    k2014 = next((k for k in m.params.index if "2014" in k and "is_playoff" in k), None)
-    if k2014:
-        coef_2014, p_2014 = m.params[k2014], m.pvalues[k2014]
-        direction = "lower" if coef_2014 < 0 else "higher"
-        print(f"\n   ► Playoff premium was {direction} in 2014–25 than in {fmt_ref} by "
-              f"{abs(_pp(coef_2014, p_bar)):.1f} pp  (p = {p_2014:.3f} {_stars(p_2014).strip()}).")
-
-
-# ── Analysis 3: Pre/post-2014 coefficient stability (regular season) ──────────
+# ── Analysis 2: Pre/post-2014 coefficient stability (regular season) ──────────
 
 def run_stability_analysis(df: pd.DataFrame) -> None:
-    _section("3. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only)")
+    _section("2. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only)")
     print("   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?")
     print("   Stable coefficients → those factors didn't drive the post-2014 change.\n")
 
@@ -355,7 +270,7 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     re = df[df["is_playoff"] == 0].dropna(subset=["rest_diff", "tz_diff"])
     po = df[df["is_playoff"] == 1].dropna(subset=["rest_diff", "tz_diff"])
 
-    _section("4. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
+    _section("3. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
     print(f"   Bivariate logistic regression — each factor tested independently.")
     print(f"   N regular season: {len(re):,}   N playoffs: {len(po):,}\n")
 
@@ -412,7 +327,6 @@ def run() -> None:
         return
 
     run_sequential_decomposition(df)
-    run_playoff_gap_analysis(df)
     run_stability_analysis(df)
     run_factor_summary(df)
 

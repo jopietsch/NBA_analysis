@@ -138,31 +138,6 @@ class TestComputePlayoffFormatAverages:
         assert format_po_avg == [0] * len(nba.PLAYOFF_FORMAT_PERIODS)
 
 
-class TestComputeGapSeries:
-    def test_gap_where_both_exist(self):
-        result = nba.compute_gap_series(
-            ["18–19", "19–20", "20–21"],
-            [60.0,    58.0,    55.0],
-            ["18–19", "20–21"],
-            [68.0,    61.0],
-        )
-        assert result[0] == 8.0     # 68 - 60
-        assert np.isnan(result[1])  # no playoff data for 19–20 (bubble year)
-        assert result[2] == 6.0     # 61 - 55
-
-    def test_all_missing_playoff_data_returns_all_nan(self):
-        result = nba.compute_gap_series(["18–19", "19–20"], [60.0, 58.0], [], [])
-        assert len(result) == 2
-        assert all(np.isnan(v) for v in result)
-
-    def test_length_matches_reg_seasons(self):
-        reg_seasons = [nba.short_label(y) for y in range(2010, 2026)]
-        reg_pcts = [60.0] * len(reg_seasons)
-        result = nba.compute_gap_series(reg_seasons, reg_pcts, reg_seasons, reg_pcts)
-        assert len(result) == len(reg_seasons)
-        assert all(v == 0.0 for v in result)
-
-
 class TestFetchSeasonHomePct:
     def test_computes_home_win_pct_from_cache(self, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)

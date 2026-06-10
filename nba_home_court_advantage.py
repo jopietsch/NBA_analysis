@@ -219,21 +219,6 @@ def compute_playoff_format_averages(
     return format_reg_avg, format_po_avg, format_labels_short
 
 
-def compute_gap_series(
-    reg_seasons: list[str], reg_pcts: list[float],
-    po_seasons: list[str], po_pcts: list[float],
-) -> list[float]:
-    """
-    Per-season gap aligned to reg_seasons: playoff home win% − regular-season home win%.
-    float("nan") where no playoff data exists for that season.
-    """
-    po_pct_by_season = dict(zip(po_seasons, po_pcts))
-    return [
-        round(po_pct_by_season[s] - reg_pct, 1) if s in po_pct_by_season else float("nan")
-        for s, reg_pct in zip(reg_seasons, reg_pcts)
-    ]
-
-
 # ── Plot ──────────────────────────────────────────────────────────────────────
 BLUE  = "#378add"
 GREEN = "#1d9e75"
@@ -250,9 +235,8 @@ def plot_results(
     po_seasons: list[str], po_pcts: list[float],
     era_reg_avg: list[float], era_po_avg: list[float], era_labels_short: list[str],
     format_reg_avg: list[float], format_po_avg: list[float], format_labels_short: list[str],
-    gap_values: list[float],
 ) -> None:
-    """Build the 6-panel figure and save/show it."""
+    """Build the 5-panel figure and save/show it."""
     plt.rcParams.update({
         "font.family":        "DejaVu Sans",
         "axes.spines.top":    False,
@@ -265,15 +249,15 @@ def plot_results(
         "axes.axisbelow":     True,
     })
 
-    fig = plt.figure(figsize=(22.5, 21.0))
+    fig = plt.figure(figsize=(22.5, 17.5))
     fig.suptitle("NBA Home Court Advantage — A 40-Year Decline",
                  fontsize=18, fontweight="bold", y=0.995, color="#2c2c2a")
     fig.text(0.5, 0.965,
              "Data: NBA.com  |  Regular season & playoffs  |  1983-84 through 2024-25",
              ha="center", fontsize=9, color=GRAY)
 
-    gs = fig.add_gridspec(5, 4, hspace=0.4, wspace=0.32,
-                          height_ratios=[1, 0.45, 0.45, 1, 0.65],
+    gs = fig.add_gridspec(4, 4, hspace=0.4, wspace=0.32,
+                          height_ratios=[1, 0.45, 0.45, 1],
                           left=0.07, right=0.97, top=0.94, bottom=0.09)
 
     # ── Panel 1: season-by-season regular season vs playoffs ─────────────────
@@ -487,52 +471,6 @@ def plot_results(
     ax5.set_title("Regular season vs playoffs\nhome win % by playoff format period",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax5.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    # ── Panel 6: playoff vs. regular-season gap ───────────────────────────────
-    ax6 = fig.add_subplot(gs[4, 0:4])
-    gap_arr  = np.array(gap_values, dtype=float)
-    gap_mask = ~np.isnan(gap_arr)
-    x_gap = x[gap_mask]
-    y_gap = gap_arr[gap_mask]
-
-    ax6.fill_between(x_gap, y_gap, 0, color=GREEN, alpha=0.20, zorder=1)
-    ax6.plot(x_gap, y_gap, color=GREEN, linewidth=2, zorder=2)
-    ax6.scatter(x_gap, y_gap, color=GREEN, s=30, zorder=3,
-                edgecolors="white", linewidths=0.8)
-    ax6.axhline(0, color=GRAY, linewidth=1.2, linestyle="-", alpha=0.7, zorder=1)
-    ax6.text(len(reg_seasons) - 0.3, 0.5, "← no gap: equal home advantage",
-             ha="right", va="bottom", fontsize=8, color=GRAY, style="italic")
-
-    if gap_mask.sum() >= 2:
-        zg = np.polyfit(x_gap, y_gap, 1)
-        ax6.plot(x_gap, np.poly1d(zg)(x_gap), "--", color=GREEN, linewidth=1.4, alpha=0.5)
-
-    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
-        era_idx = [i for i, s in enumerate(reg_seasons) if y1 <= label_to_year(s) <= y2]
-        if not era_idx:
-            continue
-        ax6.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
-                    alpha=0.08, color=era_color, zorder=0)
-        if min(era_idx) > 0:
-            ax6.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
-
-    ax6.set_ylim(-5, 20)
-    for change_year, change_label in PLAYOFF_FORMAT_CHANGES:
-        idx = next((i for i, s in enumerate(reg_seasons) if label_to_year(s) == change_year), None)
-        if idx is None:
-            continue
-        ax6.axvline(idx - 0.5, color="#444444", linestyle="-.", linewidth=1, alpha=0.6, zorder=1)
-        ax6.text(idx - 0.4, 19, change_label, rotation=90, ha="left", va="top",
-                 fontsize=6.5, color="#444444", linespacing=1.2)
-
-    ax6.set_title(
-        "Playoff home-court advantage over regular season"
-        "  (playoff home win % − regular-season home win %)",
-        fontsize=12, fontweight="bold", color="#2c2c2a", pad=8,
-    )
-    ax6.set_xticks(x[::tick_step])
-    ax6.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax6.set_ylabel("Gap (pp)", fontsize=10)
 
     # Footnote: explain what each era represents
     era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
@@ -959,12 +897,10 @@ def main() -> None:
     format_reg_avg, format_po_avg, format_labels_short = compute_playoff_format_averages(
         reg_seasons, reg_pcts, po_seasons, po_pcts
     )
-    gap_values = compute_gap_series(reg_seasons, reg_pcts, po_seasons, po_pcts)
     plot_results(
         reg_seasons, reg_pcts, po_seasons, po_pcts,
         era_reg_avg, era_po_avg, era_labels_short,
         format_reg_avg, format_po_avg, format_labels_short,
-        gap_values,
     )
 
     rest_seasons, rest_stats = compute_rest_stats(START_YEAR, END_YEAR, SeasonType.regular)
