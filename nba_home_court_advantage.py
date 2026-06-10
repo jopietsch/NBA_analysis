@@ -893,6 +893,150 @@ def compute_timezone_stats(
     return seasons, stats
 
 
+# ── Travel distance analysis ─────────────────────────────────────────────────
+# Haversine distance from the away team's home arena to the game arena,
+# used to test whether longer road trips reduce the visiting team's odds.
+# Coordinates are approximate arena lat/lon; small errors (< 20 mi) don't
+# affect the broad distance-bucket analysis. Franchise names must match
+# TEAM_NAME strings in the cached CSVs.
+ARENA_COORDS: dict[str, tuple[float, float]] = {
+    # Eastern
+    "Atlanta Hawks":           (33.757,  -84.396),
+    "Boston Celtics":          (42.366,  -71.062),
+    "Brooklyn Nets":           (40.683,  -73.975),
+    "Charlotte Bobcats":       (35.225,  -80.839),
+    "Charlotte Hornets":       (35.225,  -80.839),
+    "Cleveland Cavaliers":     (41.497,  -81.688),
+    "Detroit Pistons":         (42.697,  -83.245),   # Palace of Auburn Hills (most of dataset)
+    "Indiana Pacers":          (39.764,  -86.156),
+    "Miami Heat":              (25.781,  -80.188),
+    "New Jersey Nets":         (40.814,  -74.067),   # Meadowlands (East Rutherford, NJ)
+    "New York Knicks":         (40.750,  -73.994),
+    "Orlando Magic":           (28.539,  -81.384),
+    "Philadelphia 76ers":      (39.901,  -75.172),
+    "Toronto Raptors":         (43.643,  -79.379),
+    "Washington Bullets":      (38.898,  -77.021),
+    "Washington Wizards":      (38.898,  -77.021),
+    # Central
+    "Chicago Bulls":           (41.881,  -87.674),
+    "Dallas Mavericks":        (32.791,  -96.810),
+    "Houston Rockets":         (29.751,  -95.362),
+    "Kansas City Kings":       (39.076,  -94.578),
+    "Memphis Grizzlies":       (35.138,  -90.051),
+    "Milwaukee Bucks":         (43.044,  -87.917),
+    "Minnesota Timberwolves":  (44.979,  -93.276),
+    "New Orleans Hornets":     (29.949,  -90.082),
+    "New Orleans Pelicans":    (29.949,  -90.082),
+    "New Orleans/Oklahoma City Hornets": (29.949,  -90.082),  # NOLA home base
+    "Oklahoma City Thunder":   (35.463,  -97.515),
+    "San Antonio Spurs":       (29.427,  -98.438),
+    # Mountain
+    "Denver Nuggets":          (39.749, -104.983),
+    "Phoenix Suns":            (33.446, -112.071),
+    "Utah Jazz":               (40.768, -111.901),
+    # Pacific
+    "Golden State Warriors":   (37.750, -122.201),   # Oakland (majority of dataset)
+    "LA Clippers":             (34.043, -118.267),
+    "Los Angeles Clippers":    (34.043, -118.267),
+    "Los Angeles Lakers":      (34.043, -118.267),
+    "Portland Trail Blazers":  (45.532, -122.667),
+    "Sacramento Kings":        (38.580, -121.500),
+    "San Diego Clippers":      (32.710, -117.157),
+    "Seattle SuperSonics":     (47.622, -122.354),
+    "Vancouver Grizzlies":     (49.278, -123.109),
+}
+
+TRAVEL_BUCKETS = ["0–500", "500–1000", "1000–1500", "1500+"]
+
+TRAVEL_COLORS = {
+    "0–500":     GRAY,
+    "500–1000":  BLUE,
+    "1000–1500": "#e8a33d",
+    "1500+":     RED,
+}
+TRAVEL_LABELS = {
+    "0–500":     "< 500 mi",
+    "500–1000":  "500–1,000 mi",
+    "1000–1500": "1,000–1,500 mi",
+    "1500+":     "1,500+ mi (long haul)",
+}
+
+
+def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance in miles between two lat/lon points."""
+    R = 3958.8  # Earth radius in miles
+    phi1, phi2 = np.radians(lat1), np.radians(lat2)
+    dphi    = np.radians(lat2 - lat1)
+    dlambda = np.radians(lon2 - lon1)
+    a = np.sin(dphi / 2) ** 2 + np.cos(phi1) * np.cos(phi2) * np.sin(dlambda / 2) ** 2
+    return float(2 * R * np.arcsin(np.sqrt(a)))
+
+
+def _bucket_distance(miles: float) -> str:
+    """Return the TRAVEL_BUCKETS key for a given distance in miles."""
+    if miles < 500:
+        return "0–500"
+    if miles < 1000:
+        return "500–1000"
+    if miles < 1500:
+        return "1000–1500"
+    return "1500+"
+
+
+def fetch_travel_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Per-game home win result tagged with haversine distance (miles) from the
+    away team's home arena to the home arena. Rows with unknown franchise
+    names are dropped. Returns columns ['distance_miles', 'HOME_WIN'].
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+
+    home_coords = merged["TEAM_NAME_home"].map(ARENA_COORDS)
+    away_coords = merged["TEAM_NAME_away"].map(ARENA_COORDS)
+    mask = home_coords.notna() & away_coords.notna()
+    merged = merged[mask].copy()
+    if merged.empty:
+        return None
+
+    home_c = merged["TEAM_NAME_home"].map(ARENA_COORDS)
+    away_c = merged["TEAM_NAME_away"].map(ARENA_COORDS)
+    merged["distance_miles"] = [
+        _haversine(a[0], a[1], h[0], h[1])
+        for a, h in zip(away_c, home_c)
+    ]
+    merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
+    return merged[["distance_miles", "HOME_WIN"]]
+
+
+def compute_travel_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season home win % grouped by away team travel distance (bucketed)."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {b: [] for b in TRAVEL_BUCKETS}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_travel_data(year, season_type)
+        if g is None or g.empty:
+            continue
+
+        seasons.append(short_label(year))
+        g = g.copy()
+        g["bucket"] = g["distance_miles"].apply(_bucket_distance)
+        for bucket in TRAVEL_BUCKETS:
+            sub = g[g["bucket"] == bucket]
+            stats[bucket].append(100 * sub["HOME_WIN"].mean() if len(sub) else np.nan)
+
+    return seasons, stats
+
+
 # ── Box-score differential analysis ──────────────────────────────────────────
 
 def _compute_box_differentials(merged: pd.DataFrame) -> pd.DataFrame:
@@ -1660,6 +1804,20 @@ def main() -> None:
     )
     overall_po_pct = float(np.mean(po_pcts)) if po_pcts else 60.0
     plot_series_breakdown(game_nums, series_pcts, game_counts, era_series_data, overall_po_pct)
+
+    travel_seasons, travel_stats = compute_travel_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    if travel_seasons:
+        plot_category_road_win_analysis(
+            travel_seasons, travel_stats,
+            category_order=TRAVEL_BUCKETS,
+            colors=TRAVEL_COLORS,
+            labels=TRAVEL_LABELS,
+            title="Home Court Advantage by Away Team Travel Distance",
+            season_label="Regular season",
+            output_path="nba_home_court_travel.png",
+            road_win_desc="home win % grouped by away team flight distance",
+            y_label="Home win %",
+        )
 
     print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")
     reg_zone_seasons, reg_zone_stats = compute_shot_zone_stats(START_YEAR, END_YEAR, SeasonType.regular)

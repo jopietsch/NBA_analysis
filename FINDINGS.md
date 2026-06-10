@@ -247,6 +247,34 @@ reducible to a simple story about competitive balance.
 
 ---
 
+## 12. Travel Distance
+
+Away team travel distance (haversine miles from the visitor's home arena to the
+game arena) is available for every game in the dataset — no new API calls required,
+only the cached game logs and a coordinate lookup.
+
+### Distance alone does not explain home court advantage
+
+Across the four distance buckets (< 500, 500–1,000, 1,000–1,500, 1,500+ miles),
+home win % shows no consistent ordering by travel burden — the buckets cluster
+within ±1 percentage point of the baseline with no monotone relationship. The
+bivariate logistic on continuous distance is statistically significant in the
+regular season but the effect is negligible (less than 0.1 pp per 100 miles).
+In the playoffs there is no significant effect at all.
+
+This null result suggests that the coarse geographic proxy (time-zone differential)
+already captures whatever travel effect exists, and that actual flight miles add no
+additional predictive power. Visiting teams may also self-correct for distance by
+arriving early, which erodes any mechanical disadvantage from long trips.
+
+### Era trend is flat
+
+There is no evidence that the travel-distance effect has grown or shrunk over the
+four decades in the dataset. The era-bucketed averages show no systematic pattern.
+Travel distance is not a driver of the long-run decline in home court advantage.
+
+---
+
 ## 8. Summary
 
 Home court advantage has declined substantially in both the regular season and

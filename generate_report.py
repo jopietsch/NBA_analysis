@@ -418,6 +418,20 @@ def _section_parity(s, sections):
     ]
 
 
+def _section_travel(s, sections):
+    return [
+        PageBreak(),
+        *_section_header("12. Travel Distance", s, sections),
+        Spacer(1, 0.1 * inch),
+        _chart(
+            "nba_home_court_travel.png",
+            "Figure 12. Home win % by away team travel distance (regular season). "
+            "Left: per-season home win % for each distance bucket with trend lines. "
+            "Right: era-averaged home win % by distance bucket.",
+        ),
+    ]
+
+
 def _section_summary(s, sections):
     rank_data = [
         ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
@@ -492,6 +506,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     story += _section_shot_zones(s, sections)
     story += _section_margin(s, sections)
     story += _section_parity(s, sections)
+    story += _section_travel(s, sections)
     story += _section_summary(s, sections)
     story += _appendix_results(s)
 

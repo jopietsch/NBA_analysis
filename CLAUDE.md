@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 11 numbered `##` sections (plus Summary); drives the PDF report prose; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 12 numbered `##` sections (plus Summary); drives the PDF report prose; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -44,6 +44,7 @@ The project is two Python modules plus one test file:
 - `fetch_shot_zones(end_year, season_type, location)` — team-level shot zone FGA totals from `LeagueDashTeamShotLocations` split by 'Home'/'Road'; columns flattened from API MultiIndex before caching
 - `fetch_margin_data(end_year, season_type)` — per-home-game point margin from cached game log; renames `PLUS_MINUS` → `margin`; no new cache files (PLUS_MINUS absent before 1995–96)
 - `fetch_series_data(end_year)` — playoffs only; derives `game_in_series` (GAME_ID last digit), `series_key` (GAME_ID[-3:-1]), `HOME_WIN`; returns home rows only
+- `fetch_travel_data(end_year, season_type)` — merge home/away rows, map franchise names to `ARENA_COORDS`, compute haversine distance; drop unknown franchises; return `['distance_miles', 'HOME_WIN']`
 
 *Shared low-level helpers:*
 - `_load_game_log(end_year, season_type)` — load cached game log CSV (one row per team per game)
@@ -62,6 +63,7 @@ The project is two Python modules plus one test file:
 - `compute_parity_stats(...)` — per-season std dev of team win%, a measure of competitive balance
 - `compute_series_stats(...)` — pooled home win % per game number (G1–G7) across all playoff seasons; returns (game_nums, win_pcts, counts)
 - `compute_series_stats_by_era(...)` — same split by era label; excludes game numbers with fewer than 5 games in an era
+- `compute_travel_stats(...)` — per-season home win % grouped by `TRAVEL_BUCKETS` (0–500, 500–1000, 1000–1500, 1500+ miles)
 - `bucket_stats_by_era(seasons, stats)` — average any per-season stats dict within each ERA_DEFS period
 - `_align_to_seasons(ref_seasons, target_seasons, target_stats, key)` — align a per-season stat series to a reference season list, filling gaps with NaN; used to overlay playoff data on the regular-season x-axis in plot functions
 
@@ -81,6 +83,7 @@ The project is two Python modules plus one test file:
 - `plot_margin_analysis(...)` — 3-panel figure: all-game margin over time, win/loss margin split, era bar chart → `nba_home_court_margin.png`
 - `plot_parity_analysis(...)` — 2-panel figure: dual-axis time series and era-colored scatter → `nba_home_court_parity.png`
 - `plot_series_breakdown(...)` — 2-panel figure: bar chart by G1–G7 and era-colored lines → `nba_home_court_series_breakdown.png`
+- `plot_category_road_win_analysis(...)` also used for travel → `nba_home_court_travel.png` (regular season; distance buckets as category keys)
 
 `main()` runs the full pipeline and ends with `import nba_home_court_regression; nba_home_court_regression.run()` — the import is inside `main()` to avoid a circular import (regression module imports this one at module level).
 
@@ -93,8 +96,10 @@ The project is two Python modules plus one test file:
   - `rest_diff`, `altitude_home`, `tz_diff`
   - `foul_diff`, `fg_pct_diff`, `efg_pct_diff`, `tpa_rate_diff`, `fg3_pct_diff`, `ft_pct_diff`
   - `margin` — home team point differential (`PLUS_MINUS_home`); NaN before 1995–96
+  - `distance_miles` — haversine miles from away team's arena to home arena; NaN for unknown franchises
+  - `game_in_series` — last digit of GAME_ID for playoff rows; NaN for regular season
 
-Seven analyses printed to stdout:
+Eight analyses printed to stdout:
 1. **Sequential R² decomposition** (regular season only) — era → +rest → +altitude → +tz → +covid
 2. **Pre/post-2014 coefficient stability** — do rest/altitude/tz effects change after the Finals format shift?
 3. **Factor significance summary** — bivariate logistic regressions for rest/altitude/tz in regular season vs. playoffs side-by-side
@@ -102,12 +107,13 @@ Seven analyses printed to stdout:
 5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with OLS trends
 6. **Competitive balance / parity** — Pearson/Spearman correlation and OLS between team win% std dev and home win %; era-bucketed table
 7. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted OLS trend across game numbers
+8. **Travel distance** — home win % by distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with `distance_miles` as continuous predictor
 
-Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean). `scipy.stats` for Pearson/Spearman in parity analysis.
+Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean). `scipy.stats` for Pearson/Spearman in parity analysis. `scipy.stats.chi2_contingency` for series structure chi-square.
 
 ---
 
-**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_section_header(title, s, sections)` returns the `[Paragraph, HR, prose]` preamble shared by all 11 section functions; `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
+**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_section_header(title, s, sections)` returns the `[Paragraph, HR, prose]` preamble shared by all 12 section functions; `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
 
 ---
 
@@ -125,6 +131,8 @@ All fetched data is cached under `cache/` to avoid re-fetching:
 - `PLAYOFF_FORMAT_PERIODS` — 4 periods defined by 1985/2003/2014 format changes
 - `ALTITUDE_TEAMS` — `{"Denver Nuggets", "Utah Jazz"}` — the two high-elevation arenas
 - `TEAM_TIMEZONES` — dict mapping franchise name → integer (0=Eastern … 3=Pacific)
+- `ARENA_COORDS` — dict mapping franchise name → (lat, lon); covers all ~35 historical franchises; used with `_haversine()` to compute away team travel distance
+- `TRAVEL_BUCKETS`, `TRAVEL_COLORS`, `TRAVEL_LABELS` — parallel dicts for the four distance bins (0–500, 500–1000, 1000–1500, 1500+ miles)
 - `SKIP_PLAYOFF_YEARS = {2020}` — bubble season excluded from playoff stats
 - `COVID_SEASONS = {"19–20", "20–21"}` — flagged in charts and regression
 - `SHOT_ZONE_GROUPS` — maps zone names to flat FGA column names in the shot-zone cache CSVs

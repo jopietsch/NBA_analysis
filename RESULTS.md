@@ -199,6 +199,33 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
      G7 n = 183 games (series that went to 7)
 
+─── 8. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ──────────
+   Distance = haversine miles from away team's home arena to game arena.
+   Does longer travel reduce the visiting team's winning odds?
+
+   Regular season  (N = 47,882, baseline home win % = 60.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500    10,957        60.5%          +0.3 pp
+       500–1000    15,300        61.0%          +0.8 pp
+      1000–1500     9,615        59.4%          -0.9 pp
+          1500+    12,010        59.7%          -0.6 pp
+
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi),  p = 0.024  *
+
+   Playoffs  (N = 3,207, baseline home win % = 64.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500       887        62.5%          -1.9 pp
+       500–1000     1,227        65.9%          +1.5 pp
+      1000–1500       717        63.7%          -0.6 pp
+          1500+       376        64.9%          +0.6 pp
+
+   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi),  p = 0.769  
+
+
 ════════════════════════════════════════════════════════════════════════
 
 ```

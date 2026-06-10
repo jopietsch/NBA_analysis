@@ -106,12 +106,20 @@ def build_game_dataset() -> pd.DataFrame:
             else:
                 merged["game_in_series"] = np.nan
 
+            home_c = merged["TEAM_NAME_home"].map(nba.ARENA_COORDS)
+            away_c = merged["TEAM_NAME_away"].map(nba.ARENA_COORDS)
+            merged["distance_miles"] = [
+                nba._haversine(a[0], a[1], h[0], h[1])
+                if isinstance(a, tuple) and isinstance(h, tuple) else np.nan
+                for a, h in zip(away_c, home_c)
+            ]
+
             chunks.append(merged[[
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff",
-                "margin", "game_in_series",
+                "margin", "game_in_series", "distance_miles",
             ]])
 
     if not chunks:
@@ -589,6 +597,55 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
         print(f"     G7 n = {total_by_game[7]:,} games (series that went to 7)")
 
 
+# ── Analysis 8: Travel distance ───────────────────────────────────────────────
+
+def run_travel_analysis(df: pd.DataFrame) -> None:
+    """Bivariate table: does haversine travel distance predict home win?"""
+    full = df.dropna(subset=["distance_miles"])
+    if full.empty:
+        _section("8. TRAVEL DISTANCE — AWAY TEAM FLIGHT MILES")
+        print("   No distance data available in this dataset.")
+        return
+
+    _section("8. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES")
+    print("   Distance = haversine miles from away team's home arena to game arena.")
+    print("   Does longer travel reduce the visiting team's winning odds?\n")
+
+    buckets = [("0–500", 0, 500), ("500–1000", 500, 1000),
+               ("1000–1500", 1000, 1500), ("1500+", 1500, np.inf)]
+
+    for context_label, sub in [("Regular season", full[full["is_playoff"] == 0]),
+                                ("Playoffs",       full[full["is_playoff"] == 1])]:
+        if sub.empty:
+            continue
+        p_bar = sub["home_win"].mean()
+        print(f"   {context_label}  (N = {len(sub):,}, baseline home win % = {p_bar*100:.1f}%)\n")
+        print(f"   {'Bucket':>12}  {'N':>8}  {'Home win %':>11}  {'vs. baseline':>13}")
+        print(f"   {'─'*12}  {'─'*8}  {'─'*11}  {'─'*13}")
+
+        for label, lo, hi in buckets:
+            bsub = sub[(sub["distance_miles"] >= lo) & (sub["distance_miles"] < hi)]
+            if bsub.empty:
+                continue
+            bpct = 100.0 * bsub["home_win"].mean()
+            diff = bpct - p_bar * 100
+            print(f"   {label:>12}  {len(bsub):>8,}  {bpct:>10.1f}%  {diff:>+12.1f} pp")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                m = smf.logit("home_win ~ distance_miles", data=sub).fit(disp=0)
+                coef = m.params["distance_miles"]
+                pval = m.pvalues["distance_miles"]
+                pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+                pp_per_100mi = _pp(coef, p_bar) * 100
+                print(f"\n   Bivariate logistic: coef = {coef:+.5f} log-odds/mi  "
+                      f"(≈{pp_per_100mi:+.2f} pp per 100 mi),  p = {pval_s}  {_stars(pval).strip()}")
+            except Exception:
+                pass
+        print()
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -623,6 +680,7 @@ def run() -> None:
         run_margin_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_series_breakdown(df)
+        run_travel_analysis(df)
 
         print("\n" + "═" * _W + "\n")
 

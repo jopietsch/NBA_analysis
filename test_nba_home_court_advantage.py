@@ -1166,6 +1166,93 @@ class TestComputeParityStats:
         assert calls == [2019, 2021]
 
 
+class TestHaversine:
+    def test_boston_to_la_approximately_2600_miles(self):
+        # TD Garden (Boston) → Crypto.com Arena (LA)
+        dist = nba._haversine(42.366, -71.062, 34.043, -118.267)
+        assert 2550 < dist < 2650
+
+    def test_same_location_returns_zero(self):
+        assert nba._haversine(0.0, 0.0, 0.0, 0.0) == pytest.approx(0.0, abs=1e-6)
+
+    def test_is_symmetric(self):
+        d1 = nba._haversine(42.366, -71.062, 34.043, -118.267)
+        d2 = nba._haversine(34.043, -118.267, 42.366, -71.062)
+        assert d1 == pytest.approx(d2, rel=1e-9)
+
+
+class TestFetchTravelData:
+    def _write_csv(self, tmp_path, df):
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_travel_data(2024, "Regular Season") is None
+
+    def test_computes_distance_from_arena_coords(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID":    [1, 1],
+            "MATCHUP":    ["BOS vs. LAL", "LAL @ BOS"],
+            "TEAM_NAME":  ["Boston Celtics", "Los Angeles Lakers"],
+            "WL":         ["W", "L"],
+        })
+        self._write_csv(tmp_path, df)
+        result = nba.fetch_travel_data(2024, "Regular Season")
+        assert result is not None
+        assert len(result) == 1
+        assert result.iloc[0]["distance_miles"] > 2500
+        assert result.iloc[0]["HOME_WIN"] == 1
+
+    def test_drops_unknown_franchises(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID":    [1, 1, 2, 2],
+            "MATCHUP":    ["BOS vs. LAL", "LAL @ BOS", "UNK vs. BOS", "BOS @ UNK"],
+            "TEAM_NAME":  ["Boston Celtics", "Los Angeles Lakers",
+                           "Unknown Team", "Boston Celtics"],
+            "WL":         ["W", "L", "W", "L"],
+        })
+        self._write_csv(tmp_path, df)
+        result = nba.fetch_travel_data(2024, "Regular Season")
+        assert result is not None
+        # Only the BOS vs LAL game should survive (Unknown Team dropped)
+        assert len(result) == 1
+
+
+class TestComputeTravelStats:
+    def test_aggregates_home_win_pct_by_distance_bucket(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "distance_miles": [200.0, 300.0, 700.0, 1200.0, 1800.0],
+                "HOME_WIN":       [1,     0,     1,     1,      0     ],
+            })
+        monkeypatch.setattr(nba, "fetch_travel_data", fake_fetch)
+        seasons, stats = nba.compute_travel_stats(2023, 2025, "Regular Season")
+        assert seasons == ["23–24"]
+        assert stats["0–500"][0] == pytest.approx(50.0)   # 1W + 1L
+        assert stats["500–1000"][0] == pytest.approx(100.0)
+        assert stats["1000–1500"][0] == pytest.approx(100.0)
+        assert stats["1500+"][0] == pytest.approx(0.0)
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_travel_data", lambda year, s: None)
+        seasons, stats = nba.compute_travel_stats(2023, 2025, "Regular Season")
+        assert seasons == []
+        for bucket in nba.TRAVEL_BUCKETS:
+            assert stats[bucket] == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "fetch_travel_data",
+                            lambda year, s: calls.append(year) or None)
+        nba.compute_travel_stats(2019, 2021, "Playoffs", skip_years={2020})
+        assert 2020 not in calls
+        assert calls == [2019, 2021]
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)
