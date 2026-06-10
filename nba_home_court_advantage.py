@@ -446,6 +446,135 @@ def plot_results(
     plt.show()
 
 
+# ── Rest-day analysis (prototype) ──────────────────────────────────────────
+def fetch_rest_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Compute per-game rest-day info for one season/type from the cached game
+    log (one row per team per game). REST = days between a team's
+    consecutive games minus 1 (0 = back-to-back). Games where either team's
+    rest is unknown (their first game in this cached log) are dropped.
+
+    Note: for playoffs, "first game" means the team's first playoff game of
+    that year, since the cache only contains playoff games — so first-round
+    games are dropped (no prior playoff game to compute rest from).
+    """
+    path = cache_path(end_year, season_type)
+    if not os.path.exists(path):
+        return None
+
+    df = pd.read_csv(path, parse_dates=["GAME_DATE"])
+    if df.empty:
+        return None
+
+    df = df.sort_values(["TEAM_ID", "GAME_DATE"])
+    df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
+    df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
+
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)]
+    away = df[df["MATCHUP"].str.contains(" @ ", regex=False, na=False)]
+
+    merged = home.merge(away, on="GAME_ID", suffixes=("_home", "_away"))
+    merged = merged.dropna(subset=["REST_home", "REST_away"])
+    if merged.empty:
+        return None
+
+    merged["REST_DIFF"] = merged["REST_home"] - merged["REST_away"]
+    merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
+    return merged[["REST_home", "REST_away", "REST_DIFF", "HOME_WIN"]]
+
+
+def compute_rest_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season back-to-back rates and home win % by rest differential."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "b2b_home_pct": [], "b2b_away_pct": [],
+        "win_home_more_rest": [], "win_equal_rest": [], "win_away_more_rest": [],
+    }
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_rest_data(year, season_type)
+        if g is None or g.empty:
+            continue
+
+        seasons.append(short_label(year))
+        stats["b2b_home_pct"].append(100 * (g["REST_home"] == 0).mean())
+        stats["b2b_away_pct"].append(100 * (g["REST_away"] == 0).mean())
+
+        more  = g[g["REST_DIFF"] > 0]
+        equal = g[g["REST_DIFF"] == 0]
+        less  = g[g["REST_DIFF"] < 0]
+        stats["win_home_more_rest"].append(100 * more["HOME_WIN"].mean()  if len(more)  else np.nan)
+        stats["win_equal_rest"].append(    100 * equal["HOME_WIN"].mean() if len(equal) else np.nan)
+        stats["win_away_more_rest"].append(100 * less["HOME_WIN"].mean()  if len(less)  else np.nan)
+
+    return seasons, stats
+
+
+def plot_rest_analysis(
+    seasons: list[str], stats: dict,
+    season_label: str, output_path: str, extra_subtitle: str = "",
+) -> None:
+    """
+    2-panel chart exploring whether schedule-driven rest disparities help
+    explain the decline in home court advantage.
+
+    Panel 1: back-to-back rate for home vs away teams, per season — shows
+    whether the league's schedule has gotten more balanced over time.
+    Panel 2: home win % split by which team had more rest, per season —
+    shows whether the rest-advantage effect on home win % has shrunk.
+    """
+    x = np.arange(len(seasons))
+    tick_step = max(1, len(seasons) // 14)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10))
+    fig.suptitle("Does Schedule Balance Explain the Decline in Home Court Advantage?",
+                 fontsize=15, fontweight="bold", y=0.99, color="#2c2c2a")
+    fig.text(0.5, 0.955,
+             f"Data: NBA.com  |  {season_label}  |  "
+             f"rest days = days between games − 1 (0 = back-to-back){extra_subtitle}",
+             ha="center", fontsize=9, color=GRAY)
+
+    # Panel 1: back-to-back rates
+    ax1.plot(x, stats["b2b_home_pct"], color=BLUE, linewidth=2, label="Home team on back-to-back")
+    ax1.plot(x, stats["b2b_away_pct"], color=GREEN, linewidth=2, label="Away team on back-to-back")
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("% of games")
+    ax1.set_title("Back-to-back rate, home vs away teams",
+                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Panel 2: home win % by rest differential, with trend lines
+    ax2.plot(x, stats["win_home_more_rest"], color=BLUE, linewidth=2, label="Home team more rested")
+    ax2.plot(x, stats["win_equal_rest"],     color=GRAY, linewidth=2, label="Equal rest")
+    ax2.plot(x, stats["win_away_more_rest"], color=RED,  linewidth=2, label="Away team more rested")
+
+    for series, color in [("win_home_more_rest", BLUE), ("win_away_more_rest", RED)]:
+        y = np.array(stats[series], dtype=float)
+        mask = ~np.isnan(y)
+        if mask.sum() >= 2:
+            z = np.polyfit(x[mask], y[mask], 1)
+            ax2.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.4, alpha=0.5)
+
+    ax2.set_xticks(x[::tick_step])
+    ax2.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax2.set_ylabel("Home win %")
+    ax2.set_title("Home win % depending on which team had more rest",
+                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
 def main() -> None:
     reg_seasons, reg_pcts, po_seasons, po_pcts = fetch_all_seasons()
     era_reg_avg, era_po_avg, era_labels_short = compute_era_averages(
@@ -455,6 +584,19 @@ def main() -> None:
         reg_seasons, reg_pcts, po_seasons, po_pcts,
         era_reg_avg, era_po_avg, era_labels_short,
     )
+
+    rest_seasons, rest_stats = compute_rest_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    plot_rest_analysis(rest_seasons, rest_stats,
+                        season_label="Regular season",
+                        output_path="nba_home_court_advantage_rest.png")
+
+    po_rest_seasons, po_rest_stats = compute_rest_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_rest_analysis(po_rest_seasons, po_rest_stats,
+                        season_label="Playoffs",
+                        output_path="nba_home_court_advantage_rest_playoffs.png",
+                        extra_subtitle="; first round each year dropped (no prior playoff game for rest calc)")
 
 
 if __name__ == "__main__":
