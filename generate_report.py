@@ -82,6 +82,16 @@ def _styles():
             textColor=colors.HexColor(MID),
             alignment=TA_CENTER, spaceAfter=14,
         ),
+        "toc_num": ParagraphStyle(
+            "toc_num", parent=base["Normal"],
+            fontSize=11, textColor=colors.HexColor(ACCENT),
+            alignment=TA_CENTER,
+        ),
+        "toc_title": ParagraphStyle(
+            "toc_title", parent=base["Normal"],
+            fontSize=11, textColor=colors.HexColor(DARK),
+            leading=18,
+        ),
         "note": ParagraphStyle(
             "note", parent=base["Normal"],
             fontSize=8.5, leading=12,
@@ -231,7 +241,17 @@ def _cover(s, sections):
         ),
         Spacer(1, 0.8 * inch),
         Paragraph("Contents", s["h2"]),
-        _table(toc_data, [CONTENT_W * 0.08, CONTENT_W * 0.92], header_rows=0),
+        Table(
+            [[Paragraph(num, s["toc_num"]), Paragraph(title, s["toc_title"])]
+             for num, title in toc_data],
+            colWidths=[CONTENT_W * 0.10, CONTENT_W * 0.90],
+            style=TableStyle([
+                ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
+                ("TOPPADDING",    (0, 0), (-1, -1), 5),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                ("LINEBELOW",     (0, -1), (-1, -1), 0.5, colors.HexColor("#dddddd")),
+            ]),
+        ),
         PageBreak(),
     ]
 
