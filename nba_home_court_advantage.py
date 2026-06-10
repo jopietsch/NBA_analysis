@@ -206,15 +206,16 @@ def plot_results(
         "axes.axisbelow":     True,
     })
 
-    fig = plt.figure(figsize=(15, 10.5))
+    fig = plt.figure(figsize=(22.5, 17.5))
     fig.suptitle("NBA Home Court Advantage — A 40-Year Decline",
-                 fontsize=18, fontweight="bold", y=0.98, color="#2c2c2a")
-    fig.text(0.5, 0.955,
-             "Data: NBA.com via nba_api  |  Regular season & playoffs  |  1983-84 through 2024-25",
+                 fontsize=18, fontweight="bold", y=0.995, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Data: NBA.com  |  Regular season & playoffs  |  1983-84 through 2024-25",
              ha="center", fontsize=9, color=GRAY)
 
-    gs = fig.add_gridspec(2, 4, hspace=0.5, wspace=0.32,
-                          left=0.07, right=0.97, top=0.92, bottom=0.20)
+    gs = fig.add_gridspec(4, 4, hspace=0.4, wspace=0.32,
+                          height_ratios=[1, 0.45, 0.45, 1],
+                          left=0.07, right=0.97, top=0.94, bottom=0.09)
 
     # ── Panel 1: season-by-season regular season vs playoffs ─────────────────
     ax1 = fig.add_subplot(gs[0, 1:3])
@@ -292,8 +293,109 @@ def plot_results(
                      arrowprops=dict(arrowstyle="->", color=GRAY, lw=1),
                      fontsize=8, color=GRAY)
 
-    # ── Panel 2: era grouped bar chart ───────────────────────────────────────
-    ax2 = fig.add_subplot(gs[1, 1:3])
+    # ── Panel 2: playoffs only, with a trend line per era ────────────────────
+    ax3 = fig.add_subplot(gs[1, 1:3])
+    xp = np.arange(len(po_seasons))
+    pt_colors_po = [RED if s in COVID_SEASONS else GREEN for s in po_seasons]
+
+    ax3.plot(xp, po_pcts, color=GREEN, linewidth=2, zorder=2)
+    ax3.scatter(xp, po_pcts, c=pt_colors_po, s=40, zorder=3,
+                edgecolors="white", linewidths=0.8)
+
+    po_pcts_arr2 = np.array(po_pcts, dtype=float)
+
+    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+        era_idx = [i for i, s in enumerate(po_seasons) if y1 <= label_to_year(s) <= y2]
+        if not era_idx:
+            continue
+
+        ax3.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
+                    alpha=0.08, color=era_color, zorder=0)
+        if min(era_idx) > 0:
+            ax3.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
+        mid = (min(era_idx) + max(era_idx)) / 2
+        ax3.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+
+        # Per-era trend line
+        if len(era_idx) >= 2:
+            era_x = np.array(era_idx)
+            ze = np.polyfit(era_x, po_pcts_arr2[era_x], 1)
+            ax3.plot(era_x, np.poly1d(ze)(era_x), "--", color=era_color, linewidth=1.8, alpha=0.8)
+
+    # Shade COVID seasons (drawn on top of era shading)
+    covid_idx_po = [i for i, s in enumerate(po_seasons) if s in COVID_SEASONS]
+    if covid_idx_po:
+        ax3.axvspan(min(covid_idx_po) - 0.5, max(covid_idx_po) + 0.5,
+                    alpha=0.12, color=RED, zorder=1)
+
+    ax3.set_title("Playoffs: home win % per season, with a trend line per era",
+                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    tick_step_po = max(1, len(po_seasons) // 14)
+    ax3.set_xticks(xp[::tick_step_po])
+    ax3.set_xticklabels(po_seasons[::tick_step_po], rotation=45, ha="right", fontsize=8)
+    ax3.set_ylim(45, 80)
+    ax3.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax3.set_ylabel("Home win %", fontsize=10)
+
+    handles3 = [
+        mpatches.Patch(color=GREEN, label="Playoffs"),
+        mpatches.Patch(color=RED,   label="COVID-impacted seasons"),
+        plt.Line2D([0], [0], color=GRAY, linestyle="--", alpha=0.8, label="Trend (per era)"),
+    ]
+    ax3.legend(handles=handles3, fontsize=9, loc="upper right",
+               framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 3: regular season only, with a trend line per era ──────────────
+    ax4 = fig.add_subplot(gs[2, 1:3])
+    pt_colors_reg = [RED if s in COVID_SEASONS else BLUE for s in reg_seasons]
+
+    ax4.plot(x, reg_pcts, color=BLUE, linewidth=2, zorder=2)
+    ax4.scatter(x, reg_pcts, c=pt_colors_reg, s=40, zorder=3,
+                edgecolors="white", linewidths=0.8)
+
+    reg_pcts_arr = np.array(reg_pcts, dtype=float)
+
+    for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+        era_idx = [i for i, s in enumerate(reg_seasons) if y1 <= label_to_year(s) <= y2]
+        if not era_idx:
+            continue
+
+        ax4.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5,
+                    alpha=0.08, color=era_color, zorder=0)
+        if min(era_idx) > 0:
+            ax4.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
+        mid = (min(era_idx) + max(era_idx)) / 2
+        ax4.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+
+        # Per-era trend line
+        if len(era_idx) >= 2:
+            era_x = np.array(era_idx)
+            ze = np.polyfit(era_x, reg_pcts_arr[era_x], 1)
+            ax4.plot(era_x, np.poly1d(ze)(era_x), "--", color=era_color, linewidth=1.8, alpha=0.8)
+
+    # Shade COVID seasons (drawn on top of era shading)
+    if covid_idx:
+        ax4.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5,
+                    alpha=0.12, color=RED, zorder=1)
+
+    ax4.set_title("Regular season: home win % per season, with a trend line per era",
+                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax4.set_xticks(x[::tick_step])
+    ax4.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax4.set_ylim(45, 80)
+    ax4.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax4.set_ylabel("Home win %", fontsize=10)
+
+    handles4 = [
+        mpatches.Patch(color=BLUE, label="Regular season"),
+        mpatches.Patch(color=RED,  label="COVID-impacted seasons"),
+        plt.Line2D([0], [0], color=GRAY, linestyle="--", alpha=0.8, label="Trend (per era)"),
+    ]
+    ax4.legend(handles=handles4, fontsize=9, loc="upper right",
+               framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 4: era grouped bar chart ────────────────────────────────────────
+    ax2 = fig.add_subplot(gs[3, 1:3])
     xi = np.arange(len(era_labels_short))
     w  = 0.35
     bars1 = ax2.bar(xi - w/2, era_reg_avg, width=w, color=BLUE,  label="Regular season", zorder=2)
@@ -315,7 +417,7 @@ def plot_results(
 
     # Footnote: explain what each era represents
     era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
-    fig.text(0.5, 0.10, era_notes, ha="center", va="top",
+    fig.text(0.5, 0.045, era_notes, ha="center", va="top",
              fontsize=7.5, color=GRAY, linespacing=1.6)
 
     # ── Save ──────────────────────────────────────────────────────────────────
