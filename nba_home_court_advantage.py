@@ -1038,6 +1038,8 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str) -> pd.DataF
         df = pd.read_csv(path)
         return df if not df.empty else None
 
+    os.makedirs(CACHE_DIR, exist_ok=True)
+
     try:
         from nba_api.stats.endpoints import leaguedashteamshotlocations
         result = leaguedashteamshotlocations.LeagueDashTeamShotLocations(
@@ -1050,9 +1052,11 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str) -> pd.DataF
         df = result.get_data_frames()[0]
     except Exception as e:
         print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}")
+        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
         return None
 
     if df.empty:
+        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
         return None
 
     # The API returns a MultiIndex DataFrame: columns are (zone_name, stat) tuples.
