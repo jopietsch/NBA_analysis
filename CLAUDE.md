@@ -47,6 +47,7 @@ The project is two Python modules plus one test file:
 - `_load_game_log(end_year, season_type)` — load cached game log CSV (one row per team per game)
 - `_merge_home_away_rows(df)` — join home/away rows on GAME_ID, producing one row per game
 - `_add_rest_days(df)` — add REST column (days since prior game − 1); shared with regression module
+- `_compute_box_differentials(merged)` — compute 6 home-minus-away box-score differentials (foul, FG%, eFG%, 3PA rate, 3P%, FT%) from a merged game DataFrame; shared between `fetch_differential_data()` and `build_game_dataset()`
 
 *Aggregation helpers:*
 - `_compute_period_averages(period_defs, ...)` — private; buckets reg/playoff win % into time periods; backing both public functions below
@@ -55,13 +56,14 @@ The project is two Python modules plus one test file:
 - `compute_rest_stats(...)`, `compute_altitude_stats(...)`, `compute_timezone_stats(...)` — per-season stat series for each analysis
 - `compute_differential_stats(...)` — per-season mean home-minus-away box-score differentials
 - `compute_shot_zone_stats(...)` — per-season home-minus-road shot zone % differentials; calls `_zone_pcts()` internally
+- `bucket_stats_by_era(seasons, stats)` — average any per-season stats dict within each ERA_DEFS period
+- `_align_to_seasons(ref_seasons, target_seasons, target_stats, key)` — align a per-season stat series to a reference season list, filling gaps with NaN; used to overlay playoff data on the regular-season x-axis in plot functions
 
 *Plot helpers (private):*
 - `_shade_eras(ax, seasons, label_y=46)` — draw era background shading + dividers; pass `label_y=None` to suppress text labels (used on non-win-% axes)
 - `_annotate_bars(ax, bars, color)` — label bar heights with % values
 - `_draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts)` — draws the season-by-season reg+playoff combined panel (used by both the combined figure and individual PNG)
-- `_draw_era_bars(ax, era_reg_avg, era_po_avg, era_labels_short)` — draws the era grouped bar chart panel
-- `_draw_format_bars(ax, format_reg_avg, format_po_avg, format_labels_short)` — draws the playoff-format-period grouped bar chart panel
+- `_draw_paired_bars(ax, reg_avg, po_avg, labels, title)` — draws a reg-season/playoff grouped bar chart panel; used for both the era and playoff-format-period views
 - `_plot_season_era_panel(ax, seasons, pcts, color, title, format_markers=False)` — draws season-by-season line + per-era trend lines + era shading + COVID shading; used for the standalone playoff and regular-season panels
 
 *Plotting functions:*
@@ -77,7 +79,7 @@ The project is two Python modules plus one test file:
 
 **`nba_home_court_regression.py`** — statistical analysis, called by `main()`
 
-- `build_game_dataset()` — loads all cached CSVs, merges home/away rows, computes rest days via `nba._add_rest_days()`, and produces one game-level row per game with features:
+- `build_game_dataset()` — loads all cached CSVs, merges home/away rows, computes rest days via `nba._add_rest_days()`, and box-score differentials via `nba._compute_box_differentials()`; produces one game-level row per game with features:
   - `home_win`, `year`, `is_playoff`, `era`, `format_period`, `covid`
   - `rest_diff`, `altitude_home`, `tz_diff`
   - `foul_diff`, `fg_pct_diff`, `efg_pct_diff`, `tpa_rate_diff`, `fg3_pct_diff`, `ft_pct_diff`
@@ -92,7 +94,7 @@ Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentia
 
 ---
 
-**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
+**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_section_header(title, s, sections)` returns the `[Paragraph, HR, prose]` preamble shared by all 8 section functions; `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
 
 ---
 
