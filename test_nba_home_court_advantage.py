@@ -259,6 +259,135 @@ class TestComputeRestStats:
         assert calls == [2019, 2021]
 
 
+class TestFetchAltitudeData:
+    def test_returns_none_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.fetch_altitude_data(2024, "Regular Season") is None
+
+    def test_returns_none_for_empty_dataframe(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        pd.DataFrame(columns=["TEAM_NAME", "MATCHUP", "WL"]).to_csv(
+            nba.cache_path(2024, "Regular Season"), index=False
+        )
+        assert nba.fetch_altitude_data(2024, "Regular Season") is None
+
+    def test_returns_none_when_no_home_games(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "TEAM_NAME": ["Denver Nuggets"],
+            "MATCHUP":   ["DEN @ BOS"],
+            "WL":        ["W"],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+        assert nba.fetch_altitude_data(2024, "Regular Season") is None
+
+    def test_tags_altitude_teams_and_computes_away_win(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "TEAM_NAME": ["Denver Nuggets", "Denver Nuggets", "Utah Jazz",   "Boston Celtics", "Boston Celtics"],
+            "MATCHUP":   ["DEN vs. BOS",    "DEN vs. LAL",    "UTA vs. PHX", "BOS vs. DEN",    "BOS @ LAL"],
+            "WL":        ["W",              "L",              "L",          "W",              "L"],
+        })
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+        result = nba.fetch_altitude_data(2024, "Regular Season")
+
+        # The away row (BOS @ LAL) is dropped, leaving 4 home games
+        assert len(result) == 4
+
+        den_rows = result[result["TEAM_NAME"] == "Denver Nuggets"]
+        assert den_rows["ALTITUDE"].all()
+        assert sorted(den_rows["AWAY_WIN"].tolist()) == [0, 1]  # one home win, one home loss
+
+        uta_rows = result[result["TEAM_NAME"] == "Utah Jazz"]
+        assert uta_rows["ALTITUDE"].all()
+        assert uta_rows["AWAY_WIN"].iloc[0] == 1  # home team (Jazz) lost
+
+        bos_rows = result[result["TEAM_NAME"] == "Boston Celtics"]
+        assert not bos_rows["ALTITUDE"].any()
+        assert bos_rows["AWAY_WIN"].iloc[0] == 0  # home team (Celtics) won
+
+
+class TestFetchAltitudeDataFromRealCache:
+    def test_returns_expected_columns_for_real_season(self, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
+
+        result = nba.fetch_altitude_data(1985, "Regular Season")
+
+        assert result is not None
+        assert list(result.columns) == ["TEAM_NAME", "AWAY_WIN", "ALTITUDE"]
+        assert len(result) > 0
+        assert result["AWAY_WIN"].isin([0, 1]).all()
+        # Utah Jazz (TEAM_NAME stayed constant despite the UTH -> UTA
+        # abbreviation change) should be tagged as an altitude team
+        assert result.loc[result["TEAM_NAME"] == "Utah Jazz", "ALTITUDE"].all()
+
+
+class TestComputeAltitudeStats:
+    def test_aggregates_road_win_pct_per_team_and_other(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "TEAM_NAME": ["Denver Nuggets", "Denver Nuggets", "Utah Jazz", "Boston Celtics", "Boston Celtics"],
+                "AWAY_WIN":  [0, 1, 1, 0, 1],
+                "ALTITUDE":  [True, True, True, False, False],
+            })
+
+        monkeypatch.setattr(nba, "fetch_altitude_data", fake_fetch)
+        seasons, stats = nba.compute_altitude_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        assert stats["Denver Nuggets"] == [50.0]
+        assert stats["Utah Jazz"] == [100.0]
+        assert stats["other"] == [50.0]
+
+    def test_skips_years_with_no_data(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_altitude_data", lambda year, season_type: None)
+
+        seasons, stats = nba.compute_altitude_stats(2023, 2025, "Regular Season")
+
+        assert seasons == []
+        for values in stats.values():
+            assert values == []
+
+    def test_skip_years_param_excludes_years(self, monkeypatch):
+        calls = []
+
+        def fake_fetch(year, season_type):
+            calls.append(year)
+            return None
+
+        monkeypatch.setattr(nba, "fetch_altitude_data", fake_fetch)
+        nba.compute_altitude_stats(2019, 2021, "Playoffs", skip_years={2020})
+
+        assert calls == [2019, 2021]
+
+
+class TestComputeAltitudeEraAverages:
+    def test_buckets_seasons_into_eras_and_averages(self):
+        # 83–84 -> 1984 and 93–94 -> 1994 both fall in the 1984–94 era
+        seasons = ["83–84", "93–94"]
+        stats = {
+            "Denver Nuggets": [30.0, 50.0],
+            "Utah Jazz":       [20.0, 40.0],
+            "other":           [40.0, 40.0],
+        }
+
+        era_avgs, era_labels = nba.compute_altitude_era_averages(seasons, stats)
+
+        i = era_labels.index("1984–94")
+        assert era_avgs["Denver Nuggets"][i] == 40.0
+        assert era_avgs["Utah Jazz"][i] == 30.0
+        assert era_avgs["other"][i] == 40.0
+
+        # Eras with no matching seasons average to 0
+        j = era_labels.index("2023–25")
+        assert era_avgs["Denver Nuggets"][j] == 0
+        assert era_avgs["Utah Jazz"][j] == 0
+        assert era_avgs["other"][j] == 0
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)

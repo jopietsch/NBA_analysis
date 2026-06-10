@@ -575,6 +575,150 @@ def plot_rest_analysis(
     plt.show()
 
 
+# ── Altitude analysis (prototype) ──────────────────────────────────────────
+# Home arenas at significant elevation, used to test whether visiting teams
+# are specifically disadvantaged at altitude (vs. just facing good teams).
+# Matched on TEAM_NAME since the Jazz's abbreviation changed (UTH -> UTA)
+# partway through the dataset, but TEAM_NAME has stayed constant.
+# Source: https://en.wikipedia.org/wiki/List_of_NBA_arenas
+ALTITUDE_TEAMS = {
+    "Denver Nuggets": 5280,
+    "Utah Jazz": 4226,
+}
+
+ALTITUDE_COLORS = {
+    "Denver Nuggets": "#e8a33d",
+    "Utah Jazz": "#7c6fce",
+    "other": GRAY,
+}
+
+ALTITUDE_LABELS = {
+    "Denver Nuggets": "Denver (5,280 ft)",
+    "Utah Jazz": "Utah (4,226 ft)",
+    "other": "All other arenas (avg)",
+}
+
+
+def fetch_altitude_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Per-home-game result from the cached game log, tagged with whether the
+    home team plays at elevation (Denver, Utah). AWAY_WIN = 1 if the
+    visiting team won that game.
+    """
+    path = cache_path(end_year, season_type)
+    if not os.path.exists(path):
+        return None
+
+    df = pd.read_csv(path)
+    if df.empty:
+        return None
+
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
+    if home.empty:
+        return None
+
+    home["AWAY_WIN"] = (home["WL"] == "L").astype(int)
+    home["ALTITUDE"] = home["TEAM_NAME"].isin(ALTITUDE_TEAMS)
+    return home[["TEAM_NAME", "AWAY_WIN", "ALTITUDE"]]
+
+
+def compute_altitude_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season road (visiting-team) win % at each altitude city vs elsewhere."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {name: [] for name in ALTITUDE_TEAMS}
+    stats["other"] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_altitude_data(year, season_type)
+        if g is None or g.empty:
+            continue
+
+        seasons.append(short_label(year))
+        other = g[~g["ALTITUDE"]]
+        stats["other"].append(100 * other["AWAY_WIN"].mean() if len(other) else np.nan)
+        for name in ALTITUDE_TEAMS:
+            team_g = g[g["TEAM_NAME"] == name]
+            stats[name].append(100 * team_g["AWAY_WIN"].mean() if len(team_g) else np.nan)
+
+    return seasons, stats
+
+
+def compute_altitude_era_averages(seasons: list[str], stats: dict) -> tuple[dict, list[str]]:
+    """Average road win % at each altitude city vs elsewhere, per rule-change era."""
+    era_avgs: dict[str, list[float]] = {key: [] for key in stats}
+    for _, y1, y2, _ in ERA_DEFS:
+        idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
+        for key, values in stats.items():
+            vals = [values[i] for i in idx if not np.isnan(values[i])]
+            era_avgs[key].append(round(np.mean(vals), 1) if vals else 0)
+
+    era_labels_short = [e[0] for e in ERA_DEFS]
+    return era_avgs, era_labels_short
+
+
+def plot_altitude_analysis(seasons: list[str], stats: dict, season_label: str, output_path: str) -> None:
+    """
+    2-panel chart testing whether visiting teams are specifically
+    disadvantaged at high-elevation arenas (Denver, Utah).
+
+    Panel 1: road win % per season at each altitude city vs the league
+    average elsewhere, with trend lines.
+    Panel 2: the same, averaged within each rule-change era.
+    """
+    x = np.arange(len(seasons))
+    tick_step = max(1, len(seasons) // 14)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6), gridspec_kw={"width_ratios": [2, 1]})
+    fig.suptitle("Are Visiting Teams Disadvantaged by Altitude (Denver, Utah)?",
+                 fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             f"Data: NBA.com  |  {season_label}  |  road win % = visiting team's win % at that arena",
+             ha="center", fontsize=9, color=GRAY)
+
+    # Panel 1: per-season trend
+    for key in ["other", "Denver Nuggets", "Utah Jazz"]:
+        y = np.array(stats[key], dtype=float)
+        ax1.plot(x, y, color=ALTITUDE_COLORS[key], linewidth=2, label=ALTITUDE_LABELS[key])
+        mask = ~np.isnan(y)
+        if mask.sum() >= 2:
+            z = np.polyfit(x[mask], y[mask], 1)
+            ax1.plot(x, np.poly1d(z)(x), "--", color=ALTITUDE_COLORS[key], linewidth=1.4, alpha=0.5)
+
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("Road (visiting team) win %")
+    ax1.set_title("Road win % by season", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Panel 2: era-grouped bar chart
+    era_avgs, era_labels = compute_altitude_era_averages(seasons, stats)
+    xi = np.arange(len(era_labels))
+    w = 0.25
+    for offset, key in zip([-w, 0, w], ["Denver Nuggets", "Utah Jazz", "other"]):
+        bars = ax2.bar(xi + offset, era_avgs[key], width=w, color=ALTITUDE_COLORS[key],
+                       label=ALTITUDE_LABELS[key], zorder=2)
+        for bar in bars:
+            ax2.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
+                     f"{bar.get_height():.0f}%", ha="center", va="bottom",
+                     fontsize=6.5, color=ALTITUDE_COLORS[key])
+
+    ax2.set_xticks(xi)
+    ax2.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=8)
+    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax2.set_title("Road win % by era", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
+    ax2.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd")
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
 def main() -> None:
     reg_seasons, reg_pcts, po_seasons, po_pcts = fetch_all_seasons()
     era_reg_avg, era_po_avg, era_labels_short = compute_era_averages(
@@ -597,6 +741,18 @@ def main() -> None:
                         season_label="Playoffs",
                         output_path="nba_home_court_advantage_rest_playoffs.png",
                         extra_subtitle="; first round each year dropped (no prior playoff game for rest calc)")
+
+    alt_seasons, alt_stats = compute_altitude_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    plot_altitude_analysis(alt_seasons, alt_stats,
+                            season_label="Regular season",
+                            output_path="nba_home_court_advantage_altitude.png")
+
+    po_alt_seasons, po_alt_stats = compute_altitude_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_altitude_analysis(po_alt_seasons, po_alt_stats,
+                            season_label="Playoffs",
+                            output_path="nba_home_court_advantage_altitude_playoffs.png")
 
 
 if __name__ == "__main__":
