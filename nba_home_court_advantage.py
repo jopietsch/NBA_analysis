@@ -97,13 +97,21 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
 
 
 # ── Era definitions ───────────────────────────────────────────────────────────
-# Eras are bounded by major NBA rule changes affecting pace/defense:
+# Eras are bounded by major NBA rule changes affecting pace/defense. Sources:
+#   - Hand-checking restrictions (1994-95): https://theballzone.com/when-was-hand-checking-banned-in-the-nba/
+#   - Illegal defense eliminated / zone legalized / defensive 3-sec (2001-02):
+#       https://en.wikipedia.org/wiki/Defensive_three-second_violation
+#   - Perimeter hand-checking ban (2004-05):
+#       https://www.basketballnetwork.net/old-school/how-removing-the-hand-check-rule-changed-the-nba-forever
+#   - Freedom-of-movement emphasis (2017-18) / transition take-foul rule (2022-23):
+#       https://videorulebook.nba.com/rule/transition-take-fouls/
 ERA_DEFS = [
     ("1984–94", 1984, 1994, "Illegal defense rules (no zone defense)"),
-    ("1995–01", 1995, 2001, "1994: hand-checking restrictions; zone still illegal"),
-    ("2002–04", 2002, 2004, "2001: zone defense legalized, defensive 3-sec added"),
-    ("2005–17", 2005, 2017, "2004-05: perimeter hand-checking banned (pace-and-space)"),
-    ("2018–25", 2018, 2025, "2017-18: freedom-of-movement / transition take-foul rules"),
+    ("1995–01", 1995, 2001, "Hand-checking restrictions; zone still illegal"),
+    ("2002–04", 2002, 2004, "Zone defense legalized, defensive 3-sec added"),
+    ("2005–17", 2005, 2017, "Perimeter hand-checking banned (pace-and-space)"),
+    ("2018–22", 2018, 2022, "Freedom-of-movement emphasis"),
+    ("2023–25", 2023, 2025, "Transition take-foul rule added"),
 ]
 
 
@@ -178,7 +186,7 @@ BG    = "#f9f9f7"
 PANEL = "#ffffff"
 
 # One background shade per era (matches order of ERA_DEFS)
-ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a"]
+ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
 
 def plot_results(
     reg_seasons: list[str], reg_pcts: list[float],
