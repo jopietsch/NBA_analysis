@@ -114,6 +114,23 @@ ERA_DEFS = [
     ("2023–25", 2023, 2025, "Transition take-foul rule added"),
 ]
 
+# Playoff series-format / scheduling changes (separate from the defensive-rule
+# eras above — these only affect the playoff data). Marked as vertical lines
+# on the playoffs panel rather than background shading to avoid clutter.
+# Sources:
+#   - 1985: Finals move to 2-3-2 format; home-court advantage based on
+#       regular-season record instead of alternating by conference:
+#       https://en.wikipedia.org/wiki/2%E2%80%933%E2%80%932_format
+#   - 2003: First round expanded from best-of-5 to best-of-7:
+#       https://en.wikipedia.org/wiki/NBA_playoffs
+#   - 2014: Finals revert to 2-2-1-1-1 (same format as all other rounds):
+#       https://en.wikipedia.org/wiki/2%E2%80%933%E2%80%932_format
+PLAYOFF_FORMAT_CHANGES = [
+    (1985, "'85: Finals → 2-3-2,\nhome court by record"),
+    (2003, "'03: Round 1 →\nbest-of-7"),
+    (2014, "'14: Finals →\n2-2-1-1-1"),
+]
+
 
 def label_to_year(lbl: str) -> int:
     suffix = int(lbl.split("–")[1])
@@ -328,6 +345,16 @@ def plot_results(
         ax3.axvspan(min(covid_idx_po) - 0.5, max(covid_idx_po) + 0.5,
                     alpha=0.12, color=RED, zorder=1)
 
+    # Mark playoff format/scheduling changes (distinct from the rule-change
+    # era shading: dash-dot vertical lines, labeled near the top of the panel)
+    for change_year, change_label in PLAYOFF_FORMAT_CHANGES:
+        idx = next((i for i, s in enumerate(po_seasons) if label_to_year(s) == change_year), None)
+        if idx is None:
+            continue
+        ax3.axvline(idx - 0.5, color="#444444", linestyle="-.", linewidth=1, alpha=0.6, zorder=1)
+        ax3.text(idx - 0.4, 79, change_label, rotation=90, ha="left", va="top",
+                 fontsize=6.5, color="#444444", linespacing=1.2)
+
     ax3.set_title("Playoffs: home win % per season, with a trend line per era",
                   fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     tick_step_po = max(1, len(po_seasons) // 14)
@@ -336,14 +363,6 @@ def plot_results(
     ax3.set_ylim(45, 80)
     ax3.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
     ax3.set_ylabel("Home win %", fontsize=10)
-
-    handles3 = [
-        mpatches.Patch(color=GREEN, label="Playoffs"),
-        mpatches.Patch(color=RED,   label="COVID-impacted seasons"),
-        plt.Line2D([0], [0], color=GRAY, linestyle="--", alpha=0.8, label="Trend (per era)"),
-    ]
-    ax3.legend(handles=handles3, fontsize=9, loc="upper right",
-               framealpha=0.85, edgecolor="#ddd")
 
     # ── Panel 3: regular season only, with a trend line per era ──────────────
     ax4 = fig.add_subplot(gs[2, 1:3])
@@ -386,14 +405,6 @@ def plot_results(
     ax4.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
     ax4.set_ylabel("Home win %", fontsize=10)
 
-    handles4 = [
-        mpatches.Patch(color=BLUE, label="Regular season"),
-        mpatches.Patch(color=RED,  label="COVID-impacted seasons"),
-        plt.Line2D([0], [0], color=GRAY, linestyle="--", alpha=0.8, label="Trend (per era)"),
-    ]
-    ax4.legend(handles=handles4, fontsize=9, loc="upper right",
-               framealpha=0.85, edgecolor="#ddd")
-
     # ── Panel 4: era grouped bar chart ────────────────────────────────────────
     ax2 = fig.add_subplot(gs[3, 1:3])
     xi = np.arange(len(era_labels_short))
@@ -419,6 +430,13 @@ def plot_results(
     era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
     fig.text(0.5, 0.045, era_notes, ha="center", va="top",
              fontsize=7.5, color=GRAY, linespacing=1.6)
+
+    # Footnote: explain the playoff format changes marked on the playoffs panel
+    format_notes = "  |  ".join(
+        change_label.replace("\n", " ") for _, change_label in PLAYOFF_FORMAT_CHANGES
+    )
+    fig.text(0.5, -0.01, format_notes, ha="center", va="top",
+             fontsize=7.5, color="#444444", linespacing=1.6)
 
     # ── Save ──────────────────────────────────────────────────────────────────
     output_path = "nba_home_court_advantage.png"
