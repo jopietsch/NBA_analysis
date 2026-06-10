@@ -28,7 +28,7 @@ SLEEP_SEC  = 1.0    # polite pause between API calls
 SKIP_PLAYOFF_YEARS = {2020}
 
 # Seasons with limited/no fans (COVID) — highlighted in the chart
-COVID_SEASONS = {"19-20", "20-21"}
+COVID_SEASONS = {"19–20", "20–21"}
 
 # Raw game logs are cached here as CSVs to avoid re-fetching from NBA.com
 CACHE_DIR = "cache"
@@ -99,11 +99,11 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
 # ── Era definitions ───────────────────────────────────────────────────────────
 # Eras are bounded by major NBA rule changes affecting pace/defense:
 ERA_DEFS = [
-    ("1984–94", 1984, 1994),  # Illegal defense rules (no zone defense)
-    ("1995–01", 1995, 2001),  # 1994 hand-checking restrictions; zone still illegal
-    ("2002–04", 2002, 2004),  # 2001: zone defense legalized, defensive 3-sec added
-    ("2005–17", 2005, 2017),  # 2004-05: perimeter hand-checking banned (pace-and-space era)
-    ("2018–25", 2018, 2025),  # 2017-18: freedom-of-movement / transition take-foul rules
+    ("1984–94", 1984, 1994, "Illegal defense rules (no zone defense)"),
+    ("1995–01", 1995, 2001, "1994: hand-checking restrictions; zone still illegal"),
+    ("2002–04", 2002, 2004, "2001: zone defense legalized, defensive 3-sec added"),
+    ("2005–17", 2005, 2017, "2004-05: perimeter hand-checking banned (pace-and-space)"),
+    ("2018–25", 2018, 2025, "2017-18: freedom-of-movement / transition take-foul rules"),
 ]
 
 
@@ -159,7 +159,7 @@ def compute_era_averages(
 ) -> tuple[list[float], list[float], list[str]]:
     """Average regular-season and playoff home win % within each era."""
     era_reg_avg, era_po_avg = [], []
-    for _, y1, y2 in ERA_DEFS:
+    for _, y1, y2, _ in ERA_DEFS:
         rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
         pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
         era_reg_avg.append(round(np.mean(rv), 1) if rv else 0)
@@ -195,7 +195,7 @@ def plot_results(
         "axes.axisbelow":     True,
     })
 
-    fig = plt.figure(figsize=(15, 9))
+    fig = plt.figure(figsize=(15, 10.5))
     fig.suptitle("NBA Home Court Advantage — A 40-Year Decline",
                  fontsize=18, fontweight="bold", y=0.98, color="#2c2c2a")
     fig.text(0.5, 0.955,
@@ -203,10 +203,10 @@ def plot_results(
              ha="center", fontsize=9, color=GRAY)
 
     gs = fig.add_gridspec(2, 4, hspace=0.5, wspace=0.32,
-                          left=0.07, right=0.97, top=0.91, bottom=0.08)
+                          left=0.07, right=0.97, top=0.92, bottom=0.20)
 
     # ── Panel 1: season-by-season regular season vs playoffs ─────────────────
-    ax1 = fig.add_subplot(gs[0, :])
+    ax1 = fig.add_subplot(gs[0, 1:3])
     x = np.arange(len(reg_seasons))
     pt_colors = [RED if s in COVID_SEASONS else BLUE for s in reg_seasons]
 
@@ -238,8 +238,9 @@ def plot_results(
 
     ax1.set_title("Regular season vs playoffs: home win % per season",
                   fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax1.set_xticks(x)
-    ax1.set_xticklabels(reg_seasons, rotation=45, ha="right", fontsize=8)
+    tick_step = max(1, len(reg_seasons) // 14)
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.set_ylim(45, 80)
     ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
     ax1.set_ylabel("Home win %", fontsize=10)
@@ -288,6 +289,11 @@ def plot_results(
     ax2.set_title("Regular season vs playoffs\nhome win % by era",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # Footnote: explain what each era represents
+    era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
+    fig.text(0.5, 0.10, era_notes, ha="center", va="top",
+             fontsize=7.5, color=GRAY, linespacing=1.6)
 
     # ── Save ──────────────────────────────────────────────────────────────────
     output_path = "nba_home_court_advantage.png"
