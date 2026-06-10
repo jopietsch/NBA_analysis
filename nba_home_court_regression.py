@@ -78,9 +78,28 @@ def build_game_dataset() -> pd.DataFrame:
             merged["tz_diff"] = (home_tz - away_tz).abs().astype("float64")
             merged.loc[home_tz.isna() | away_tz.isna(), "tz_diff"] = np.nan
 
+            fg3a_home = merged["FG3A_home"].replace(0, np.nan)
+            fg3a_away = merged["FG3A_away"].replace(0, np.nan)
+            fta_home  = merged["FTA_home"].replace(0, np.nan)
+            fta_away  = merged["FTA_away"].replace(0, np.nan)
+            merged["foul_diff"]     = merged["PF_home"] - merged["PF_away"]
+            merged["fg_pct_diff"]   = 100 * (merged["FGM_home"] / merged["FGA_home"]
+                                             - merged["FGM_away"] / merged["FGA_away"])
+            merged["efg_pct_diff"]  = 100 * (
+                (merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
+                - (merged["FGM_away"] + 0.5 * merged["FG3M_away"]) / merged["FGA_away"])
+            merged["tpa_rate_diff"] = 100 * (merged["FG3A_home"] / merged["FGA_home"]
+                                             - merged["FG3A_away"] / merged["FGA_away"])
+            merged["fg3_pct_diff"]  = 100 * (merged["FG3M_home"] / fg3a_home
+                                             - merged["FG3M_away"] / fg3a_away)
+            merged["ft_pct_diff"]   = 100 * (merged["FTM_home"]  / fta_home
+                                             - merged["FTM_away"]  / fta_away)
+
             chunks.append(merged[[
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "altitude_home", "tz_diff",
+                "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
+                "fg3_pct_diff", "ft_pct_diff",
             ]])
 
     if not chunks:
@@ -310,6 +329,56 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     print(f"     ({n_cc_re:,} regular-season) — too sparse for reliable playoff inference.")
 
 
+# ── Analysis 4: Foul & shooting differentials by era ─────────────────────────
+
+def run_differential_analysis(df: pd.DataFrame) -> None:
+    col_keys   = ["foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
+                  "fg3_pct_diff", "ft_pct_diff"]
+    col_labels = ["Foul diff", "FG% (pp)", "eFG% (pp)", "3PA rate (pp)",
+                  "3P% (pp)", "FT% (pp)"]
+    COL_W = 13
+
+    _section("4. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
+    print("   Negative foul diff = refs call fewer fouls on the home team.")
+    print("   Trend = OLS slope (change per season year); pp = percentage points.\n")
+
+    for season_label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        print(f"   {season_label}  (N = {len(sub):,} games)\n")
+
+        header = f"   {'Era':<12}" + "".join(f"{lbl:>{COL_W}}" for lbl in col_labels)
+        divider = f"   {'─'*12}" + "─" * (COL_W * len(col_keys))
+        print(header)
+        print(divider)
+
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_rows = sub[(sub["year"] >= y1) & (sub["year"] <= y2)]
+            row = f"   {era_label:<12}"
+            for key in col_keys:
+                vals = era_rows[key].dropna()
+                row += f"{vals.mean():>+{COL_W}.2f}" if len(vals) else f"{'—':>{COL_W}}"
+            print(row)
+
+        print(divider)
+        trend_row = f"   {'Trend/yr':<12}"
+        for key in col_keys:
+            data = sub[["year", key]].dropna()
+            if len(data) < 10:
+                trend_row += f"{'—':>{COL_W}}"
+                continue
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m = smf.ols(f"{key} ~ year", data=data).fit()
+            coef = m.params["year"]
+            pval = m.pvalues["year"]
+            cell = f"{coef:>+{COL_W - 3}.3f}{_stars(pval)}"
+            trend_row += cell
+        print(trend_row)
+        print()
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def run() -> None:
@@ -325,5 +394,6 @@ def run() -> None:
     run_sequential_decomposition(df)
     run_stability_analysis(df)
     run_factor_summary(df)
+    run_differential_analysis(df)
 
     print("\n" + "═" * _W + "\n")

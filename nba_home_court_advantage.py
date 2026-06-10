@@ -221,7 +221,7 @@ PANEL = "#ffffff"
 ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
 
 
-def _shade_eras(ax: plt.Axes, seasons: list[str]) -> None:
+def _shade_eras(ax: plt.Axes, seasons: list[str], label_y: float | None = 46) -> None:
     for (label, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
         era_idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
         if not era_idx:
@@ -229,8 +229,9 @@ def _shade_eras(ax: plt.Axes, seasons: list[str]) -> None:
         ax.axvspan(min(era_idx) - 0.5, max(era_idx) + 0.5, alpha=0.08, color=era_color, zorder=0)
         if min(era_idx) > 0:
             ax.axvline(min(era_idx) - 0.5, color=GRAY, linestyle=":", linewidth=0.8, alpha=0.6)
-        mid = (min(era_idx) + max(era_idx)) / 2
-        ax.text(mid, 46, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+        if label_y is not None:
+            mid = (min(era_idx) + max(era_idx)) / 2
+            ax.text(mid, label_y, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
 
 
 def _annotate_bars(ax: plt.Axes, bars, color: str) -> None:
@@ -856,6 +857,321 @@ def compute_timezone_stats(
     return seasons, stats
 
 
+# ── Box-score differential analysis ──────────────────────────────────────────
+
+def fetch_differential_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Per-game home-minus-away differentials for fouls and shooting efficiency
+    (shooting % in percentage points). Computed from raw M/A columns so games
+    with zero attempts (e.g., 0 FG3A) become NaN rather than zero.
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+
+    fg3a_home = merged["FG3A_home"].replace(0, np.nan)
+    fg3a_away = merged["FG3A_away"].replace(0, np.nan)
+    fta_home  = merged["FTA_home"].replace(0, np.nan)
+    fta_away  = merged["FTA_away"].replace(0, np.nan)
+
+    return pd.DataFrame({
+        "foul_diff":    merged["PF_home"] - merged["PF_away"],
+        "fg_pct_diff":  100 * (merged["FGM_home"] / merged["FGA_home"]
+                               - merged["FGM_away"] / merged["FGA_away"]),
+        "efg_pct_diff": 100 * ((merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
+                               - (merged["FGM_away"] + 0.5 * merged["FG3M_away"]) / merged["FGA_away"]),
+        "tpa_rate_diff": 100 * (merged["FG3A_home"] / merged["FGA_home"]
+                                - merged["FG3A_away"] / merged["FGA_away"]),
+        "fg3_pct_diff": 100 * (merged["FG3M_home"] / fg3a_home
+                               - merged["FG3M_away"] / fg3a_away),
+        "ft_pct_diff":  100 * (merged["FTM_home"]  / fta_home
+                               - merged["FTM_away"]  / fta_away),
+    })
+
+
+def compute_differential_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season mean home-minus-away differentials for fouls and shooting %."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "foul_diff": [], "fg_pct_diff": [], "efg_pct_diff": [], "tpa_rate_diff": [],
+        "fg3_pct_diff": [], "ft_pct_diff": [],
+    }
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_differential_data(year, season_type)
+        if g is None or g.empty:
+            continue
+
+        seasons.append(short_label(year))
+        for key in stats:
+            stats[key].append(g[key].mean(skipna=True))
+
+    return seasons, stats
+
+
+def plot_differential_analysis(
+    reg_seasons: list[str], reg_stats: dict,
+    po_seasons: list[str], po_stats: dict,
+) -> None:
+    """
+    4-panel figure showing per-season home-minus-away differentials for fouls
+    and shooting %, with regular season and playoffs on the same axes.
+    A trend toward zero indicates the home-team advantage in that metric is shrinking.
+    """
+    x = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+
+    # Align playoff data to the regular-season x-axis (same approach as panel 1)
+    po_by_season = {s: i for i, s in enumerate(po_seasons)}
+
+    def _aligned(key: str) -> np.ndarray:
+        return np.array(
+            [po_stats[key][po_by_season[s]] if s in po_by_season else np.nan
+             for s in reg_seasons],
+            dtype=float,
+        )
+
+    panels = [
+        ("foul_diff",     "Foul differential (home PF − away PF)",
+         "Fouls per game",    "negative = refs call fewer fouls on home team"),
+        ("fg_pct_diff",   "FG% differential (home − away)",
+         "Percentage points", ""),
+        ("efg_pct_diff",  "eFG% differential (home − away)",
+         "Percentage points", "weights 3-pointers at 1.5×"),
+        ("tpa_rate_diff", "3PA rate differential (home − away)",
+         "Percentage points", "share of shots that are 3-point attempts"),
+        ("fg3_pct_diff",  "3P% differential (home − away)",
+         "Percentage points", ""),
+        ("ft_pct_diff",   "FT% differential (home − away)",
+         "Percentage points", ""),
+    ]
+
+    fig, axes = plt.subplots(2, 3, figsize=(22, 10))
+    fig.suptitle("Home vs Away Box-Score Differentials — Are the Gaps Closing?",
+                 fontsize=15, fontweight="bold", y=0.99, color="#2c2c2a")
+    fig.text(0.5, 0.955,
+             "Data: NBA.com  |  Positive = home team higher  |  1983-84 through 2024-25",
+             ha="center", fontsize=9, color=GRAY)
+
+    for ax, (key, title, ylabel, note) in zip(axes.flat, panels):
+        y_reg = np.array(reg_stats[key], dtype=float)
+        y_po  = _aligned(key)
+
+        for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
+            mask = ~np.isnan(y)
+            ax.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
+            if mask.sum() >= 2:
+                z = np.polyfit(x[mask], y[mask], 1)
+                ax.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.8, alpha=0.9, zorder=3)
+
+        _shade_eras(ax, reg_seasons, label_y=None)
+        ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+        ax.set_xticks(x[::tick_step])
+        ax.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+        ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+        ax.set_ylabel(ylabel, fontsize=10)
+        ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+        if note:
+            ax.set_xlabel(note, fontsize=8, color=GRAY)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_advantage_differentials.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
+# ── Shot-zone analysis ────────────────────────────────────────────────────────
+# LeagueDashTeamShotLocations column names for each shot zone's FGA.
+# RA = Restricted Area, PITP = Paint In The Paint (non-RA), MR = Mid-Range,
+# LC3/RC3 = Left/Right Corner 3, ATB3 = Above the Break 3, BC = Back Court.
+# Mapping from the API's MultiIndex (zone, stat) column tuples to flat CSV names.
+_ZONE_COL_MAP: dict[tuple[str, str], str] = {
+    ("Restricted Area",       "FGA"): "FGA_RA",
+    ("In The Paint (Non-RA)", "FGA"): "FGA_NON_RA",
+    ("Mid-Range",             "FGA"): "FGA_MR",
+    ("Left Corner 3",         "FGA"): "FGA_LC3",
+    ("Right Corner 3",        "FGA"): "FGA_RC3",
+    ("Above the Break 3",     "FGA"): "FGA_ATB3",
+    ("Backcourt",             "FGA"): "FGA_BC",
+}
+
+SHOT_ZONE_GROUPS: dict[str, list[str]] = {
+    "paint":    ["FGA_RA", "FGA_NON_RA"],
+    "midrange": ["FGA_MR"],
+    "corner3":  ["FGA_LC3", "FGA_RC3"],
+    "above3":   ["FGA_ATB3"],
+    # FGA_BC excluded — backcourt heaves are noise
+}
+SHOT_ZONE_LABELS: dict[str, str] = {
+    "paint":    "Paint (RA + Non-RA)",
+    "midrange": "Mid-Range",
+    "corner3":  "Corner 3",
+    "above3":   "Above Break 3",
+}
+SHOT_ZONE_COLORS: dict[str, str] = {
+    "paint":    BLUE,
+    "midrange": GRAY,
+    "corner3":  GREEN,
+    "above3":   RED,
+}
+
+
+def fetch_shot_zones(end_year: int, season_type: str, location: str) -> pd.DataFrame | None:
+    """
+    Fetch team-level shot zone FGA totals from LeagueDashTeamShotLocations,
+    split by location ('Home' or 'Road'). Cached as shot_zones_*.csv.
+    """
+    path = os.path.join(
+        CACHE_DIR,
+        f"shot_zones_{season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv",
+    )
+    if os.path.exists(path):
+        df = pd.read_csv(path)
+        return df if not df.empty else None
+
+    try:
+        from nba_api.stats.endpoints import leaguedashteamshotlocations
+        result = leaguedashteamshotlocations.LeagueDashTeamShotLocations(
+            season=season_str(end_year),
+            season_type_all_star=season_type,
+            location_nullable=location,
+            per_mode_detailed="Totals",
+            timeout=60,
+        )
+        df = result.get_data_frames()[0]
+    except Exception as e:
+        print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}")
+        return None
+
+    if df.empty:
+        return None
+
+    # The API returns a MultiIndex DataFrame: columns are (zone_name, stat) tuples.
+    # Flatten to simple names before caching so the CSV round-trips cleanly.
+    id_map = {("", "TEAM_ID"): "TEAM_ID", ("", "TEAM_NAME"): "TEAM_NAME"}
+    col_map = {**id_map, **_ZONE_COL_MAP}
+    present = [c for c in col_map if c in df.columns]
+    df = df[present].copy()
+    df.columns = [col_map[c] for c in present]
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def _zone_pcts(df: pd.DataFrame) -> dict[str, float]:
+    """League-wide shot zone percentages (share of total FGA) from a team-level DataFrame."""
+    totals = {
+        zone: sum(df[col].sum() for col in cols if col in df.columns)
+        for zone, cols in SHOT_ZONE_GROUPS.items()
+    }
+    total_fga = sum(totals.values())
+    if total_fga == 0:
+        return {k: np.nan for k in SHOT_ZONE_GROUPS}
+    return {k: 100.0 * v / total_fga for k, v in totals.items()}
+
+
+def compute_shot_zone_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """
+    Per-season home-minus-road shot zone % differentials.
+    Each value is the pp difference in that zone's share of total FGA (home − road).
+    """
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {zone: [] for zone in SHOT_ZONE_GROUPS}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        home_df = fetch_shot_zones(year, season_type, "Home")
+        road_df = fetch_shot_zones(year, season_type, "Road")
+        if home_df is None or road_df is None:
+            continue
+
+        home_pcts = _zone_pcts(home_df)
+        road_pcts = _zone_pcts(road_df)
+        if any(np.isnan(v) for v in {**home_pcts, **road_pcts}.values()):
+            continue
+
+        seasons.append(short_label(year))
+        for zone in SHOT_ZONE_GROUPS:
+            stats[zone].append(home_pcts[zone] - road_pcts[zone])
+
+    return seasons, stats
+
+
+def plot_shot_zone_analysis(
+    reg_seasons: list[str], reg_stats: dict,
+    po_seasons: list[str], po_stats: dict,
+) -> None:
+    """
+    4-panel figure: home-minus-road shot zone % differentials over time,
+    regular season and playoffs on the same axes.
+    A trend toward zero = away teams gaining access to the same shot quality.
+    """
+    x = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+
+    po_by_season = {s: i for i, s in enumerate(po_seasons)}
+
+    def _aligned(zone: str) -> np.ndarray:
+        return np.array(
+            [po_stats[zone][po_by_season[s]] if s in po_by_season else np.nan
+             for s in reg_seasons],
+            dtype=float,
+        )
+
+    fig, axes = plt.subplots(2, 2, figsize=(16, 10))
+    fig.suptitle("Shot Zone Differentials: Home vs Road — Are Away Teams Getting Better Looks?",
+                 fontsize=14, fontweight="bold", y=0.99, color="#2c2c2a")
+    fig.text(0.5, 0.955,
+             "Data: NBA.com  |  Positive = home team higher share of FGA  |  1983-84 through 2024-25",
+             ha="center", fontsize=9, color=GRAY)
+
+    for ax, (zone, label) in zip(axes.flat, SHOT_ZONE_LABELS.items()):
+        color = SHOT_ZONE_COLORS[zone]
+        y_reg = np.array(reg_stats[zone], dtype=float)
+        y_po  = _aligned(zone)
+
+        for y, lcolor, llabel in [(y_reg, color, "Regular season"),
+                                   (y_po, color, "Playoffs")]:
+            ls = "-" if llabel == "Regular season" else "--"
+            alpha = 0.9 if llabel == "Regular season" else 0.6
+            mask = ~np.isnan(y)
+            ax.plot(x, y, color=lcolor, linewidth=2, linestyle=ls,
+                    alpha=alpha, label=llabel, zorder=2)
+            if mask.sum() >= 2:
+                z = np.polyfit(x[mask], y[mask], 1)
+                ax.plot(x, np.poly1d(z)(x), ":", color=lcolor, linewidth=1.5,
+                        alpha=alpha * 0.7, zorder=3)
+
+        _shade_eras(ax, reg_seasons, label_y=None)
+        ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+        ax.set_title(f"{label} % differential (home − road)",
+                     fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+        ax.set_ylabel("Percentage points", fontsize=10)
+        ax.set_xticks(x[::tick_step])
+        ax.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+        ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    plt.tight_layout()
+    output_path = "nba_home_court_shot_zones.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
 def main() -> None:
     reg_seasons, reg_pcts, po_seasons, po_pcts = fetch_all_seasons()
     era_reg_avg, era_po_avg, era_labels_short = compute_era_averages(
@@ -882,6 +1198,22 @@ def main() -> None:
                         season_label="Playoffs",
                         output_path="nba_home_court_advantage_rest_playoffs.png",
                         extra_subtitle="; first round each year dropped (no prior playoff game for rest calc)")
+
+    reg_diff_seasons, reg_diff_stats = compute_differential_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    po_diff_seasons, po_diff_stats = compute_differential_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_differential_analysis(reg_diff_seasons, reg_diff_stats, po_diff_seasons, po_diff_stats)
+
+    print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")
+    reg_zone_seasons, reg_zone_stats = compute_shot_zone_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    po_zone_seasons, po_zone_stats = compute_shot_zone_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    if reg_zone_seasons:
+        plot_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
+    else:
+        print("  No shot zone data returned — column names may differ; inspect cached CSVs.")
 
     import nba_home_court_regression
     nba_home_court_regression.run()

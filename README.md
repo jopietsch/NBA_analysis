@@ -1,98 +1,75 @@
 # NBA Home Court Advantage
 
 Fetches every NBA game from 1983-84 through 2024-25 via [nba_api](https://github.com/swar/nba_api),
-computes the home team's win percentage per season (regular season and playoffs),
-and renders a chart exploring how home court advantage has changed over time.
+analyzes how home court advantage has changed over time, and investigates the mechanisms behind its
+40-year decline using logistic regression and box-score differentials.
 
 ## Usage
 
 ```bash
 pip install -r requirements.txt
-python3 nba_home_court_advantage.py
+MPLBACKEND=Agg python3 nba_home_court_advantage.py
 ```
 
-Game logs are cached as CSVs under `cache/` so repeat runs don't re-fetch from
-NBA.com. The first run takes 2-4 minutes (one API call per season/type, with a
-polite 1s pause between calls); subsequent runs use the cache and finish almost
-instantly.
+Game logs and shot zone data are cached as CSVs under `cache/` so repeat runs don't re-fetch from
+NBA.com. The first run takes several minutes (API calls per season with polite pauses); subsequent
+runs use the cache and finish almost instantly.
 
-The script saves `nba_home_court_advantage.png` plus six "why is it declining"
-prototype charts (regular season + playoffs versions of the rest, altitude,
-and time-zone analyses below), and displays each figure.
+Use `MPLBACKEND=Agg` to suppress display windows and generate PNGs only.
 
 ## Output
 
-### `nba_home_court_advantage.png`
+The script generates five PNG charts and prints a regression analysis to stdout.
 
-The figure has six panels:
+### `nba_home_court_advantage.png` — Overview
 
-1. **Regular season vs playoffs** — home win % per season, with an overall
-   trend line for each, era shading, and COVID-season highlighting.
-2. **Playoffs only** — home win % per season with a separate trend line fit
-   per era, plus markers for playoff format/scheduling changes (1985, 2003,
-   2014).
-3. **Regular season only** — same as above, but for regular season data.
-4. **Era averages** — grouped bar chart comparing regular season vs playoff
-   home win % across each rule-change era.
-5. **Playoff format period averages** — grouped bar chart comparing regular
-   season vs playoff home win % across each playoff-format period
-   (`PLAYOFF_FORMAT_PERIODS`), i.e. the spans of seasons between the format
-   changes marked in panel 2 (1984; 1985-2002; 2003-2013; 2014-2025).
-6. **Playoff vs. regular-season gap** — full-width line chart showing
-   (playoff home win % − regular-season home win %) per season, with format
-   change markers and era shading. Directly visualizes the key finding:
-   playoffs used to carry a noticeably larger home-court edge than the regular
-   season, and that gap has narrowed sharply since the 2014 Finals format
-   change.
+5-panel figure showing the full history of home court advantage:
 
-Eras are defined by major NBA rule changes affecting pace/defense (see
-`ERA_DEFS` in `nba_home_court_advantage.py` for sources). The 2020 bubble
-playoffs (all neutral-site games) are excluded from playoff stats, and the
-2019-20 / 2020-21 seasons are flagged as COVID-impacted (limited/no fans).
+1. **Regular season vs playoffs** — home win % per season, with overall trend lines, era shading, and COVID-season highlighting.
+2. **Playoffs only** — home win % per season with a separate trend line per era, plus markers for playoff format/scheduling changes (1985, 2003, 2014).
+3. **Regular season only** — same as above for regular season data.
+4. **Era averages** — grouped bar chart comparing regular season vs playoff home win % across each rule-change era.
+5. **Playoff format period averages** — grouped bar chart across the four playoff-format periods (1984; 1985-2002; 2003-2013; 2014-2025).
 
-### `nba_home_court_advantage_rest.png` / `nba_home_court_advantage_rest_playoffs.png`
+Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS` in `nba_home_court_advantage.py`). The 2020 bubble playoffs are excluded from playoff stats.
 
-Explores whether schedule-driven rest disparities help explain the decline in
-home court advantage, for the regular season and playoffs respectively. Rest
-days are computed from each team's cached game log (days between consecutive
-games minus 1; 0 = back-to-back). For playoffs, each year's first-round games
-are dropped since there's no prior playoff game to compute rest from.
+### `nba_home_court_advantage_rest.png` / `..._rest_playoffs.png` — Rest Analysis
 
-1. **Back-to-back rate** — % of games where the home/away team is playing on
-   no rest, per season.
-2. **Home win % by rest differential** — home win % split by whether the home
-   team, away team, or neither had more rest, with trend lines for the two
-   "more rested" groups.
+2-panel chart exploring whether schedule-driven rest disparities explain the decline, for regular season and playoffs separately:
 
-### `nba_home_court_advantage_altitude.png` / `..._altitude_playoffs.png`
+1. **Back-to-back rate** — % of games where the home/away team plays on no rest, per season.
+2. **Home win % by rest differential** — home win % split by whether the home team, away team, or neither had more rest.
 
-Tests whether visiting teams are specifically disadvantaged at the NBA's two
-high-elevation arenas (Denver, 5,280 ft; Utah, 4,226 ft), for the regular
-season and playoffs respectively. Teams are matched on `TEAM_NAME` (stable
-across the dataset, unlike the Jazz's `UTH` -> `UTA` abbreviation change).
+### `nba_home_court_advantage_differentials.png` — Box-Score Differentials
 
-1. **Road win % by season** — visiting-team win % at Denver, Utah, and the
-   league average everywhere else, with trend lines.
-2. **Road win % by era** — the same, averaged within each rule-change era.
+2×3 figure showing per-season home-minus-away differentials for six box-score stats (regular season and playoffs on the same axes):
 
-Note: team quality is a major confound here (e.g. road teams won more at
-Denver than average during the Nuggets' weak late-90s teams), so this is a
-rough first look rather than a clean isolation of an altitude effect.
+- **Foul differential** — home teams called for fewer fouls; this gap has sharply narrowed.
+- **FG% differential** — home team shooting edge, slightly narrowing.
+- **eFG% differential** — same but weighting 3-pointers at 1.5×; the home edge is declining.
+- **3PA rate differential** — home vs away share of shots taken from 3; converging as the 3-point revolution normalized shot selection league-wide.
+- **3P% differential** — home vs away 3-point accuracy; no clear trend.
+- **FT% differential** — home vs away free throw accuracy; no clear trend.
 
-### `nba_home_court_advantage_timezone.png` / `..._timezone_playoffs.png`
+### `nba_home_court_shot_zones.png` — Shot Zone Analysis
 
-Tests whether visiting teams are disadvantaged by crossing time zones, for
-the regular season and playoffs respectively. Each franchise is mapped to a
-time zone (`TEAM_TIMEZONES`, 0 = Eastern through 3 = Pacific, ignoring DST),
-and each game is grouped by how many zones the visiting team crossed.
+2×2 figure showing per-season home-minus-road shot zone % differentials (share of FGA by zone). Data from `LeagueDashTeamShotLocations`; available from ~1996-97 onward.
 
-1. **Road win % by season** — visiting-team win % for 0/1/2/3 zones crossed,
-   with trend lines.
-2. **Road win % by era** — the same, averaged within each rule-change era.
+- **Paint (RA + Non-RA)** — home teams have historically taken a higher share of shots from the paint; that gap is closing.
+- **Mid-range** — road teams consistently take a higher mid-range share (~1–1.5 pp); relatively stable.
+- **Corner 3** — no systematic home/road difference.
+- **Above-break 3** — small differences, converging toward zero.
 
-The altitude and time-zone charts share a generic plotting function,
-`plot_category_road_win_analysis()`, and a generic era-bucketing helper,
-`bucket_stats_by_era()`.
+### Regression Analysis (stdout)
+
+Four analyses printed to stdout after the charts:
+
+1. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
+2. **Pre/post-2014 coefficient stability** — whether rest/altitude/tz effects changed after the 2014 Finals format shift.
+3. **Factor significance** — bivariate logistic regression for rest, altitude (DEN/UTA), and time zone in regular season vs playoffs.
+4. **Foul & shooting differentials by era** — OLS trend per season year for each box-score differential, regular season and playoffs separately.
+
+See `FINDINGS.md` for a summary of the key results.
 
 ## Tests
 
@@ -100,6 +77,4 @@ The altitude and time-zone charts share a generic plotting function,
 python3 -m pytest
 ```
 
-Runs with coverage reporting (configured in `pytest.ini`). Tests cover the
-data-fetching/caching logic and era-bucketing math; the plotting code in
-`plot_results()` is not unit tested.
+Runs with coverage reporting (configured in `pytest.ini`). Tests cover the data-fetching/caching logic and era-bucketing math; plotting functions are not unit tested.
