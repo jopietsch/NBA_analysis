@@ -158,10 +158,11 @@ def _md_to_flowables(text: str) -> list:
         if block.startswith('### '):
             flowables.append(Paragraph(_md_inline(block[4:]), _STYLES['h2']))
         elif block.startswith('!['):
-            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)', block)
+            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)(?:\{width=([0-9.]+)\})?', block)
             if m:
+                w = CONTENT_W * float(m.group(3)) if m.group(3) else None
                 flowables.append(Spacer(1, 0.1 * inch))
-                flowables.append(_chart(m.group(2), m.group(1)))
+                flowables.append(_chart(m.group(2), m.group(1), width=w))
         elif block.startswith('- '):
             for line in block.splitlines():
                 if line.startswith('- '):

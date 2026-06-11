@@ -59,9 +59,9 @@ significant explanatory power (joint test p = 0.24; the 2014–25 indicator alon
 p = 0.29). The post-2014 fall is consistent with the long-run decline passing
 through that boundary, not with a distinct format effect.
 
-![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png)
+![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png){width=0.5}
 
-![Figure 3. Average home win % by playoff format period (1985, 2003, 2014 format changes). Blue = regular season, green = playoffs.](nba_home_court_advantage_format_bars.png)
+![Figure 3. Average home win % by playoff format period (1985, 2003, 2014 format changes). Blue = regular season, green = playoffs.](nba_home_court_advantage_format_bars.png){width=0.5}
 
 ---
 

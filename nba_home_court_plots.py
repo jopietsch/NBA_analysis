@@ -348,11 +348,11 @@ def plot_results(
     _save("nba_home_court_advantage_era_bars.png",
           lambda ax: _draw_paired_bars(ax, era_reg_avg, era_po_avg, era_labels_short,
                                        "Regular season vs playoffs\nhome win % by era"),
-          (10, 6))
+          (5, 3))
     _save("nba_home_court_advantage_format_bars.png",
           lambda ax: _draw_paired_bars(ax, format_reg_avg, format_po_avg, format_labels_short,
                                        "Regular season vs playoffs\nhome win % by playoff format period"),
-          (10, 6))
+          (5, 3))
 
 
 def plot_rest_analysis(
