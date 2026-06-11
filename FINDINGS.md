@@ -173,10 +173,11 @@ efficient shot type in modern basketball. This gap is also narrowing
 have shifted toward the 3-point line and away from the mid-range, but road teams
 have historically been pushed there more often and are now less disadvantaged.
 
-Corner 3 and above-break 3 show no systematic home/road difference throughout
-the dataset. Shot quality at the arc is not a home court advantage. A modest
-positive trend in above-break 3 (+0.013 pp/yr, p = 0.054) is at the boundary
-of significance and may reflect recent noise rather than a structural shift.
+Corner 3 and above-break 3 show no large or consistent home/road difference
+throughout the dataset. Shot quality at the arc is not a meaningful home court
+advantage. Above-break 3 shows a small but statistically significant positive
+trend (+0.013 pp/yr, p < 0.05) in the regular season, though the effect is
+minor compared to the paint and mid-range shifts.
 
 ![Figure 8. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. Solid = regular season, dashed = playoffs. RA = restricted area (within ~4 ft of the basket).](nba_home_court_shot_zones.png)
 
@@ -528,9 +529,12 @@ season but the effect disappears in the playoffs. Team quality is a confound:
 when those franchises are strong enough to host playoff games, their opponents
 are also strong, masking the altitude effect.
 
-**Time zone differences** show no statistically significant effect in either
-context. There are too few coast-to-coast playoff matchups across 42 seasons for
-reliable inference, and the regular-season effect is also not significant.
+**Time zone differences** show no significant effect in the playoffs. In the
+regular season, the effect is not significant in isolation (bivariate p = 0.085)
+but becomes significant when controlling for era, rest, and altitude (p = 0.012,
+−0.6 pp per time zone). The effect is real but small, and only emerges once the
+larger era and altitude effects are accounted for. There are too few coast-to-coast
+playoff matchups across 42 seasons for reliable playoff inference.
 
 ### Pre/post-2014 level shift
 
@@ -559,7 +563,7 @@ model. The mechanisms, in order of statistical strength, are summarized in the t
 | League-wide 3-point shooting | r = −0.898 season-level; −2.3 pp per 10 pp 3PA within era | p < 0.001 |
 | Altitude (Denver / Utah) | +8.2 pp home advantage | p < 0.001 |
 | Rest differential | +1.5 pp per rest-day advantage | p < 0.001 |
-| Time-zone travel and distance | Time zone: −0.4 pp/zone; distance: −0.08 pp per 100 mi | Time zone p = 0.085; distance p = 0.024 |
+| Time-zone travel and distance | Time zone: −0.6 pp/zone (era-controlled); distance: −0.08 pp per 100 mi | Time zone p = 0.012 (full model); distance p = 0.024 |
 | Competitive balance / parity | r = −0.066 — no relationship | p = 0.676 |
 
 **Playoffs** — ordered by effect size:
