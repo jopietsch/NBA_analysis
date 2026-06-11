@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 12 numbered `##` sections (plus Summary); drives the PDF report prose; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 13 numbered `##` sections (§1–§12 analyses + §13 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -125,7 +125,7 @@ Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentia
 
 ---
 
-**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. Narrative prose is read from `FINDINGS.md` via `_parse_findings()` (splits on `##` headings, keyed by exact heading text). Charts are injected at fixed positions within each section function. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_section_header(title, s, sections)` returns the `[Paragraph, HR, prose]` preamble shared by all 13 section functions; `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``); `_md_inline()` handles inline markup conversion.
+**`generate_report.py`** — assembles all PNGs and written analysis into a PDF report. Run after `nba_home_court_advantage.py`. Uses `reportlab` (platypus layout engine). Outputs `nba_home_court_advantage_report.pdf`. `build_report()` iterates `FINDINGS.md` `##` sections in order — no hardcoded section list. Sections ≥ 4 get a `PageBreak`. Charts are embedded via `![caption](path)` references in `FINDINGS.md` itself, parsed by `_md_to_flowables()`. TOC is auto-generated from section headings. Appendix A renders `RESULTS.md` verbatim via `Preformatted`. Key helpers: `_md_to_flowables()` converts markdown body text to reportlab flowables (handles `### ` subheadings, `- ` bullet lists, `**bold**`, `` `code` ``, and `![caption](path)` image blocks); `_md_inline()` handles inline markup; `_cover()` builds the cover page and TOC; `_appendix_results()` renders RESULTS.md.
 
 ---
 
@@ -149,6 +149,16 @@ All fetched data is cached under `cache/` to avoid re-fetching:
 - `COVID_SEASONS = {"19–20", "20–21"}` — flagged in charts and regression
 - `SHOT_ZONE_GROUPS` — maps zone names to flat FGA column names in the shot-zone cache CSVs
 - `_ZONE_COL_MAP` — maps `LeagueDashTeamShotLocations` MultiIndex column tuples to flat names
+
+## Adding a new analysis
+
+Every analysis follows the same five steps, in this order:
+
+1. **Data** (`nba_home_court_data.py`) — add `fetch_*` and `compute_*` functions; all fetched data cached under `cache/`
+2. **Plot** (`nba_home_court_plots.py`) — add `plot_*` function; wire the call into `main()` in `nba_home_court_advantage.py`
+3. **Regression** (`nba_home_court_regression.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
+4. **Tests** (`test_nba_home_court_advantage.py`) — unit tests for the data/computation layer; use synthetic DataFrames
+5. **FINDINGS.md** — add a new `## N. Title` section with prose and `![Figure N. caption](chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
 
 ## nba_api quirks
 
