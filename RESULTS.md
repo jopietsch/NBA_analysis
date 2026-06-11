@@ -103,9 +103,22 @@ All data from cache/ — same source as the plots above.
    time zone diff (per zone)                       -0.023    -0.6     0.012    *
    COVID seasons                                   -0.097    -2.3     0.078     
 
-   ► Era accounts for 56% of total model fit.
    ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
-   ► Rest, altitude, and time zone together add the remaining 44%.
+
+   Shapley R² decomposition  (2⁵ = 32 logits, same N = 47,215 games):
+   Each block's average marginal R² over all 5! orderings.
+   Compare to sequential (order-dependent, era entered first).
+
+   Block                          Shapley   Sequential
+   ────────────────────────────  ────────  ───────────
+   Era (structural decline)         50.3%        55.8%
+   Rest differential                17.6%        16.3%
+   Altitude (DEN/UTA)               25.7%        24.9%
+   Time zone diff                    1.5%         2.0%
+   COVID flag                        4.8%         1.0%
+
+   ► Era Shapley share: 50%  (sequential: 56% — sequential inflated because era is entered first).
+   ► Rest + altitude + tz + COVID (Shapley): 50%.
 
 ─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
    Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
@@ -230,6 +243,43 @@ All data from cache/ — same source as the plots above.
    ► Overall reg-season mean margin: +2.80 pts.
    ► Overall playoff mean margin:    +4.36 pts.
 
+─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§4 check) 
+   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.
+   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.
+   All quantiles parallel → pure level effect (conditional divergence is artifact).
+   Q10↓ with Q90↑ → genuine polarization.
+
+   Regular season  (N = 34,311 games, 1997–2025)
+
+   Quantile   Slope pts/yr                95% CI         p     
+   ────────  ─────────────  ────────────────────  ────────  ───
+        Q10         -0.154  [-0.185, -0.122]    <0.001  ***
+        Q25         -0.091  [-0.111, -0.071]    <0.001  ***
+        Q50         -0.056  [-0.076, -0.035]    <0.001  ***
+        Q75         -0.000  [-0.020, +0.020]     1.000     
+        Q90         +0.045  [+0.014, +0.077]     0.005   **
+
+   IQR change rate (Q90 − Q10 slope diff): +0.199 pts/yr
+   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
+     The conditional-on-outcome divergence in §4 reflects a real change in
+     distribution shape, not just a composition effect.
+
+   Playoffs  (N = 2,272 games, 1997–2025)
+
+   Quantile   Slope pts/yr                95% CI         p     
+   ────────  ─────────────  ────────────────────  ────────  ───
+        Q10         -0.055  [-0.167, +0.057]     0.337     
+        Q25         -0.083  [-0.168, +0.002]     0.054     
+        Q50         -0.000  [-0.083, +0.083]     1.000     
+        Q75         +0.125  [+0.043, +0.207]     0.003   **
+        Q90         +0.145  [+0.035, +0.256]     0.010    *
+
+   IQR change rate (Q90 − Q10 slope diff): +0.200 pts/yr
+   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
+     The conditional-on-outcome divergence in §4 reflects a real change in
+     distribution shape, not just a composition effect.
+
+
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
    Trend = slope of trend line (change per season year); pp = percentage points.
@@ -293,47 +343,56 @@ All data from cache/ — same source as the plots above.
 ─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
    foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
    Officials with <50 playoff games excluded.
+   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
 
    42 officials with ≥50 playoff games
    41/42 (98%) show negative mean foul diff (home-favoring)
+   Individually significant (p<0.05, real t-test):    29/42
+   Survive Benjamini-Hochberg correction (FDR 5%):    29/42
    League mean foul_diff across officials: -1.195 fouls/game
-   SD across officials: 0.614 fouls/game
 
-   Official                     N games Mean diff  p (vs 0)     
-   ────────────────────────── ───────── ───────── ───────── ────
+   Variance decomposition (career level, method of moments):
+   Observed SD across officials: 0.621 fouls/game
+   Mean within-official SE:      0.495 fouls/game
+   Estimated true between-SD:    0.376 fouls/game
+   ► Sampling noise explains 63% of observed spread.
 
-   Top 10 (most home-favoring — lowest foul_diff):
-   Eddie Rush                       100    -2.530    <0.001  ***
-   Ron Garretson                    143    -2.385    <0.001  ***
-   Joe Crawford                     160    -2.288    <0.001  ***
-   Rodney Mott                       69    -2.232    <0.001  ***
-   Bob Delaney                       80    -2.175    <0.001  ***
-   David Jones                       51    -1.843    <0.001  ***
-   James Capers                     186    -1.823    <0.001  ***
-   Sean Wright                       98    -1.796    <0.001  ***
-   Eric Lewis                        79    -1.759    <0.001  ***
-   Sean Corbin                       97    -1.619    <0.001  ***
+   Top 10 most home-favoring (by shrunken mean foul_diff):
+   Official                     N games  Raw diff  Shrunken         p      BH-p
+   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Ron Garretson                    143    -2.385    -1.736    <0.001    <0.001
+   Joe Crawford                     160    -2.288    -1.720    <0.001    <0.001
+   Eddie Rush                       100    -2.530    -1.673    <0.001    <0.001
+   Rodney Mott                       69    -2.232    -1.525    <0.001    <0.001
+   James Capers                     186    -1.823    -1.512    <0.001    <0.001
+   Bob Delaney                       80    -2.175    -1.450    <0.001     0.003
+   Sean Wright                       98    -1.796    -1.425    <0.001     0.002
+   Eric Lewis                        79    -1.759    -1.404    <0.001     0.003
+   Sean Corbin                       97    -1.619    -1.358    <0.001     0.003
+   Marc Davis                       203    -1.468    -1.340    <0.001    <0.001
 
-   Bottom 10 (least home-favoring — highest foul_diff):
-   Joe Forte                         51    +0.451    <0.001  ***
-   Josh Tiven                        89    -0.112    <0.001  ***
-   Courtney Kirkland                 76    -0.316    <0.001  ***
-   David Guthrie                    113    -0.398    <0.001  ***
-   Kane Fitzgerald                   58    -0.500    <0.001  ***
-   Jason Phillips                    96    -0.615    <0.001  ***
-   Tony Brothers                    198    -0.626    <0.001  ***
-   Brian Forte                       54    -0.630    <0.001  ***
-   Pat Fraher                        88    -0.841    <0.001  ***
-   Greg Willard                      87    -0.862    <0.001  ***
+   Bottom 10 least home-favoring (by shrunken mean foul_diff):
+   Official                     N games  Raw diff  Shrunken         p      BH-p
+   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Scott Foster                     241    -0.963    -1.053     0.002     0.004
+   Zach Zarba                       161    -0.932    -1.048     0.006     0.013
+   Monty McCutchen                  160    -0.863    -1.017     0.014     0.024
+   Kane Fitzgerald                   58    -0.500    -1.003     0.414     0.446
+   Jason Phillips                    96    -0.615    -0.938     0.148     0.183
+   Courtney Kirkland                 76    -0.316    -0.924     0.576     0.590
+   Tony Brothers                    198    -0.626    -0.886     0.070     0.099
+   David Guthrie                    113    -0.398    -0.859     0.367     0.405
+   Joe Forte                         51    +0.451    -0.833     0.527     0.553
+   Josh Tiven                        89    -0.112    -0.812     0.825     0.825
 
-   Mean home foul_diff by era (officials with games in that era):
-   Era           N officials       Mean         SD
-   ──────────── ──────────── ────────── ──────────
-   1995–01                20     -1.317      3.718
-   2002–04                27     -0.781      1.779
-   2005–17                42     -1.237      0.974
-   2018–22                28     -0.912      0.913
-   2023–25                20     -0.792      0.880
+   Era variance decomposition — does official spread compress over time?
+   Era            N off     Mean    Raw SD   True SD   Noise %
+   ──────────── ─────── ──────── ───────── ───────── ─────────
+   1995–01           14   -2.239     2.076     0.000      100%
+   2002–04           27   -0.781     1.813     0.722       84%
+   2005–17           42   -1.237     0.986     0.622       60%
+   2018–22           28   -0.912     0.930     0.000      100%
+   2023–25           20   -0.792     0.903     0.000      100%
 
 
 ─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────

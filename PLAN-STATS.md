@@ -204,6 +204,9 @@ only after item 1 lands — CIs derived from the broken test would launder it.
 
 ## Sequencing
 
+Model and effort recommendations per batch (which Claude model to run, what
+effort setting, and why) are in `MODEL_USAGE.md`.
+
 1. **Batch 1 (P0 + item 2):** referee fix + hierarchical re-check — same
    function, same FINDINGS section, ship together.
 2. **Batch 2 (items 3, 4):** quantile margins + Shapley decomposition — both

@@ -1211,12 +1211,21 @@ def compute_referee_bias_stats(
         if len(grp) < min_games:
             continue
         era_means = grp.groupby("era")["foul_diff"].mean().to_dict()
+        # era_sd / era_n: needed for method-of-moments variance decomposition.
+        # std(ddof=1) is NaN when n==1; filter those out so callers get clean dicts.
+        era_sd_raw = grp.groupby("era")["foul_diff"].std(ddof=1).to_dict()
+        era_n_raw  = grp.groupby("era")["foul_diff"].count().to_dict()
+        era_sd = {k: float(v) for k, v in era_sd_raw.items() if not (isinstance(v, float) and np.isnan(v))}
+        era_n  = {k: int(v)   for k, v in era_n_raw.items()}
         result.append({
-            "personId":      int(pid),
-            "name":          str(name),
-            "n_games":       len(grp),
+            "personId":       int(pid),
+            "name":           str(name),
+            "n_games":        len(grp),
             "mean_foul_diff": float(grp["foul_diff"].mean()),
-            "era_means":     era_means,
+            "sd_foul_diff":   float(grp["foul_diff"].std(ddof=1)) if len(grp) > 1 else 0.0,
+            "era_means":      era_means,
+            "era_sd":         era_sd,
+            "era_n":          era_n,
         })
 
     result.sort(key=lambda x: x["mean_foul_diff"], reverse=True)

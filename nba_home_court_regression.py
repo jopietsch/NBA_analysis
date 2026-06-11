@@ -332,6 +332,60 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
             print(f"     decline passing through, not a distinct format-change effect.")
 
 
+# ── Shapley R² helper ─────────────────────────────────────────────────────────
+
+def _compute_shapley_shares(reg: pd.DataFrame, era_ref: str) -> dict[str, float]:
+    """Shapley R² decomposition for 5 predictor blocks via all 2^5 = 32 logits.
+
+    Fits every subset on the same N rows, computes each block's average marginal
+    McFadden R² over all orderings. Returns {block_name: pct_of_total_r2}
+    where values sum to 100. (PLAN-STATS item 4.)
+    """
+    from itertools import combinations
+    from math import factorial
+
+    block_terms = {
+        "era":      f"C(era, Treatment('{era_ref}'))",
+        "rest":     "rest_diff",
+        "altitude": "altitude_home",
+        "tz":       "tz_diff",
+        "covid":    "covid",
+    }
+    names = list(block_terms)
+    n     = len(names)
+
+    cache: dict[frozenset, float] = {}
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        for size in range(n + 1):
+            for sub in combinations(names, size):
+                key     = frozenset(sub)
+                formula = ("home_win ~ 1" if not sub else
+                           "home_win ~ " + " + ".join(block_terms[b] for b in sub))
+                try:
+                    cache[key] = _mcfadden(smf.logit(formula, data=reg).fit(disp=0))
+                except Exception:
+                    cache[key] = 0.0
+
+    total = cache.get(frozenset(names), 0.0)
+
+    shapley: dict[str, float] = {}
+    for bi in names:
+        others = [b for b in names if b != bi]
+        phi    = 0.0
+        for size in range(n):
+            w = factorial(size) * factorial(n - size - 1) / factorial(n)
+            for sub in combinations(others, size):
+                S = frozenset(sub)
+                phi += w * (cache.get(S | {bi}, 0.0) - cache.get(S, 0.0))
+        shapley[bi] = phi
+
+    return (
+        {k: 100.0 * v / total for k, v in shapley.items()}
+        if total > 0 else {k: 0.0 for k in names}
+    )
+
+
 # ── Analysis 2: Sequential decomposition (regular season) ─────────────────────
 
 def run_sequential_decomposition(df: pd.DataFrame) -> None:
@@ -388,18 +442,48 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
         pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
         print(f"   {label:<44}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  {pval_s:>8}  {_stars(pval)}")
 
-    # Top-line summary
-    era_r2   = _mcfadden(fitted[0][1])
-    era_pct  = 100.0 * era_r2 / total_r2 if total_r2 > 0 else 0.0
-    last_era = nba.ERA_DEFS[-1][0]
-    last_coef = params.get(
-        f"C(era, Treatment('{era_ref}'))[T.{last_era}]", np.nan
-    )
-    total_pp = _pp(last_coef, p_bar) if not np.isnan(last_coef) else np.nan
-    print(f"\n   ► Era accounts for {era_pct:.0f}% of total model fit.")
+    # Sequential shares for side-by-side with Shapley
+    seq_block_order = ["era", "rest", "altitude", "tz", "covid"]
+    seq_shares: dict[str, float] = {}
+    prev = 0.0
+    for (_, m_i), bname in zip(fitted, seq_block_order):
+        r2_i = _mcfadden(m_i)
+        seq_shares[bname] = 100.0 * (r2_i - prev) / total_r2 if total_r2 > 0 else 0.0
+        prev = r2_i
+
+    last_era  = nba.ERA_DEFS[-1][0]
+    last_coef = params.get(f"C(era, Treatment('{era_ref}'))[T.{last_era}]", np.nan)
+    total_pp  = _pp(last_coef, p_bar) if not np.isnan(last_coef) else np.nan
     if not np.isnan(total_pp):
-        print(f"   ► Era dummies imply a net decline of {total_pp:.1f} pp from {era_ref} → {last_era}.")
-    print(f"   ► Rest, altitude, and time zone together add the remaining {100 - era_pct:.0f}%.")
+        print(f"\n   ► Era dummies imply a net decline of {total_pp:.1f} pp from {era_ref} → {last_era}.")
+
+    # ── Shapley R² decomposition ───────────────────────────────────────────
+    print(f"\n   Shapley R² decomposition  (2⁵ = 32 logits, same N = {n:,} games):")
+    print(f"   Each block's average marginal R² over all 5! orderings.")
+    print(f"   Compare to sequential (order-dependent, era entered first).\n")
+    print(f"   {'Block':<28}  {'Shapley':>8}  {'Sequential':>11}")
+    print(f"   {'─'*28}  {'─'*8}  {'─'*11}")
+
+    shapley_pct = _compute_shapley_shares(reg, era_ref)
+
+    block_display = {
+        "era":      "Era (structural decline)",
+        "rest":     "Rest differential",
+        "altitude": "Altitude (DEN/UTA)",
+        "tz":       "Time zone diff",
+        "covid":    "COVID flag",
+    }
+    for bname in seq_block_order:
+        lbl = block_display[bname]
+        print(f"   {lbl:<28}  {shapley_pct.get(bname, 0):>7.1f}%  "
+              f"{seq_shares.get(bname, 0):>10.1f}%")
+
+    era_sh  = shapley_pct.get("era", 0.0)
+    era_seq = seq_shares.get("era", 0.0)
+    rest_sh = sum(shapley_pct.get(b, 0) for b in ["rest", "altitude", "tz", "covid"])
+    print(f"\n   ► Era Shapley share: {era_sh:.0f}%  (sequential: {era_seq:.0f}% — "
+          f"sequential inflated because era is entered first).")
+    print(f"   ► Rest + altitude + tz + COVID (Shapley): {rest_sh:.0f}%.")
 
 
 # ── Analysis 2: Pre/post-2014 coefficient stability (regular season) ──────────
@@ -760,6 +844,77 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
     po_mean  = df.loc[df["is_playoff"] == 1, "margin"].mean()
     print(f"   ► Overall reg-season mean margin: {reg_mean:+.2f} pts.")
     print(f"   ► Overall playoff mean margin:    {po_mean:+.2f} pts.")
+
+
+# ── Analysis 4b: Unconditional quantile regression on margins ─────────────────
+
+def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
+    """Unconditional quantile regression — tests whether 'polarization' in §4
+    is genuine distribution widening or a composition artifact of the declining
+    home win rate. (PLAN-STATS item 3.)
+
+    All quantiles drifting down in parallel → pure level effect (wins appeared
+    bigger / losses appeared worse only because marginal games changed sides).
+    Lower quantiles declining while upper quantiles rise or hold → genuine
+    variance widening (polarization confirmed).
+    """
+    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§4 check)")
+    print("   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.")
+    print("   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.")
+    print("   All quantiles parallel → pure level effect (conditional divergence is artifact).")
+    print("   Q10↓ with Q90↑ → genuine polarization.\n")
+
+    quantiles = [0.10, 0.25, 0.50, 0.75, 0.90]
+    q_labels  = ["Q10", "Q25", "Q50", "Q75", "Q90"]
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po].dropna(subset=["margin"])
+        if len(sub) < 100:
+            continue
+        yr_min, yr_max = int(sub["year"].min()), int(sub["year"].max())
+        print(f"   {ctx_label}  (N = {len(sub):,} games, {yr_min}–{yr_max})\n")
+        print(f"   {'Quantile':>8}  {'Slope pts/yr':>13}  {'95% CI':>20}  {'p':>8}  {'':3}")
+        print(f"   {'─'*8}  {'─'*13}  {'─'*20}  {'─'*8}  {'─'*3}")
+
+        slopes: dict[str, float] = {}
+        for q, qlbl in zip(quantiles, q_labels):
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    m = smf.quantreg("margin ~ year", data=sub).fit(q=q, disp=0)
+                coef = float(m.params["year"])
+                pval = float(m.pvalues["year"])
+                ci   = m.conf_int().loc["year"]
+                lo, hi = float(ci.iloc[0]), float(ci.iloc[1])
+                pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+                print(f"   {qlbl:>8}  {coef:>+13.3f}  "
+                      f"[{lo:+.3f}, {hi:+.3f}]  {pval_s:>8}  {_stars(pval)}")
+                slopes[qlbl] = coef
+            except Exception as exc:
+                print(f"   {qlbl:>8}  (failed: {exc})")
+
+        if "Q10" in slopes and "Q90" in slopes:
+            spread_chg = slopes["Q90"] - slopes["Q10"]
+            q50 = slopes.get("Q50", 0.0)
+            print(f"\n   IQR change rate (Q90 − Q10 slope diff): {spread_chg:+.3f} pts/yr")
+            if spread_chg > 0.02:
+                print(f"   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).")
+                print(f"     The conditional-on-outcome divergence in §4 reflects a real change in")
+                print(f"     distribution shape, not just a composition effect.")
+            elif spread_chg < -0.02:
+                print(f"   ► Q90 falls / Q10 rises — distribution compressing.")
+            else:
+                all_slopes = list(slopes.values())
+                rng = max(all_slopes) - min(all_slopes)
+                if rng < 0.05:
+                    print(f"   ► All quantiles shift in parallel (spread change ≈ 0).")
+                    print(f"     The §4 conditional divergence is a composition artifact:")
+                    print(f"     as home win % declines, marginal games flip sides and push")
+                    print(f"     the conditional-win and conditional-loss means apart without")
+                    print(f"     any genuine change in the distribution's shape.")
+                else:
+                    print(f"   ► Mixed pattern; individual slopes above are the primary result.")
+        print()
 
 
 # ── Analysis 6: Competitive balance / parity ─────────────────────────────────
@@ -1193,12 +1348,20 @@ def run_hca_consistency_analysis() -> None:
 # ── Analysis 14: Referee crew home foul bias ─────────────────────────────────
 
 def run_referee_analysis() -> None:
-    """Per-official home foul bias for playoff games; era trend and rankings."""
+    """Per-official home foul bias for playoff games; era trend and rankings.
+
+    PLAN-STATS items 1 & 2: uses real per-game SDs for t-tests (not the
+    zero-variance trick that made every official appear significant), adds
+    Benjamini–Hochberg correction across all 42 tests, method-of-moments
+    variance decomposition, and empirical-Bayes shrinkage for the rankings.
+    """
     from scipy import stats as sp_stats
+    from statsmodels.stats.multitest import multipletests
 
     _section("REFEREE CREW HOME FOUL BIAS (PLAYOFFS)")
     print("   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)")
-    print("   Officials with <50 playoff games excluded.\n")
+    print("   Officials with <50 playoff games excluded.")
+    print("   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.\n")
 
     ref_df = nba.fetch_all_referee_data(
         nba.START_YEAR, nba.END_YEAR, "Playoffs",
@@ -1218,51 +1381,127 @@ def run_referee_analysis() -> None:
         print("   No officials met the minimum-games threshold.\n")
         return
 
-    n_total = len(bias_stats)
+    n_total   = len(bias_stats)
     n_negative = sum(1 for o in bias_stats if o["mean_foul_diff"] < 0)
-    all_means = [o["mean_foul_diff"] for o in bias_stats]
+    all_means  = [o["mean_foul_diff"] for o in bias_stats]
+    league_mean = float(np.mean(all_means))
+
+    # ── Real one-sample t-tests using per-game SDs ──────────────────────────
+    raw_pvals: list[float] = []
+    for o in bias_stats:
+        n  = o["n_games"]
+        sd = o.get("sd_foul_diff", 0.0)
+        if sd > 0 and n > 1:
+            t = o["mean_foul_diff"] / (sd / np.sqrt(n))
+            p = float(sp_stats.t.sf(abs(t), n - 1) * 2)
+        else:
+            p = np.nan
+        raw_pvals.append(p)
+
+    # BH correction across all officials simultaneously
+    valid_idx = [i for i, p in enumerate(raw_pvals) if not np.isnan(p)]
+    bh_pvals: list[float] = [np.nan] * n_total
+    if valid_idx:
+        _, padj, _, _ = multipletests([raw_pvals[i] for i in valid_idx], method="fdr_bh")
+        for k, i in enumerate(valid_idx):
+            bh_pvals[i] = float(padj[k])
+
+    n_sig_raw = sum(1 for p in raw_pvals if not np.isnan(p) and p < 0.05)
+    n_sig_bh  = sum(1 for p in bh_pvals  if not np.isnan(p) and p < 0.05)
+
     print(f"   {n_total} officials with ≥50 playoff games")
-    print(f"   {n_negative}/{n_total} ({100*n_negative/n_total:.0f}%) show negative mean foul diff "
-          f"(home-favoring)")
-    print(f"   League mean foul_diff across officials: {np.mean(all_means):+.3f} fouls/game")
-    print(f"   SD across officials: {np.std(all_means):.3f} fouls/game\n")
+    print(f"   {n_negative}/{n_total} ({100*n_negative/n_total:.0f}%) show negative mean foul diff (home-favoring)")
+    print(f"   Individually significant (p<0.05, real t-test):    {n_sig_raw}/{n_total}")
+    print(f"   Survive Benjamini-Hochberg correction (FDR 5%):    {n_sig_bh}/{n_total}")
+    print(f"   League mean foul_diff across officials: {league_mean:+.3f} fouls/game")
+
+    # ── Method-of-moments variance decomposition — career level ─────────────
+    obs_var = float(np.var(all_means, ddof=1))
+    samp_vars = [
+        o["sd_foul_diff"] ** 2 / o["n_games"]
+        for o in bias_stats
+        if o.get("sd_foul_diff", 0.0) > 0 and o["n_games"] > 1
+    ]
+    mean_samp_var = float(np.mean(samp_vars)) if samp_vars else 0.0
+    true_var = max(0.0, obs_var - mean_samp_var)
+    true_sd  = float(np.sqrt(true_var))
+
+    print(f"\n   Variance decomposition (career level, method of moments):")
+    print(f"   Observed SD across officials: {np.sqrt(obs_var):.3f} fouls/game")
+    print(f"   Mean within-official SE:      {np.sqrt(mean_samp_var):.3f} fouls/game")
+    print(f"   Estimated true between-SD:    {true_sd:.3f} fouls/game")
+    if true_var == 0:
+        print(f"   ► Career-mean spread is entirely sampling noise (true between-official SD ≈ 0).")
+    else:
+        noise_pct = 100.0 * mean_samp_var / obs_var if obs_var > 0 else 0.0
+        print(f"   ► Sampling noise explains {noise_pct:.0f}% of observed spread.")
+
+    # ── Empirical-Bayes shrinkage ────────────────────────────────────────────
+    shrunken: list[float] = []
+    for o in bias_stats:
+        sd_i = o.get("sd_foul_diff", 0.0)
+        if true_var > 0 and sd_i > 0 and o["n_games"] > 1:
+            samp_var_i = sd_i ** 2 / o["n_games"]
+            w = true_var / (true_var + samp_var_i)
+            shrunken.append(w * o["mean_foul_diff"] + (1.0 - w) * league_mean)
+        else:
+            shrunken.append(league_mean)
+
+    # Sort by shrunken mean ascending = most home-favoring (most negative) first
+    ranked = sorted(
+        zip(bias_stats, raw_pvals, bh_pvals, shrunken),
+        key=lambda x: x[3],
+    )
 
     NW, CW = 26, 9
-    header = (f"   {'Official':<{NW}} {'N games':>{CW}} {'Mean diff':>{CW}} "
-              f"{'p (vs 0)':>{CW}} {'':>4}")
-    print(header)
-    print(f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*4}")
 
-    def _print_officials(officials: list[dict]) -> None:
-        for o in officials:
-            _, pval = sp_stats.ttest_1samp([o["mean_foul_diff"]] * o["n_games"],
-                                           popmean=0)
-            pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+    def _pstr(p: float) -> str:
+        if np.isnan(p): return "n/a"
+        if p < 0.001:   return "<0.001"
+        return f"{p:.3f}"
+
+    header = (f"   {'Official':<{NW}} {'N games':>{CW}} {'Raw diff':>{CW}} "
+              f"{'Shrunken':>{CW}} {'p':>{CW}} {'BH-p':>{CW}}")
+    sep    = f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW}"
+
+    def _print_block(block):
+        print(header)
+        print(sep)
+        for o, rp, bp, s in block:
             print(f"   {o['name']:<{NW}} {o['n_games']:>{CW},} "
-                  f"{o['mean_foul_diff']:>+{CW}.3f} {pval_s:>{CW}} "
-                  f"{_stars(pval).strip():>4}")
+                  f"{o['mean_foul_diff']:>+{CW}.3f} {s:>+{CW}.3f} "
+                  f"{_pstr(rp):>{CW}} {_pstr(bp):>{CW}}")
 
-    print(f"\n   Top 10 (most home-favoring — lowest foul_diff):")
-    _print_officials(list(reversed(bias_stats[-10:])))
-    print(f"\n   Bottom 10 (least home-favoring — highest foul_diff):")
-    _print_officials(bias_stats[:10])
+    print(f"\n   Top 10 most home-favoring (by shrunken mean foul_diff):")
+    _print_block(ranked[:10])
+    print(f"\n   Bottom 10 least home-favoring (by shrunken mean foul_diff):")
+    _print_block(ranked[-10:])
 
-    # Era-bucketed mean foul_diff across all officials' era_means
+    # ── Era variance decomposition ───────────────────────────────────────────
     era_order = [e[0] for e in nba.ERA_DEFS]
-    era_data: dict[str, list[float]] = {e: [] for e in era_order}
+    era_entries: dict[str, list[tuple[float, float, int]]] = {e: [] for e in era_order}
     for o in bias_stats:
-        for era, mean in o["era_means"].items():
-            if era in era_data:
-                era_data[era].append(mean)
+        for era in era_order:
+            m  = o["era_means"].get(era)
+            sd = o.get("era_sd", {}).get(era)
+            n  = o.get("era_n", {}).get(era, 0)
+            if m is not None and sd is not None and n > 1:
+                era_entries[era].append((float(m), float(sd), int(n)))
 
-    print(f"\n   Mean home foul_diff by era (officials with games in that era):")
-    print(f"   {'Era':<12} {'N officials':>12} {'Mean':>10} {'SD':>10}")
-    print(f"   {'─'*12} {'─'*12} {'─'*10} {'─'*10}")
+    print(f"\n   Era variance decomposition — does official spread compress over time?")
+    print(f"   {'Era':<12} {'N off':>7} {'Mean':>8} {'Raw SD':>9} {'True SD':>9} {'Noise %':>9}")
+    print(f"   {'─'*12} {'─'*7} {'─'*8} {'─'*9} {'─'*9} {'─'*9}")
     for era in era_order:
-        vals = era_data[era]
-        if not vals:
+        entries = era_entries[era]
+        if len(entries) < 3:
             continue
-        print(f"   {era:<12} {len(vals):>12} {np.mean(vals):>+10.3f} {np.std(vals):>10.3f}")
+        vals   = [e[0] for e in entries]
+        obs_v  = float(np.var(vals, ddof=1))
+        sv     = float(np.mean([e[1] ** 2 / e[2] for e in entries]))
+        true_v = max(0.0, obs_v - sv)
+        noise  = 100.0 * min(1.0, sv / obs_v) if obs_v > 0 else 100.0
+        print(f"   {era:<12} {len(vals):>7} {np.mean(vals):>+8.3f} "
+              f"{np.sqrt(obs_v):>9.3f} {np.sqrt(true_v):>9.3f} {noise:>8.0f}%")
     print()
 
 
@@ -1307,6 +1546,7 @@ def run() -> None:
         run_factor_summary(df)
         run_rest_bucket_analysis(df)
         run_margin_analysis(df)
+        run_quantile_margin_analysis(df)
         run_differential_analysis(df)
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
         run_referee_analysis()

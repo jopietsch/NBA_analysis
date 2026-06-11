@@ -110,18 +110,36 @@ are getting worse: the average home loss margin has grown by −0.083 pts/yr
 (p < 0.001). Home teams are losing more games, and when they lose, they lose
 by more.
 
-This rules out one intuitive explanation for the win-rate decline — that games
-at home are simply becoming more competitive and flipping the coin. Instead,
-the pattern is more polarized: when the home team is good enough to win, they
-win convincingly; but they drop more games outright.
+### Polarization is genuine, not a composition artifact
+
+The conditional-on-outcome pattern above could be a mechanical artifact: as
+home win rate falls, marginal close games migrate from the win pool to the
+loss pool, pushing both conditional means away from zero without any
+individual game becoming more lopsided. Unconditional quantile regression on
+the raw home margin directly tests this.
+
+Regular-season quantile regression (1996–97 through 2024–25, N = 34,311 games)
+finds that Q90 (big home wins) rises at **+0.045 pts/yr** (p = 0.005) while Q10
+(big home losses) falls at **−0.154 pts/yr** (p < 0.001). The IQR spread widens
+at **+0.199 pts/yr**. These slopes are statistically significant and diverge in
+opposite directions — the distribution is genuinely widening, not merely
+shifting. The "polarization" reading from the conditional-on-outcome analysis
+reflects a real change in distribution shape, not a composition effect.
+
+The median (Q50) declines at −0.056 pts/yr (p < 0.001), consistent with the
+falling home win rate. The asymmetry — big home losses falling much faster
+than the median while big home wins rise — is also consistent with the
+conditional story: home teams are losing more games and, when they do, losing
+by more, but still winning convincingly when they win.
 
 ### Playoffs show a different pattern
 
 In the playoffs, the all-game margin shows no significant trend (+0.002 pts/yr,
-not significant). But like the regular season, both win margins (+0.152 pts/yr,
-p < 0.001) and loss margins (−0.076 pts/yr, p < 0.05) are growing in magnitude.
-Playoff games are increasingly bimodal — blowouts in both directions are more
-common than they were in the 1990s, yet the net margin is unchanged.
+not significant). Quantile regression confirms genuine polarization there too:
+Q90 rises at +0.145 pts/yr (p = 0.010) and Q10 falls at −0.055 pts/yr (not
+significant), with an IQR spread widening of +0.200 pts/yr. Playoff games are
+increasingly bimodal — blowouts in both directions are more common than they
+were in the 1990s, yet the net margin is unchanged.
 
 The regular-season mean margin (+2.80 pts) is lower than the playoff mean
 (+4.36 pts), consistent with the higher overall home win percentage in the
@@ -219,7 +237,7 @@ have shifted over time.
 
 Home-favoring foul bias is nearly universal: 41 of 42 officials with at least 50
 playoff games show a negative career mean foul differential. The one exception —
-Joe Forte (+0.451 fouls/game) — is the only qualifying official in the dataset
+Joe Forte (+0.451 fouls/game raw) — is the only qualifying official in the dataset
 whose games tilted marginally toward the road team. The league-wide mean across
 all qualifying officials is approximately −1.2 fouls per game, a substantial and
 consistent tilt in the home team's favor.
@@ -232,29 +250,44 @@ degree, not direction.
 
 ### Era Trends
 
-The most striking pattern in the era breakdown is not the mean bias but the
-compression of variance across individual referees. The standard deviation of
-per-official era-mean foul bias fell from 3.718 in the 1995–01 era to 0.880 in
-2023–25 — a fourfold reduction. The extreme outliers who showed very large
-home-favoring biases in earlier eras have no modern equivalents; the distribution
-of individual tendencies has tightened considerably.
+The raw standard deviation of per-official era-mean foul bias declines from 2.08
+in the 1995–01 era to 0.90 in 2023–25. However, a method-of-moments variance
+decomposition — which subtracts sampling noise (each official's within-official
+SE² / n) from the observed variance — reveals that this compression is partly a
+small-sample artifact. For three of five eras (1995–01, 2018–22, and 2023–25) the
+estimated true between-official SD is effectively zero: all of the observed spread
+is consistent with sampling noise given the number of officials and games per
+official in those eras. Only the 2005–17 era (the largest, with 42 officials and
+long careers) shows clear evidence of genuine between-official variance (true
+SD ≈ 0.62 fouls/game after noise correction).
 
 The era means themselves are non-monotone (ranging from −0.781 in 2002–04 to
-−1.317 in 1995–01, with the current era at −0.792), so there is no clear
-trend in the average level of bias across eras. What has changed is consistency:
-today's officials call the game more similarly to each other than their
-predecessors did. This is the individual-referee counterpart to the per-game foul
-differential trend identified in §5.
+−1.239 in 1995–01, with the current era at −0.792), so there is no clear trend
+in the average level of bias across eras. The apparent "fourfold compression" of
+individual tendencies is real in the raw data but is partly sampling noise from
+early eras where few officials had many games — the underlying true between-
+official variance in the modern era (true SD ≈ 0.38 fouls/game career-level) is
+lower than the raw spread implies but still above zero.
 
 ### Individual Referee Rankings
 
-The top-ranked officials by home-favoring bias include Eddie Rush (−2.530, 100
-games), Ron Garretson (−2.385, 143 games), and Joe Crawford (−2.288, 160 games).
-At the other end, Tony Brothers (−0.626, 198 games) and Jason Phillips (−0.615,
-96 games) are among the most neutral. The career biases are statistically
-significant for all qualifying officials, and the names at both extremes span
-multiple eras — individual tendencies appear to be stable characteristics of each
-official rather than artifacts of when they worked.
+The top-ranked officials by home-favoring bias include Ron Garretson (−2.385 raw,
+143 games), Joe Crawford (−2.288, 160 games), and Eddie Rush (−2.530, 100 games).
+At the other end, Josh Tiven (−0.112 raw, 89 games) is among the most neutral;
+his apparent near-zero career mean carries a p-value of 0.83 — correctly
+identified as indistinguishable from zero with a realistic foul-diff SD of ~3
+fouls/game. Empirical-Bayes shrinkage toward the league mean adjusts officials
+with smaller samples: Tiven's shrunken estimate is −0.81 fouls/game (still well
+below the top-10 threshold), reflecting that with 89 games the data can only
+weakly distinguish his true level from the league average.
+
+Of the 42 qualifying officials, **29 are individually significant at p < 0.05**
+using per-game standard deviations (real t-tests replacing a previous zero-
+variance implementation). All 29 also survive Benjamini–Hochberg correction
+at FDR 5%, indicating the pattern is not a multiple-testing artifact. The 13
+non-significant officials are those with smaller samples (51–96 games) or raw
+means close to zero, not those with large negative means — confirming that the
+directional signal is genuine even where the individual test lacks power.
 
 ![Figure 9. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
 
@@ -570,10 +603,20 @@ decline into measurable factors. Full tables are in `RESULTS.md`.
 
 ### Era dominates the model fit
 
-The era indicators account for the majority of total model fit. The structural
+The era indicators account for roughly half of total model fit. The structural
 multi-decade decline is not explained by rest, altitude, or travel — it spans
 every rule-change era and those factors add only incremental explanatory power
 on top of it.
+
+The sequential decomposition (entering era first) assigns era 56% and
+the remaining factors 44% combined. Because the sequential share depends on
+entry order, we also computed Shapley R² shares, which average each block's
+marginal contribution over all possible orderings. Era's Shapley share is
+**50%** (vs. 56% sequential — sequential is inflated because era is entered
+first and absorbs shared variance with rest and COVID). Altitude's Shapley share
+is **26%**, rest **18%**, COVID **5%**, and time zone **2%**. The Shapley shares
+are reported in the summary table below; the sequential table is retained in
+`RESULTS.md` as a labeled cross-check.
 
 ### Rest, altitude, and time zone
 
@@ -620,12 +663,15 @@ fluctuation; a large one means no reliable effect was found.*
 **Regular season — what the prediction model credits** (share of the model's
 explained variation):
 
-| Factor | Share | Effect | Evidence |
+Shares are Shapley R² — each block's average marginal McFadden R² over all possible entry orderings (32 logit fits, N = 47,215 games). The sequential share (era entered first) is shown in parentheses for reference.
+
+| Factor | Share (Shapley) | Effect | Evidence |
 |---|---|---|---|
-| Era (structural decline) | 56% | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
-| Altitude (Denver / Utah) | 25% | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
-| Rest differential | 16% | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
-| Time-zone differential | 2% | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
+| Era (structural decline) | 50% (seq: 56%) | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
+| Altitude (Denver / Utah) | 26% (seq: 25%) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
+| Rest differential | 18% (seq: 16%) | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
+| COVID flag | 5% (seq: 1%) | Lower home win % in bubble and COVID seasons | Very strong (p < 0.001) |
+| Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
 
 **Regular season — mechanisms behind the decline**:
 

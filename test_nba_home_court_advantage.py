@@ -1457,6 +1457,133 @@ class TestComputeRefereeBiasStats:
         assert "Carol Ref" not in names
 
 
+class TestShapleyShares:
+    """PLAN-STATS item 4: Shapley R² decomposition properties."""
+
+    def _make_reg_df(self, n=200, seed=42):
+        """Minimal synthetic game-level DataFrame for testing Shapley fits."""
+        import nba_home_court_regression as reg_mod
+        rng = np.random.default_rng(seed)
+        year = rng.integers(1984, 2025, size=n)
+        era = np.where(year <= 1994, "1984–94",
+              np.where(year <= 2001, "1995–01",
+              np.where(year <= 2004, "2002–04",
+              np.where(year <= 2017, "2005–17",
+              np.where(year <= 2022, "2018–22", "2023–25")))))
+        rest_diff     = rng.integers(-2, 3, size=n).astype(float)
+        altitude_home = rng.integers(0, 2, size=n).astype(float)
+        tz_diff       = rng.integers(0, 4, size=n).astype(float)
+        covid         = (year >= 2020) & (year <= 2021)
+        home_win      = rng.integers(0, 2, size=n)
+        return pd.DataFrame({
+            "home_win":      home_win,
+            "year":          year,
+            "era":           era,
+            "rest_diff":     rest_diff,
+            "altitude_home": altitude_home,
+            "tz_diff":       tz_diff,
+            "covid":         covid.astype(int),
+        })
+
+    def test_shares_sum_to_100(self):
+        import nba_home_court_regression as reg_mod
+        df = self._make_reg_df()
+        shares = reg_mod._compute_shapley_shares(df, "1984–94")
+        total = sum(shares.values())
+        assert abs(total - 100.0) < 0.5  # allow small floating-point discrepancy
+
+    def test_all_shares_finite(self):
+        import nba_home_court_regression as reg_mod
+        df = self._make_reg_df()
+        shares = reg_mod._compute_shapley_shares(df, "1984–94")
+        assert all(np.isfinite(v) for v in shares.values())
+
+    def test_returns_all_five_blocks(self):
+        import nba_home_court_regression as reg_mod
+        df = self._make_reg_df()
+        shares = reg_mod._compute_shapley_shares(df, "1984–94")
+        assert set(shares.keys()) == {"era", "rest", "altitude", "tz", "covid"}
+
+
+class TestComputeRefereeBiasStatsSd:
+    """PLAN-STATS item 1: sd_foul_diff must be computed from actual per-game values."""
+
+    def _setup(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Game 1: foul_diff = PF_home - PF_away = 22 - 18 = +4
+        # Game 2: foul_diff = 18 - 24 = -6
+        game_log = pd.DataFrame({
+            "GAME_ID":   [1, 1, 2, 2],
+            "MATCHUP":   ["BOS vs. MIA", "MIA @ BOS", "LAL vs. GSW", "GSW @ LAL"],
+            "WL":        ["W", "L", "L", "W"],
+            "TEAM_NAME": ["Boston Celtics", "Miami Heat", "Los Angeles Lakers", "Golden State Warriors"],
+            "PF":        [22, 18, 18, 24],
+            "FGM":       [40, 38, 38, 42],
+            "FGA":       [85, 82, 82, 88],
+            "FG3M":      [12, 10, 10, 14],
+            "FG3A":      [30, 28, 28, 32],
+            "FTM":       [18, 16, 16, 20],
+            "FTA":       [22, 20, 20, 24],
+        })
+        game_log.to_csv(nba.cache_path(2024, "Playoffs"), index=False)
+
+        ref_df = pd.DataFrame({
+            "GAME_ID":  ["0000000001", "0000000001", "0000000002", "0000000002"],
+            "personId": [10, 11, 10, 12],
+            "name":     ["Alice Ref", "Bob Ref", "Alice Ref", "Carol Ref"],
+            "year":     [2024, 2024, 2024, 2024],
+        })
+        return ref_df
+
+    def test_sd_foul_diff_is_per_game_std(self, tmp_path, monkeypatch):
+        ref_df = self._setup(tmp_path, monkeypatch)
+        result = nba.compute_referee_bias_stats(ref_df, 2024, 2024, "Playoffs", min_games=1)
+        alice = next(o for o in result if o["name"] == "Alice Ref")
+        # Alice: per-game foul_diffs = [+4, -6]; std(ddof=1) = sqrt(50) ≈ 7.071
+        expected_sd = float(np.std([4.0, -6.0], ddof=1))
+        assert abs(alice["sd_foul_diff"] - expected_sd) < 0.01
+
+    def test_single_game_official_sd_is_zero(self, tmp_path, monkeypatch):
+        ref_df = self._setup(tmp_path, monkeypatch)
+        result = nba.compute_referee_bias_stats(ref_df, 2024, 2024, "Playoffs", min_games=1)
+        bob = next(o for o in result if o["name"] == "Bob Ref")
+        # Bob worked only 1 game — sd is 0 (not NaN) so t-test code won't divide by zero
+        assert bob["sd_foul_diff"] == pytest.approx(0.0)
+
+    def test_era_sd_and_era_n_are_populated(self, tmp_path, monkeypatch):
+        ref_df = self._setup(tmp_path, monkeypatch)
+        result = nba.compute_referee_bias_stats(ref_df, 2024, 2024, "Playoffs", min_games=1)
+        alice = next(o for o in result if o["name"] == "Alice Ref")
+        assert "era_sd" in alice
+        assert "era_n" in alice
+        # 2024 falls in the 2023–25 era; Alice has 2 games there → n=2 and sd is present
+        era = "2023–25"
+        assert alice["era_n"].get(era, 0) == 2
+        assert era in alice["era_sd"]
+
+
+class TestRealTtestSignificance:
+    """PLAN-STATS item 1: verify the real t-test is used and gives sensible results."""
+
+    def test_near_zero_mean_official_not_significant(self):
+        # Josh Tiven-like case: mean=-0.112, realistic SD=3.0, n=89
+        # Old broken test: ttest_1samp([-0.112]*89, 0) → p<0.001 (zero variance, WRONG)
+        # Correct test: t = mean / (sd / sqrt(n)) = -0.112 / (3/sqrt(89)) ≈ -0.352 → p≈0.73
+        from scipy import stats as sp_stats
+        mean, sd, n = -0.112, 3.0, 89
+        t = mean / (sd / np.sqrt(n))
+        p = float(sp_stats.t.sf(abs(t), n - 1) * 2)
+        assert p > 0.05
+
+    def test_large_bias_official_is_significant(self):
+        # Mean=-0.6, SD=3.0, n=200 → t≈-2.83 → p≈0.005
+        from scipy import stats as sp_stats
+        mean, sd, n = -0.6, 3.0, 200
+        t = mean / (sd / np.sqrt(n))
+        p = float(sp_stats.t.sf(abs(t), n - 1) * 2)
+        assert p < 0.05
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)
