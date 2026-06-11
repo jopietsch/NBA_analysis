@@ -1,13 +1,11 @@
 """
 nba_home_court_regression.py — statistical analysis of home court advantage.
 
-Game-level logistic regression on all cached data. Three analyses:
-  1. Sequential R² decomposition — which factors explain the regular-season
-     decline and how much variance does each one add?
-  2. Playoff gap × format period — does the is_playoff effect change across
-     the playoff format periods? Tests the key narrative directly.
-  3. Pre/post-2014 coefficient stability — did rest, altitude, and time zone
-     effects change after the Finals format shift, or are they constant?
+Game-level statistical analyses on all cached data — one run_* function per
+FINDINGS.md section that needs numbers: decline trend, format periods,
+sequential R² decomposition, coefficient stability, rest/altitude/time zone,
+rest buckets, margins, box-score and shot-zone differentials, referees,
+travel, parity, 3PA rate, pace, series structure, and franchise HCA.
 
 Called from nba_home_court_advantage.main() after the plots.
 """
@@ -245,6 +243,95 @@ def run_decline_trend(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis: Playoff format periods ──────────────────────────────────────────
+
+def run_format_period_analysis(df: pd.DataFrame) -> None:
+    """Playoff home win % by format period — pairwise tests between consecutive
+    periods, plus a logistic model testing whether the format changes add a
+    level shift beyond the secular year trend."""
+    from scipy.stats import chi2
+    from statsmodels.stats.proportion import proportions_ztest
+
+    po = df[df["is_playoff"] == 1]
+    if po.empty:
+        return
+    fmt_ref = nba.PLAYOFF_FORMAT_PERIODS[2][0]    # "2003–13"
+    p_bar = po["home_win"].mean()
+
+    _section("PLAYOFF FORMAT PERIODS — DID THE SCHEDULING CHANGES MATTER?")
+    print("   Playoff home win % by format period (1985, 2003, 2014 changes).")
+    print("   Pairwise tests compare consecutive periods; the trend-controlled model")
+    print("   asks whether format adds a level shift beyond the secular year trend.\n")
+
+    counts: dict[str, tuple[int, int]] = {}
+    print(f"   {'Period':<10}  {'N games':>8}  {'Home win %':>11}")
+    print(f"   {'─'*10}  {'─'*8}  {'─'*11}")
+    for label, _, _, _ in nba.PLAYOFF_FORMAT_PERIODS:
+        sub = po[po["format_period"] == label]
+        if sub.empty:
+            continue
+        wins, n = int(sub["home_win"].sum()), len(sub)
+        counts[label] = (wins, n)
+        print(f"   {label:<10}  {n:>8,}  {100.0 * wins / n:>10.1f}%")
+
+    print(f"\n   Consecutive periods — two-proportion z-tests:")
+    avail = [lbl for lbl, *_ in nba.PLAYOFF_FORMAT_PERIODS if lbl in counts]
+    for a, b in zip(avail, avail[1:]):
+        (wa, na), (wb, nb) = counts[a], counts[b]
+        z, p = proportions_ztest([wa, wb], [na, nb])
+        diff = 100.0 * (wb / nb - wa / na)
+        p_s = "<0.001" if p < 0.001 else f"{p:.3f}"
+        print(f"   {a:>8} → {b:<8}  {diff:+5.1f} pp   "
+              f"(z = {z:+.2f}, p = {p_s}  {_stars(p).strip()})")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m_year = smf.logit("home_win ~ year", data=po).fit(disp=0)
+        m_fmt  = smf.logit(
+            f"home_win ~ year + C(format_period, Treatment('{fmt_ref}'))",
+            data=po,
+        ).fit(disp=0)
+
+    print(f"\n   Trend-controlled logistic: home_win ~ year + format_period")
+    print(f"   (reference period = {fmt_ref})\n")
+    print(f"   {'Predictor':<28}  {'log-odds':>8}  {'≈pp':>6}  {'p':>8}  {'':3}")
+    print(f"   {'─'*28}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
+    for name in m_fmt.params.index:
+        if name == "Intercept":
+            continue
+        coef, pval = m_fmt.params[name], m_fmt.pvalues[name]
+        label = (name
+                 .replace(f"C(format_period, Treatment('{fmt_ref}'))[T.", "format: ")
+                 .replace("]", "")
+                 .replace("year", "year trend (per yr)"))
+        pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+        print(f"   {label:<28}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  "
+              f"{pval_s:>8}  {_stars(pval)}")
+
+    lr    = 2.0 * (m_fmt.llf - m_year.llf)
+    dfree = int(m_fmt.df_model - m_year.df_model)
+    p_lr  = chi2.sf(lr, dfree)
+    p_lr_s = "<0.001" if p_lr < 0.001 else f"{p_lr:.3f}"
+    print(f"\n   LR test — format dummies jointly vs. year-only model: "
+          f"χ²({dfree}) = {lr:.2f},  p = {p_lr_s}  {_stars(p_lr).strip()}")
+
+    last_label = nba.PLAYOFF_FORMAT_PERIODS[-1][0]
+    key = f"C(format_period, Treatment('{fmt_ref}'))[T.{last_label}]"
+    c14 = m_fmt.params.get(key, np.nan)
+    p14 = m_fmt.pvalues.get(key, np.nan)
+    if not np.isnan(c14):
+        if p14 < 0.05:
+            print(f"\n   ► The {last_label} period sits {_pp(c14, p_bar):+.1f} pp from "
+                  f"the {fmt_ref} level even after")
+            print(f"     the year trend — the 2014 format change had a real level effect")
+            print(f"     beyond the secular decline.")
+        else:
+            print(f"\n   ► After controlling for the year trend, the {last_label} dummy is "
+                  f"not significant")
+            print(f"     (p = {p14:.3f}) — the post-2014 drop is consistent with the secular")
+            print(f"     decline passing through, not a distinct format-change effect.")
+
+
 # ── Analysis 2: Sequential decomposition (regular season) ─────────────────────
 
 def run_sequential_decomposition(df: pd.DataFrame) -> None:
@@ -414,6 +501,88 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     print(f"   ► Time zones show no significant effect in either context.")
     print(f"     Only {n_cc_po} coast-to-coast playoff games exist across 42 seasons")
     print(f"     ({n_cc_re:,} regular-season) — too sparse for reliable playoff inference.")
+
+
+# ── Analysis: Rest-differential buckets and era stability ─────────────────────
+
+def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
+    """Home win % by rest-differential bucket, plus a rest × era interaction
+    test — has the rest effect changed across eras?"""
+    from scipy.stats import chi2, chi2_contingency
+
+    _section("REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY")
+    print("   Buckets: away team more rested (rest_diff < 0), equal rest, and home")
+    print("   team more rested (rest_diff > 0). Games without a prior game to")
+    print("   compute rest from are excluded.\n")
+
+    buckets = [
+        ("Away more rest", lambda s: s < 0),
+        ("Equal rest",     lambda s: s == 0),
+        ("Home more rest", lambda s: s > 0),
+    ]
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po].dropna(subset=["rest_diff"])
+        if sub.empty:
+            continue
+        p_bar = sub["home_win"].mean() * 100
+        print(f"   {ctx_label}  (N = {len(sub):,}, baseline home win % = {p_bar:.1f}%)\n")
+        print(f"   {'Bucket':<16}  {'N games':>8}  {'Home win %':>11}  {'vs. baseline':>13}")
+        print(f"   {'─'*16}  {'─'*8}  {'─'*11}  {'─'*13}")
+
+        table = []
+        for label, cond in buckets:
+            b = sub[cond(sub["rest_diff"])]
+            if b.empty:
+                continue
+            wins, n = int(b["home_win"].sum()), len(b)
+            pct = 100.0 * wins / n
+            table.append([wins, n - wins])
+            print(f"   {label:<16}  {n:>8,}  {pct:>10.1f}%  {pct - p_bar:>+12.1f} pp")
+
+        if len(table) >= 2:
+            stat, p_chi, dof, _ = chi2_contingency(table)
+            p_s = "<0.001" if p_chi < 0.001 else f"{p_chi:.3f}"
+            print(f"\n   Chi-square (H0: home win % equal across buckets): "
+                  f"χ²({dof}) = {stat:.2f},  p = {p_s}  {_stars(p_chi).strip()}")
+
+        print(f"\n   Rest effect by era (bivariate logistic within each era):")
+        print(f"   {'Era':<12}  {'N':>7}  {'log-odds/day':>13}  {'≈pp/day':>8}  {'p':>8}  {'':3}")
+        print(f"   {'─'*12}  {'─'*7}  {'─'*13}  {'─'*8}  {'─'*8}  {'─'*3}")
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_rows = sub[(sub["year"] >= y1) & (sub["year"] <= y2)]
+            if len(era_rows) < 50 or era_rows["rest_diff"].nunique() < 2:
+                continue
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                try:
+                    m = smf.logit("home_win ~ rest_diff", data=era_rows).fit(disp=0)
+                except Exception:
+                    continue
+            c, p = m.params["rest_diff"], m.pvalues["rest_diff"]
+            pb = era_rows["home_win"].mean()
+            p_s = "<0.001" if p < 0.001 else f"{p:.3f}"
+            print(f"   {era_label:<12}  {len(era_rows):>7,}  {c:>+13.3f}  "
+                  f"{_pp(c, pb):>+8.1f}  {p_s:>8}  {_stars(p)}")
+
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m_add = smf.logit("home_win ~ rest_diff + C(era)", data=sub).fit(disp=0)
+                m_int = smf.logit("home_win ~ rest_diff * C(era)", data=sub).fit(disp=0)
+            lr    = 2.0 * (m_int.llf - m_add.llf)
+            dfree = int(m_int.df_model - m_add.df_model)
+            p_lr  = chi2.sf(lr, dfree)
+            p_lr_s = "<0.001" if p_lr < 0.001 else f"{p_lr:.3f}"
+            verdict = ("the rest effect has NOT been stable across eras"
+                       if p_lr < 0.05
+                       else "no evidence the rest effect changed across eras")
+            print(f"\n   Rest × era interaction (LR test): χ²({dfree}) = {lr:.2f},  "
+                  f"p = {p_lr_s}  {_stars(p_lr).strip()}")
+            print(f"   ► {verdict}.")
+        except Exception:
+            pass
+        print()
 
 
 # ── Analysis 4: Foul & shooting differentials by era ─────────────────────────
@@ -973,6 +1142,54 @@ def run_team_hca_analysis() -> None:
         print()
 
 
+# ── Analysis: Franchise HCA consistency (regular season vs. playoffs) ─────────
+
+def run_hca_consistency_analysis() -> None:
+    """Correlation between regular-season and playoff franchise HCA — do the
+    same franchises protect home court in both contexts?"""
+    from scipy.stats import pearsonr, spearmanr
+
+    _section("FRANCHISE HCA — REGULAR SEASON VS. PLAYOFFS CONSISTENCY")
+    print("   Do franchises that protect home court in the regular season also do")
+    print("   so in the playoffs? Correlation across franchises with both figures.\n")
+
+    rs = nba.compute_team_hca_stats(
+        nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
+    )
+    po = nba.compute_team_hca_stats(
+        nba.START_YEAR, nba.END_YEAR, "Playoffs",
+        skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
+    )
+    shared = sorted(set(rs) & set(po))
+    if len(shared) < 5:
+        print("   Insufficient overlap between the two tables.\n")
+        return
+
+    rs_vals = np.array([rs[t]["hca"] for t in shared])
+    po_vals = np.array([po[t]["hca"] for t in shared])
+    r_p, p_p = pearsonr(rs_vals, po_vals)
+    r_s, p_s = spearmanr(rs_vals, po_vals)
+    p_p_s = "<0.001" if p_p < 0.001 else f"{p_p:.3f}"
+    p_s_s = "<0.001" if p_s < 0.001 else f"{p_s:.3f}"
+
+    print(f"   N = {len(shared)} franchises with both regular-season and playoff HCA")
+    print(f"   Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
+    print(f"   Spearman ρ = {r_s:+.3f}  (p = {p_s_s}  {_stars(p_s).strip()})\n")
+
+    gap = po_vals - rs_vals
+    print(f"   Mean regular-season HCA (shared franchises): {rs_vals.mean():+.1f} pp")
+    print(f"   Mean playoff HCA (shared franchises):        {po_vals.mean():+.1f} pp")
+    print(f"   Mean playoff − regular-season gap:           {gap.mean():+.1f} pp "
+          f"(SD {gap.std():.1f})")
+
+    if p_p < 0.05 and r_p > 0:
+        print(f"\n   ► Positive, significant correlation — franchises that protect home")
+        print(f"     court in the regular season tend to do so in the playoffs too.")
+    elif p_p >= 0.05:
+        print(f"\n   ► No significant correlation — regular-season HCA does not reliably")
+        print(f"     predict playoff HCA at the franchise level (playoff samples are small).")
+
+
 # ── Analysis 14: Referee crew home foul bias ─────────────────────────────────
 
 def run_referee_analysis() -> None:
@@ -1084,9 +1301,11 @@ def run() -> None:
         )
 
         run_decline_trend(df)
+        run_format_period_analysis(df)
         run_sequential_decomposition(df)
         run_stability_analysis(df)
         run_factor_summary(df)
+        run_rest_bucket_analysis(df)
         run_margin_analysis(df)
         run_differential_analysis(df)
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
@@ -1097,6 +1316,7 @@ def run() -> None:
         run_pace_analysis(df)
         run_series_breakdown(df)
         run_team_hca_analysis()
+        run_hca_consistency_analysis()
 
         print("\n" + "═" * _W + "\n")
 

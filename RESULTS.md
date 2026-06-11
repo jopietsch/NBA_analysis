@@ -42,6 +42,39 @@ All data from cache/ — same source as the plots above.
    2023–25          3        -1.190     0.063     
 
 
+─── PLAYOFF FORMAT PERIODS — DID THE SCHEDULING CHANGES MATTER? ────────
+   Playoff home win % by format period (1985, 2003, 2014 changes).
+   Pairwise tests compare consecutive periods; the trend-controlled model
+   asks whether format adds a level shift beyond the secular year trend.
+
+   Period       N games   Home win %
+   ──────────  ────────  ───────────
+   1984              79        64.6%
+   1985–02        1,282        66.1%
+   2003–13          925        66.3%
+   2014–25          921        59.8%
+
+   Consecutive periods — two-proportion z-tests:
+       1984 → 1985–02    +1.6 pp   (z = -0.29, p = 0.772  )
+    1985–02 → 2003–13    +0.1 pp   (z = -0.06, p = 0.952  )
+    2003–13 → 2014–25    -6.4 pp   (z = +2.87, p = 0.004  **)
+
+   Trend-controlled logistic: home_win ~ year + format_period
+   (reference period = 2003–13)
+
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   format: 1984                    -0.344    -7.9     0.291     
+   format: 1985–02                 -0.167    -3.8     0.290     
+   format: 2014–25                 -0.149    -3.4     0.290     
+   year trend (per yr)             -0.011    -0.3     0.210     
+
+   LR test — format dummies jointly vs. year-only model: χ²(3) = 4.25,  p = 0.235  
+
+   ► After controlling for the year trend, the 2014–25 dummy is not significant
+     (p = 0.290) — the post-2014 drop is consistent with the secular
+     decline passing through, not a distinct format-change effect.
+
 ─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
    Outcome: home_win. Baseline home win %: 60.3%.
    McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
@@ -111,6 +144,58 @@ All data from cache/ — same source as the plots above.
    ► Time zones show no significant effect in either context.
      Only 107 coast-to-coast playoff games exist across 42 seasons
      (5,676 regular-season) — too sparse for reliable playoff inference.
+
+─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
+   Buckets: away team more rested (rest_diff < 0), equal rest, and home
+   team more rested (rest_diff > 0). Games without a prior game to
+   compute rest from are excluded.
+
+   Regular season  (N = 47,215, baseline home win % = 60.3%)
+
+   Bucket             N games   Home win %   vs. baseline
+   ────────────────  ────────  ───────────  ─────────────
+   Away more rest       8,473        57.7%          -2.5 pp
+   Equal rest          22,804        59.3%          -0.9 pp
+   Home more rest      15,938        62.9%          +2.7 pp
+
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 78.00,  p = <0.001  ***
+
+   Rest effect by era (bivariate logistic within each era):
+   Era                 N   log-odds/day   ≈pp/day         p     
+   ────────────  ───────  ─────────────  ────────  ────────  ───
+   1984–94        11,123         +0.047      +1.1     0.007   **
+   1995–01         7,669         +0.072      +1.7    <0.001  ***
+   2002–04         3,516         +0.044      +1.1     0.135     
+   2005–17        15,520         +0.054      +1.3    <0.001  ***
+   2018–22         5,749         +0.065      +1.6     0.012    *
+   2023–25         3,638         +0.124      +3.0    <0.001  ***
+
+   Rest × era interaction (LR test): χ²(5) = 4.85,  p = 0.434  
+   ► no evidence the rest effect changed across eras.
+
+   Playoffs  (N = 2,879, baseline home win % = 63.0%)
+
+   Bucket             N games   Home win %   vs. baseline
+   ────────────────  ────────  ───────────  ─────────────
+   Away more rest          98        68.4%          +5.3 pp
+   Equal rest           2,642        62.2%          -0.9 pp
+   Home more rest         139        75.5%         +12.5 pp
+
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.34,  p = 0.003  **
+
+   Rest effect by era (bivariate logistic within each era):
+   Era                 N   log-odds/day   ≈pp/day         p     
+   ────────────  ───────  ─────────────  ────────  ────────  ───
+   1984–94           706         +0.027      +0.6     0.748     
+   1995–01           440         +0.193      +4.5     0.061     
+   2002–04           217         +0.136      +3.2     0.365     
+   2005–17           986         +0.118      +2.7     0.080     
+   2018–22           304         -0.038      -0.9     0.792     
+   2023–25           226         +0.115      +2.8     0.404     
+
+   Rest × era interaction (LR test): χ²(5) = 2.67,  p = 0.750  
+   ► no evidence the rest effect changed across eras.
+
 
 ─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
    Positive = home team winning by more.
@@ -447,8 +532,8 @@ All data from cache/ — same source as the plots above.
    New Jersey Nets                      1,165      53.9%     1,165      29.7%     +24.2 pp
    Atlanta Hawks                        1,685      61.6%     1,686      37.8%     +23.8 pp
    Cleveland Cavaliers                  1,688      61.9%     1,681      38.3%     +23.6 pp
-   New Orleans/Oklahoma City Hornet        82      58.5%        82      35.4%     +23.2 pp
    Portland Trail Blazers               1,688      65.9%     1,690      42.7%     +23.2 pp
+   New Orleans/Oklahoma City Hornet        82      58.5%        82      35.4%     +23.2 pp
    Los Angeles Clippers                 1,247      50.2%     1,247      27.7%     +22.5 pp
    Charlotte Bobcats                      402      47.5%       402      25.4%     +22.1 pp
    Milwaukee Bucks                      1,688      61.4%     1,689      39.5%     +21.9 pp
@@ -463,8 +548,8 @@ All data from cache/ — same source as the plots above.
    Chicago Bulls                        1,686      61.4%     1,683      42.5%     +18.9 pp
    Boston Celtics                       1,687      66.4%     1,688      48.0%     +18.4 pp
    Memphis Grizzlies                      967      57.9%       966      39.9%     +18.1 pp
-   Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
    Los Angeles Lakers                   1,688      68.4%     1,687      50.6%     +17.8 pp
+   Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
    Washington Wizards                   1,113      49.8%     1,115      32.1%     +17.7 pp
    Philadelphia 76ers                   1,687      56.2%     1,690      38.9%     +17.3 pp
    New Orleans Hornets                    361      56.0%       361      38.8%     +17.2 pp
@@ -523,6 +608,21 @@ All data from cache/ — same source as the plots above.
    ► Utah Jazz: +39.7 pp  (rank #1/32)
    ► Denver Nuggets: +29.2 pp  (rank #14/32)
 
+
+─── FRANCHISE HCA — REGULAR SEASON VS. PLAYOFFS CONSISTENCY ────────────
+   Do franchises that protect home court in the regular season also do
+   so in the playoffs? Correlation across franchises with both figures.
+
+   N = 32 franchises with both regular-season and playoff HCA
+   Pearson r  = +0.356  (p = 0.045  *)
+   Spearman ρ = +0.262  (p = 0.148  )
+
+   Mean regular-season HCA (shared franchises): +19.9 pp
+   Mean playoff HCA (shared franchises):        +27.1 pp
+   Mean playoff − regular-season gap:           +7.2 pp (SD 7.5)
+
+   ► Positive, significant correlation — franchises that protect home
+     court in the regular season tend to do so in the playoffs too.
 
 ════════════════════════════════════════════════════════════════════════
 

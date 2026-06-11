@@ -44,8 +44,16 @@ drops in the most recent eras.
 The playoff-format analysis divides the dataset into four periods defined by the
 1985, 2003, and 2014 Finals scheduling changes. The 2014 shift from a 2-3-2 to a
 2-2-1-1-1 series structure coincided with a sharp fall in playoff home win
-percentage. Isolating format effects from the broader secular trend is difficult,
-but the pattern is consistent across both framings.
+percentage — from 66.3% in 2003–13 to 59.8% in 2014–25, a −6.4 pp drop that is
+highly significant in a direct comparison (p = 0.004). The earlier format changes
+moved playoff home win % by less than 2 pp and neither is statistically
+distinguishable from zero.
+
+The drop cannot, however, be attributed to the format change itself: once the
+secular year trend is controlled for, the format-period indicators add no
+significant explanatory power (joint test p = 0.24; the 2014–25 indicator alone
+p = 0.29). The post-2014 fall is consistent with the long-run decline passing
+through that boundary, not with a distinct format effect.
 
 ![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png)
 
@@ -255,14 +263,25 @@ official rather than artifacts of when they worked.
 ## 8. Rest and Schedule Balance
 
 Rest days are computed from game logs as days between consecutive games minus one
-(0 = back-to-back, 1 = one rest day, etc.). When the home team has more rest than
-the road team the advantage is larger; when the away team is more rested the
-advantage shrinks significantly.
+(0 = back-to-back, 1 = one rest day, etc.). In the regular season the bucket
+split is unambiguous: when the home team has more rest it wins 62.9% of the
+time, versus 57.7% when the away team is more rested — a 5.2 pp swing around
+the 60.3% baseline that a chi-square test confirms is highly significant
+(p < 0.001).
 
-The effect is larger in the playoffs than in the regular season — higher stakes
-amplify the impact of fatigue. Back-to-back rates for home and away teams have
-shifted over time as the league has adjusted scheduling, but the rest differential
-effect on winning has remained stable across eras.
+In the playoffs, schedules are nearly always symmetric — about 92% of playoff
+games are played on equal rest — so the unequal-rest buckets are small (139 and
+98 games). Home teams with a rest edge win 75.5% of those games and the bucket
+differences are significant (p = 0.003), though the small away-more-rest bucket
+also sits above baseline, a reminder that playoff rest asymmetries arise only in
+unusual series situations. The per-day regression estimate (≈ +2.3 pp per rest
+day, §15) is the more reliable playoff measure, and it is larger than the
+regular-season figure — higher stakes amplify the impact of fatigue.
+
+Back-to-back rates for home and away teams have shifted substantially over time
+as the league has adjusted scheduling, but the rest effect on winning has
+remained stable across eras: a rest × era interaction test finds no evidence the
+per-day effect has changed (p = 0.43 regular season, p = 0.75 playoffs).
 
 ![Figure 10. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
 
@@ -463,11 +482,12 @@ the alternating host pattern, not a narrative about pressure or momentum.
 ### Implications for the overall decline
 
 The strong G3/G4/G6 separation means that changes in which team hosts which games
-(format changes in 1985, 2003, 2014) materially affect the aggregate playoff home
-win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
-in round 1 and Finals matchups, which mechanically compressed the overall playoff
-home win % figure — an effect that overlaps with but cannot fully explain the
-broader secular decline seen in the era analysis.
+(format changes in 1985, 2003, 2014) can mechanically affect the aggregate playoff
+home win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
+in round 1 and Finals matchups, which would compress the overall playoff home win %
+figure. In practice, however, the trend-controlled test in §2 cannot statistically
+separate any such format effect from the secular decline that runs through the
+same years.
 
 ![Figure 16. Home win % by game number within playoff series. Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. Right: G1–G7 home win % split by era (six lines, era-colored).](nba_home_court_series_breakdown.png)
 
@@ -526,11 +546,14 @@ provided no benefit, though the sample is too small to draw strong conclusions.
 
 ### Regular Season vs. Playoffs Consistency
 
-The scatter of regular-season HCA versus playoff HCA shows a positive
-relationship: franchises that protect home court in the regular season tend to
-do so in the playoffs as well. However, the playoff HCAs are uniformly larger
-and more dispersed, reflecting both the higher-stakes environment and the
-smaller sample sizes. Portland, Seattle, and Atlanta — already near the top
+The scatter of regular-season HCA versus playoff HCA shows a modest positive
+relationship (Pearson r = +0.36, p = 0.045): franchises that protect home court
+in the regular season tend to do so in the playoffs as well, though the
+correlation is weak — by rank it is not significant (Spearman ρ = +0.26,
+p = 0.15) — because playoff samples per franchise are small. The playoff HCAs
+are uniformly larger (the mean playoff HCA exceeds the regular-season figure by
++7.2 pp across shared franchises) and more dispersed, reflecting both the
+higher-stakes environment and the smaller sample sizes. Portland, Seattle, and Atlanta — already near the top
 of the regular-season table — rank even higher in the playoffs, while others
 like the New Jersey Nets show notably weaker playoff home advantages than
 their regular-season figures might suggest.
