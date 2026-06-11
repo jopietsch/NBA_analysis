@@ -264,9 +264,11 @@ SE² / n) from the observed variance — reveals that this compression is partly
 small-sample artifact. For three of five eras (1995–01, 2018–22, and 2023–25) the
 estimated true between-official SD is effectively zero: all of the observed spread
 is consistent with sampling noise given the number of officials and games per
-official in those eras. Only the 2005–17 era (the largest, with 42 officials and
+official in those eras. The 2002–04 era carries a non-zero point estimate (true
+SD ≈ 0.72 fouls/game) but 84% of its observed spread is sampling noise, so that
+figure is unreliable. Only the 2005–17 era (the largest, with 42 officials and
 long careers) shows clear evidence of genuine between-official variance (true
-SD ≈ 0.62 fouls/game after noise correction).
+SD ≈ 0.62 fouls/game, with 60% noise after correction).
 
 The era means themselves are non-monotone (ranging from −0.781 in 2002–04 to
 −2.239 in 1995–01, with the current era at −0.792), so there is no clear trend
@@ -678,7 +680,7 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Era (structural decline) | 50% (seq: 56%) | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
 | Altitude (Denver / Utah) | 26% (seq: 25%) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
 | Rest differential | 18% (seq: 16%) | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
-| COVID flag | 5% (seq: 1%) | Lower home win % in COVID-impacted seasons (2020–21) | Very strong (p < 0.001) |
+| COVID flag | 5% (seq: 1%) | Lower home win % in COVID-impacted seasons (2020–21) | Suggestive, not significant (p = 0.078) |
 | Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
 
 **Regular season — mechanisms behind the decline**:
@@ -695,7 +697,7 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 
 | Factor | Effect | Evidence |
 |---|---|---|
-| Era (structural decline) | Every era since 1984–94 has lower home advantage | Very strong (p < 0.001) |
+| Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (p = 0.009, season-level trend) |
 | Rest differential | +2.3 pp per extra day of rest — larger than in the regular season | Solid (p = 0.014) |
 | Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | None — likely chance (p = 0.59) |
 | Time-zone / distance | No meaningful effect of either | None (p = 0.28 and p = 0.77) |
