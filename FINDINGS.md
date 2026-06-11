@@ -150,7 +150,7 @@ playoffs across most of the dataset.
 
 ## 5. Box-Score Differentials
 
-Three box-score differentials (home minus away) show statistically significant
+Four box-score differentials (home minus away) show statistically significant
 trends over time. For era-by-era averages and trend values, see `RESULTS.md`.
 
 ### Foul differential — referees are calling the game more neutrally
@@ -179,7 +179,13 @@ teams now take a marginally higher share of their shots from three. Shot
 selection is no longer a meaningful home court edge — road teams now arrive with
 the same offensive game plan as the home team.
 
-FG% (unweighted) is also narrowing. FT% and 3P% show no significant trend.
+### FG% differential — unweighted shooting gap is also narrowing
+
+The raw field-goal percentage gap (home minus away, unweighted across 2- and
+3-point attempts) is also closing significantly. This is a cruder measure than
+eFG% — it ignores the value difference between shot types — but the trend runs
+in the same direction and confirms the shooting convergence is not an artifact
+of the 3-point weighting. FT% and 3P% show no significant trend.
 
 ![Figure 7. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. Negative foul diff = home team called for fewer fouls.](nba_home_court_advantage_differentials.png)
 
@@ -243,9 +249,10 @@ consistent tilt in the home team's favor.
 
 The variation across individual referees is wide. The most home-favoring officials
 averaged roughly 2.2–2.5 fewer fouls on the home team per game; the least
-home-favoring still called fewer fouls on the home team but by only 0.1–0.6 fouls
-per game. Nearly all referees show the same directional bias — they differ in
-degree, not direction.
+home-favoring still called fewer fouls on the home team, ranging from about 0.9
+fouls per game (Scott Foster, Zach Zarba) down to near zero (Josh Tiven at −0.11).
+Nearly all referees show the same directional bias — they differ in degree, not
+direction.
 
 ### Era Trends
 
@@ -262,7 +269,7 @@ SD ≈ 0.62 fouls/game after noise correction).
 
 The era means themselves are non-monotone (ranging from −0.781 in 2002–04 to
 −2.239 in 1995–01, with the current era at −0.792), so there is no clear trend
-in the average level of bias across eras. The apparent "fourfold compression" of
+in the average level of bias across eras. The apparent compression of
 individual tendencies is real in the raw data but is partly sampling noise from
 early eras where few officials had many games — the underlying true between-
 official variance in the modern era (true SD ≈ 0.38 fouls/game career-level) is
@@ -307,8 +314,9 @@ games are played on equal rest — so the unequal-rest buckets are small (139 an
 differences are significant (p = 0.003), though the small away-more-rest bucket
 also sits above baseline, a reminder that playoff rest asymmetries arise only in
 unusual series situations. The per-day regression estimate (≈ +2.3 pp per rest
-day, §15) is the more reliable playoff measure, and it is larger than the
-regular-season figure — higher stakes amplify the impact of fatigue.
+day in the playoffs, from the bivariate logistic) is the more reliable playoff
+measure, and it is larger than the regular-season figure (+1.5 pp/day) —
+higher stakes amplify the impact of fatigue.
 
 Back-to-back rates for home and away teams have shifted substantially over time
 as the league has adjusted scheduling, but the rest effect on winning has
@@ -669,7 +677,7 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Era (structural decline) | 50% (seq: 56%) | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
 | Altitude (Denver / Utah) | 26% (seq: 25%) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
 | Rest differential | 18% (seq: 16%) | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
-| COVID flag | 5% (seq: 1%) | Lower home win % in bubble and COVID seasons | Very strong (p < 0.001) |
+| COVID flag | 5% (seq: 1%) | Lower home win % in COVID-impacted seasons (2020–21) | Very strong (p < 0.001) |
 | Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
 
 **Regular season — mechanisms behind the decline**:
@@ -700,7 +708,7 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Shot quality (shooting + paint access) | Both edges trend downward, but the playoff sample is too small to be sure | Not significant |
 
 The core story: the decline is primarily **structural** — controlling for which
-rule-change era a game was played in accounts for the majority of explained
+rule-change era a game was played in accounts for roughly half of explained
 variance, meaning the forces driving the decline operate through long-run shifts
 in how the game is played and officiated, not through any single identifiable
 event. Within that structural decline, the strongest identified mechanisms are
