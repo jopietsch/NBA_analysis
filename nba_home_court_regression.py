@@ -23,7 +23,7 @@ import pandas as pd
 import statsmodels.formula.api as smf
 from nba_api.stats.library.parameters import SeasonType
 
-import nba_home_court_advantage as nba
+import nba_home_court_data as nba
 
 
 class _Tee:

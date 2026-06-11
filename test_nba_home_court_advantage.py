@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import nba_home_court_advantage as nba
+import nba_home_court_data as nba
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "tests", "data")
 

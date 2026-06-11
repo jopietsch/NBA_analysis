@@ -30,9 +30,9 @@ Use `MPLBACKEND=Agg` when running the script to suppress display windows and gen
 
 ## Architecture
 
-The project is two Python modules plus one test file:
+The project is three Python modules plus one test file:
 
-**`nba_home_court_advantage.py`** — data pipeline and visualization
+**`nba_home_court_data.py`** — all constants, data fetching, and computation (no matplotlib dependency)
 
 *Data fetching (all results cached as CSVs under `cache/`):*
 - `fetch_season_home_pct(end_year, season_type)` — game log → home win %; uses `LeagueGameFinder`
@@ -68,7 +68,11 @@ The project is two Python modules plus one test file:
 - `bucket_stats_by_era(seasons, stats)` — average any per-season stats dict within each ERA_DEFS period
 - `_align_to_seasons(ref_seasons, target_seasons, target_stats, key)` — align a per-season stat series to a reference season list, filling gaps with NaN; used to overlay playoff data on the regular-season x-axis in plot functions
 
-*Plot helpers (private):*
+---
+
+**`nba_home_court_plots.py`** — all visualization (imports `nba_home_court_data`, no data logic)
+
+*Drawing helpers (private):*
 - `_shade_eras(ax, seasons, label_y=46)` — draw era background shading + dividers; pass `label_y=None` to suppress text labels (used on non-win-% axes)
 - `_annotate_bars(ax, bars, color)` — label bar heights with % values
 - `_draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts)` — draws the season-by-season reg+playoff combined panel (used by both the combined figure and individual PNG)
@@ -87,7 +91,9 @@ The project is two Python modules plus one test file:
 - `plot_category_road_win_analysis(...)` also used for travel → `nba_home_court_travel.png` (regular season; distance buckets as category keys)
 - `plot_3pa_hca_analysis(...)` — 3-panel figure: dual-axis time series (3PA rate vs. home win %), regular-season scatter, playoff scatter → `nba_home_court_3pa.png`
 
-`main()` runs the full pipeline and ends with `import nba_home_court_regression; nba_home_court_regression.run()` — the import is inside `main()` to avoid a circular import (regression module imports this one at module level).
+---
+
+**`nba_home_court_advantage.py`** — pipeline orchestration only; imports from the two modules above and calls them in sequence via `main()`. The regression module is imported inside `main()` to avoid any chance of circular import.
 
 ---
 
@@ -131,14 +137,14 @@ All fetched data is cached under `cache/` to avoid re-fetching:
 - `{season}_{Regular_Season|Playoffs}.csv` — game logs from `LeagueGameFinder` (one row per team per game); all box-score columns present (FGM, FGA, FG3M, FG3A, FTM, FTA, FT_PCT, PF, etc.)
 - `shot_zones_{season}_{type}_{Home|Road}.csv` — team shot zone FGA totals from `LeagueDashTeamShotLocations`; columns: TEAM_ID, TEAM_NAME, FGA_RA, FGA_NON_RA, FGA_MR, FGA_LC3, FGA_RC3, FGA_ATB3, FGA_BC
 
-## Key domain constants (in `nba_home_court_advantage.py`)
+## Key domain constants (in `nba_home_court_data.py`)
 
 - `ERA_DEFS` — 6 rule-change eras (1984–2025), used for era shading in charts and as categorical predictor in regression
 - `PLAYOFF_FORMAT_PERIODS` — 4 periods defined by 1985/2003/2014 format changes
 - `ALTITUDE_TEAMS` — `{"Denver Nuggets", "Utah Jazz"}` — the two high-elevation arenas
 - `TEAM_TIMEZONES` — dict mapping franchise name → integer (0=Eastern … 3=Pacific)
 - `ARENA_COORDS` — dict mapping franchise name → (lat, lon); covers all ~35 historical franchises; used with `_haversine()` to compute away team travel distance
-- `TRAVEL_BUCKETS`, `TRAVEL_COLORS`, `TRAVEL_LABELS` — parallel dicts for the four distance bins (0–500, 500–1000, 1000–1500, 1500+ miles)
+- `TRAVEL_BUCKETS` — the four distance bin keys (0–500, 500–1000, 1000–1500, 1500+ miles); `TRAVEL_COLORS` and `TRAVEL_LABELS` are in `nba_home_court_plots.py`
 - `SKIP_PLAYOFF_YEARS = {2020}` — bubble season excluded from playoff stats
 - `COVID_SEASONS = {"19–20", "20–21"}` — flagged in charts and regression
 - `SHOT_ZONE_GROUPS` — maps zone names to flat FGA column names in the shot-zone cache CSVs
