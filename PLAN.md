@@ -179,13 +179,12 @@ Requires `BoxScoreSummaryV2.GameInfo` — one API call per game.
 - Plot: dual-axis time series of attendance vs. home win %
 
 ### Status: Deferred — implement after D's BoxScoreSummaryV2 pattern is established
-- [ ] `fetch_attendance_summary(end_year)`
-- [ ] `compute_attendance_stats(...)`
-- [ ] Tests for above
-- [ ] `run_attendance_analysis(df)`
-- [ ] `plot_attendance_analysis(...)`
-- [ ] `## 13. Attendance` in FINDINGS.md
-- [ ] `_section_attendance(s, sections)` in generate_report.py
+- [ ] `fetch_attendance_summary(end_year)` in `nba_home_court_data.py`
+- [ ] `compute_attendance_stats(...)` in `nba_home_court_data.py`
+- [ ] Tests for above in `test_nba_home_court_advantage.py`
+- [ ] `run_attendance_analysis(df)` in `nba_home_court_regression.py`
+- [ ] `plot_attendance_analysis(...)` in `nba_home_court_plots.py`; wire call into `nba_home_court_advantage.py main()`
+- [ ] Add `## 14. Attendance` section with prose + `![caption](path)` to `FINDINGS.md` — PDF picks it up automatically
 
 ---
 
@@ -203,55 +202,45 @@ Requires `BoxScoreSummaryV2.Officials` — same per-game fetch as D.
 - This directly tests the "referees call the game more neutrally" finding (Section 6 of FINDINGS.md)
 
 ### Status: Deferred — implement after Analysis D establishes BoxScoreSummaryV2 pattern
-- [ ] `fetch_all_referee_data(start_year, end_year, season_type)`
-- [ ] `compute_referee_bias_stats(...)`
-- [ ] Tests for above
-- [ ] `run_referee_analysis(df)`
-- [ ] `plot_referee_analysis(...)`
-- [ ] `## 14. Referee Patterns` in FINDINGS.md
-- [ ] `_section_referees(s, sections)` in generate_report.py
+- [ ] `fetch_all_referee_data(start_year, end_year, season_type)` in `nba_home_court_data.py`
+- [ ] `compute_referee_bias_stats(...)` in `nba_home_court_data.py`
+- [ ] Tests for above in `test_nba_home_court_advantage.py`
+- [ ] `run_referee_analysis(df)` in `nba_home_court_regression.py`
+- [ ] `plot_referee_analysis(...)` in `nba_home_court_plots.py`; wire call into `nba_home_court_advantage.py main()`
+- [ ] Add `## 15. Referee Patterns` section with prose + `![caption](path)` to `FINDINGS.md` — PDF picks it up automatically
 
 ---
 
-## Final PDF Wiring (do after all analyses are complete)
+## PDF Integration (how it works now)
 
-Current `build_report()` call order in `generate_report.py`:
+`generate_report.py` no longer has `_section_*` functions or a pipeline list.
+`build_report()` iterates `FINDINGS.md` `##` sections in order — each section's
+prose and `![caption](path)` image references render automatically. TOC is also
+auto-generated from section headings.
 
+**To add a new analysis to the PDF:** add a `## N. Title` section to `FINDINGS.md`
+with prose and one or more `![Figure N. caption text](chart_filename.png)` lines.
+That's it — no changes to `generate_report.py` needed.
+
+Current FINDINGS.md section order (§1–§13):
 ```
-_section_overview        §1
-_section_era_bars        §2
-_section_era_lines       §3
-_section_regression      §4  (was §4, stays §4)
-_section_rest            §5
-_section_differentials   §6
-_section_shot_zones      §7
-_section_summary         §8
-_appendix_results
-```
-
-Target order after all analyses:
-
-```
-_section_overview          §1
-_section_era_bars          §2
-_section_era_lines         §3
-_section_series_breakdown  §9  ← new (Analysis A)
-_section_regression        §4
-_section_rest              §5
-_section_differentials     §6
-_section_shot_zones        §7
-_section_margin            §10 ← new (Analysis B)
-_section_parity            §11 ← new (Analysis C)
-_section_travel            §12 ← new (Analysis E)
-_section_attendance        §13 ← new (Analysis D, when ready)
-_section_referees          §14 ← new (Analysis F, when ready)
-_section_summary           §8  (renumber to §15 in FINDINGS.md)
-_appendix_results
+§1  The Decline
+§2  Era and Format Period Analysis
+§3  Per-Era Trend Lines
+§4  What Explains the Decline?
+§5  Rest and Schedule Balance
+§6  Box-Score Differentials
+§7  Shot Zone Analysis
+§8  Playoff Series Structure
+§9  Win Margin Trends
+§10 Competitive Balance and Parity
+§11 Travel Distance
+§12 3-Point Shooting and Home Court Advantage
+§13 Summary          ← renumber to §16 once D and F are added
 ```
 
-- [ ] Renumber `## 8. Summary` to `## 15. Summary` in FINDINGS.md once all sections added
-- [ ] TOC updates automatically from FINDINGS.md `##` headings — no extra work needed
-- [ ] Update rank table in Summary section once all findings are in
+- [ ] Update Summary rank table in FINDINGS.md once D and F findings are in
+- [ ] Renumber `## 13. Summary` to `## 16. Summary` once D and F are added
 
 ---
 
