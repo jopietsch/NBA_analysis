@@ -553,30 +553,41 @@ regular season. The decline is structural — it spans every rule-change era and
 the era effect accounts for the majority of variance explained by the regression
 model. The mechanisms, in order of statistical strength, are summarized in the table below.
 
-**Regular season** — ordered by contribution to explained variance, then effect size:
+**Regular season — logistic regression model** (by R² contribution):
+
+| Factor | R² contribution | Effect | Significance |
+|---|---|---|---|
+| Era (structural decline) | 56% | −8.9 pp net 1984–94 → 2023–25 | p < 0.001 |
+| Altitude (Denver / Utah) | 25% | +8.2 pp home advantage | p < 0.001 |
+| Rest differential | 16% | +1.5 pp per rest-day advantage | p < 0.001 |
+| Time-zone differential | 2% | −0.6 pp/zone (era-controlled) | p = 0.012 |
+
+**Regular season — mechanism and correlation analyses**:
 
 | Factor | Effect | Significance |
 |---|---|---|
-| Era (structural decline) | 56% of model fit; −8.9 pp net 1984–94 → 2023–25 | p < 0.001 |
 | Foul differential (refs more neutral) | +0.023 pp/yr closing gap | p < 0.001 |
 | Shot quality (eFG% + paint access) | eFG%: −0.015 pp/yr; paint share: −0.037 pp/yr | p < 0.001 |
 | League-wide 3-point shooting | r = −0.898 season-level; −2.3 pp per 10 pp 3PA within era | p < 0.001 |
-| Altitude (Denver / Utah) | +8.2 pp home advantage | p < 0.001 |
-| Rest differential | +1.5 pp per rest-day advantage | p < 0.001 |
-| Time-zone travel and distance | Time zone: −0.6 pp/zone (era-controlled); distance: −0.08 pp per 100 mi | Time zone p = 0.012 (full model); distance p = 0.024 |
+| Travel distance | −0.08 pp per 100 mi | p = 0.024 |
 | Competitive balance / parity | r = −0.066 — no relationship | p = 0.676 |
 
-**Playoffs** — ordered by effect size:
+**Playoffs — logistic regression model**:
 
 | Factor | Effect | Significance |
 |---|---|---|
 | Era (structural decline) | All eras significantly below 1984–94 baseline | p < 0.001 |
 | Rest differential | +2.3 pp per rest-day advantage | p = 0.014 |
+| Altitude (Denver / Utah) | −1.8 pp — no edge in playoffs | p = 0.591 |
+| Time-zone / distance | No meaningful effect | Time zone p = 0.278; distance p = 0.769 |
+
+**Playoffs — mechanism and correlation analyses**:
+
+| Factor | Effect | Significance |
+|---|---|---|
 | Foul differential (refs more neutral) | +0.020 pp/yr closing gap | p = 0.002 |
 | League-wide 3-point shooting | r = −0.468 season-level; within-era game-level effect weak | p = 0.002 season-level; p = 0.097 within era |
 | Shot quality (eFG% + paint access) | eFG% declining; paint trend not significant | eFG% p < 0.05 |
-| Altitude (Denver / Utah) | −1.8 pp — no edge in playoffs | p = 0.591 |
-| Time-zone travel and distance | No meaningful effect | Time zone p = 0.278; distance p = 0.769 |
 
 The core story: the decline is primarily **structural** — controlling for which
 rule-change era a game was played in accounts for the majority of explained
