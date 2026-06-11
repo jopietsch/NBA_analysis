@@ -607,8 +607,8 @@ All data from cache/ — same source as the plots above.
    Chicago Bulls                        1,686      61.4%     1,683      42.5%     +18.9 pp
    Boston Celtics                       1,687      66.4%     1,688      48.0%     +18.4 pp
    Memphis Grizzlies                      967      57.9%       966      39.9%     +18.1 pp
-   Los Angeles Lakers                   1,688      68.4%     1,687      50.6%     +17.8 pp
    Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
+   Los Angeles Lakers                   1,688      68.4%     1,687      50.6%     +17.8 pp
    Washington Wizards                   1,113      49.8%     1,115      32.1%     +17.7 pp
    Philadelphia 76ers                   1,687      56.2%     1,690      38.9%     +17.3 pp
    New Orleans Hornets                    361      56.0%       361      38.8%     +17.2 pp

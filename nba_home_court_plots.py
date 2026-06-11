@@ -591,13 +591,31 @@ def plot_margin_analysis(
     reg_era, era_labels = bucket_stats_by_era(reg_seasons, {"reg": reg_stats["all_games_mean"]})
     po_era,  _          = bucket_stats_by_era(po_seasons,  {"po":  po_stats["all_games_mean"]})
 
+    # bucket_stats_by_era returns 0 for eras with no underlying data (margin
+    # data starts 1996–97, so the 1984–94 era is empty). Mask those to NaN so
+    # no bar is drawn rather than a misleading ~0 bar.
+    def _mask_empty_eras(seasons, values):
+        out = []
+        for _, y1, y2, _ in ERA_DEFS:
+            has = any(y1 <= label_to_year(s) <= y2 and not np.isnan(v)
+                      for s, v in zip(seasons, values))
+            out.append(not has)
+        return np.array(out)
+
+    reg_vals = np.array(reg_era["reg"], dtype=float)
+    po_vals  = np.array(po_era["po"],   dtype=float)
+    reg_vals[_mask_empty_eras(reg_seasons, reg_stats["all_games_mean"])] = np.nan
+    po_vals[_mask_empty_eras(po_seasons,  po_stats["all_games_mean"])]  = np.nan
+
     xi = np.arange(len(era_labels))
     w  = 0.35
-    bars1 = ax3.bar(xi - w / 2, reg_era["reg"], width=w, color=BLUE,  label="Regular season", zorder=2)
-    bars2 = ax3.bar(xi + w / 2, po_era["po"],   width=w, color=GREEN, label="Playoffs",        zorder=2)
+    bars1 = ax3.bar(xi - w / 2, reg_vals, width=w, color=BLUE,  label="Regular season", zorder=2)
+    bars2 = ax3.bar(xi + w / 2, po_vals,  width=w, color=GREEN, label="Playoffs",        zorder=2)
     for bars, color in [(bars1, BLUE), (bars2, GREEN)]:
         for bar in bars:
             h  = bar.get_height()
+            if np.isnan(h):
+                continue
             va = "bottom" if h >= 0 else "top"
             ax3.text(bar.get_x() + bar.get_width() / 2, h + (0.1 if h >= 0 else -0.1),
                      f"{h:+.1f}", ha="center", va=va, fontsize=7.5, color=color)
