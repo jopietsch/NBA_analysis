@@ -56,13 +56,13 @@ figure but has converged dramatically in recent years.
 
 ## 4. What Explains the Decline?
 
-A game-level logistic regression (outcome: home win) with era dummies, rest
+A game-level logistic regression (outcome: home win) with era indicators, rest
 differential, altitude, time-zone differential, and a COVID flag decomposes the
 decline into measurable factors. Full tables are in `RESULTS.md`.
 
 ### Era dominates the model fit
 
-The era dummies account for the majority of total model fit. The structural
+The era indicators account for the majority of total model fit. The structural
 multi-decade decline is not explained by rest, altitude, or travel — it spans
 every rule-change era and those factors add only incremental explanatory power
 on top of it.
@@ -321,7 +321,7 @@ In the regular season, the within-era effect survives: each 10 percentage-point
 rise in a game's combined 3PA rate is associated with roughly **−2.3 pp lower home
 win probability** (p < 0.001). In the playoffs, the within-era effect disappears
 (p ≈ 0.10), suggesting that in the smaller playoff sample the signal is absorbed
-by era dummies.
+by the era indicators.
 
 ### Why would more 3-point shooting reduce home advantage?
 
@@ -352,16 +352,45 @@ Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the playoff decline steeper than the
 regular season. The decline is structural — it spans every rule-change era and
 the era effect accounts for the majority of variance explained by the regression
-model. The mechanisms, in order of statistical strength, are listed in the table
-below.
+model. The mechanisms, in order of statistical strength, are summarized in the table below.
 
-The core story: home court advantage has eroded because **referees call the game
-more neutrally** than they did 40 years ago, **home teams no longer generate a
-disproportionate paint-access or shooting edge**, and **the 3-point revolution
-has equalized shot selection** between home and road teams. Rest remains a
-meaningful factor — particularly in the playoffs — but cannot explain the secular
-decline. Altitude at Denver and Utah confers a real regular-season edge but is
-absent in the playoffs. Time-zone travel shows no statistically reliable effect.
+**Regular season** — ordered by contribution to explained variance, then effect size:
+
+| Factor | Effect | Significance |
+|---|---|---|
+| Era (structural decline) | 56% of model fit; −8.9 pp net 1984–94 → 2023–25 | p < 0.001 |
+| Foul differential (refs more neutral) | +0.023 pp/yr closing gap | p < 0.001 |
+| Shot quality (eFG% + paint access) | eFG%: −0.015 pp/yr; paint share: −0.037 pp/yr | p < 0.001 |
+| League-wide 3-point shooting | r = −0.898 season-level; −2.3 pp per 10 pp 3PA within era | p < 0.001 |
+| Altitude (Denver / Utah) | +8.2 pp home advantage | p < 0.001 |
+| Rest differential | +1.5 pp per rest-day advantage | p < 0.001 |
+| Time-zone travel and distance | Time zone: −0.4 pp/zone; distance: −0.08 pp per 100 mi | Time zone p = 0.085; distance p = 0.024 |
+| Competitive balance / parity | r = −0.066 — no relationship | p = 0.676 |
+
+**Playoffs** — ordered by effect size:
+
+| Factor | Effect | Significance |
+|---|---|---|
+| Era (structural decline) | All eras significantly below 1984–94 baseline | p < 0.001 |
+| Rest differential | +2.3 pp per rest-day advantage | p = 0.014 |
+| Foul differential (refs more neutral) | +0.020 pp/yr closing gap | p = 0.002 |
+| League-wide 3-point shooting | r = −0.468 season-level; within-era game-level effect weak | p = 0.002 season-level; p = 0.097 within era |
+| Shot quality (eFG% + paint access) | eFG% declining; paint trend not significant | eFG% p < 0.05 |
+| Altitude (Denver / Utah) | −1.8 pp — no edge in playoffs | p = 0.591 |
+| Time-zone travel and distance | No meaningful effect | Time zone p = 0.278; distance p = 0.769 |
+
+The core story: the decline is primarily **structural** — controlling for which
+rule-change era a game was played in accounts for the majority of explained
+variance, meaning the forces driving the decline operate through long-run shifts
+in how the game is played and officiated, not through any single identifiable
+event. Within that structural decline, the strongest identified mechanisms are
+that **referees call the game more neutrally** than they did 40 years ago,
+**home teams no longer generate a disproportionate paint-access or shooting
+edge**, and **the 3-point revolution has equalized shot selection** between home
+and road teams. Rest remains a meaningful factor — particularly in the playoffs —
+but cannot explain the secular decline. Altitude at Denver and Utah confers a
+real regular-season edge but is absent in the playoffs. Time-zone travel shows
+no statistically reliable effect.
 
 For specific coefficient values, effect sizes, significance levels, and era
 breakdowns, see `RESULTS.md`.

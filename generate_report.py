@@ -105,6 +105,17 @@ def _styles():
             fontName="Courier",
             spaceAfter=0,
         ),
+        "table_header": ParagraphStyle(
+            "table_header", parent=base["Normal"],
+            fontSize=9, leading=12,
+            textColor=colors.white,
+            fontName="Helvetica-Bold",
+        ),
+        "table_body": ParagraphStyle(
+            "table_body", parent=base["Normal"],
+            fontSize=9, leading=12,
+            textColor=colors.HexColor(DARK),
+        ),
     }
 
 
@@ -147,6 +158,26 @@ def _md_to_flowables(text: str, s: dict) -> list:
             for line in block.splitlines():
                 if line.startswith('- '):
                     flowables.append(Paragraph('• ' + _md_inline(line[2:]), s['body']))
+        elif block.startswith('|'):
+            rows = []
+            is_header = True
+            for line in block.splitlines():
+                line = line.strip()
+                if not line:
+                    continue
+                if re.match(r'^\|[\s\-:|]+\|$', line):
+                    is_header = False
+                    continue
+                style = s['table_header'] if is_header else s['table_body']
+                cells = [Paragraph(_md_inline(c.strip()), style)
+                         for c in line.split('|')[1:-1]]
+                rows.append(cells)
+                is_header = False
+            if rows:
+                n_cols = max(len(r) for r in rows)
+                col_w = CONTENT_W / n_cols
+                flowables.append(Spacer(1, 0.1 * inch))
+                flowables.append(_table(rows, [col_w] * n_cols))
         else:
             joined = ' '.join(ln.strip() for ln in block.splitlines() if ln.strip())
             flowables.append(Paragraph(_md_inline(joined), s['body']))
@@ -449,23 +480,9 @@ def _section_3pa(s, sections):
 
 
 def _section_summary(s, sections):
-    rank_data = [
-        ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
-        ["1",    "Era (structural decline)",       "Dominant — majority of fit", "Larger decline"     ],
-        ["2",    "Foul diff (refs more neutral)",  "Significant, *** trend",   "Significant, ** trend"],
-        ["3",    "Altitude — DEN / UTA",           "Significant, ***",         "Not significant"      ],
-        ["4",    "eFG% edge shrinking",            "Significant, *** trend",   "Smaller decline"      ],
-        ["5",    "Rest differential",              "Significant, ***",         "Larger effect, *"     ],
-        ["6",    "3PA rate convergence",           "Significant, *** trend",   "Significant, * trend" ],
-        ["7",    "Paint access (shot zones)",      "Declining (1996– )",       "Noisy"                ],
-        ["8",    "Time zone",                      "Not significant",          "Not significant"      ],
-    ]
-    cw = [CONTENT_W * f for f in (0.06, 0.33, 0.31, 0.30)]
     return [
         PageBreak(),
         *_section_header("13. Summary", s, sections),
-        Spacer(1, 0.1 * inch),
-        _table(rank_data, cw),
         Spacer(1, 0.3 * inch),
         _hr(),
         Paragraph(
