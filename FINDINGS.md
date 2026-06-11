@@ -551,7 +551,7 @@ Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the playoff decline steeper than the
 regular season. The decline is structural — it spans every rule-change era and
 the era effect accounts for the majority of variance explained by the regression
-model. The mechanisms, in order of statistical strength, are summarized in the table below.
+model. The mechanisms are summarized in the tables below, split by type of analysis.
 
 **Regular season — logistic regression model** (by R² contribution):
 
@@ -599,8 +599,9 @@ that **referees call the game more neutrally** than they did 40 years ago,
 edge**, and **the 3-point revolution has equalized shot selection** between home
 and road teams. Rest remains a meaningful factor — particularly in the playoffs —
 but cannot explain the secular decline. Altitude at Denver and Utah confers a
-real regular-season edge but is absent in the playoffs. Time-zone travel shows
-no statistically reliable effect.
+real regular-season edge but is absent in the playoffs. Time-zone differential
+has a small but significant effect in the regular season once era and altitude
+are controlled for, but no detectable effect in the playoffs.
 
 For specific coefficient values, effect sizes, significance levels, and era
 breakdowns, see `RESULTS.md`.
