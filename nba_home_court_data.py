@@ -278,6 +278,17 @@ def _align_to_seasons(
     )
 
 
+def _iter_season_frames(start_year, end_year, season_type, skip_years, fetch):
+    """Yield (year, frame) for each season that has cached data."""
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch(year, season_type)
+        if g is None or g.empty:
+            continue
+        yield year, g
+
+
 # ── Rest-day analysis ─────────────────────────────────────────────────────────
 def fetch_rest_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
@@ -319,13 +330,7 @@ def compute_rest_stats(
         "win_home_more_rest": [], "win_equal_rest": [], "win_away_more_rest": [],
     }
 
-    for year in range(start_year, end_year + 1):
-        if year in skip_years:
-            continue
-        g = fetch_rest_data(year, season_type)
-        if g is None or g.empty:
-            continue
-
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_rest_data):
         seasons.append(short_label(year))
         stats["b2b_home_pct"].append(100 * (g["REST_home"] == 0).mean())
         stats["b2b_away_pct"].append(100 * (g["REST_away"] == 0).mean())
@@ -379,13 +384,7 @@ def compute_altitude_stats(
     stats: dict[str, list[float]] = {name: [] for name in ALTITUDE_TEAMS}
     stats["other"] = []
 
-    for year in range(start_year, end_year + 1):
-        if year in skip_years:
-            continue
-        g = fetch_altitude_data(year, season_type)
-        if g is None or g.empty:
-            continue
-
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_altitude_data):
         seasons.append(short_label(year))
         other = g[~g["ALTITUDE"]]
         stats["other"].append(100 * other["HOME_WIN"].mean() if len(other) else np.nan)
@@ -445,13 +444,12 @@ def fetch_timezone_data(end_year: int, season_type: str) -> pd.DataFrame | None:
 
     home_tz = merged["TEAM_NAME_home"].map(TEAM_TIMEZONES)
     away_tz = merged["TEAM_NAME_away"].map(TEAM_TIMEZONES)
-    merged = merged[home_tz.notna() & away_tz.notna()].copy()
+    mask = home_tz.notna() & away_tz.notna()
+    merged = merged[mask].copy()
     if merged.empty:
         return None
 
-    home_tz = merged["TEAM_NAME_home"].map(TEAM_TIMEZONES)
-    away_tz = merged["TEAM_NAME_away"].map(TEAM_TIMEZONES)
-    merged["TZ_DIFF"] = (home_tz - away_tz).abs().astype(int)
+    merged["TZ_DIFF"] = (home_tz[mask] - away_tz[mask]).abs().astype(int)
     merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
     return merged[["TZ_DIFF", "HOME_WIN"]]
 
@@ -463,13 +461,7 @@ def compute_timezone_stats(
     seasons: list[str] = []
     stats: dict[str, list[float]] = {cat: [] for cat in TZ_CATEGORIES}
 
-    for year in range(start_year, end_year + 1):
-        if year in skip_years:
-            continue
-        g = fetch_timezone_data(year, season_type)
-        if g is None or g.empty:
-            continue
-
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_timezone_data):
         seasons.append(short_label(year))
         for cat in TZ_CATEGORIES:
             sub = g[g["TZ_DIFF"] == int(cat)]
@@ -575,11 +567,9 @@ def fetch_travel_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     if merged.empty:
         return None
 
-    home_c = merged["TEAM_NAME_home"].map(ARENA_COORDS)
-    away_c = merged["TEAM_NAME_away"].map(ARENA_COORDS)
     merged["distance_miles"] = [
         _haversine(a[0], a[1], h[0], h[1])
-        for a, h in zip(away_c, home_c)
+        for a, h in zip(away_coords[mask], home_coords[mask])
     ]
     merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
     return merged[["distance_miles", "HOME_WIN"]]
@@ -592,13 +582,7 @@ def compute_travel_stats(
     seasons: list[str] = []
     stats: dict[str, list[float]] = {b: [] for b in TRAVEL_BUCKETS}
 
-    for year in range(start_year, end_year + 1):
-        if year in skip_years:
-            continue
-        g = fetch_travel_data(year, season_type)
-        if g is None or g.empty:
-            continue
-
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_travel_data):
         seasons.append(short_label(year))
         g = g.copy()
         g["bucket"] = g["distance_miles"].apply(_bucket_distance)
@@ -657,13 +641,7 @@ def compute_differential_stats(
         "fg3_pct_diff": [], "ft_pct_diff": [],
     }
 
-    for year in range(start_year, end_year + 1):
-        if year in skip_years:
-            continue
-        g = fetch_differential_data(year, season_type)
-        if g is None or g.empty:
-            continue
-
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_differential_data):
         seasons.append(short_label(year))
         for key in stats:
             stats[key].append(g[key].mean(skipna=True))
@@ -816,13 +794,7 @@ def compute_margin_stats(
         "all_games_mean": [], "home_wins_mean": [], "home_losses_mean": [], "std_dev": [],
     }
 
-    for year in range(start_year, end_year + 1):
-        if year in skip_years:
-            continue
-        g = fetch_margin_data(year, season_type)
-        if g is None or g.empty:
-            continue
-
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_margin_data):
         seasons.append(short_label(year))
         stats["all_games_mean"].append(g["margin"].mean())
         wins   = g[g["WL"] == "W"]
