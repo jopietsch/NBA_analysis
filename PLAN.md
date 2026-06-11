@@ -248,27 +248,27 @@ auto-generated from section headings.
 with prose and one or more `![Figure N. caption text](chart_filename.png)` lines.
 That's it — no changes to `generate_report.py` needed.
 
-Current FINDINGS.md section order (§1–§15):
+Current FINDINGS.md section order (§1–§16):
 ```
 §1  The Decline
 §2  Era and Format Period Analysis
 §3  Per-Era Trend Lines
-§4  What Explains the Decline?
-§5  Rest and Schedule Balance
-§6  Box-Score Differentials
-§7  Shot Zone Analysis
-§8  Playoff Series Structure
-§9  Win Margin Trends
+§4  Win Margin Trends
+§5  Box-Score Differentials
+§6  Shot Zone Analysis
+§7  Referee Patterns
+§8  Rest and Schedule Balance
+§9  Travel Distance
 §10 Competitive Balance and Parity
-§11 Travel Distance
-§12 3-Point Shooting and Home Court Advantage
-§13 Pace and Home Court Advantage
+§11 3-Point Shooting and Home Court Advantage
+§12 Pace and Home Court Advantage
+§13 Playoff Series Structure
 §14 Franchise Home Court Advantage
-§15 Summary          ← renumber to §16 once F is added
+§15 What Explains the Decline?   ← synthesis after all evidence
+§16 Summary
 ```
 
-- [ ] Update Summary rank table in FINDINGS.md once F findings are in
-- [ ] Renumber `## 15. Summary` to `## 16. Summary` once F is added
+- [ ] Update Summary rank table in FINDINGS.md once referee (§7) findings are in
 
 ---
 

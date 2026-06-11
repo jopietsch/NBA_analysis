@@ -199,7 +199,7 @@ def _clean(name: str, era_ref: str, fmt_ref: str) -> str:
 
 def run_decline_trend(df: pd.DataFrame) -> None:
     """Trend line for home_win_pct ~ year at the season level — formally tests the decline."""
-    _section("1. THE OVERALL DECLINE — IS IT STATISTICALLY REAL?")
+    _section("THE OVERALL DECLINE — IS IT STATISTICALLY REAL?")
     print("   Trend line fit to per-season home win % on year (season-level, not game-level).")
     print("   Formally tests the multi-decade trend and measures per-era slopes.\n")
 
@@ -253,7 +253,7 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     n = len(reg)
     p_bar = reg["home_win"].mean()
 
-    _section(f"2. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = {n:,} games)")
+    _section(f"WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = {n:,} games)")
     print(f"   Outcome: home_win. Baseline home win %: {p_bar * 100:.1f}%.")
     print(f"   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;")
     print(f"   the ΔR² column shows how much each block adds over the previous model.")
@@ -318,7 +318,7 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
 # ── Analysis 2: Pre/post-2014 coefficient stability (regular season) ──────────
 
 def run_stability_analysis(df: pd.DataFrame) -> None:
-    _section("3. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only)")
+    _section("PRE/POST-2014 COEFFICIENT STABILITY  (regular season only)")
     print("   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?")
     print("   Stable coefficients → those factors didn't drive the post-2014 change.\n")
 
@@ -371,7 +371,7 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     re = df[df["is_playoff"] == 0].dropna(subset=["rest_diff", "tz_diff"])
     po = df[df["is_playoff"] == 1].dropna(subset=["rest_diff", "tz_diff"])
 
-    _section("4. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
+    _section("REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER?")
     print(f"   Bivariate logistic regression — each factor tested independently.")
     print(f"   N regular season: {len(re):,}   N playoffs: {len(po):,}\n")
 
@@ -425,7 +425,7 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
                   "3P% (pp)", "FT% (pp)"]
     COL_W = 14
 
-    _section("5. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
+    _section("FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
     print("   Negative foul diff = refs call fewer fouls on the home team.")
     print("   Trend = slope of trend line (change per season year); pp = percentage points.\n")
 
@@ -481,7 +481,7 @@ def run_shot_zone_analysis(
     }
     COL_W = 18
 
-    _section("6. SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA)")
+    _section("SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA)")
     print("   Positive = home team takes a higher share of FGA from that zone.")
     print("   Trend = slope of trend line (change per season year). Data from 1996–97 onward.\n")
 
@@ -540,7 +540,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
         ("Home losses", 0,    "margin"),
     ]
 
-    _section("7. WIN MARGIN TRENDS  (home team point differential per game)")
+    _section("WIN MARGIN TRENDS  (home team point differential per game)")
     print("   Positive = home team winning by more.")
     print("   Trend = slope of trend line (change per season year).\n")
 
@@ -601,7 +601,7 @@ def run_parity_correlation(
 ) -> None:
     from scipy import stats as scipy_stats
 
-    _section("8. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE")
+    _section("COMPETITIVE BALANCE AND HOME COURT ADVANTAGE")
     print("   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.")
     print("   Parity = std dev of all-team win percentages for the season.\n")
 
@@ -670,7 +670,7 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
     po["game_in_series"] = po["game_in_series"].astype(int)
     po = po[po["game_in_series"].between(1, 7)]
 
-    _section("9. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER")
+    _section("PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER")
     print("   Does home court advantage vary by game number within a series (G1–G7)?")
     print("   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).\n")
 
@@ -733,11 +733,11 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
     """Bivariate table: does haversine travel distance predict home win?"""
     full = df.dropna(subset=["distance_miles"])
     if full.empty:
-        _section("10. TRAVEL DISTANCE — AWAY TEAM FLIGHT MILES")
+        _section("TRAVEL DISTANCE — AWAY TEAM FLIGHT MILES")
         print("   No distance data available in this dataset.")
         return
 
-    _section("10. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES")
+    _section("TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES")
     print("   Distance = haversine miles from away team's home arena to game arena.")
     print("   Does longer travel reduce the visiting team's winning odds?\n")
 
@@ -780,7 +780,7 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
     """Season-level and game-level relationship between league-wide 3PA rate and home win %."""
     from scipy.stats import pearsonr, spearmanr
 
-    _section("11. LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE")
+    _section("LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE")
     print("   Does more 3-point shooting reduce home court advantage?")
     print("   Two angles: season-level correlation and game-level logistic regression.\n")
 
@@ -858,7 +858,7 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
     """Season-level and game-level relationship between pace and home win %."""
     from scipy.stats import pearsonr, spearmanr
 
-    _section("12. PACE AND HOME COURT ADVANTAGE")
+    _section("PACE AND HOME COURT ADVANTAGE")
     print("   Does faster-paced play (more possessions per game) reduce home court advantage?")
     print("   Season-level correlation plus game-level logistic regression.\n")
 
@@ -929,7 +929,7 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
 
 def run_team_hca_analysis() -> None:
     """Per-franchise home vs. road win% aggregated across all seasons."""
-    _section("13. FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN %")
+    _section("FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN %")
     print("   Which franchises benefit most from playing at home?")
     print("   HCA = home win% − road win% (controls for overall team quality).\n")
 
@@ -979,7 +979,7 @@ def run_referee_analysis() -> None:
     """Per-official home foul bias for playoff games; era trend and rankings."""
     from scipy import stats as sp_stats
 
-    _section("14. REFEREE CREW HOME FOUL BIAS (PLAYOFFS)")
+    _section("REFEREE CREW HOME FOUL BIAS (PLAYOFFS)")
     print("   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)")
     print("   Officials with <50 playoff games excluded.\n")
 
@@ -1087,16 +1087,16 @@ def run() -> None:
         run_sequential_decomposition(df)
         run_stability_analysis(df)
         run_factor_summary(df)
+        run_margin_analysis(df)
         run_differential_analysis(df)
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
-        run_margin_analysis(df)
-        run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
-        run_series_breakdown(df)
+        run_referee_analysis()
         run_travel_analysis(df)
+        run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_3pa_analysis(df)
         run_pace_analysis(df)
+        run_series_breakdown(df)
         run_team_hca_analysis()
-        run_referee_analysis()
 
         print("\n" + "═" * _W + "\n")
 

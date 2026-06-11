@@ -75,16 +75,16 @@ Fourteen analyses printed to stdout:
 2. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
 3. **Pre/post-2014 coefficient stability** — whether rest/altitude/tz effects changed after the 2014 Finals format shift.
 4. **Factor significance** — bivariate logistic regression for rest, altitude (DEN/UTA), and time zone in regular season vs playoffs.
-5. **Foul & shooting differentials by era** — trend line per season year for each box-score differential, regular season and playoffs separately.
-6. **Shot zone differentials by era** — trend line for each shot zone differential (paint, mid-range, corner 3, above-break 3); data from 1996–97.
-7. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines; regular season and playoffs.
-8. **Competitive balance / parity** — Pearson/Spearman correlation and trend line: does team win% disparity predict home court advantage?
-9. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line.
-10. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
+5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines; regular season and playoffs.
+6. **Foul & shooting differentials by era** — trend line per season year for each box-score differential, regular season and playoffs separately.
+7. **Shot zone differentials by era** — trend line for each shot zone differential (paint, mid-range, corner 3, above-break 3); data from 1996–97.
+8. **Referee crew home foul bias** — per-official career mean home foul differential in playoff games (≥50 games); top/bottom rankings; era-bucketed distribution of individual biases showing whether referee neutrality has increased over time.
+9. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
+10. **Competitive balance / parity** — Pearson/Spearman correlation and trend line: does team win% disparity predict home court advantage?
 11. **League-wide 3-point shooting** — season-level and game-level relationship between 3PA rate and home win %; within-era game-level test to separate trend from mechanism.
 12. **Pace** — season-level and game-level relationship between possessions per 48 min and home win %; within-era test; result is a null/reversed finding (pace does not explain the decline).
-13. **Franchise home court advantage** — per-franchise home win% minus road win%; ranked table for regular season and playoffs; altitude franchises (Denver, Utah) identified; scatter of regular-season vs. playoff HCA.
-14. **Referee crew home foul bias** — per-official career mean home foul differential in playoff games (≥50 games); top/bottom rankings; era-bucketed distribution of individual biases showing whether referee neutrality has increased over time.
+13. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line.
+14. **Franchise home court advantage** — per-franchise home win% minus road win%; ranked table for regular season and playoffs; altitude franchises (Denver, Utah) identified; scatter of regular-season vs. playoff HCA.
 
 ### PDF report
 
@@ -104,7 +104,7 @@ coefficient values and significance levels.
 ## Updating FINDINGS.md
 
 `FINDINGS.md` is the single source of truth for narrative prose and chart
-placement. It has fifteen numbered analysis sections (§1–§15) plus §16 Summary (renamed once §16 Referee is added).
+placement. It has fifteen numbered analysis sections (§1–§15) plus §16 Summary.
 Charts are embedded as `![caption](filename.png)` image references within the
 relevant section — the PDF picks them up automatically. Edit it when findings
 change, then regenerate the PDF with `python3 generate_report.py`.
