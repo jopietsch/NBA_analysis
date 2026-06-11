@@ -175,6 +175,27 @@ def _draw_paired_bars(
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
 
+def _add_trend_line(
+    ax: plt.Axes,
+    x: np.ndarray,
+    y: np.ndarray,
+    color: str,
+    *,
+    linestyle: str = "--",
+    linewidth: float = 1.4,
+    alpha: float = 0.5,
+    zorder: int = 3,
+    x_plot: np.ndarray | None = None,
+) -> None:
+    mask = ~np.isnan(y)
+    if mask.sum() < 2:
+        return
+    z = np.polyfit(x[mask], y[mask], 1)
+    xp = x if x_plot is None else x_plot
+    ax.plot(xp, np.poly1d(z)(xp), linestyle, color=color,
+            linewidth=linewidth, alpha=alpha, zorder=zorder)
+
+
 def _plot_season_era_panel(
     ax: plt.Axes,
     seasons: list[str],
@@ -375,10 +396,7 @@ def plot_rest_analysis(
 
     for series, color in [("win_home_more_rest", BLUE), ("win_away_more_rest", RED)]:
         y = np.array(stats[series], dtype=float)
-        mask = ~np.isnan(y)
-        if mask.sum() >= 2:
-            z = np.polyfit(x[mask], y[mask], 1)
-            ax2.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.4, alpha=0.5)
+        _add_trend_line(ax2, x, y, color)
 
     ax2.set_xticks(x[::tick_step])
     ax2.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -422,10 +440,7 @@ def plot_category_road_win_analysis(
     for key in category_order:
         y = np.array(stats[key], dtype=float)
         ax1.plot(x, y, color=colors[key], linewidth=2, label=labels[key])
-        mask = ~np.isnan(y)
-        if mask.sum() >= 2:
-            z = np.polyfit(x[mask], y[mask], 1)
-            ax1.plot(x, np.poly1d(z)(x), "--", color=colors[key], linewidth=1.4, alpha=0.5)
+        _add_trend_line(ax1, x, y, colors[key])
 
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -499,11 +514,8 @@ def plot_differential_analysis(
         y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, key)
 
         for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
-            mask = ~np.isnan(y)
             ax.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
-            if mask.sum() >= 2:
-                z = np.polyfit(x[mask], y[mask], 1)
-                ax.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.8, alpha=0.9, zorder=3)
+            _add_trend_line(ax, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
         _shade_eras(ax, reg_seasons, label_y=None)
         ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
@@ -549,11 +561,8 @@ def plot_margin_analysis(
     y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "all_games_mean")
 
     for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
-        mask = ~np.isnan(y)
         ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
-        if mask.sum() >= 2:
-            z = np.polyfit(x[mask], y[mask], 1)
-            ax1.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.8, alpha=0.9, zorder=3)
+        _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
     _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
@@ -572,11 +581,8 @@ def plot_margin_analysis(
         (y_wins,   BLUE, "Home wins"),
         (y_losses, RED,  "Home losses"),
     ]:
-        mask = ~np.isnan(y)
         ax2.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
-        if mask.sum() >= 2:
-            z = np.polyfit(x[mask], y[mask], 1)
-            ax2.plot(x, np.poly1d(z)(x), "--", color=color, linewidth=1.8, alpha=0.9, zorder=3)
+        _add_trend_line(ax2, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
     _shade_eras(ax2, reg_seasons, label_y=None)
     ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
@@ -671,11 +677,8 @@ def plot_parity_analysis(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
 
     ax1r = ax1.twinx()
-    mask_p = ~np.isnan(y_parity)
     ax1r.plot(x, y_parity, color=RED, linewidth=2, label="Win% std dev", zorder=2, alpha=0.8)
-    if mask_p.sum() >= 2:
-        z = np.polyfit(x[mask_p], y_parity[mask_p], 1)
-        ax1r.plot(x, np.poly1d(z)(x), "--", color=RED, linewidth=1.4, alpha=0.5)
+    _add_trend_line(ax1r, x, y_parity, RED)
     ax1r.set_ylabel("Team win% std dev\n(lower = more parity)", color=RED, fontsize=9)
     ax1r.tick_params(axis="y", labelcolor=RED)
 
@@ -819,13 +822,10 @@ def plot_shot_zone_analysis(
                                    (y_po, color, "Playoffs")]:
             ls = "-" if llabel == "Regular season" else "--"
             alpha = 0.9 if llabel == "Regular season" else 0.6
-            mask = ~np.isnan(y)
             ax.plot(x, y, color=lcolor, linewidth=2, linestyle=ls,
                     alpha=alpha, label=llabel, zorder=2)
-            if mask.sum() >= 2:
-                z = np.polyfit(x[mask], y[mask], 1)
-                ax.plot(x, np.poly1d(z)(x), ":", color=lcolor, linewidth=1.5,
-                        alpha=alpha * 0.7, zorder=3)
+            _add_trend_line(ax, x, y, lcolor, linestyle=":", linewidth=1.5,
+                            alpha=alpha * 0.7, zorder=3)
 
         _shade_eras(ax, reg_seasons, label_y=None)
         ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
