@@ -120,8 +120,8 @@ the raw home margin directly tests this.
 
 Regular-season quantile regression (1996–97 through 2024–25, N = 34,311 games)
 finds that Q90 (big home wins) rises at **+0.045 pts/yr** (p = 0.005) while Q10
-(big home losses) falls at **−0.154 pts/yr** (p < 0.001). The IQR spread widens
-at **+0.199 pts/yr**. These slopes are statistically significant and diverge in
+(big home losses) falls at **−0.154 pts/yr** (p < 0.001). The Q90–Q10 spread
+widens at **+0.199 pts/yr**. These slopes are statistically significant and diverge in
 opposite directions — the distribution is genuinely widening, not merely
 shifting. The "polarization" reading from the conditional-on-outcome analysis
 reflects a real change in distribution shape, not a composition effect.
@@ -135,11 +135,10 @@ by more, but still winning convincingly when they win.
 ### Playoffs show a different pattern
 
 In the playoffs, the all-game margin shows no significant trend (+0.002 pts/yr,
-not significant). Quantile regression confirms genuine polarization there too:
-Q90 rises at +0.145 pts/yr (p = 0.010) and Q10 falls at −0.055 pts/yr (not
-significant), with an IQR spread widening of +0.200 pts/yr. Playoff games are
-increasingly bimodal — blowouts in both directions are more common than they
-were in the 1990s, yet the net margin is unchanged.
+not significant). Quantile regression finds a widening Q90–Q10 spread (+0.200 pts/yr): Q90 rises
+at +0.145 pts/yr (p = 0.010), though Q10 shows no significant trend (−0.055
+pts/yr, p = 0.337). The widening is driven by big home wins growing, not by big
+home losses worsening. The net margin is unchanged.
 
 The regular-season mean margin (+2.80 pts) is lower than the playoff mean
 (+4.36 pts), consistent with the higher overall home win percentage in the
@@ -262,7 +261,7 @@ long careers) shows clear evidence of genuine between-official variance (true
 SD ≈ 0.62 fouls/game after noise correction).
 
 The era means themselves are non-monotone (ranging from −0.781 in 2002–04 to
-−1.239 in 1995–01, with the current era at −0.792), so there is no clear trend
+−2.239 in 1995–01, with the current era at −0.792), so there is no clear trend
 in the average level of bias across eras. The apparent "fourfold compression" of
 individual tendencies is real in the raw data but is partly sampling noise from
 early eras where few officials had many games — the underlying true between-
@@ -603,20 +602,20 @@ decline into measurable factors. Full tables are in `RESULTS.md`.
 
 ### Era dominates the model fit
 
-The era indicators account for roughly half of total model fit. The structural
-multi-decade decline is not explained by rest, altitude, or travel — it spans
-every rule-change era and those factors add only incremental explanatory power
-on top of it.
+Era accounts for **50%** of the model's explained variation (Shapley share —
+see below), with rest, altitude, time zone, and COVID sharing the remaining
+50%. The Shapley decomposition averages each factor's marginal contribution
+over all possible entry orderings, making it order-independent; the sequential
+table (era entered first, giving it 56%) is retained in `RESULTS.md` as a
+cross-check.
 
-The sequential decomposition (entering era first) assigns era 56% and
-the remaining factors 44% combined. Because the sequential share depends on
-entry order, we also computed Shapley R² shares, which average each block's
-marginal contribution over all possible orderings. Era's Shapley share is
-**50%** (vs. 56% sequential — sequential is inflated because era is entered
-first and absorbs shared variance with rest and COVID). Altitude's Shapley share
-is **26%**, rest **18%**, COVID **5%**, and time zone **2%**. The Shapley shares
-are reported in the summary table below; the sequential table is retained in
-`RESULTS.md` as a labeled cross-check.
+Importantly, altitude and rest explain the *level* of home advantage — Denver
+and Utah games and well-rested home teams win more often regardless of era —
+but neither explains the *decline*. The era effect captures whatever changed
+across four decades of rule evolution: how referees call the game, how teams
+prepare for road trips, how the 3-point revolution equalized shot selection.
+Rest and altitude are stable moderators of an already-declining baseline, not
+drivers of the trend.
 
 ### Rest, altitude, and time zone
 
@@ -663,9 +662,9 @@ fluctuation; a large one means no reliable effect was found.*
 **Regular season — what the prediction model credits** (share of the model's
 explained variation):
 
-Shares are Shapley R² — each block's average marginal McFadden R² over all possible entry orderings (32 logit fits, N = 47,215 games). The sequential share (era entered first) is shown in parentheses for reference.
+Shares are order-independent (Shapley): each factor's average marginal contribution to the model's fit across all possible orderings. Sequential share (era entered first) shown in parentheses. Altitude's 26% share reflects a large per-game effect (+8.2 pp) concentrated in Denver and Utah home games.
 
-| Factor | Share (Shapley) | Effect | Evidence |
+| Factor | Share | Effect | Evidence |
 |---|---|---|---|
 | Era (structural decline) | 50% (seq: 56%) | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
 | Altitude (Denver / Utah) | 26% (seq: 25%) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
