@@ -14,7 +14,7 @@ import re
 from datetime import datetime
 
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY, TA_LEFT
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
@@ -32,7 +32,7 @@ from reportlab.platypus import (
 )
 
 PAGE_W, PAGE_H = letter
-MARGIN = 0.85 * inch
+MARGIN    = 0.85 * inch
 CONTENT_W = PAGE_W - 2 * MARGIN
 
 DARK   = "#2c2c2a"
@@ -44,9 +44,9 @@ FINDINGS_PATH = "FINDINGS.md"
 RESULTS_PATH  = "RESULTS.md"
 
 
-# ── Style sheet ───────────────────────────────────────────────────────────────
+# ── Styles (built once at import) ─────────────────────────────────────────────
 
-def _styles():
+def _build_styles() -> dict:
     base = getSampleStyleSheet()
     return {
         **{k: base[k] for k in base.byName},
@@ -119,6 +119,9 @@ def _styles():
     }
 
 
+_STYLES = _build_styles()
+
+
 # ── FINDINGS.md parser ────────────────────────────────────────────────────────
 
 def _parse_findings(path=FINDINGS_PATH) -> dict[str, str]:
@@ -145,7 +148,7 @@ def _md_inline(text: str) -> str:
     return text
 
 
-def _md_to_flowables(text: str, s: dict) -> list:
+def _md_to_flowables(text: str) -> list:
     """Convert a FINDINGS.md section body to a list of reportlab flowables."""
     flowables = []
     for block in re.split(r'\n{2,}', text):
@@ -153,11 +156,16 @@ def _md_to_flowables(text: str, s: dict) -> list:
         if not block:
             continue
         if block.startswith('### '):
-            flowables.append(Paragraph(_md_inline(block[4:]), s['h2']))
+            flowables.append(Paragraph(_md_inline(block[4:]), _STYLES['h2']))
+        elif block.startswith('!['):
+            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)', block)
+            if m:
+                flowables.append(Spacer(1, 0.1 * inch))
+                flowables.append(_chart(m.group(2), m.group(1)))
         elif block.startswith('- '):
             for line in block.splitlines():
                 if line.startswith('- '):
-                    flowables.append(Paragraph('• ' + _md_inline(line[2:]), s['body']))
+                    flowables.append(Paragraph('• ' + _md_inline(line[2:]), _STYLES['body']))
         elif block.startswith('|'):
             rows = []
             is_header = True
@@ -168,7 +176,7 @@ def _md_to_flowables(text: str, s: dict) -> list:
                 if re.match(r'^\|[\s\-:|]+\|$', line):
                     is_header = False
                     continue
-                style = s['table_header'] if is_header else s['table_body']
+                style = _STYLES['table_header'] if is_header else _STYLES['table_body']
                 cells = [Paragraph(_md_inline(c.strip()), style)
                          for c in line.split('|')[1:-1]]
                 rows.append(cells)
@@ -180,7 +188,7 @@ def _md_to_flowables(text: str, s: dict) -> list:
                 flowables.append(_table(rows, [col_w] * n_cols))
         else:
             joined = ' '.join(ln.strip() for ln in block.splitlines() if ln.strip())
-            flowables.append(Paragraph(_md_inline(joined), s['body']))
+            flowables.append(Paragraph(_md_inline(joined), _STYLES['body']))
     return flowables
 
 
@@ -188,7 +196,7 @@ def _md_to_flowables(text: str, s: dict) -> list:
 
 def _img(path, width=None):
     if not os.path.exists(path):
-        return Paragraph(f"[Missing image: {path}]", _styles()["note"])
+        return Paragraph(f"[Missing image: {path}]", _STYLES["note"])
     if width is None:
         width = CONTENT_W
     ri = Image(path)
@@ -225,16 +233,8 @@ def _chart(path, caption_text, width=None):
     return KeepTogether([
         _img(path, width=width),
         Spacer(1, 4),
-        Paragraph(caption_text, _styles()["caption"]),
+        Paragraph(caption_text, _STYLES["caption"]),
     ])
-
-
-def _section_header(title: str, s: dict, sections: dict) -> list:
-    return [
-        Paragraph(title, s["h1"]),
-        _hr(),
-        *_md_to_flowables(sections.get(title, ""), s),
-    ]
 
 
 def _results_text() -> str:
@@ -253,9 +253,9 @@ def _results_text() -> str:
     return "\n".join(content)
 
 
-# ── Report sections ───────────────────────────────────────────────────────────
+# ── Special section builders ──────────────────────────────────────────────────
 
-def _cover(s, sections):
+def _cover(sections: dict) -> list:
     toc_data = []
     for heading in sections:
         parts = heading.split('. ', 1)
@@ -265,23 +265,23 @@ def _cover(s, sections):
 
     return [
         Spacer(1, 1.2 * inch),
-        Paragraph("NBA Home Court Advantage", s["cover_title"]),
-        Paragraph("A 40-Year Decline", s["cover_sub"]),
+        Paragraph("NBA Home Court Advantage", _STYLES["cover_title"]),
+        Paragraph("A 40-Year Decline", _STYLES["cover_sub"]),
         Spacer(1, 0.25 * inch),
         _hr(),
         Spacer(1, 0.15 * inch),
         Paragraph(
-            "Data: NBA.com via nba_api  ·  1983–84 through 2024–25  ·  51,089 games",
-            s["cover_sub"],
+            "Data: NBA.com  ·  1983–84 through 2024–25  ·  51,089 games",
+            _STYLES["cover_sub"],
         ),
         Paragraph(
             f"Generated {datetime.now().strftime('%B %d, %Y at %H:%M')}",
-            s["cover_sub"],
+            _STYLES["cover_sub"],
         ),
         Spacer(1, 0.8 * inch),
-        Paragraph("Contents", s["h2"]),
+        Paragraph("Contents", _STYLES["h2"]),
         Table(
-            [[Paragraph(num, s["toc_num"]), Paragraph(title, s["toc_title"])]
+            [[Paragraph(num, _STYLES["toc_num"]), Paragraph(title, _STYLES["toc_title"])]
              for num, title in toc_data],
             colWidths=[CONTENT_W * 0.10, CONTENT_W * 0.90],
             style=TableStyle([
@@ -295,228 +295,46 @@ def _cover(s, sections):
     ]
 
 
-def _section_decline(s, sections):
-    return [
-        *_section_header("1. The Decline", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_advantage_season.png",
-            "Figure 1. Home win % per season, 1983–84 through 2024–25. "
-            "Blue = regular season, green = playoffs. "
-            "Dashed lines are overall trend fits. Background shading marks rule-change eras.",
-        ),
-    ]
-
-
-def _section_era(s, sections):
-    era_img    = _img("nba_home_court_advantage_era_bars.png",    width=CONTENT_W * 0.49)
-    format_img = _img("nba_home_court_advantage_format_bars.png", width=CONTENT_W * 0.49)
-    side_by_side = Table(
-        [[era_img, format_img]],
-        colWidths=[CONTENT_W * 0.5, CONTENT_W * 0.5],
-        style=TableStyle([("ALIGN",  (0, 0), (-1, -1), "CENTER"),
-                          ("VALIGN", (0, 0), (-1, -1), "TOP")]),
-    )
-    return [
-        *_section_header("2. Era and Format Period Analysis", s, sections),
-        Spacer(1, 0.1 * inch),
-        KeepTogether([
-            side_by_side,
-            Spacer(1, 4),
-            Paragraph(
-                "Figure 2. Left: average home win % by rule-change era. "
-                "Right: average home win % by playoff format period. "
-                "Blue = regular season, green = playoffs.",
-                s["caption"],
-            ),
-        ]),
-    ]
-
-
-def _section_era_lines(s, sections):
-    return [
-        *_section_header("3. Per-Era Trend Lines", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_advantage_regular_era.png",
-            "Figure 3. Regular-season home win % per season. A separate trend line is fit "
-            "within each rule-change era. Background shading identifies each era.",
-        ),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_advantage_playoffs_era.png",
-            "Figure 4. Playoff home win % per season with a separate trend line per era. "
-            "Vertical markers indicate playoff format changes (1985, 2003, 2014).",
-        ),
-    ]
-
-
-def _section_regression(s, sections):
+def _appendix_results() -> list:
     return [
         PageBreak(),
-        *_section_header("4. What Explains the Decline?", s, sections),
-    ]
-
-
-def _section_rest(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("5. Rest and Schedule Balance", s, sections),
-        _chart(
-            "nba_home_court_advantage_rest.png",
-            "Figure 5. Regular-season rest analysis. "
-            "Top: back-to-back rate per season for home and away teams. "
-            "Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.",
-        ),
-        _chart(
-            "nba_home_court_advantage_rest_playoffs.png",
-            "Figure 6. Playoff rest analysis. First-round games are excluded because rest "
-            "cannot be computed from a prior playoff game. Rest effects are larger in the playoffs.",
-        ),
-    ]
-
-
-def _section_differentials(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("6. Box-Score Differentials", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_advantage_differentials.png",
-            "Figure 7. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. "
-            "Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. "
-            "Negative foul diff = home team called for fewer fouls.",
-        ),
-    ]
-
-
-def _section_shot_zones(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("7. Shot Zone Analysis", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_shot_zones.png",
-            "Figure 8. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. "
-            "Solid = regular season, dashed = playoffs. "
-            "RA = restricted area (within ~4 ft of the basket).",
-        ),
-    ]
-
-
-def _section_series_breakdown(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("8. Playoff Series Structure", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_series_breakdown.png",
-            "Figure 8. Home win % by game number within playoff series. "
-            "Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. "
-            "Right: G1–G7 home win % split by era (six lines, era-colored).",
-        ),
-    ]
-
-
-def _section_margin(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("9. Win Margin Trends", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_margin.png",
-            "Figure 9. Home team point margin per season. "
-            "Left: mean margin for all games (regular season and playoffs) with trend lines. "
-            "Center: mean margin split by home wins vs. losses (regular season). "
-            "Right: era-bucketed average margin, regular season vs. playoffs.",
-        ),
-    ]
-
-
-def _section_parity(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("10. Competitive Balance and Parity", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_parity.png",
-            "Figure 10. Competitive balance and home court advantage. "
-            "Left: home win % (blue, left axis) and team win% std dev (red, right axis) "
-            "over time — lower std dev = more equal league. "
-            "Right: scatter of parity std dev vs. home win % per season, colored by era, "
-            "with trend line.",
-        ),
-    ]
-
-
-def _section_travel(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("11. Travel Distance", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_travel.png",
-            "Figure 11. Home win % by away team travel distance (regular season). "
-            "Left: per-season home win % for each distance bucket with trend lines. "
-            "Right: era-averaged home win % by distance bucket.",
-        ),
-    ]
-
-
-def _section_3pa(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("12. 3-Point Shooting and Home Court Advantage", s, sections),
-        Spacer(1, 0.1 * inch),
-        _chart(
-            "nba_home_court_3pa.png",
-            "Figure 12. League-wide 3PA rate and home court advantage. "
-            "Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % "
-            "(blue, left axis) moving in near-lockstep over 40 years. "
-            "Center: regular-season scatter (one point per season, era-colored) with trend line. "
-            "Right: same for playoffs.",
-        ),
-    ]
-
-
-def _section_summary(s, sections):
-    return [
-        PageBreak(),
-        *_section_header("13. Summary", s, sections),
-        Spacer(1, 0.3 * inch),
-        _hr(),
-        Paragraph(
-            "Data: NBA.com via nba_api. Analysis covers 1983–84 through 2024–25. "
-            "Shot zone data available from 1996–97. "
-            "Logistic regression uses McFadden R²; marginal effects at the mean. "
-            "See Appendix A for full tables and coefficient values.",
-            s["note"],
-        ),
-    ]
-
-
-def _appendix_results(s):
-    return [
-        PageBreak(),
-        Paragraph("Appendix A: Full Regression Output", s["h1"]),
+        Paragraph("Appendix A: Full Regression Output", _STYLES["h1"]),
         _hr(),
         Paragraph(
             "Auto-generated by <font name=\"Courier\">nba_home_court_regression.py</font> "
             "each time the analysis is run. Contains the sequential R² decomposition, "
             "pre/post-2014 coefficient stability check, bivariate factor significance table, "
             "and foul/shooting differential trends by era.",
-            s["body"],
+            _STYLES["body"],
         ),
         Spacer(1, 0.1 * inch),
-        Preformatted(_results_text(), s["code"]),
+        Preformatted(_results_text(), _STYLES["code"]),
     ]
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def build_report(output_path="nba_home_court_advantage_report.pdf"):
-    s = _styles()
     sections = _parse_findings()
+
+    story = [*_cover(sections)]
+    for heading, body in sections.items():
+        num_str = heading.split('.')[0]
+        if num_str.isdigit() and int(num_str) >= 4:
+            story.append(PageBreak())
+        story += [Paragraph(heading, _STYLES["h1"]), _hr(), *_md_to_flowables(body)]
+    story += [
+        Spacer(1, 0.3 * inch),
+        _hr(),
+        Paragraph(
+            "Data: NBA.com. Analysis covers 1983–84 through 2024–25. "
+            "Shot zone data available from 1996–97. "
+            "Logistic regression uses McFadden R²; marginal effects at the mean. "
+            "See Appendix A for full tables and coefficient values.",
+            _STYLES["note"],
+        ),
+    ]
+    story += _appendix_results()
 
     doc = SimpleDocTemplate(
         output_path,
@@ -526,24 +344,6 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
         title="NBA Home Court Advantage — A 40-Year Decline",
         author="Justin Pietsch",
     )
-
-    story = []
-    story += _cover(s, sections)
-    story += _section_decline(s, sections)
-    story += _section_era(s, sections)
-    story += _section_era_lines(s, sections)
-    story += _section_regression(s, sections)
-    story += _section_rest(s, sections)
-    story += _section_differentials(s, sections)
-    story += _section_shot_zones(s, sections)
-    story += _section_series_breakdown(s, sections)
-    story += _section_margin(s, sections)
-    story += _section_parity(s, sections)
-    story += _section_travel(s, sections)
-    story += _section_3pa(s, sections)
-    story += _section_summary(s, sections)
-    story += _appendix_results(s)
-
     doc.build(story)
     print(f"Saved → {output_path}")
 

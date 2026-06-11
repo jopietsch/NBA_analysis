@@ -28,6 +28,8 @@ but the overall trajectory is one of the strongest trends in the dataset. The
 regularity of the decline — not a one-time step but a persistent drift — points
 to systemic forces rather than a single rule change.
 
+![Figure 1. Home win % per season, 1983–84 through 2024–25. Blue = regular season, green = playoffs. Dashed lines are overall trend fits. Background shading marks rule-change eras.](nba_home_court_advantage_season.png)
+
 ---
 
 ## 2. Era and Format Period Analysis
@@ -43,6 +45,10 @@ The playoff-format analysis divides the dataset into four periods defined by the
 percentage. Isolating format effects from the broader secular trend is difficult,
 but the pattern is consistent across both framings.
 
+![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png)
+
+![Figure 3. Average home win % by playoff format period (1985, 2003, 2014 format changes). Blue = regular season, green = playoffs.](nba_home_court_advantage_format_bars.png)
+
 ---
 
 ## 3. Per-Era Trend Lines
@@ -51,6 +57,10 @@ Fitting a separate trend line within each era reveals that the decline is not a
 smooth drift — there are periods of relative stability and periods of sharper
 change. Playoff home court advantage has consistently exceeded the regular-season
 figure but has converged dramatically in recent years.
+
+![Figure 4. Regular-season home win % per season. A separate trend line is fit within each rule-change era. Background shading identifies each era.](nba_home_court_advantage_regular_era.png)
+
+![Figure 5. Playoff home win % per season with a separate trend line per era. Vertical markers indicate playoff format changes (1985, 2003, 2014).](nba_home_court_advantage_playoffs_era.png)
 
 ---
 
@@ -104,6 +114,10 @@ amplify the impact of fatigue. Back-to-back rates for home and away teams have
 shifted over time as the league has adjusted scheduling, but the rest differential
 effect on winning has remained stable across eras.
 
+![Figure 6. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
+
+![Figure 7. Playoff rest analysis. First-round games are excluded because rest cannot be computed from a prior playoff game. Rest effects are larger in the playoffs.](nba_home_court_advantage_rest_playoffs.png)
+
 ---
 
 ## 6. Box-Score Differentials
@@ -137,6 +151,8 @@ plan as the home team.
 
 FG% (unweighted) is also narrowing. FT% and 3P% show no significant trend.
 
+![Figure 8. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. Negative foul diff = home team called for fewer fouls.](nba_home_court_advantage_differentials.png)
+
 ---
 
 ## 7. Shot Zone Analysis
@@ -161,6 +177,8 @@ Corner 3 and above-break 3 show no systematic home/road difference throughout
 the dataset. Shot quality at the arc is not a home court advantage. A modest
 positive trend in above-break 3 (+0.013 pp/yr, p = 0.054) is at the boundary
 of significance and may reflect recent noise rather than a structural shift.
+
+![Figure 9. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. Solid = regular season, dashed = playoffs. RA = restricted area (within ~4 ft of the basket).](nba_home_court_shot_zones.png)
 
 ---
 
@@ -202,6 +220,8 @@ in round 1 and Finals matchups, which mechanically compressed the overall playof
 home win % figure — an effect that overlaps with but cannot fully explain the
 broader secular decline seen in the era analysis.
 
+![Figure 10. Home win % by game number within playoff series. Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. Right: G1–G7 home win % split by era (six lines, era-colored).](nba_home_court_series_breakdown.png)
+
 ---
 
 ## 9. Win Margin Trends
@@ -236,6 +256,8 @@ The regular-season mean margin (+2.80 pts) is lower than the playoff mean
 (+4.36 pts), consistent with the higher overall home win percentage in the
 playoffs across most of the dataset.
 
+![Figure 11. Home team point margin per season. Left: mean margin for all games (regular season and playoffs) with trend lines. Center: mean margin split by home wins vs. losses (regular season). Right: era-bucketed average margin, regular season vs. playoffs.](nba_home_court_margin.png)
+
 ---
 
 ## 10. Competitive Balance and Parity
@@ -261,6 +283,8 @@ in the regression model are not explained by the compression of team talent alon
 Whatever the era effect captures — rule changes to pace and officiating, broader
 cultural and travel shifts, improvements in sports science for road teams — it is not
 reducible to a simple story about competitive balance.
+
+![Figure 12. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
 ---
 
@@ -289,6 +313,8 @@ arriving early, which erodes any mechanical disadvantage from long trips.
 There is no evidence that the travel-distance effect has grown or shrunk over the
 four decades in the dataset. The era-bucketed averages show no systematic pattern.
 Travel distance is not a driver of the long-run decline in home court advantage.
+
+![Figure 13. Home win % by away team travel distance (regular season). Left: per-season home win % for each distance bucket with trend lines. Right: era-averaged home win % by distance bucket.](nba_home_court_travel.png)
 
 ---
 
@@ -343,6 +369,8 @@ These mechanisms are not mutually exclusive and likely all contribute. The foul
 differential trend — referees calling the game more neutrally over time — is the
 single strongest identified driver, and a neutral-foul environment both enables
 more 3-point shooting and removes a key home advantage mechanism simultaneously.
+
+![Figure 14. League-wide 3PA rate and home court advantage. Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % (blue, left axis) moving in near-lockstep over 40 years. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_3pa.png)
 
 ---
 
