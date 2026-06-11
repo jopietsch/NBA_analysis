@@ -98,7 +98,7 @@ figure; the gap widened through the mid-2000s and has narrowed back toward its
 ## 4. Win Margin Trends
 
 Point margin data (PLUS_MINUS) is unavailable in the NBA.com game logs before the
-1995–96 season, so this analysis covers 1995–96 through 2024–25.
+1996–97 season, so this analysis covers 1996–97 through 2024–25.
 
 ### The decline is not about wins getting closer
 
@@ -209,11 +209,12 @@ efficient shot type in modern basketball. This gap is also narrowing
 have shifted toward the 3-point line and away from the mid-range, but road teams
 have historically been pushed there more often and are now less disadvantaged.
 
-Corner 3 and above-break 3 show no large or consistent home/road difference
-throughout the dataset. Shot quality at the arc is not a meaningful home court
-advantage. Above-break 3 shows a small but statistically significant positive
-trend (+0.013 pp/yr, p < 0.05) in the regular season, though the effect is
-minor compared to the paint and mid-range shifts.
+Corner 3 shows no significant home/road difference and no trend. Above-break 3
+also shows no meaningful level difference, but does show a small and statistically
+significant positive trend (+0.013 pp/yr, p < 0.05) in the regular season —
+home teams have gradually taken a slightly larger share of above-break attempts
+over time. The effect is minor compared to the paint and mid-range shifts, and
+shot quality at the arc is not a meaningful home court advantage overall.
 
 ![Figure 8. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. Solid = regular season, dashed = playoffs. RA = restricted area (within ~4 ft of the basket).](nba_home_court_shot_zones.png)
 
@@ -659,7 +660,7 @@ decline — the drop shows up in the intercept (−4.7 pp), not in the covariate
 Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the regular-season decline somewhat
 steeper than the playoffs. The decline is structural — it spans every rule-change era and
-the era effect accounts for the majority of variance explained by the regression
+the era effect accounts for roughly half of the variance explained by the regression
 model. The mechanisms are summarized in the tables below, split by type of analysis.
 
 *How to read these tables: "pp" means percentage points — a fall from 65% to
