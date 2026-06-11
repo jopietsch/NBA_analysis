@@ -420,7 +420,73 @@ decline runs through eras of both fast and slow play without pace tracking it.
 
 ---
 
-## 14. Summary
+## 14. Franchise Home Court Advantage
+
+Home court advantage is not equally distributed across franchises. Some arenas
+have historically conferred a large and consistent home edge; others have
+provided little beyond what team quality alone predicts. This analysis measures
+per-franchise HCA as home win% minus road win% — a metric that controls for
+overall team quality, since a dominant team like the 1990s Bulls wins at home
+and on the road; what distinguishes a strong home court is the *gap* between
+the two.
+
+### Regular Season
+
+Across 39 franchises with at least 50 home games in the dataset, the league
+mean HCA is **+20.2 pp** (range: +9.6 to +35.4 pp). Every franchise shows a
+positive HCA — no team in the dataset has historically been better on the road
+than at home over a meaningful sample.
+
+The altitude franchises dominate the top of the table. Denver ranks **#2 at
++28.5 pp** and Utah ranks **#3 at +26.8 pp** — both well above the league
+mean and consistent with the altitude effect identified in §4. Portland (+23.2
+pp) and Seattle (+25.6 pp) also rank near the top, suggesting that arenas in
+the Pacific Northwest carry a structural advantage beyond just team quality.
+Indiana, Atlanta, and Cleveland also appear in the top tier.
+
+At the lower end sit franchises with shorter histories in the dataset or those
+that have played in more neutral metropolitan markets. The Brooklyn Nets (+9.6
+pp) and LA Clippers (+11.8 pp) show the smallest regular-season home advantages
+among franchises with substantial samples — both play in large markets where
+opposing fan sections are often well represented at road games. The Kansas City
+Kings post the highest number (+35.4 pp) but with only 82 games (one season,
+1983–84), so that figure is too small a sample to treat as reliable.
+
+### Playoffs
+
+The playoff table covers 32 franchises with at least 20 home playoff games.
+The league mean HCA in the playoffs is **+27.1 pp** — notably higher than the
+regular-season mean. This is not a contradiction of the lower overall playoff
+home win%: here, each franchise's home record is compared to that same
+franchise's *road* record in the playoffs, and in postseason play, the home
+team is almost always a comparable or superior opponent than the road team
+faces, amplifying the venue effect relative to the regular season.
+
+Utah leads the playoff table at **+39.7 pp**, followed by Portland (+39.3 pp)
+and Seattle (+37.7 pp). The Los Angeles Lakers (+31.7 pp) and Boston (+30.2
+pp) — two of the most storied franchises — also rank highly, consistent with
+their sustained success and strong home environments over decades.
+
+The LA Clippers post the only **negative playoff HCA** in the dataset (−3.6
+pp, 28 home games) — the one franchise where home court appears to have
+provided no benefit, though the sample is too small to draw strong conclusions.
+
+### Regular Season vs. Playoffs Consistency
+
+The scatter of regular-season HCA versus playoff HCA shows a positive
+relationship: franchises that protect home court in the regular season tend to
+do so in the playoffs as well. However, the playoff HCAs are uniformly larger
+and more dispersed, reflecting both the higher-stakes environment and the
+smaller sample sizes. Some franchises that rank in the middle of the
+regular-season table — Portland, Seattle, Atlanta — rank near the top in
+the playoffs, while others like the New Jersey Nets show notably weaker
+playoff home advantages than their regular-season figures might suggest.
+
+![Figure 16. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
+
+---
+
+## 15. Summary
 
 Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the playoff decline steeper than the

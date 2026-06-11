@@ -384,6 +384,100 @@ All data from cache/ — same source as the plots above.
    coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.315  
 
 
+─── 13. FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN % ───────────
+   Which franchises benefit most from playing at home?
+   HCA = home win% − road win% (controls for overall team quality).
+
+   Regular season  (39 franchises with ≥50 home games)
+
+   Franchise                           n_home     home%    n_road     road%       HCA
+   ──────────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Kansas City Kings                       82      59.8%        82      24.4%     +35.4 pp
+   Denver Nuggets                       1,689      64.6%     1,688      36.1%     +28.5 pp
+   Utah Jazz                            1,687      70.5%     1,689      43.6%     +26.8 pp
+   Washington Bullets                     574      54.2%       574      27.7%     +26.5 pp
+   Seattle SuperSonics                  1,009      67.0%     1,009      41.4%     +25.6 pp
+   Indiana Pacers                       1,687      63.7%     1,689      39.4%     +24.3 pp
+   New Jersey Nets                      1,165      53.9%     1,165      29.7%     +24.2 pp
+   Atlanta Hawks                        1,685      61.6%     1,686      37.8%     +23.8 pp
+   Cleveland Cavaliers                  1,688      61.9%     1,681      38.3%     +23.6 pp
+   New Orleans/Oklahoma City Hornet        82      58.5%        82      35.4%     +23.2 pp
+   Portland Trail Blazers               1,688      65.9%     1,690      42.7%     +23.2 pp
+   Los Angeles Clippers                 1,247      50.2%     1,247      27.7%     +22.5 pp
+   Charlotte Bobcats                      402      47.5%       402      25.4%     +22.1 pp
+   Milwaukee Bucks                      1,688      61.4%     1,689      39.5%     +21.9 pp
+   San Antonio Spurs                    1,685      70.2%     1,690      48.4%     +21.8 pp
+   Sacramento Kings                     1,605      53.8%     1,607      32.2%     +21.6 pp
+   Golden State Warriors                1,686      58.6%     1,683      37.3%     +21.3 pp
+   Phoenix Suns                         1,691      64.5%     1,686      43.7%     +20.9 pp
+   Houston Rockets                      1,688      65.2%     1,688      44.8%     +20.3 pp
+   Orlando Magic                        1,441      57.1%     1,444      36.9%     +20.2 pp
+   Detroit Pistons                      1,684      60.0%     1,686      40.2%     +19.8 pp
+   New York Knicks                      1,685      57.3%     1,685      38.2%     +19.1 pp
+   Chicago Bulls                        1,686      61.4%     1,683      42.5%     +18.9 pp
+   Boston Celtics                       1,687      66.4%     1,688      48.0%     +18.4 pp
+   Memphis Grizzlies                      967      57.9%       966      39.9%     +18.1 pp
+   Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
+   Los Angeles Lakers                   1,688      68.4%     1,687      50.6%     +17.8 pp
+   Washington Wizards                   1,113      49.8%     1,115      32.1%     +17.7 pp
+   Philadelphia 76ers                   1,687      56.2%     1,690      38.9%     +17.3 pp
+   New Orleans Hornets                    361      56.0%       361      38.8%     +17.2 pp
+   Dallas Mavericks                     1,689      60.5%     1,690      43.4%     +17.1 pp
+   Minnesota Timberwolves               1,438      49.7%     1,438      33.5%     +16.1 pp
+   Charlotte Hornets                      994      53.1%       997      37.3%     +15.8 pp
+   Toronto Raptors                      1,196      54.8%     1,196      39.4%     +15.4 pp
+   Oklahoma City Thunder                  680      65.6%       678      51.2%     +14.4 pp
+   New Orleans Pelicans                   481      51.8%       483      38.1%     +13.7 pp
+   Vancouver Grizzlies                    230      28.7%       230      15.2%     +13.5 pp
+   LA Clippers                            400      65.5%       400      53.8%     +11.8 pp
+   Brooklyn Nets                          523      49.9%       523      40.3%      +9.6 pp
+
+   League mean HCA = +20.2 pp  (range: +9.6 to +35.4 pp)
+   ► Denver Nuggets: +28.5 pp  (rank #2/39)
+   ► Utah Jazz: +26.8 pp  (rank #3/39)
+
+   Playoffs  (32 franchises with ≥20 home games)
+
+   Franchise                           n_home     home%    n_road     road%       HCA
+   ──────────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Utah Jazz                              144      66.0%       141      26.2%     +39.7 pp
+   Portland Trail Blazers                 113      61.9%       115      22.6%     +39.3 pp
+   Seattle SuperSonics                     69      66.7%        69      29.0%     +37.7 pp
+   Atlanta Hawks                          105      58.1%       111      24.3%     +33.8 pp
+   Los Angeles Clippers                    33      60.6%        36      27.8%     +32.8 pp
+   Brooklyn Nets                           25      52.0%        25      20.0%     +32.0 pp
+   Los Angeles Lakers                     220      75.0%       201      43.3%     +31.7 pp
+   Oklahoma City Thunder                   72      69.4%        68      38.2%     +31.2 pp
+   New York Knicks                        119      64.7%       123      34.1%     +30.6 pp
+   Boston Celtics                         217      69.6%       193      39.4%     +30.2 pp
+   Milwaukee Bucks                        102      59.8%       107      29.9%     +29.9 pp
+   Orlando Magic                           69      59.4%        71      29.6%     +29.8 pp
+   Charlotte Hornets                       24      58.3%        31      29.0%     +29.3 pp
+   Denver Nuggets                         100      59.0%       104      29.8%     +29.2 pp
+   Houston Rockets                        132      64.4%       126      35.7%     +28.7 pp
+   Detroit Pistons                        141      68.8%       132      40.2%     +28.6 pp
+   Toronto Raptors                         56      58.9%        56      30.4%     +28.6 pp
+   Indiana Pacers                         133      64.7%       142      36.6%     +28.0 pp
+   Miami Heat                             143      67.1%       135      39.3%     +27.9 pp
+   San Antonio Spurs                      175      70.3%       176      43.2%     +27.1 pp
+   Golden State Warriors                  107      73.8%       109      47.7%     +26.1 pp
+   Chicago Bulls                          146      70.5%       139      44.6%     +25.9 pp
+   Sacramento Kings                        41      58.5%        42      33.3%     +25.2 pp
+   Memphis Grizzlies                       50      50.0%        52      25.0%     +25.0 pp
+   Dallas Mavericks                       115      60.9%       128      35.9%     +24.9 pp
+   Philadelphia 76ers                     104      59.6%       108      36.1%     +23.5 pp
+   Cleveland Cavaliers                    118      66.1%       119      42.9%     +23.2 pp
+   Washington Wizards                      34      52.9%        37      32.4%     +20.5 pp
+   Phoenix Suns                           130      60.0%       126      40.5%     +19.5 pp
+   Minnesota Timberwolves                  45      51.1%        49      32.7%     +18.5 pp
+   New Jersey Nets                         53      52.8%        58      41.4%     +11.5 pp
+   LA Clippers                             28      39.3%        28      42.9%      -3.6 pp
+
+   League mean HCA = +27.1 pp  (range: -3.6 to +39.7 pp)
+   ► Utah Jazz: +39.7 pp  (rank #1/32)
+   ► Denver Nuggets: +29.2 pp  (rank #14/32)
+
+
 ════════════════════════════════════════════════════════════════════════
 
 ```

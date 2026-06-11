@@ -1023,3 +1023,98 @@ def plot_pace_hca_analysis(
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.show()
+
+
+def plot_team_hca_analysis(
+    reg_stats: dict,
+    po_stats:  dict,
+) -> None:
+    """
+    2-panel figure: which franchises have the biggest home court advantage?
+
+    Panel 1: Horizontal bar chart of regular-season HCA by franchise, sorted
+             largest to smallest.
+    Panel 2: Scatter of regular-season HCA vs. playoff HCA per franchise,
+             with a y=x diagonal reference line.
+    """
+    sorted_teams = sorted(reg_stats, key=lambda t: reg_stats[t]["hca"], reverse=True)
+    hcas   = [reg_stats[t]["hca"] for t in sorted_teams]
+    colors = [GREEN if h >= 0 else RED for h in hcas]
+
+    height = max(10, len(sorted_teams) * 0.33 + 2)
+    fig, (ax1, ax2) = plt.subplots(
+        1, 2, figsize=(20, height),
+        gridspec_kw={"width_ratios": [3, 2]},
+    )
+    fig.suptitle("Franchise Home Court Advantage — Regular Season vs. Playoffs (All-Time)",
+                 fontsize=14, fontweight="bold", y=1.02, color="#2c2c2a")
+    fig.text(
+        0.5, 0.965,
+        "Data: NBA.com  |  HCA = home win% − road win%  |  1983–84 through 2024–25  |"
+        "  Historical franchises shown separately",
+        ha="center", fontsize=9, color=GRAY,
+    )
+
+    # ── Panel 1: horizontal bar chart (regular season) ────────────────────────
+    y = np.arange(len(sorted_teams))
+    bars = ax1.barh(y, hcas, color=colors, edgecolor="white", linewidth=0.5, height=0.7)
+    ax1.axvline(0, color=GRAY, linewidth=1.0, zorder=1)
+    ax1.set_yticks(y)
+    ax1.set_yticklabels(sorted_teams, fontsize=8)
+    ax1.invert_yaxis()
+    ax1.xaxis.set_major_formatter(mticker.FormatStrFormatter("%+.0f pp"))
+    ax1.set_xlabel("Home court advantage (home win% − road win%)", fontsize=10)
+    ax1.set_title("Regular-season HCA by franchise (all-time)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    for bar, h in zip(bars, hcas):
+        xoff = 0.25 if h >= 0 else -0.25
+        ha   = "left" if h >= 0 else "right"
+        ax1.text(h + xoff, bar.get_y() + bar.get_height() / 2,
+                 f"{h:+.1f}", ha=ha, va="center", fontsize=7, color="#333")
+
+    # ── Panel 2: reg vs. playoff HCA scatter ─────────────────────────────────
+    common = sorted(set(reg_stats) & set(po_stats))
+    if common:
+        x_vals = [reg_stats[t]["hca"] for t in common]
+        y_vals = [po_stats[t]["hca"]  for t in common]
+
+        all_vals = x_vals + y_vals
+        vmin, vmax = min(all_vals) - 3, max(all_vals) + 3
+        ax2.plot([vmin, vmax], [vmin, vmax], ":", color=GRAY, linewidth=1.2, alpha=0.5,
+                 label="y = x (equal HCA in both)")
+        ax2.axhline(0, color=GRAY, linewidth=0.7, linestyle="--", alpha=0.4)
+        ax2.axvline(0, color=GRAY, linewidth=0.7, linestyle="--", alpha=0.4)
+
+        ax2.scatter(x_vals, y_vals, color=BLUE, s=55, zorder=3,
+                    edgecolors="white", linewidths=0.8)
+
+        # label top/bottom 3 by regular-season HCA + any obvious outliers
+        sorted_by_reg = sorted(common, key=lambda t: reg_stats[t]["hca"], reverse=True)
+        to_label = set(sorted_by_reg[:3]) | set(sorted_by_reg[-2:])
+        for t in common:
+            if t not in to_label:
+                continue
+            rv, pv = reg_stats[t]["hca"], po_stats[t]["hca"]
+            short = t.replace("Portland Trail Blazers", "Portland")
+            ax2.annotate(short, (rv, pv), fontsize=7, ha="center", va="bottom",
+                         xytext=(0, 5), textcoords="offset points", color="#333")
+
+        ax2.set_xlim(vmin, vmax)
+        ax2.set_ylim(vmin, vmax)
+        ax2.xaxis.set_major_formatter(mticker.FormatStrFormatter("%+.0f"))
+        ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%+.0f"))
+        ax2.set_xlabel("Regular-season HCA (pp)", fontsize=10)
+        ax2.set_ylabel("Playoff HCA (pp)", fontsize=10)
+        ax2.set_title("Regular-season vs. playoff HCA\n(one point per franchise)",
+                      fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+        ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+    else:
+        ax2.text(0.5, 0.5, "Insufficient playoff data",
+                 ha="center", va="center", transform=ax2.transAxes,
+                 fontsize=12, color=GRAY)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_team_hca.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()

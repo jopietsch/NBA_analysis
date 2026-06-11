@@ -29,7 +29,7 @@ regression tables (auto-generated each run, never edit manually).
 
 ### PNG charts
 
-`nba_home_court_advantage.py` saves sixteen PNG charts.
+`nba_home_court_advantage.py` saves seventeen PNG charts.
 
 **Overview (combined and individual panels):**
 
@@ -64,6 +64,7 @@ Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS
 | `nba_home_court_travel.png` | 2-panel figure: home win % by away team travel distance bracket (per-season trend and era-averaged bars) |
 | `nba_home_court_3pa.png` | 3-panel figure: league-wide 3PA rate vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
 | `nba_home_court_pace.png` | 3-panel figure: league-wide pace (possessions per 48 min) vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
+| `nba_home_court_team_hca.png` | 2-panel figure: regular-season HCA by franchise (sorted bar chart) and scatter of regular-season vs. playoff HCA per franchise |
 
 ### Regression analysis (stdout)
 
@@ -81,6 +82,7 @@ Twelve analyses printed to stdout:
 10. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
 11. **League-wide 3-point shooting** — season-level and game-level relationship between 3PA rate and home win %; within-era game-level test to separate trend from mechanism.
 12. **Pace** — season-level and game-level relationship between possessions per 48 min and home win %; within-era test; result is a null/reversed finding (pace does not explain the decline).
+13. **Franchise home court advantage** — per-franchise home win% minus road win%; ranked table for regular season and playoffs; altitude franchises (Denver, Utah) identified; scatter of regular-season vs. playoff HCA.
 
 ### PDF report
 
@@ -91,7 +93,7 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains fourteen sections plus an appendix. Narrative prose and chart placement are
+The report contains fifteen sections plus an appendix. Narrative prose and chart placement are
 driven entirely by `FINDINGS.md` — `generate_report.py` iterates its `##` sections in order with
 no hardcoded section list. Edit `FINDINGS.md` to update prose or reorder charts; the PDF picks up
 changes automatically. Appendix A renders `RESULTS.md` verbatim and is the authoritative source for
@@ -100,7 +102,7 @@ coefficient values and significance levels.
 ## Updating FINDINGS.md
 
 `FINDINGS.md` is the single source of truth for narrative prose and chart
-placement. It has thirteen numbered analysis sections (§1–§13) plus §14 Summary.
+placement. It has fourteen numbered analysis sections (§1–§14) plus §15 Summary.
 Charts are embedded as `![caption](filename.png)` image references within the
 relevant section — the PDF picks them up automatically. Edit it when findings
 change, then regenerate the PDF with `python3 generate_report.py`.
@@ -125,7 +127,7 @@ Before updating FINDINGS.md, verify that the analysis outputs are current:
 3. Read the current FINDINGS.md.
 
 4. Update FINDINGS.md to reflect the current analysis. Rules:
-   - FINDINGS.md has fourteen ## sections (§1–§13 analyses + §14 Summary).
+   - FINDINGS.md has fifteen ## sections (§1–§14 analyses + §15 Summary).
      Do not rename or renumber sections without also updating any cross-references.
    - ### subheadings within a section are rendered as sub-headers in the PDF.
    - No specific coefficient values, R² values, or percentage points — those

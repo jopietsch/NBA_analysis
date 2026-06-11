@@ -185,9 +185,11 @@ Requires `BoxScoreSummaryV2.Officials` — same per-game fetch as D.
 - [ ] Tests for above in `test_nba_home_court_advantage.py`
 - [ ] `run_referee_analysis(df)` in `nba_home_court_regression.py`
 - [ ] `plot_referee_analysis(...)` in `nba_home_court_plots.py`; wire call into `nba_home_court_advantage.py main()`
-- [ ] Add `## 15. Referee Patterns` section with prose + `![caption](path)` to `FINDINGS.md`
+- [ ] Add `## 16. Referee Patterns` section with placeholder prose + `![caption](path)` to `FINDINGS.md`
 - [ ] Add PNG to `.gitignore`
 - [ ] Update `README.md` (PNG table, regression list, counts) and `CLAUDE.md` (function lists, analysis count)
+- [ ] Run `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate PNGs and `RESULTS.md`
+- [ ] Update `FINDINGS.md` §16 with actual numbers from `RESULTS.md`; regenerate PDF
 
 ---
 
@@ -202,7 +204,7 @@ auto-generated from section headings.
 with prose and one or more `![Figure N. caption text](chart_filename.png)` lines.
 That's it — no changes to `generate_report.py` needed.
 
-Current FINDINGS.md section order (§1–§13):
+Current FINDINGS.md section order (§1–§15):
 ```
 §1  The Decline
 §2  Era and Format Period Analysis
@@ -216,11 +218,13 @@ Current FINDINGS.md section order (§1–§13):
 §10 Competitive Balance and Parity
 §11 Travel Distance
 §12 3-Point Shooting and Home Court Advantage
-§14 Summary          ← renumber to §15 once F is added
+§13 Pace and Home Court Advantage
+§14 Franchise Home Court Advantage
+§15 Summary          ← renumber to §16 once F is added
 ```
 
 - [ ] Update Summary rank table in FINDINGS.md once F findings are in
-- [ ] Renumber `## 14. Summary` to `## 15. Summary` once F is added
+- [ ] Renumber `## 15. Summary` to `## 16. Summary` once F is added
 
 ---
 
@@ -233,4 +237,5 @@ Current FINDINGS.md section order (§1–§13):
 | A: Series | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | E: Travel | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | G: Pace   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| H: TeamHCA| ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | F: Refs   | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |

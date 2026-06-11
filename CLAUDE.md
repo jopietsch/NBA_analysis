@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 13 numbered `##` sections (§1–§12 analyses + §13 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 14 numbered `##` sections (§1–§14 analyses + §15 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -66,6 +66,7 @@ The project is three Python modules plus one test file:
 - `compute_travel_stats(...)` — per-season home win % grouped by `TRAVEL_BUCKETS` (0–500, 500–1000, 1000–1500, 1500+ miles)
 - `compute_league_3pa_stats(...)` — per-season league-wide 3PA rate (% of all FGA) and home win %; used for the 3PA vs. HCA analysis
 - `compute_league_pace_stats(...)` — per-season league-wide pace (possessions per 48 min) and home win %; pace = (FGA − OREB + TOV + 0.44×FTA) / MIN × 240
+- `compute_team_hca_stats(start_year, end_year, season_type, skip_years, min_games=50)` — all-time per-franchise home/road win% and HCA (home% − road%); dict keyed by TEAM_NAME
 - `bucket_stats_by_era(seasons, stats)` — average any per-season stats dict within each ERA_DEFS period
 - `_align_to_seasons(ref_seasons, target_seasons, target_stats, key)` — align a per-season stat series to a reference season list, filling gaps with NaN; used to overlay playoff data on the regular-season x-axis in plot functions
 
@@ -92,6 +93,7 @@ The project is three Python modules plus one test file:
 - `plot_category_road_win_analysis(...)` also used for travel → `nba_home_court_travel.png` (regular season; distance buckets as category keys)
 - `plot_3pa_hca_analysis(...)` — 3-panel figure: dual-axis time series (3PA rate vs. home win %), regular-season scatter, playoff scatter → `nba_home_court_3pa.png`
 - `plot_pace_hca_analysis(...)` — 3-panel figure: dual-axis time series (pace vs. home win %), regular-season scatter, playoff scatter → `nba_home_court_pace.png`
+- `plot_team_hca_analysis(reg_stats, po_stats)` — 2-panel figure: sorted horizontal bar chart of regular-season HCA by franchise; scatter of regular-season vs. playoff HCA per franchise → `nba_home_court_team_hca.png`
 
 ---
 
@@ -111,7 +113,7 @@ The project is three Python modules plus one test file:
   - `tpa_rate_avg` — game-level combined 3PA rate: total FG3A / total FGA across both teams (%)
   - `pace_avg` — average possessions per team per game: (home_poss + away_poss) / 2; poss = FGA − OREB + TOV + 0.44×FTA; NaN if OREB/TOV absent
 
-Twelve analyses printed to stdout:
+Thirteen analyses printed to stdout:
 1. **Overall decline** — trend line for `home_win_pct ~ year` at season level; overall slope and per-era slopes for regular season and playoffs
 2. **Sequential R² decomposition** — era → +rest → +altitude → +tz → +covid
 3. **Pre/post-2014 coefficient stability** — do rest/altitude/tz effects change after the Finals format shift?
@@ -124,6 +126,7 @@ Twelve analyses printed to stdout:
 10. **Travel distance** — home win % by distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with `distance_miles` as continuous predictor
 11. **League-wide 3-point shooting** — season-level Pearson/Spearman r between 3PA rate and home win %; era-bucketed table; game-level logistic bivariate and era-controlled to test within-era mechanism
 12. **Pace** — season-level and game-level relationship between possessions per 48 min and home win %; within-era test; null/reversed result (pace does not explain the decline)
+13. **Franchise home court advantage** — per-franchise home win% minus road win%, aggregated across all seasons; ranked table for regular season and playoffs; altitude teams identified; `compute_team_hca_stats()` called directly (not from game-level dataset)
 
 Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean). `scipy.stats` for Pearson/Spearman in parity and 3PA analyses. `scipy.stats.chi2_contingency` for series structure chi-square.
 
@@ -156,16 +159,18 @@ All fetched data is cached under `cache/` to avoid re-fetching:
 
 ## Adding a new analysis
 
-Every analysis follows the same eight steps, in this order:
+Every analysis follows the same ten steps, in this order:
 
 1. **Data** (`nba_home_court_data.py`) — add `fetch_*` and `compute_*` functions; all fetched data cached under `cache/`
 2. **Plot** (`nba_home_court_plots.py`) — add `plot_*` function; wire the call into `main()` in `nba_home_court_advantage.py`
 3. **Regression** (`nba_home_court_regression.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
 4. **Tests** (`test_nba_home_court_advantage.py`) — unit tests for the data/computation layer; use synthetic DataFrames
-5. **FINDINGS.md** — add a new `## N. Title` section with prose and `![Figure N. caption](chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
+5. **FINDINGS.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
 6. **`.gitignore`** — add the new PNG filename
 7. **`README.md`** — add the PNG to the output table, add the regression analysis to the numbered list, update PNG and section counts
 8. **`CLAUDE.md`** — add new `compute_*` and `plot_*` functions to the architecture reference lists; update regression analysis count
+9. **Run** — `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate all PNGs and `RESULTS.md`
+10. **Update FINDINGS.md** — replace placeholder prose with actual numbers, directions, and significance levels from `RESULTS.md`; then regenerate the PDF with `python3 generate_report.py`
 
 ## nba_api quirks
 

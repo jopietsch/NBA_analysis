@@ -1312,6 +1312,72 @@ class TestComputeLeaguePaceStats:
         assert seasons == []
 
 
+class TestComputeTeamHcaStats:
+    def _make_game_log(self, tmp_path, year, rows):
+        df = pd.DataFrame({
+            "MATCHUP":   [r[0] for r in rows],
+            "WL":        [r[1] for r in rows],
+            "TEAM_NAME": [r[2] for r in rows],
+        })
+        df.to_csv(nba.cache_path(year, "Regular Season"), index=False)
+
+    def test_computes_hca_correctly(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Boston: 42 home wins / 60 home games = 70%
+        #          30 road wins / 60 road games = 50%  → HCA = +20 pp
+        rows = (
+            [("BOS vs. MIA", "W", "Boston Celtics")] * 42 +
+            [("BOS vs. MIA", "L", "Boston Celtics")] * 18 +
+            [("BOS @ LAL",   "W", "Boston Celtics")] * 30 +
+            [("BOS @ LAL",   "L", "Boston Celtics")] * 30
+        )
+        self._make_game_log(tmp_path, 2024, rows)
+
+        result = nba.compute_team_hca_stats(2024, 2024, "Regular Season", min_games=50)
+
+        assert "Boston Celtics" in result
+        bos = result["Boston Celtics"]
+        assert abs(bos["home_pct"] - 70.0) < 0.01
+        assert abs(bos["road_pct"] - 50.0) < 0.01
+        assert abs(bos["hca"]     - 20.0) < 0.01
+        assert bos["n_home"] == 60
+        assert bos["n_road"] == 60
+
+    def test_filters_teams_below_min_games(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Miami: only 5 home games — should be excluded with min_games=50
+        rows = (
+            [("BOS vs. MIA", "W", "Boston Celtics")] * 42 +
+            [("BOS vs. MIA", "L", "Boston Celtics")] * 18 +
+            [("BOS @ LAL",   "W", "Boston Celtics")] * 30 +
+            [("BOS @ LAL",   "L", "Boston Celtics")] * 30 +
+            [("MIA vs. BOS", "W", "Miami Heat")] * 3 +
+            [("MIA vs. BOS", "L", "Miami Heat")] * 2
+        )
+        self._make_game_log(tmp_path, 2024, rows)
+
+        result = nba.compute_team_hca_stats(2024, 2024, "Regular Season", min_games=50)
+
+        assert "Boston Celtics" in result
+        assert "Miami Heat" not in result
+
+    def test_returns_empty_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        result = nba.compute_team_hca_stats(2024, 2024, "Regular Season")
+        assert result == {}
+
+    def test_skip_years_excludes_seasons(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        rows = (
+            [("BOS vs. MIA", "W", "Boston Celtics")] * 30 +
+            [("BOS @ LAL",   "W", "Boston Celtics")] * 30
+        )
+        self._make_game_log(tmp_path, 2024, rows)
+
+        result = nba.compute_team_hca_stats(2024, 2024, "Regular Season", skip_years={2024})
+        assert result == {}
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)

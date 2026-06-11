@@ -924,6 +924,54 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis 13: Franchise home court advantage ───────────────────────────────
+
+def run_team_hca_analysis() -> None:
+    """Per-franchise home vs. road win% aggregated across all seasons."""
+    _section("13. FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN %")
+    print("   Which franchises benefit most from playing at home?")
+    print("   HCA = home win% − road win% (controls for overall team quality).\n")
+
+    for ctx_label, season_type, skip, min_g in [
+        ("Regular season", "Regular Season", set(),                     50),
+        ("Playoffs",       "Playoffs",       nba.SKIP_PLAYOFF_YEARS,    20),
+    ]:
+        stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, season_type,
+            skip_years=skip, min_games=min_g,
+        )
+        if not stats:
+            print(f"   {ctx_label}: no data.\n")
+            continue
+
+        sorted_teams = sorted(stats, key=lambda t: stats[t]["hca"], reverse=True)
+        hcas = [stats[t]["hca"] for t in sorted_teams]
+
+        print(f"   {ctx_label}  ({len(sorted_teams)} franchises with ≥{min_g} home games)\n")
+
+        NW, CW = 32, 9
+        header = (f"   {'Franchise':<{NW}} {'n_home':>{CW}} {'home%':>{CW}} "
+                  f"{'n_road':>{CW}} {'road%':>{CW}} {'HCA':>{CW}}")
+        print(header)
+        print(f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW}")
+
+        for team in sorted_teams:
+            d = stats[team]
+            name = team[:NW] if len(team) > NW else team
+            print(f"   {name:<{NW}} {d['n_home']:>{CW},} {d['home_pct']:>{CW}.1f}%"
+                  f" {d['n_road']:>{CW},} {d['road_pct']:>{CW}.1f}% {d['hca']:>+{CW}.1f} pp")
+
+        league_mean = float(np.mean(hcas))
+        print(f"\n   League mean HCA = {league_mean:+.1f} pp  "
+              f"(range: {min(hcas):+.1f} to {max(hcas):+.1f} pp)")
+
+        altitude = [t for t in sorted_teams if t in nba.ALTITUDE_TEAMS]
+        for at in altitude:
+            rank = sorted_teams.index(at) + 1
+            print(f"   ► {at}: {stats[at]['hca']:+.1f} pp  (rank #{rank}/{len(sorted_teams)})")
+        print()
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -970,6 +1018,7 @@ def run() -> None:
         run_travel_analysis(df)
         run_3pa_analysis(df)
         run_pace_analysis(df)
+        run_team_hca_analysis()
 
         print("\n" + "═" * _W + "\n")
 

@@ -740,6 +740,58 @@ def compute_league_pace_stats(
     return seasons, pace_vals, home_win_pcts
 
 
+# ── Team home court advantage analysis ───────────────────────────────────────
+
+def compute_team_hca_stats(
+    start_year: int, end_year: int, season_type: str,
+    skip_years: set[int] = frozenset(), min_games: int = 50,
+) -> dict[str, dict]:
+    """
+    All-time per-franchise home and road win% aggregated across seasons.
+    Returns dict: TEAM_NAME -> {home_pct, road_pct, hca, n_home, n_road}.
+    Franchises with fewer than min_games home games are excluded.
+    """
+    home_wins:  dict[str, int] = {}
+    home_total: dict[str, int] = {}
+    road_wins:  dict[str, int] = {}
+    road_total: dict[str, int] = {}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+
+        is_home = df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)
+        is_road = df["MATCHUP"].str.contains(" @ ", regex=False, na=False)
+
+        for subset, w_dict, t_dict in [
+            (df[is_home], home_wins, home_total),
+            (df[is_road], road_wins, road_total),
+        ]:
+            for team, grp in subset.groupby("TEAM_NAME", sort=False):
+                t_dict[team] = t_dict.get(team, 0) + len(grp)
+                w_dict[team] = w_dict.get(team, 0) + int((grp["WL"] == "W").sum())
+
+    result: dict[str, dict] = {}
+    for team in set(home_total) | set(road_total):
+        n_h = home_total.get(team, 0)
+        n_r = road_total.get(team, 0)
+        if n_h < min_games or n_r < min_games:
+            continue
+        h_pct = 100.0 * home_wins.get(team, 0) / n_h
+        r_pct = 100.0 * road_wins.get(team, 0) / n_r
+        result[team] = {
+            "home_pct": round(h_pct, 1),
+            "road_pct": round(r_pct, 1),
+            "hca":      round(h_pct - r_pct, 1),
+            "n_home":   n_h,
+            "n_road":   n_r,
+        }
+    return result
+
+
 def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-home-game point margin from the cached game log.
