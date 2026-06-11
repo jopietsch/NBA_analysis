@@ -18,17 +18,21 @@ COVID seasons are flagged in the charts and regression as an anomaly.
 
 ### The trend is statistically unambiguous
 
-A trend line fit to per-season home win % on year confirms the decline is real and
-precisely measured. The regular season falls at roughly **−0.25 pp per year**
-(p < 0.001, R² = 0.73) — a total drop of more than 10 percentage points over
-the 41-year dataset. The playoffs fall at **−0.20 pp per year** (p = 0.009),
-though with more year-to-year volatility (R² = 0.16).
+A binomial GLM (events/trials per season, weighting each season by its game
+count) confirms the decline is real and precisely measured. The regular season
+falls at roughly **−0.25 pp per year** (GLM p < 0.001; OLS/HAC p < 0.001,
+R² = 0.73) — a total drop of about 10 percentage points over the 41-year
+dataset. The playoffs fall at **−0.21 pp per year** (GLM p = 0.003;
+OLS/HAC p < 0.001), though with more year-to-year volatility (R² = 0.16).
+The earlier OLS estimate (p = 0.009 without HAC correction) understated
+the significance; both the game-count-weighted GLM and the serial-correlation-robust
+HAC standard errors point to a stronger result.
 
 Within individual eras the season counts are mostly too small for reliable slope
-estimates (only the 1984–94 and 2005–17 regular-season slopes reach p < 0.05),
-but the overall trajectory is one of the strongest trends in the dataset. The
-regularity of the decline — not a one-time step but a persistent drift — points
-to systemic forces rather than a single rule change.
+estimates (only the 1984–94 regular-season slope reaches significance in the
+binomial GLM), but the overall trajectory is one of the strongest trends in the
+dataset. The regularity of the decline — not a one-time step but a persistent
+drift — points to systemic forces rather than a single rule change.
 
 ![Figure 1. Home win % per season, 1983–84 through 2024–25. Blue = regular season, green = playoffs. Dashed lines are overall trend fits. Background shading marks rule-change eras.](nba_home_court_advantage_season.png)
 
@@ -316,10 +320,17 @@ games are played on equal rest — so the unequal-rest buckets are small (139 an
 98 games). Home teams with a rest edge win 75.5% of those games and the bucket
 differences are significant (p = 0.003), though the small away-more-rest bucket
 also sits above baseline, a reminder that playoff rest asymmetries arise only in
-unusual series situations. The per-day regression estimate (≈ +2.3 pp per rest
-day in the playoffs, from the bivariate logistic) is the more reliable playoff
-measure, and it is larger than the regular-season figure (+1.5 pp/day) —
-higher stakes amplify the impact of fatigue.
+unusual series situations. The bivariate per-day regression estimate is ≈ +2.3 pp
+per rest day in the playoffs.
+
+However, playoff rest is endogenous to team strength: a team that sweeps or
+wins 4–1 earns more rest than one that battles seven games, so rest asymmetry
+correlates with quality. Controlling for same-season regular-season win%
+differential (`quality_diff`), the playoff rest effect shrinks to +1.5 pp/day
+and loses significance (p = 0.146, N = 2,879 games), while team quality itself
+is the dominant predictor. The raw +2.3 pp/day estimate should therefore be read
+as an upper bound that conflates rest with team strength, not a clean causal
+estimate of fatigue.
 
 Back-to-back rates for home and away teams have shifted substantially over time
 as the league has adjusted scheduling, but the rest effect on winning has
@@ -468,19 +479,23 @@ also at its peak (65.0%), then **fell** during the defensive 1995-2004 era
 while HCA continued its descent. The relationship is U-shaped across eras, not
 monotone -- pace and HCA share no common trend.
 
-### Game-level: the effect is positive, not negative
+### Game-level: the effect is positive, but partly endogenous
 
 At the game level, faster-paced games have **higher** home win probability, not
-lower. The bivariate logistic yields +2.37 pp per 10 extra possessions (p < 0.001
-in the regular season), and the within-era logistic -- controlling for era --
-actually strengthens the effect (+2.54 pp per 10 possessions, p < 0.001). In the
-playoffs there is no significant game-level effect in either direction.
+lower. Using realized pace, the bivariate logistic yields +2.37 pp per 10 extra
+possessions (p < 0.001 in the regular season), and the within-era logistic
+strengthens the effect (+2.54 pp per 10 possessions, p < 0.001).
 
-The most likely explanation is **game-state causality**: pace reflects what is
-happening in a game as much as it determines it. When the home team is winning
-and running off turnovers and makes, the game moves faster. Pace is partly an
-*outcome* of home court advantage rather than a cause of it, which reverses the
-apparent direction of the relationship.
+To address **game-state causality** — pace partly reflecting the game outcome
+rather than causing it — we substitute *expected pace*: each team's
+leave-one-out mean possessions (all other games that season), averaged for the
+two teams in each matchup. This pre-determined measure cannot be affected by
+what happens in today's game. With expected pace, the bivariate effect falls to
++1.84 pp per 10 possessions (p < 0.001) and the within-era effect drops to
++2.06 pp per 10 possessions (p = 0.026). The attenuation is modest, confirming
+that game-state causality inflates the realized-pace estimate, but a genuine
+positive signal remains: home teams are more likely to win in higher-tempo
+matchups even when pace is measured before the game.
 
 ### Pace does not explain the decline
 
@@ -650,10 +665,16 @@ playoff matchups across 42 seasons for reliable playoff inference.
 ### Pre/post-2014 level shift
 
 Splitting the sample at the 2014 Finals format change confirms a real drop in the
-overall home-win probability after 2014. Coefficients on rest and time zone are
-stable across the split; the altitude coefficient shrinks (+0.39 → +0.25
-log-odds) but remains positive. None of these factors drove the post-2014
-decline — the drop shows up in the intercept (−4.7 pp), not in the covariates.
+overall home-win probability after 2014. A pooled logit with explicit `post2014 × factor`
+interactions formally tests whether the factor effects changed:
+- **Rest**: interaction p = 0.154 — rest effect unchanged post-2014
+- **Altitude**: interaction p = 0.083 — the altitude coefficient shrinks
+  (≈−3.5 pp, borderline significant), consistent with Denver/Utah teams having
+  become relatively less dominant at home in the modern era
+- **Time zone**: interaction p = 0.865 — unchanged
+
+None of these factor shifts drove the post-2014 decline — the drop shows up in
+the intercept (level shift −4.6 pp, p < 0.001), not in the covariates.
 
 ---
 
@@ -697,8 +718,8 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 
 | Factor | Effect | Evidence |
 |---|---|---|
-| Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (p = 0.009, season-level trend) |
-| Rest differential | +2.3 pp per extra day of rest — larger than in the regular season | Solid (p = 0.014) |
+| Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (GLM p = 0.003, HAC p < 0.001, season-level trend) |
+| Rest differential | +2.3 pp/day bivariate, but shrinks to +1.5 pp/day (p = 0.146) controlling for team quality — effect likely confounded by team strength | Weaker than headline (bivariate p = 0.014, quality-controlled p = 0.146) |
 | Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | None — likely chance (p = 0.59) |
 | Time-zone / distance | No meaningful effect of either | None (p = 0.28 and p = 0.77) |
 

@@ -18,6 +18,7 @@ import sys
 import warnings
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from nba_api.stats.library.parameters import SeasonType
 
@@ -109,8 +110,33 @@ def build_game_dataset() -> pd.DataFrame:
                 away_poss = (merged["FGA_away"] - merged["OREB_away"]
                              + merged["TOV_away"] + 0.44 * merged["FTA_away"])
                 merged["pace_avg"] = (home_poss + away_poss) / 2.0
+
+                # Expected pace: leave-one-out per-team mean so realized pace
+                # can't reflect game-outcome endogeneity.
+                hp_arr = home_poss.values.astype(float)
+                ap_arr = away_poss.values.astype(float)
+                hteams = merged["TEAM_NAME_home"].values
+                ateams = merged["TEAM_NAME_away"].values
+                team_tot: dict[str, float] = {}
+                team_cnt: dict[str, int] = {}
+                for t, p in zip(np.concatenate([hteams, ateams]),
+                                np.concatenate([hp_arr, ap_arr])):
+                    team_tot[t] = team_tot.get(t, 0.0) + float(p)
+                    team_cnt[t] = team_cnt.get(t, 0) + 1
+                loo_h = np.array(
+                    [(team_tot[t] - p) / (team_cnt[t] - 1)
+                     if team_cnt[t] > 1 else np.nan
+                     for t, p in zip(hteams, hp_arr)]
+                )
+                loo_a = np.array(
+                    [(team_tot[t] - p) / (team_cnt[t] - 1)
+                     if team_cnt[t] > 1 else np.nan
+                     for t, p in zip(ateams, ap_arr)]
+                )
+                merged["expected_pace"] = (loo_h + loo_a) / 2.0
             else:
                 merged["pace_avg"] = np.nan
+                merged["expected_pace"] = np.nan
 
             if is_playoff:
                 gid_str = merged["GAME_ID"].apply(lambda x: str(int(float(x))))
@@ -133,7 +159,8 @@ def build_game_dataset() -> pd.DataFrame:
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff",
                 "margin", "game_in_series", "distance_miles", "tpa_rate_avg",
-                "pace_avg",
+                "pace_avg", "expected_pace",
+                "TEAM_NAME_home", "TEAM_NAME_away",
             ]])
 
     if not chunks:
@@ -144,6 +171,48 @@ def build_game_dataset() -> pd.DataFrame:
     n_complete = len(result.dropna(subset=["rest_diff", "tz_diff"]))
     print(f" {len(result):,} game rows ({n_complete:,} with complete features).")
     return result
+
+
+def _add_quality_diff(df: pd.DataFrame) -> pd.DataFrame:
+    """Add quality_diff = home RS win% - away RS win% (same season) to playoff rows.
+
+    Playoff rest is earned by advancing quickly, which correlates with team strength,
+    so quality_diff controls for that confound in playoff rest analyses.
+    """
+    rs = df[df["is_playoff"] == 0]
+    home_records = (
+        rs.groupby(["year", "TEAM_NAME_home"])["home_win"]
+        .agg(wins="sum", games="count")
+        .rename_axis(index={"TEAM_NAME_home": "team"})
+    )
+    away_records = (
+        rs.groupby(["year", "TEAM_NAME_away"])["home_win"]
+        .agg(losses="sum", games="count")
+        .rename_axis(index={"TEAM_NAME_away": "team"})
+    )
+    away_records["wins"] = away_records["games"] - away_records["losses"]
+    away_records = away_records.drop(columns="losses")
+
+    all_records = pd.concat([home_records, away_records]).groupby(
+        level=["year", "team"]
+    ).sum()
+    all_records["rs_winpct"] = all_records["wins"] / all_records["games"]
+    winpct = all_records["rs_winpct"]  # MultiIndex: (year, team)
+
+    po_mask = df["is_playoff"] == 1
+    po = df[po_mask]
+    df = df.copy()
+    df.loc[po_mask, "quality_diff"] = (
+        po.apply(
+            lambda r: (
+                winpct.get((r["year"], r["TEAM_NAME_home"]), np.nan)
+                - winpct.get((r["year"], r["TEAM_NAME_away"]), np.nan)
+            ),
+            axis=1,
+        ).values
+    )
+    df.loc[~po_mask, "quality_diff"] = np.nan
+    return df
 
 
 # ── Print helpers ─────────────────────────────────────────────────────────────
@@ -199,53 +268,106 @@ def _clean(name: str, era_ref: str, fmt_ref: str) -> str:
     )
 
 
+def _ci_lo_hi(model, param: str, p_bar: float | None = None) -> tuple[float, float]:
+    """Return 95% CI for a model parameter, optionally converted to pp via p_bar."""
+    ci = model.conf_int()
+    lo, hi = float(ci.loc[param, 0]), float(ci.loc[param, 1])
+    if p_bar is not None:
+        lo = lo * p_bar * (1 - p_bar) * 100.0
+        hi = hi * p_bar * (1 - p_bar) * 100.0
+    return lo, hi
+
+
 # ── Analysis 1: Overall decline ───────────────────────────────────────────────
 
 def run_decline_trend(df: pd.DataFrame) -> None:
     """Trend line for home_win_pct ~ year at the season level — formally tests the decline."""
     _section("THE OVERALL DECLINE — IS IT STATISTICALLY REAL?")
-    print("   Trend line fit to per-season home win % on year (season-level, not game-level).")
-    print("   Formally tests the multi-decade trend and measures per-era slopes.\n")
+    print("   Primary: binomial GLM (events/trials per season, weights by game count).")
+    print("   Cross-check: OLS with Newey–West HAC SEs (maxlags=1).")
+    print("   Per-era slopes use same methods on era subsets.\n")
 
     for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
         sub = df[df["is_playoff"] == is_po]
-        by_year = sub.groupby("year")["home_win"].mean() * 100
-        rows = pd.DataFrame({"year": by_year.index.astype(int), "pct": by_year.values})
+        agg = sub.groupby("year")["home_win"].agg(["sum", "count"]).reset_index()
+        agg.columns = ["year", "wins", "games"]
+        agg["year"] = agg["year"].astype(int)
+        agg["pct"] = agg["wins"] / agg["games"] * 100
         if is_po:
-            rows = rows[~rows["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
-        if len(rows) < 3:
+            agg = agg[~agg["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        agg = agg.sort_values("year").reset_index(drop=True)
+        if len(agg) < 3:
             continue
 
-        yr_min, yr_max = int(rows["year"].min()), int(rows["year"].max())
+        yr_min, yr_max = int(agg["year"].min()), int(agg["year"].max())
+        exog = sm.add_constant(agg["year"].values.astype(float))
+        endog = agg[["wins", "games"]].copy()
+        endog["losses"] = endog["games"] - endog["wins"]
+
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            m_full = smf.ols("pct ~ year", data=rows).fit()
+            # Binomial GLM — primary
+            glm = sm.GLM(
+                endog[["wins", "losses"]].values,
+                exog,
+                family=sm.families.Binomial(),
+            ).fit()
+            # OLS with HAC SEs — cross-check
+            ols_base = smf.ols("pct ~ year", data=agg).fit()
+            ols_hac = ols_base.get_robustcov_results(cov_type="HAC", maxlags=1)
 
-        coef  = m_full.params["year"]
-        pval  = m_full.pvalues["year"]
-        pval_s = _fmt_p(pval)
-        total = coef * (yr_max - yr_min)
+        # Binomial GLM reports slope in log-odds; convert to pp at the mean
+        p_bar_frac = agg["pct"].mean() / 100.0
+        glm_coef_lo = glm.params[1]
+        glm_pp = glm_coef_lo * p_bar_frac * (1 - p_bar_frac) * 100.0
+        glm_p = glm.pvalues[1]
+        glm_total_lo = glm_coef_lo * (yr_max - yr_min)
+        glm_total_pp = glm_total_lo * p_bar_frac * (1 - p_bar_frac) * 100.0
+        glm_ci = glm.conf_int()         # numpy ndarray shape (n_params, 2)
+        glm_ci_lo = glm_ci[1, 0] * p_bar_frac * (1 - p_bar_frac) * 100.0
+        glm_ci_hi = glm_ci[1, 1] * p_bar_frac * (1 - p_bar_frac) * 100.0
 
-        print(f"   {ctx_label}  ({len(rows)} seasons, {yr_min}–{yr_max})")
-        print(f"   Overall: {coef:+.3f} pp/yr  "
-              f"(p = {pval_s}  {_stars(pval).strip()},  R² = {m_full.rsquared:.3f},  "
-              f"total change: {total:+.1f} pp)\n")
+        ols_coef = ols_base.params["year"]    # HAC doesn't change coefficients
+        ols_p = ols_hac.pvalues[1]            # numpy array: 0=Intercept, 1=year
+        ols_total = ols_coef * (yr_max - yr_min)
+        ols_ci = ols_base.conf_int()
+        ols_ci_lo = float(ols_ci.loc["year", 0])
+        ols_ci_hi = float(ols_ci.loc["year", 1])
 
-        print(f"   {'Era':<12}  {'N':>4}  {'Slope pp/yr':>12}  {'p':>8}  {'':3}")
-        print(f"   {'─'*12}  {'─'*4}  {'─'*12}  {'─'*8}  {'─'*3}")
+        print(f"   {ctx_label}  ({len(agg)} seasons, {yr_min}–{yr_max})")
+        print(f"   Binomial GLM: {glm_pp:+.3f} pp/yr  95% CI [{glm_ci_lo:+.3f}, {glm_ci_hi:+.3f}]  "
+              f"(p = {_fmt_p(glm_p)}  {_stars(glm_p).strip()},  total ≈ {glm_total_pp:+.1f} pp)")
+        print(f"   OLS / HAC:    {ols_coef:+.3f} pp/yr  95% CI [{ols_ci_lo:+.3f}, {ols_ci_hi:+.3f}]  "
+              f"(p = {_fmt_p(ols_p)}  {_stars(ols_p).strip()},  R² = {ols_base.rsquared:.3f},  total: {ols_total:+.1f} pp)\n")
+
+        print(f"   {'Era':<12}  {'N':>4}  {'GLM pp/yr':>10}  {'GLM p':>8}  "
+              f"{'OLS pp/yr':>10}  {'HAC p':>8}  {'':3}")
+        print(f"   {'─'*12}  {'─'*4}  {'─'*10}  {'─'*8}  {'─'*10}  {'─'*8}  {'─'*3}")
         for era_label, y1, y2, _ in nba.ERA_DEFS:
-            era_rows = rows[(rows["year"] >= y1) & (rows["year"] <= y2)]
+            era_rows = agg[(agg["year"] >= y1) & (agg["year"] <= y2)]
             n = len(era_rows)
             if n < 3:
-                print(f"   {era_label:<12}  {n:>4}  {'(too few)':>12}")
+                print(f"   {era_label:<12}  {n:>4}  {'(too few)':>10}")
                 continue
+            era_exog = sm.add_constant(era_rows["year"].values.astype(float))
+            era_endog = era_rows[["wins"]].copy()
+            era_endog["losses"] = era_rows["games"] - era_rows["wins"]
+            era_pbar = era_rows["pct"].mean() / 100.0
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
-                m_era = smf.ols("pct ~ year", data=era_rows).fit()
-            c = m_era.params["year"]
-            p = m_era.pvalues["year"]
-            p_s = _fmt_p(p)
-            print(f"   {era_label:<12}  {n:>4}  {c:>+12.3f}  {p_s:>8}  {_stars(p)}")
+                era_glm = sm.GLM(
+                    era_endog[["wins", "losses"]].values,
+                    era_exog,
+                    family=sm.families.Binomial(),
+                ).fit()
+                era_ols_base = smf.ols("pct ~ year", data=era_rows).fit()
+                era_ols_hac = era_ols_base.get_robustcov_results(cov_type="HAC", maxlags=1)
+            gc = era_glm.params[1] * era_pbar * (1 - era_pbar) * 100.0
+            gp = era_glm.pvalues[1]
+            oc = era_ols_base.params["year"]
+            op = era_ols_hac.pvalues[1]
+            print(f"   {era_label:<12}  {n:>4}  {gc:>+10.3f}  {_fmt_p(gp):>8}  "
+                  f"{oc:>+10.3f}  {_fmt_p(op):>8}  {_stars(gp)}")
         print()
 
 
@@ -437,8 +559,9 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     params, pvals = full.params, full.pvalues
 
     print(f"\n   Full model coefficients  (reference era = {era_ref}):\n")
-    print(f"   {'Predictor':<44}  {'log-odds':>8}  {'≈pp':>6}  {'p':>8}  {'':>3}")
-    print(f"   {'─'*44}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
+    print(f"   {'Predictor':<44}  {'log-odds':>8}  {'≈pp':>6}  {'95% CI (pp)':>14}  {'p':>8}  {'':>3}")
+    print(f"   {'─'*44}  {'─'*8}  {'─'*6}  {'─'*14}  {'─'*8}  {'─'*3}")
+    full_ci = full.conf_int()
     for name in params.index:
         if name == "Intercept":
             continue
@@ -446,7 +569,10 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
         pval  = pvals[name]
         label = _clean(name, era_ref, "1984")
         pval_s = _fmt_p(pval)
-        print(f"   {label:<44}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  {pval_s:>8}  {_stars(pval)}")
+        ci_lo = full_ci.loc[name, 0] * p_bar * (1 - p_bar) * 100.0
+        ci_hi = full_ci.loc[name, 1] * p_bar * (1 - p_bar) * 100.0
+        print(f"   {label:<44}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  "
+              f"[{ci_lo:+5.1f},{ci_hi:+5.1f}]  {pval_s:>8}  {_stars(pval)}")
 
     # Sequential shares for side-by-side with Shapley
     seq_block_order = ["era", "rest", "altitude", "tz", "covid"]
@@ -541,6 +667,43 @@ def run_stability_analysis(df: pd.DataFrame) -> None:
     print(f"   ► Rest, altitude, and tz coefficients show {'little' if all(abs(m_post.params.get(r, 0) - m_pre.params.get(r, 0)) < 0.05 for r in display) else 'some'} "
           f"change — those factors' effects on winning are largely stable.")
 
+    # Formal interaction test: pooled model with post2014 × factor interactions
+    print(f"\n   Formal interaction test — pooled logit with post2014 × factor interactions:")
+    print(f"   H0: coefficients unchanged before and after 2014.\n")
+    reg2 = reg.copy()
+    reg2["post2014"] = (reg2["year"] >= 2014).astype(int)
+    p_bar = reg2["home_win"].mean()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            m_int = smf.logit(
+                "home_win ~ (rest_diff + altitude_home + tz_diff) * post2014",
+                data=reg2,
+            ).fit(disp=0)
+            interaction_terms = [
+                ("rest_diff:post2014",     "rest_diff × post2014"),
+                ("altitude_home:post2014", "altitude_home × post2014"),
+                ("tz_diff:post2014",       "tz_diff × post2014"),
+            ]
+            print(f"   {'Interaction term':<30}  {'log-odds':>8}  {'≈pp':>6}  {'p':>8}  {'':3}")
+            print(f"   {'─'*30}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
+            for raw, label in interaction_terms:
+                if raw in m_int.params.index:
+                    c = m_int.params[raw]
+                    p = m_int.pvalues[raw]
+                    print(f"   {label:<30}  {c:+8.3f}  {_pp(c, p_bar):+6.1f}  "
+                          f"{_fmt_p(p):>8}  {_stars(p)}")
+                else:
+                    print(f"   {label:<30}  {'(omitted)':>8}")
+            if "post2014" in m_int.params.index:
+                c_l = m_int.params["post2014"]
+                p_l = m_int.pvalues["post2014"]
+                print(f"   {'─'*30}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
+                print(f"   {'post2014 (level shift)':<30}  {c_l:+8.3f}  {_pp(c_l, p_bar):+6.1f}  "
+                      f"{_fmt_p(p_l):>8}  {_stars(p_l)}")
+        except Exception:
+            pass
+
 
 # ── Analysis 4: Rest, altitude, time zone — do they matter? ──────────────────
 
@@ -577,8 +740,12 @@ def run_factor_summary(df: pd.DataFrame) -> None:
             c_po, p_po_ = m_po.params[raw], m_po.pvalues[raw]
             pv_re = _fmt_p(p_re_)
             pv_po = _fmt_p(p_po_)
+            ci_re = _ci_lo_hi(m_re, raw, p_re)
+            ci_po = _ci_lo_hi(m_po, raw, p_po)
             print(f"   {label:<{LW}}  {c_re:+8.3f}  {_pp(c_re, p_re):+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
                   f"{c_po:+8.3f}  {_pp(c_po, p_po):+5.1f}  {pv_po:>8}  {_stars(p_po_)}")
+            print(f"   {'95% CI (pp)':>{LW}}  {'':8}  [{ci_re[0]:+4.1f},{ci_re[1]:+4.1f}]  {'':8}  {'':3}  "
+                  f"{'':8}  [{ci_po[0]:+4.1f},{ci_po[1]:+4.1f}]")
 
     # Coast-to-coast playoff game count for context
     n_cc_po = int((po["tz_diff"] == 3).sum())
@@ -591,6 +758,32 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     print(f"   ► Time zones show no significant effect in either context.")
     print(f"     Only {n_cc_po} coast-to-coast playoff games exist across 42 seasons")
     print(f"     ({n_cc_re:,} regular-season) — too sparse for reliable playoff inference.")
+
+    # Playoff rest: control for team quality (RS win% differential)
+    # Rest is earned by winning quickly, which correlates with team strength.
+    po_q = df[(df["is_playoff"] == 1)].dropna(subset=["rest_diff", "quality_diff"])
+    if not po_q.empty:
+        p_po_q = po_q["home_win"].mean()
+        print(f"\n   Playoff rest controlling for team quality (N = {len(po_q):,} games):")
+        print(f"   quality_diff = home RS win% − away RS win% (same season).")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            try:
+                m_q = smf.logit(
+                    "home_win ~ rest_diff + quality_diff", data=po_q
+                ).fit(disp=0)
+                c_rest = m_q.params["rest_diff"]
+                p_rest = m_q.pvalues["rest_diff"]
+                c_qual = m_q.params["quality_diff"]
+                p_qual = m_q.pvalues["quality_diff"]
+                print(f"   {'Predictor':<28}  {'log-odds':>8}  {'≈pp':>6}  {'p':>8}  {'':3}")
+                print(f"   {'─'*28}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
+                print(f"   {'rest_diff (per day)':<28}  {c_rest:+8.3f}  "
+                      f"{_pp(c_rest, p_po_q):+6.1f}  {_fmt_p(p_rest):>8}  {_stars(p_rest)}")
+                print(f"   {'quality_diff (RS win% gap)':<28}  {c_qual:+8.3f}  "
+                      f"{_pp(c_qual, p_po_q):+6.1f}  {_fmt_p(p_qual):>8}  {_stars(p_qual)}")
+            except Exception:
+                pass
 
 
 # ── Analysis: Rest-differential buckets and era stability ─────────────────────
@@ -1099,8 +1292,11 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
                 pval = m.pvalues["distance_miles"]
                 pval_s = _fmt_p(pval)
                 pp_per_100mi = _pp(coef, p_bar) * 100
+                ci_lo, ci_hi = _ci_lo_hi(m, "distance_miles", p_bar)
                 print(f"\n   Bivariate logistic: coef = {coef:+.5f} log-odds/mi  "
-                      f"(≈{pp_per_100mi:+.2f} pp per 100 mi),  p = {pval_s}  {_stars(pval).strip()}")
+                      f"(≈{pp_per_100mi:+.2f} pp per 100 mi,  "
+                      f"95% CI [{ci_lo*100:+.2f}, {ci_hi*100:+.2f}]),  "
+                      f"p = {pval_s}  {_stars(pval).strip()}")
             except Exception:
                 pass
         print()
@@ -1158,9 +1354,11 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
             pval  = m_biv.pvalues["tpa_rate_avg"]
             pval_s = _fmt_p(pval)
             pp_per_10pct = _pp(coef, p_bar) * 10
+            ci_lo, ci_hi = _ci_lo_hi(m_biv, "tpa_rate_avg", p_bar)
             print(f"\n   Game-level bivariate logistic  (N = {len(sub):,} games)")
             print(f"   coef = {coef:+.4f} log-odds per pp of 3PA rate")
-            print(f"   ≈ {pp_per_10pct:+.2f} pp change in home win % per 10 pp rise in 3PA rate")
+            print(f"   ≈ {pp_per_10pct:+.2f} pp per 10 pp rise in 3PA rate  "
+                  f"95% CI [{ci_lo*10:+.2f}, {ci_hi*10:+.2f}]")
             print(f"   p = {pval_s}  {_stars(pval).strip()}")
         except Exception:
             pass
@@ -1233,9 +1431,11 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             pval  = m_biv.pvalues["pace_avg"]
             pval_s = _fmt_p(pval)
             pp_per_10 = _pp(coef, p_bar) * 10
+            ci_lo, ci_hi = _ci_lo_hi(m_biv, "pace_avg", p_bar)
             print(f"\n   Game-level bivariate logistic  (N = {len(sub):,} games)")
             print(f"   coef = {coef:+.4f} log-odds per possession")
-            print(f"   ≈ {pp_per_10:+.2f} pp change in home win % per 10 extra possessions")
+            print(f"   ≈ {pp_per_10:+.2f} pp per 10 extra possessions  "
+                  f"95% CI [{ci_lo*10:+.2f}, {ci_hi*10:+.2f}]")
             print(f"   p = {pval_s}  {_stars(pval).strip()}")
         except Exception:
             pass
@@ -1251,6 +1451,37 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
                   f"p = {pval_e_s}  {_stars(pval_e).strip()}")
         except Exception:
             pass
+
+        # Expected pace (LOO) logistic — tests endogeneity of realized pace
+        sub_ep = df[df["is_playoff"] == is_po].dropna(subset=["expected_pace"])
+        if not sub_ep.empty:
+            p_bar_ep = sub_ep["home_win"].mean()
+            print(f"\n   Expected pace (LOO)  (N = {len(sub_ep):,} games)")
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    m_biv_ep = smf.logit("home_win ~ expected_pace", data=sub_ep).fit(disp=0)
+                c_ep = m_biv_ep.params["expected_pace"]
+                p_ep = m_biv_ep.pvalues["expected_pace"]
+                print(f"   Bivariate: coef = {c_ep:+.4f}  "
+                      f"(≈ {_pp(c_ep, p_bar_ep) * 10:+.2f} pp per 10 poss)  "
+                      f"p = {_fmt_p(p_ep)}  {_stars(p_ep).strip()}")
+            except Exception:
+                pass
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    m_era_ep = smf.logit(
+                        "home_win ~ expected_pace + C(era)", data=sub_ep
+                    ).fit(disp=0)
+                c_era_ep = m_era_ep.params["expected_pace"]
+                p_era_ep = m_era_ep.pvalues["expected_pace"]
+                pp_era_ep = _pp(c_era_ep, p_bar_ep) * 10
+                print(f"   Within-era: coef = {c_era_ep:+.4f}  "
+                      f"(≈ {pp_era_ep:+.2f} pp per 10 poss)  "
+                      f"p = {_fmt_p(p_era_ep)}  {_stars(p_era_ep).strip()}")
+            except Exception:
+                pass
 
         print()
 
@@ -1524,6 +1755,7 @@ def run() -> None:
         if df.empty:
             print("No game data found in cache/. Run the main script first to populate it.")
             return
+        df = _add_quality_diff(df)
 
         parity_seasons, parity_std = nba.compute_parity_stats(
             nba.START_YEAR, nba.END_YEAR, "Regular Season"

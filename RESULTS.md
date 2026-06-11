@@ -14,32 +14,35 @@ All data from cache/ — same source as the plots above.
   Building game-level dataset from cache... 51,089 game rows (50,094 with complete features).
 
 ─── THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ────────────────────
-   Trend line fit to per-season home win % on year (season-level, not game-level).
-   Formally tests the multi-decade trend and measures per-era slopes.
+   Primary: binomial GLM (events/trials per season, weights by game count).
+   Cross-check: OLS with Newey–West HAC SEs (maxlags=1).
+   Per-era slopes use same methods on era subsets.
 
    Regular season  (42 seasons, 1984–2025)
-   Overall: -0.251 pp/yr  (p = <0.001  ***,  R² = 0.733,  total change: -10.3 pp)
+   Binomial GLM: -0.245 pp/yr  95% CI [-0.282, -0.208]  (p = <0.001  ***,  total ≈ -10.0 pp)
+   OLS / HAC:    -0.251 pp/yr  95% CI [-0.299, -0.202]  (p = <0.001  ***,  R² = 0.733,  total: -10.3 pp)
 
-   Era              N   Slope pp/yr         p     
-   ────────────  ────  ────────────  ────────  ───
-   1984–94         11        -0.506     0.024    *
-   1995–01          7        +0.229     0.464     
-   2002–04          3        +1.135     0.584     
-   2005–17         13        -0.180     0.030    *
-   2018–22          5        -1.191     0.074     
-   2023–25          3        -1.800     0.354     
+   Era              N   GLM pp/yr     GLM p   OLS pp/yr     HAC p     
+   ────────────  ────  ──────────  ────────  ──────────  ────────  ───
+   1984–94         11      -0.522    <0.001      -0.506     0.019  ***
+   1995–01          7      +0.201     0.462      +0.229     0.205     
+   2002–04          3      +1.136     0.256      +1.135     0.312     
+   2005–17         13      -0.179     0.085      -0.180     0.002     
+   2018–22          5      -1.183     0.009      -1.191     0.009   **
+   2023–25          3      -1.802     0.073      -1.800     0.158     
 
    Playoffs  (41 seasons, 1984–2025)
-   Overall: -0.200 pp/yr  (p = 0.009  **,  R² = 0.164,  total change: -8.2 pp)
+   Binomial GLM: -0.209 pp/yr  95% CI [-0.348, -0.070]  (p = 0.003  **,  total ≈ -8.6 pp)
+   OLS / HAC:    -0.200 pp/yr  95% CI [-0.347, -0.054]  (p = <0.001  ***,  R² = 0.164,  total: -8.2 pp)
 
-   Era              N   Slope pp/yr         p     
-   ────────────  ────  ────────────  ────────  ───
-   1984–94         11        +0.234     0.684     
-   1995–01          7        +0.312     0.823     
-   2002–04          3        +6.398     0.230     
-   2005–17         13        -0.445     0.301     
-   2018–22          4        -2.155     0.425     
-   2023–25          3        -1.190     0.063     
+   Era              N   GLM pp/yr     GLM p   OLS pp/yr     HAC p     
+   ────────────  ────  ──────────  ────────  ──────────  ────────  ───
+   1984–94         11      +0.250     0.629      +0.234     0.262     
+   1995–01          7      +0.385     0.719      +0.312     0.782     
+   2002–04          3      +6.551     0.095      +6.398     0.097     
+   2005–17         13      -0.442     0.255      -0.445     0.323     
+   2018–22          4      -2.129     0.207      -2.155     0.184     
+   2023–25          3      -1.191     0.754      -1.190     0.026     
 
 
 ─── PLAYOFF FORMAT PERIODS — DID THE SCHEDULING CHANGES MATTER? ────────
@@ -91,17 +94,17 @@ All data from cache/ — same source as the plots above.
 
    Full model coefficients  (reference era = 1984–94):
 
-   Predictor                                     log-odds     ≈pp         p     
-   ────────────────────────────────────────────  ────────  ──────  ────────  ───
-   era: 1995–01                                    -0.209    -5.0    <0.001  ***
-   era: 2002–04                                    -0.167    -4.0    <0.001  ***
-   era: 2005–17                                    -0.230    -5.5    <0.001  ***
-   era: 2018–22                                    -0.318    -7.6    <0.001  ***
-   era: 2023–25                                    -0.372    -8.9    <0.001  ***
-   rest diff (per day)                             +0.061    +1.5    <0.001  ***
-   altitude home (DEN/UTA)                         +0.340    +8.2    <0.001  ***
-   time zone diff (per zone)                       -0.023    -0.6     0.012    *
-   COVID seasons                                   -0.097    -2.3     0.078     
+   Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
+   ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
+   era: 1995–01                                    -0.209    -5.0  [ -6.5, -3.6]    <0.001  ***
+   era: 2002–04                                    -0.167    -4.0  [ -5.9, -2.1]    <0.001  ***
+   era: 2005–17                                    -0.230    -5.5  [ -6.7, -4.3]    <0.001  ***
+   era: 2018–22                                    -0.318    -7.6  [ -9.5, -5.8]    <0.001  ***
+   era: 2023–25                                    -0.372    -8.9  [-10.7, -7.1]    <0.001  ***
+   rest diff (per day)                             +0.061    +1.5  [ +1.1, +1.9]    <0.001  ***
+   altitude home (DEN/UTA)                         +0.340    +8.2  [ +6.3,+10.0]    <0.001  ***
+   time zone diff (per zone)                       -0.023    -0.6  [ -1.0, -0.1]     0.012    *
+   COVID seasons                                   -0.097    -2.3  [ -4.9, +0.3]     0.078     
 
    ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
 
@@ -139,6 +142,17 @@ All data from cache/ — same source as the plots above.
    ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
    ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
 
+   Formal interaction test — pooled logit with post2014 × factor interactions:
+   H0: coefficients unchanged before and after 2014.
+
+   Interaction term                log-odds     ≈pp         p     
+   ──────────────────────────────  ────────  ──────  ────────  ───
+   rest_diff × post2014              +0.027    +0.7     0.154     
+   altitude_home × post2014          -0.144    -3.5     0.083     
+   tz_diff × post2014                -0.003    -0.1     0.865     
+   ──────────────────────────────  ────────  ──────  ────────  ───
+   post2014 (level shift)            -0.193    -4.6    <0.001  ***
+
 ─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
    Bivariate logistic regression — each factor tested independently.
    N regular season: 47,215   N playoffs: 2,879
@@ -147,8 +161,11 @@ All data from cache/ — same source as the plots above.
                                  log-odds    ≈pp         p       log-odds    ≈pp         p     
    ────────────────────────────  ────────  ─────  ────────  ───  ────────  ─────  ────────  ───
    Rest diff (per day)             +0.064   +1.5    <0.001  ***    +0.098   +2.3     0.014    *
+                    95% CI (pp)            [+1.1,+1.9]                           [+0.5,+4.1]
    Altitude home (DEN/UTA)         +0.343   +8.2    <0.001  ***    -0.077   -1.8     0.591     
+                    95% CI (pp)            [+6.4,+10.0]                           [-8.4,+4.8]
    Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
+                    95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
 
    ► Rest matters in both contexts — effect is larger in playoffs
      (≈2.3 pp/day) than regular season (≈1.5 pp/day).
@@ -157,6 +174,13 @@ All data from cache/ — same source as the plots above.
    ► Time zones show no significant effect in either context.
      Only 107 coast-to-coast playoff games exist across 42 seasons
      (5,676 regular-season) — too sparse for reliable playoff inference.
+
+   Playoff rest controlling for team quality (N = 2,879 games):
+   quality_diff = home RS win% − away RS win% (same season).
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   rest_diff (per day)             +0.063    +1.5     0.146     
+   quality_diff (RS win% gap)      +4.823  +112.4    <0.001  ***
 
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home
@@ -408,7 +432,7 @@ All data from cache/ — same source as the plots above.
       1000–1500     9,615        59.4%          -0.9 pp
           1500+    12,010        59.7%          -0.6 pp
 
-   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi),  p = 0.024  *
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.01]),  p = 0.024  *
 
    Playoffs  (N = 3,207, baseline home win % = 64.3%)
 
@@ -419,7 +443,7 @@ All data from cache/ — same source as the plots above.
       1000–1500       717        63.7%          -0.6 pp
           1500+       376        64.9%          +0.6 pp
 
-   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi),  p = 0.769  
+   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.27, +0.37]),  p = 0.769  
 
 
 ─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
@@ -470,7 +494,7 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 47,881 games)
    coef = -0.0111 log-odds per pp of 3PA rate
-   ≈ -2.67 pp change in home win % per 10 pp rise in 3PA rate
+   ≈ -2.67 pp per 10 pp rise in 3PA rate  95% CI [-3.04, -2.29]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
@@ -494,7 +518,7 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 3,207 games)
    coef = -0.0112 log-odds per pp of 3PA rate
-   ≈ -2.57 pp change in home win % per 10 pp rise in 3PA rate
+   ≈ -2.57 pp per 10 pp rise in 3PA rate  95% CI [-4.01, -1.12]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
@@ -523,11 +547,15 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 47,879 games)
    coef = +0.0099 log-odds per possession
-   ≈ +2.37 pp change in home win % per 10 extra possessions
+   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.76, +2.98]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
    coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
+
+   Expected pace (LOO)  (N = 47,641 games)
+   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = <0.001  ***
+   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.026  *
 
    Playoffs  (n = 41 seasons)
    Season-level Pearson r  = -0.115  (p = 0.474  )
@@ -544,11 +572,15 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 3,207 games)
    coef = -0.0038 log-odds per possession
-   ≈ -0.87 pp change in home win % per 10 extra possessions
+   ≈ -0.87 pp per 10 extra possessions  95% CI [-3.18, +1.44]
    p = 0.461  
 
    Controlling for era (within-era game-level effect):
    coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.315  
+
+   Expected pace (LOO)  (N = 3,207 games)
+   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.492  
+   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.239  
 
 
 ─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
