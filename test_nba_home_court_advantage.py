@@ -1378,6 +1378,85 @@ class TestComputeTeamHcaStats:
         assert result == {}
 
 
+class TestFetchRefereeData:
+    def _make_game_log(self, path, game_ids):
+        rows = []
+        for gid in game_ids:
+            rows.append({"GAME_ID": gid, "MATCHUP": "BOS vs. MIA", "WL": "W", "TEAM_NAME": "Boston Celtics"})
+        pd.DataFrame(rows).to_csv(path, index=False)
+
+    def test_reads_from_cache_when_present(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        cache_file = tmp_path / "referee_2023-24_Playoffs.csv"
+        cached = pd.DataFrame({
+            "GAME_ID": ["0042300401", "0042300401"],
+            "personId": [1, 2],
+            "name": ["Joe Smith", "Ann Jones"],
+        })
+        cached.to_csv(cache_file, index=False)
+        result = nba.fetch_referee_data(2024, "Playoffs")
+        assert result is not None
+        assert len(result) == 2
+        assert list(result["name"]) == ["Joe Smith", "Ann Jones"]
+
+    def test_returns_none_when_no_game_log(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        result = nba.fetch_referee_data(2024, "Playoffs")
+        assert result is None
+
+
+class TestComputeRefereeBiasStats:
+    def _setup(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Two games: game 1 (home wins, more home fouls), game 2 (visitor fouls more)
+        game_log = pd.DataFrame({
+            "GAME_ID":  [1, 1, 2, 2],
+            "MATCHUP":  ["BOS vs. MIA", "MIA @ BOS", "LAL vs. GSW", "GSW @ LAL"],
+            "WL":       ["W", "L", "L", "W"],
+            "TEAM_NAME": ["Boston Celtics", "Miami Heat", "Los Angeles Lakers", "Golden State Warriors"],
+            "PF":       [22, 18, 18, 24],
+            "FGM":      [40, 38, 38, 42],
+            "FGA":      [85, 82, 82, 88],
+            "FG3M":     [12, 10, 10, 14],
+            "FG3A":     [30, 28, 28, 32],
+            "FTM":      [18, 16, 16, 20],
+            "FTA":      [22, 20, 20, 24],
+        })
+        game_log.to_csv(nba.cache_path(2024, "Playoffs"), index=False)
+
+        # GAME_IDs must normalize to the same 10-digit string as the game log entries
+        # game log has int GAME_ID 1 → "0000000001"; 2 → "0000000002"
+        ref_df = pd.DataFrame({
+            "GAME_ID":  ["0000000001", "0000000001", "0000000002", "0000000002"],
+            "personId": [10, 11, 10, 12],
+            "name":     ["Alice Ref", "Bob Ref", "Alice Ref", "Carol Ref"],
+            "year":     [2024, 2024, 2024, 2024],
+        })
+        return ref_df
+
+    def test_computes_per_official_mean_foul_diff(self, tmp_path, monkeypatch):
+        ref_df = self._setup(tmp_path, monkeypatch)
+        # game 1: foul_diff = 22-18 = +4; game 2: foul_diff = 18-24 = -6
+        # Alice worked both games: mean = (4 + -6) / 2 = -1.0
+        result = nba.compute_referee_bias_stats(
+            ref_df, 2024, 2024, "Playoffs", min_games=1
+        )
+        alice = next(o for o in result if o["name"] == "Alice Ref")
+        assert abs(alice["mean_foul_diff"] - (-1.0)) < 0.01
+        assert alice["n_games"] == 2
+
+    def test_excludes_officials_below_min_games(self, tmp_path, monkeypatch):
+        ref_df = self._setup(tmp_path, monkeypatch)
+        # With min_games=2, only Alice (2 games) qualifies; Bob and Carol have 1 each
+        result = nba.compute_referee_bias_stats(
+            ref_df, 2024, 2024, "Playoffs", min_games=2
+        )
+        names = [o["name"] for o in result]
+        assert "Alice Ref" in names
+        assert "Bob Ref" not in names
+        assert "Carol Ref" not in names
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)

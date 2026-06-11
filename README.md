@@ -29,7 +29,7 @@ regression tables (auto-generated each run, never edit manually).
 
 ### PNG charts
 
-`nba_home_court_advantage.py` saves seventeen PNG charts.
+`nba_home_court_advantage.py` saves eighteen PNG charts.
 
 **Overview (combined and individual panels):**
 
@@ -65,10 +65,11 @@ Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS
 | `nba_home_court_3pa.png` | 3-panel figure: league-wide 3PA rate vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
 | `nba_home_court_pace.png` | 3-panel figure: league-wide pace (possessions per 48 min) vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
 | `nba_home_court_team_hca.png` | 2-panel figure: regular-season HCA by franchise (sorted bar chart) and scatter of regular-season vs. playoff HCA per franchise |
+| `nba_home_court_referee.png` | 2-panel figure: top/bottom referees ranked by career home foul differential; box plots of per-official bias distribution by era |
 
 ### Regression analysis (stdout)
 
-Twelve analyses printed to stdout:
+Fourteen analyses printed to stdout:
 
 1. **Overall decline** — trend line for home win % on year at season level; overall and per-era slopes.
 2. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
@@ -83,6 +84,7 @@ Twelve analyses printed to stdout:
 11. **League-wide 3-point shooting** — season-level and game-level relationship between 3PA rate and home win %; within-era game-level test to separate trend from mechanism.
 12. **Pace** — season-level and game-level relationship between possessions per 48 min and home win %; within-era test; result is a null/reversed finding (pace does not explain the decline).
 13. **Franchise home court advantage** — per-franchise home win% minus road win%; ranked table for regular season and playoffs; altitude franchises (Denver, Utah) identified; scatter of regular-season vs. playoff HCA.
+14. **Referee crew home foul bias** — per-official career mean home foul differential in playoff games (≥50 games); top/bottom rankings; era-bucketed distribution of individual biases showing whether referee neutrality has increased over time.
 
 ### PDF report
 
@@ -93,7 +95,7 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains fifteen sections plus an appendix. Narrative prose and chart placement are
+The report contains sixteen sections plus an appendix. Narrative prose and chart placement are
 driven entirely by `FINDINGS.md` — `generate_report.py` iterates its `##` sections in order with
 no hardcoded section list. Edit `FINDINGS.md` to update prose or reorder charts; the PDF picks up
 changes automatically. Appendix A renders `RESULTS.md` verbatim and is the authoritative source for
@@ -102,7 +104,7 @@ coefficient values and significance levels.
 ## Updating FINDINGS.md
 
 `FINDINGS.md` is the single source of truth for narrative prose and chart
-placement. It has fourteen numbered analysis sections (§1–§14) plus §15 Summary.
+placement. It has fifteen numbered analysis sections (§1–§15) plus §16 Summary (renamed once §16 Referee is added).
 Charts are embedded as `![caption](filename.png)` image references within the
 relevant section — the PDF picks them up automatically. Edit it when findings
 change, then regenerate the PDF with `python3 generate_report.py`.

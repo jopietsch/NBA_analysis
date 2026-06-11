@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 14 numbered `##` sections (§1–§14 analyses + §15 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 15 numbered `##` sections (§1–§15 analyses + §16 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -67,6 +67,9 @@ The project is three Python modules plus one test file:
 - `compute_league_3pa_stats(...)` — per-season league-wide 3PA rate (% of all FGA) and home win %; used for the 3PA vs. HCA analysis
 - `compute_league_pace_stats(...)` — per-season league-wide pace (possessions per 48 min) and home win %; pace = (FGA − OREB + TOV + 0.44×FTA) / MIN × 240
 - `compute_team_hca_stats(start_year, end_year, season_type, skip_years, min_games=50)` — all-time per-franchise home/road win% and HCA (home% − road%); dict keyed by TEAM_NAME
+- `fetch_referee_data(end_year, season_type)` — per-game official list from BoxScoreSummaryV3 (data_sets[3]); cached as `referee_{season}_{type}.csv`; 4 rows/game (crew chief + 2 refs + replay center)
+- `fetch_all_referee_data(start_year, end_year, season_type, skip_years)` — concat across seasons; returns DataFrame[GAME_ID, personId, name, year]
+- `compute_referee_bias_stats(ref_df, start_year, end_year, season_type, skip_years, min_games=50)` — per-official mean home foul_diff (PF_home − PF_away); computes foul data from game logs internally; returns list of dicts sorted by mean_foul_diff desc
 - `bucket_stats_by_era(seasons, stats)` — average any per-season stats dict within each ERA_DEFS period
 - `_align_to_seasons(ref_seasons, target_seasons, target_stats, key)` — align a per-season stat series to a reference season list, filling gaps with NaN; used to overlay playoff data on the regular-season x-axis in plot functions
 
@@ -94,6 +97,7 @@ The project is three Python modules plus one test file:
 - `plot_3pa_hca_analysis(...)` — 3-panel figure: dual-axis time series (3PA rate vs. home win %), regular-season scatter, playoff scatter → `nba_home_court_3pa.png`
 - `plot_pace_hca_analysis(...)` — 3-panel figure: dual-axis time series (pace vs. home win %), regular-season scatter, playoff scatter → `nba_home_court_pace.png`
 - `plot_team_hca_analysis(reg_stats, po_stats)` — 2-panel figure: sorted horizontal bar chart of regular-season HCA by franchise; scatter of regular-season vs. playoff HCA per franchise → `nba_home_court_team_hca.png`
+- `plot_referee_analysis(bias_stats)` — 2-panel figure: top/bottom officials ranked by career mean home foul diff; box plots of per-official era-mean bias by era → `nba_home_court_referee.png`
 
 ---
 
@@ -113,7 +117,7 @@ The project is three Python modules plus one test file:
   - `tpa_rate_avg` — game-level combined 3PA rate: total FG3A / total FGA across both teams (%)
   - `pace_avg` — average possessions per team per game: (home_poss + away_poss) / 2; poss = FGA − OREB + TOV + 0.44×FTA; NaN if OREB/TOV absent
 
-Thirteen analyses printed to stdout:
+Fourteen analyses printed to stdout:
 1. **Overall decline** — trend line for `home_win_pct ~ year` at season level; overall slope and per-era slopes for regular season and playoffs
 2. **Sequential R² decomposition** — era → +rest → +altitude → +tz → +covid
 3. **Pre/post-2014 coefficient stability** — do rest/altitude/tz effects change after the Finals format shift?
@@ -127,6 +131,7 @@ Thirteen analyses printed to stdout:
 11. **League-wide 3-point shooting** — season-level Pearson/Spearman r between 3PA rate and home win %; era-bucketed table; game-level logistic bivariate and era-controlled to test within-era mechanism
 12. **Pace** — season-level and game-level relationship between possessions per 48 min and home win %; within-era test; null/reversed result (pace does not explain the decline)
 13. **Franchise home court advantage** — per-franchise home win% minus road win%, aggregated across all seasons; ranked table for regular season and playoffs; altitude teams identified; `compute_team_hca_stats()` called directly (not from game-level dataset)
+14. **Referee crew home foul bias** — per-official career mean home foul differential (playoff games, ≥50 games); top/bottom rankings; era-bucketed distribution showing whether individual referee neutrality has increased; uses `BoxScoreSummaryV3` (cached)
 
 Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean). `scipy.stats` for Pearson/Spearman in parity and 3PA analyses. `scipy.stats.chi2_contingency` for series structure chi-square.
 

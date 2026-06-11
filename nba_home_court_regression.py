@@ -129,6 +129,7 @@ def build_game_dataset() -> pd.DataFrame:
             ]
 
             chunks.append(merged[[
+                "GAME_ID",
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
@@ -972,6 +973,82 @@ def run_team_hca_analysis() -> None:
         print()
 
 
+# ── Analysis 14: Referee crew home foul bias ─────────────────────────────────
+
+def run_referee_analysis() -> None:
+    """Per-official home foul bias for playoff games; era trend and rankings."""
+    from scipy import stats as sp_stats
+
+    _section("14. REFEREE CREW HOME FOUL BIAS (PLAYOFFS)")
+    print("   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)")
+    print("   Officials with <50 playoff games excluded.\n")
+
+    ref_df = nba.fetch_all_referee_data(
+        nba.START_YEAR, nba.END_YEAR, "Playoffs",
+        skip_years=nba.SKIP_PLAYOFF_YEARS,
+    )
+    if ref_df is None:
+        print("   No cached referee data — run the analysis first to fetch it.\n")
+        return
+
+    bias_stats = nba.compute_referee_bias_stats(
+        ref_df,
+        nba.START_YEAR, nba.END_YEAR, "Playoffs",
+        skip_years=nba.SKIP_PLAYOFF_YEARS,
+        min_games=50,
+    )
+    if not bias_stats:
+        print("   No officials met the minimum-games threshold.\n")
+        return
+
+    n_total = len(bias_stats)
+    n_negative = sum(1 for o in bias_stats if o["mean_foul_diff"] < 0)
+    all_means = [o["mean_foul_diff"] for o in bias_stats]
+    print(f"   {n_total} officials with ≥50 playoff games")
+    print(f"   {n_negative}/{n_total} ({100*n_negative/n_total:.0f}%) show negative mean foul diff "
+          f"(home-favoring)")
+    print(f"   League mean foul_diff across officials: {np.mean(all_means):+.3f} fouls/game")
+    print(f"   SD across officials: {np.std(all_means):.3f} fouls/game\n")
+
+    NW, CW = 26, 9
+    header = (f"   {'Official':<{NW}} {'N games':>{CW}} {'Mean diff':>{CW}} "
+              f"{'p (vs 0)':>{CW}} {'':>4}")
+    print(header)
+    print(f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*4}")
+
+    def _print_officials(officials: list[dict]) -> None:
+        for o in officials:
+            _, pval = sp_stats.ttest_1samp([o["mean_foul_diff"]] * o["n_games"],
+                                           popmean=0)
+            pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+            print(f"   {o['name']:<{NW}} {o['n_games']:>{CW},} "
+                  f"{o['mean_foul_diff']:>+{CW}.3f} {pval_s:>{CW}} "
+                  f"{_stars(pval).strip():>4}")
+
+    print(f"\n   Top 10 (most home-favoring — lowest foul_diff):")
+    _print_officials(list(reversed(bias_stats[-10:])))
+    print(f"\n   Bottom 10 (least home-favoring — highest foul_diff):")
+    _print_officials(bias_stats[:10])
+
+    # Era-bucketed mean foul_diff across all officials' era_means
+    era_order = [e[0] for e in nba.ERA_DEFS]
+    era_data: dict[str, list[float]] = {e: [] for e in era_order}
+    for o in bias_stats:
+        for era, mean in o["era_means"].items():
+            if era in era_data:
+                era_data[era].append(mean)
+
+    print(f"\n   Mean home foul_diff by era (officials with games in that era):")
+    print(f"   {'Era':<12} {'N officials':>12} {'Mean':>10} {'SD':>10}")
+    print(f"   {'─'*12} {'─'*12} {'─'*10} {'─'*10}")
+    for era in era_order:
+        vals = era_data[era]
+        if not vals:
+            continue
+        print(f"   {era:<12} {len(vals):>12} {np.mean(vals):>+10.3f} {np.std(vals):>10.3f}")
+    print()
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -1019,6 +1096,7 @@ def run() -> None:
         run_3pa_analysis(df)
         run_pace_analysis(df)
         run_team_hca_analysis()
+        run_referee_analysis()
 
         print("\n" + "═" * _W + "\n")
 

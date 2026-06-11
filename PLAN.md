@@ -166,28 +166,72 @@ for franchise relocations).
 
 ---
 
-## Analysis F: Referee Crew Assignments (Deferred)
+## Analysis F: Referee Crew Assignments
 
-**Data acquisition complexity: VERY HIGH**
-Requires `BoxScoreSummaryV2.Officials` — same per-game fetch as D.
-- Playoffs only: ~3k calls ≈ 50 minutes
-- Full dataset: ~51k calls
+**Status: Ready to implement (playoffs-only first; expand to regular season if findings are interesting)**
 
-**Approach when implemented:**
-- Reuse BoxScoreSummaryV2 infrastructure from Analysis D
-- Cache as `referee_{season}_{type}.csv` with columns `GAME_ID, OFFICIAL_1, OFFICIAL_2, OFFICIAL_3`
-- Analysis: per-crew home foul bias index over time; does crew-level variation explain the foul differential trend?
-- This directly tests the "referees call the game more neutrally" finding (Section 6 of FINDINGS.md)
+**Data acquisition complexity: HIGH**
+- Playoffs only: 3,207 unique game IDs across 41 seasons ≈ 50–60 minutes to fetch
+- Full dataset: ~51k calls (defer until playoffs-only results justify it)
 
-### Status: Deferred — implement after Analysis D establishes BoxScoreSummaryV2 pattern
-- [ ] `fetch_all_referee_data(start_year, end_year, season_type)` in `nba_home_court_data.py`
-- [ ] `compute_referee_bias_stats(...)` in `nba_home_court_data.py`
-- [ ] Tests for above in `test_nba_home_court_advantage.py`
-- [ ] `run_referee_analysis(df)` in `nba_home_court_regression.py`
-- [ ] `plot_referee_analysis(...)` in `nba_home_court_plots.py`; wire call into `nba_home_court_advantage.py main()`
-- [ ] Add `## 16. Referee Patterns` section with placeholder prose + `![caption](path)` to `FINDINGS.md`
-- [ ] Add PNG to `.gitignore`
-- [ ] Update `README.md` (PNG table, regression list, counts) and `CLAUDE.md` (function lists, analysis count)
+### API decisions (verified 2026-06-11)
+
+- **Use `BoxScoreSummaryV3`**, not V2. V2 has known data availability issues for games on or after
+  4/10/2025 and nba_api now warns to migrate. V3 has the same `game_id` parameter and same timeout.
+- **Officials are in `data_sets[3]`** — confirmed on game `0042400401` (2024–25 playoffs):
+  4 rows with columns `gameId, personId, name, nameI, firstName, familyName, jerseyNum`.
+  The 4 officials = crew chief + 2 referees + replay center official.
+- **Game IDs**: cached playoff CSVs have integer GAME_ID values (e.g. `42400407`). Must
+  zero-pad to 10 digits when calling the API: `f"{game_id:010d}"`.
+- **Cache file per season**: `cache/referee_{season}_{type}.csv` with columns
+  `GAME_ID, personId, name` (one row per official per game, 4 rows/game).
+  Flat format is simpler than pivoting to OFFICIAL_1/2/3 — join on GAME_ID at analysis time.
+
+### Analysis design
+
+Primary question: **does referee crew composition predict home foul differential, and has
+crew-level home bias changed over time?**
+
+- **Home foul bias per official**: join referee rows to the game-level dataset on GAME_ID;
+  compute each official's per-game home foul differential (using `foul_diff` column already
+  in `build_game_dataset()`); average across all games they worked.
+- **Era trend**: group bias by era label — test whether crew-level bias has declined in sync
+  with the foul differential trend (§6 of FINDINGS.md).
+- **Top/bottom officials**: rank officials by mean home foul bias; flag outliers.
+- **Regression**: game-level logistic — does presence of a high-bias crew predict `home_win`
+  above and beyond era + rest + altitude + tz?
+
+### Data Layer (`nba_home_court_data.py`)
+- [x] `fetch_referee_data(end_year, season_type)` — for each unique GAME_ID in the cached
+      game log, call `BoxScoreSummaryV3(game_id=f"{gid:010d}", timeout=60)`, extract
+      `data_sets[3]`, keep `GAME_ID, personId, name`; cache result as
+      `cache/referee_{season}_{type}.csv`; skip if cache file already exists; sleep
+      `SLEEP_SEC` between calls
+- [x] `fetch_all_referee_data(start_year, end_year, season_type, skip_years)` — iterate
+      seasons, call `fetch_referee_data`, return concatenated DataFrame
+- [x] `compute_referee_bias_stats(ref_df, start_year, end_year, season_type, skip_years,
+      min_games)` — builds foul_diff from game logs internally; per-official mean,
+      n_games, era_means; returns list of dicts sorted by mean_foul_diff
+
+### Tests (`test_nba_home_court_advantage.py`)
+- [x] `TestFetchRefereeData::test_reads_from_cache_when_present`
+- [x] `TestFetchRefereeData::test_returns_none_when_no_game_log`
+- [x] `TestComputeRefereeBiasStats::test_computes_per_official_mean_foul_diff`
+- [x] `TestComputeRefereeBiasStats::test_excludes_officials_below_min_games`
+
+### Statistical Analysis (`nba_home_court_regression.py`)
+- [x] `run_referee_analysis()` — fetches ref_df internally; per-official mean home foul
+      bias table (top 10 / bottom 10); era-bucketed distribution; distribution stats
+
+### Plot (`nba_home_court_plots.py`)
+- [x] `plot_referee_analysis(bias_stats)` → `nba_home_court_referee.png`
+  - Panel 1: top/bottom 15 officials ranked by career mean home foul diff
+  - Panel 2: box plots of per-official era-mean foul diff by era
+
+### PDF / docs
+- [x] Add `## 16. Referee Patterns` section with placeholder prose + `![caption](nba_home_court_referee.png)` to `FINDINGS.md`
+- [x] Add `nba_home_court_referee.png` to `.gitignore`
+- [x] Update `README.md` (PNG table, regression list, counts) and `CLAUDE.md` (function lists, analysis count)
 - [ ] Run `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate PNGs and `RESULTS.md`
 - [ ] Update `FINDINGS.md` §16 with actual numbers from `RESULTS.md`; regenerate PDF
 
@@ -238,4 +282,4 @@ Current FINDINGS.md section order (§1–§15):
 | E: Travel | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | G: Pace   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | H: TeamHCA| ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| F: Refs   | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| F: Refs   | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |

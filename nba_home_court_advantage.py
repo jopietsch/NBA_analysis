@@ -22,13 +22,14 @@ from nba_home_court_data import (
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_travel_stats, compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats,
+    fetch_all_referee_data, compute_referee_bias_stats,
 )
 from nba_home_court_plots import (
     TRAVEL_COLORS, TRAVEL_LABELS,
     plot_results, plot_rest_analysis, plot_category_road_win_analysis,
     plot_differential_analysis, plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
-    plot_pace_hca_analysis, plot_team_hca_analysis,
+    plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
 )
 
 
@@ -135,6 +136,19 @@ def main() -> None:
         skip_years=SKIP_PLAYOFF_YEARS, min_games=20,
     )
     plot_team_hca_analysis(reg_team_stats, po_team_stats)
+
+    print("\nFetching referee data (BoxScoreSummaryV3, cached under cache/)...")
+    ref_df = fetch_all_referee_data(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS,
+    )
+    if ref_df is not None:
+        bias_stats = compute_referee_bias_stats(
+            ref_df, START_YEAR, END_YEAR, "Playoffs",
+            skip_years=SKIP_PLAYOFF_YEARS, min_games=50,
+        )
+        plot_referee_analysis(bias_stats)
+    else:
+        print("  No referee data cached yet — will fetch during next run.")
 
     import nba_home_court_regression
     nba_home_court_regression.run()

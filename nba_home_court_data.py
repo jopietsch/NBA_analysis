@@ -1068,3 +1068,156 @@ def compute_shot_zone_stats(
             stats[zone].append(home_pcts[zone] - road_pcts[zone])
 
     return seasons, stats
+
+
+# ── Referee crew analysis ─────────────────────────────────────────────────────
+
+def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Fetch officials for every game in the cached game log via BoxScoreSummaryV3
+    (data_sets[3]). Caches one row per official per game as
+    cache/referee_{season}_{type}.csv with columns [GAME_ID, personId, name].
+    Returns None if no game log or no officials found.
+    """
+    cache_file = os.path.join(
+        CACHE_DIR,
+        f"referee_{season_str(end_year)}_{season_type.replace(' ', '_')}.csv",
+    )
+    if os.path.exists(cache_file):
+        try:
+            df = pd.read_csv(cache_file)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    game_log = _load_game_log(end_year, season_type)
+    if game_log is None:
+        return None
+
+    game_ids = sorted(game_log["GAME_ID"].unique())
+    from nba_api.stats.endpoints import boxscoresummaryv3
+
+    records: list[dict] = []
+    failed = 0
+    print(f"  Fetching referee data: {season_str(end_year)} {season_type} "
+          f"({len(game_ids)} games)...", flush=True)
+    for i, gid in enumerate(game_ids, 1):
+        gid_str = f"{int(float(gid)):010d}"
+        try:
+            b = boxscoresummaryv3.BoxScoreSummaryV3(game_id=gid_str, timeout=60)
+            for _, row in b.data_sets[3].get_data_frame().iterrows():
+                records.append({
+                    "GAME_ID":   gid_str,
+                    "personId":  int(row["personId"]),
+                    "name":      str(row["name"]),
+                })
+        except Exception as e:
+            failed += 1
+            if failed <= 3:
+                print(f"    WARN {gid_str}: {e!r}")
+        time.sleep(SLEEP_SEC)
+        if i % 100 == 0:
+            print(f"    ...{i}/{len(game_ids)}", flush=True)
+
+    if failed:
+        print(f"    {failed} games failed (API errors)")
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    if not records:
+        pd.DataFrame().to_csv(cache_file, index=False)
+        return None
+
+    df = pd.DataFrame(records)
+    df.to_csv(cache_file, index=False)
+    return df
+
+
+def fetch_all_referee_data(
+    start_year: int,
+    end_year: int,
+    season_type: str,
+    skip_years: set[int] = frozenset(),
+) -> pd.DataFrame | None:
+    """
+    Fetch referee data for all seasons and return a concatenated DataFrame with
+    columns [GAME_ID, personId, name, year], or None if nothing is cached.
+    """
+    chunks: list[pd.DataFrame] = []
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = fetch_referee_data(year, season_type)
+        if df is None or df.empty:
+            continue
+        df = df.copy()
+        df["year"] = year
+        chunks.append(df)
+    if not chunks:
+        return None
+    return pd.concat(chunks, ignore_index=True)
+
+
+def compute_referee_bias_stats(
+    ref_df: pd.DataFrame,
+    start_year: int,
+    end_year: int,
+    season_type: str,
+    skip_years: set[int] = frozenset(),
+    min_games: int = 50,
+) -> list[dict]:
+    """
+    Per-official home foul bias aggregated across all games they worked.
+    Loads game logs internally to compute foul_diff (PF_home − PF_away) so this
+    function does not depend on the regression game dataset.
+
+    Returns a list of dicts sorted by mean_foul_diff descending, each with:
+      {personId, name, n_games, mean_foul_diff, era_means: {era_label: mean}}
+    Officials with fewer than min_games games are excluded.
+    """
+    def _norm(gid) -> str:
+        return f"{int(float(gid)):010d}"
+
+    foul_chunks: list[pd.DataFrame] = []
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+        merged = _merge_home_away_rows(df)
+        if merged is None:
+            continue
+        era_label = next(
+            (lbl for lbl, y1, y2, _ in ERA_DEFS if y1 <= year <= y2), "other"
+        )
+        diffs = _compute_box_differentials(merged)
+        foul_chunks.append(pd.DataFrame({
+            "GAME_ID":    merged["GAME_ID"].apply(_norm),
+            "foul_diff":  diffs["foul_diff"].values,
+            "era":        era_label,
+        }))
+
+    if not foul_chunks:
+        return []
+
+    foul_data = pd.concat(foul_chunks, ignore_index=True)
+
+    ref = ref_df.copy()
+    ref["GAME_ID"] = ref["GAME_ID"].apply(_norm)
+    joined = ref.merge(foul_data, on="GAME_ID", how="inner")
+
+    result: list[dict] = []
+    for (pid, name), grp in joined.groupby(["personId", "name"]):
+        if len(grp) < min_games:
+            continue
+        era_means = grp.groupby("era")["foul_diff"].mean().to_dict()
+        result.append({
+            "personId":      int(pid),
+            "name":          str(name),
+            "n_games":       len(grp),
+            "mean_foul_diff": float(grp["foul_diff"].mean()),
+            "era_means":     era_means,
+        })
+
+    result.sort(key=lambda x: x["mean_foul_diff"], reverse=True)
+    return result

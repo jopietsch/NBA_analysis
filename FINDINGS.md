@@ -506,6 +506,41 @@ playoff home advantages than their regular-season figures might suggest.
 
 ---
 
+## 16. Referee Patterns
+
+Officials have historically called more fouls on visiting teams than on home
+teams — a pattern consistent with crowd-driven influence on referee judgment.
+This analysis asks whether that bias is distributed uniformly across referees or
+concentrated in a subset, and whether individual referee tendencies have changed
+as overall home court advantage has declined.
+
+### Methodology
+
+For each playoff game from 1983–84 through 2024–25 (excluding the 2020 bubble
+season), officials were fetched from the NBA API (BoxScoreSummaryV3) and cached.
+Each official's mean home foul differential (home fouls minus away fouls per
+game) was computed across all playoff games they worked, restricted to officials
+with at least 50 games. A negative value indicates the home team was called for
+fewer fouls — the home-favoring direction. Era means were computed separately
+for each official within each rule-change era to track whether individual biases
+have shifted over time.
+
+### Distribution of Referee Bias
+
+[Placeholder — update after running the analysis]
+
+### Era Trends
+
+[Placeholder — update after running the analysis]
+
+### Individual Referee Rankings
+
+[Placeholder — update after running the analysis]
+
+![Figure 17. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
+
+---
+
 ## 15. Summary
 
 Home court advantage has declined substantially in both the regular season and
