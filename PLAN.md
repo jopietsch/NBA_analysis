@@ -135,34 +135,34 @@ flight miles — and road trip length — may explain variance the timezone vari
 for franchise relocations).
 
 ### Data Layer (`nba_home_court_advantage.py`)
-- [ ] `ARENA_COORDS: dict[str, tuple[float, float]]` constant near `TEAM_TIMEZONES` — map franchise name → (lat, lon)
-- [ ] `_haversine(lat1, lon1, lat2, lon2) -> float` private helper
-- [ ] `fetch_travel_data(end_year, season_type)` — merge home/away rows, map team names to coords via ARENA_COORDS, compute haversine distance; drop rows with unknown franchises; return df with `distance_miles`, `HOME_WIN`
-- [ ] `compute_travel_stats(start_year, end_year, season_type, skip_years)` — bucket distances: `0–500`, `500–1000`, `1000–1500`, `1500+` miles; return per-bucket per-season home win %
+- [x] `ARENA_COORDS: dict[str, tuple[float, float]]` constant near `TEAM_TIMEZONES` — map franchise name → (lat, lon)
+- [x] `_haversine(lat1, lon1, lat2, lon2) -> float` private helper
+- [x] `fetch_travel_data(end_year, season_type)` — merge home/away rows, map team names to coords via ARENA_COORDS, compute haversine distance; drop rows with unknown franchises; return df with `distance_miles`, `HOME_WIN`
+- [x] `compute_travel_stats(start_year, end_year, season_type, skip_years)` — bucket distances: `0–500`, `500–1000`, `1000–1500`, `1500+` miles; return per-bucket per-season home win %
 - No new cache files
 
 ### Tests (`test_nba_home_court_advantage.py`)
-- [ ] `TestHaversine::test_boston_to_la_approximately_2600_miles` — assert within ±50 miles of known value
-- [ ] `TestHaversine::test_same_location_returns_zero`
-- [ ] `TestHaversine::test_is_symmetric`
-- [ ] `TestFetchTravelData::test_computes_distance_from_arena_coords` — synthetic CSV with Boston home vs. LA Lakers; assert distance > 2500 and HOME_WIN correct
-- [ ] `TestFetchTravelData::test_drops_unknown_franchises`
-- [ ] `TestFetchTravelData::test_returns_none_when_cache_missing`
-- [ ] `TestComputeTravelStats::test_aggregates_home_win_pct_by_distance_bucket`
-- [ ] `TestComputeTravelStats::test_skips_years_with_no_data`
-- [ ] `TestComputeTravelStats::test_skip_years_param_excludes_years`
+- [x] `TestHaversine::test_boston_to_la_approximately_2600_miles` — assert within ±50 miles of known value
+- [x] `TestHaversine::test_same_location_returns_zero`
+- [x] `TestHaversine::test_is_symmetric`
+- [x] `TestFetchTravelData::test_computes_distance_from_arena_coords` — synthetic CSV with Boston home vs. LA Lakers; assert distance > 2500 and HOME_WIN correct
+- [x] `TestFetchTravelData::test_drops_unknown_franchises`
+- [x] `TestFetchTravelData::test_returns_none_when_cache_missing`
+- [x] `TestComputeTravelStats::test_aggregates_home_win_pct_by_distance_bucket`
+- [x] `TestComputeTravelStats::test_skips_years_with_no_data`
+- [x] `TestComputeTravelStats::test_skip_years_param_excludes_years`
 
 ### Statistical Analysis (`nba_home_court_regression.py`)
-- [ ] Add distance bucket coefficients to logistic model (parallel to timezone analysis)
-- [ ] `run_travel_analysis(df)` — bivariate logistic per bucket; table of bucket | N | home win % | log-odds | p
+- [x] Add distance bucket coefficients to logistic model (parallel to timezone analysis)
+- [x] `run_travel_analysis(df)` — bivariate logistic per bucket; table of bucket | N | home win % | log-odds | p
 
 ### Plot (`nba_home_court_advantage.py`)
-- [ ] Reuse `plot_category_road_win_analysis` with distance buckets as category keys → `nba_home_court_travel.png`
+- [x] Reuse `plot_category_road_win_analysis` with distance buckets as category keys → `nba_home_court_travel.png`
 
 ### PDF Integration
-- [ ] Add `## 12. Travel Distance` section to `FINDINGS.md`
-- [ ] Add `_section_travel(s, sections)` function to `generate_report.py`
-- [ ] Add `story += _section_travel(s, sections)` call in `build_report()`
+- [x] Add `## 12. Travel Distance` section to `FINDINGS.md`
+- [x] Add `_section_travel(s, sections)` function to `generate_report.py`
+- [x] Add `story += _section_travel(s, sections)` call in `build_report()`
 
 ---
 
@@ -232,8 +232,8 @@ crew-level home bias changed over time?**
 - [x] Add `## 16. Referee Patterns` section with placeholder prose + `![caption](nba_home_court_referee.png)` to `FINDINGS.md`
 - [x] Add `nba_home_court_referee.png` to `.gitignore`
 - [x] Update `README.md` (PNG table, regression list, counts) and `CLAUDE.md` (function lists, analysis count)
-- [ ] Run `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate PNGs and `RESULTS.md`
-- [ ] Update `FINDINGS.md` §16 with actual numbers from `RESULTS.md`; regenerate PDF
+- [x] Run `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate PNGs and `RESULTS.md`
+- [x] Update `FINDINGS.md` §16 with actual numbers from `RESULTS.md`; regenerate PDF
 
 ---
 
@@ -268,7 +268,7 @@ Current FINDINGS.md section order (§1–§16):
 §16 Summary
 ```
 
-- [ ] Update Summary rank table in FINDINGS.md once referee (§7) findings are in
+- [x] Update Summary rank table in FINDINGS.md once referee (§7) findings are in — referee findings corroborate the foul differential mechanism; no new summary row needed
 
 ---
 
@@ -282,4 +282,4 @@ Current FINDINGS.md section order (§1–§16):
 | E: Travel | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | G: Pace   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | H: TeamHCA| ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| F: Refs   | ✅ | ✅ | ✅ | ✅ | ✅ | ⬜ |
+| F: Refs   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
