@@ -284,6 +284,59 @@ All data from cache/ — same source as the plots above.
    Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi),  p = 0.769  
 
 
+─── 11. LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────
+   Does more 3-point shooting reduce home court advantage?
+   Two angles: season-level correlation and game-level logistic regression.
+
+   Regular season  (n = 42 seasons)
+   Season-level Pearson r  = -0.898  (p = <0.001  ***)
+   Season-level Spearman ρ = -0.884  (p = <0.001  ***)
+
+   Era           Mean 3PA%    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94             6.8%         65.0%           11
+   1995–01            18.1%         60.1%            7
+   2002–04            18.3%         61.1%            3
+   2005–17            23.8%         59.5%           13
+   2018–22            37.5%         56.2%            5
+   2023–25            40.1%         55.6%            3
+
+   Game-level bivariate logistic  (N = 47,881 games)
+   coef = -0.0111 log-odds per pp of 3PA rate
+   ≈ -2.67 pp change in home win % per 10 pp rise in 3PA rate
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0096  (≈ -2.31 pp per 10 pp 3PA)  p = <0.001  ***
+   (If this is small and insignificant, 3PA effect is fully explained
+    by the secular trend — higher 3PA and lower HCA happen at the same
+    time but 3PA does not predict outcomes within any given era.)
+
+   Playoffs  (n = 41 seasons)
+   Season-level Pearson r  = -0.468  (p = 0.002  **)
+   Season-level Spearman ρ = -0.390  (p = 0.012  *)
+
+   Era           Mean 3PA%    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94             8.7%         67.7%           11
+   1995–01            20.9%         64.1%            7
+   2002–04            20.8%         64.2%            3
+   2005–17            25.8%         64.3%           13
+   2018–22            38.6%         60.8%            4
+   2023–25            40.0%         58.4%            3
+
+   Game-level bivariate logistic  (N = 3,207 games)
+   coef = -0.0112 log-odds per pp of 3PA rate
+   ≈ -2.57 pp change in home win % per 10 pp rise in 3PA rate
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0111  (≈ -2.54 pp per 10 pp 3PA)  p = 0.097  
+   (If this is small and insignificant, 3PA effect is fully explained
+    by the secular trend — higher 3PA and lower HCA happen at the same
+    time but 3PA does not predict outcomes within any given era.)
+
+
 ════════════════════════════════════════════════════════════════════════
 
 ```

@@ -1099,6 +1099,38 @@ def compute_differential_stats(
     return seasons, stats
 
 
+def compute_league_3pa_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], list[float], list[float]]:
+    """
+    Per-season league-wide 3PA rate (% of all FGA) and home win %.
+    Returns (seasons, tpa_rates, home_win_pcts).
+    """
+    seasons: list[str] = []
+    tpa_rates: list[float] = []
+    home_win_pcts: list[float] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+        total_fga = df["FGA"].sum()
+        if total_fga == 0:
+            continue
+        tpa_rate = 100.0 * df["FG3A"].sum() / total_fga
+        merged = _merge_home_away_rows(df)
+        if merged is None:
+            continue
+        hw_pct = 100.0 * (merged["WL_home"] == "W").mean()
+        seasons.append(short_label(year))
+        tpa_rates.append(tpa_rate)
+        home_win_pcts.append(hw_pct)
+
+    return seasons, tpa_rates, home_win_pcts
+
+
 def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-home-game point margin from the cached game log.
@@ -1754,6 +1786,107 @@ def plot_shot_zone_analysis(
     plt.show()
 
 
+def plot_3pa_hca_analysis(
+    reg_seasons: list[str], reg_tpa: list[float], reg_pcts: list[float],
+    po_seasons:  list[str], po_tpa:  list[float], po_pcts:  list[float],
+) -> None:
+    """
+    3-panel figure: does the league-wide 3-point shooting rate drive the decline
+    in home court advantage?
+
+    Panel 1: dual-axis time series — regular-season 3PA rate (right axis, orange)
+             vs. home win % (left axis, blue), era-shaded.
+    Panel 2: scatter regular season — x = 3PA rate, y = home win %, era-colored,
+             trend line, Pearson r annotation.
+    Panel 3: scatter playoffs — same layout.
+    """
+    from scipy.stats import pearsonr, spearmanr
+
+    ORANGE = "#e8a33d"
+
+    x_reg = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+    y_tpa_reg = np.array(reg_tpa, dtype=float)
+    y_pct_reg = np.array(reg_pcts, dtype=float)
+    y_tpa_po  = np.array(po_tpa,  dtype=float)
+    y_pct_po  = np.array(po_pcts, dtype=float)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))
+    fig.suptitle("Does League-Wide 3-Point Shooting Explain the Decline in Home Court Advantage?",
+                 fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Data: NBA.com  |  3PA rate = share of all field-goal attempts that are 3-pointers  "
+             "|  1983–84 through 2024–25",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: dual-axis time series (regular season) ─────────────────────
+    _shade_eras(ax1, reg_seasons, label_y=None)
+    ax1.plot(x_reg, y_pct_reg, color=BLUE, linewidth=2, label="Home win %", zorder=2)
+    ax1.set_xticks(x_reg[::tick_step])
+    ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("Home win %", color=BLUE, fontsize=10)
+    ax1.tick_params(axis="y", labelcolor=BLUE)
+    ax1.set_title("Regular-season 3PA rate vs. home win %\nover time",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    ax1r = ax1.twinx()
+    ax1r.plot(x_reg, y_tpa_reg, color=ORANGE, linewidth=2, label="3PA rate %", zorder=2, alpha=0.85)
+    ax1r.set_ylabel("League 3PA rate (% of FGA)", color=ORANGE, fontsize=10)
+    ax1r.tick_params(axis="y", labelcolor=ORANGE)
+    ax1r.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+
+    lines1, labs1 = ax1.get_legend_handles_labels()
+    lines2, labs2 = ax1r.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labs1 + labs2, fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 2: scatter regular season ─────────────────────────────────────
+    def _scatter_panel(ax, seasons, x_vals, y_vals, title):
+        for s, xv, yv in zip(seasons, x_vals, y_vals):
+            if np.isnan(xv) or np.isnan(yv):
+                continue
+            yr = label_to_year(s)
+            color = GRAY
+            for (_, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+                if y1 <= yr <= y2:
+                    color = era_color
+                    break
+            ax.scatter(xv, yv, color=color, s=60, zorder=3, edgecolors="white", linewidths=0.8)
+
+        valid = ~np.isnan(np.array(x_vals)) & ~np.isnan(np.array(y_vals))
+        xv_arr = np.array(x_vals)[valid]
+        yv_arr = np.array(y_vals)[valid]
+        if valid.sum() >= 4:
+            z = np.polyfit(xv_arr, yv_arr, 1)
+            xr = np.linspace(xv_arr.min(), xv_arr.max(), 100)
+            ax.plot(xr, np.poly1d(z)(xr), "--", color=GRAY, linewidth=1.8, alpha=0.7)
+            r, p = pearsonr(xv_arr, yv_arr)
+            p_str = "<0.001" if p < 0.001 else f"{p:.3f}"
+            ax.text(0.05, 0.05, f"Pearson r = {r:+.2f}  (p = {p_str})",
+                    transform=ax.transAxes, fontsize=9, color="#444",
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.7))
+
+        era_patches = [mpatches.Patch(color=c, label=e[0]) for e, c in zip(ERA_DEFS, ERA_COLORS)]
+        ax.legend(handles=era_patches, fontsize=8, framealpha=0.85, edgecolor="#ddd",
+                  title="Era", title_fontsize=8)
+        ax.set_xlabel("League 3PA rate (% of FGA)", fontsize=10)
+        ax.set_ylabel("Home win %", fontsize=10)
+        ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+        ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    _scatter_panel(ax2, reg_seasons, list(y_tpa_reg), list(y_pct_reg),
+                   "Regular season: 3PA rate vs. home win %\n(one point per season)")
+    _scatter_panel(ax3, po_seasons,  list(y_tpa_po),  list(y_pct_po),
+                   "Playoffs: 3PA rate vs. home win %\n(one point per season)")
+
+    plt.tight_layout()
+    output_path = "nba_home_court_3pa.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()
+
+
 def main() -> None:
     reg_seasons, reg_pcts, po_seasons, po_pcts = fetch_all_seasons()
     era_reg_avg, era_po_avg, era_labels_short = compute_era_averages(
@@ -1828,6 +1961,17 @@ def main() -> None:
         plot_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
     else:
         print("  No shot zone data returned — column names may differ; inspect cached CSVs.")
+
+    reg_tpa_seasons, reg_tpa_rates, reg_tpa_pcts = compute_league_3pa_stats(
+        START_YEAR, END_YEAR, SeasonType.regular
+    )
+    po_tpa_seasons, po_tpa_rates, po_tpa_pcts = compute_league_3pa_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_3pa_hca_analysis(
+        reg_tpa_seasons, reg_tpa_rates, reg_tpa_pcts,
+        po_tpa_seasons,  po_tpa_rates,  po_tpa_pcts,
+    )
 
     import nba_home_court_regression
     nba_home_court_regression.run()

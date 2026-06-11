@@ -292,7 +292,61 @@ Travel distance is not a driver of the long-run decline in home court advantage.
 
 ---
 
-## 12. Summary
+## 12. 3-Point Shooting and Home Court Advantage
+
+The league-wide 3-point attempt rate — the share of all field-goal attempts that
+are 3-pointers — has risen from below 10% in the mid-1980s to above 40% today.
+This analysis asks whether that rise is mechanically connected to the decline in
+home court advantage, or merely coincidental.
+
+### The correlation is striking but not the whole story
+
+At the season level, the correlation between league-wide 3PA rate and regular-season
+home win % is strongly negative (Pearson r ≈ −0.90, p < 0.001). The two series
+move nearly in lockstep over 40 years. In the playoffs the relationship is weaker
+but still significant (r ≈ −0.47, p = 0.002), likely because playoff formats and
+sample sizes add noise.
+
+The era-bucketed table tells the same story: the five eras with the highest 3PA
+rates have the lowest home win percentages, monotonically.
+
+### 3PA rate predicts home win probability even within eras
+
+The more important test is whether 3PA rate predicts home win probability at the
+**game level**, controlling for era. If higher 3PA games have lower home win
+probabilities even within the same rule-change era, the effect is not purely a
+temporal trend — there is a real game-by-game mechanism.
+
+In the regular season, the within-era effect survives: each 10 percentage-point
+rise in a game's combined 3PA rate is associated with roughly **−2.3 pp lower home
+win probability** (p < 0.001). In the playoffs, the within-era effect disappears
+(p ≈ 0.10), suggesting that in the smaller playoff sample the signal is absorbed
+by era dummies.
+
+### Why would more 3-point shooting reduce home advantage?
+
+Three plausible mechanisms, consistent with the other analyses in this report:
+
+- **Shot selection has equalized.** The 3PA rate differential and shot zone
+  analyses show road teams no longer take a qualitatively worse shot diet than
+  home teams. As both teams converge on the same high-3PA game plan, the home
+  team loses a structural edge.
+- **High-3PA games are higher-variance.** Three-point shooting has a wider
+  per-possession outcome distribution than 2-point shooting. In higher-variance
+  environments, the weaker team wins more often — which, from the home team's
+  perspective, means an upset is easier for the visitor to pull off.
+- **Crowd effects may matter less** when offense is driven by catch-and-shoot
+  corner 3s executed by practiced routines, rather than by interior penetration
+  that is sensitive to crowd pressure and referee calls.
+
+These mechanisms are not mutually exclusive and likely all contribute. The foul
+differential trend — referees calling the game more neutrally over time — is the
+single strongest identified driver, and a neutral-foul environment both enables
+more 3-point shooting and removes a key home advantage mechanism simultaneously.
+
+---
+
+## 13. Summary
 
 Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the playoff decline steeper than the

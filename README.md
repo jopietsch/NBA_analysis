@@ -29,7 +29,7 @@ regression tables (auto-generated each run, never edit manually).
 
 ### PNG charts
 
-`nba_home_court_advantage.py` saves fourteen PNG charts.
+`nba_home_court_advantage.py` saves fifteen PNG charts.
 
 **Overview (combined and individual panels):**
 
@@ -62,19 +62,23 @@ Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS
 | `nba_home_court_parity.png` | 2-panel figure: dual-axis time series of home win % and team win% std dev; era-colored scatter with trend line |
 | `nba_home_court_series_breakdown.png` | 2-panel figure: home win % by game number G1–G7 (pooled) and per-era lines |
 | `nba_home_court_travel.png` | 2-panel figure: home win % by away team travel distance bracket (per-season trend and era-averaged bars) |
+| `nba_home_court_3pa.png` | 3-panel figure: league-wide 3PA rate vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
 
 ### Regression analysis (stdout)
 
-Eight analyses printed to stdout:
+Eleven analyses printed to stdout:
 
-1. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
-2. **Pre/post-2014 coefficient stability** — whether rest/altitude/tz effects changed after the 2014 Finals format shift.
-3. **Factor significance** — bivariate logistic regression for rest, altitude (DEN/UTA), and time zone in regular season vs playoffs.
-4. **Foul & shooting differentials by era** — trend line per season year for each box-score differential, regular season and playoffs separately.
-5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines; regular season and playoffs.
-6. **Competitive balance / parity** — Pearson/Spearman correlation and trend line: does team win% disparity predict home court advantage?
-7. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line.
-8. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
+1. **Overall decline** — trend line for home win % on year at season level; overall and per-era slopes.
+2. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
+3. **Pre/post-2014 coefficient stability** — whether rest/altitude/tz effects changed after the 2014 Finals format shift.
+4. **Factor significance** — bivariate logistic regression for rest, altitude (DEN/UTA), and time zone in regular season vs playoffs.
+5. **Foul & shooting differentials by era** — trend line per season year for each box-score differential, regular season and playoffs separately.
+6. **Shot zone differentials by era** — trend line for each shot zone differential (paint, mid-range, corner 3, above-break 3); data from 1996–97.
+7. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines; regular season and playoffs.
+8. **Competitive balance / parity** — Pearson/Spearman correlation and trend line: does team win% disparity predict home court advantage?
+9. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line.
+10. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
+11. **League-wide 3-point shooting** — season-level and game-level relationship between 3PA rate and home win %; within-era game-level test to separate trend from mechanism.
 
 ### PDF report
 
@@ -85,7 +89,7 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains twelve sections plus an appendix. Narrative prose is read directly from
+The report contains thirteen sections plus an appendix. Narrative prose is read directly from
 `FINDINGS.md` — edit that file to update the report text. Charts are injected by `generate_report.py`
 at fixed positions within each section. Appendix A renders `RESULTS.md` verbatim and is the
 authoritative source for coefficient values and significance levels.
@@ -117,7 +121,7 @@ Before updating FINDINGS.md, verify that the analysis outputs are current:
 3. Read the current FINDINGS.md.
 
 4. Update FINDINGS.md to reflect the current analysis. Rules:
-   - FINDINGS.md has eight ## sections numbered to match the PDF (e.g. "## 4. What
+   - FINDINGS.md has thirteen ## sections numbered to match the PDF (e.g. "## 4. What
      Explains the Decline?"). Do not rename or renumber sections — generate_report.py
      looks them up by exact heading.
    - ### subheadings within a section are rendered as sub-headers in the PDF.

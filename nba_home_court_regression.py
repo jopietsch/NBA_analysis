@@ -100,6 +100,10 @@ def build_game_dataset() -> pd.DataFrame:
             merged[diffs.columns] = diffs
             merged["margin"] = merged["PLUS_MINUS_home"]
 
+            total_fga  = merged["FGA_home"]  + merged["FGA_away"]
+            total_fg3a = merged["FG3A_home"] + merged["FG3A_away"]
+            merged["tpa_rate_avg"] = 100.0 * total_fg3a / total_fga.replace(0, np.nan)
+
             if is_playoff:
                 gid_str = merged["GAME_ID"].apply(lambda x: str(int(float(x))))
                 merged["game_in_series"] = gid_str.str[-1].astype(int).astype(float)
@@ -119,7 +123,7 @@ def build_game_dataset() -> pd.DataFrame:
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff",
-                "margin", "game_in_series", "distance_miles",
+                "margin", "game_in_series", "distance_miles", "tpa_rate_avg",
             ]])
 
     if not chunks:
@@ -760,6 +764,84 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+def run_3pa_analysis(df: pd.DataFrame) -> None:
+    """Season-level and game-level relationship between league-wide 3PA rate and home win %."""
+    from scipy.stats import pearsonr, spearmanr
+
+    _section("11. LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE")
+    print("   Does more 3-point shooting reduce home court advantage?")
+    print("   Two angles: season-level correlation and game-level logistic regression.\n")
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po].dropna(subset=["tpa_rate_avg"])
+        if sub.empty:
+            continue
+
+        # Season-level: mean tpa_rate_avg and home win % per year
+        by_year = sub.groupby("year").agg(
+            tpa_rate=("tpa_rate_avg", "mean"),
+            home_pct=("home_win", lambda x: x.mean() * 100),
+        ).reset_index()
+
+        r_p, p_p = pearsonr(by_year["tpa_rate"], by_year["home_pct"])
+        r_s, p_s = spearmanr(by_year["tpa_rate"], by_year["home_pct"])
+        p_p_s = "<0.001" if p_p < 0.001 else f"{p_p:.3f}"
+        p_s_s = "<0.001" if p_s < 0.001 else f"{p_s:.3f}"
+
+        print(f"   {ctx_label}  (n = {len(by_year)} seasons)")
+        print(f"   Season-level Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
+        print(f"   Season-level Spearman ρ = {r_s:+.3f}  (p = {p_s_s}  {_stars(p_s).strip()})")
+
+        # Era-bucketed table: mean 3PA rate and mean home win % per era
+        COL_W = 12
+        header = (f"   {'Era':<10} {'Mean 3PA%':>{COL_W}} {'Home win%':>{COL_W}} "
+                  f"{'n seasons':>{COL_W}}")
+        print(f"\n{header}")
+        print(f"   {'-'*10} {'-'*COL_W} {'-'*COL_W} {'-'*COL_W}")
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_years = [y for y in by_year["year"] if y1 <= y <= y2]
+            era_rows = by_year[by_year["year"].isin(era_years)]
+            if era_rows.empty:
+                continue
+            m_tpa = era_rows["tpa_rate"].mean()
+            m_pct = era_rows["home_pct"].mean()
+            print(f"   {era_label:<10} {m_tpa:>{COL_W}.1f}% {m_pct:>{COL_W}.1f}% "
+                  f"{len(era_rows):>{COL_W}}")
+
+        # Game-level bivariate logistic
+        p_bar = sub["home_win"].mean()
+        try:
+            m_biv = smf.logit("home_win ~ tpa_rate_avg", data=sub).fit(disp=0)
+            coef  = m_biv.params["tpa_rate_avg"]
+            pval  = m_biv.pvalues["tpa_rate_avg"]
+            pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+            pp_per_10pct = _pp(coef, p_bar) * 10
+            print(f"\n   Game-level bivariate logistic  (N = {len(sub):,} games)")
+            print(f"   coef = {coef:+.4f} log-odds per pp of 3PA rate")
+            print(f"   ≈ {pp_per_10pct:+.2f} pp change in home win % per 10 pp rise in 3PA rate")
+            print(f"   p = {pval_s}  {_stars(pval).strip()}")
+        except Exception:
+            pass
+
+        # Game-level controlling for era
+        try:
+            m_era = smf.logit("home_win ~ tpa_rate_avg + C(era)", data=sub).fit(disp=0)
+            coef_e  = m_era.params["tpa_rate_avg"]
+            pval_e  = m_era.pvalues["tpa_rate_avg"]
+            pval_e_s = "<0.001" if pval_e < 0.001 else f"{pval_e:.3f}"
+            pp_era = _pp(coef_e, p_bar) * 10
+            print(f"\n   Controlling for era (within-era game-level effect):")
+            print(f"   coef = {coef_e:+.4f}  (≈ {pp_era:+.2f} pp per 10 pp 3PA)  "
+                  f"p = {pval_e_s}  {_stars(pval_e).strip()}")
+            print(f"   (If this is small and insignificant, 3PA effect is fully explained")
+            print(f"    by the secular trend — higher 3PA and lower HCA happen at the same")
+            print(f"    time but 3PA does not predict outcomes within any given era.)")
+        except Exception:
+            pass
+
+        print()
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -804,6 +886,7 @@ def run() -> None:
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_series_breakdown(df)
         run_travel_analysis(df)
+        run_3pa_analysis(df)
 
         print("\n" + "═" * _W + "\n")
 

@@ -432,6 +432,22 @@ def _section_travel(s, sections):
     ]
 
 
+def _section_3pa(s, sections):
+    return [
+        PageBreak(),
+        *_section_header("12. 3-Point Shooting and Home Court Advantage", s, sections),
+        Spacer(1, 0.1 * inch),
+        _chart(
+            "nba_home_court_3pa.png",
+            "Figure 12. League-wide 3PA rate and home court advantage. "
+            "Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % "
+            "(blue, left axis) moving in near-lockstep over 40 years. "
+            "Center: regular-season scatter (one point per season, era-colored) with trend line. "
+            "Right: same for playoffs.",
+        ),
+    ]
+
+
 def _section_summary(s, sections):
     rank_data = [
         ["Rank", "Factor",                        "Regular season",           "Playoffs"             ],
@@ -447,7 +463,7 @@ def _section_summary(s, sections):
     cw = [CONTENT_W * f for f in (0.06, 0.33, 0.31, 0.30)]
     return [
         PageBreak(),
-        *_section_header("12. Summary", s, sections),
+        *_section_header("13. Summary", s, sections),
         Spacer(1, 0.1 * inch),
         _table(rank_data, cw),
         Spacer(1, 0.3 * inch),
@@ -507,6 +523,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     story += _section_margin(s, sections)
     story += _section_parity(s, sections)
     story += _section_travel(s, sections)
+    story += _section_3pa(s, sections)
     story += _section_summary(s, sections)
     story += _appendix_results(s)
 
