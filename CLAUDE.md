@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 16 numbered `##` sections (§1–§15 analyses + §16 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 16 numbered `##` sections (§1–§14 analyses + §15 synthesis + §16 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -30,7 +30,7 @@ Use `MPLBACKEND=Agg` when running the script to suppress display windows and gen
 
 ## Architecture
 
-Four Python files:
+Six files:
 
 - **`nba_home_court_data.py`** — all constants, data fetching, and computation; no matplotlib dependency
 - **`nba_home_court_plots.py`** — all visualization; imports data module, no data logic of its own

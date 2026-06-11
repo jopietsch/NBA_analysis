@@ -204,15 +204,44 @@ have shifted over time.
 
 ### Distribution of Referee Bias
 
-[Placeholder — update after running the analysis]
+Home-favoring foul bias is nearly universal: 41 of 42 officials with at least 50
+playoff games show a negative career mean foul differential. The one exception —
+Joe Forte (+0.451 fouls/game) — is the only qualifying official in the dataset
+whose games tilted marginally toward the road team. The league-wide mean across
+all qualifying officials is approximately −1.2 fouls per game, a substantial and
+consistent tilt in the home team's favor.
+
+The variation across individual referees is wide. The most home-favoring officials
+averaged roughly 2.2–2.5 fewer fouls on the home team per game; the least
+home-favoring still called fewer fouls on the home team but by only 0.1–0.6 fouls
+per game. Nearly all referees show the same directional bias — they differ in
+degree, not direction.
 
 ### Era Trends
 
-[Placeholder — update after running the analysis]
+The most striking pattern in the era breakdown is not the mean bias but the
+compression of variance across individual referees. The standard deviation of
+per-official era-mean foul bias fell from 3.718 in the 1995–01 era to 0.880 in
+2023–25 — a fourfold reduction. The extreme outliers who showed very large
+home-favoring biases in earlier eras have no modern equivalents; the distribution
+of individual tendencies has tightened considerably.
+
+The era means themselves are non-monotone (ranging from −0.781 in 2002–04 to
+−1.317 in 1995–01, with the current era at −0.792), so there is no clear
+trend in the average level of bias across eras. What has changed is consistency:
+today's officials call the game more similarly to each other than their
+predecessors did. This is the individual-referee counterpart to the per-game foul
+differential trend identified in §5.
 
 ### Individual Referee Rankings
 
-[Placeholder — update after running the analysis]
+The top-ranked officials by home-favoring bias include Eddie Rush (−2.530, 100
+games), Ron Garretson (−2.385, 143 games), and Joe Crawford (−2.288, 160 games).
+At the other end, Tony Brothers (−0.626, 198 games) and Jason Phillips (−0.615,
+96 games) are among the most neutral. The career biases are statistically
+significant for all qualifying officials, and the names at both extremes span
+multiple eras — individual tendencies appear to be stable characteristics of each
+official rather than artifacts of when they worked.
 
 ![Figure 9. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
 

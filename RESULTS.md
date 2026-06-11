@@ -13,7 +13,7 @@ All data from cache/ — same source as the plots above.
 
   Building game-level dataset from cache... 51,089 game rows (50,094 with complete features).
 
-─── 1. THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ─────────────────
+─── THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ────────────────────
    Trend line fit to per-season home win % on year (season-level, not game-level).
    Formally tests the multi-decade trend and measures per-era slopes.
 
@@ -42,7 +42,7 @@ All data from cache/ — same source as the plots above.
    2023–25          3        -1.190     0.063     
 
 
-─── 2. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ───
+─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
    Outcome: home_win. Baseline home win %: 60.3%.
    McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
    the ΔR² column shows how much each block adds over the previous model.
@@ -74,7 +74,7 @@ All data from cache/ — same source as the plots above.
    ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
    ► Rest, altitude, and time zone together add the remaining 44%.
 
-─── 3. PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ──────
+─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
    Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
    Stable coefficients → those factors didn't drive the post-2014 change.
 
@@ -93,7 +93,7 @@ All data from cache/ — same source as the plots above.
    ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
    ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
 
-─── 4. REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ─────────────────
+─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
    Bivariate logistic regression — each factor tested independently.
    N regular season: 47,215   N playoffs: 2,879
 
@@ -112,67 +112,7 @@ All data from cache/ — same source as the plots above.
      Only 107 coast-to-coast playoff games exist across 42 seasons
      (5,676 regular-season) — too sparse for reliable playoff inference.
 
-─── 5. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) 
-   Negative foul diff = refs call fewer fouls on the home team.
-   Trend = slope of trend line (change per season year); pp = percentage points.
-
-   Regular season  (N = 47,882 games)
-
-   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   1984–94              -1.23         +1.57         +1.56         -0.35         +1.12         +0.27
-   1995–01              -0.59         +1.16         +1.20         -0.11         +0.83         +0.35
-   2002–04              -0.52         +1.48         +1.62         +0.08         +1.66         +0.07
-   2005–17              -0.79         +1.17         +1.25         -0.10         +0.70         +0.26
-   2018–22              -0.33         +0.81         +0.93         +0.24         +0.46         -0.01
-   2023–25              -0.20         +0.72         +0.97         +0.37         +0.94         +0.66
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.023***     -0.020***     -0.015***     +0.017***     -0.007        -0.000   
-
-   Playoffs  (N = 3,207 games)
-
-   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   1984–94              -1.58         +1.56         +1.47         -0.85         -0.21         +0.52
-   1995–01              -1.22         +1.31         +1.40         -0.20         +1.55         +0.58
-   2002–04              -1.04         +1.92         +1.88         -0.32         +0.60         +0.00
-   2005–17              -1.43         +1.56         +1.57         -0.36         +0.39         +0.22
-   2018–22              -0.67         +1.00         +1.30         +0.88         +0.86         +0.26
-   2023–25              -0.70         +1.03         +1.19         -0.11         +1.00         +2.68
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
-
-
-─── 6. SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ──────
-   Positive = home team takes a higher share of FGA from that zone.
-   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
-
-   Regular season  (N = 29 seasons)
-
-   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
-   ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.28             -1.24             +0.16             -0.20
-   2002–04                  +1.18             -1.24             +0.29             -0.23
-   2005–17                  +1.26             -1.19             +0.12             -0.19
-   2018–22                  +0.55             -0.77             +0.18             +0.04
-   2023–25                  +0.37             -0.77             +0.20             +0.21
-   ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.037***         +0.024***         -0.000            +0.013  *
-
-   Playoffs  (N = 28 seasons)
-
-   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
-   ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.72             -1.70             +0.44             -0.46
-   2002–04                  +2.08             -1.82             +0.10             -0.36
-   2005–17                  +1.78             -1.50             +0.10             -0.39
-   2018–22                  +0.72             -1.62             +0.48             +0.42
-   2023–25                  +1.58             -1.42             +0.26             -0.41
-   ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.030            +0.007            -0.000            +0.024   
-
-
-─── 7. WIN MARGIN TRENDS  (home team point differential per game) ──────
+─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
    Positive = home team winning by more.
    Trend = slope of trend line (change per season year).
 
@@ -205,7 +145,140 @@ All data from cache/ — same source as the plots above.
    ► Overall reg-season mean margin: +2.80 pts.
    ► Overall playoff mean margin:    +4.36 pts.
 
-─── 8. COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ────────────────────
+─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
+   Negative foul diff = refs call fewer fouls on the home team.
+   Trend = slope of trend line (change per season year); pp = percentage points.
+
+   Regular season  (N = 47,882 games)
+
+   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   1984–94              -1.23         +1.57         +1.56         -0.35         +1.12         +0.27
+   1995–01              -0.59         +1.16         +1.20         -0.11         +0.83         +0.35
+   2002–04              -0.52         +1.48         +1.62         +0.08         +1.66         +0.07
+   2005–17              -0.79         +1.17         +1.25         -0.10         +0.70         +0.26
+   2018–22              -0.33         +0.81         +0.93         +0.24         +0.46         -0.01
+   2023–25              -0.20         +0.72         +0.97         +0.37         +0.94         +0.66
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr         +0.023***     -0.020***     -0.015***     +0.017***     -0.007        -0.000   
+
+   Playoffs  (N = 3,207 games)
+
+   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   1984–94              -1.58         +1.56         +1.47         -0.85         -0.21         +0.52
+   1995–01              -1.22         +1.31         +1.40         -0.20         +1.55         +0.58
+   2002–04              -1.04         +1.92         +1.88         -0.32         +0.60         +0.00
+   2005–17              -1.43         +1.56         +1.57         -0.36         +0.39         +0.22
+   2018–22              -0.67         +1.00         +1.30         +0.88         +0.86         +0.26
+   2023–25              -0.70         +1.03         +1.19         -0.11         +1.00         +2.68
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
+
+
+─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
+   Positive = home team takes a higher share of FGA from that zone.
+   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
+
+   Regular season  (N = 29 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.28             -1.24             +0.16             -0.20
+   2002–04                  +1.18             -1.24             +0.29             -0.23
+   2005–17                  +1.26             -1.19             +0.12             -0.19
+   2018–22                  +0.55             -0.77             +0.18             +0.04
+   2023–25                  +0.37             -0.77             +0.20             +0.21
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.037***         +0.024***         -0.000            +0.013  *
+
+   Playoffs  (N = 28 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.72             -1.70             +0.44             -0.46
+   2002–04                  +2.08             -1.82             +0.10             -0.36
+   2005–17                  +1.78             -1.50             +0.10             -0.39
+   2018–22                  +0.72             -1.62             +0.48             +0.42
+   2023–25                  +1.58             -1.42             +0.26             -0.41
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.030            +0.007            -0.000            +0.024   
+
+
+─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
+   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
+   Officials with <50 playoff games excluded.
+
+   42 officials with ≥50 playoff games
+   41/42 (98%) show negative mean foul diff (home-favoring)
+   League mean foul_diff across officials: -1.195 fouls/game
+   SD across officials: 0.614 fouls/game
+
+   Official                     N games Mean diff  p (vs 0)     
+   ────────────────────────── ───────── ───────── ───────── ────
+
+   Top 10 (most home-favoring — lowest foul_diff):
+   Eddie Rush                       100    -2.530    <0.001  ***
+   Ron Garretson                    143    -2.385    <0.001  ***
+   Joe Crawford                     160    -2.288    <0.001  ***
+   Rodney Mott                       69    -2.232    <0.001  ***
+   Bob Delaney                       80    -2.175    <0.001  ***
+   David Jones                       51    -1.843    <0.001  ***
+   James Capers                     186    -1.823    <0.001  ***
+   Sean Wright                       98    -1.796    <0.001  ***
+   Eric Lewis                        79    -1.759    <0.001  ***
+   Sean Corbin                       97    -1.619    <0.001  ***
+
+   Bottom 10 (least home-favoring — highest foul_diff):
+   Joe Forte                         51    +0.451    <0.001  ***
+   Josh Tiven                        89    -0.112    <0.001  ***
+   Courtney Kirkland                 76    -0.316    <0.001  ***
+   David Guthrie                    113    -0.398    <0.001  ***
+   Kane Fitzgerald                   58    -0.500    <0.001  ***
+   Jason Phillips                    96    -0.615    <0.001  ***
+   Tony Brothers                    198    -0.626    <0.001  ***
+   Brian Forte                       54    -0.630    <0.001  ***
+   Pat Fraher                        88    -0.841    <0.001  ***
+   Greg Willard                      87    -0.862    <0.001  ***
+
+   Mean home foul_diff by era (officials with games in that era):
+   Era           N officials       Mean         SD
+   ──────────── ──────────── ────────── ──────────
+   1995–01                20     -1.317      3.718
+   2002–04                27     -0.781      1.779
+   2005–17                42     -1.237      0.974
+   2018–22                28     -0.912      0.913
+   2023–25                20     -0.792      0.880
+
+
+─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
+   Distance = haversine miles from away team's home arena to game arena.
+   Does longer travel reduce the visiting team's winning odds?
+
+   Regular season  (N = 47,882, baseline home win % = 60.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500    10,957        60.5%          +0.3 pp
+       500–1000    15,300        61.0%          +0.8 pp
+      1000–1500     9,615        59.4%          -0.9 pp
+          1500+    12,010        59.7%          -0.6 pp
+
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi),  p = 0.024  *
+
+   Playoffs  (N = 3,207, baseline home win % = 64.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500       887        62.5%          -1.9 pp
+       500–1000     1,227        65.9%          +1.5 pp
+      1000–1500       717        63.7%          -0.6 pp
+          1500+       376        64.9%          +0.6 pp
+
+   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi),  p = 0.769  
+
+
+─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
    Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
    Parity = std dev of all-team win percentages for the season.
 
@@ -234,57 +307,7 @@ All data from cache/ — same source as the plots above.
      home win % was already declining, and fell in 2002–04 while home win %
      ticked back up. The two series do not move in lockstep.
 
-─── 9. PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ────────────
-   Does home court advantage vary by game number within a series (G1–G7)?
-   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
-
-     Game   N games   Home win %    vs. G1
-   ──────  ────────  ───────────  ────────
-       G1       494        69.2%         —
-       G2       497        72.0%   +2.8 pp
-       G3       494        55.7%  -13.6 pp
-       G4       486        55.3%  -13.9 pp
-       G5       412        74.8%   +5.5 pp
-       G6       312        55.8%  -13.5 pp
-       G7       183        64.5%   -4.7 pp
-
-   Chi-square test (H0: home win % uniform across all game numbers):
-   χ²(6) = 80.40,  p = <0.001  ***
-
-   Weighted trend line across game numbers: -0.99 pp/game  (p = 0.580  )
-   (Positive = home win % rises as the series goes deeper)
-
-   ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
-     G7 n = 183 games (series that went to 7)
-
-─── 10. TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────
-   Distance = haversine miles from away team's home arena to game arena.
-   Does longer travel reduce the visiting team's winning odds?
-
-   Regular season  (N = 47,882, baseline home win % = 60.3%)
-
-         Bucket         N   Home win %   vs. baseline
-   ────────────  ────────  ───────────  ─────────────
-          0–500    10,957        60.5%          +0.3 pp
-       500–1000    15,300        61.0%          +0.8 pp
-      1000–1500     9,615        59.4%          -0.9 pp
-          1500+    12,010        59.7%          -0.6 pp
-
-   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi),  p = 0.024  *
-
-   Playoffs  (N = 3,207, baseline home win % = 64.3%)
-
-         Bucket         N   Home win %   vs. baseline
-   ────────────  ────────  ───────────  ─────────────
-          0–500       887        62.5%          -1.9 pp
-       500–1000     1,227        65.9%          +1.5 pp
-      1000–1500       717        63.7%          -0.6 pp
-          1500+       376        64.9%          +0.6 pp
-
-   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi),  p = 0.769  
-
-
-─── 11. LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────
+─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
    Does more 3-point shooting reduce home court advantage?
    Two angles: season-level correlation and game-level logistic regression.
 
@@ -337,7 +360,7 @@ All data from cache/ — same source as the plots above.
     time but 3PA does not predict outcomes within any given era.)
 
 
-─── 12. PACE AND HOME COURT ADVANTAGE ──────────────────────────────────
+─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
    Does faster-paced play (more possessions per game) reduce home court advantage?
    Season-level correlation plus game-level logistic regression.
 
@@ -384,7 +407,30 @@ All data from cache/ — same source as the plots above.
    coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.315  
 
 
-─── 13. FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN % ───────────
+─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
+   Does home court advantage vary by game number within a series (G1–G7)?
+   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
+
+     Game   N games   Home win %    vs. G1
+   ──────  ────────  ───────────  ────────
+       G1       494        69.2%         —
+       G2       497        72.0%   +2.8 pp
+       G3       494        55.7%  -13.6 pp
+       G4       486        55.3%  -13.9 pp
+       G5       412        74.8%   +5.5 pp
+       G6       312        55.8%  -13.5 pp
+       G7       183        64.5%   -4.7 pp
+
+   Chi-square test (H0: home win % uniform across all game numbers):
+   χ²(6) = 80.40,  p = <0.001  ***
+
+   Weighted trend line across game numbers: -0.99 pp/game  (p = 0.580  )
+   (Positive = home win % rises as the series goes deeper)
+
+   ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
+     G7 n = 183 games (series that went to 7)
+
+─── FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN % ───────────────
    Which franchises benefit most from playing at home?
    HCA = home win% − road win% (controls for overall team quality).
 
@@ -455,8 +501,8 @@ All data from cache/ — same source as the plots above.
    Charlotte Hornets                       24      58.3%        31      29.0%     +29.3 pp
    Denver Nuggets                         100      59.0%       104      29.8%     +29.2 pp
    Houston Rockets                        132      64.4%       126      35.7%     +28.7 pp
-   Detroit Pistons                        141      68.8%       132      40.2%     +28.6 pp
    Toronto Raptors                         56      58.9%        56      30.4%     +28.6 pp
+   Detroit Pistons                        141      68.8%       132      40.2%     +28.6 pp
    Indiana Pacers                         133      64.7%       142      36.6%     +28.0 pp
    Miami Heat                             143      67.1%       135      39.3%     +27.9 pp
    San Antonio Spurs                      175      70.3%       176      43.2%     +27.1 pp
