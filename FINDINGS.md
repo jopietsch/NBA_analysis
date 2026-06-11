@@ -62,6 +62,26 @@ figure but has converged dramatically in recent years.
 
 ![Figure 5. Playoff home win % per season with a separate trend line per era. Vertical markers indicate playoff format changes (1985, 2003, 2014).](nba_home_court_advantage_playoffs_era.png)
 
+### Rule-Change Eras (regular season and playoffs)
+
+| Era | Seasons | Rule change |
+|-----|---------|-------------|
+| 1984–94 | 1983–84 through 1993–94 | Illegal defense rules (no zone defense) |
+| 1995–01 | 1994–95 through 2000–01 | Hand-checking restrictions; zone still illegal |
+| 2002–04 | 2001–02 through 2003–04 | Zone defense legalized, defensive 3-sec added |
+| 2005–17 | 2004–05 through 2016–17 | Perimeter hand-checking banned (pace-and-space) |
+| 2018–22 | 2017–18 through 2021–22 | Freedom-of-movement emphasis |
+| 2023–25 | 2022–23 through 2024–25 | Transition take-foul rule added |
+
+### Playoff Format Periods
+
+| Period | Seasons | Format |
+|--------|---------|--------|
+| 1984 | 1983–84 | Best-of-5 R1, 2-2-1-1-1 Finals (alternating home court) |
+| 1985–02 | 1984–85 through 2001–02 | Best-of-5 R1, 2-3-2 Finals (home court by record) |
+| 2003–13 | 2002–03 through 2012–13 | Best-of-7 R1, 2-3-2 Finals |
+| 2014–25 | 2013–14 through 2024–25 | Best-of-7 R1, 2-2-1-1-1 Finals |
+
 ---
 
 ## 4. What Explains the Decline?
