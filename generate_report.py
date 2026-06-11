@@ -308,13 +308,13 @@ def _section_era_lines(s, sections):
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_regular_era.png",
-            "Figure 3. Regular-season home win % per season. A separate OLS trend line is fit "
+            "Figure 3. Regular-season home win % per season. A separate trend line is fit "
             "within each rule-change era. Background shading identifies each era.",
         ),
         Spacer(1, 0.1 * inch),
         _chart(
             "nba_home_court_advantage_playoffs_era.png",
-            "Figure 4. Playoff home win % per season with a separate OLS trend line per era. "
+            "Figure 4. Playoff home win % per season with a separate trend line per era. "
             "Vertical markers indicate playoff format changes (1985, 2003, 2014).",
         ),
     ]
@@ -353,7 +353,7 @@ def _section_differentials(s, sections):
         _chart(
             "nba_home_court_advantage_differentials.png",
             "Figure 7. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. "
-            "Solid = regular season, dashed = playoffs. Dotted overlays are OLS trend lines. "
+            "Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. "
             "Negative foul diff = home team called for fewer fouls.",
         ),
     ]
@@ -413,7 +413,7 @@ def _section_parity(s, sections):
             "Left: home win % (blue, left axis) and team win% std dev (red, right axis) "
             "over time — lower std dev = more equal league. "
             "Right: scatter of parity std dev vs. home win % per season, colored by era, "
-            "with OLS fit.",
+            "with trend line.",
         ),
     ]
 
@@ -499,11 +499,11 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
     story += _section_decline(s, sections)
     story += _section_era(s, sections)
     story += _section_era_lines(s, sections)
-    story += _section_series_breakdown(s, sections)
     story += _section_regression(s, sections)
     story += _section_rest(s, sections)
     story += _section_differentials(s, sections)
     story += _section_shot_zones(s, sections)
+    story += _section_series_breakdown(s, sections)
     story += _section_margin(s, sections)
     story += _section_parity(s, sections)
     story += _section_travel(s, sections)

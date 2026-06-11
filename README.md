@@ -38,7 +38,7 @@ regression tables (auto-generated each run, never edit manually).
 | File | Contents |
 |------|----------|
 | `nba_home_court_advantage_season.png` | Regular season vs playoffs home win % per season, overall trend lines, era shading, COVID highlighting |
-| `nba_home_court_advantage_regular_era.png` | Regular-season home win % per season with a separate OLS trend line per era |
+| `nba_home_court_advantage_regular_era.png` | Regular-season home win % per season with a separate trend line per era |
 | `nba_home_court_advantage_playoffs_era.png` | Same for playoffs, with playoff format-change markers (1985, 2003, 2014) |
 | `nba_home_court_advantage_era_bars.png` | Home win % averaged within each rule-change era (reg season vs playoffs) |
 | `nba_home_court_advantage_format_bars.png` | Home win % averaged within each playoff-format period |
@@ -59,7 +59,7 @@ Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS
 | `nba_home_court_advantage_differentials.png` | 2×3 figure: per-season home-minus-away differentials for foul rate, FG%, eFG%, 3PA rate, 3P%, FT% |
 | `nba_home_court_shot_zones.png` | 2×2 figure: per-season home-minus-road shot zone % differentials (paint, mid-range, corner 3, above-break 3); data from 1996-97 onward |
 | `nba_home_court_margin.png` | 3-panel figure: home team point margin over time (all games, wins/losses split, era bar chart) |
-| `nba_home_court_parity.png` | 2-panel figure: dual-axis time series of home win % and team win% std dev; era-colored scatter with OLS fit |
+| `nba_home_court_parity.png` | 2-panel figure: dual-axis time series of home win % and team win% std dev; era-colored scatter with trend line |
 | `nba_home_court_series_breakdown.png` | 2-panel figure: home win % by game number G1–G7 (pooled) and per-era lines |
 | `nba_home_court_travel.png` | 2-panel figure: home win % by away team travel distance bracket (per-season trend and era-averaged bars) |
 
@@ -70,10 +70,10 @@ Eight analyses printed to stdout:
 1. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
 2. **Pre/post-2014 coefficient stability** — whether rest/altitude/tz effects changed after the 2014 Finals format shift.
 3. **Factor significance** — bivariate logistic regression for rest, altitude (DEN/UTA), and time zone in regular season vs playoffs.
-4. **Foul & shooting differentials by era** — OLS trend per season year for each box-score differential, regular season and playoffs separately.
-5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with OLS trends; regular season and playoffs.
-6. **Competitive balance / parity** — Pearson/Spearman correlation and OLS: does team win% disparity predict home court advantage?
-7. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted OLS trend.
+4. **Foul & shooting differentials by era** — trend line per season year for each box-score differential, regular season and playoffs separately.
+5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines; regular season and playoffs.
+6. **Competitive balance / parity** — Pearson/Spearman correlation and trend line: does team win% disparity predict home court advantage?
+7. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line.
 8. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
 
 ### PDF report

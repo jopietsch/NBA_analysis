@@ -182,9 +182,9 @@ def _clean(name: str, era_ref: str, fmt_ref: str) -> str:
 # ── Analysis 1: Overall decline ───────────────────────────────────────────────
 
 def run_decline_trend(df: pd.DataFrame) -> None:
-    """OLS home_win_pct ~ year at the season level — formally tests the decline."""
+    """Trend line for home_win_pct ~ year at the season level — formally tests the decline."""
     _section("1. THE OVERALL DECLINE — IS IT STATISTICALLY REAL?")
-    print("   OLS of per-season home win % on year (season-level, not game-level).")
+    print("   Trend line fit to per-season home win % on year (season-level, not game-level).")
     print("   Formally tests the multi-decade trend and measures per-era slopes.\n")
 
     for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
@@ -239,7 +239,7 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
 
     _section(f"2. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = {n:,} games)")
     print(f"   Outcome: home_win. Baseline home win %: {p_bar * 100:.1f}%.")
-    print(f"   McFadden R² is analogous to OLS R² but typical values are much smaller;")
+    print(f"   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;")
     print(f"   the ΔR² column shows how much each block adds over the previous model.")
     print(f"   '≈pp' = approximate marginal effect in percentage points (at mean p).\n")
 
@@ -411,7 +411,7 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
 
     _section("5. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
     print("   Negative foul diff = refs call fewer fouls on the home team.")
-    print("   Trend = OLS slope (change per season year); pp = percentage points.\n")
+    print("   Trend = slope of trend line (change per season year); pp = percentage points.\n")
 
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
@@ -456,7 +456,7 @@ def run_shot_zone_analysis(
     reg_seasons: list, reg_stats: dict,
     po_seasons:  list, po_stats:  dict,
 ) -> None:
-    """OLS trend for each shot zone differential — parallel to run_differential_analysis."""
+    """Trend line for each shot zone differential — parallel to run_differential_analysis."""
     zone_labels = {
         "paint":    "Paint (RA+Non-RA)",
         "midrange": "Mid-Range",
@@ -467,7 +467,7 @@ def run_shot_zone_analysis(
 
     _section("6. SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA)")
     print("   Positive = home team takes a higher share of FGA from that zone.")
-    print("   Trend = OLS slope (change per season year). Data from 1996–97 onward.\n")
+    print("   Trend = slope of trend line (change per season year). Data from 1996–97 onward.\n")
 
     for season_label, seasons, stats in [
         ("Regular season", reg_seasons, reg_stats),
@@ -526,7 +526,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
 
     _section("7. WIN MARGIN TRENDS  (home team point differential per game)")
     print("   Positive = home team winning by more.")
-    print("   Trend = OLS slope (change per season year).\n")
+    print("   Trend = slope of trend line (change per season year).\n")
 
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
@@ -614,7 +614,7 @@ def run_parity_correlation(
     coef = m.params["parity_std"]
     pval = m.pvalues["parity_std"]
     pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
-    print(f"   OLS: home_win_pct ~ parity_std_dev")
+    print(f"   Trend line: home_win_pct ~ parity_std_dev")
     print(f"   Slope: {coef:+.3f} pp per unit std dev  (p = {pval_s}  {_stars(pval).strip()})")
     print(f"   R² = {m.rsquared:.4f}\n")
 
@@ -700,7 +700,7 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
     coef = m.params["game_num"]
     pval = m.pvalues["game_num"]
     pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
-    print(f"\n   Weighted OLS trend across game numbers: {coef:+.2f} pp/game  "
+    print(f"\n   Weighted trend line across game numbers: {coef:+.2f} pp/game  "
           f"(p = {pval_s}  {_stars(pval).strip()})")
     print(f"   (Positive = home win % rises as the series goes deeper)")
 

@@ -14,7 +14,7 @@ All data from cache/ — same source as the plots above.
   Building game-level dataset from cache... 51,089 game rows (50,094 with complete features).
 
 ─── 1. THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ─────────────────
-   OLS of per-season home win % on year (season-level, not game-level).
+   Trend line fit to per-season home win % on year (season-level, not game-level).
    Formally tests the multi-decade trend and measures per-era slopes.
 
    Regular season  (42 seasons, 1984–2025)
@@ -44,7 +44,7 @@ All data from cache/ — same source as the plots above.
 
 ─── 2. WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ───
    Outcome: home_win. Baseline home win %: 60.3%.
-   McFadden R² is analogous to OLS R² but typical values are much smaller;
+   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
    the ΔR² column shows how much each block adds over the previous model.
    '≈pp' = approximate marginal effect in percentage points (at mean p).
 
@@ -114,7 +114,7 @@ All data from cache/ — same source as the plots above.
 
 ─── 5. FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) 
    Negative foul diff = refs call fewer fouls on the home team.
-   Trend = OLS slope (change per season year); pp = percentage points.
+   Trend = slope of trend line (change per season year); pp = percentage points.
 
    Regular season  (N = 47,882 games)
 
@@ -145,7 +145,7 @@ All data from cache/ — same source as the plots above.
 
 ─── 6. SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ──────
    Positive = home team takes a higher share of FGA from that zone.
-   Trend = OLS slope (change per season year). Data from 1996–97 onward.
+   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
 
    Regular season  (N = 29 seasons)
 
@@ -174,7 +174,7 @@ All data from cache/ — same source as the plots above.
 
 ─── 7. WIN MARGIN TRENDS  (home team point differential per game) ──────
    Positive = home team winning by more.
-   Trend = OLS slope (change per season year).
+   Trend = slope of trend line (change per season year).
 
    Regular season  (N = 34,311 games)
 
@@ -213,7 +213,7 @@ All data from cache/ — same source as the plots above.
    Pearson r  = -0.066  (p = 0.676  )
    Spearman ρ = -0.020  (p = 0.899  )
 
-   OLS: home_win_pct ~ parity_std_dev
+   Trend line: home_win_pct ~ parity_std_dev
    Slope: -15.093 pp per unit std dev  (p = 0.676  )
    R² = 0.0044
 
@@ -251,7 +251,7 @@ All data from cache/ — same source as the plots above.
    Chi-square test (H0: home win % uniform across all game numbers):
    χ²(6) = 80.40,  p = <0.001  ***
 
-   Weighted OLS trend across game numbers: -0.99 pp/game  (p = 0.580  )
+   Weighted trend line across game numbers: -0.99 pp/game  (p = 0.580  )
    (Positive = home win % rises as the series goes deeper)
 
    ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)

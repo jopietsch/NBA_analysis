@@ -17,7 +17,7 @@ COVID seasons are flagged in the charts and regression as an anomaly.
 
 ### The trend is statistically unambiguous
 
-OLS regression of per-season home win % on year confirms the decline is real and
+A trend line fit to per-season home win % on year confirms the decline is real and
 precisely measured. The regular season falls at roughly **−0.25 pp per year**
 (p < 0.001, R² = 0.73) — a total drop of more than 10 percentage points over
 the 41-year dataset. The playoffs fall at **−0.20 pp per year** (p = 0.009),
@@ -109,7 +109,7 @@ effect on winning has remained stable across eras.
 ## 6. Box-Score Differentials
 
 Three box-score differentials (home minus away) show statistically significant
-trends over time. For era-by-era averages and OLS trend values, see `RESULTS.md`.
+trends over time. For era-by-era averages and trend values, see `RESULTS.md`.
 
 ### Foul differential — referees are calling the game more neutrally
 
@@ -146,8 +146,8 @@ Shot zone data is available from 1996–97 onward via NBA.com's
 
 Paint access (restricted area + non-RA combined) shows the clearest pattern:
 home teams have historically taken a higher share of shots from the paint —
-the most efficient shots in basketball — and that gap is closing. OLS confirms
-this trend is highly significant: **−0.037 pp/yr** (p < 0.001) in the regular
+the most efficient shots in basketball — and that gap is closing. The trend line
+confirms this is highly significant: **−0.037 pp/yr** (p < 0.001) in the regular
 season. Road teams are accessing the paint more freely than they used to, which
 is consistent with both the eFG% narrowing and the foul differential trend.
 

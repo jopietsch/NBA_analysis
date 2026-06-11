@@ -103,18 +103,18 @@ Ten analyses printed to stdout:
 1. **Sequential R² decomposition** (regular season only) — era → +rest → +altitude → +tz → +covid
 2. **Pre/post-2014 coefficient stability** — do rest/altitude/tz effects change after the Finals format shift?
 3. **Factor significance summary** — bivariate logistic regressions for rest/altitude/tz in regular season vs. playoffs side-by-side
-4. **Foul & shooting differentials by era** — OLS trend (change per season year) for each box-score differential, regular season and playoffs separately
-5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with OLS trends
-6. **Competitive balance / parity** — Pearson/Spearman correlation and OLS between team win% std dev and home win %; era-bucketed table
-1. **Overall decline** — OLS `home_win_pct ~ year` at season level; overall slope and per-era slopes for regular season and playoffs
+4. **Foul & shooting differentials by era** — trend line (change per season year) for each box-score differential, regular season and playoffs separately
+5. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines
+6. **Competitive balance / parity** — Pearson/Spearman correlation and trend line between team win% std dev and home win %; era-bucketed table
+1. **Overall decline** — trend line for `home_win_pct ~ year` at season level; overall slope and per-era slopes for regular season and playoffs
 2. **Sequential R² decomposition** — era → +rest → +altitude → +tz → +covid
 3. **Pre/post-2014 coefficient stability** — do rest/altitude/tz effects change after the Finals format shift?
 4. **Factor significance summary** — bivariate logistic regressions for rest/altitude/tz in regular season vs. playoffs side-by-side
-5. **Foul & shooting differentials by era** — OLS trend (change per season year) for each box-score differential, regular season and playoffs separately
-6. **Shot zone differentials by era** — OLS trend for each shot zone differential (paint, mid-range, corner 3, above-break 3); data from 1996–97
-7. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with OLS trends
-8. **Competitive balance / parity** — Pearson/Spearman correlation and OLS between team win% std dev and home win %; era-bucketed table
-9. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted OLS trend across game numbers
+5. **Foul & shooting differentials by era** — trend line (change per season year) for each box-score differential, regular season and playoffs separately
+6. **Shot zone differentials by era** — trend line for each shot zone differential (paint, mid-range, corner 3, above-break 3); data from 1996–97
+7. **Win margin trends** — era-bucketed mean home point margin (all games, wins-only, losses-only) with trend lines
+8. **Competitive balance / parity** — Pearson/Spearman correlation and trend line between team win% std dev and home win %; era-bucketed table
+9. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line across game numbers
 10. **Travel distance** — home win % by distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with `distance_miles` as continuous predictor
 
 Uses `statsmodels.formula.api.logit` (binary outcome) and `smf.ols` (differentials). McFadden R² as logistic fit metric. Marginal effects reported as `coef × p̄ × (1−p̄) × 100` (percentage points at the mean). `scipy.stats` for Pearson/Spearman in parity analysis. `scipy.stats.chi2_contingency` for series structure chi-square.

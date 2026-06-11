@@ -1425,7 +1425,7 @@ def plot_parity_analysis(
     2-panel chart: does competitive balance track with home court advantage?
 
     Panel 1: dual-axis time series — home win % and team win% std dev over seasons.
-    Panel 2: scatter of parity std dev vs. home win %, era-colored with OLS fit.
+    Panel 2: scatter of parity std dev vs. home win %, era-colored with trend line.
     """
     parity_lookup = dict(zip(parity_seasons, parity_std))
     y_parity = np.array([parity_lookup.get(s, np.nan) for s in reg_seasons], dtype=float)
@@ -1465,7 +1465,7 @@ def plot_parity_analysis(
     lines2, labs2 = ax1r.get_legend_handles_labels()
     ax1.legend(lines1 + lines2, labs1 + labs2, fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
-    # Panel 2: scatter (one point per season), era-colored, with OLS fit
+    # Panel 2: scatter (one point per season), era-colored, with trend line
     for s, px, py in zip(reg_seasons, y_parity, y_reg):
         if np.isnan(px) or np.isnan(py):
             continue
