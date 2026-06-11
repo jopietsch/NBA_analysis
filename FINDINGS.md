@@ -9,8 +9,9 @@ and coefficient values, see `RESULTS.md` (auto-generated each run).
 ## 1. The Decline
 
 Home court advantage has been falling for 40 years in both the regular season
-and the playoffs, with the playoff decline steeper than the regular-season one.
-The gap between the two has nearly closed in recent seasons.
+and the playoffs, with the regular-season decline somewhat steeper than the
+playoff one. The gap between the two widened through the mid-2000s and has
+narrowed back to roughly its mid-1980s level in recent seasons.
 
 The 2020 bubble season (neutral-site playoffs) is excluded from playoff stats.
 COVID seasons are flagged in the charts and regression as an anomaly.
@@ -23,7 +24,8 @@ precisely measured. The regular season falls at roughly **−0.25 pp per year**
 the 41-year dataset. The playoffs fall at **−0.20 pp per year** (p = 0.009),
 though with more year-to-year volatility (R² = 0.16).
 
-Within individual eras the season count is too small for reliable slope estimates,
+Within individual eras the season counts are mostly too small for reliable slope
+estimates (only the 1984–94 and 2005–17 regular-season slopes reach p < 0.05),
 but the overall trajectory is one of the strongest trends in the dataset. The
 regularity of the decline — not a one-time step but a persistent drift — points
 to systemic forces rather than a single rule change.
@@ -56,7 +58,8 @@ but the pattern is consistent across both framings.
 Fitting a separate trend line within each era reveals that the decline is not a
 smooth drift — there are periods of relative stability and periods of sharper
 change. Playoff home court advantage has consistently exceeded the regular-season
-figure but has converged dramatically in recent years.
+figure; the gap widened through the mid-2000s and has narrowed back toward its
+1980s level in recent seasons.
 
 ![Figure 4. Regular-season home win % per season. A separate trend line is fit within each rule-change era. Background shading identifies each era.](nba_home_court_advantage_regular_era.png)
 
@@ -143,11 +146,13 @@ home and road teams.
 
 ### 3PA rate differential — shot selection has converged
 
-Road teams used to take proportionally fewer 3-point attempts than home teams at
-the same venue. As the 3-point revolution normalized high-volume shooting
-league-wide, that difference has closed completely. Shot selection is no longer a
-meaningful home court edge — road teams now arrive with the same offensive game
-plan as the home team.
+Road teams used to take proportionally **more** 3-point attempts than home teams
+at the same venue — consistent with being pushed away from the paint and toward
+the perimeter. As the 3-point revolution normalized high-volume shooting
+league-wide, that difference has not just closed but reversed slightly: home
+teams now take a marginally higher share of their shots from three. Shot
+selection is no longer a meaningful home court edge — road teams now arrive with
+the same offensive game plan as the home team.
 
 FG% (unweighted) is also narrowing. FT% and 3P% show no significant trend.
 
@@ -338,8 +343,9 @@ move nearly in lockstep over 40 years. In the playoffs the relationship is weake
 but still significant (r ≈ −0.47, p = 0.002), likely because playoff formats and
 sample sizes add noise.
 
-The era-bucketed table tells the same story: the five eras with the highest 3PA
-rates have the lowest home win percentages, monotonically.
+The era-bucketed table tells the same story: eras with higher 3PA rates have
+lower home win percentages, with only one small inversion (1995–01 at 60.1%
+vs. 2002–04 at 61.1%).
 
 ### 3PA rate predicts home win probability even within eras
 
@@ -524,10 +530,10 @@ The scatter of regular-season HCA versus playoff HCA shows a positive
 relationship: franchises that protect home court in the regular season tend to
 do so in the playoffs as well. However, the playoff HCAs are uniformly larger
 and more dispersed, reflecting both the higher-stakes environment and the
-smaller sample sizes. Some franchises that rank in the middle of the
-regular-season table — Portland, Seattle, Atlanta — rank near the top in
-the playoffs, while others like the New Jersey Nets show notably weaker
-playoff home advantages than their regular-season figures might suggest.
+smaller sample sizes. Portland, Seattle, and Atlanta — already near the top
+of the regular-season table — rank even higher in the playoffs, while others
+like the New Jersey Nets show notably weaker playoff home advantages than
+their regular-season figures might suggest.
 
 ![Figure 17. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
 
@@ -568,55 +574,62 @@ playoff matchups across 42 seasons for reliable playoff inference.
 ### Pre/post-2014 level shift
 
 Splitting the sample at the 2014 Finals format change confirms a real drop in the
-overall home-win probability after 2014. Coefficients on rest, altitude, and time
-zone are broadly stable across the split — those factors did not drive the
-post-2014 decline.
+overall home-win probability after 2014. Coefficients on rest and time zone are
+stable across the split; the altitude coefficient shrinks (+0.39 → +0.25
+log-odds) but remains positive. None of these factors drove the post-2014
+decline — the drop shows up in the intercept (−4.7 pp), not in the covariates.
 
 ---
 
 ## 16. Summary
 
 Home court advantage has declined substantially in both the regular season and
-the playoffs over the past 40 years, with the playoff decline steeper than the
-regular season. The decline is structural — it spans every rule-change era and
+the playoffs over the past 40 years, with the regular-season decline somewhat
+steeper than the playoffs. The decline is structural — it spans every rule-change era and
 the era effect accounts for the majority of variance explained by the regression
 model. The mechanisms are summarized in the tables below, split by type of analysis.
 
-**Regular season — logistic regression model** (by R² contribution):
+*How to read these tables: "pp" means percentage points — a fall from 65% to
+55% is a drop of 10 pp. The "Evidence" column translates each effect's p-value:
+a small p-value (below 0.05) means the effect is very unlikely to be a chance
+fluctuation; a large one means no reliable effect was found.*
 
-| Factor | R² contribution | Effect | Significance |
+**Regular season — what the prediction model credits** (share of the model's
+explained variation):
+
+| Factor | Share | Effect | Evidence |
 |---|---|---|---|
-| Era (structural decline) | 56% | −8.9 pp net 1984–94 → 2023–25 | p < 0.001 |
-| Altitude (Denver / Utah) | 25% | +8.2 pp home advantage | p < 0.001 |
-| Rest differential | 16% | +1.5 pp per rest-day advantage | p < 0.001 |
-| Time-zone differential | 2% | −0.6 pp/zone (era-controlled) | p = 0.012 |
+| Era (structural decline) | 56% | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
+| Altitude (Denver / Utah) | 25% | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
+| Rest differential | 16% | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
+| Time-zone differential | 2% | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
 
-**Regular season — mechanism and correlation analyses**:
+**Regular season — mechanisms behind the decline**:
 
-| Factor | Effect | Significance |
+| Factor | What changed | Evidence |
 |---|---|---|
-| Foul differential (refs more neutral) | +0.023 pp/yr closing gap | p < 0.001 |
-| Shot quality (eFG% + paint access) | eFG%: −0.015 pp/yr; paint share: −0.037 pp/yr | p < 0.001 |
-| League-wide 3-point shooting | r = −0.898 season-level; −2.3 pp per 10 pp 3PA within era | p < 0.001 |
-| Travel distance | −0.08 pp per 100 mi | p = 0.024 |
-| Competitive balance / parity | r = −0.066 — no relationship | p = 0.676 |
+| Referee fouls (refs more neutral) | Home teams' foul advantage shrank from 1.2 fewer fouls/game in 1984–94 to 0.2 today | Very strong (p < 0.001) |
+| Shot quality (shooting + paint access) | Home shooting-efficiency edge fell from +1.6 pp to +1.0 pp; home paint-access edge fell from +1.3 pp to +0.4 pp | Very strong (p < 0.001) |
+| League-wide 3-point shooting | Seasons with more 3-point shooting have lower home win % (correlation −0.90); even within an era, higher-3PA games favor the visitor (−2.3 pp per 10 pp of 3PA rate) | Very strong (p < 0.001) |
+| Travel distance | Longer trips barely hurt the visitor: −0.08 pp per 100 miles | Real but negligible (p = 0.024) |
+| Competitive balance / parity | League parity does not track home advantage at all | None — likely chance (p = 0.68) |
 
-**Playoffs — logistic regression model**:
+**Playoffs — what the prediction model credits**:
 
-| Factor | Effect | Significance |
+| Factor | Effect | Evidence |
 |---|---|---|
-| Era (structural decline) | All eras significantly below 1984–94 baseline | p < 0.001 |
-| Rest differential | +2.3 pp per rest-day advantage | p = 0.014 |
-| Altitude (Denver / Utah) | −1.8 pp — no edge in playoffs | p = 0.591 |
-| Time-zone / distance | No meaningful effect | Time zone p = 0.278; distance p = 0.769 |
+| Era (structural decline) | Every era since 1984–94 has lower home advantage | Very strong (p < 0.001) |
+| Rest differential | +2.3 pp per extra day of rest — larger than in the regular season | Solid (p = 0.014) |
+| Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | None — likely chance (p = 0.59) |
+| Time-zone / distance | No meaningful effect of either | None (p = 0.28 and p = 0.77) |
 
-**Playoffs — mechanism and correlation analyses**:
+**Playoffs — mechanisms behind the decline**:
 
-| Factor | Effect | Significance |
+| Factor | What changed | Evidence |
 |---|---|---|
-| Foul differential (refs more neutral) | +0.020 pp/yr closing gap | p = 0.002 |
-| League-wide 3-point shooting | r = −0.468 season-level; within-era game-level effect weak | p = 0.002 season-level; p = 0.097 within era |
-| Shot quality (eFG% + paint access) | eFG% declining; paint trend not significant | eFG% p < 0.05 |
+| Referee fouls (refs more neutral) | Home teams' foul advantage shrank from 1.6 fewer fouls/game in 1984–94 to 0.7 today | Strong (p < 0.01) |
+| League-wide 3-point shooting | Playoff seasons with more 3-point shooting have lower home win % (correlation −0.47) | Strong season-level (p = 0.002); weak within era (p = 0.097) |
+| Shot quality (shooting + paint access) | Both edges trend downward, but the playoff sample is too small to be sure | Not significant |
 
 The core story: the decline is primarily **structural** — controlling for which
 rule-change era a game was played in accounts for the majority of explained
