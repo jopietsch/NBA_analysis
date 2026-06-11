@@ -21,9 +21,20 @@ No new charts are planned, so no `.gitignore` changes.
 
 ---
 
+## Batch status
+
+| Batch | Items | Status | Completed |
+|---|---|---|---|
+| 1 | 1 (P0), 2 (P1) | ✓ Done | 2026-06-11 |
+| 2 | 3, 4 (P1) | ✓ Done | 2026-06-11 |
+| 3 | 5–8, 12 (P2) | Not started | — |
+| 4 | 9–11 (P2) | Not started | — |
+
+---
+
 ## P0 — Bug fix (do first; FINDINGS currently states an unsupported claim)
 
-### 1. §7 Referee per-official significance test is broken
+### 1. §7 Referee per-official significance test is broken ✓ DONE
 
 **Problem.** `run_referee_analysis` computes each official's p-value as
 `ttest_1samp([o["mean_foul_diff"]] * o["n_games"], 0)` — a constant vector
@@ -57,7 +68,7 @@ significant.
 
 ## P1 — Different approach could change the conclusion
 
-### 2. §7 Referee rankings and the variance-compression claim
+### 2. §7 Referee rankings and the variance-compression claim ✓ DONE
 
 **Problem.** (a) Career-mean rankings favor small-sample extremes — same
 artifact as the Kansas City Kings row in §14. (b) The headline "SD across
@@ -80,7 +91,7 @@ which inflates early-era SDs mechanically.
   corrected numbers or gets restated as partly a sampling artifact — follow
   the data.
 
-### 3. §4 Win-margin "polarization" — replace conditional-on-outcome trends
+### 3. §4 Win-margin "polarization" — replace conditional-on-outcome trends ✓ DONE
 
 **Problem.** Trends in margin *conditional on win/loss* suffer from a
 composition effect: as home win % declines, marginal close games migrate from
@@ -99,7 +110,7 @@ partly mechanical.
 - Keep the existing conditional table (it matches Figure 6) but add the
   quantile table and reframe FINDINGS §4 around it.
 
-### 4. §15 Sequential R² decomposition is order-dependent
+### 4. §15 Sequential R² decomposition is order-dependent ✓ DONE
 
 **Problem.** "Era accounts for 56% of model fit" depends on era being entered
 first; era absorbs all variance it shares with rest (scheduling changed
