@@ -775,7 +775,7 @@ def compute_team_hca_stats(
                 w_dict[team] = w_dict.get(team, 0) + int((grp["WL"] == "W").sum())
 
     result: dict[str, dict] = {}
-    for team in set(home_total) | set(road_total):
+    for team in sorted(set(home_total) | set(road_total)):
         n_h = home_total.get(team, 0)
         n_r = road_total.get(team, 0)
         if n_h < min_games or n_r < min_games:

@@ -168,6 +168,12 @@ def _stars(p: float) -> str:
     return "   "
 
 
+def _fmt_p(p: float) -> str:
+    if np.isnan(p):
+        return "n/a"
+    return "<0.001" if p < 0.001 else f"{p:.3f}"
+
+
 def _mcfadden(model) -> float:
     return 1.0 - model.llf / model.llnull
 
@@ -217,7 +223,7 @@ def run_decline_trend(df: pd.DataFrame) -> None:
 
         coef  = m_full.params["year"]
         pval  = m_full.pvalues["year"]
-        pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+        pval_s = _fmt_p(pval)
         total = coef * (yr_max - yr_min)
 
         print(f"   {ctx_label}  ({len(rows)} seasons, {yr_min}–{yr_max})")
@@ -238,7 +244,7 @@ def run_decline_trend(df: pd.DataFrame) -> None:
                 m_era = smf.ols("pct ~ year", data=era_rows).fit()
             c = m_era.params["year"]
             p = m_era.pvalues["year"]
-            p_s = "<0.001" if p < 0.001 else f"{p:.3f}"
+            p_s = _fmt_p(p)
             print(f"   {era_label:<12}  {n:>4}  {c:>+12.3f}  {p_s:>8}  {_stars(p)}")
         print()
 
@@ -280,7 +286,7 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
         (wa, na), (wb, nb) = counts[a], counts[b]
         z, p = proportions_ztest([wa, wb], [na, nb])
         diff = 100.0 * (wb / nb - wa / na)
-        p_s = "<0.001" if p < 0.001 else f"{p:.3f}"
+        p_s = _fmt_p(p)
         print(f"   {a:>8} → {b:<8}  {diff:+5.1f} pp   "
               f"(z = {z:+.2f}, p = {p_s}  {_stars(p).strip()})")
 
@@ -304,14 +310,14 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
                  .replace(f"C(format_period, Treatment('{fmt_ref}'))[T.", "format: ")
                  .replace("]", "")
                  .replace("year", "year trend (per yr)"))
-        pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+        pval_s = _fmt_p(pval)
         print(f"   {label:<28}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  "
               f"{pval_s:>8}  {_stars(pval)}")
 
     lr    = 2.0 * (m_fmt.llf - m_year.llf)
     dfree = int(m_fmt.df_model - m_year.df_model)
     p_lr  = chi2.sf(lr, dfree)
-    p_lr_s = "<0.001" if p_lr < 0.001 else f"{p_lr:.3f}"
+    p_lr_s = _fmt_p(p_lr)
     print(f"\n   LR test — format dummies jointly vs. year-only model: "
           f"χ²({dfree}) = {lr:.2f},  p = {p_lr_s}  {_stars(p_lr).strip()}")
 
@@ -439,7 +445,7 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
         coef  = params[name]
         pval  = pvals[name]
         label = _clean(name, era_ref, "1984")
-        pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+        pval_s = _fmt_p(pval)
         print(f"   {label:<44}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  {pval_s:>8}  {_stars(pval)}")
 
     # Sequential shares for side-by-side with Shapley
@@ -569,8 +575,8 @@ def run_factor_summary(df: pd.DataFrame) -> None:
             m_po = smf.logit(f"home_win ~ {raw}", data=po).fit(disp=0)
             c_re, p_re_ = m_re.params[raw], m_re.pvalues[raw]
             c_po, p_po_ = m_po.params[raw], m_po.pvalues[raw]
-            pv_re = "<0.001" if p_re_ < 0.001 else f"{p_re_:.3f}"
-            pv_po = "<0.001" if p_po_ < 0.001 else f"{p_po_:.3f}"
+            pv_re = _fmt_p(p_re_)
+            pv_po = _fmt_p(p_po_)
             print(f"   {label:<{LW}}  {c_re:+8.3f}  {_pp(c_re, p_re):+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
                   f"{c_po:+8.3f}  {_pp(c_po, p_po):+5.1f}  {pv_po:>8}  {_stars(p_po_)}")
 
@@ -626,7 +632,7 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
 
         if len(table) >= 2:
             stat, p_chi, dof, _ = chi2_contingency(table)
-            p_s = "<0.001" if p_chi < 0.001 else f"{p_chi:.3f}"
+            p_s = _fmt_p(p_chi)
             print(f"\n   Chi-square (H0: home win % equal across buckets): "
                   f"χ²({dof}) = {stat:.2f},  p = {p_s}  {_stars(p_chi).strip()}")
 
@@ -645,7 +651,7 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
                     continue
             c, p = m.params["rest_diff"], m.pvalues["rest_diff"]
             pb = era_rows["home_win"].mean()
-            p_s = "<0.001" if p < 0.001 else f"{p:.3f}"
+            p_s = _fmt_p(p)
             print(f"   {era_label:<12}  {len(era_rows):>7,}  {c:>+13.3f}  "
                   f"{_pp(c, pb):>+8.1f}  {p_s:>8}  {_stars(p)}")
 
@@ -657,7 +663,7 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
             lr    = 2.0 * (m_int.llf - m_add.llf)
             dfree = int(m_int.df_model - m_add.df_model)
             p_lr  = chi2.sf(lr, dfree)
-            p_lr_s = "<0.001" if p_lr < 0.001 else f"{p_lr:.3f}"
+            p_lr_s = _fmt_p(p_lr)
             verdict = ("the rest effect has NOT been stable across eras"
                        if p_lr < 0.05
                        else "no evidence the rest effect changed across eras")
@@ -886,7 +892,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
                 pval = float(m.pvalues["year"])
                 ci   = m.conf_int().loc["year"]
                 lo, hi = float(ci.iloc[0]), float(ci.iloc[1])
-                pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+                pval_s = _fmt_p(pval)
                 print(f"   {qlbl:>8}  {coef:>+13.3f}  "
                       f"[{lo:+.3f}, {hi:+.3f}]  {pval_s:>8}  {_stars(pval)}")
                 slopes[qlbl] = coef
@@ -942,9 +948,9 @@ def run_parity_correlation(
     r_s, p_s = scipy_stats.spearmanr(std_vals, home_vals)
 
     print(f"   N = {len(shared)} seasons")
-    print(f"   Pearson r  = {r_p:+.3f}  (p = {'<0.001' if p_p < 0.001 else f'{p_p:.3f}'}"
+    print(f"   Pearson r  = {r_p:+.3f}  (p = {_fmt_p(p_p)}"
           f"  {_stars(p_p).strip()})")
-    print(f"   Spearman ρ = {r_s:+.3f}  (p = {'<0.001' if p_s < 0.001 else f'{p_s:.3f}'}"
+    print(f"   Spearman ρ = {r_s:+.3f}  (p = {_fmt_p(p_s)}"
           f"  {_stars(p_s).strip()})\n")
 
     data = pd.DataFrame({"parity_std": std_vals, "home_pct": home_vals})
@@ -953,7 +959,7 @@ def run_parity_correlation(
         m = smf.ols("home_pct ~ parity_std", data=data).fit()
     coef = m.params["parity_std"]
     pval = m.pvalues["parity_std"]
-    pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+    pval_s = _fmt_p(pval)
     print(f"   Trend line: home_win_pct ~ parity_std_dev")
     print(f"   Slope: {coef:+.3f} pp per unit std dev  (p = {pval_s}  {_stars(pval).strip()})")
     print(f"   R² = {m.rsquared:.4f}\n")
@@ -1025,7 +1031,7 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
     if len(game_nums) >= 2:
         table = [[wins_by_game[g], total_by_game[g] - wins_by_game[g]] for g in game_nums]
         chi2_stat, p_chi, dof, _ = chi2_contingency(table)
-        p_chi_s = "<0.001" if p_chi < 0.001 else f"{p_chi:.3f}"
+        p_chi_s = _fmt_p(p_chi)
         print(f"\n   Chi-square test (H0: home win % uniform across all game numbers):")
         print(f"   χ²({dof}) = {chi2_stat:.2f},  p = {p_chi_s}  {_stars(p_chi).strip()}")
 
@@ -1039,7 +1045,7 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
         m = smf.ols("home_pct ~ game_num", data=rows, weights=rows["n"]).fit()
     coef = m.params["game_num"]
     pval = m.pvalues["game_num"]
-    pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+    pval_s = _fmt_p(pval)
     print(f"\n   Weighted trend line across game numbers: {coef:+.2f} pp/game  "
           f"(p = {pval_s}  {_stars(pval).strip()})")
     print(f"   (Positive = home win % rises as the series goes deeper)")
@@ -1091,7 +1097,7 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
                 m = smf.logit("home_win ~ distance_miles", data=sub).fit(disp=0)
                 coef = m.params["distance_miles"]
                 pval = m.pvalues["distance_miles"]
-                pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+                pval_s = _fmt_p(pval)
                 pp_per_100mi = _pp(coef, p_bar) * 100
                 print(f"\n   Bivariate logistic: coef = {coef:+.5f} log-odds/mi  "
                       f"(≈{pp_per_100mi:+.2f} pp per 100 mi),  p = {pval_s}  {_stars(pval).strip()}")
@@ -1121,8 +1127,8 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
 
         r_p, p_p = pearsonr(by_year["tpa_rate"], by_year["home_pct"])
         r_s, p_s = spearmanr(by_year["tpa_rate"], by_year["home_pct"])
-        p_p_s = "<0.001" if p_p < 0.001 else f"{p_p:.3f}"
-        p_s_s = "<0.001" if p_s < 0.001 else f"{p_s:.3f}"
+        p_p_s = _fmt_p(p_p)
+        p_s_s = _fmt_p(p_s)
 
         print(f"   {ctx_label}  (n = {len(by_year)} seasons)")
         print(f"   Season-level Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
@@ -1150,7 +1156,7 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
             m_biv = smf.logit("home_win ~ tpa_rate_avg", data=sub).fit(disp=0)
             coef  = m_biv.params["tpa_rate_avg"]
             pval  = m_biv.pvalues["tpa_rate_avg"]
-            pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+            pval_s = _fmt_p(pval)
             pp_per_10pct = _pp(coef, p_bar) * 10
             print(f"\n   Game-level bivariate logistic  (N = {len(sub):,} games)")
             print(f"   coef = {coef:+.4f} log-odds per pp of 3PA rate")
@@ -1164,7 +1170,7 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
             m_era = smf.logit("home_win ~ tpa_rate_avg + C(era)", data=sub).fit(disp=0)
             coef_e  = m_era.params["tpa_rate_avg"]
             pval_e  = m_era.pvalues["tpa_rate_avg"]
-            pval_e_s = "<0.001" if pval_e < 0.001 else f"{pval_e:.3f}"
+            pval_e_s = _fmt_p(pval_e)
             pp_era = _pp(coef_e, p_bar) * 10
             print(f"\n   Controlling for era (within-era game-level effect):")
             print(f"   coef = {coef_e:+.4f}  (≈ {pp_era:+.2f} pp per 10 pp 3PA)  "
@@ -1198,8 +1204,8 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
 
         r_p, p_p = pearsonr(by_year["pace"], by_year["home_pct"])
         r_s, p_s = spearmanr(by_year["pace"], by_year["home_pct"])
-        p_p_s = "<0.001" if p_p < 0.001 else f"{p_p:.3f}"
-        p_s_s = "<0.001" if p_s < 0.001 else f"{p_s:.3f}"
+        p_p_s = _fmt_p(p_p)
+        p_s_s = _fmt_p(p_s)
 
         print(f"   {ctx_label}  (n = {len(by_year)} seasons)")
         print(f"   Season-level Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
@@ -1225,7 +1231,7 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             m_biv = smf.logit("home_win ~ pace_avg", data=sub).fit(disp=0)
             coef  = m_biv.params["pace_avg"]
             pval  = m_biv.pvalues["pace_avg"]
-            pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+            pval_s = _fmt_p(pval)
             pp_per_10 = _pp(coef, p_bar) * 10
             print(f"\n   Game-level bivariate logistic  (N = {len(sub):,} games)")
             print(f"   coef = {coef:+.4f} log-odds per possession")
@@ -1238,7 +1244,7 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             m_era = smf.logit("home_win ~ pace_avg + C(era)", data=sub).fit(disp=0)
             coef_e  = m_era.params["pace_avg"]
             pval_e  = m_era.pvalues["pace_avg"]
-            pval_e_s = "<0.001" if pval_e < 0.001 else f"{pval_e:.3f}"
+            pval_e_s = _fmt_p(pval_e)
             pp_era = _pp(coef_e, p_bar) * 10
             print(f"\n   Controlling for era (within-era game-level effect):")
             print(f"   coef = {coef_e:+.4f}  (≈ {pp_era:+.2f} pp per 10 possessions)  "
@@ -1324,8 +1330,8 @@ def run_hca_consistency_analysis() -> None:
     po_vals = np.array([po[t]["hca"] for t in shared])
     r_p, p_p = pearsonr(rs_vals, po_vals)
     r_s, p_s = spearmanr(rs_vals, po_vals)
-    p_p_s = "<0.001" if p_p < 0.001 else f"{p_p:.3f}"
-    p_s_s = "<0.001" if p_s < 0.001 else f"{p_s:.3f}"
+    p_p_s = _fmt_p(p_p)
+    p_s_s = _fmt_p(p_s)
 
     print(f"   N = {len(shared)} franchises with both regular-season and playoff HCA")
     print(f"   Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
@@ -1455,11 +1461,6 @@ def run_referee_analysis() -> None:
 
     NW, CW = 26, 9
 
-    def _pstr(p: float) -> str:
-        if np.isnan(p): return "n/a"
-        if p < 0.001:   return "<0.001"
-        return f"{p:.3f}"
-
     header = (f"   {'Official':<{NW}} {'N games':>{CW}} {'Raw diff':>{CW}} "
               f"{'Shrunken':>{CW}} {'p':>{CW}} {'BH-p':>{CW}}")
     sep    = f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW}"
@@ -1470,7 +1471,7 @@ def run_referee_analysis() -> None:
         for o, rp, bp, s in block:
             print(f"   {o['name']:<{NW}} {o['n_games']:>{CW},} "
                   f"{o['mean_foul_diff']:>+{CW}.3f} {s:>+{CW}.3f} "
-                  f"{_pstr(rp):>{CW}} {_pstr(bp):>{CW}}")
+                  f"{_fmt_p(rp):>{CW}} {_fmt_p(bp):>{CW}}")
 
     print(f"\n   Top 10 most home-favoring (by shrunken mean foul_diff):")
     _print_block(ranked[:10])

@@ -591,8 +591,8 @@ All data from cache/ — same source as the plots above.
    New Jersey Nets                      1,165      53.9%     1,165      29.7%     +24.2 pp
    Atlanta Hawks                        1,685      61.6%     1,686      37.8%     +23.8 pp
    Cleveland Cavaliers                  1,688      61.9%     1,681      38.3%     +23.6 pp
-   Portland Trail Blazers               1,688      65.9%     1,690      42.7%     +23.2 pp
    New Orleans/Oklahoma City Hornet        82      58.5%        82      35.4%     +23.2 pp
+   Portland Trail Blazers               1,688      65.9%     1,690      42.7%     +23.2 pp
    Los Angeles Clippers                 1,247      50.2%     1,247      27.7%     +22.5 pp
    Charlotte Bobcats                      402      47.5%       402      25.4%     +22.1 pp
    Milwaukee Bucks                      1,688      61.4%     1,689      39.5%     +21.9 pp
@@ -607,8 +607,8 @@ All data from cache/ — same source as the plots above.
    Chicago Bulls                        1,686      61.4%     1,683      42.5%     +18.9 pp
    Boston Celtics                       1,687      66.4%     1,688      48.0%     +18.4 pp
    Memphis Grizzlies                      967      57.9%       966      39.9%     +18.1 pp
-   Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
    Los Angeles Lakers                   1,688      68.4%     1,687      50.6%     +17.8 pp
+   Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
    Washington Wizards                   1,113      49.8%     1,115      32.1%     +17.7 pp
    Philadelphia 76ers                   1,687      56.2%     1,690      38.9%     +17.3 pp
    New Orleans Hornets                    361      56.0%       361      38.8%     +17.2 pp
@@ -645,8 +645,8 @@ All data from cache/ — same source as the plots above.
    Charlotte Hornets                       24      58.3%        31      29.0%     +29.3 pp
    Denver Nuggets                         100      59.0%       104      29.8%     +29.2 pp
    Houston Rockets                        132      64.4%       126      35.7%     +28.7 pp
-   Toronto Raptors                         56      58.9%        56      30.4%     +28.6 pp
    Detroit Pistons                        141      68.8%       132      40.2%     +28.6 pp
+   Toronto Raptors                         56      58.9%        56      30.4%     +28.6 pp
    Indiana Pacers                         133      64.7%       142      36.6%     +28.0 pp
    Miami Heat                             143      67.1%       135      39.3%     +27.9 pp
    San Antonio Spurs                      175      70.3%       176      43.2%     +27.1 pp
