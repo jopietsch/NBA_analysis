@@ -90,7 +90,7 @@ def _build_styles() -> dict:
         "toc_title": ParagraphStyle(
             "toc_title", parent=base["Normal"],
             fontSize=11, textColor=colors.HexColor(DARK),
-            leading=18,
+            leading=15,
         ),
         "note": ParagraphStyle(
             "note", parent=base["Normal"],
@@ -264,7 +264,7 @@ def _cover(sections: dict) -> list:
     toc_data.append(['A.', 'Appendix: Full Regression Output'])
 
     return [
-        Spacer(1, 1.2 * inch),
+        Spacer(1, 0.5 * inch),
         Paragraph("NBA Home Court Advantage", _STYLES["cover_title"]),
         Paragraph("A 40-Year Decline", _STYLES["cover_sub"]),
         Spacer(1, 0.25 * inch),
@@ -278,7 +278,7 @@ def _cover(sections: dict) -> list:
             f"Generated {datetime.now().strftime('%B %d, %Y at %H:%M')}",
             _STYLES["cover_sub"],
         ),
-        Spacer(1, 0.8 * inch),
+        Spacer(1, 0.25 * inch),
         Paragraph("Contents", _STYLES["h2"]),
         Table(
             [[Paragraph(num, _STYLES["toc_num"]), Paragraph(title, _STYLES["toc_title"])]
@@ -286,8 +286,8 @@ def _cover(sections: dict) -> list:
             colWidths=[CONTENT_W * 0.10, CONTENT_W * 0.90],
             style=TableStyle([
                 ("VALIGN",        (0, 0), (-1, -1), "MIDDLE"),
-                ("TOPPADDING",    (0, 0), (-1, -1), 5),
-                ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+                ("TOPPADDING",    (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 3),
                 ("LINEBELOW",     (0, -1), (-1, -1), 0.5, colors.HexColor("#dddddd")),
             ]),
         ),
