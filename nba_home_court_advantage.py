@@ -21,12 +21,14 @@ from nba_home_court_data import (
     compute_rest_stats, compute_differential_stats, compute_margin_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_travel_stats, compute_shot_zone_stats, compute_league_3pa_stats,
+    compute_league_pace_stats,
 )
 from nba_home_court_plots import (
     TRAVEL_COLORS, TRAVEL_LABELS,
     plot_results, plot_rest_analysis, plot_category_road_win_analysis,
     plot_differential_analysis, plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
+    plot_pace_hca_analysis,
 )
 
 
@@ -114,6 +116,17 @@ def main() -> None:
     plot_3pa_hca_analysis(
         reg_tpa_seasons, reg_tpa_rates, reg_tpa_pcts,
         po_tpa_seasons,  po_tpa_rates,  po_tpa_pcts,
+    )
+
+    reg_pace_seasons, reg_pace_vals, reg_pace_pcts = compute_league_pace_stats(
+        START_YEAR, END_YEAR, SeasonType.regular
+    )
+    po_pace_seasons, po_pace_vals, po_pace_pcts = compute_league_pace_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_pace_hca_analysis(
+        reg_pace_seasons, reg_pace_vals, reg_pace_pcts,
+        po_pace_seasons,  po_pace_vals,  po_pace_pcts,
     )
 
     import nba_home_court_regression

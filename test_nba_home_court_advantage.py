@@ -1253,6 +1253,65 @@ class TestComputeTravelStats:
         assert calls == [2019, 2021]
 
 
+class TestComputeLeaguePaceStats:
+    def _write_csv(self, tmp_path, df):
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+    def test_computes_pace_per_season(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Two games (4 team-rows): poss = 80 - 5 + 15 + 0.44*20 = 98.8
+        # pace = 98.8 * 240 / 240 = 98.8
+        df = pd.DataFrame({
+            "GAME_ID":  [1, 1, 2, 2],
+            "MATCHUP":  ["A vs. B", "B @ A", "C vs. D", "D @ C"],
+            "TEAM_NAME": ["Team A", "Team B", "Team C", "Team D"],
+            "WL":       ["W", "L", "W", "L"],
+            "FGA":      [80, 80, 80, 80],
+            "OREB":     [5,  5,  5,  5],
+            "TOV":      [15, 15, 15, 15],
+            "FTA":      [20, 20, 20, 20],
+            "MIN":      [240, 240, 240, 240],
+        })
+        self._write_csv(tmp_path, df)
+
+        seasons, pace_vals, home_pcts = nba.compute_league_pace_stats(2024, 2024, "Regular Season")
+
+        assert seasons == ["23–24"]
+        expected_pace = (80 - 5 + 15 + 0.44 * 20) * 240 / 240
+        assert pace_vals[0] == pytest.approx(expected_pace, rel=1e-5)
+        assert home_pcts[0] == pytest.approx(100.0, rel=1e-5)
+
+    def test_returns_empty_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        seasons, pace_vals, home_pcts = nba.compute_league_pace_stats(2024, 2024, "Regular Season")
+        assert seasons == []
+        assert pace_vals == []
+        assert home_pcts == []
+
+    def test_skips_years_in_skip_years(self, monkeypatch):
+        calls = []
+        monkeypatch.setattr(nba, "_load_game_log",
+                            lambda year, s: calls.append(year) or None)
+        nba.compute_league_pace_stats(2019, 2021, "Regular Season", skip_years={2020})
+        assert 2020 not in calls
+        assert calls == [2019, 2021]
+
+    def test_skips_seasons_with_missing_columns(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # DataFrame without OREB/TOV columns
+        df = pd.DataFrame({
+            "GAME_ID":  [1, 1],
+            "MATCHUP":  ["A vs. B", "B @ A"],
+            "WL":       ["W", "L"],
+            "FGA":      [80, 80],
+            "FTA":      [20, 20],
+            "MIN":      [240, 240],
+        })
+        self._write_csv(tmp_path, df)
+        seasons, pace_vals, home_pcts = nba.compute_league_pace_stats(2024, 2024, "Regular Season")
+        assert seasons == []
+
+
 class TestFetchAllSeasons:
     def test_skips_playoffs_only_for_skip_years(self, monkeypatch):
         monkeypatch.setattr(nba, "START_YEAR", 2019)

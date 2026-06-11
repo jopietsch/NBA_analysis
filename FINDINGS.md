@@ -374,7 +374,53 @@ more 3-point shooting and removes a key home advantage mechanism simultaneously.
 
 ---
 
-## 13. Summary
+## 13. Pace and Home Court Advantage
+
+The NBA has undergone large swings in pace over the past 40 years. The
+defensive-era 1990s produced some of the slowest games on record (~93-94
+possessions per team per 48 min), while the 3-point revolution era has driven
+pace back toward 1980s levels (~101-102). The hypothesis was that faster-paced
+games would produce lower home court advantage by pushing outcomes closer to
+expected value. The data do not support this.
+
+### Season-level: no significant correlation
+
+At the season level, the correlation between league-wide pace and regular-season
+home win % is near zero and non-significant (Pearson r = +0.28, p = 0.072;
+Spearman r = +0.15, p = 0.331). In the playoffs there is also no significant
+relationship (r = -0.12, p = 0.474). The era table explains why: pace was
+**high** in the 1984-94 era (~102 poss/48 min) when home court advantage was
+also at its peak (65.0%), then **fell** during the defensive 1995-2004 era
+(~93-94) while HCA also declined, then **rose again** in the modern era (~101)
+while HCA continued its descent. The relationship is U-shaped across eras, not
+monotone -- pace and HCA share no common trend.
+
+### Game-level: the effect is positive, not negative
+
+At the game level, faster-paced games have **higher** home win probability, not
+lower. The bivariate logistic yields +2.37 pp per 10 extra possessions (p < 0.001
+in the regular season), and the within-era logistic -- controlling for era --
+actually strengthens the effect (+2.54 pp per 10 possessions, p < 0.001). In the
+playoffs there is no significant game-level effect in either direction.
+
+The most likely explanation is **game-state causality**: pace reflects what is
+happening in a game as much as it determines it. When the home team is winning
+and running off turnovers and makes, the game moves faster. Pace is partly an
+*outcome* of home court advantage rather than a cause of it, which reverses the
+apparent direction of the relationship.
+
+### Pace does not explain the decline
+
+Pace was approximately as high in 1984-94 as it is today, yet home court
+advantage in those early seasons was ~10 pp higher. Whatever is driving the
+long-run decline, it is not the number of possessions per game. The secular
+decline runs through eras of both fast and slow play without pace tracking it.
+
+![Figure 15. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
+
+---
+
+## 14. Summary
 
 Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the playoff decline steeper than the

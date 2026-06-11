@@ -703,6 +703,43 @@ def compute_league_3pa_stats(
     return seasons, tpa_rates, home_win_pcts
 
 
+def compute_league_pace_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], list[float], list[float]]:
+    """
+    Per-season league-wide pace (possessions per 48 min, per team) and home win %.
+    Pace = (FGA − OREB + TOV + 0.44×FTA) / MIN × 240.
+    Returns (seasons, pace_vals, home_win_pcts).
+    """
+    seasons: list[str] = []
+    pace_vals: list[float] = []
+    home_win_pcts: list[float] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None or df.empty:
+            continue
+        if not {"FGA", "OREB", "TOV", "FTA", "MIN"}.issubset(df.columns):
+            continue
+        df = df.copy()
+        poss = df["FGA"] - df["OREB"] + df["TOV"] + 0.44 * df["FTA"]
+        pace = poss * 240.0 / df["MIN"].replace(0, np.nan)
+        avg_pace = float(pace.dropna().mean())
+        if np.isnan(avg_pace):
+            continue
+        merged = _merge_home_away_rows(df)
+        if merged is None:
+            continue
+        hw_pct = 100.0 * (merged["WL_home"] == "W").mean()
+        seasons.append(short_label(year))
+        pace_vals.append(avg_pace)
+        home_win_pcts.append(float(hw_pct))
+
+    return seasons, pace_vals, home_win_pcts
+
+
 def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-home-game point margin from the cached game log.

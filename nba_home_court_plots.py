@@ -924,3 +924,102 @@ def plot_3pa_hca_analysis(
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.show()
+
+
+def plot_pace_hca_analysis(
+    reg_seasons: list[str], reg_pace: list[float], reg_pcts: list[float],
+    po_seasons:  list[str], po_pace:  list[float], po_pcts:  list[float],
+) -> None:
+    """
+    3-panel figure: does league-wide pace (possessions per 48 min) drive the
+    decline in home court advantage?
+
+    Panel 1: dual-axis time series — regular-season pace (right axis, purple)
+             vs. home win % (left axis, blue), era-shaded.
+    Panel 2: scatter regular season — x = pace, y = home win %, era-colored.
+    Panel 3: scatter playoffs — same layout.
+    """
+    from scipy.stats import pearsonr
+
+    PURPLE = "#9467bd"
+
+    x_reg = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+    y_pace_reg = np.array(reg_pace, dtype=float)
+    y_pct_reg  = np.array(reg_pcts, dtype=float)
+    y_pace_po  = np.array(po_pace,  dtype=float)
+    y_pct_po   = np.array(po_pcts,  dtype=float)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))
+    fig.suptitle("Does League-Wide Pace Explain the Decline in Home Court Advantage?",
+                 fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Data: NBA.com  |  Pace = estimated possessions per 48 min per team  "
+             "|  1983–84 through 2024–25",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: dual-axis time series (regular season) ─────────────────────
+    _shade_eras(ax1, reg_seasons, label_y=None)
+    ax1.plot(x_reg, y_pct_reg, color=BLUE, linewidth=2, label="Home win %", zorder=2)
+    ax1.set_xticks(x_reg[::tick_step])
+    ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("Home win %", color=BLUE, fontsize=10)
+    ax1.tick_params(axis="y", labelcolor=BLUE)
+    ax1.set_title("Regular-season pace vs. home win %\nover time",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    ax1r = ax1.twinx()
+    ax1r.plot(x_reg, y_pace_reg, color=PURPLE, linewidth=2,
+              label="Pace (poss/48 min)", zorder=2, alpha=0.85)
+    ax1r.set_ylabel("Pace (possessions per 48 min)", color=PURPLE, fontsize=10)
+    ax1r.tick_params(axis="y", labelcolor=PURPLE)
+
+    lines1, labs1 = ax1.get_legend_handles_labels()
+    lines2, labs2 = ax1r.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labs1 + labs2, fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panels 2 & 3: scatter (one point per season) ─────────────────────────
+    def _scatter_panel(ax, seasons, x_vals, y_vals, title):
+        for s, xv, yv in zip(seasons, x_vals, y_vals):
+            if np.isnan(xv) or np.isnan(yv):
+                continue
+            yr = label_to_year(s)
+            color = GRAY
+            for (_, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
+                if y1 <= yr <= y2:
+                    color = era_color
+                    break
+            ax.scatter(xv, yv, color=color, s=60, zorder=3, edgecolors="white", linewidths=0.8)
+
+        valid = ~np.isnan(np.array(x_vals)) & ~np.isnan(np.array(y_vals))
+        xv_arr = np.array(x_vals)[valid]
+        yv_arr = np.array(y_vals)[valid]
+        if valid.sum() >= 4:
+            z = np.polyfit(xv_arr, yv_arr, 1)
+            xr = np.linspace(xv_arr.min(), xv_arr.max(), 100)
+            ax.plot(xr, np.poly1d(z)(xr), "--", color=GRAY, linewidth=1.8, alpha=0.7)
+            r, p = pearsonr(xv_arr, yv_arr)
+            p_str = "<0.001" if p < 0.001 else f"{p:.3f}"
+            ax.text(0.05, 0.05, f"Pearson r = {r:+.2f}  (p = {p_str})",
+                    transform=ax.transAxes, fontsize=9, color="#444",
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.7))
+
+        era_patches = [mpatches.Patch(color=c, label=e[0]) for e, c in zip(ERA_DEFS, ERA_COLORS)]
+        ax.legend(handles=era_patches, fontsize=8, framealpha=0.85, edgecolor="#ddd",
+                  title="Era", title_fontsize=8)
+        ax.set_xlabel("Pace (possessions per 48 min)", fontsize=10)
+        ax.set_ylabel("Home win %", fontsize=10)
+        ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+        ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    _scatter_panel(ax2, reg_seasons, list(y_pace_reg), list(y_pct_reg),
+                   "Regular season: pace vs. home win %\n(one point per season)")
+    _scatter_panel(ax3, po_seasons,  list(y_pace_po),  list(y_pct_po),
+                   "Playoffs: pace vs. home win %\n(one point per season)")
+
+    plt.tight_layout()
+    output_path = "nba_home_court_pace.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.show()

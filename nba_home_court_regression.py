@@ -104,6 +104,16 @@ def build_game_dataset() -> pd.DataFrame:
             total_fg3a = merged["FG3A_home"] + merged["FG3A_away"]
             merged["tpa_rate_avg"] = 100.0 * total_fg3a / total_fga.replace(0, np.nan)
 
+            pace_cols = {"OREB_home", "OREB_away", "TOV_home", "TOV_away"}
+            if pace_cols.issubset(merged.columns):
+                home_poss = (merged["FGA_home"] - merged["OREB_home"]
+                             + merged["TOV_home"] + 0.44 * merged["FTA_home"])
+                away_poss = (merged["FGA_away"] - merged["OREB_away"]
+                             + merged["TOV_away"] + 0.44 * merged["FTA_away"])
+                merged["pace_avg"] = (home_poss + away_poss) / 2.0
+            else:
+                merged["pace_avg"] = np.nan
+
             if is_playoff:
                 gid_str = merged["GAME_ID"].apply(lambda x: str(int(float(x))))
                 merged["game_in_series"] = gid_str.str[-1].astype(int).astype(float)
@@ -124,6 +134,7 @@ def build_game_dataset() -> pd.DataFrame:
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff",
                 "margin", "game_in_series", "distance_miles", "tpa_rate_avg",
+                "pace_avg",
             ]])
 
     if not chunks:
@@ -842,6 +853,77 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+def run_pace_analysis(df: pd.DataFrame) -> None:
+    """Season-level and game-level relationship between pace and home win %."""
+    from scipy.stats import pearsonr, spearmanr
+
+    _section("12. PACE AND HOME COURT ADVANTAGE")
+    print("   Does faster-paced play (more possessions per game) reduce home court advantage?")
+    print("   Season-level correlation plus game-level logistic regression.\n")
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po].dropna(subset=["pace_avg"])
+        if sub.empty:
+            continue
+
+        by_year = sub.groupby("year").agg(
+            pace=("pace_avg", "mean"),
+            home_pct=("home_win", lambda x: x.mean() * 100),
+        ).reset_index()
+
+        r_p, p_p = pearsonr(by_year["pace"], by_year["home_pct"])
+        r_s, p_s = spearmanr(by_year["pace"], by_year["home_pct"])
+        p_p_s = "<0.001" if p_p < 0.001 else f"{p_p:.3f}"
+        p_s_s = "<0.001" if p_s < 0.001 else f"{p_s:.3f}"
+
+        print(f"   {ctx_label}  (n = {len(by_year)} seasons)")
+        print(f"   Season-level Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
+        print(f"   Season-level Spearman ρ = {r_s:+.3f}  (p = {p_s_s}  {_stars(p_s).strip()})")
+
+        COL_W = 12
+        header = (f"   {'Era':<10} {'Mean pace':>{COL_W}} {'Home win%':>{COL_W}} "
+                  f"{'n seasons':>{COL_W}}")
+        print(f"\n{header}")
+        print(f"   {'-'*10} {'-'*COL_W} {'-'*COL_W} {'-'*COL_W}")
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_years = [y for y in by_year["year"] if y1 <= y <= y2]
+            era_rows = by_year[by_year["year"].isin(era_years)]
+            if era_rows.empty:
+                continue
+            m_pace = era_rows["pace"].mean()
+            m_pct  = era_rows["home_pct"].mean()
+            print(f"   {era_label:<10} {m_pace:>{COL_W}.1f}  {m_pct:>{COL_W}.1f}% "
+                  f"{len(era_rows):>{COL_W}}")
+
+        p_bar = sub["home_win"].mean()
+        try:
+            m_biv = smf.logit("home_win ~ pace_avg", data=sub).fit(disp=0)
+            coef  = m_biv.params["pace_avg"]
+            pval  = m_biv.pvalues["pace_avg"]
+            pval_s = "<0.001" if pval < 0.001 else f"{pval:.3f}"
+            pp_per_10 = _pp(coef, p_bar) * 10
+            print(f"\n   Game-level bivariate logistic  (N = {len(sub):,} games)")
+            print(f"   coef = {coef:+.4f} log-odds per possession")
+            print(f"   ≈ {pp_per_10:+.2f} pp change in home win % per 10 extra possessions")
+            print(f"   p = {pval_s}  {_stars(pval).strip()}")
+        except Exception:
+            pass
+
+        try:
+            m_era = smf.logit("home_win ~ pace_avg + C(era)", data=sub).fit(disp=0)
+            coef_e  = m_era.params["pace_avg"]
+            pval_e  = m_era.pvalues["pace_avg"]
+            pval_e_s = "<0.001" if pval_e < 0.001 else f"{pval_e:.3f}"
+            pp_era = _pp(coef_e, p_bar) * 10
+            print(f"\n   Controlling for era (within-era game-level effect):")
+            print(f"   coef = {coef_e:+.4f}  (≈ {pp_era:+.2f} pp per 10 possessions)  "
+                  f"p = {pval_e_s}  {_stars(pval_e).strip()}")
+        except Exception:
+            pass
+
+        print()
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -887,6 +969,7 @@ def run() -> None:
         run_series_breakdown(df)
         run_travel_analysis(df)
         run_3pa_analysis(df)
+        run_pace_analysis(df)
 
         print("\n" + "═" * _W + "\n")
 

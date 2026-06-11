@@ -166,28 +166,6 @@ for franchise relocations).
 
 ---
 
-## Analysis D: Attendance Data (Deferred)
-
-**Data acquisition complexity: HIGH**
-Requires `BoxScoreSummaryV2.GameInfo` — one API call per game.
-- Full game-level: ~51k calls ≈ 14 hours
-- Season-level sampling (20 games/season × 41 seasons): ~820 calls ≈ 15 minutes
-
-**Approach when implemented:**
-- `fetch_attendance_summary(end_year)` — sample 20 games/season from `BoxScoreSummaryV2`, average attendance; cache as `attendance_{season}.csv`
-- Start with playoffs only (~3k calls) to validate trend before extending to full regular season
-- Plot: dual-axis time series of attendance vs. home win %
-
-### Status: Deferred — implement after D's BoxScoreSummaryV2 pattern is established
-- [ ] `fetch_attendance_summary(end_year)` in `nba_home_court_data.py`
-- [ ] `compute_attendance_stats(...)` in `nba_home_court_data.py`
-- [ ] Tests for above in `test_nba_home_court_advantage.py`
-- [ ] `run_attendance_analysis(df)` in `nba_home_court_regression.py`
-- [ ] `plot_attendance_analysis(...)` in `nba_home_court_plots.py`; wire call into `nba_home_court_advantage.py main()`
-- [ ] Add `## 14. Attendance` section with prose + `![caption](path)` to `FINDINGS.md` — PDF picks it up automatically
-
----
-
 ## Analysis F: Referee Crew Assignments (Deferred)
 
 **Data acquisition complexity: VERY HIGH**
@@ -207,7 +185,9 @@ Requires `BoxScoreSummaryV2.Officials` — same per-game fetch as D.
 - [ ] Tests for above in `test_nba_home_court_advantage.py`
 - [ ] `run_referee_analysis(df)` in `nba_home_court_regression.py`
 - [ ] `plot_referee_analysis(...)` in `nba_home_court_plots.py`; wire call into `nba_home_court_advantage.py main()`
-- [ ] Add `## 15. Referee Patterns` section with prose + `![caption](path)` to `FINDINGS.md` — PDF picks it up automatically
+- [ ] Add `## 15. Referee Patterns` section with prose + `![caption](path)` to `FINDINGS.md`
+- [ ] Add PNG to `.gitignore`
+- [ ] Update `README.md` (PNG table, regression list, counts) and `CLAUDE.md` (function lists, analysis count)
 
 ---
 
@@ -236,11 +216,11 @@ Current FINDINGS.md section order (§1–§13):
 §10 Competitive Balance and Parity
 §11 Travel Distance
 §12 3-Point Shooting and Home Court Advantage
-§13 Summary          ← renumber to §16 once D and F are added
+§14 Summary          ← renumber to §15 once F is added
 ```
 
-- [ ] Update Summary rank table in FINDINGS.md once D and F findings are in
-- [ ] Renumber `## 13. Summary` to `## 16. Summary` once D and F are added
+- [ ] Update Summary rank table in FINDINGS.md once F findings are in
+- [ ] Renumber `## 14. Summary` to `## 15. Summary` once F is added
 
 ---
 
@@ -248,9 +228,9 @@ Current FINDINGS.md section order (§1–§13):
 
 | Analysis | Data | Tests | Regression | Plot | FINDINGS.md | PDF |
 |----------|------|-------|------------|------|-------------|-----|
-| B: Margin | ✅ | ✅ | ✅ | ✅ | ✅* | ✅ |
+| B: Margin | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | C: Parity | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | A: Series | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | E: Travel | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| D: Attend | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |
+| G: Pace   | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | F: Refs   | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ | ⬜ |

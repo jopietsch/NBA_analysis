@@ -337,6 +337,53 @@ All data from cache/ — same source as the plots above.
     time but 3PA does not predict outcomes within any given era.)
 
 
+─── 12. PACE AND HOME COURT ADVANTAGE ──────────────────────────────────
+   Does faster-paced play (more possessions per game) reduce home court advantage?
+   Season-level correlation plus game-level logistic regression.
+
+   Regular season  (n = 42 seasons)
+   Season-level Pearson r  = +0.280  (p = 0.072  )
+   Season-level Spearman ρ = +0.154  (p = 0.331  )
+
+   Era           Mean pace    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94           102.4          65.0%           11
+   1995–01            93.9          60.1%            7
+   2002–04            93.2          61.1%            3
+   2005–17            95.3          59.5%           13
+   2018–22           101.4          56.2%            5
+   2023–25           101.2          55.6%            3
+
+   Game-level bivariate logistic  (N = 47,879 games)
+   coef = +0.0099 log-odds per possession
+   ≈ +2.37 pp change in home win % per 10 extra possessions
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
+
+   Playoffs  (n = 41 seasons)
+   Season-level Pearson r  = -0.115  (p = 0.474  )
+   Season-level Spearman ρ = -0.235  (p = 0.140  )
+
+   Era           Mean pace    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94            98.5          67.7%           11
+   1995–01            89.9          64.1%            7
+   2002–04            92.5          64.2%            3
+   2005–17            92.8          64.3%           13
+   2018–22            98.4          60.8%            4
+   2023–25            97.1          58.4%            3
+
+   Game-level bivariate logistic  (N = 3,207 games)
+   coef = -0.0038 log-odds per possession
+   ≈ -0.87 pp change in home win % per 10 extra possessions
+   p = 0.461  
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.315  
+
+
 ════════════════════════════════════════════════════════════════════════
 
 ```

@@ -29,7 +29,7 @@ regression tables (auto-generated each run, never edit manually).
 
 ### PNG charts
 
-`nba_home_court_advantage.py` saves fifteen PNG charts.
+`nba_home_court_advantage.py` saves sixteen PNG charts.
 
 **Overview (combined and individual panels):**
 
@@ -43,7 +43,7 @@ regression tables (auto-generated each run, never edit manually).
 | `nba_home_court_advantage_era_bars.png` | Home win % averaged within each rule-change era (reg season vs playoffs) |
 | `nba_home_court_advantage_format_bars.png` | Home win % averaged within each playoff-format period |
 
-Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS` in `nba_home_court_advantage.py`). The 2020 bubble playoffs are excluded from playoff stats.
+Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS` in `nba_home_court_data.py`). The 2020 bubble playoffs are excluded from playoff stats.
 
 **Rest analysis:**
 
@@ -63,10 +63,11 @@ Eras are defined by major NBA rule changes affecting pace/defense (see `ERA_DEFS
 | `nba_home_court_series_breakdown.png` | 2-panel figure: home win % by game number G1–G7 (pooled) and per-era lines |
 | `nba_home_court_travel.png` | 2-panel figure: home win % by away team travel distance bracket (per-season trend and era-averaged bars) |
 | `nba_home_court_3pa.png` | 3-panel figure: league-wide 3PA rate vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
+| `nba_home_court_pace.png` | 3-panel figure: league-wide pace (possessions per 48 min) vs. home win % (dual-axis time series, regular-season scatter, playoff scatter) |
 
 ### Regression analysis (stdout)
 
-Eleven analyses printed to stdout:
+Twelve analyses printed to stdout:
 
 1. **Overall decline** — trend line for home win % on year at season level; overall and per-era slopes.
 2. **Sequential R² decomposition** — how much era, rest, altitude, time zone, and COVID each add to explaining regular-season home win %.
@@ -79,6 +80,7 @@ Eleven analyses printed to stdout:
 9. **Playoff series structure** — home win % by game number G1–G7; chi-square test for uniformity; weighted trend line.
 10. **Travel distance** — home win % by away team travel distance bucket (0–500, 500–1000, 1000–1500, 1500+ miles); bivariate logistic with continuous distance predictor.
 11. **League-wide 3-point shooting** — season-level and game-level relationship between 3PA rate and home win %; within-era game-level test to separate trend from mechanism.
+12. **Pace** — season-level and game-level relationship between possessions per 48 min and home win %; within-era test; result is a null/reversed finding (pace does not explain the decline).
 
 ### PDF report
 
@@ -89,16 +91,18 @@ python3 generate_report.py
 # → nba_home_court_advantage_report.pdf
 ```
 
-The report contains thirteen sections plus an appendix. Narrative prose is read directly from
-`FINDINGS.md` — edit that file to update the report text. Charts are injected by `generate_report.py`
-at fixed positions within each section. Appendix A renders `RESULTS.md` verbatim and is the
-authoritative source for coefficient values and significance levels.
+The report contains fourteen sections plus an appendix. Narrative prose and chart placement are
+driven entirely by `FINDINGS.md` — `generate_report.py` iterates its `##` sections in order with
+no hardcoded section list. Edit `FINDINGS.md` to update prose or reorder charts; the PDF picks up
+changes automatically. Appendix A renders `RESULTS.md` verbatim and is the authoritative source for
+coefficient values and significance levels.
 
 ## Updating FINDINGS.md
 
-`FINDINGS.md` is the single source of truth for narrative prose — both the
-standalone document and the PDF report text are driven by it. It has twelve
-numbered sections (matching the PDF) plus an appendix. Edit it when findings
+`FINDINGS.md` is the single source of truth for narrative prose and chart
+placement. It has thirteen numbered analysis sections (§1–§13) plus §14 Summary.
+Charts are embedded as `![caption](filename.png)` image references within the
+relevant section — the PDF picks them up automatically. Edit it when findings
 change, then regenerate the PDF with `python3 generate_report.py`.
 
 `RESULTS.md` is auto-generated each run — never edit manually.
@@ -121,9 +125,8 @@ Before updating FINDINGS.md, verify that the analysis outputs are current:
 3. Read the current FINDINGS.md.
 
 4. Update FINDINGS.md to reflect the current analysis. Rules:
-   - FINDINGS.md has thirteen ## sections numbered to match the PDF (e.g. "## 4. What
-     Explains the Decline?"). Do not rename or renumber sections — generate_report.py
-     looks them up by exact heading.
+   - FINDINGS.md has fourteen ## sections (§1–§13 analyses + §14 Summary).
+     Do not rename or renumber sections without also updating any cross-references.
    - ### subheadings within a section are rendered as sub-headers in the PDF.
    - No specific coefficient values, R² values, or percentage points — those
      belong in RESULTS.md and go stale. Reference RESULTS.md for specifics.
