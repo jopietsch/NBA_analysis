@@ -11,6 +11,7 @@ injected by the section functions below. To update report text, edit FINDINGS.md
 
 import os
 import re
+import sys
 from datetime import datetime
 
 from reportlab.lib import colors
@@ -371,7 +372,30 @@ def _draw_footer(canvas, doc):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
+def _check_prerequisites() -> None:
+    """Exit with a clear error if any referenced PNG or RESULTS.md is missing."""
+    missing = []
+    with open(FINDINGS_PATH) as f:
+        content = f.read()
+    for m in re.finditer(r'!\[[^\]]*\]\(([^)]+\.png)\)', content):
+        path = m.group(1)
+        if not os.path.exists(path):
+            missing.append(path)
+    if not os.path.exists(RESULTS_PATH):
+        missing.append(RESULTS_PATH)
+    if missing:
+        print("ERROR: The following files are missing and must be generated before the report can be built:\n")
+        for p in missing:
+            print(f"  {p}")
+        print("\nRun the analysis pipeline first:\n")
+        print("  MPLBACKEND=Agg python3 nba_home_court_advantage.py\n")
+        print("Then retry:\n")
+        print("  python3 generate_report.py")
+        sys.exit(1)
+
+
 def build_report(output_path="nba_home_court_advantage_report.pdf"):
+    _check_prerequisites()
     sections = _parse_findings()
 
     story = [*_cover(sections)]
