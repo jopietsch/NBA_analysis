@@ -68,7 +68,7 @@ The decline isn't perfectly smooth — there are stretches of relative stability
 
 ## 3. Win Margin Trends
 
-Here's where it gets counterintuitive.
+Here's where it gets counterintuitive. Point margins don't explain why home court advantage is falling — they show what the fall looks like, and they rule out one tempting story: that home court is fading because games have simply gotten closer. The opposite is true.
 
 In the regular season, the overall home-team point margin has declined over time — home teams win by less on average than they used to. But the mechanism is not what you'd expect. Home wins are actually getting **bigger**, not smaller (+0.041 pts/yr). What's pulling the average down is that home **losses** are getting worse: the average home loss margin has grown by nearly a tenth of a point per year.
 
@@ -85,6 +85,8 @@ When the home team wins, it's increasingly a comfortable victory. When it loses,
 In the playoffs, there's no clear trend in the overall margin. The spread is widening there too (+0.200 pts/yr), but it's driven entirely by big home wins growing — not by home losses getting worse. The net margin is unchanged. Playoff home court still holds, at least in terms of margin when the home team does win.
 
 The regular-season mean home margin (+2.80 pts) is lower than the playoff mean (+4.36 pts), consistent with the higher overall home win rate in the postseason.
+
+None of this changes the why. Margins describe what the decline looks like in points — home teams lose more often, and uglier — not what's causing it. The causes come later, in Sections 7 through 10.
 
 ![Figure 4. Home team point margin per season. Left: mean margin for all games (regular season and playoffs) with trend lines. Center: mean margin split by home wins vs. losses (regular season). Right: era-bucketed average margin, regular season vs. playoffs.](nba_home_court_margin.png)
 
