@@ -29,9 +29,9 @@ the significance; both the game-count-weighted GLM and the serial-correlation-ro
 HAC standard errors point to a stronger result.
 
 Within individual eras the season counts are mostly too small for reliable slope
-estimates (only the 1984–94 regular-season slope reaches significance in the
-binomial GLM), but the overall trajectory is one of the strongest trends in the
-dataset. The regularity of the decline — not a one-time step but a persistent
+estimates (only the 1984–94 and 2018–22 regular-season slopes reach significance
+in the binomial GLM; under HAC, 2005–17 and 2018–22 are also significant), but
+the overall trajectory is one of the strongest trends in the dataset. The regularity of the decline — not a one-time step but a persistent
 drift — points to systemic forces rather than a single rule change.
 
 ![Figure 1. Home win % per season, 1983–84 through 2024–25. Blue = regular season, green = playoffs. Dashed lines are overall trend fits. Background shading marks rule-change eras.](nba_home_court_advantage_season.png)
@@ -407,8 +407,11 @@ arriving early, which erodes any mechanical disadvantage from long trips.
 ### Era trend is flat
 
 There is no evidence that the travel-distance effect has grown or shrunk over the
-four decades in the dataset. The era-bucketed averages show no systematic pattern.
-Travel distance is not a driver of the long-run decline in home court advantage.
+four decades in the dataset. The four distance buckets show no monotone ordering —
+home win % within each bucket clusters within ±1 percentage point of the baseline
+with no consistent pattern — and the bivariate logistic effect is negligible
+(−0.08 pp per 100 miles). Travel distance is not a driver of the long-run decline
+in home court advantage.
 
 
 ---
@@ -503,11 +506,12 @@ rather than causing it — we substitute *expected pace*: each team's
 leave-one-out mean possessions (all other games that season), averaged for the
 two teams in each matchup. This pre-determined measure cannot be affected by
 what happens in today's game. With expected pace, the bivariate effect falls to
-+1.84 pp per 10 possessions (p < 0.001) and the within-era effect drops to
-+2.06 pp per 10 possessions (p = 0.026). The attenuation is modest, confirming
-that game-state causality inflates the realized-pace estimate, but a genuine
-positive signal remains: home teams are more likely to win in higher-tempo
-matchups even when pace is measured before the game.
++1.84 pp per 10 possessions (p = 0.148, not significant) and the within-era
+effect drops to +2.06 pp per 10 possessions (p = 0.065, marginal). The
+attenuation is substantial: once pace is measured before the game — removing
+the game-state causality entirely — neither estimate clears conventional
+significance thresholds. The pre-game pace signal is suggestive at best, not a
+robust finding.
 
 ### Pace does not explain the decline
 
@@ -665,10 +669,15 @@ drivers of the trend.
 
 ### Rest, altitude, and time zone
 
-**Rest** matters in both the regular season and the playoffs. The per-day effect
-is larger in the playoffs than in the regular season — higher stakes amplify
-fatigue. When the home team has more rest than the road team, the home win
-probability rises; the reverse is also true.
+**Rest** is a robust predictor in the regular season (+1.5 pp/day, p < 0.001):
+when the home team has more rest than the road team, the home win probability
+rises; the reverse is also true. The bivariate playoff estimate is larger
+(+2.3 pp/day), but this is confounded by team strength — teams that win
+quickly earn more rest, so rest asymmetry correlates with quality. Controlling
+for same-season win% differential, the playoff rest effect shrinks to +1.5 pp/day
+and loses significance (p = 0.146); team quality is the dominant predictor. The
+higher bivariate playoff figure should not be read as evidence that rest matters
+more in the playoffs.
 
 **Altitude** at Denver and Utah carries a significant home edge in the regular
 season but the effect disappears in the playoffs. Team quality is a confound:
@@ -677,7 +686,7 @@ are also strong, masking the altitude effect.
 
 **Time zone differences** show no significant effect in the playoffs. In the
 regular season, the effect is not significant in isolation (bivariate p = 0.085)
-but becomes significant when controlling for era, rest, and altitude (p = 0.012,
+but becomes significant when controlling for era, rest, and altitude (p = 0.005,
 −0.6 pp per time zone). The effect is real but small, and only emerges once the
 larger era and altitude effects are accounted for. There are too few coast-to-coast
 playoff matchups across 42 seasons for reliable playoff inference.
@@ -725,8 +734,8 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Era (structural decline) | 50% (seq: 56%) | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
 | Altitude (Denver / Utah) | 26% (seq: 25%) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
 | Rest differential | 18% (seq: 16%) | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
-| COVID flag | 5% (seq: 1%) | Lower home win % in COVID-impacted seasons (2020–21) | Suggestive, not significant (p = 0.078) |
-| Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
+| COVID flag | 5% (seq: 1%) | −2.3 pp in COVID-impacted seasons (2020–21) | Significant (p = 0.045) |
+| Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.005) |
 
 **Regular season — confirmed mechanisms** (significant contributors to the decline):
 
@@ -751,7 +760,7 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (GLM p = 0.003, HAC p < 0.001) |
 | Rest differential | +2.3 pp/day bivariate; shrinks to +1.5 pp/day and loses significance when same-season win% differential is controlled — effect is confounded by team strength | Confounded: bivariate p = 0.014, quality-controlled p = 0.146 (not significant) |
 | Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | No significant effect (p = 0.59) |
-| Time-zone / distance | No meaningful effect of either | No significant effect (p = 0.28 and p = 0.77) |
+| Time-zone / distance | No meaningful effect of either | No significant effect (p = 0.28 and p = 0.71) |
 
 **Playoffs — confirmed mechanisms** (significant contributors to the decline):
 
