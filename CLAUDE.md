@@ -54,6 +54,11 @@ Every analysis follows the same steps, in this order:
 7. **Run** — `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate all PNGs and `RESULTS.md`
 8. **Update FINDINGS.md** — replace placeholder prose with actual numbers and directions from `RESULTS.md`; then regenerate the PDF with `python3 generate_report.py`
 
+## updating FINDINGS.md
+- when editing or adding to FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear.
+- make sure that the FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
+- when FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`
+
 ## nba_api quirks
 
 - `LeagueDashTeamShotLocations` uses `season=` (not `season_nullable=`) and `per_mode_detailed=` (not `per_mode_simple=`). Returns a MultiIndex DataFrame; `fetch_shot_zones()` flattens to flat column names before caching.
