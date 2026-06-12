@@ -557,3 +557,102 @@ class TestRunRefereeAnalysis:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             reg.run_referee_analysis(bias_stats)
+
+
+# ── Smoke tests: remaining DataFrame-accepting run_* functions ────────────────
+
+class TestRunFormatPeriodAnalysis:
+    def test_does_not_raise(self, capsys):
+        df = _make_game_df(n=500)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_format_period_analysis(df)
+
+    def test_no_playoff_games_returns_early(self, capsys):
+        df = _make_game_df(n=300)
+        df["is_playoff"] = 0
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_format_period_analysis(df)
+
+
+class TestRunSequentialDecomposition:
+    def test_does_not_raise(self, capsys):
+        df = _make_game_df(n=500)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_sequential_decomposition(df)
+
+
+class TestRunStabilityAnalysis:
+    def test_does_not_raise(self, capsys):
+        df = _make_game_df(n=500)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_stability_analysis(df)
+
+
+class TestRun3paAnalysis:
+    def test_does_not_raise(self, capsys):
+        df = _make_game_df(n=500)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_3pa_analysis(df)
+
+
+class TestRunPaceAnalysis:
+    def test_does_not_raise(self, capsys):
+        df = _make_game_df(n=500)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_pace_analysis(df)
+
+
+# ── Smoke tests: list-accepting run_* functions ───────────────────────────────
+
+class TestRunParityCorrelation:
+    def _make_lists(self, n=20, seed=5):
+        rng = np.random.default_rng(seed)
+        years = list(range(nba.START_YEAR, nba.START_YEAR + n))
+        seasons = [nba.short_label(y) for y in years]
+        parity_std = list(rng.uniform(0.12, 0.18, n))
+        reg_pcts   = list(rng.uniform(58.0, 64.0, n))
+        return seasons, parity_std, reg_pcts
+
+    def test_does_not_raise(self, capsys):
+        seasons, parity_std, reg_pcts = self._make_lists()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_parity_correlation(seasons, parity_std, seasons, reg_pcts)
+
+    def test_insufficient_overlap_returns_early(self, capsys):
+        parity_seasons = [nba.short_label(y) for y in range(1990, 1994)]
+        reg_seasons    = [nba.short_label(y) for y in range(2020, 2025)]
+        parity_std = [0.14, 0.15, 0.13, 0.16]
+        reg_pcts   = [62.0, 61.0, 60.0, 59.0, 58.0]
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_parity_correlation(parity_seasons, parity_std, reg_seasons, reg_pcts)
+
+
+class TestRunShotZoneAnalysis:
+    def _make_shot_zone_data(self, n_seasons=15, seed=11):
+        rng = np.random.default_rng(seed)
+        # Shot zone data starts ~1996-97, so offset from START_YEAR
+        years = list(range(nba.START_YEAR + 13, nba.START_YEAR + 13 + n_seasons))
+        seasons = [nba.short_label(y) for y in years]
+        zone_keys = ["paint", "midrange", "corner3", "above3"]
+        stats = {k: list(rng.uniform(-2.0, 2.0, n_seasons)) for k in zone_keys}
+        return seasons, stats
+
+    def test_does_not_raise(self, capsys):
+        reg_seasons, reg_stats = self._make_shot_zone_data(n_seasons=15, seed=11)
+        po_seasons,  po_stats  = self._make_shot_zone_data(n_seasons=15, seed=12)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_shot_zone_analysis(reg_seasons, reg_stats, po_seasons, po_stats)
+
+    def test_empty_seasons_does_not_raise(self, capsys):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_shot_zone_analysis([], {}, [], {})
