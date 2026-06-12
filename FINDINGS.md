@@ -319,7 +319,7 @@ The cleanest version of the test: compare before and after 2014, when the recent
 
 ### So what does explain it?
 
-Not logistics — the game itself. The whistle got more neutral (Section 8), the home team's shot-quality edge evaporated (Section 7), and the 3-point revolution pulled the game away from the basket, where crowd-influenced calls mattered most (Section 9). This model can't see those forces directly — foul calls are part of a game's outcome, and 3-point shooting rose in lockstep with the eras — but it shows exactly where they live: inside the era effect, which is where the rest of this report points.
+Not logistics — the game itself. Two forces, reinforcing each other: the whistle got more neutral (Section 8), and the 3-point revolution pulled the game away from the basket, where crowd-influenced calls mattered most (Section 9). You can see their footprint in the box score — the home team's old shot-quality edge, better shooting and better access to the paint, has all but evaporated (Section 7). This model can't see those forces directly — foul calls are part of a game's outcome, and 3-point shooting rose in lockstep with the eras — but it shows exactly where they live: inside the era effect, which is where the rest of this report points.
 
 ---
 
