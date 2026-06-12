@@ -67,9 +67,9 @@ change. Playoff home court advantage has consistently exceeded the regular-seaso
 figure; the gap widened through the mid-2000s and has narrowed back toward its
 1980s level in recent seasons.
 
-![Figure 4. Regular-season home win % per season. A separate trend line is fit within each rule-change era. Background shading identifies each era.](nba_home_court_advantage_regular_era.png)
+![Figure 4. Regular-season home win % per season. A separate trend line is fit within each rule-change era. Background shading identifies each era.](nba_home_court_advantage_regular_era.png){height=0.22}
 
-![Figure 5. Playoff home win % per season with a separate trend line per era. Vertical markers indicate playoff format changes (1985, 2003, 2014).](nba_home_court_advantage_playoffs_era.png)
+![Figure 5. Playoff home win % per season with a separate trend line per era. Vertical markers indicate playoff format changes (1985, 2003, 2014).](nba_home_court_advantage_playoffs_era.png){height=0.22}
 
 ### Rule-Change Eras (regular season and playoffs)
 

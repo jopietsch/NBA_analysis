@@ -166,11 +166,13 @@ def _md_to_flowables(text: str) -> list:
         if block.startswith('### '):
             flowables.append(Paragraph(_md_inline(block[4:]), _STYLES['h2']))
         elif block.startswith('!['):
-            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)(?:\{width=([0-9.]+)\})?', block)
+            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]+)\})?', block)
             if m:
-                w = CONTENT_W * float(m.group(3)) if m.group(3) else None
+                opts = dict(kv.split('=') for kv in (m.group(3) or '').split() if '=' in kv)
+                w  = CONTENT_W * float(opts['width'])  if 'width'  in opts else None
+                mh = PAGE_H    * float(opts['height']) if 'height' in opts else None
                 flowables.append(Spacer(1, 0.1 * inch))
-                flowables.append(_chart(m.group(2), m.group(1), width=w))
+                flowables.append(_chart(m.group(2), m.group(1), width=w, max_height=mh))
         elif block.startswith('- '):
             for line in block.splitlines():
                 if line.startswith('- '):
@@ -203,7 +205,7 @@ def _md_to_flowables(text: str) -> list:
 
 # ── Layout helpers ────────────────────────────────────────────────────────────
 
-def _img(path, width=None):
+def _img(path, width=None, max_height=None):
     if not os.path.exists(path):
         return Paragraph(f"[Missing image: {path}]", _STYLES["note"])
     if width is None:
@@ -212,6 +214,9 @@ def _img(path, width=None):
     aspect = ri.imageHeight / ri.imageWidth
     ri.drawWidth  = width
     ri.drawHeight = width * aspect
+    if max_height and ri.drawHeight > max_height:
+        ri.drawHeight = max_height
+        ri.drawWidth  = max_height / aspect
     ri.hAlign = "CENTER"
     return ri
 
@@ -238,9 +243,9 @@ def _table(data, col_widths, header_rows=1):
     return Table(data, colWidths=col_widths, style=TableStyle(style))
 
 
-def _chart(path, caption_text, width=None):
+def _chart(path, caption_text, width=None, max_height=None):
     return KeepTogether([
-        _img(path, width=width),
+        _img(path, width=width, max_height=max_height),
         Spacer(1, 4),
         Paragraph(caption_text, _STYLES["caption"]),
     ])
