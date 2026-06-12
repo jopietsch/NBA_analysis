@@ -12,7 +12,7 @@ import matplotlib.ticker as mticker
 from scipy.stats import pearsonr
 
 from nba_home_court_data import (
-    ERA_DEFS, PLAYOFF_FORMAT_CHANGES, COVID_SEASONS, SHOT_ZONE_GROUPS,
+    ERA_DEFS, PLAYOFF_FORMAT_CHANGES, COVID_SEASONS,
     label_to_year, bucket_stats_by_era, _align_to_seasons,
 )
 
