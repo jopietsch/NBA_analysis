@@ -397,7 +397,7 @@ def plot_rest_analysis(
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_differential_analysis(
@@ -456,7 +456,7 @@ def plot_differential_analysis(
     output_path = "nba_home_court_advantage_differentials.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_margin_analysis(
@@ -563,7 +563,7 @@ def plot_margin_analysis(
     output_path = "nba_home_court_margin.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_parity_analysis(
@@ -642,7 +642,7 @@ def plot_parity_analysis(
     output_path = "nba_home_court_parity.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_series_breakdown(
@@ -716,7 +716,7 @@ def plot_series_breakdown(
     output_path = "nba_home_court_series_breakdown.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_shot_zone_analysis(
@@ -765,7 +765,7 @@ def plot_shot_zone_analysis(
     output_path = "nba_home_court_shot_zones.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def _scatter_panel(
@@ -877,7 +877,7 @@ def plot_3pa_hca_analysis(
     output_path = "nba_home_court_3pa.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_pace_hca_analysis(
@@ -943,7 +943,7 @@ def plot_pace_hca_analysis(
     output_path = "nba_home_court_pace.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_team_hca_analysis(
@@ -1038,7 +1038,7 @@ def plot_team_hca_analysis(
     output_path = "nba_home_court_team_hca.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()
 
 
 def plot_referee_analysis(bias_stats: list[dict]) -> None:
@@ -1139,4 +1139,4 @@ def plot_referee_analysis(bias_stats: list[dict]) -> None:
     output_path = "nba_home_court_referee.png"
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
-    plt.show()
+    plt.close()

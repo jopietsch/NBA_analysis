@@ -25,21 +25,6 @@ from nba_api.stats.library.parameters import SeasonType
 import nba_home_court_data as nba
 
 
-class _Tee:
-    """Write to multiple streams simultaneously (stdout + capture buffer)."""
-    def __init__(self, *streams):
-        self.streams = streams
-
-    def write(self, data: str) -> int:
-        for s in self.streams:
-            s.write(data)
-        return len(data)
-
-    def flush(self) -> None:
-        for s in self.streams:
-            s.flush()
-
-
 # ── Feature construction ──────────────────────────────────────────────────────
 
 def _classify_year(year: int, defs: list) -> str:
@@ -1836,9 +1821,8 @@ _RESULTS_PATH = "RESULTS.md"
 
 def run() -> None:
     buf = io.StringIO()
-    tee = _Tee(sys.stdout, buf)
 
-    with contextlib.redirect_stdout(tee):
+    with contextlib.redirect_stdout(buf):
         _header("NBA HOME COURT ADVANTAGE — REGRESSION ANALYSIS")
         print("Game-level logistic regression. Outcome: home_win (1/0) per game.")
         print("All data from cache/ — same source as the plots above.\n")
