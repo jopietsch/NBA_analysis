@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+This is for a python system to get data, and analyze to produce a report with graphs and statistics to understand NBA home court advantage and how and why it has changed over time.
+
+oOurur main questions for all this analysis and the output is 1: has HCA changed over time? 2: what makes up HCA? 3: what contributes to it's change over time, and what does not, but people might thing that it does.
+
 ## Key files
 
 - `FINDINGS.md` — narrative interpretation in 14 numbered `##` sections (§1–§12 analyses + §13 synthesis + §14 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
