@@ -289,62 +289,6 @@ def _iter_season_frames(start_year, end_year, season_type, skip_years, fetch):
         yield year, g
 
 
-# ── Rest-day analysis ─────────────────────────────────────────────────────────
-def fetch_rest_data(end_year: int, season_type: str) -> pd.DataFrame | None:
-    """
-    Compute per-game rest-day info for one season/type from the cached game
-    log (one row per team per game). REST = days between a team's
-    consecutive games minus 1 (0 = back-to-back). Games where either team's
-    rest is unknown (their first game in this cached log) are dropped.
-
-    Note: for playoffs, "first game" means the team's first playoff game of
-    that year, since the cache only contains playoff games — so first-round
-    games are dropped (no prior playoff game to compute rest from).
-    """
-    df = _load_game_log(end_year, season_type)
-    if df is None:
-        return None
-
-    df = _add_rest_days(df)
-
-    merged = _merge_home_away_rows(df)
-    if merged is None:
-        return None
-
-    merged = merged.dropna(subset=["REST_home", "REST_away"])
-    if merged.empty:
-        return None
-
-    merged["REST_DIFF"] = merged["REST_home"] - merged["REST_away"]
-    merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
-    return merged[["REST_home", "REST_away", "REST_DIFF", "HOME_WIN"]]
-
-
-def compute_rest_stats(
-    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
-) -> tuple[list[str], dict]:
-    """Per-season back-to-back rates and home win % by rest differential."""
-    seasons: list[str] = []
-    stats: dict[str, list[float]] = {
-        "b2b_home_pct": [], "b2b_away_pct": [],
-        "win_home_more_rest": [], "win_equal_rest": [], "win_away_more_rest": [],
-    }
-
-    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_rest_data):
-        seasons.append(short_label(year))
-        stats["b2b_home_pct"].append(100 * (g["REST_home"] == 0).mean())
-        stats["b2b_away_pct"].append(100 * (g["REST_away"] == 0).mean())
-
-        more  = g[g["REST_DIFF"] > 0]
-        equal = g[g["REST_DIFF"] == 0]
-        less  = g[g["REST_DIFF"] < 0]
-        stats["win_home_more_rest"].append(100 * more["HOME_WIN"].mean()  if len(more)  else np.nan)
-        stats["win_equal_rest"].append(    100 * equal["HOME_WIN"].mean() if len(equal) else np.nan)
-        stats["win_away_more_rest"].append(100 * less["HOME_WIN"].mean()  if len(less)  else np.nan)
-
-    return seasons, stats
-
-
 # ── Altitude analysis ─────────────────────────────────────────────────────────
 # Home arenas at significant elevation, used to test whether visiting teams
 # are specifically disadvantaged at altitude (vs. just facing good teams).

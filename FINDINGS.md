@@ -184,35 +184,7 @@ The spread of individual biases has narrowed over time in the raw data. But much
 
 ---
 
-## 9. Rest and Schedule Balance
-
-Rest matters — but not as much as the raw numbers suggest.
-
-In the regular season, the advantage is clear: when the home team has more rest than the visitor, it wins **62.9%** of the time. When the away team is more rested, that drops to **57.7%** — a 5.2 percentage-point swing. The difference is real and not due to chance.
-
-In the playoffs, the advantage looks even bigger on the surface. Home teams with a rest edge win **75.5%** of those games. But there's a catch: playoff rest is mostly a reward for winning quickly. A team that sweeps in five games doesn't just win — it gets extra rest while its next opponent battles seven games. So "more rest" and "better team" are tangled together. When you account for team quality, the rest effect shrinks to +1.5 pp per day and can no longer be confirmed. The rest edge is real, but the raw number overstates it by bundling it with talent.
-
-The rest effect on winning has stayed stable across all eras — there's no evidence the per-day advantage has grown or shrunk as scheduling has evolved.
-
-![Figure 11. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
-
----
-
-## 10. Travel Distance
-
-Flying across the country to play a game should matter. The data says it barely does.
-
-Splitting games into distance buckets — under 500 miles, 500–1,000, 1,000–1,500, and 1,500+ miles — produces no consistent pattern. Home win rates across those buckets cluster within a single percentage point of the overall baseline. There's no monotone relationship between how far the visitor traveled and how often the home team wins.
-
-The effect exists in the regular season, technically — but it's negligible. Less than 0.1 percentage point per 100 miles. A coast-to-coast flight of 2,500 miles is worth about 2 percentage points, which gets swamped by the 5+ pp rest effect and the 8+ pp altitude effect in Denver and Salt Lake City.
-
-In the playoffs, the effect disappears entirely.
-
-The most likely reason: visiting teams adjust. Road trips are planned well in advance. Teams arrive a day early. The NBA isn't the 1970s anymore, when teams flew commercial and arrived the morning of the game. Modern travel logistics have essentially neutralized the raw distance disadvantage.
-
----
-
-## 11. 3-Point Shooting and Home Court Advantage
+## 9. 3-Point Shooting and Home Court Advantage
 
 The 3-point revolution and the decline in home court advantage have unfolded on almost exactly the same timeline. That is not a coincidence.
 
@@ -236,11 +208,11 @@ Three things are probably happening simultaneously:
 
 The foul differential trend and the 3-point revolution are probably reinforcing each other. A more neutral whistle enables more 3-point shooting and simultaneously removes the home team's free-throw edge.
 
-![Figure 12. League-wide 3PA rate and home court advantage. Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % (blue, left axis) moving in near-lockstep over 40 years. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_3pa.png)
+![Figure 11. League-wide 3PA rate and home court advantage. Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % (blue, left axis) moving in near-lockstep over 40 years. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_3pa.png)
 
 ---
 
-## 12. Pace and Home Court Advantage
+## 10. Pace and Home Court Advantage
 
 Pace was supposed to be part of the story. Faster games, more possessions, smaller samples per game — the theory was that high pace pushes outcomes closer to expected value and erodes the home edge. The data says otherwise.
 
@@ -258,11 +230,11 @@ When you use each team's average pace from their *other* games that season — a
 
 Pace doesn't explain the decline. The NBA of 1984–94 played at roughly the same speed as today's game, yet home court advantage was 10 percentage points higher. Whatever is causing the decline, it isn't about how many possessions teams get.
 
-![Figure 13. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
+![Figure 12. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
 
 ---
 
-## 13. Competitive Balance and Parity
+## 11. Competitive Balance and Parity
 
 Has the league gotten more equal? Yes, slowly. Is that why home court advantage is shrinking? Mostly no — but there's a small wrinkle.
 
@@ -274,11 +246,11 @@ Both series trend downward over 40 years. When two things trend in the same dire
 
 The effect is real but modest. Parity isn't the engine driving the 40-year decline. It's a factor at the margins — a small nudge in the right direction in more equal years, lost in the noise the rest of the time. This parity analysis focuses on regular-season data; the playoff sample is too small — roughly 15 games per season — to run a reliable year-level parity test.
 
-![Figure 14. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
+![Figure 13. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
 ---
 
-## 14. Franchise Home Court Advantage
+## 12. Franchise Home Court Advantage
 
 Home court advantage is not the same everywhere. Some arenas have historically been fortresses. Others are closer to playing on a neutral court with a slight scheduling edge.
 
@@ -311,35 +283,47 @@ Here's the sobering caveat: **with the playoff sample sizes available per franch
 
 Teams that protect home court in the regular season tend to do so in the playoffs too — there's a real but modest connection between the two. Denver and Utah are at or near the top of both lists. But the playoff sample is too thin to make strong individual franchise claims — that broad pattern is the most reliable signal available.
 
-![Figure 15. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
+![Figure 14. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
 
 ---
 
-## 15. What Explains the Decline?
+## 13. The Usual Suspects: Rest, Travel, Altitude, and Time Zones
 
-Running a regular-season game-level model that accounts for era, rest, altitude, time-zone differential, and COVID gets at the question directly: what actually predicts whether the home team wins, and how much of the overall decline can each factor explain?
+Ask a fan why home teams win and you'll hear about tired visitors: the road team flew in last night, crossed two time zones, and is playing its fourth game in five nights. All of that is real. So the question this section answers is whether any of it can explain why home court advantage has been shrinking for 40 years. The short answer: no. Each of these factors shapes how big the home edge is in any given game — but none of them moved over four decades. A factor that never changed can't explain a trend that never stopped.
 
-### The era effect swamps everything else
+### Rest is real — and it hasn't changed
 
-**Era accounts for 50% of the model's explained variation.** Rest, altitude, time zone, and COVID share the other 50%. The era effect is mostly capturing the accumulated drift across four decades — the foul differential trend, the shot-quality convergence, the 3-point revolution — rather than discrete rule-triggered jumps. The one exception in the regular season is the hand-checking restriction era (1994–95 onward), which shows a real discrete drop of about 2.6 pp beyond the continuous trend. Every other rule-change boundary is indistinguishable from the smooth underlying decline. In the playoffs, no era boundary produces a discrete effect at all.
+When the home team has more rest than the visitor, it wins **62.9%** of regular-season games. When the visitor is more rested, that drops to **57.7%** — about a 5-point swing, worth roughly **+1.5 percentage points per extra day of rest**. That makes rest one of the bigger levers in the sport.
 
-Crucially, altitude and rest explain the *level* of home advantage — Denver and Utah, and well-rested home teams, win more often in every era — but neither one explains why the advantage is lower *today* than it was in 1984. They're constants. The era effect is the variable.
+In the playoffs the raw number looks even bigger: home teams with a rest edge win **75.5%** of those games. But playoff rest is mostly a reward for winning quickly — the team that finished its series early gets the extra days off while its next opponent battles seven games. Account for team quality and the playoff rest effect shrinks back to the regular-season level and can no longer be confirmed.
 
-### Rest, altitude, and time zone
+What matters for the decline: the rest effect has stayed stable across all eras, in both the regular season and the playoffs. There's no evidence the per-day advantage has grown or shrunk as scheduling has evolved.
 
-**Rest** adds about +1.5 percentage points per day of rest advantage in the regular season. It's real and consistent across all eras. In the playoffs the raw number looks bigger (+2.3 pp/day), but most of that is team quality — the team with more rest usually earned it by winning their series faster. Account for team strength and the rest effect shrinks back to the same level and can no longer be confirmed.
+### Travel barely registers
 
-**Altitude** gives Denver and Utah a clear edge in the regular season — about +8.2 pp above what their record alone would predict. In the playoffs that edge disappears. When those teams make deep runs, they're facing opponents good enough to overcome the thin air.
+Flying across the country to play should matter. The data says it barely does. Splitting regular-season games into distance buckets — under 500 miles up through 1,500+ — produces home win rates clustered within a point of the overall baseline. The per-mile effect is real but negligible: less than 0.1 percentage point per 100 miles, so even a 2,500-mile coast-to-coast flight is worth only about 2 points. In the playoffs, the effect disappears entirely. Road trips are planned far in advance, teams fly charter and arrive a day early — modern logistics have essentially neutralized distance.
 
-**Time zone** has a small but real effect in the regular season: about −0.6 pp per time zone the visitor crosses. It only shows up clearly once you account for era and altitude, and there are too few coast-to-coast playoff series to detect it in the postseason.
+### Altitude and time zones
 
-### The post-2014 drop is real but not explained by the factors
+**Altitude** gives Denver and Utah a clear edge in the regular season — about **+8.2 percentage points** beyond what their records alone would predict. In the playoffs that edge disappears. When those teams make deep runs, they're facing opponents good enough to overcome the thin air.
 
-Since 2014, the overall home-win probability has fallen by about **4.6 percentage points** relative to what the era trend alone would predict. Rest, altitude, and time zone effects haven't changed — none of them shifted after 2014 in a way that explains the drop. The shift shows up in the baseline, not in the individual factors. Something structural changed in how the game was played and called, and the most likely candidates are the freedom-of-movement emphasis and the continued normalization of 3-point shooting.
+**Time zones** cost the visitor about 0.6 percentage points per zone crossed in the regular season — small but real, though it only shows up clearly once era and altitude are accounted for. With only 107 coast-to-coast playoff games in 42 seasons, there's no way to detect a postseason effect either way.
+
+### Put them all in one model, and the decline is still standing there
+
+A game-level model that knows each game's rest situation, altitude, time-zone gap, COVID conditions, and era splits its explanatory power roughly in half: **50% to the schedule-and-geography factors combined, 50% to era alone** — meaning *which decade the game was played in* predicts the winner as well as everything else put together.
+
+That "era effect" is not a competing cause. It's the decline itself, measured — the bucket holding everything about the game that changed across four decades: the vanishing foul-call edge (Sections 6 and 8), the disappearing shot-quality advantage (Section 7), the 3-point revolution (Section 9). Home advantage is **8.9 percentage points lower** in 2023–25 than in 1984–94, and almost none of that traces to rest, travel, altitude, or time zones. They're constants; the era effect is the variable. The one discrete break in the regular season is the hand-checking restrictions of 1994–95, worth about a 2.6-point drop beyond the gradual slide — every other rule-change boundary blends into the smooth decline, and in the playoffs no era boundary produces a discrete effect at all.
+
+The cleanest version of the test: compare before and after 2014, when the recent acceleration began. The rest, altitude, and time-zone effects are statistically unchanged — but the baseline home advantage dropped by **4.6 percentage points**. The factors held still while the floor fell.
+
+### So what does explain it?
+
+Not logistics — the game itself. The whistle got more neutral (Section 8), the home team's shot-quality edge evaporated (Section 7), and the 3-point revolution pulled the game away from the basket, where crowd-influenced calls mattered most (Section 9). This model can't see those forces directly — foul calls are part of a game's outcome, and 3-point shooting rose in lockstep with the eras — but it shows exactly where they live: inside the era effect, which is where the rest of this report points.
 
 ---
 
-## 16. Summary
+## 14. Summary
 
 Home court advantage has fallen by about **10 percentage points** in the regular season over 40 years, from roughly 65% in 1984 to roughly 55% today. The playoff decline is smaller but follows the same trend. This is one of the most consistent, persistent trends in any major American sports dataset.
 
@@ -400,6 +384,6 @@ Each factor's share reflects its average contribution across all possible orderi
 
 **The short version:** The crowd used to move the whistle. The referee would call a foul on the road player where they might let it go at home, and that 1.2-foul-per-game edge compounded into a 10-point win rate advantage over a full season. Now refs call it straight — or at least straighter — and the 3-point revolution has removed the one situation where crowd influence mattered most: interior contact, where the line between a foul and a no-call is most subjective.
 
-Every other factor — rest, altitude, time zone, travel, pace, parity — explains the level of home advantage or modulates it at the margins. None of them explain why it's been falling for 40 years. The era effect does. The game changed. The crowd lost its grip on the outcome.
+Every other factor — rest, altitude, time zone, travel, pace, parity — explains the level of home advantage or modulates it at the margins. None of them explain why it's been falling for 40 years. The game itself changed — the whistle went neutral and the shooting moved outside. The crowd lost its grip on the outcome.
 
 For specific coefficient values, effect sizes, significance levels, and era breakdowns, see `RESULTS.md`.

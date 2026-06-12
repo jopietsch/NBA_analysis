@@ -365,85 +365,6 @@ All data from cache/ — same source as the plots above.
    2023–25           20   -0.792     0.903     0.000      100%
 
 
-─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
-   Buckets: away team more rested (rest_diff < 0), equal rest, and home
-   team more rested (rest_diff > 0). Games without a prior game to
-   compute rest from are excluded.
-
-   Regular season  (N = 47,215, baseline home win % = 60.3%)
-
-   Bucket             N games   Home win %   vs. baseline
-   ────────────────  ────────  ───────────  ─────────────
-   Away more rest       8,473        57.7%          -2.5 pp
-   Equal rest          22,804        59.3%          -0.9 pp
-   Home more rest      15,938        62.9%          +2.7 pp
-
-   Chi-square (H0: home win % equal across buckets): χ²(2) = 78.00,  p = <0.001  ***
-
-   Rest effect by era (bivariate logistic within each era):
-   Era                 N   log-odds/day   ≈pp/day         p     
-   ────────────  ───────  ─────────────  ────────  ────────  ───
-   1984–94        11,123         +0.047      +1.1     0.007   **
-   1995–01         7,669         +0.072      +1.7    <0.001  ***
-   2002–04         3,516         +0.044      +1.1     0.135     
-   2005–17        15,520         +0.054      +1.3    <0.001  ***
-   2018–22         5,749         +0.065      +1.6     0.012    *
-   2023–25         3,638         +0.124      +3.0    <0.001  ***
-
-   Rest × era interaction (LR test): χ²(5) = 4.85,  p = 0.434  
-   ► no evidence the rest effect changed across eras.
-
-   Playoffs  (N = 2,879, baseline home win % = 63.0%)
-
-   Bucket             N games   Home win %   vs. baseline
-   ────────────────  ────────  ───────────  ─────────────
-   Away more rest          98        68.4%          +5.3 pp
-   Equal rest           2,642        62.2%          -0.9 pp
-   Home more rest         139        75.5%         +12.5 pp
-
-   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.34,  p = 0.003  **
-
-   Rest effect by era (bivariate logistic within each era):
-   Era                 N   log-odds/day   ≈pp/day         p     
-   ────────────  ───────  ─────────────  ────────  ────────  ───
-   1984–94           706         +0.027      +0.6     0.748     
-   1995–01           440         +0.193      +4.5     0.061     
-   2002–04           217         +0.136      +3.2     0.365     
-   2005–17           986         +0.118      +2.7     0.080     
-   2018–22           304         -0.038      -0.9     0.792     
-   2023–25           226         +0.115      +2.8     0.404     
-
-   Rest × era interaction (LR test): χ²(5) = 2.67,  p = 0.750  
-   ► no evidence the rest effect changed across eras.
-
-
-─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
-   Distance = haversine miles from away team's home arena to game arena.
-   Does longer travel reduce the visiting team's winning odds?
-
-   Regular season  (N = 47,882, baseline home win % = 60.3%)
-
-         Bucket         N   Home win %   vs. baseline
-   ────────────  ────────  ───────────  ─────────────
-          0–500    10,957        60.5%          +0.3 pp
-       500–1000    15,300        61.0%          +0.8 pp
-      1000–1500     9,615        59.4%          -0.9 pp
-          1500+    12,010        59.7%          -0.6 pp
-
-   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.02]),  p = 0.010  *
-
-   Playoffs  (N = 3,207, baseline home win % = 64.3%)
-
-         Bucket         N   Home win %   vs. baseline
-   ────────────  ────────  ───────────  ─────────────
-          0–500       887        62.5%          -1.9 pp
-       500–1000     1,227        65.9%          +1.5 pp
-      1000–1500       717        63.7%          -0.6 pp
-          1500+       376        64.9%          +0.6 pp
-
-   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
-
-
 ─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
    Does more 3-point shooting reduce home court advantage?
    Two angles: season-level correlation and game-level logistic regression.
@@ -715,6 +636,114 @@ All data from cache/ — same source as the plots above.
      in the playoffs too, though playoff sample sizes are too small for
      franchise-level shrinkage to improve on raw estimates.
 
+─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
+   Buckets: away team more rested (rest_diff < 0), equal rest, and home
+   team more rested (rest_diff > 0). Games without a prior game to
+   compute rest from are excluded.
+
+   Regular season  (N = 47,215, baseline home win % = 60.3%)
+
+   Bucket             N games   Home win %   vs. baseline
+   ────────────────  ────────  ───────────  ─────────────
+   Away more rest       8,473        57.7%          -2.5 pp
+   Equal rest          22,804        59.3%          -0.9 pp
+   Home more rest      15,938        62.9%          +2.7 pp
+
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 78.00,  p = <0.001  ***
+
+   Rest effect by era (bivariate logistic within each era):
+   Era                 N   log-odds/day   ≈pp/day         p     
+   ────────────  ───────  ─────────────  ────────  ────────  ───
+   1984–94        11,123         +0.047      +1.1     0.007   **
+   1995–01         7,669         +0.072      +1.7    <0.001  ***
+   2002–04         3,516         +0.044      +1.1     0.135     
+   2005–17        15,520         +0.054      +1.3    <0.001  ***
+   2018–22         5,749         +0.065      +1.6     0.012    *
+   2023–25         3,638         +0.124      +3.0    <0.001  ***
+
+   Rest × era interaction (LR test): χ²(5) = 4.85,  p = 0.434  
+   ► no evidence the rest effect changed across eras.
+
+   Playoffs  (N = 2,879, baseline home win % = 63.0%)
+
+   Bucket             N games   Home win %   vs. baseline
+   ────────────────  ────────  ───────────  ─────────────
+   Away more rest          98        68.4%          +5.3 pp
+   Equal rest           2,642        62.2%          -0.9 pp
+   Home more rest         139        75.5%         +12.5 pp
+
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.34,  p = 0.003  **
+
+   Rest effect by era (bivariate logistic within each era):
+   Era                 N   log-odds/day   ≈pp/day         p     
+   ────────────  ───────  ─────────────  ────────  ────────  ───
+   1984–94           706         +0.027      +0.6     0.748     
+   1995–01           440         +0.193      +4.5     0.061     
+   2002–04           217         +0.136      +3.2     0.365     
+   2005–17           986         +0.118      +2.7     0.080     
+   2018–22           304         -0.038      -0.9     0.792     
+   2023–25           226         +0.115      +2.8     0.404     
+
+   Rest × era interaction (LR test): χ²(5) = 2.67,  p = 0.750  
+   ► no evidence the rest effect changed across eras.
+
+
+─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
+   Distance = haversine miles from away team's home arena to game arena.
+   Does longer travel reduce the visiting team's winning odds?
+
+   Regular season  (N = 47,882, baseline home win % = 60.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500    10,957        60.5%          +0.3 pp
+       500–1000    15,300        61.0%          +0.8 pp
+      1000–1500     9,615        59.4%          -0.9 pp
+          1500+    12,010        59.7%          -0.6 pp
+
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.02]),  p = 0.010  *
+
+   Playoffs  (N = 3,207, baseline home win % = 64.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500       887        62.5%          -1.9 pp
+       500–1000     1,227        65.9%          +1.5 pp
+      1000–1500       717        63.7%          -0.6 pp
+          1500+       376        64.9%          +0.6 pp
+
+   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
+
+
+─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
+   Bivariate logistic regression — each factor tested independently.
+   N regular season: 47,215   N playoffs: 2,879
+
+   Factor                           ── Regular season ──         ──── Playoffs ────    
+                                 log-odds    ≈pp         p       log-odds    ≈pp         p     
+   ────────────────────────────  ────────  ─────  ────────  ───  ────────  ─────  ────────  ───
+   Rest diff (per day)             +0.064   +1.5    <0.001  ***    +0.098   +2.3     0.014    *
+                    95% CI (pp)            [+1.1,+1.9]                           [+0.5,+4.1]
+   Altitude home (DEN/UTA)         +0.343   +8.2    <0.001  ***    -0.077   -1.8     0.591     
+                    95% CI (pp)            [+6.4,+10.0]                           [-8.4,+4.8]
+   Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
+                    95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
+
+   ► Rest matters in both contexts — effect is larger in playoffs
+     (≈2.3 pp/day) than regular season (≈1.5 pp/day).
+   ► Altitude home advantage is real in the regular season (+8.2 pp)
+     but absent in playoffs — Denver/Utah team strength is a confound.
+   ► Time zones show no significant effect in either context.
+     Only 107 coast-to-coast playoff games exist across 42 seasons
+     (5,676 regular-season) — too sparse for reliable playoff inference.
+
+   Playoff rest controlling for team quality (N = 2,879 games):
+   quality_diff = home RS win% − away RS win% (same season).
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   rest_diff (per day)             +0.063    +1.5     0.146     
+   quality_diff (RS win% gap)      +4.823  +112.4    <0.001  ***
+
 ─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
    Outcome: home_win. Baseline home win %: 60.3%.
    McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
@@ -790,35 +819,6 @@ All data from cache/ — same source as the plots above.
    tz_diff × post2014                -0.003    -0.1     0.865     
    ──────────────────────────────  ────────  ──────  ────────  ───
    post2014 (level shift)            -0.193    -4.6    <0.001  ***
-
-─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
-   Bivariate logistic regression — each factor tested independently.
-   N regular season: 47,215   N playoffs: 2,879
-
-   Factor                           ── Regular season ──         ──── Playoffs ────    
-                                 log-odds    ≈pp         p       log-odds    ≈pp         p     
-   ────────────────────────────  ────────  ─────  ────────  ───  ────────  ─────  ────────  ───
-   Rest diff (per day)             +0.064   +1.5    <0.001  ***    +0.098   +2.3     0.014    *
-                    95% CI (pp)            [+1.1,+1.9]                           [+0.5,+4.1]
-   Altitude home (DEN/UTA)         +0.343   +8.2    <0.001  ***    -0.077   -1.8     0.591     
-                    95% CI (pp)            [+6.4,+10.0]                           [-8.4,+4.8]
-   Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
-                    95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
-
-   ► Rest matters in both contexts — effect is larger in playoffs
-     (≈2.3 pp/day) than regular season (≈1.5 pp/day).
-   ► Altitude home advantage is real in the regular season (+8.2 pp)
-     but absent in playoffs — Denver/Utah team strength is a confound.
-   ► Time zones show no significant effect in either context.
-     Only 107 coast-to-coast playoff games exist across 42 seasons
-     (5,676 regular-season) — too sparse for reliable playoff inference.
-
-   Playoff rest controlling for team quality (N = 2,879 games):
-   quality_diff = home RS win% − away RS win% (same season).
-   Predictor                     log-odds     ≈pp         p     
-   ────────────────────────────  ────────  ──────  ────────  ───
-   rest_diff (per day)             +0.063    +1.5     0.146     
-   quality_diff (RS win% gap)      +4.823  +112.4    <0.001  ***
 
 ════════════════════════════════════════════════════════════════════════
 

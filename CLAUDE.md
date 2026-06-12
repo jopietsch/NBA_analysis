@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in 16 numbered `##` sections (§1–§14 analyses + §15 synthesis + §16 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in 14 numbered `##` sections (§1–§12 analyses + §13 synthesis + §14 Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands
@@ -55,7 +55,7 @@ Every analysis follows the same steps, in this order:
 8. **Update FINDINGS.md** — replace placeholder prose with actual numbers and directions from `RESULTS.md`; then regenerate the PDF with `python3 generate_report.py`
 
 ## updating FINDINGS.md
-- when editing or adding to FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear.
+- when editing or adding to FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear. We do not redundant information unless it's to strengthen a point. redudant information is usually confusing.
 - make sure that the FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
 - whenever the order of sections changes in FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_regression.py must be updated to the new order
 - do not overexplain statistical analysis. make sure everything you write is backed up by the data.

@@ -341,64 +341,6 @@ def plot_results(
           (5, 3))
 
 
-def plot_rest_analysis(
-    seasons: list[str], stats: dict,
-    season_label: str, output_path: str, extra_subtitle: str = "",
-) -> None:
-    """
-    2-panel chart exploring whether schedule-driven rest disparities help
-    explain the decline in home court advantage.
-
-    Panel 1: back-to-back rate for home vs away teams, per season — shows
-    whether the league's schedule has gotten more balanced over time.
-    Panel 2: home win % split by which team had more rest, per season —
-    shows whether the rest-advantage effect on home win % has shrunk.
-    """
-    x = np.arange(len(seasons))
-    tick_step = max(1, len(seasons) // 14)
-
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10))
-    fig.suptitle("Does Schedule Balance Explain the Decline in Home Court Advantage?",
-                 fontsize=15, fontweight="bold", y=0.99, color="#2c2c2a")
-    fig.text(0.5, 0.955,
-             f"Data: NBA.com  |  {season_label}  |  "
-             f"rest days = days between games − 1 (0 = back-to-back){extra_subtitle}",
-             ha="center", fontsize=9, color=GRAY)
-
-    # Panel 1: back-to-back rates
-    ax1.plot(x, stats["b2b_home_pct"], color=BLUE, linewidth=2, label="Home team on back-to-back")
-    ax1.plot(x, stats["b2b_away_pct"], color=GREEN, linewidth=2, label="Away team on back-to-back")
-    ax1.set_xticks(x[::tick_step])
-    ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax1.set_ylabel("% of games")
-    ax1.set_title("Back-to-back rate, home vs away teams",
-                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    # Panel 2: home win % by rest differential, with trend lines
-    ax2.plot(x, stats["win_home_more_rest"], color=BLUE, linewidth=2, label="Home team more rested")
-    ax2.plot(x, stats["win_equal_rest"],     color=GRAY, linewidth=2, label="Equal rest")
-    ax2.plot(x, stats["win_away_more_rest"], color=RED,  linewidth=2, label="Away team more rested")
-
-    for series, color in [("win_home_more_rest", BLUE), ("win_away_more_rest", RED)]:
-        y = np.array(stats[series], dtype=float)
-        _add_trend_line(ax2, x, y, color)
-
-    ax2.set_xticks(x[::tick_step])
-    ax2.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax2.set_ylabel("Home win %")
-    ax2.set_title("Home win % depending on which team had more rest",
-                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
-    print(f"\nSaved → {output_path}")
-    plt.close()
-
-
 def plot_differential_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,

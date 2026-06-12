@@ -1968,17 +1968,13 @@ def run() -> None:
                 print("   No officials met the minimum-games threshold.\n")
         else:
             print("   No cached referee data — run the analysis first to fetch it.\n")
-        # §9 Rest and Schedule Balance
-        run_rest_bucket_analysis(df)
-        # §10 Travel Distance
-        run_travel_analysis(df)
-        # §11 3-Point Shooting and Home Court Advantage
+        # §9 3-Point Shooting and Home Court Advantage
         run_3pa_analysis(df)
-        # §12 Pace and Home Court Advantage
+        # §10 Pace and Home Court Advantage
         run_pace_analysis(df)
-        # §13 Competitive Balance and Parity
+        # §11 Competitive Balance and Parity
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
-        # §14 Franchise Home Court Advantage
+        # §12 Franchise Home Court Advantage
         reg_hca_stats = nba.compute_team_hca_stats(
             nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
         )
@@ -1988,10 +1984,12 @@ def run() -> None:
         )
         run_team_hca_analysis(reg_hca_stats, po_hca_stats)
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
-        # §15 What Explains the Decline?
+        # §13 The Usual Suspects: Rest, Travel, Altitude, and Time Zones
+        run_rest_bucket_analysis(df)
+        run_travel_analysis(df)
+        run_factor_summary(df)
         run_sequential_decomposition(df)
         run_stability_analysis(df)
-        run_factor_summary(df)
 
         print("\n" + "═" * _W + "\n")
 

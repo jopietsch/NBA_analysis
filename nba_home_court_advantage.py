@@ -18,14 +18,14 @@ from nba_home_court_data import (
     START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS,
     fetch_all_seasons,
     compute_era_averages, compute_playoff_format_averages,
-    compute_rest_stats, compute_differential_stats, compute_margin_stats,
+    compute_differential_stats, compute_margin_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats,
     fetch_all_referee_data, compute_referee_bias_stats,
 )
 from nba_home_court_plots import (
-    plot_results, plot_rest_analysis,
+    plot_results,
     plot_differential_analysis, plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
@@ -45,11 +45,6 @@ def main() -> None:
         era_reg_avg, era_po_avg, era_labels_short,
         format_reg_avg, format_po_avg, format_labels_short,
     )
-
-    rest_seasons, rest_stats = compute_rest_stats(START_YEAR, END_YEAR, SeasonType.regular)
-    plot_rest_analysis(rest_seasons, rest_stats,
-                       season_label="Regular season",
-                       output_path="nba_home_court_advantage_rest.png")
 
     reg_diff_seasons, reg_diff_stats = compute_differential_stats(START_YEAR, END_YEAR, SeasonType.regular)
     po_diff_seasons, po_diff_stats = compute_differential_stats(
