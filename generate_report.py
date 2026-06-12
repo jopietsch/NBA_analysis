@@ -100,10 +100,17 @@ def _build_styles() -> dict:
         ),
         "code": ParagraphStyle(
             "code", parent=base["Code"],
-            fontSize=6.5, leading=9,
+            fontSize=7, leading=9.5,
             textColor=colors.HexColor(DARK),
             fontName="Courier",
             spaceAfter=0,
+        ),
+        "appendix_section": ParagraphStyle(
+            "appendix_section", parent=base["Normal"],
+            fontSize=9, leading=12,
+            textColor=colors.HexColor(ACCENT),
+            fontName="Helvetica-Bold",
+            spaceBefore=6, spaceAfter=3,
         ),
         "table_header": ParagraphStyle(
             "table_header", parent=base["Normal"],
@@ -296,8 +303,40 @@ def _cover(sections: dict) -> list:
     ]
 
 
+def _parse_regression_sections(text: str) -> list[tuple[str | None, str]]:
+    """Split regression output into (title, body) pairs on '─── TITLE ─────' lines.
+    Pure box-drawing separator lines (═══, ───) are stripped from bodies."""
+    section_re = re.compile(r'^─{3,}\s+(.*?)\s*─*\s*$')
+    sep_re = re.compile(r'^[═─]+\s*$')
+
+    sections: list[tuple[str | None, str]] = []
+    current_title: str | None = None
+    current_lines: list[str] = []
+
+    for line in text.split('\n'):
+        m = section_re.match(line)
+        if m:
+            body = '\n'.join(current_lines).strip()
+            if body:
+                sections.append((current_title, body))
+            current_title = m.group(1).strip()
+            current_lines = []
+        elif sep_re.match(line.strip()):
+            pass  # drop pure separator lines — titles replace them
+        else:
+            current_lines.append(line)
+
+    body = '\n'.join(current_lines).strip()
+    if body:
+        sections.append((current_title, body))
+
+    return sections
+
+
 def _appendix_results() -> list:
-    return [
+    sections = _parse_regression_sections(_results_text())
+
+    flowables: list = [
         PageBreak(),
         Paragraph("Appendix A: Full Regression Output", _STYLES["h1"]),
         _hr(),
@@ -309,8 +348,15 @@ def _appendix_results() -> list:
             _STYLES["body"],
         ),
         Spacer(1, 0.1 * inch),
-        Preformatted(_results_text(), _STYLES["code"]),
     ]
+
+    for title, body in sections:
+        if title:
+            flowables.append(Spacer(1, 0.08 * inch))
+            flowables.append(Paragraph(title, _STYLES["appendix_section"]))
+        flowables.append(Preformatted(body, _STYLES["code"]))
+
+    return flowables
 
 
 # ── Page number footer ────────────────────────────────────────────────────────
