@@ -120,6 +120,8 @@ Because the gap between higher-seed and lower-seed home games is so large, chang
 
 Home court advantage is not the same everywhere. Some arenas have historically been fortresses. Others are closer to playing on a neutral court with a slight scheduling edge.
 
+A note on what this section is — and isn't. Every number here is a franchise's average across the full 40 years, so this section answers the second of the report's three questions: what makes home court an advantage, and how much it varies by venue. It says nothing about the decline — that story resumes in Section 6.
+
 The right way to measure this is home win% minus road win% — not just home win%, which mostly measures how good the team is. The 1990s Bulls won everywhere. What matters for home court is the *gap* between how they played at home versus on the road.
 
 ### Regular Season
@@ -215,7 +217,7 @@ In the regular season, the raw field-goal percentage gap (home minus away) is al
 
 ## 8. Shot Zone Analysis
 
-Zoom in from efficiency to geography and the story sharpens further.
+Zoom in from efficiency to geography and the story sharpens further: this is the disappearing shot-quality edge from Section 7, mapped onto the floor.
 
 The clearest trend is in **paint access**. Home teams have historically gotten to the restricted area — the highest-percentage shots in basketball — more than road teams. That gap is closing at −0.037 percentage points per year in the regular season. Road defenses are no longer being consistently pushed away from the paint by a more physical home-crowd-fueled officiating environment. They can get inside now.
 
@@ -229,7 +231,7 @@ In the regular season, corner 3s show no meaningful home/road difference at all.
 
 ## 9. Referee Patterns
 
-Nearly every referee in the NBA has called fewer fouls on the home team than the away team in playoff games, over their entire career. The pattern is nearly universal in the postseason.
+Section 7 showed the home team's foul-call edge shrinking in the aggregate box score. This section asks who was doing the tilting. The answer: almost everyone. Nearly every referee in the NBA has called fewer fouls on the home team than the away team in playoff games, over their entire career.
 
 ### Almost no one is immune
 
@@ -246,6 +248,8 @@ Nearly all referees tilt the same direction. They just differ in how much.
 The 13 officials without a firmly established bias are those with smaller samples or raw numbers close to zero — not the ones with large home-favoring averages. The directional signal is genuine even where sample size limits what can be detected.
 
 The spread of individual biases has narrowed over time in the raw data. But much of that compression comes from smaller samples in older eras, where a few games can swing an official's career average dramatically. The modern era still shows genuine between-official variance — referees do differ from each other — but the overall level of home-favoring bias has come down across the board.
+
+That across-the-board retreat is the decline's biggest driver, seen one official at a time. The whistle didn't get straighter because the league weeded out a few biased referees — the whole profession moved together.
 
 ![Figure 9. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
 
