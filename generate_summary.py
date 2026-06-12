@@ -2,12 +2,14 @@
 """
 generate_summary.py — 3-page visual summary PDF for general sports fans.
 
+Narrative text and image placement are read from SUMMARY.md.
 Run after generating the summary PNGs:
     MPLBACKEND=Agg python3 nba_home_court_summary_plots.py
     python3 generate_summary.py
 """
 
 import os
+import re
 import sys
 from datetime import datetime
 
@@ -33,6 +35,7 @@ DARK   = "#2c2c2a"
 MID    = "#666666"
 ORANGE = "#e8a33d"
 
+SUMMARY_PATH = "SUMMARY.md"
 SUMMARY_PNGS = [
     "summary_decline.png",
     "summary_whistle.png",
@@ -49,6 +52,9 @@ def _check_prerequisites():
         print("\nMissing files:")
         for p in missing:
             print(f"  {p}")
+        sys.exit(1)
+    if not os.path.exists(SUMMARY_PATH):
+        print(f"ERROR: {SUMMARY_PATH} not found.")
         sys.exit(1)
 
 
@@ -97,12 +103,6 @@ def _build_styles():
             textColor=colors.HexColor(DARK),
             spaceAfter=6,
         ),
-        "verdict_bullet": ParagraphStyle(
-            "verdict_bullet", parent=base["Normal"],
-            fontSize=11, leading=16,
-            textColor=colors.HexColor(DARK),
-            leftIndent=14, spaceAfter=3,
-        ),
         "source": ParagraphStyle(
             "source", parent=base["Normal"],
             fontSize=8.5, leading=12,
@@ -110,6 +110,12 @@ def _build_styles():
             spaceBefore=8, spaceAfter=0, alignment=TA_CENTER,
         ),
     }
+
+
+def _md_inline(text):
+    text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+    text = re.sub(r'\*([^*\n]+?)\*', r'<i>\1</i>', text)
+    return text
 
 
 def _img(path, max_height=None):
@@ -131,6 +137,59 @@ def _hr():
                       color=colors.HexColor("#dddddd"), spaceAfter=6)
 
 
+def _page_to_flowables(page_text, is_cover, S):
+    """Convert one page's markdown text into reportlab flowables."""
+    flowables = []
+    blocks = re.split(r'\n{2,}', page_text.strip())
+    headline_count = 0
+    image_seen = False
+
+    for block in blocks:
+        block = block.strip()
+        if not block:
+            continue
+
+        if block.startswith('# '):
+            flowables.append(Spacer(1, 0.2 * inch))
+            flowables.append(Paragraph(_md_inline(block[2:]), S["cover_title"]))
+
+        elif block.startswith('## '):
+            text = _md_inline(block[3:])
+            if is_cover:
+                flowables.append(Paragraph(text, S["cover_stat"]))
+            else:
+                if headline_count > 0:
+                    flowables += [Spacer(1, 0.1 * inch), _hr(), Spacer(1, 0.06 * inch)]
+                flowables.append(Paragraph(text, S["page_headline"] if image_seen or headline_count == 0
+                                           else S["verdict_head"]))
+                headline_count += 1
+
+        elif block.startswith('!['):
+            m = re.match(r'!\[([^\]]*)\]\(([^)]+)\)(?:\{([^}]+)\})?', block)
+            if m:
+                opts = dict(kv.split('=') for kv in (m.group(3) or '').split() if '=' in kv)
+                mh = PAGE_H * float(opts['height']) if 'height' in opts else None
+                if is_cover and not image_seen:
+                    flowables += [Spacer(1, 0.15 * inch), _hr(), Spacer(1, 0.1 * inch)]
+                else:
+                    flowables.append(Spacer(1, 0.05 * inch))
+                flowables.append(_img(m.group(2), max_height=mh))
+                flowables.append(Spacer(1, 4))
+                flowables.append(Paragraph(_md_inline(m.group(1)), S["caption"]))
+                image_seen = True
+
+        else:
+            text = _md_inline(block)
+            if is_cover and not image_seen:
+                flowables += [Spacer(1, 0.05 * inch),
+                              Paragraph(text, S["cover_hook"])]
+            else:
+                style = S["verdict_head"] if text.isupper() else S["verdict_body"]
+                flowables.append(Paragraph(text, style))
+
+    return flowables
+
+
 def _draw_footer(canvas, doc):
     canvas.saveState()
     canvas.setFont("Helvetica", 8)
@@ -143,105 +202,22 @@ def build_summary(output="nba_home_court_advantage_summary.pdf"):
     _check_prerequisites()
     S = _build_styles()
 
+    with open(SUMMARY_PATH) as f:
+        content = f.read()
+
+    pages = re.split(r'\n---\n', content)
+
     story = []
+    for i, page_text in enumerate(pages):
+        story += _page_to_flowables(page_text, is_cover=(i == 0), S=S)
+        if i < len(pages) - 1:
+            story.append(PageBreak())
 
-    # ── Page 1: Cover + The Decline ───────────────────────────────────────────
-    story += [
-        Spacer(1, 0.2 * inch),
-        Paragraph("NBA Home Court Advantage", S["cover_title"]),
-        Paragraph("A 40-Year Decline", S["cover_stat"]),
-        Spacer(1, 0.05 * inch),
-        Paragraph(
-            "Home teams used to win nearly two-thirds of their games. "
-            "Now they barely win more than half. "
-            "Here is where that 10-point edge went.",
-            S["cover_hook"],
-        ),
-        Spacer(1, 0.15 * inch),
-        _hr(),
-        Spacer(1, 0.1 * inch),
-        _img("summary_decline.png", max_height=PAGE_H * 0.50),
-        Spacer(1, 4),
-        Paragraph(
-            "Regular season (blue) and playoffs (green), 1983–84 through 2024–25. "
-            "Dashed lines are long-run trend fits.",
-            S["caption"],
-        ),
-        PageBreak(),
-    ]
-
-    # ── Page 2: The Two Causes ────────────────────────────────────────────────
-    story += [
-        Paragraph("THE WHISTLE MOVED — AND THEN IT STOPPED", S["page_headline"]),
-        Spacer(1, 0.05 * inch),
-        _img("summary_whistle.png", max_height=PAGE_H * 0.34),
-        Spacer(1, 4),
-        Paragraph(
-            "Left: home team's foul-call edge per season (regular season and playoffs). "
-            "Right: each dot is one career playoff official — green means that referee "
-            "called fewer fouls on home teams across their entire career.",
-            S["caption"],
-        ),
-        Spacer(1, 0.1 * inch),
-        _hr(),
-        Spacer(1, 0.06 * inch),
-        Paragraph("THE 3-POINT REVOLUTION CHANGED EVERYTHING", S["page_headline"]),
-        Spacer(1, 0.05 * inch),
-        _img("summary_3point.png", max_height=PAGE_H * 0.34),
-        Spacer(1, 4),
-        Paragraph(
-            "Left: 3-point attempt rate (orange) and home win % (blue) over 40 years — "
-            "near-perfect mirror images. "
-            "Right: one dot per season; as 3PA rate rose, home court fell.",
-            S["caption"],
-        ),
-        PageBreak(),
-    ]
-
-    # ── Page 3: Franchise Rankings + Verdict ─────────────────────────────────
-    story += [
-        Paragraph("SOME ARENAS ARE STILL FORTRESSES", S["page_headline"]),
-        Spacer(1, 0.05 * inch),
-        _img("summary_franchises.png", max_height=PAGE_H * 0.39),
-        Spacer(1, 4),
-        Paragraph(
-            "All-time regular-season home win% minus road win% per franchise. "
-            "Every franchise has a positive gap — home court always helps. "
-            "Denver and Utah lead, boosted by altitude.",
-            S["caption"],
-        ),
-        Spacer(1, 0.04 * inch),
-        _hr(),
-        Spacer(1, 0.03 * inch),
-        Paragraph("THE SHORT VERSION", S["verdict_head"]),
-        Paragraph(
-            "The crowd used to move the whistle. Refs would call a foul on the road player "
-            "where they might let it go at home — and that 1.2-foul-per-game edge, night "
-            "after night, added up to a 10-point win-rate advantage across a full season. "
-            "Now refs call it almost dead even. The crowd is still loud. It just doesn't "
-            "move the whistle the way it once did.",
-            S["verdict_body"],
-        ),
-        Paragraph(
-            "The 3-point revolution made it worse. The crowd's influence mattered most at "
-            "the rim, where the foul-or-no-call is most subjective. As offenses moved "
-            "outside the arc, those moments became rarer — and every possession became "
-            "higher-variance, which favors the underdog (usually the road team).",
-            S["verdict_body"],
-        ),
-        Paragraph(
-            "Two popular explanations the data rules out: faster pace (the 1984 NBA played "
-            "at today's speed — home court was 10 points higher) and a more equal league "
-            "(the Jordan-era 1990s were highly unequal, and the decline was already "
-            "well underway).",
-            S["verdict_body"],
-        ),
-        Paragraph(
-            f"Data: NBA.com  ·  51,089 games  ·  1983–84 through 2024–25  "
-            f"·  Generated {datetime.now().strftime('%B %d, %Y')}",
-            S["source"],
-        ),
-    ]
+    story.append(Paragraph(
+        f"Data: NBA.com  ·  51,089 games  ·  1983–84 through 2024–25  "
+        f"·  Generated {datetime.now().strftime('%B %d, %Y')}",
+        S["source"],
+    ))
 
     doc = SimpleDocTemplate(
         output,
