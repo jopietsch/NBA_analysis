@@ -48,19 +48,6 @@ TZ_LABELS = {
     "3": "3 time zones crossed (coast-to-coast)",
 }
 
-TRAVEL_COLORS = {
-    "0–500":     GRAY,
-    "500–1000":  BLUE,
-    "1000–1500": "#e8a33d",
-    "1500+":     RED,
-}
-TRAVEL_LABELS = {
-    "0–500":     "< 500 mi",
-    "500–1000":  "500–1,000 mi",
-    "1000–1500": "1,000–1,500 mi",
-    "1500+":     "1,500+ mi (long haul)",
-}
-
 SHOT_ZONE_LABELS: dict[str, str] = {
     "paint":    "Paint (RA + Non-RA)",
     "midrange": "Mid-Range",
@@ -406,69 +393,6 @@ def plot_rest_analysis(
     ax2.set_title("Home win % depending on which team had more rest",
                   fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
-    print(f"\nSaved → {output_path}")
-    plt.show()
-
-
-def plot_category_road_win_analysis(
-    seasons: list[str], stats: dict, category_order: list[str],
-    colors: dict, labels: dict, title: str, season_label: str,
-    output_path: str, road_win_desc: str,
-    y_label: str = "Road (visiting team) win %",
-) -> None:
-    """
-    Generic 2-panel chart comparing win % across a set of game categories
-    (e.g. altitude city, time zones crossed).
-
-    Panel 1: win % per season for each category, with trend lines.
-    Panel 2: the same, averaged within each rule-change era.
-    y_label controls the axis label and panel titles (use "Home win %" for
-    altitude, "Road (visiting team) win %" for time-zone analysis).
-    """
-    x = np.arange(len(seasons))
-    tick_step = max(1, len(seasons) // 14)
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6), gridspec_kw={"width_ratios": [2, 1]})
-    fig.suptitle(title, fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
-    fig.text(0.5, 0.965,
-             f"Data: NBA.com  |  {season_label}  |  {road_win_desc}",
-             ha="center", fontsize=9, color=GRAY)
-
-    # Panel 1: per-season trend
-    for key in category_order:
-        y = np.array(stats[key], dtype=float)
-        ax1.plot(x, y, color=colors[key], linewidth=2, label=labels[key])
-        _add_trend_line(ax1, x, y, colors[key])
-
-    ax1.set_xticks(x[::tick_step])
-    ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax1.set_ylabel(y_label)
-    ax1.set_title(f"{y_label} by season", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    # Panel 2: era-grouped bar chart
-    era_avgs, era_labels = bucket_stats_by_era(seasons, stats)
-    xi = np.arange(len(era_labels))
-    n = len(category_order)
-    w = 0.8 / n
-    offsets = [(-(n - 1) / 2 + i) * w for i in range(n)]
-    for offset, key in zip(offsets, category_order):
-        bars = ax2.bar(xi + offset, era_avgs[key], width=w, color=colors[key],
-                       label=labels[key], zorder=2)
-        for bar in bars:
-            ax2.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                     f"{bar.get_height():.0f}%", ha="center", va="bottom",
-                     fontsize=6.5, color=colors[key])
-
-    ax2.set_xticks(xi)
-    ax2.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=8)
-    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax2.set_title(f"{y_label} by era", fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax2.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)

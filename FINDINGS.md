@@ -382,8 +382,6 @@ per-day effect has changed (p = 0.43 regular season, p = 0.75 playoffs).
 
 ![Figure 11. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
 
-![Figure 12. Playoff rest analysis. First-round games are excluded because rest cannot be computed from a prior playoff game. Rest effects are larger in the playoffs.](nba_home_court_advantage_rest_playoffs.png)
-
 ---
 
 ## 10. Travel Distance
@@ -412,7 +410,6 @@ There is no evidence that the travel-distance effect has grown or shrunk over th
 four decades in the dataset. The era-bucketed averages show no systematic pattern.
 Travel distance is not a driver of the long-run decline in home court advantage.
 
-![Figure 13. Home win % by away team travel distance (regular season). Left: per-season home win % for each distance bucket with trend lines. Right: era-averaged home win % by distance bucket.](nba_home_court_travel.png)
 
 ---
 
@@ -469,7 +466,7 @@ differential trend — referees calling the game more neutrally over time — is
 single strongest identified driver, and a neutral-foul environment both enables
 more 3-point shooting and removes a key home advantage mechanism simultaneously.
 
-![Figure 14. League-wide 3PA rate and home court advantage. Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % (blue, left axis) moving in near-lockstep over 40 years. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_3pa.png)
+![Figure 12. League-wide 3PA rate and home court advantage. Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % (blue, left axis) moving in near-lockstep over 40 years. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_3pa.png)
 
 ---
 
@@ -519,7 +516,7 @@ advantage in those early seasons was ~10 pp higher. Whatever is driving the
 long-run decline, it is not the number of possessions per game. The secular
 decline runs through eras of both fast and slow play without pace tracking it.
 
-![Figure 15. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
+![Figure 13. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
 
 ---
 
@@ -557,7 +554,7 @@ effect is modest and should be interpreted cautiously (N = 42, first-differencin
 amplifies noise), but it survives trend removal. Parity is not a primary driver
 of the long-run decline, but the association is not purely spurious either.
 
-![Figure 16. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
+![Figure 14. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
 ---
 
@@ -639,7 +636,7 @@ franchises (SD 7.5), reflecting both the higher-stakes environment and the
 selection effect noted above (postseason home teams are almost always stronger
 than their road opponents).
 
-![Figure 17. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
+![Figure 15. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
 
 ---
 
