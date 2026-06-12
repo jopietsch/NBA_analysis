@@ -27,8 +27,8 @@ No new charts are planned, so no `.gitignore` changes.
 |---|---|---|---|
 | 1 | 1 (P0), 2 (P1) | ✓ Done | 2026-06-11 |
 | 2 | 3, 4 (P1) | ✓ Done | 2026-06-11 |
-| 3 | 5–8, 12 (P2) | Not started | — |
-| 4 | 9–11 (P2) | Not started | — |
+| 3 | 5–8, 12 (P2) | ✓ Done | 2026-06-11 |
+| 4 | 9–11 (P2) | ✓ Done | 2026-06-11 |
 
 ---
 

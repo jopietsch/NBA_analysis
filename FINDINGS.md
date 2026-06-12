@@ -382,20 +382,30 @@ standard deviation means the field is compressed. The hypothesis was that salary
 and draft-lottery mechanisms have compressed team quality, leaving the home team with
 less of a structural talent edge over any given road opponent.
 
-### Parity does not explain home court advantage
+### Raw correlation is near zero
 
-The cross-season correlation between team win% disparity and home win % is near zero
-and statistically non-significant. Despite decades of changes to the league's
-competitive-balance mechanisms, the two series do not move together in any reliable
-way. The era-bucketed pattern is mixed: win% disparity actually **peaked** in the
-1995–01 era while home court advantage was already declining, then fell in 2002–04
-while home win % ticked back up slightly before continuing its descent.
+The cross-season Pearson correlation between team win% disparity and home win % is
+near zero and non-significant (r = −0.07, p = 0.68). The era-bucketed pattern is
+mixed: win% disparity actually **peaked** in the 1995–01 era while home court
+advantage was already declining, then fell in 2002–04 while home win % ticked back
+up slightly before continuing its descent.
 
-This rules out parity as a primary driver of the observed decline. The era coefficients
-in the regression model are not explained by the compression of team talent alone.
-Whatever the era effect captures — rule changes to pace and officiating, broader
-cultural and travel shifts, improvements in sports science for road teams — it is not
-reducible to a simple story about competitive balance.
+### Detrended check uncovers a weak within-trend link
+
+Both series share a common downward trend over 40 years; raw correlations between
+two trending series can be spurious. Removing the trend from both series reveals a
+different picture. The first-differenced test (year-to-year changes in parity vs.
+year-to-year changes in home win %) finds r = **−0.337** (p = 0.031, N = 41
+year-pairs). The residual-on-year approach (correlating the residuals after
+independently regressing each series on year) gives r = **−0.355** (p = 0.021,
+N = 42 seasons). Both detrended tests are significant.
+
+Interpretation: within the overall trend, years in which the league becomes
+slightly more equal also tend to see slightly lower home advantage — a real
+within-trend association in the direction the parity hypothesis predicts. The
+effect is modest and should be interpreted cautiously (N = 42, first-differencing
+amplifies noise), but it survives trend removal. Parity is not a primary driver
+of the long-run decline, but the association is not purely spurious either.
 
 ![Figure 13. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
@@ -564,24 +574,30 @@ the two.
 ### Regular Season
 
 Across 39 franchises with at least 50 home games in the dataset, the league
-mean HCA is **+20.2 pp** (range: +9.6 to +35.4 pp). Every franchise shows a
+mean HCA is **+20.2 pp** (raw range: +9.6 to +35.4 pp). Every franchise shows a
 positive HCA — no team in the dataset has historically been better on the road
 than at home over a meaningful sample.
 
-The altitude franchises dominate the top of the table. Denver ranks **#2 at
-+28.5 pp** and Utah ranks **#3 at +26.8 pp** — both well above the league
-mean and consistent with the altitude effect identified in §15. Portland (+23.2
-pp) and Seattle (+25.6 pp) also rank near the top, suggesting that arenas in
-the Pacific Northwest carry a structural advantage beyond just team quality.
-Indiana, Atlanta, and Cleveland also appear in the top tier.
+A method-of-moments variance decomposition separates true between-franchise signal
+from sampling noise: the observed SD across franchises is 4.9 pp, of which
+approximately **30% is sampling noise**; the estimated true between-franchise SD
+is **≈ 4.1 pp**. Raw league-table rankings are therefore somewhat attenuated by
+noise, particularly for shorter-lived franchises. Empirical-Bayes shrinkage toward
+the league mean corrects for this — the table is re-ranked by shrunken HCA.
 
-At the lower end sit franchises with shorter histories in the dataset or those
-that have played in more neutral metropolitan markets. The Brooklyn Nets (+9.6
-pp) and LA Clippers (+11.8 pp) show the smallest regular-season home advantages
-among franchises with substantial samples — both play in large markets where
-opposing fan sections are often well represented at road games. The Kansas City
-Kings post the highest number (+35.4 pp) but with only 82 games (one season,
-1983–84), so that figure is too small a sample to treat as reliable.
+The altitude franchises dominate the top of the shrunken rankings. Denver ranks
+**#1 at +27.3 pp** (raw +28.5 pp) and Utah ranks **#2 at +25.9 pp** (raw
++26.8 pp) — both well above the league mean. Portland (+22.8 pp shrunken) and
+Seattle (+24.4 pp shrunken) also rank near the top. Indiana, Atlanta, and
+Cleveland appear in the upper tier.
+
+At the lower end, the Brooklyn Nets (+13.4 pp shrunken) and LA Clippers (+15.3 pp
+shrunken) show the smallest regular-season advantages among well-sampled franchises —
+both play in large markets where opposing fan sections are often well represented.
+The Kansas City Kings post the highest raw number (+35.4 pp) but their 95% CI is
+**±14.1 pp** — after shrinkage the estimate falls to +23.9 pp (rank #5). With
+only 82 games (one season, 1983–84), the CI alone confirms the figure cannot be
+treated as reliable at face value.
 
 ### Playoffs
 
@@ -593,28 +609,35 @@ franchise's *road* record in the playoffs, and in postseason play, the home
 team is almost always a comparable or superior opponent than the road team
 faces, amplifying the venue effect relative to the regular season.
 
-Utah leads the playoff table at **+39.7 pp**, followed by Portland (+39.3 pp)
-and Seattle (+37.7 pp). The Los Angeles Lakers (+31.7 pp) and Boston (+30.2
-pp) — two of the most storied franchises — also rank highly, consistent with
-their sustained success and strong home environments over decades.
+Utah leads the raw table at **+39.7 pp** (CI ± 10.6 pp), followed by Portland
+(+39.3 pp) and Seattle (+37.7 pp). The Los Angeles Lakers (+31.7 pp) and Boston
+(+30.2 pp) also rank highly.
 
-The LA Clippers post the only **negative playoff HCA** in the dataset (−3.6
-pp, 28 home games) — the one franchise where home court appears to have
-provided no benefit, though the sample is too small to draw strong conclusions.
+**However, the variance decomposition shows that playoff franchise HCA differences
+are entirely within sampling noise**: the estimated true between-franchise SD is
+≈ 0.0 pp (observed SD = 8.1 pp, sampling noise = 100%). With 20–150 home playoff
+games per franchise over 42 seasons, binomial standard errors swamp the signal.
+Empirical-Bayes shrinkage collapses all playoff estimates to the league mean
+(+27.1 pp), confirming that no franchise's playoff HCA can be reliably distinguished
+from random variation. The LA Clippers' apparent negative HCA (−3.6 pp, 28 games,
+CI ± 20+ pp) is a prime example — it is indistinguishable from chance.
 
 ### Regular Season vs. Playoffs Consistency
 
-The scatter of regular-season HCA versus playoff HCA shows a modest positive
-relationship (Pearson r = +0.36, p = 0.045): franchises that protect home court
-in the regular season tend to do so in the playoffs as well, though the
-correlation is weak — by rank it is not significant (Spearman ρ = +0.26,
-p = 0.15) — because playoff samples per franchise are small. The playoff HCAs
-are uniformly larger (the mean playoff HCA exceeds the regular-season figure by
-+7.2 pp across shared franchises) and more dispersed, reflecting both the
-higher-stakes environment and the smaller sample sizes. Portland, Seattle, and Atlanta — already near the top
-of the regular-season table — rank even higher in the playoffs, while others
-like the New Jersey Nets show notably weaker playoff home advantages than
-their regular-season figures might suggest.
+The scatter of raw regular-season HCA versus raw playoff HCA shows a modest
+positive relationship (Pearson r = +0.36, p = 0.045, N = 32 franchises):
+franchises that protect home court in the regular season tend to do so in the
+playoffs as well. By rank the signal is weaker (Spearman ρ = +0.26, p = 0.15)
+and an empirical-Bayes improvement is not possible: because playoff HCA spread
+is 100% sampling noise, shrinkage collapses all playoff estimates to the league
+mean, making a shrunken correlation undefined. The raw r = +0.36 is therefore
+an attenuated estimate whose true value could be anywhere from zero to strongly
+positive — the playoff sample is too thin to tell.
+
+The playoff HCA mean exceeds the regular-season figure by +7.2 pp across shared
+franchises (SD 7.5), reflecting both the higher-stakes environment and the
+selection effect noted above (postseason home teams are almost always stronger
+than their road opponents).
 
 ![Figure 17. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
 
@@ -711,8 +734,8 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Referee fouls (refs more neutral) | Home teams' foul advantage shrank from 1.2 fewer fouls/game in 1984–94 to 0.2 today | Very strong (p < 0.001) |
 | Shot quality (shooting + paint access) | Home shooting-efficiency edge fell from +1.6 pp to +1.0 pp; home paint-access edge fell from +1.3 pp to +0.4 pp | Very strong (p < 0.001) |
 | League-wide 3-point shooting | Seasons with more 3-point shooting have lower home win % (correlation −0.90); even within an era, higher-3PA games favor the visitor (−2.3 pp per 10 pp of 3PA rate) | Very strong (p < 0.001) |
-| Travel distance | Longer trips barely hurt the visitor: −0.08 pp per 100 miles | Real but negligible (p = 0.024) |
-| Competitive balance / parity | League parity does not track home advantage at all | None — likely chance (p = 0.68) |
+| Travel distance | Longer trips barely hurt the visitor: −0.08 pp per 100 miles | Real but negligible (p = 0.010) |
+| Competitive balance / parity | Raw cross-season correlation near zero (p = 0.68), but detrended tests show a weak negative link (r ≈ −0.35, p ≈ 0.02): more equal seasons tend to have slightly lower HCA | Weak within-trend association |
 
 **Playoffs — what the prediction model credits**:
 

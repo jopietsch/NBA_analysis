@@ -278,6 +278,39 @@ def _ci_lo_hi(model, param: str, p_bar: float | None = None) -> tuple[float, flo
     return lo, hi
 
 
+def _shrink_hca(stats: dict) -> tuple[dict[str, float], dict[str, float]]:
+    """Empirical-Bayes shrinkage of franchise HCA toward the league mean.
+
+    Returns (shrunken, ci_hw):
+    - shrunken[team]: EB-shrunken HCA in pp
+    - ci_hw[team]: 95% CI half-width in pp (binomial variance formula)
+    """
+    teams = list(stats)
+    hcas = np.array([stats[t]["hca"] for t in teams], dtype=float)
+    league_mean = float(hcas.mean())
+
+    samp_vars = np.array([
+        1e4 * (
+            (stats[t]["home_pct"] / 100.0) * (1.0 - stats[t]["home_pct"] / 100.0) / stats[t]["n_home"]
+            + (stats[t]["road_pct"] / 100.0) * (1.0 - stats[t]["road_pct"] / 100.0) / stats[t]["n_road"]
+        )
+        for t in teams
+    ])
+
+    obs_var = float(np.var(hcas, ddof=1))
+    mean_sv = float(samp_vars.mean())
+    true_var = max(0.0, obs_var - mean_sv)
+
+    shrunken: dict[str, float] = {}
+    ci_hw: dict[str, float] = {}
+    for i, t in enumerate(teams):
+        sv_i = samp_vars[i]
+        w = true_var / (true_var + sv_i) if true_var > 0 else 0.0
+        shrunken[t] = w * stats[t]["hca"] + (1.0 - w) * league_mean
+        ci_hw[t] = 1.96 * float(np.sqrt(sv_i))
+    return shrunken, ci_hw
+
+
 # ── Analysis 1: Overall decline ───────────────────────────────────────────────
 
 def run_decline_trend(df: pd.DataFrame) -> None:
@@ -526,7 +559,8 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     print(f"   Outcome: home_win. Baseline home win %: {p_bar * 100:.1f}%.")
     print(f"   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;")
     print(f"   the ΔR² column shows how much each block adds over the previous model.")
-    print(f"   '≈pp' = approximate marginal effect in percentage points (at mean p).\n")
+    print(f"   '≈pp' = approximate marginal effect in percentage points (at mean p).")
+    print(f"   p-values and CIs use cluster-robust SEs (clusters = season-year).\n")
 
     er = f"C(era, Treatment('{era_ref}'))"
     steps = [
@@ -541,7 +575,9 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         for label, formula in steps:
-            fitted.append((label, smf.logit(formula, data=reg).fit(disp=0)))
+            fitted.append((label, smf.logit(formula, data=reg).fit(
+                disp=0, cov_type="cluster", cov_kwds={"groups": reg["year"].values},
+            )))
 
     total_r2 = _mcfadden(fitted[-1][1])
 
@@ -1183,6 +1219,43 @@ def run_parity_correlation(
         print(f"\n   ► Negative r: more disparity ↔ lower home advantage — counter to the")
         print(f"     parity hypothesis. Effect is significant but era is a dominant confound.")
 
+    # ── Detrended checks — remove spurious cross-trend correlation ─────────────
+    years_arr = np.array([nba.label_to_year(s) for s in shared])
+    sort_idx = np.argsort(years_arr)
+    years_sorted = years_arr[sort_idx]
+    std_sorted   = std_vals[sort_idx]
+    home_sorted  = home_vals[sort_idx]
+
+    # First-differenced: year-to-year changes
+    d_std  = np.diff(std_sorted)
+    d_home = np.diff(home_sorted)
+    r_fd, p_fd = scipy_stats.pearsonr(d_std, d_home)
+    print(f"\n   Detrended checks (both series share a downward trend — remove it first):")
+    print(f"   First-differenced (Δparity vs. Δhome-win%):")
+    print(f"   Pearson r = {r_fd:+.3f}  (p = {_fmt_p(p_fd)}  {_stars(p_fd).strip()})  "
+          f"N = {len(d_std)} year-pairs")
+
+    # Residual-on-year: detrend each series independently then correlate
+    from scipy.stats import linregress
+    sl_s, ic_s, *_ = linregress(years_sorted, std_sorted)
+    sl_h, ic_h, *_ = linregress(years_sorted, home_sorted)
+    res_std  = std_sorted  - (sl_s * years_sorted + ic_s)
+    res_home = home_sorted - (sl_h * years_sorted + ic_h)
+    r_rd, p_rd = scipy_stats.pearsonr(res_std, res_home)
+    print(f"   Residual-on-year (detrended parity vs. detrended home-win%):")
+    print(f"   Pearson r = {r_rd:+.3f}  (p = {_fmt_p(p_rd)}  {_stars(p_rd).strip()})  "
+          f"N = {len(shared)} seasons")
+
+    if p_fd >= 0.05 and p_rd >= 0.05:
+        print(f"\n   ► Both detrended tests are non-significant — the raw correlation is")
+        print(f"     driven by the shared downward trend, not a causal link.")
+        print(f"     Year-to-year changes in parity do not predict year-to-year changes")
+        print(f"     in home court advantage.")
+    elif p_fd < 0.05 or p_rd < 0.05:
+        print(f"\n   ► At least one detrended test is significant — some association")
+        print(f"     remains after removing the common trend. Interpret with caution")
+        print(f"     (N is small and first-differences amplify measurement noise).")
+
 
 # ── Analysis 7: Playoff series structure ─────────────────────────────────────
 
@@ -1287,7 +1360,9 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             try:
-                m = smf.logit("home_win ~ distance_miles", data=sub).fit(disp=0)
+                m = smf.logit("home_win ~ distance_miles", data=sub).fit(
+                    disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
+                )
                 coef = m.params["distance_miles"]
                 pval = m.pvalues["distance_miles"]
                 pval_s = _fmt_p(pval)
@@ -1349,7 +1424,9 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
         # Game-level bivariate logistic
         p_bar = sub["home_win"].mean()
         try:
-            m_biv = smf.logit("home_win ~ tpa_rate_avg", data=sub).fit(disp=0)
+            m_biv = smf.logit("home_win ~ tpa_rate_avg", data=sub).fit(
+                disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
+            )
             coef  = m_biv.params["tpa_rate_avg"]
             pval  = m_biv.pvalues["tpa_rate_avg"]
             pval_s = _fmt_p(pval)
@@ -1365,7 +1442,9 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
 
         # Game-level controlling for era
         try:
-            m_era = smf.logit("home_win ~ tpa_rate_avg + C(era)", data=sub).fit(disp=0)
+            m_era = smf.logit("home_win ~ tpa_rate_avg + C(era)", data=sub).fit(
+                disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
+            )
             coef_e  = m_era.params["tpa_rate_avg"]
             pval_e  = m_era.pvalues["tpa_rate_avg"]
             pval_e_s = _fmt_p(pval_e)
@@ -1426,7 +1505,9 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
 
         p_bar = sub["home_win"].mean()
         try:
-            m_biv = smf.logit("home_win ~ pace_avg", data=sub).fit(disp=0)
+            m_biv = smf.logit("home_win ~ pace_avg", data=sub).fit(
+                disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
+            )
             coef  = m_biv.params["pace_avg"]
             pval  = m_biv.pvalues["pace_avg"]
             pval_s = _fmt_p(pval)
@@ -1441,7 +1522,9 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             pass
 
         try:
-            m_era = smf.logit("home_win ~ pace_avg + C(era)", data=sub).fit(disp=0)
+            m_era = smf.logit("home_win ~ pace_avg + C(era)", data=sub).fit(
+                disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
+            )
             coef_e  = m_era.params["pace_avg"]
             pval_e  = m_era.pvalues["pace_avg"]
             pval_e_s = _fmt_p(pval_e)
@@ -1460,7 +1543,9 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             try:
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")
-                    m_biv_ep = smf.logit("home_win ~ expected_pace", data=sub_ep).fit(disp=0)
+                    m_biv_ep = smf.logit("home_win ~ expected_pace", data=sub_ep).fit(
+                        disp=0, cov_type="cluster", cov_kwds={"groups": sub_ep["year"].values},
+                    )
                 c_ep = m_biv_ep.params["expected_pace"]
                 p_ep = m_biv_ep.pvalues["expected_pace"]
                 print(f"   Bivariate: coef = {c_ep:+.4f}  "
@@ -1473,7 +1558,9 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
                     warnings.simplefilter("ignore")
                     m_era_ep = smf.logit(
                         "home_win ~ expected_pace + C(era)", data=sub_ep
-                    ).fit(disp=0)
+                    ).fit(
+                        disp=0, cov_type="cluster", cov_kwds={"groups": sub_ep["year"].values},
+                    )
                 c_era_ep = m_era_ep.params["expected_pace"]
                 p_era_ep = m_era_ep.pvalues["expected_pace"]
                 pp_era_ep = _pp(c_era_ep, p_bar_ep) * 10
@@ -1506,31 +1593,64 @@ def run_team_hca_analysis() -> None:
             print(f"   {ctx_label}: no data.\n")
             continue
 
-        sorted_teams = sorted(stats, key=lambda t: stats[t]["hca"], reverse=True)
+        shrunken, ci_hw = _shrink_hca(stats)
+        sh_vals = np.array([shrunken[t] for t in stats])
+        all_shrunken_equal = bool(np.std(sh_vals) < 1e-6)
+
+        if all_shrunken_equal:
+            # true_var = 0: sort by raw HCA
+            sorted_teams = sorted(stats, key=lambda t: stats[t]["hca"], reverse=True)
+        else:
+            sorted_teams = sorted(stats, key=lambda t: shrunken[t], reverse=True)
         hcas = [stats[t]["hca"] for t in sorted_teams]
 
-        print(f"   {ctx_label}  ({len(sorted_teams)} franchises with ≥{min_g} home games)\n")
+        print(f"   {ctx_label}  ({len(sorted_teams)} franchises with ≥{min_g} home games)")
+        if all_shrunken_equal:
+            print(f"   Sorted by raw HCA (EB shrinkage collapses all to league mean — see variance decomp below).")
+        else:
+            print(f"   Sorted by EB-shrunken HCA.")
+        print(f"   CI ± = 95% half-width (binomial SE).\n")
 
-        NW, CW = 32, 9
-        header = (f"   {'Franchise':<{NW}} {'n_home':>{CW}} {'home%':>{CW}} "
-                  f"{'n_road':>{CW}} {'road%':>{CW}} {'HCA':>{CW}}")
+        NW, CW, CW2 = 26, 7, 9
+        header = (f"   {'Franchise':<{NW}} {'n_h':>{CW}} {'home%':>{CW}} "
+                  f"{'n_r':>{CW}} {'road%':>{CW}} {'HCA':>{CW}} {'CI ±':>{CW}} {'Shrunken':>{CW2}}")
+        sep = f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW2}"
         print(header)
-        print(f"   {'─'*NW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW} {'─'*CW}")
+        print(sep)
 
         for team in sorted_teams:
             d = stats[team]
             name = team[:NW] if len(team) > NW else team
             print(f"   {name:<{NW}} {d['n_home']:>{CW},} {d['home_pct']:>{CW}.1f}%"
-                  f" {d['n_road']:>{CW},} {d['road_pct']:>{CW}.1f}% {d['hca']:>+{CW}.1f} pp")
+                  f" {d['n_road']:>{CW},} {d['road_pct']:>{CW}.1f}% {d['hca']:>+{CW}.1f}"
+                  f" ±{ci_hw[team]:>{CW}.1f} {shrunken[team]:>+{CW2}.1f} pp")
 
         league_mean = float(np.mean(hcas))
+
+        # Variance decomposition
+        all_teams = list(stats)
+        samp_vars_all = np.array([
+            1e4 * (
+                (stats[t]["home_pct"] / 100.0) * (1.0 - stats[t]["home_pct"] / 100.0) / stats[t]["n_home"]
+                + (stats[t]["road_pct"] / 100.0) * (1.0 - stats[t]["road_pct"] / 100.0) / stats[t]["n_road"]
+            )
+            for t in all_teams
+        ])
+        obs_var_all  = float(np.var(np.array([stats[t]["hca"] for t in all_teams]), ddof=1))
+        mean_sv_all  = float(samp_vars_all.mean())
+        true_var_all = max(0.0, obs_var_all - mean_sv_all)
+        noise_pct    = 100.0 * mean_sv_all / obs_var_all if obs_var_all > 0 else 100.0
+
         print(f"\n   League mean HCA = {league_mean:+.1f} pp  "
-              f"(range: {min(hcas):+.1f} to {max(hcas):+.1f} pp)")
+              f"(raw range: {min(hcas):+.1f} to {max(hcas):+.1f} pp)")
+        print(f"   Variance decomposition: observed SD = {np.sqrt(obs_var_all):.1f} pp, "
+              f"sampling noise = {noise_pct:.0f}%, true between-franchise SD ≈ {np.sqrt(true_var_all):.1f} pp")
 
         altitude = [t for t in sorted_teams if t in nba.ALTITUDE_TEAMS]
         for at in altitude:
             rank = sorted_teams.index(at) + 1
-            print(f"   ► {at}: {stats[at]['hca']:+.1f} pp  (rank #{rank}/{len(sorted_teams)})")
+            print(f"   ► {at}: raw {stats[at]['hca']:+.1f} pp, shrunken {shrunken[at]:+.1f} pp  "
+                  f"(rank #{rank}/{len(sorted_teams)} by shrunken)")
         print()
 
 
@@ -1565,9 +1685,32 @@ def run_hca_consistency_analysis() -> None:
     p_s_s = _fmt_p(p_s)
 
     print(f"   N = {len(shared)} franchises with both regular-season and playoff HCA")
+    print(f"   Raw HCA:")
     print(f"   Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
-    print(f"   Spearman ρ = {r_s:+.3f}  (p = {p_s_s}  {_stars(p_s).strip()})\n")
+    print(f"   Spearman ρ = {r_s:+.3f}  (p = {p_s_s}  {_stars(p_s).strip()})")
 
+    # Shrunken-value correlation — attenuation bias reduced
+    rs_sh, _ = _shrink_hca(rs)
+    po_sh, _ = _shrink_hca(po)
+    sh_rs = np.array([rs_sh[t] for t in shared])
+    sh_po = np.array([po_sh[t] for t in shared])
+
+    if np.std(sh_po) < 1e-6 or np.std(sh_rs) < 1e-6:
+        print(f"\n   Shrunken HCA: true between-franchise variance ≈ 0 in at least one context")
+        print(f"   (observed spread across franchises is entirely sampling noise).")
+        print(f"   Shrinkage collapses all values to the league mean — shrunken correlation undefined.")
+        print(f"   This confirms that franchise-level playoff HCA differences are not reliably")
+        print(f"   distinguishable from random variation given typical playoff sample sizes.")
+    else:
+        r_sh_p, p_sh_p = pearsonr(sh_rs, sh_po)
+        r_sh_s, p_sh_s = spearmanr(sh_rs, sh_po)
+        print(f"\n   Shrunken HCA (EB toward league mean; reduces attenuation from small samples):")
+        print(f"   Pearson r  = {r_sh_p:+.3f}  (p = {_fmt_p(p_sh_p)}  {_stars(p_sh_p).strip()})")
+        print(f"   Spearman ρ = {r_sh_s:+.3f}  (p = {_fmt_p(p_sh_s)}  {_stars(p_sh_s).strip()})")
+        if r_sh_p > r_p:
+            print(f"   Shrinkage strengthens r: raw {r_p:+.3f} → shrunken {r_sh_p:+.3f} (attenuation reduced).")
+
+    print()
     gap = po_vals - rs_vals
     print(f"   Mean regular-season HCA (shared franchises): {rs_vals.mean():+.1f} pp")
     print(f"   Mean playoff HCA (shared franchises):        {po_vals.mean():+.1f} pp")
@@ -1575,8 +1718,10 @@ def run_hca_consistency_analysis() -> None:
           f"(SD {gap.std():.1f})")
 
     if p_p < 0.05 and r_p > 0:
-        print(f"\n   ► Positive, significant correlation — franchises that protect home")
-        print(f"     court in the regular season tend to do so in the playoffs too.")
+        print(f"\n   ► Raw correlation positive and significant (r = {r_p:+.3f}) —")
+        print(f"     franchises that protect home court in the regular season tend to do so")
+        print(f"     in the playoffs too, though playoff sample sizes are too small for")
+        print(f"     franchise-level shrinkage to improve on raw estimates.")
     elif p_p >= 0.05:
         print(f"\n   ► No significant correlation — regular-season HCA does not reliably")
         print(f"     predict playoff HCA at the franchise level (playoff samples are small).")

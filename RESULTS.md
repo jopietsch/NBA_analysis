@@ -83,6 +83,7 @@ All data from cache/ — same source as the plots above.
    McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
    the ΔR² column shows how much each block adds over the previous model.
    '≈pp' = approximate marginal effect in percentage points (at mean p).
+   p-values and CIs use cluster-robust SEs (clusters = season-year).
 
    Model                                R²       ΔR²   % of fit
    ──────────────────────────────  ───────  ────────  ─────────
@@ -96,15 +97,15 @@ All data from cache/ — same source as the plots above.
 
    Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
    ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
-   era: 1995–01                                    -0.209    -5.0  [ -6.5, -3.6]    <0.001  ***
-   era: 2002–04                                    -0.167    -4.0  [ -5.9, -2.1]    <0.001  ***
-   era: 2005–17                                    -0.230    -5.5  [ -6.7, -4.3]    <0.001  ***
-   era: 2018–22                                    -0.318    -7.6  [ -9.5, -5.8]    <0.001  ***
-   era: 2023–25                                    -0.372    -8.9  [-10.7, -7.1]    <0.001  ***
+   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.2]    <0.001  ***
+   era: 2002–04                                    -0.167    -4.0  [ -6.3, -1.6]    <0.001  ***
+   era: 2005–17                                    -0.230    -5.5  [ -7.1, -3.9]    <0.001  ***
+   era: 2018–22                                    -0.318    -7.6  [-10.3, -4.9]    <0.001  ***
+   era: 2023–25                                    -0.372    -8.9  [-11.2, -6.6]    <0.001  ***
    rest diff (per day)                             +0.061    +1.5  [ +1.1, +1.9]    <0.001  ***
-   altitude home (DEN/UTA)                         +0.340    +8.2  [ +6.3,+10.0]    <0.001  ***
-   time zone diff (per zone)                       -0.023    -0.6  [ -1.0, -0.1]     0.012    *
-   COVID seasons                                   -0.097    -2.3  [ -4.9, +0.3]     0.078     
+   altitude home (DEN/UTA)                         +0.340    +8.2  [ +4.8,+11.5]    <0.001  ***
+   time zone diff (per zone)                       -0.023    -0.6  [ -1.0, -0.2]     0.005   **
+   COVID seasons                                   -0.097    -2.3  [ -4.6, -0.1]     0.045    *
 
    ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
 
@@ -432,7 +433,7 @@ All data from cache/ — same source as the plots above.
       1000–1500     9,615        59.4%          -0.9 pp
           1500+    12,010        59.7%          -0.6 pp
 
-   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.01]),  p = 0.024  *
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.02]),  p = 0.010  *
 
    Playoffs  (N = 3,207, baseline home win % = 64.3%)
 
@@ -443,7 +444,7 @@ All data from cache/ — same source as the plots above.
       1000–1500       717        63.7%          -0.6 pp
           1500+       376        64.9%          +0.6 pp
 
-   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.27, +0.37]),  p = 0.769  
+   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
 
 
 ─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
@@ -475,6 +476,16 @@ All data from cache/ — same source as the plots above.
      home win % was already declining, and fell in 2002–04 while home win %
      ticked back up. The two series do not move in lockstep.
 
+   Detrended checks (both series share a downward trend — remove it first):
+   First-differenced (Δparity vs. Δhome-win%):
+   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
+   Residual-on-year (detrended parity vs. detrended home-win%):
+   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
+
+   ► At least one detrended test is significant — some association
+     remains after removing the common trend. Interpret with caution
+     (N is small and first-differences amplify measurement noise).
+
 ─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
    Does more 3-point shooting reduce home court advantage?
    Two angles: season-level correlation and game-level logistic regression.
@@ -494,7 +505,7 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 47,881 games)
    coef = -0.0111 log-odds per pp of 3PA rate
-   ≈ -2.67 pp per 10 pp rise in 3PA rate  95% CI [-3.04, -2.29]
+   ≈ -2.67 pp per 10 pp rise in 3PA rate  95% CI [-3.13, -2.20]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
@@ -518,11 +529,11 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 3,207 games)
    coef = -0.0112 log-odds per pp of 3PA rate
-   ≈ -2.57 pp per 10 pp rise in 3PA rate  95% CI [-4.01, -1.12]
+   ≈ -2.57 pp per 10 pp rise in 3PA rate  95% CI [-3.68, -1.45]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0111  (≈ -2.54 pp per 10 pp 3PA)  p = 0.097  
+   coef = -0.0111  (≈ -2.54 pp per 10 pp 3PA)  p = 0.054  
    (If this is small and insignificant, 3PA effect is fully explained
     by the secular trend — higher 3PA and lower HCA happen at the same
     time but 3PA does not predict outcomes within any given era.)
@@ -547,15 +558,15 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 47,879 games)
    coef = +0.0099 log-odds per possession
-   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.76, +2.98]
+   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.17, +3.57]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
    coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
 
    Expected pace (LOO)  (N = 47,641 games)
-   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = <0.001  ***
-   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.026  *
+   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = 0.148  
+   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.065  
 
    Playoffs  (n = 41 seasons)
    Season-level Pearson r  = -0.115  (p = 0.474  )
@@ -572,15 +583,15 @@ All data from cache/ — same source as the plots above.
 
    Game-level bivariate logistic  (N = 3,207 games)
    coef = -0.0038 log-odds per possession
-   ≈ -0.87 pp per 10 extra possessions  95% CI [-3.18, +1.44]
-   p = 0.461  
+   ≈ -0.87 pp per 10 extra possessions  95% CI [-2.91, +1.17]
+   p = 0.402  
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.315  
+   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.251  
 
    Expected pace (LOO)  (N = 3,207 games)
-   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.492  
-   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.239  
+   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.426  
+   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
 
 
 ─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
@@ -611,93 +622,99 @@ All data from cache/ — same source as the plots above.
    HCA = home win% − road win% (controls for overall team quality).
 
    Regular season  (39 franchises with ≥50 home games)
+   Sorted by EB-shrunken HCA.
+   CI ± = 95% half-width (binomial SE).
 
-   Franchise                           n_home     home%    n_road     road%       HCA
-   ──────────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Kansas City Kings                       82      59.8%        82      24.4%     +35.4 pp
-   Denver Nuggets                       1,689      64.6%     1,688      36.1%     +28.5 pp
-   Utah Jazz                            1,687      70.5%     1,689      43.6%     +26.8 pp
-   Washington Bullets                     574      54.2%       574      27.7%     +26.5 pp
-   Seattle SuperSonics                  1,009      67.0%     1,009      41.4%     +25.6 pp
-   Indiana Pacers                       1,687      63.7%     1,689      39.4%     +24.3 pp
-   New Jersey Nets                      1,165      53.9%     1,165      29.7%     +24.2 pp
-   Atlanta Hawks                        1,685      61.6%     1,686      37.8%     +23.8 pp
-   Cleveland Cavaliers                  1,688      61.9%     1,681      38.3%     +23.6 pp
-   New Orleans/Oklahoma City Hornet        82      58.5%        82      35.4%     +23.2 pp
-   Portland Trail Blazers               1,688      65.9%     1,690      42.7%     +23.2 pp
-   Los Angeles Clippers                 1,247      50.2%     1,247      27.7%     +22.5 pp
-   Charlotte Bobcats                      402      47.5%       402      25.4%     +22.1 pp
-   Milwaukee Bucks                      1,688      61.4%     1,689      39.5%     +21.9 pp
-   San Antonio Spurs                    1,685      70.2%     1,690      48.4%     +21.8 pp
-   Sacramento Kings                     1,605      53.8%     1,607      32.2%     +21.6 pp
-   Golden State Warriors                1,686      58.6%     1,683      37.3%     +21.3 pp
-   Phoenix Suns                         1,691      64.5%     1,686      43.7%     +20.9 pp
-   Houston Rockets                      1,688      65.2%     1,688      44.8%     +20.3 pp
-   Orlando Magic                        1,441      57.1%     1,444      36.9%     +20.2 pp
-   Detroit Pistons                      1,684      60.0%     1,686      40.2%     +19.8 pp
-   New York Knicks                      1,685      57.3%     1,685      38.2%     +19.1 pp
-   Chicago Bulls                        1,686      61.4%     1,683      42.5%     +18.9 pp
-   Boston Celtics                       1,687      66.4%     1,688      48.0%     +18.4 pp
-   Memphis Grizzlies                      967      57.9%       966      39.9%     +18.1 pp
-   Los Angeles Lakers                   1,688      68.4%     1,687      50.6%     +17.8 pp
-   Miami Heat                           1,483      61.4%     1,484      43.6%     +17.8 pp
-   Washington Wizards                   1,113      49.8%     1,115      32.1%     +17.7 pp
-   Philadelphia 76ers                   1,687      56.2%     1,690      38.9%     +17.3 pp
-   New Orleans Hornets                    361      56.0%       361      38.8%     +17.2 pp
-   Dallas Mavericks                     1,689      60.5%     1,690      43.4%     +17.1 pp
-   Minnesota Timberwolves               1,438      49.7%     1,438      33.5%     +16.1 pp
-   Charlotte Hornets                      994      53.1%       997      37.3%     +15.8 pp
-   Toronto Raptors                      1,196      54.8%     1,196      39.4%     +15.4 pp
-   Oklahoma City Thunder                  680      65.6%       678      51.2%     +14.4 pp
-   New Orleans Pelicans                   481      51.8%       483      38.1%     +13.7 pp
-   Vancouver Grizzlies                    230      28.7%       230      15.2%     +13.5 pp
-   LA Clippers                            400      65.5%       400      53.8%     +11.8 pp
-   Brooklyn Nets                          523      49.9%       523      40.3%      +9.6 pp
+   Franchise                      n_h   home%     n_r   road%     HCA    CI ±  Shrunken
+   ────────────────────────── ─────── ─────── ─────── ─────── ─────── ─────── ─────────
+   Denver Nuggets               1,689    64.6%   1,688    36.1%   +28.5 ±    3.2     +27.3 pp
+   Utah Jazz                    1,687    70.5%   1,689    43.6%   +26.8 ±    3.2     +25.9 pp
+   Washington Bullets             574    54.2%     574    27.7%   +26.5 ±    5.5     +24.5 pp
+   Seattle SuperSonics          1,009    67.0%   1,009    41.4%   +25.6 ±    4.2     +24.4 pp
+   Kansas City Kings               82    59.8%      82    24.4%   +35.4 ±   14.1     +23.9 pp
+   Indiana Pacers               1,687    63.7%   1,689    39.4%   +24.3 ±    3.3     +23.7 pp
+   New Jersey Nets              1,165    53.9%   1,165    29.7%   +24.2 ±    3.9     +23.4 pp
+   Atlanta Hawks                1,685    61.6%   1,686    37.8%   +23.8 ±    3.3     +23.3 pp
+   Cleveland Cavaliers          1,688    61.9%   1,681    38.3%   +23.6 ±    3.3     +23.1 pp
+   Portland Trail Blazers       1,688    65.9%   1,690    42.7%   +23.2 ±    3.3     +22.8 pp
+   Los Angeles Clippers         1,247    50.2%   1,247    27.7%   +22.5 ±    3.7     +22.1 pp
+   Milwaukee Bucks              1,688    61.4%   1,689    39.5%   +21.9 ±    3.3     +21.7 pp
+   San Antonio Spurs            1,685    70.2%   1,690    48.4%   +21.8 ±    3.2     +21.6 pp
+   Sacramento Kings             1,605    53.8%   1,607    32.2%   +21.6 ±    3.3     +21.4 pp
+   Charlotte Bobcats              402    47.5%     402    25.4%   +22.1 ±    6.5     +21.3 pp
+   Golden State Warriors        1,686    58.6%   1,683    37.3%   +21.3 ±    3.3     +21.1 pp
+   New Orleans/Oklahoma City       82    58.5%      82    35.4%   +23.2 ±   14.9     +20.9 pp
+   Phoenix Suns                 1,691    64.5%   1,686    43.7%   +20.9 ±    3.3     +20.8 pp
+   Houston Rockets              1,688    65.2%   1,688    44.8%   +20.3 ±    3.3     +20.3 pp
+   Orlando Magic                1,441    57.1%   1,444    36.9%   +20.2 ±    3.6     +20.2 pp
+   Detroit Pistons              1,684    60.0%   1,686    40.2%   +19.8 ±    3.3     +19.9 pp
+   New York Knicks              1,685    57.3%   1,685    38.2%   +19.1 ±    3.3     +19.3 pp
+   Chicago Bulls                1,686    61.4%   1,683    42.5%   +18.9 ±    3.3     +19.1 pp
+   Boston Celtics               1,687    66.4%   1,688    48.0%   +18.4 ±    3.3     +18.7 pp
+   Memphis Grizzlies              967    57.9%     966    39.9%   +18.1 ±    4.4     +18.6 pp
+   New Orleans Hornets            361    56.0%     361    38.8%   +17.2 ±    7.2     +18.5 pp
+   Washington Wizards           1,113    49.8%   1,115    32.1%   +17.7 ±    4.0     +18.2 pp
+   Miami Heat                   1,483    61.4%   1,484    43.6%   +17.8 ±    3.5     +18.2 pp
+   Los Angeles Lakers           1,688    68.4%   1,687    50.6%   +17.8 ±    3.3     +18.1 pp
+   Philadelphia 76ers           1,687    56.2%   1,690    38.9%   +17.3 ±    3.3     +17.7 pp
+   Dallas Mavericks             1,689    60.5%   1,690    43.4%   +17.1 ±    3.3     +17.5 pp
+   Charlotte Hornets              994    53.1%     997    37.3%   +15.8 ±    4.3     +16.8 pp
+   Minnesota Timberwolves       1,438    49.7%   1,438    33.5%   +16.1 ±    3.6     +16.8 pp
+   Vancouver Grizzlies            230    28.7%     230    15.2%   +13.5 ±    7.5     +16.6 pp
+   Toronto Raptors              1,196    54.8%   1,196    39.4%   +15.4 ±    4.0     +16.3 pp
+   New Orleans Pelicans           481    51.8%     483    38.1%   +13.7 ±    6.2     +16.1 pp
+   Oklahoma City Thunder          680    65.6%     678    51.2%   +14.4 ±    5.2     +16.1 pp
+   LA Clippers                    400    65.5%     400    53.8%   +11.8 ±    6.8     +15.3 pp
+   Brooklyn Nets                  523    49.9%     523    40.3%    +9.6 ±    6.0     +13.4 pp
 
-   League mean HCA = +20.2 pp  (range: +9.6 to +35.4 pp)
-   ► Denver Nuggets: +28.5 pp  (rank #2/39)
-   ► Utah Jazz: +26.8 pp  (rank #3/39)
+   League mean HCA = +20.2 pp  (raw range: +9.6 to +35.4 pp)
+   Variance decomposition: observed SD = 4.9 pp, sampling noise = 30%, true between-franchise SD ≈ 4.1 pp
+   ► Denver Nuggets: raw +28.5 pp, shrunken +27.3 pp  (rank #1/39 by shrunken)
+   ► Utah Jazz: raw +26.8 pp, shrunken +25.9 pp  (rank #2/39 by shrunken)
 
    Playoffs  (32 franchises with ≥20 home games)
+   Sorted by raw HCA (EB shrinkage collapses all to league mean — see variance decomp below).
+   CI ± = 95% half-width (binomial SE).
 
-   Franchise                           n_home     home%    n_road     road%       HCA
-   ──────────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Utah Jazz                              144      66.0%       141      26.2%     +39.7 pp
-   Portland Trail Blazers                 113      61.9%       115      22.6%     +39.3 pp
-   Seattle SuperSonics                     69      66.7%        69      29.0%     +37.7 pp
-   Atlanta Hawks                          105      58.1%       111      24.3%     +33.8 pp
-   Los Angeles Clippers                    33      60.6%        36      27.8%     +32.8 pp
-   Brooklyn Nets                           25      52.0%        25      20.0%     +32.0 pp
-   Los Angeles Lakers                     220      75.0%       201      43.3%     +31.7 pp
-   Oklahoma City Thunder                   72      69.4%        68      38.2%     +31.2 pp
-   New York Knicks                        119      64.7%       123      34.1%     +30.6 pp
-   Boston Celtics                         217      69.6%       193      39.4%     +30.2 pp
-   Milwaukee Bucks                        102      59.8%       107      29.9%     +29.9 pp
-   Orlando Magic                           69      59.4%        71      29.6%     +29.8 pp
-   Charlotte Hornets                       24      58.3%        31      29.0%     +29.3 pp
-   Denver Nuggets                         100      59.0%       104      29.8%     +29.2 pp
-   Houston Rockets                        132      64.4%       126      35.7%     +28.7 pp
-   Detroit Pistons                        141      68.8%       132      40.2%     +28.6 pp
-   Toronto Raptors                         56      58.9%        56      30.4%     +28.6 pp
-   Indiana Pacers                         133      64.7%       142      36.6%     +28.0 pp
-   Miami Heat                             143      67.1%       135      39.3%     +27.9 pp
-   San Antonio Spurs                      175      70.3%       176      43.2%     +27.1 pp
-   Golden State Warriors                  107      73.8%       109      47.7%     +26.1 pp
-   Chicago Bulls                          146      70.5%       139      44.6%     +25.9 pp
-   Sacramento Kings                        41      58.5%        42      33.3%     +25.2 pp
-   Memphis Grizzlies                       50      50.0%        52      25.0%     +25.0 pp
-   Dallas Mavericks                       115      60.9%       128      35.9%     +24.9 pp
-   Philadelphia 76ers                     104      59.6%       108      36.1%     +23.5 pp
-   Cleveland Cavaliers                    118      66.1%       119      42.9%     +23.2 pp
-   Washington Wizards                      34      52.9%        37      32.4%     +20.5 pp
-   Phoenix Suns                           130      60.0%       126      40.5%     +19.5 pp
-   Minnesota Timberwolves                  45      51.1%        49      32.7%     +18.5 pp
-   New Jersey Nets                         53      52.8%        58      41.4%     +11.5 pp
-   LA Clippers                             28      39.3%        28      42.9%      -3.6 pp
+   Franchise                      n_h   home%     n_r   road%     HCA    CI ±  Shrunken
+   ────────────────────────── ─────── ─────── ─────── ─────── ─────── ─────── ─────────
+   Utah Jazz                      144    66.0%     141    26.2%   +39.7 ±   10.6     +27.1 pp
+   Portland Trail Blazers         113    61.9%     115    22.6%   +39.3 ±   11.8     +27.1 pp
+   Seattle SuperSonics             69    66.7%      69    29.0%   +37.7 ±   15.4     +27.1 pp
+   Atlanta Hawks                  105    58.1%     111    24.3%   +33.8 ±   12.4     +27.1 pp
+   Los Angeles Clippers            33    60.6%      36    27.8%   +32.8 ±   22.2     +27.1 pp
+   Brooklyn Nets                   25    52.0%      25    20.0%   +32.0 ±   25.1     +27.1 pp
+   Los Angeles Lakers             220    75.0%     201    43.3%   +31.7 ±    8.9     +27.1 pp
+   Oklahoma City Thunder           72    69.4%      68    38.2%   +31.2 ±   15.7     +27.1 pp
+   New York Knicks                119    64.7%     123    34.1%   +30.6 ±   12.0     +27.1 pp
+   Boston Celtics                 217    69.6%     193    39.4%   +30.2 ±    9.2     +27.1 pp
+   Milwaukee Bucks                102    59.8%     107    29.9%   +29.9 ±   12.9     +27.1 pp
+   Orlando Magic                   69    59.4%      71    29.6%   +29.8 ±   15.7     +27.1 pp
+   Charlotte Hornets               24    58.3%      31    29.0%   +29.3 ±   25.4     +27.1 pp
+   Denver Nuggets                 100    59.0%     104    29.8%   +29.2 ±   13.0     +27.1 pp
+   Houston Rockets                132    64.4%     126    35.7%   +28.7 ±   11.7     +27.1 pp
+   Detroit Pistons                141    68.8%     132    40.2%   +28.6 ±   11.3     +27.1 pp
+   Toronto Raptors                 56    58.9%      56    30.4%   +28.6 ±   17.6     +27.1 pp
+   Indiana Pacers                 133    64.7%     142    36.6%   +28.0 ±   11.3     +27.1 pp
+   Miami Heat                     143    67.1%     135    39.3%   +27.9 ±   11.3     +27.1 pp
+   San Antonio Spurs              175    70.3%     176    43.2%   +27.1 ±   10.0     +27.1 pp
+   Golden State Warriors          107    73.8%     109    47.7%   +26.1 ±   12.5     +27.1 pp
+   Chicago Bulls                  146    70.5%     139    44.6%   +25.9 ±   11.1     +27.1 pp
+   Sacramento Kings                41    58.5%      42    33.3%   +25.2 ±   20.8     +27.1 pp
+   Memphis Grizzlies               50    50.0%      52    25.0%   +25.0 ±   18.2     +27.1 pp
+   Dallas Mavericks               115    60.9%     128    35.9%   +24.9 ±   12.2     +27.1 pp
+   Philadelphia 76ers             104    59.6%     108    36.1%   +23.5 ±   13.1     +27.1 pp
+   Cleveland Cavaliers            118    66.1%     119    42.9%   +23.2 ±   12.3     +27.1 pp
+   Washington Wizards              34    52.9%      37    32.4%   +20.5 ±   22.6     +27.1 pp
+   Phoenix Suns                   130    60.0%     126    40.5%   +19.5 ±   12.0     +27.1 pp
+   Minnesota Timberwolves          45    51.1%      49    32.7%   +18.5 ±   19.6     +27.1 pp
+   New Jersey Nets                 53    52.8%      58    41.4%   +11.5 ±   18.5     +27.1 pp
+   LA Clippers                     28    39.3%      28    42.9%    -3.6 ±   25.8     +27.1 pp
 
-   League mean HCA = +27.1 pp  (range: -3.6 to +39.7 pp)
-   ► Utah Jazz: +39.7 pp  (rank #1/32)
-   ► Denver Nuggets: +29.2 pp  (rank #14/32)
+   League mean HCA = +27.1 pp  (raw range: -3.6 to +39.7 pp)
+   Variance decomposition: observed SD = 8.1 pp, sampling noise = 100%, true between-franchise SD ≈ 0.0 pp
+   ► Utah Jazz: raw +39.7 pp, shrunken +27.1 pp  (rank #1/32 by shrunken)
+   ► Denver Nuggets: raw +29.2 pp, shrunken +27.1 pp  (rank #14/32 by shrunken)
 
 
 ─── FRANCHISE HCA — REGULAR SEASON VS. PLAYOFFS CONSISTENCY ────────────
@@ -705,15 +722,24 @@ All data from cache/ — same source as the plots above.
    so in the playoffs? Correlation across franchises with both figures.
 
    N = 32 franchises with both regular-season and playoff HCA
+   Raw HCA:
    Pearson r  = +0.356  (p = 0.045  *)
    Spearman ρ = +0.262  (p = 0.148  )
+
+   Shrunken HCA: true between-franchise variance ≈ 0 in at least one context
+   (observed spread across franchises is entirely sampling noise).
+   Shrinkage collapses all values to the league mean — shrunken correlation undefined.
+   This confirms that franchise-level playoff HCA differences are not reliably
+   distinguishable from random variation given typical playoff sample sizes.
 
    Mean regular-season HCA (shared franchises): +19.9 pp
    Mean playoff HCA (shared franchises):        +27.1 pp
    Mean playoff − regular-season gap:           +7.2 pp (SD 7.5)
 
-   ► Positive, significant correlation — franchises that protect home
-     court in the regular season tend to do so in the playoffs too.
+   ► Raw correlation positive and significant (r = +0.356) —
+     franchises that protect home court in the regular season tend to do so
+     in the playoffs too, though playoff sample sizes are too small for
+     franchise-level shrinkage to improve on raw estimates.
 
 ════════════════════════════════════════════════════════════════════════
 
