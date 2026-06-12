@@ -1575,20 +1575,16 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
 
 # ── Analysis 13: Franchise home court advantage ───────────────────────────────
 
-def run_team_hca_analysis() -> None:
+def run_team_hca_analysis(reg_stats: dict, po_stats: dict) -> None:
     """Per-franchise home vs. road win% aggregated across all seasons."""
     _section("FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN %")
     print("   Which franchises benefit most from playing at home?")
     print("   HCA = home win% − road win% (controls for overall team quality).\n")
 
-    for ctx_label, season_type, skip, min_g in [
-        ("Regular season", "Regular Season", set(),                     50),
-        ("Playoffs",       "Playoffs",       nba.SKIP_PLAYOFF_YEARS,    20),
+    for ctx_label, stats, min_g in [
+        ("Regular season", reg_stats, 50),
+        ("Playoffs",       po_stats,  20),
     ]:
-        stats = nba.compute_team_hca_stats(
-            nba.START_YEAR, nba.END_YEAR, season_type,
-            skip_years=skip, min_games=min_g,
-        )
         if not stats:
             print(f"   {ctx_label}: no data.\n")
             continue
@@ -1656,7 +1652,7 @@ def run_team_hca_analysis() -> None:
 
 # ── Analysis: Franchise HCA consistency (regular season vs. playoffs) ─────────
 
-def run_hca_consistency_analysis() -> None:
+def run_hca_consistency_analysis(reg_stats: dict, po_stats: dict) -> None:
     """Correlation between regular-season and playoff franchise HCA — do the
     same franchises protect home court in both contexts?"""
     from scipy.stats import pearsonr, spearmanr
@@ -1665,13 +1661,8 @@ def run_hca_consistency_analysis() -> None:
     print("   Do franchises that protect home court in the regular season also do")
     print("   so in the playoffs? Correlation across franchises with both figures.\n")
 
-    rs = nba.compute_team_hca_stats(
-        nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
-    )
-    po = nba.compute_team_hca_stats(
-        nba.START_YEAR, nba.END_YEAR, "Playoffs",
-        skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
-    )
+    rs = reg_stats
+    po = po_stats
     shared = sorted(set(rs) & set(po))
     if len(shared) < 5:
         print("   Insufficient overlap between the two tables.\n")
@@ -1729,7 +1720,7 @@ def run_hca_consistency_analysis() -> None:
 
 # ── Analysis 14: Referee crew home foul bias ─────────────────────────────────
 
-def run_referee_analysis() -> None:
+def run_referee_analysis(bias_stats: list) -> None:
     """Per-official home foul bias for playoff games; era trend and rankings.
 
     PLAN-STATS items 1 & 2: uses real per-game SDs for t-tests (not the
@@ -1744,24 +1735,6 @@ def run_referee_analysis() -> None:
     print("   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)")
     print("   Officials with <50 playoff games excluded.")
     print("   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.\n")
-
-    ref_df = nba.fetch_all_referee_data(
-        nba.START_YEAR, nba.END_YEAR, "Playoffs",
-        skip_years=nba.SKIP_PLAYOFF_YEARS,
-    )
-    if ref_df is None:
-        print("   No cached referee data — run the analysis first to fetch it.\n")
-        return
-
-    bias_stats = nba.compute_referee_bias_stats(
-        ref_df,
-        nba.START_YEAR, nba.END_YEAR, "Playoffs",
-        skip_years=nba.SKIP_PLAYOFF_YEARS,
-        min_games=50,
-    )
-    if not bias_stats:
-        print("   No officials met the minimum-games threshold.\n")
-        return
 
     n_total   = len(bias_stats)
     n_negative = sum(1 for o in bias_stats if o["mean_foul_diff"] < 0)
@@ -1927,14 +1900,35 @@ def run() -> None:
         run_quantile_margin_analysis(df)
         run_differential_analysis(df)
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
-        run_referee_analysis()
+        ref_df = nba.fetch_all_referee_data(
+            nba.START_YEAR, nba.END_YEAR, "Playoffs",
+            skip_years=nba.SKIP_PLAYOFF_YEARS,
+        )
+        if ref_df is not None:
+            ref_bias_stats = nba.compute_referee_bias_stats(
+                ref_df, nba.START_YEAR, nba.END_YEAR, "Playoffs",
+                skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=50,
+            )
+            if ref_bias_stats:
+                run_referee_analysis(ref_bias_stats)
+            else:
+                print("   No officials met the minimum-games threshold.\n")
+        else:
+            print("   No cached referee data — run the analysis first to fetch it.\n")
         run_travel_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_3pa_analysis(df)
         run_pace_analysis(df)
         run_series_breakdown(df)
-        run_team_hca_analysis()
-        run_hca_consistency_analysis()
+        reg_hca_stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
+        )
+        po_hca_stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, "Playoffs",
+            skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
+        )
+        run_team_hca_analysis(reg_hca_stats, po_hca_stats)
+        run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
 
         print("\n" + "═" * _W + "\n")
 

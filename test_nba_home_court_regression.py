@@ -430,3 +430,130 @@ class TestRunSeriesBreakdown:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             reg.run_series_breakdown(df)
+
+
+# ── Newly injectable functions ────────────────────────────────────────────────
+
+def _make_hca_stats(teams, base_hca=20.0, n_games=200):
+    """Build a stats dict suitable for run_team_hca_analysis / run_hca_consistency_analysis."""
+    rng = np.random.default_rng(7)
+    return {
+        t: {
+            "hca":      base_hca + rng.uniform(-8, 8),
+            "home_pct": 60.0 + rng.uniform(-5, 5),
+            "road_pct": 40.0 + rng.uniform(-5, 5),
+            "n_home":   n_games,
+            "n_road":   n_games,
+        }
+        for t in teams
+    }
+
+
+def _make_bias_stats(n_officials=15, seed=9):
+    """Build a bias_stats list matching compute_referee_bias_stats output schema."""
+    rng = np.random.default_rng(seed)
+    era_labels = [e[0] for e in nba.ERA_DEFS]
+    result = []
+    for i in range(n_officials):
+        n = int(rng.integers(55, 200))
+        mean_fd = float(rng.uniform(-2.5, 0.5))
+        sd_fd = float(rng.uniform(2.5, 3.5))
+        era_means = {e: float(rng.uniform(-2.0, 0.5)) for e in era_labels}
+        era_sd    = {e: float(rng.uniform(2.0, 4.0))  for e in era_labels}
+        era_n     = {e: max(2, int(n // len(era_labels))) for e in era_labels}
+        result.append({
+            "name":           f"Referee {i}",
+            "n_games":        n,
+            "mean_foul_diff": mean_fd,
+            "sd_foul_diff":   sd_fd,
+            "era_means":      era_means,
+            "era_sd":         era_sd,
+            "era_n":          era_n,
+        })
+    return result
+
+
+class TestRunTeamHcaAnalysis:
+    TEAMS_RS = ["Denver Nuggets", "Utah Jazz", "Boston Celtics",
+                "LA Clippers", "Brooklyn Nets", "Chicago Bulls"]
+    TEAMS_PO = ["Denver Nuggets", "Utah Jazz", "Boston Celtics",
+                "LA Clippers", "Brooklyn Nets"]
+
+    def test_does_not_raise(self, capsys):
+        reg_stats = _make_hca_stats(self.TEAMS_RS)
+        po_stats  = _make_hca_stats(self.TEAMS_PO, n_games=50)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_team_hca_analysis(reg_stats, po_stats)
+
+    def test_empty_reg_stats_does_not_raise(self, capsys):
+        po_stats = _make_hca_stats(self.TEAMS_PO, n_games=50)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_team_hca_analysis({}, po_stats)
+
+    def test_altitude_team_included_does_not_raise(self, capsys):
+        # Denver and Utah are in nba.ALTITUDE_TEAMS — the function special-cases them
+        teams = list(nba.ALTITUDE_TEAMS) + ["Boston Celtics", "LA Clippers"]
+        reg_stats = _make_hca_stats(teams)
+        po_stats  = _make_hca_stats(teams, n_games=40)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_team_hca_analysis(reg_stats, po_stats)
+
+
+class TestRunHcaConsistencyAnalysis:
+    TEAMS = [f"Team {i}" for i in range(8)]
+
+    def test_does_not_raise(self, capsys):
+        reg_stats = _make_hca_stats(self.TEAMS)
+        po_stats  = _make_hca_stats(self.TEAMS, n_games=40)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_hca_consistency_analysis(reg_stats, po_stats)
+
+    def test_fewer_than_five_shared_does_not_raise(self, capsys):
+        # No overlap → "Insufficient overlap" printed, returns cleanly
+        reg_stats = _make_hca_stats(["RS Team A", "RS Team B"])
+        po_stats  = _make_hca_stats(["PO Team X", "PO Team Y"])
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_hca_consistency_analysis(reg_stats, po_stats)
+
+    def test_positively_correlated_hca_does_not_raise(self, capsys):
+        # Construct RS and PO with the same ordering — clear positive correlation
+        teams = [f"Team {i}" for i in range(10)]
+        rng = np.random.default_rng(3)
+        hcas = 10.0 + np.arange(10) * 2.0 + rng.uniform(-0.5, 0.5, 10)
+        reg_stats = {t: {"hca": float(h), "home_pct": 60.0, "road_pct": 40.0,
+                         "n_home": 300, "n_road": 300}
+                     for t, h in zip(teams, hcas)}
+        po_stats  = {t: {"hca": float(h) + rng.uniform(-1, 1), "home_pct": 65.0,
+                         "road_pct": 38.0, "n_home": 60, "n_road": 60}
+                     for t, h in zip(teams, hcas)}
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_hca_consistency_analysis(reg_stats, po_stats)
+
+
+class TestRunRefereeAnalysis:
+    def test_does_not_raise(self, capsys):
+        bias_stats = _make_bias_stats(n_officials=15)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_referee_analysis(bias_stats)
+
+    def test_single_official_does_not_raise(self, capsys):
+        bias_stats = _make_bias_stats(n_officials=1)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_referee_analysis(bias_stats)
+
+    def test_all_negative_foul_diff_does_not_raise(self, capsys):
+        # All officials home-favoring (negative mean) — tests the counts display
+        bias_stats = _make_bias_stats(n_officials=12)
+        for o in bias_stats:
+            o["mean_foul_diff"] = abs(o["mean_foul_diff"]) * -1
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_referee_analysis(bias_stats)
