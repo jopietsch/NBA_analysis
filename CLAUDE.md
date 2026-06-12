@@ -50,13 +50,14 @@ Every analysis follows the same steps, in this order:
 3. **Regression** (`nba_home_court_regression.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
 4. **Tests** (`test_nba_home_court_advantage.py`) — unit tests for the data/computation layer; use synthetic DataFrames
 5. **FINDINGS.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
-6. **`.gitignore`** — add the new PNG filename
+\6. **`.gitignore`** — add the new PNG filename
 7. **Run** — `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate all PNGs and `RESULTS.md`
 8. **Update FINDINGS.md** — replace placeholder prose with actual numbers and directions from `RESULTS.md`; then regenerate the PDF with `python3 generate_report.py`
 
 ## updating FINDINGS.md
 - when editing or adding to FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear.
 - make sure that the FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
+- whenever the order of sections changes in FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_regression.py must be updated to the new order
 - when FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`
 
 ## nba_api quirks
