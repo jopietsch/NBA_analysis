@@ -439,8 +439,8 @@ temporal trend — there is a real game-by-game mechanism.
 
 In the regular season, the within-era effect survives: each 10 percentage-point
 rise in a game's combined 3PA rate is associated with roughly **−2.3 pp lower home
-win probability** (p < 0.001). In the playoffs, the within-era effect disappears
-(p ≈ 0.10), suggesting that in the smaller playoff sample the signal is absorbed
+win probability** (p < 0.001). In the playoffs, the within-era effect is marginal
+(p = 0.054 with cluster-robust SEs), suggesting that in the smaller playoff sample the signal is absorbed
 by the era indicators.
 
 ### Why would more 3-point shooting reduce home advantage?
@@ -707,7 +707,11 @@ Home court advantage has declined substantially in both the regular season and
 the playoffs over the past 40 years, with the regular-season decline somewhat
 steeper than the playoffs. The decline is structural — it spans every rule-change era and
 the era effect accounts for roughly half of the variance explained by the regression
-model. The mechanisms are summarized in the tables below, split by type of analysis.
+model. The decline is not about individual games getting closer: home teams are
+actually winning their wins by more, but losing their losses by more too. Quantile
+regression confirms this is genuine distribution widening (Q90 rising +0.045 pts/yr,
+Q10 falling −0.154 pts/yr), not a composition artifact of the falling win rate. The
+mechanisms are summarized in the tables below, split by type of analysis.
 
 *How to read these tables: "pp" means percentage points — a fall from 65% to
 55% is a drop of 10 pp. The "Evidence" column translates each effect's p-value:
@@ -735,6 +739,7 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Shot quality (shooting + paint access) | Home shooting-efficiency edge fell from +1.6 pp to +1.0 pp; home paint-access edge fell from +1.3 pp to +0.4 pp | Very strong (p < 0.001) |
 | League-wide 3-point shooting | Seasons with more 3-point shooting have lower home win % (correlation −0.90); even within an era, higher-3PA games favor the visitor (−2.3 pp per 10 pp of 3PA rate) | Very strong (p < 0.001) |
 | Travel distance | Longer trips barely hurt the visitor: −0.08 pp per 100 miles | Real but negligible (p = 0.010) |
+| Game pace (possessions/game) | No season-level correlation (p = 0.07); game-level effect is positive (faster games favor the home team: +2.4 pp per 10 possessions) but pace shows no common trend with HCA across eras — not a driver | Not a driver (no cross-era correlation) |
 | Competitive balance / parity | Raw cross-season correlation near zero (p = 0.68), but detrended tests show a weak negative link (r ≈ −0.35, p ≈ 0.02): more equal seasons tend to have slightly lower HCA | Weak within-trend association |
 
 **Playoffs — what the prediction model credits**:
@@ -751,22 +756,40 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Factor | What changed | Evidence |
 |---|---|---|
 | Referee fouls (refs more neutral) | Home teams' foul advantage shrank from 1.6 fewer fouls/game in 1984–94 to 0.7 today | Strong (p < 0.01) |
-| League-wide 3-point shooting | Playoff seasons with more 3-point shooting have lower home win % (correlation −0.47) | Strong season-level (p = 0.002); weak within era (p = 0.097) |
+| League-wide 3-point shooting | Playoff seasons with more 3-point shooting have lower home win % (correlation −0.47) | Strong season-level (p = 0.002); weak within era (p = 0.054) |
 | Shot quality (shooting + paint access) | Both edges trend downward, but the playoff sample is too small to be sure | Not significant |
+| Game pace | No season-level correlation (p = 0.47); within-era game-level effect positive but small; pace does not track the playoff decline | Not a driver |
 
-The core story: the decline is primarily **structural** — controlling for which
-rule-change era a game was played in accounts for roughly half of explained
-variance, meaning the forces driving the decline operate through long-run shifts
-in how the game is played and officiated, not through any single identifiable
-event. Within that structural decline, the strongest identified mechanisms are
-that **referees call the game more neutrally** than they did 40 years ago,
-**home teams no longer generate a disproportionate paint-access or shooting
-edge**, and **the 3-point revolution has equalized shot selection** between home
-and road teams. Rest remains a meaningful factor — particularly in the playoffs —
-but cannot explain the secular decline. Altitude at Denver and Utah confers a
-real regular-season edge but is absent in the playoffs. Time-zone differential
-has a small but significant effect in the regular season once era and altitude
-are controlled for, but no detectable effect in the playoffs.
+**In both the regular season and the playoffs**, the decline is primarily
+**structural**: controlling for which rule-change era a game was played in
+accounts for roughly half of the model's explained variation. The forces behind
+the decline operate through long-run shifts in how the game is played and
+officiated, not through any single identifiable event. The strongest mechanism
+in both contexts is that **referees call the game more neutrally** than they did
+40 years ago — a shift visible in the foul differential, the shooting-efficiency
+gap, and the paint-access edge, all of which have narrowed significantly over
+time. **The 3-point revolution** is the other cross-context driver: more 3-point
+shooting correlates strongly with lower home advantage at the season level in
+both the regular season (r = −0.90) and the playoffs (r = −0.47), and within any
+given era, higher-3PA regular-season games favor the road team (−2.3 pp per 10 pp
+of 3PA rate). Pace does not explain the decline in either context.
+
+**In the regular season specifically**, rest differential (+1.5 pp/day), altitude
+at Denver and Utah (+8.2 pp), and time-zone differential (−0.6 pp per zone) are
+all significant predictors of home win probability within any given era, but none
+of them explains the secular decline — they are stable moderators of an already-
+declining baseline. Travel distance has a statistically real but negligible effect
+(−0.08 pp per 100 miles). Detrended tests show a weak year-to-year link between
+league parity and home advantage (r ≈ −0.35), but parity is not a primary driver.
+
+**In the playoffs**, the decline is real but noisier. Rest differential shows a
+bivariate effect of +2.3 pp/day, but this shrinks to +1.5 pp/day and loses
+significance (p = 0.146) once same-season regular-season win% differential is
+controlled for — rest is earned by winning quickly, so the raw estimate conflates
+fatigue with team strength. Altitude, time zone, and travel distance have no
+detectable effect in the playoffs. Franchise-level playoff HCA differences are
+entirely within sampling noise and cannot be reliably distinguished from random
+variation given typical playoff sample sizes per franchise.
 
 For specific coefficient values, effect sizes, significance levels, and era
 breakdowns, see `RESULTS.md`.
