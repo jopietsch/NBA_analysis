@@ -58,6 +58,7 @@ Every analysis follows the same steps, in this order:
 - when editing or adding to FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear.
 - make sure that the FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
 - whenever the order of sections changes in FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_regression.py must be updated to the new order
+- throughout FINDINGS.md, make sure that both regular season and playoffs are mentinoned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.
 - when FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`
 
 ## nba_api quirks
