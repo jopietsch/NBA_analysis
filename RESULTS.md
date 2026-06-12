@@ -78,6 +78,85 @@ All data from cache/ — same source as the plots above.
      (p = 0.290) — the post-2014 drop is consistent with the secular
      decline passing through, not a distinct format-change effect.
 
+─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
+   Home win % by rule-change era; pairwise tests between consecutive eras.
+   Trend-controlled model: home_win ~ year + C(era).
+   LR test: do era dummies jointly add explanatory power beyond the year trend?
+   (If not, the decline is a smooth drift; if yes, specific rules caused jumps.)
+
+   Regular season  (N = 47,882 games)
+
+   Era            N games   Home win %
+   ────────────  ────────  ───────────
+   1984–94         11,275        64.9%
+   1995–01          7,777        59.9%
+   2002–04          3,567        61.1%
+   2005–17         15,749        59.5%
+   2018–22          5,829        56.3%
+   2023–25          3,685        55.6%
+
+   Consecutive eras — two-proportion z-tests:
+    1984–94 → 1995–01    -4.9 pp   (z = +6.95, p = <0.001  ***)
+    1995–01 → 2002–04    +1.2 pp   (z = -1.21, p = 0.227  )
+    2002–04 → 2005–17    -1.6 pp   (z = +1.79, p = 0.074  )
+    2005–17 → 2018–22    -3.2 pp   (z = +4.24, p = <0.001  ***)
+    2018–22 → 2023–25    -0.7 pp   (z = +0.65, p = 0.513  )
+
+   Trend-controlled logistic: home_win ~ year + C(era)
+   (reference era = 1984–94)
+
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   era: 1995–01                    -0.108    -2.6     0.010    *
+   era: 2002–04                    +0.002    +0.0     0.973     
+   era: 2005–17                    +0.029    +0.7     0.705     
+   era: 2018–22                    +0.004    +0.1     0.971     
+   era: 2023–25                    +0.024    +0.6     0.844     
+   year trend (per yr)             -0.012    -0.3    <0.001  ***
+
+   LR test — era dummies jointly vs. year-only model: χ²(5) = 20.70,  p = <0.001  ***
+
+   ► Era dummies are jointly significant beyond the year trend —
+     specific rule-change periods show a level shift above or below
+     what the underlying trend alone would predict.
+
+   Playoffs  (N = 3,207 games)
+
+   Era            N games   Home win %
+   ────────────  ────────  ───────────
+   1984–94            794        67.9%
+   1995–01            496        64.1%
+   2002–04            241        64.3%
+   2005–17          1,090        64.3%
+   2018–22            336        60.7%
+   2023–25            250        58.4%
+
+   Consecutive eras — two-proportion z-tests:
+    1984–94 → 1995–01    -3.8 pp   (z = +1.40, p = 0.163  )
+    1995–01 → 2002–04    +0.2 pp   (z = -0.05, p = 0.957  )
+    2002–04 → 2005–17    -0.0 pp   (z = +0.00, p = 0.999  )
+    2005–17 → 2018–22    -3.6 pp   (z = +1.20, p = 0.231  )
+    2018–22 → 2023–25    -2.3 pp   (z = +0.56, p = 0.572  )
+
+   Trend-controlled logistic: home_win ~ year + C(era)
+   (reference era = 1984–94)
+
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   era: 1995–01                    -0.095    -2.2     0.570     
+   era: 2002–04                    -0.045    -1.0     0.850     
+   era: 2005–17                    +0.020    +0.5     0.947     
+   era: 2018–22                    -0.060    -1.4     0.887     
+   era: 2023–25                    -0.124    -2.8     0.794     
+   year trend (per yr)             -0.008    -0.2     0.526     
+
+   LR test — era dummies jointly vs. year-only model: χ²(5) = 1.78,  p = 0.879  
+
+   ► Era dummies do not add significant explanatory power beyond
+     the year trend (p = 0.879) — the decline is well-described
+     as a continuous drift without discrete era-level jumps.
+
+
 ─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
    Outcome: home_win. Baseline home win %: 60.3%.
    McFadden R² is analogous to a linear-regression R² but typical values are much smaller;

@@ -479,6 +479,96 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
             print(f"     decline passing through, not a distinct format-change effect.")
 
 
+# ── Analysis: Rule-change era significance ────────────────────────────────────
+
+def run_era_analysis(df: pd.DataFrame) -> None:
+    """Test whether rule-change era breaks add a level shift beyond the year trend.
+
+    Mirrors run_format_period_analysis() but for ERA_DEFS and runs in both
+    regular season and playoffs.  The key question: does the decline happen in
+    discrete steps at rule-change boundaries, or is it a smooth continuous drift?
+    """
+    from scipy.stats import chi2
+    from statsmodels.stats.proportion import proportions_ztest
+
+    era_ref = nba.ERA_DEFS[0][0]   # "1984–94"
+
+    _section("RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND?")
+    print("   Home win % by rule-change era; pairwise tests between consecutive eras.")
+    print("   Trend-controlled model: home_win ~ year + C(era).")
+    print("   LR test: do era dummies jointly add explanatory power beyond the year trend?")
+    print("   (If not, the decline is a smooth drift; if yes, specific rules caused jumps.)\n")
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        if is_po:
+            sub = sub[~sub["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        if sub.empty:
+            continue
+
+        p_bar = sub["home_win"].mean()
+        print(f"   {ctx_label}  (N = {len(sub):,} games)\n")
+
+        counts: dict[str, tuple[int, int]] = {}
+        print(f"   {'Era':<12}  {'N games':>8}  {'Home win %':>11}")
+        print(f"   {'─'*12}  {'─'*8}  {'─'*11}")
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_sub = sub[(sub["year"] >= y1) & (sub["year"] <= y2)]
+            if era_sub.empty:
+                continue
+            wins_e, n_e = int(era_sub["home_win"].sum()), len(era_sub)
+            counts[era_label] = (wins_e, n_e)
+            print(f"   {era_label:<12}  {n_e:>8,}  {100.0 * wins_e / n_e:>10.1f}%")
+
+        avail = [lbl for lbl, *_ in nba.ERA_DEFS if lbl in counts]
+        print(f"\n   Consecutive eras — two-proportion z-tests:")
+        for a, b in zip(avail, avail[1:]):
+            (wa, na), (wb, nb) = counts[a], counts[b]
+            z, p = proportions_ztest([wa, wb], [na, nb])
+            diff = 100.0 * (wb / nb - wa / na)
+            print(f"   {a:>8} → {b:<8}  {diff:+5.1f} pp   "
+                  f"(z = {z:+.2f}, p = {_fmt_p(p)}  {_stars(p).strip()})")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m_year = smf.logit("home_win ~ year", data=sub).fit(disp=0)
+            m_era  = smf.logit(
+                f"home_win ~ year + C(era, Treatment('{era_ref}'))",
+                data=sub,
+            ).fit(disp=0)
+
+        print(f"\n   Trend-controlled logistic: home_win ~ year + C(era)")
+        print(f"   (reference era = {era_ref})\n")
+        print(f"   {'Predictor':<28}  {'log-odds':>8}  {'≈pp':>6}  {'p':>8}  {'':3}")
+        print(f"   {'─'*28}  {'─'*8}  {'─'*6}  {'─'*8}  {'─'*3}")
+        for name in m_era.params.index:
+            if name == "Intercept":
+                continue
+            coef, pval = m_era.params[name], m_era.pvalues[name]
+            label = (name
+                     .replace(f"C(era, Treatment('{era_ref}'))[T.", "era: ")
+                     .replace("]", "")
+                     .replace("year", "year trend (per yr)"))
+            print(f"   {label:<28}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  "
+                  f"{_fmt_p(pval):>8}  {_stars(pval)}")
+
+        lr    = 2.0 * (m_era.llf - m_year.llf)
+        dfree = int(m_era.df_model - m_year.df_model)
+        p_lr  = chi2.sf(lr, dfree)
+        print(f"\n   LR test — era dummies jointly vs. year-only model: "
+              f"χ²({dfree}) = {lr:.2f},  p = {_fmt_p(p_lr)}  {_stars(p_lr).strip()}")
+
+        if p_lr < 0.05:
+            print(f"\n   ► Era dummies are jointly significant beyond the year trend —")
+            print(f"     specific rule-change periods show a level shift above or below")
+            print(f"     what the underlying trend alone would predict.")
+        else:
+            print(f"\n   ► Era dummies do not add significant explanatory power beyond")
+            print(f"     the year trend (p = {_fmt_p(p_lr)}) — the decline is well-described")
+            print(f"     as a continuous drift without discrete era-level jumps.")
+        print()
+
+
 # ── Shapley R² helper ─────────────────────────────────────────────────────────
 
 def _compute_shapley_shares(reg: pd.DataFrame, era_ref: str) -> dict[str, float]:
@@ -1850,6 +1940,7 @@ def run() -> None:
 
         run_decline_trend(df)
         run_format_period_analysis(df)
+        run_era_analysis(df)
         run_sequential_decomposition(df)
         run_stability_analysis(df)
         run_factor_summary(df)
