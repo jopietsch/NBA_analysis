@@ -313,6 +313,16 @@ def _appendix_results() -> list:
     ]
 
 
+# ── Page number footer ────────────────────────────────────────────────────────
+
+def _draw_footer(canvas, doc):
+    canvas.saveState()
+    canvas.setFont("Helvetica", 8)
+    canvas.setFillColor(colors.HexColor(MID))
+    canvas.drawCentredString(PAGE_W / 2.0, 0.5 * inch, str(canvas.getPageNumber()))
+    canvas.restoreState()
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def build_report(output_path="nba_home_court_advantage_report.pdf"):
@@ -345,7 +355,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
         title="NBA Home Court Advantage — A 40-Year Decline",
         author="Justin Pietsch",
     )
-    doc.build(story)
+    doc.build(story, onFirstPage=_draw_footer, onLaterPages=_draw_footer)
     print(f"Saved → {output_path}")
 
 
