@@ -329,21 +329,22 @@ Home court advantage has fallen by about **10 percentage points** in the regular
 
 The decline isn't about games getting closer — when home teams win, they're actually winning by more than they used to. What's changed is that they lose more often, and when they do, they lose bigger. The spread of outcomes has widened; the overall win rate has dropped.
 
+Two questions run through this report, and they have different answers. First: is home court advantage real? Yes — and the factors in the first table are why. Second: why has it shrunk? Different factors entirely, and that's the key to the whole story — the things that make home court real tonight were just as real in 1984. The decline came from somewhere else.
+
 *How to read these tables: "pp" means percentage points — a fall from 65% to 55% is a drop of 10 pp. The "Evidence" column summarizes the strength of each finding.*
 
-**Regular season — what the prediction model credits** (share of the model's explained variation):
+**Why home court matters — regular-season edges that are real every night** (these set the size of home advantage; none of them have changed in 40 years, so none of them caused the decline):
 
-Each factor's share reflects its average contribution across all possible orderings — an order-independent measure. Altitude's outsized 26% share reflects a very large per-game effect (+8.2 pp) concentrated in Denver and Utah home games.
+| Factor | Effect | Evidence |
+|---|---|---|
+| Altitude (Denver / Utah) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
+| Rest | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
+| Time zones | −0.6 pp per time zone the visitor crosses | Solid (p = 0.005) |
+| Empty arenas (COVID seasons) | −2.3 pp in the 2020–21 COVID-impacted seasons — a temporary shock, not the trend | Significant (p = 0.045) |
 
-| Factor | Share | Effect | Evidence |
-|---|---|---|---|
-| Era (structural decline) | 50% (seq: 56%) | Home advantage is 8.9 pp lower in 2023–25 than in 1984–94 | Very strong (p < 0.001) |
-| Altitude (Denver / Utah) | 26% (seq: 25%) | +8.2 pp extra home advantage at altitude | Very strong (p < 0.001) |
-| Rest differential | 18% (seq: 16%) | +1.5 pp per extra day of rest vs. the visitor | Very strong (p < 0.001) |
-| COVID flag | 5% (seq: 1%) | −2.3 pp in COVID-impacted seasons (2020–21) | Significant (p = 0.045) |
-| Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.005) |
+Feed all of these to a prediction model and it still hands half of its explanatory power to the calendar: home advantage is 8.9 pp lower in 2023–25 than in 1984–94 even after every factor above gets its due (p < 0.001). That "era effect" *is* the decline — and the next table is what's inside it.
 
-**Regular season — confirmed mechanisms** (significant contributors to the decline):
+**Why it has fallen — the forces that changed over 40 years:**
 
 | Factor | What changed | Evidence |
 |---|---|---|
@@ -359,16 +360,17 @@ Each factor's share reflects its average contribution across all possible orderi
 | Game pace (possessions/game) | No season-level correlation with HCA; faster games favor the home team game-by-game, but pace has no common trend with the decline across eras | No effect on the decline (season-level p = 0.07) |
 | Competitive balance / parity | Raw cross-season correlation near zero; detrended tests show a weak year-to-year link (r ≈ −0.35, p ≈ 0.02) but parity explains none of the long-run trend | Not a primary driver (weak within-trend association only) |
 
-**Playoffs — what the prediction model credits**:
+**Playoffs — the same every-night edges, retested** (most of them vanish in the postseason):
 
-| Factor | Effect | Evidence |
+| Factor | Finding | Evidence |
 |---|---|---|
-| Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (GLM p = 0.003, HAC p < 0.001) |
-| Rest differential | +2.3 pp/day bivariate; shrinks to +1.5 pp/day and loses significance when same-season win% differential is controlled — effect is confounded by team strength | Confounded: bivariate p = 0.014, quality-controlled p = 0.146 (not significant) |
+| Rest | +2.3 pp/day at face value, but the edge shrinks and loses significance once team quality is controlled — well-rested playoff teams are mostly just better teams | Confounded (face-value p = 0.014; quality-controlled p = 0.146, not significant) |
 | Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | No significant effect (p = 0.59) |
-| Time-zone / distance | No meaningful effect of either | No significant effect (p = 0.28 and p = 0.71) |
+| Time zones / travel distance | No meaningful effect of either | No significant effect (p = 0.28 and p = 0.71) |
 
-**Playoffs — confirmed mechanisms** (significant contributors to the decline):
+The playoff decline itself is just as steady as the regular season's: every era since 1984–94 has lower home advantage than the one before (GLM p = 0.003, HAC p < 0.001).
+
+**Playoffs — why it has fallen:**
 
 | Factor | What changed | Evidence |
 |---|---|---|
