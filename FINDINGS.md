@@ -152,7 +152,50 @@ playoffs across most of the dataset.
 
 ---
 
-## 5. Box-Score Differentials
+## 5. Playoff Series Structure
+
+Playoff game IDs encode the game number within each series (last digit of GAME_ID),
+allowing home win % to be tracked across G1–G7 pooled over all seasons.
+
+### Higher-seed home games dominate; the alternating pattern is striking
+
+The data reveals a sharp alternating structure. Higher-seed home games (G1, G2, G5)
+see home win percentages of roughly 69–75%, while lower-seed home games (G3, G4, G6)
+cluster tightly at 55–56% — barely above even. The G3/G4/G6 figure is only modestly
+above 50% and reflects that the lower seed's home advantage is almost completely
+offset by the quality gap between the opponents.
+
+A chi-square test strongly rejects uniform home win % across game numbers
+(χ²(6) = 80.40, p < 0.001). The variation is not random — it is structurally
+determined by which team is at home, not by series pressure or fatigue effects.
+
+### G7 is notably lower than G1/G2
+
+Game 7 — the highest-stakes home game in sports — shows a win % of approximately
+65%, meaningfully below G1 (69%) and G2 (72%). The small G7 sample (183 games)
+limits inference, but the gap is consistent with the idea that opponent quality is
+highest in games 7 (only the best road teams force a Game 7), partly offsetting the
+home court advantage.
+
+There is no significant linear trend across game numbers — the pattern is not a
+simple "home advantage fades as the series gets deeper." The dominant structure is
+the alternating host pattern, not a narrative about pressure or momentum.
+
+### Implications for the overall decline
+
+The strong G3/G4/G6 separation means that changes in which team hosts which games
+(format changes in 1985, 2003, 2014) can mechanically affect the aggregate playoff
+home win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
+in round 1 and Finals matchups, which would compress the overall playoff home win %
+figure. In practice, however, the trend-controlled test in §2 cannot statistically
+separate any such format effect from the secular decline that runs through the
+same years.
+
+![Figure 7. Home win % by game number within playoff series. Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. Right: G1–G7 home win % split by era (six lines, era-colored).](nba_home_court_series_breakdown.png)
+
+---
+
+## 6. Box-Score Differentials
 
 Four box-score differentials (home minus away) show statistically significant
 trends over time. For era-by-era averages and trend values, see `RESULTS.md`.
@@ -191,11 +234,11 @@ eFG% — it ignores the value difference between shot types — but the trend ru
 in the same direction and confirms the shooting convergence is not an artifact
 of the 3-point weighting. FT% and 3P% show no significant trend.
 
-![Figure 7. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. Negative foul diff = home team called for fewer fouls.](nba_home_court_advantage_differentials.png)
+![Figure 8. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. Negative foul diff = home team called for fewer fouls.](nba_home_court_advantage_differentials.png)
 
 ---
 
-## 6. Shot Zone Analysis
+## 7. Shot Zone Analysis
 
 Shot zone data is available from 1996–97 onward via NBA.com's
 `LeagueDashTeamShotLocations` endpoint.
@@ -220,11 +263,11 @@ home teams have gradually taken a slightly larger share of above-break attempts
 over time. The effect is minor compared to the paint and mid-range shifts, and
 shot quality at the arc is not a meaningful home court advantage overall.
 
-![Figure 8. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. Solid = regular season, dashed = playoffs. RA = restricted area (within ~4 ft of the basket).](nba_home_court_shot_zones.png)
+![Figure 9. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. Solid = regular season, dashed = playoffs. RA = restricted area (within ~4 ft of the basket).](nba_home_court_shot_zones.png)
 
 ---
 
-## 7. Referee Patterns
+## 8. Referee Patterns
 
 Officials have historically called more fouls on visiting teams than on home
 teams — a pattern consistent with crowd-driven influence on referee judgment.
@@ -302,11 +345,11 @@ non-significant officials are those with smaller samples (51–96 games) or raw
 means close to zero, not those with large negative means — confirming that the
 directional signal is genuine even where the individual test lacks power.
 
-![Figure 9. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
+![Figure 10. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
 
 ---
 
-## 8. Rest and Schedule Balance
+## 9. Rest and Schedule Balance
 
 Rest days are computed from game logs as days between consecutive games minus one
 (0 = back-to-back, 1 = one rest day, etc.). In the regular season the bucket
@@ -337,13 +380,13 @@ as the league has adjusted scheduling, but the rest effect on winning has
 remained stable across eras: a rest × era interaction test finds no evidence the
 per-day effect has changed (p = 0.43 regular season, p = 0.75 playoffs).
 
-![Figure 10. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
+![Figure 11. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
 
-![Figure 11. Playoff rest analysis. First-round games are excluded because rest cannot be computed from a prior playoff game. Rest effects are larger in the playoffs.](nba_home_court_advantage_rest_playoffs.png)
+![Figure 12. Playoff rest analysis. First-round games are excluded because rest cannot be computed from a prior playoff game. Rest effects are larger in the playoffs.](nba_home_court_advantage_rest_playoffs.png)
 
 ---
 
-## 9. Travel Distance
+## 10. Travel Distance
 
 Away team travel distance (haversine miles from the visitor's home arena to the
 game arena) is available for every game in the dataset — no new API calls required,
@@ -369,45 +412,7 @@ There is no evidence that the travel-distance effect has grown or shrunk over th
 four decades in the dataset. The era-bucketed averages show no systematic pattern.
 Travel distance is not a driver of the long-run decline in home court advantage.
 
-![Figure 12. Home win % by away team travel distance (regular season). Left: per-season home win % for each distance bucket with trend lines. Right: era-averaged home win % by distance bucket.](nba_home_court_travel.png)
-
----
-
-## 10. Competitive Balance and Parity
-
-Team-level win% disparity — measured as the per-season standard deviation of franchise
-win percentages — quantifies how unequal the league is in any given year. A high
-standard deviation means a few teams dominate while others lose consistently; a low
-standard deviation means the field is compressed. The hypothesis was that salary-cap
-and draft-lottery mechanisms have compressed team quality, leaving the home team with
-less of a structural talent edge over any given road opponent.
-
-### Raw correlation is near zero
-
-The cross-season Pearson correlation between team win% disparity and home win % is
-near zero and non-significant (r = −0.07, p = 0.68). The era-bucketed pattern is
-mixed: win% disparity actually **peaked** in the 1995–01 era while home court
-advantage was already declining, then fell in 2002–04 while home win % ticked back
-up slightly before continuing its descent.
-
-### Detrended check uncovers a weak within-trend link
-
-Both series share a common downward trend over 40 years; raw correlations between
-two trending series can be spurious. Removing the trend from both series reveals a
-different picture. The first-differenced test (year-to-year changes in parity vs.
-year-to-year changes in home win %) finds r = **−0.337** (p = 0.031, N = 41
-year-pairs). The residual-on-year approach (correlating the residuals after
-independently regressing each series on year) gives r = **−0.355** (p = 0.021,
-N = 42 seasons). Both detrended tests are significant.
-
-Interpretation: within the overall trend, years in which the league becomes
-slightly more equal also tend to see slightly lower home advantage — a real
-within-trend association in the direction the parity hypothesis predicts. The
-effect is modest and should be interpreted cautiously (N = 42, first-differencing
-amplifies noise), but it survives trend removal. Parity is not a primary driver
-of the long-run decline, but the association is not purely spurious either.
-
-![Figure 13. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
+![Figure 13. Home win % by away team travel distance (regular season). Left: per-season home win % for each distance bucket with trend lines. Right: era-averaged home win % by distance bucket.](nba_home_court_travel.png)
 
 ---
 
@@ -518,46 +523,41 @@ decline runs through eras of both fast and slow play without pace tracking it.
 
 ---
 
-## 13. Playoff Series Structure
+## 13. Competitive Balance and Parity
 
-Playoff game IDs encode the game number within each series (last digit of GAME_ID),
-allowing home win % to be tracked across G1–G7 pooled over all seasons.
+Team-level win% disparity — measured as the per-season standard deviation of franchise
+win percentages — quantifies how unequal the league is in any given year. A high
+standard deviation means a few teams dominate while others lose consistently; a low
+standard deviation means the field is compressed. The hypothesis was that salary-cap
+and draft-lottery mechanisms have compressed team quality, leaving the home team with
+less of a structural talent edge over any given road opponent.
 
-### Higher-seed home games dominate; the alternating pattern is striking
+### Raw correlation is near zero
 
-The data reveals a sharp alternating structure. Higher-seed home games (G1, G2, G5)
-see home win percentages of roughly 69–75%, while lower-seed home games (G3, G4, G6)
-cluster tightly at 55–56% — barely above even. The G3/G4/G6 figure is only modestly
-above 50% and reflects that the lower seed's home advantage is almost completely
-offset by the quality gap between the opponents.
+The cross-season Pearson correlation between team win% disparity and home win % is
+near zero and non-significant (r = −0.07, p = 0.68). The era-bucketed pattern is
+mixed: win% disparity actually **peaked** in the 1995–01 era while home court
+advantage was already declining, then fell in 2002–04 while home win % ticked back
+up slightly before continuing its descent.
 
-A chi-square test strongly rejects uniform home win % across game numbers
-(χ²(6) = 80.40, p < 0.001). The variation is not random — it is structurally
-determined by which team is at home, not by series pressure or fatigue effects.
+### Detrended check uncovers a weak within-trend link
 
-### G7 is notably lower than G1/G2
+Both series share a common downward trend over 40 years; raw correlations between
+two trending series can be spurious. Removing the trend from both series reveals a
+different picture. The first-differenced test (year-to-year changes in parity vs.
+year-to-year changes in home win %) finds r = **−0.337** (p = 0.031, N = 41
+year-pairs). The residual-on-year approach (correlating the residuals after
+independently regressing each series on year) gives r = **−0.355** (p = 0.021,
+N = 42 seasons). Both detrended tests are significant.
 
-Game 7 — the highest-stakes home game in sports — shows a win % of approximately
-65%, meaningfully below G1 (69%) and G2 (72%). The small G7 sample (183 games)
-limits inference, but the gap is consistent with the idea that opponent quality is
-highest in games 7 (only the best road teams force a Game 7), partly offsetting the
-home court advantage.
+Interpretation: within the overall trend, years in which the league becomes
+slightly more equal also tend to see slightly lower home advantage — a real
+within-trend association in the direction the parity hypothesis predicts. The
+effect is modest and should be interpreted cautiously (N = 42, first-differencing
+amplifies noise), but it survives trend removal. Parity is not a primary driver
+of the long-run decline, but the association is not purely spurious either.
 
-There is no significant linear trend across game numbers — the pattern is not a
-simple "home advantage fades as the series gets deeper." The dominant structure is
-the alternating host pattern, not a narrative about pressure or momentum.
-
-### Implications for the overall decline
-
-The strong G3/G4/G6 separation means that changes in which team hosts which games
-(format changes in 1985, 2003, 2014) can mechanically affect the aggregate playoff
-home win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
-in round 1 and Finals matchups, which would compress the overall playoff home win %
-figure. In practice, however, the trend-controlled test in §2 cannot statistically
-separate any such format effect from the secular decline that runs through the
-same years.
-
-![Figure 16. Home win % by game number within playoff series. Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. Right: G1–G7 home win % split by era (six lines, era-colored).](nba_home_court_series_breakdown.png)
+![Figure 16. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
 ---
 
