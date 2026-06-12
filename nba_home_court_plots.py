@@ -303,7 +303,6 @@ def plot_results(
              fontsize=7.5, color="#444444", linespacing=1.6)
 
     # ── Save combined ─────────────────────────────────────────────────────────
-    plt.tight_layout()
     plt.savefig("nba_home_court_advantage.png", dpi=150, bbox_inches="tight", facecolor=BG)
     print("\nSaved → nba_home_court_advantage.png")
     plt.close()
