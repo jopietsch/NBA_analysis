@@ -18,19 +18,15 @@ COVID seasons are flagged in the charts and regression as an anomaly.
 
 ### The trend is statistically unambiguous
 
-A binomial GLM (events/trials per season, weighting each season by its game
-count) confirms the decline is real and precisely measured. The regular season
-falls at roughly **−0.25 pp per year** (GLM p < 0.001; OLS/HAC p < 0.001,
-R² = 0.73) — a total drop of about 10 percentage points over the 41-year
-dataset. The playoffs fall at **−0.21 pp per year** (GLM p = 0.003;
-OLS/HAC p < 0.001), though with more year-to-year volatility (R² = 0.16).
-The earlier OLS estimate (p = 0.009 without HAC correction) understated
-the significance; both the game-count-weighted GLM and the serial-correlation-robust
-HAC standard errors point to a stronger result.
+A count-weighted statistical model confirms the decline is real and precisely measured. The regular season
+falls at roughly **−0.25 pp per year** (p < 0.001, R² = 0.73) — a total drop of about 10 percentage points over the 41-year
+dataset. The playoffs fall at **−0.21 pp per year** (p < 0.001), though with more year-to-year volatility (R² = 0.16).
+Two independent methods agree: the count-weighted model and a linear regression corrected for year-to-year
+correlation in the errors both return p < 0.001; an uncorrected regression understated the result (p = 0.009).
 
 Within individual eras the season counts are mostly too small for reliable slope
 estimates (only the 1984–94 and 2018–22 regular-season slopes reach significance
-in the binomial GLM; under HAC, 2005–17 and 2018–22 are also significant), but
+in the count-weighted model; with year-to-year-error correction applied, 2005–17 and 2018–22 are also significant), but
 the overall trajectory is one of the strongest trends in the dataset. The regularity of the decline — not a one-time step but a persistent
 drift — points to systemic forces rather than a single rule change.
 
@@ -54,7 +50,7 @@ moved playoff home win % by less than 2 pp and neither is statistically
 distinguishable from zero.
 
 The drop cannot, however, be attributed to the format change itself: once the
-secular year trend is controlled for, the format-period indicators add no
+underlying year-over-year trend is controlled for, the format-period indicators add no
 significant explanatory power (joint test p = 0.24; the 2014–25 indicator alone
 p = 0.29). The post-2014 fall is consistent with the long-run decline passing
 through that boundary, not with a distinct format effect.
@@ -114,7 +110,7 @@ are getting worse: the average home loss margin has grown by −0.083 pts/yr
 (p < 0.001). Home teams are losing more games, and when they lose, they lose
 by more.
 
-### Polarization is genuine, not a composition artifact
+### Polarization is genuine, not a statistical artifact
 
 The conditional-on-outcome pattern above could be a mechanical artifact: as
 home win rate falls, marginal close games migrate from the win pool to the
@@ -128,7 +124,7 @@ finds that Q90 (big home wins) rises at **+0.045 pts/yr** (p = 0.005) while Q10
 widens at **+0.199 pts/yr**. These slopes are statistically significant and diverge in
 opposite directions — the distribution is genuinely widening, not merely
 shifting. The "polarization" reading from the conditional-on-outcome analysis
-reflects a real change in distribution shape, not a composition effect.
+reflects a real change in distribution shape, not a mathematical side-effect of the shifting win rate.
 
 The median (Q50) declines at −0.056 pts/yr (p < 0.001), consistent with the
 falling home win rate. The asymmetry — big home losses falling much faster
@@ -188,7 +184,7 @@ The strong G3/G4/G6 separation means that changes in which team hosts which game
 home win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
 in round 1 and Finals matchups, which would compress the overall playoff home win %
 figure. In practice, however, the trend-controlled test in §2 cannot statistically
-separate any such format effect from the secular decline that runs through the
+separate any such format effect from the long-term decline that runs through the
 same years.
 
 ![Figure 7. Home win % by game number within playoff series. Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. Right: G1–G7 home win % split by era (six lines, era-colored).](nba_home_court_series_breakdown.png)
@@ -386,7 +382,7 @@ per-day effect has changed (p = 0.43 regular season, p = 0.75 playoffs).
 
 ## 10. Travel Distance
 
-Away team travel distance (haversine miles from the visitor's home arena to the
+Away team travel distance (straight-line miles from the visitor's home arena to the
 game arena) is available for every game in the dataset — no new API calls required,
 only the cached game logs and a coordinate lookup.
 
@@ -492,9 +488,9 @@ relationship (r = -0.12, p = 0.474). The era table explains why: pace was
 also at its peak (65.0%), then **fell** during the defensive 1995-2004 era
 (~93-94) while HCA also declined, then **rose again** in the modern era (~101)
 while HCA continued its descent. The relationship is U-shaped across eras, not
-monotone -- pace and HCA share no common trend.
+consistently one-directional — pace and HCA share no common trend.
 
-### Game-level: the effect is positive, but partly endogenous
+### Game-level: the effect is positive, but causality runs both ways
 
 At the game level, faster-paced games have **higher** home win probability, not
 lower. Using realized pace, the bivariate logistic yields +2.37 pp per 10 extra
@@ -517,7 +513,7 @@ robust finding.
 
 Pace was approximately as high in 1984-94 as it is today, yet home court
 advantage in those early seasons was ~10 pp higher. Whatever is driving the
-long-run decline, it is not the number of possessions per game. The secular
+long-run decline, it is not the number of possessions per game. The multi-decade
 decline runs through eras of both fast and slow play without pace tracking it.
 
 ![Figure 13. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
@@ -544,19 +540,19 @@ up slightly before continuing its descent.
 ### Detrended check uncovers a weak within-trend link
 
 Both series share a common downward trend over 40 years; raw correlations between
-two trending series can be spurious. Removing the trend from both series reveals a
-different picture. The first-differenced test (year-to-year changes in parity vs.
+two trending series can be misleading — both may drift in the same direction over time without one causing the other. Removing the trend from both series reveals a
+different picture. A year-over-year-change test (year-to-year changes in parity vs.
 year-to-year changes in home win %) finds r = **−0.337** (p = 0.031, N = 41
 year-pairs). The residual-on-year approach (correlating the residuals after
 independently regressing each series on year) gives r = **−0.355** (p = 0.021,
-N = 42 seasons). Both detrended tests are significant.
+N = 42 seasons). Both trend-removed tests are significant.
 
 Interpretation: within the overall trend, years in which the league becomes
 slightly more equal also tend to see slightly lower home advantage — a real
 within-trend association in the direction the parity hypothesis predicts. The
-effect is modest and should be interpreted cautiously (N = 42, first-differencing
-amplifies noise), but it survives trend removal. Parity is not a primary driver
-of the long-run decline, but the association is not purely spurious either.
+effect is modest and should be interpreted cautiously (N = 42, year-over-year
+differencing amplifies noise), but it survives trend removal. Parity is not a primary driver
+of the long-run decline, but the association is not purely an artifact of shared trends either.
 
 ![Figure 14. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
@@ -793,7 +789,7 @@ of 3PA rate). Pace does not explain the decline in either context.
 **In the regular season specifically**, rest differential (+1.5 pp/day), altitude
 at Denver and Utah (+8.2 pp), and time-zone differential (−0.6 pp per zone) are
 all significant predictors of home win probability within any given era, but none
-of them explains the secular decline — they are stable moderators of an already-
+of them explains the long-term decline — they are stable moderators of an already-
 declining baseline. Travel distance has a statistically real but negligible effect
 (−0.08 pp per 100 miles). Detrended tests show a weak year-to-year link between
 league parity and home advantage (r ≈ −0.35), but parity is not a primary driver.
