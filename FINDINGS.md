@@ -382,6 +382,15 @@ Each factor's share reflects its average contribution across all possible orderi
 | Shot quality (shooting + paint access) | Both edges trend downward in the same direction as the regular season, but the playoff sample is too small to reach significance | No significant effect |
 | Game pace | No season-level correlation with playoff HCA; pace does not track the playoff decline | No effect on the decline (season-level p = 0.47) |
 
+**Beyond the decline — how home court behaves** (findings about the shape of home advantage, not its trend):
+
+| Finding | What the data shows |
+|---|---|
+| Playoff home court mostly belongs to the better team | Higher seeds hosting Games 1, 2, and 5 win 69–75%; lower seeds hosting Games 3, 4, and 6 win just 55–56% — barely better than a coin flip. And Game 7 is weaker than you'd guess (about 65%), because only road teams good enough to win away games survive that long |
+| The 2014 Finals format change is innocent | Playoff home win % fell 6.4 pp (66.3% to 59.8%) right around the switch from 2-3-2 to 2-2-1-1-1, but the decline already in motion fully explains it — the format itself adds nothing |
+| Every arena helps, but some help far more | All 39 franchises have won more at home than on the road — league average gap: +20.2 pp in the regular season, +27.1 pp in the playoffs. Denver (+27.3 pp) and Utah (+25.9 pp) lead the regular-season list, thanks to altitude |
+| Playoff margins tell their own story | Regular-season home margins are shrinking on average; playoff margins aren't. The playoff spread widens only because big home wins keep getting bigger — playoff home losses aren't getting worse |
+
 **The short version:** The crowd used to move the whistle. The referee would call a foul on the road player where they might let it go at home, and that 1.2-foul-per-game edge compounded into a 10-point win rate advantage over a full season. Now refs call it straight — or at least straighter — and the 3-point revolution has removed the one situation where crowd influence mattered most: interior contact, where the line between a foul and a no-call is most subjective.
 
 Every other factor — rest, altitude, time zone, travel, pace, parity — explains the level of home advantage or modulates it at the margins. None of them explain why it's been falling for 40 years. The game itself changed — the whistle went neutral and the shooting moved outside. The crowd lost its grip on the outcome.
