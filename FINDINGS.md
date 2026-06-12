@@ -8,9 +8,7 @@ and coefficient values, see `RESULTS.md` (auto-generated each run).
 
 ## 1. The Decline
 
-Home court advantage has been slipping for 40 straight years — through rule changes, labor deals, expansion drafts, and every major shift the game has seen. The regular season has dropped about **10 full percentage points** since 1984. The playoffs have fallen too, just a little more slowly.
-
-In 1984, home teams won roughly **65%** of regular-season games. Today it's closer to **55%**. That's not noise. That's a consistent, 40-year drift in one direction.
+Home court advantage has been consistendly dropping for 40 straight years — through rule changes, labor deals, expansion drafts, and every major shift the game has seen. In 1984, home teams won roughly **65%** of regular-season games. Today it's closer to **55%**.  The playoffs have fallen too, just a little more slowly.
 
 **Why is it happening?** Two forces account for most of it. Referees have been calling the game more neutrally than they used to — in the early 1980s, home teams got more than a full fewer foul per game than road teams; today that gap has nearly disappeared in the regular season and is meaningfully reduced, though still present, in the playoffs. At the same time, the 3-point revolution removed the situation where crowd-influenced officiating mattered most: plays in the paint, where the line between a foul and a no-call is most subjective. Those two trends are probably reinforcing each other. Everything else measured here — rest advantages, altitude, travel distance, pace, competitive balance — shapes how large the home edge is in any given game, but none of it explains why that edge has been falling for four decades. The sections below lay out the evidence for each piece.
 
@@ -88,7 +86,7 @@ Home teams are losing more games. And when they lose, they're getting blown out 
 
 You might think: of course home losses look worse — more games are losses now, so you're adding close defeats to the pool. But the data rules that out. Looking at the full distribution of margins across all 34,000+ regular-season games since 1996–97, the biggest home wins (top 10% of margins) are actually growing (+0.045 pts/yr — a reliable finding), while the biggest home losses (bottom 10%) are getting dramatically worse (−0.154 pts/yr — overwhelming evidence). The spread between the two widens by nearly 0.2 pts per year.
 
-This is genuine polarization. When the home team wins, it's increasingly a comfortable victory. When it loses, it's increasingly ugly. The days of the tight home loss that could have gone either way are fading.
+When the home team wins, it's increasingly a comfortable victory. When it loses, it's increasingly ugly. The days of the tight home loss that could have gone either way are fading.
 
 ### Playoffs show a different pattern
 
