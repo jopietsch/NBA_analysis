@@ -317,7 +317,7 @@ The effect is real but modest. Parity isn't the engine driving the 40-year decli
 
 ## 13. Summary
 
-Home court advantage has fallen by about **10 percentage points** in the regular season over 40 years, from roughly 65% in 1984 to roughly 55% today. The playoff decline is smaller but follows the same trend. This is one of the most consistent, persistent trends in any major American sports dataset.
+Home court advantage has fallen by about **10 percentage points** in the regular season over 40 years, from roughly 65% in 1984 to roughly 55% today. The playoff decline is smaller but follows the same trend. And the slide is remarkably steady: the long-term trend alone explains 73% of the season-to-season variation in home win rates.
 
 The decline isn't about games getting closer — when home teams win, they're actually winning by more than they used to. What's changed is that they lose more often, and when they do, they lose bigger. The spread of outcomes has widened; the overall win rate has dropped.
 
