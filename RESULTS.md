@@ -157,163 +157,6 @@ All data from cache/ — same source as the plots above.
      as a continuous drift without discrete era-level jumps.
 
 
-─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
-   Outcome: home_win. Baseline home win %: 60.3%.
-   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
-   the ΔR² column shows how much each block adds over the previous model.
-   '≈pp' = approximate marginal effect in percentage points (at mean p).
-   p-values and CIs use cluster-robust SEs (clusters = season-year).
-
-   Model                                R²       ΔR²   % of fit
-   ──────────────────────────────  ───────  ────────  ─────────
-   Era only                         0.0028   +0.0028      55.8%
-   + Rest differential              0.0036   +0.0008      16.3%
-   + Altitude (DEN/UTA)             0.0049   +0.0012      24.9%
-   + Time zone diff                 0.0050   +0.0001       2.0%
-   + COVID flag                     0.0050   +0.0000       1.0%
-
-   Full model coefficients  (reference era = 1984–94):
-
-   Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
-   ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
-   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.2]    <0.001  ***
-   era: 2002–04                                    -0.167    -4.0  [ -6.3, -1.6]    <0.001  ***
-   era: 2005–17                                    -0.230    -5.5  [ -7.1, -3.9]    <0.001  ***
-   era: 2018–22                                    -0.318    -7.6  [-10.3, -4.9]    <0.001  ***
-   era: 2023–25                                    -0.372    -8.9  [-11.2, -6.6]    <0.001  ***
-   rest diff (per day)                             +0.061    +1.5  [ +1.1, +1.9]    <0.001  ***
-   altitude home (DEN/UTA)                         +0.340    +8.2  [ +4.8,+11.5]    <0.001  ***
-   time zone diff (per zone)                       -0.023    -0.6  [ -1.0, -0.2]     0.005   **
-   COVID seasons                                   -0.097    -2.3  [ -4.6, -0.1]     0.045    *
-
-   ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
-
-   Shapley R² decomposition  (2⁵ = 32 logits, same N = 47,215 games):
-   Each block's average marginal R² over all 5! orderings.
-   Compare to sequential (order-dependent, era entered first).
-
-   Block                          Shapley   Sequential
-   ────────────────────────────  ────────  ───────────
-   Era (structural decline)         50.3%        55.8%
-   Rest differential                17.6%        16.3%
-   Altitude (DEN/UTA)               25.7%        24.9%
-   Time zone diff                    1.5%         2.0%
-   COVID flag                        4.8%         1.0%
-
-   ► Era Shapley share: 50%  (sequential: 56% — sequential inflated because era is entered first).
-   ► Rest + altitude + tz + COVID (Shapley): 50%.
-
-─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
-   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
-   Stable coefficients → those factors didn't drive the post-2014 change.
-
-   Predictor                              Pre-2014   Post-2014     Shift
-                                          log-odds    log-odds          
-   ───────────────────────────────────  ──────────  ──────────  ────────
-   rest diff (per day)                      +0.053      +0.081    +0.027
-   altitude home (DEN/UTA)                  +0.389      +0.245    -0.144
-   time zone diff (per zone)                -0.022      -0.026    -0.003
-   ───────────────────────────────────  ──────────  ──────────  ────────
-   Intercept (overall home adv. level)      +0.463      +0.270    -0.193
-
-   N pre-2014:  32,975 games  (home win %: 61.8%)
-   N post-2014: 14,240 games  (home win %: 56.7%)
-
-   ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
-   ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
-
-   Formal interaction test — pooled logit with post2014 × factor interactions:
-   H0: coefficients unchanged before and after 2014.
-
-   Interaction term                log-odds     ≈pp         p     
-   ──────────────────────────────  ────────  ──────  ────────  ───
-   rest_diff × post2014              +0.027    +0.7     0.154     
-   altitude_home × post2014          -0.144    -3.5     0.083     
-   tz_diff × post2014                -0.003    -0.1     0.865     
-   ──────────────────────────────  ────────  ──────  ────────  ───
-   post2014 (level shift)            -0.193    -4.6    <0.001  ***
-
-─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
-   Bivariate logistic regression — each factor tested independently.
-   N regular season: 47,215   N playoffs: 2,879
-
-   Factor                           ── Regular season ──         ──── Playoffs ────    
-                                 log-odds    ≈pp         p       log-odds    ≈pp         p     
-   ────────────────────────────  ────────  ─────  ────────  ───  ────────  ─────  ────────  ───
-   Rest diff (per day)             +0.064   +1.5    <0.001  ***    +0.098   +2.3     0.014    *
-                    95% CI (pp)            [+1.1,+1.9]                           [+0.5,+4.1]
-   Altitude home (DEN/UTA)         +0.343   +8.2    <0.001  ***    -0.077   -1.8     0.591     
-                    95% CI (pp)            [+6.4,+10.0]                           [-8.4,+4.8]
-   Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
-                    95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
-
-   ► Rest matters in both contexts — effect is larger in playoffs
-     (≈2.3 pp/day) than regular season (≈1.5 pp/day).
-   ► Altitude home advantage is real in the regular season (+8.2 pp)
-     but absent in playoffs — Denver/Utah team strength is a confound.
-   ► Time zones show no significant effect in either context.
-     Only 107 coast-to-coast playoff games exist across 42 seasons
-     (5,676 regular-season) — too sparse for reliable playoff inference.
-
-   Playoff rest controlling for team quality (N = 2,879 games):
-   quality_diff = home RS win% − away RS win% (same season).
-   Predictor                     log-odds     ≈pp         p     
-   ────────────────────────────  ────────  ──────  ────────  ───
-   rest_diff (per day)             +0.063    +1.5     0.146     
-   quality_diff (RS win% gap)      +4.823  +112.4    <0.001  ***
-
-─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
-   Buckets: away team more rested (rest_diff < 0), equal rest, and home
-   team more rested (rest_diff > 0). Games without a prior game to
-   compute rest from are excluded.
-
-   Regular season  (N = 47,215, baseline home win % = 60.3%)
-
-   Bucket             N games   Home win %   vs. baseline
-   ────────────────  ────────  ───────────  ─────────────
-   Away more rest       8,473        57.7%          -2.5 pp
-   Equal rest          22,804        59.3%          -0.9 pp
-   Home more rest      15,938        62.9%          +2.7 pp
-
-   Chi-square (H0: home win % equal across buckets): χ²(2) = 78.00,  p = <0.001  ***
-
-   Rest effect by era (bivariate logistic within each era):
-   Era                 N   log-odds/day   ≈pp/day         p     
-   ────────────  ───────  ─────────────  ────────  ────────  ───
-   1984–94        11,123         +0.047      +1.1     0.007   **
-   1995–01         7,669         +0.072      +1.7    <0.001  ***
-   2002–04         3,516         +0.044      +1.1     0.135     
-   2005–17        15,520         +0.054      +1.3    <0.001  ***
-   2018–22         5,749         +0.065      +1.6     0.012    *
-   2023–25         3,638         +0.124      +3.0    <0.001  ***
-
-   Rest × era interaction (LR test): χ²(5) = 4.85,  p = 0.434  
-   ► no evidence the rest effect changed across eras.
-
-   Playoffs  (N = 2,879, baseline home win % = 63.0%)
-
-   Bucket             N games   Home win %   vs. baseline
-   ────────────────  ────────  ───────────  ─────────────
-   Away more rest          98        68.4%          +5.3 pp
-   Equal rest           2,642        62.2%          -0.9 pp
-   Home more rest         139        75.5%         +12.5 pp
-
-   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.34,  p = 0.003  **
-
-   Rest effect by era (bivariate logistic within each era):
-   Era                 N   log-odds/day   ≈pp/day         p     
-   ────────────  ───────  ─────────────  ────────  ────────  ───
-   1984–94           706         +0.027      +0.6     0.748     
-   1995–01           440         +0.193      +4.5     0.061     
-   2002–04           217         +0.136      +3.2     0.365     
-   2005–17           986         +0.118      +2.7     0.080     
-   2018–22           304         -0.038      -0.9     0.792     
-   2023–25           226         +0.115      +2.8     0.404     
-
-   Rest × era interaction (LR test): χ²(5) = 2.67,  p = 0.750  
-   ► no evidence the rest effect changed across eras.
-
-
 ─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
    Positive = home team winning by more.
    Trend = slope of trend line (change per season year).
@@ -383,6 +226,29 @@ All data from cache/ — same source as the plots above.
      The conditional-on-outcome divergence in §4 reflects a real change in
      distribution shape, not just a composition effect.
 
+
+─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
+   Does home court advantage vary by game number within a series (G1–G7)?
+   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
+
+     Game   N games   Home win %    vs. G1
+   ──────  ────────  ───────────  ────────
+       G1       494        69.2%         —
+       G2       497        72.0%   +2.8 pp
+       G3       494        55.7%  -13.6 pp
+       G4       486        55.3%  -13.9 pp
+       G5       412        74.8%   +5.5 pp
+       G6       312        55.8%  -13.5 pp
+       G7       183        64.5%   -4.7 pp
+
+   Chi-square test (H0: home win % uniform across all game numbers):
+   χ²(6) = 80.40,  p = <0.001  ***
+
+   Weighted trend line across game numbers: -0.99 pp/game  (p = 0.580  )
+   (Positive = home win % rises as the series goes deeper)
+
+   ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
+     G7 n = 183 games (series that went to 7)
 
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
@@ -499,6 +365,58 @@ All data from cache/ — same source as the plots above.
    2023–25           20   -0.792     0.903     0.000      100%
 
 
+─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
+   Buckets: away team more rested (rest_diff < 0), equal rest, and home
+   team more rested (rest_diff > 0). Games without a prior game to
+   compute rest from are excluded.
+
+   Regular season  (N = 47,215, baseline home win % = 60.3%)
+
+   Bucket             N games   Home win %   vs. baseline
+   ────────────────  ────────  ───────────  ─────────────
+   Away more rest       8,473        57.7%          -2.5 pp
+   Equal rest          22,804        59.3%          -0.9 pp
+   Home more rest      15,938        62.9%          +2.7 pp
+
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 78.00,  p = <0.001  ***
+
+   Rest effect by era (bivariate logistic within each era):
+   Era                 N   log-odds/day   ≈pp/day         p     
+   ────────────  ───────  ─────────────  ────────  ────────  ───
+   1984–94        11,123         +0.047      +1.1     0.007   **
+   1995–01         7,669         +0.072      +1.7    <0.001  ***
+   2002–04         3,516         +0.044      +1.1     0.135     
+   2005–17        15,520         +0.054      +1.3    <0.001  ***
+   2018–22         5,749         +0.065      +1.6     0.012    *
+   2023–25         3,638         +0.124      +3.0    <0.001  ***
+
+   Rest × era interaction (LR test): χ²(5) = 4.85,  p = 0.434  
+   ► no evidence the rest effect changed across eras.
+
+   Playoffs  (N = 2,879, baseline home win % = 63.0%)
+
+   Bucket             N games   Home win %   vs. baseline
+   ────────────────  ────────  ───────────  ─────────────
+   Away more rest          98        68.4%          +5.3 pp
+   Equal rest           2,642        62.2%          -0.9 pp
+   Home more rest         139        75.5%         +12.5 pp
+
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.34,  p = 0.003  **
+
+   Rest effect by era (bivariate logistic within each era):
+   Era                 N   log-odds/day   ≈pp/day         p     
+   ────────────  ───────  ─────────────  ────────  ────────  ───
+   1984–94           706         +0.027      +0.6     0.748     
+   1995–01           440         +0.193      +4.5     0.061     
+   2002–04           217         +0.136      +3.2     0.365     
+   2005–17           986         +0.118      +2.7     0.080     
+   2018–22           304         -0.038      -0.9     0.792     
+   2023–25           226         +0.115      +2.8     0.404     
+
+   Rest × era interaction (LR test): χ²(5) = 2.67,  p = 0.750  
+   ► no evidence the rest effect changed across eras.
+
+
 ─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
    Distance = haversine miles from away team's home arena to game arena.
    Does longer travel reduce the visiting team's winning odds?
@@ -525,45 +443,6 @@ All data from cache/ — same source as the plots above.
 
    Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
 
-
-─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
-   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
-   Parity = std dev of all-team win percentages for the season.
-
-   N = 42 seasons
-   Pearson r  = -0.066  (p = 0.676  )
-   Spearman ρ = -0.020  (p = 0.899  )
-
-   Trend line: home_win_pct ~ parity_std_dev
-   Slope: -15.093 pp per unit std dev  (p = 0.676  )
-   R² = 0.0044
-
-   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
-
-   Era             Win% std dev    Home win %
-   ────────────  ──────────────  ────────────
-   1984–94               0.1551         65.0%
-   1995–01               0.1700         60.1%
-   2002–04               0.1393         61.1%
-   2005–17               0.1559         59.5%
-   2018–22               0.1461         56.2%
-   2023–25               0.1496         55.6%
-
-   ► Near-zero, non-significant correlation — parity (team win% disparity)
-     does not independently predict home court advantage across seasons.
-     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
-     home win % was already declining, and fell in 2002–04 while home win %
-     ticked back up. The two series do not move in lockstep.
-
-   Detrended checks (both series share a downward trend — remove it first):
-   First-differenced (Δparity vs. Δhome-win%):
-   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
-   Residual-on-year (detrended parity vs. detrended home-win%):
-   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
-
-   ► At least one detrended test is significant — some association
-     remains after removing the common trend. Interpret with caution
-     (N is small and first-differences amplify measurement noise).
 
 ─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
    Does more 3-point shooting reduce home court advantage?
@@ -673,28 +552,44 @@ All data from cache/ — same source as the plots above.
    Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
 
 
-─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
-   Does home court advantage vary by game number within a series (G1–G7)?
-   G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
+─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
+   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
+   Parity = std dev of all-team win percentages for the season.
 
-     Game   N games   Home win %    vs. G1
-   ──────  ────────  ───────────  ────────
-       G1       494        69.2%         —
-       G2       497        72.0%   +2.8 pp
-       G3       494        55.7%  -13.6 pp
-       G4       486        55.3%  -13.9 pp
-       G5       412        74.8%   +5.5 pp
-       G6       312        55.8%  -13.5 pp
-       G7       183        64.5%   -4.7 pp
+   N = 42 seasons
+   Pearson r  = -0.066  (p = 0.676  )
+   Spearman ρ = -0.020  (p = 0.899  )
 
-   Chi-square test (H0: home win % uniform across all game numbers):
-   χ²(6) = 80.40,  p = <0.001  ***
+   Trend line: home_win_pct ~ parity_std_dev
+   Slope: -15.093 pp per unit std dev  (p = 0.676  )
+   R² = 0.0044
 
-   Weighted trend line across game numbers: -0.99 pp/game  (p = 0.580  )
-   (Positive = home win % rises as the series goes deeper)
+   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
 
-   ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
-     G7 n = 183 games (series that went to 7)
+   Era             Win% std dev    Home win %
+   ────────────  ──────────────  ────────────
+   1984–94               0.1551         65.0%
+   1995–01               0.1700         60.1%
+   2002–04               0.1393         61.1%
+   2005–17               0.1559         59.5%
+   2018–22               0.1461         56.2%
+   2023–25               0.1496         55.6%
+
+   ► Near-zero, non-significant correlation — parity (team win% disparity)
+     does not independently predict home court advantage across seasons.
+     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
+     home win % was already declining, and fell in 2002–04 while home win %
+     ticked back up. The two series do not move in lockstep.
+
+   Detrended checks (both series share a downward trend — remove it first):
+   First-differenced (Δparity vs. Δhome-win%):
+   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
+   Residual-on-year (detrended parity vs. detrended home-win%):
+   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
+
+   ► At least one detrended test is significant — some association
+     remains after removing the common trend. Interpret with caution
+     (N is small and first-differences amplify measurement noise).
 
 ─── FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN % ───────────────
    Which franchises benefit most from playing at home?
@@ -819,6 +714,111 @@ All data from cache/ — same source as the plots above.
      franchises that protect home court in the regular season tend to do so
      in the playoffs too, though playoff sample sizes are too small for
      franchise-level shrinkage to improve on raw estimates.
+
+─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
+   Outcome: home_win. Baseline home win %: 60.3%.
+   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
+   the ΔR² column shows how much each block adds over the previous model.
+   '≈pp' = approximate marginal effect in percentage points (at mean p).
+   p-values and CIs use cluster-robust SEs (clusters = season-year).
+
+   Model                                R²       ΔR²   % of fit
+   ──────────────────────────────  ───────  ────────  ─────────
+   Era only                         0.0028   +0.0028      55.8%
+   + Rest differential              0.0036   +0.0008      16.3%
+   + Altitude (DEN/UTA)             0.0049   +0.0012      24.9%
+   + Time zone diff                 0.0050   +0.0001       2.0%
+   + COVID flag                     0.0050   +0.0000       1.0%
+
+   Full model coefficients  (reference era = 1984–94):
+
+   Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
+   ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
+   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.2]    <0.001  ***
+   era: 2002–04                                    -0.167    -4.0  [ -6.3, -1.6]    <0.001  ***
+   era: 2005–17                                    -0.230    -5.5  [ -7.1, -3.9]    <0.001  ***
+   era: 2018–22                                    -0.318    -7.6  [-10.3, -4.9]    <0.001  ***
+   era: 2023–25                                    -0.372    -8.9  [-11.2, -6.6]    <0.001  ***
+   rest diff (per day)                             +0.061    +1.5  [ +1.1, +1.9]    <0.001  ***
+   altitude home (DEN/UTA)                         +0.340    +8.2  [ +4.8,+11.5]    <0.001  ***
+   time zone diff (per zone)                       -0.023    -0.6  [ -1.0, -0.2]     0.005   **
+   COVID seasons                                   -0.097    -2.3  [ -4.6, -0.1]     0.045    *
+
+   ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
+
+   Shapley R² decomposition  (2⁵ = 32 logits, same N = 47,215 games):
+   Each block's average marginal R² over all 5! orderings.
+   Compare to sequential (order-dependent, era entered first).
+
+   Block                          Shapley   Sequential
+   ────────────────────────────  ────────  ───────────
+   Era (structural decline)         50.3%        55.8%
+   Rest differential                17.6%        16.3%
+   Altitude (DEN/UTA)               25.7%        24.9%
+   Time zone diff                    1.5%         2.0%
+   COVID flag                        4.8%         1.0%
+
+   ► Era Shapley share: 50%  (sequential: 56% — sequential inflated because era is entered first).
+   ► Rest + altitude + tz + COVID (Shapley): 50%.
+
+─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
+   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
+   Stable coefficients → those factors didn't drive the post-2014 change.
+
+   Predictor                              Pre-2014   Post-2014     Shift
+                                          log-odds    log-odds          
+   ───────────────────────────────────  ──────────  ──────────  ────────
+   rest diff (per day)                      +0.053      +0.081    +0.027
+   altitude home (DEN/UTA)                  +0.389      +0.245    -0.144
+   time zone diff (per zone)                -0.022      -0.026    -0.003
+   ───────────────────────────────────  ──────────  ──────────  ────────
+   Intercept (overall home adv. level)      +0.463      +0.270    -0.193
+
+   N pre-2014:  32,975 games  (home win %: 61.8%)
+   N post-2014: 14,240 games  (home win %: 56.7%)
+
+   ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
+   ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
+
+   Formal interaction test — pooled logit with post2014 × factor interactions:
+   H0: coefficients unchanged before and after 2014.
+
+   Interaction term                log-odds     ≈pp         p     
+   ──────────────────────────────  ────────  ──────  ────────  ───
+   rest_diff × post2014              +0.027    +0.7     0.154     
+   altitude_home × post2014          -0.144    -3.5     0.083     
+   tz_diff × post2014                -0.003    -0.1     0.865     
+   ──────────────────────────────  ────────  ──────  ────────  ───
+   post2014 (level shift)            -0.193    -4.6    <0.001  ***
+
+─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
+   Bivariate logistic regression — each factor tested independently.
+   N regular season: 47,215   N playoffs: 2,879
+
+   Factor                           ── Regular season ──         ──── Playoffs ────    
+                                 log-odds    ≈pp         p       log-odds    ≈pp         p     
+   ────────────────────────────  ────────  ─────  ────────  ───  ────────  ─────  ────────  ───
+   Rest diff (per day)             +0.064   +1.5    <0.001  ***    +0.098   +2.3     0.014    *
+                    95% CI (pp)            [+1.1,+1.9]                           [+0.5,+4.1]
+   Altitude home (DEN/UTA)         +0.343   +8.2    <0.001  ***    -0.077   -1.8     0.591     
+                    95% CI (pp)            [+6.4,+10.0]                           [-8.4,+4.8]
+   Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
+                    95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
+
+   ► Rest matters in both contexts — effect is larger in playoffs
+     (≈2.3 pp/day) than regular season (≈1.5 pp/day).
+   ► Altitude home advantage is real in the regular season (+8.2 pp)
+     but absent in playoffs — Denver/Utah team strength is a confound.
+   ► Time zones show no significant effect in either context.
+     Only 107 coast-to-coast playoff games exist across 42 seasons
+     (5,676 regular-season) — too sparse for reliable playoff inference.
+
+   Playoff rest controlling for team quality (N = 2,879 games):
+   quality_diff = home RS win% − away RS win% (same season).
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   rest_diff (per day)             +0.063    +1.5     0.146     
+   quality_diff (RS win% gap)      +4.823  +112.4    <0.001  ***
 
 ════════════════════════════════════════════════════════════════════════
 
