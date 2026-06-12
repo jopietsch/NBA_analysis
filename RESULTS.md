@@ -250,268 +250,6 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
      G7 n = 183 games (series that went to 7)
 
-─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
-   Negative foul diff = refs call fewer fouls on the home team.
-   Trend = slope of trend line (change per season year); pp = percentage points.
-
-   Regular season  (N = 47,882 games)
-
-   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   1984–94              -1.23         +1.57         +1.56         -0.35         +1.12         +0.27
-   1995–01              -0.59         +1.16         +1.20         -0.11         +0.83         +0.35
-   2002–04              -0.52         +1.48         +1.62         +0.08         +1.66         +0.07
-   2005–17              -0.79         +1.17         +1.25         -0.10         +0.70         +0.26
-   2018–22              -0.33         +0.81         +0.93         +0.24         +0.46         -0.01
-   2023–25              -0.20         +0.72         +0.97         +0.37         +0.94         +0.66
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.023***     -0.020***     -0.015***     +0.017***     -0.007        -0.000   
-
-   Playoffs  (N = 3,207 games)
-
-   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   1984–94              -1.58         +1.56         +1.47         -0.85         -0.21         +0.52
-   1995–01              -1.22         +1.31         +1.40         -0.20         +1.55         +0.58
-   2002–04              -1.04         +1.92         +1.88         -0.32         +0.60         +0.00
-   2005–17              -1.43         +1.56         +1.57         -0.36         +0.39         +0.22
-   2018–22              -0.67         +1.00         +1.30         +0.88         +0.86         +0.26
-   2023–25              -0.70         +1.03         +1.19         -0.11         +1.00         +2.68
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
-
-
-─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
-   Positive = home team takes a higher share of FGA from that zone.
-   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
-
-   Regular season  (N = 29 seasons)
-
-   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
-   ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.28             -1.24             +0.16             -0.20
-   2002–04                  +1.18             -1.24             +0.29             -0.23
-   2005–17                  +1.26             -1.19             +0.12             -0.19
-   2018–22                  +0.55             -0.77             +0.18             +0.04
-   2023–25                  +0.37             -0.77             +0.20             +0.21
-   ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.037***         +0.024***         -0.000            +0.013  *
-
-   Playoffs  (N = 28 seasons)
-
-   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
-   ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.72             -1.70             +0.44             -0.46
-   2002–04                  +2.08             -1.82             +0.10             -0.36
-   2005–17                  +1.78             -1.50             +0.10             -0.39
-   2018–22                  +0.72             -1.62             +0.48             +0.42
-   2023–25                  +1.58             -1.42             +0.26             -0.41
-   ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.030            +0.007            -0.000            +0.024   
-
-
-─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
-   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
-   Officials with <50 playoff games excluded.
-   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
-
-   42 officials with ≥50 playoff games
-   41/42 (98%) show negative mean foul diff (home-favoring)
-   Individually significant (p<0.05, real t-test):    29/42
-   Survive Benjamini-Hochberg correction (FDR 5%):    29/42
-   League mean foul_diff across officials: -1.195 fouls/game
-
-   Variance decomposition (career level, method of moments):
-   Observed SD across officials: 0.621 fouls/game
-   Mean within-official SE:      0.495 fouls/game
-   Estimated true between-SD:    0.376 fouls/game
-   ► Sampling noise explains 63% of observed spread.
-
-   Top 10 most home-favoring (by shrunken mean foul_diff):
-   Official                     N games  Raw diff  Shrunken         p      BH-p
-   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Ron Garretson                    143    -2.385    -1.736    <0.001    <0.001
-   Joe Crawford                     160    -2.288    -1.720    <0.001    <0.001
-   Eddie Rush                       100    -2.530    -1.673    <0.001    <0.001
-   Rodney Mott                       69    -2.232    -1.525    <0.001    <0.001
-   James Capers                     186    -1.823    -1.512    <0.001    <0.001
-   Bob Delaney                       80    -2.175    -1.450    <0.001     0.003
-   Sean Wright                       98    -1.796    -1.425    <0.001     0.002
-   Eric Lewis                        79    -1.759    -1.404    <0.001     0.003
-   Sean Corbin                       97    -1.619    -1.358    <0.001     0.003
-   Marc Davis                       203    -1.468    -1.340    <0.001    <0.001
-
-   Bottom 10 least home-favoring (by shrunken mean foul_diff):
-   Official                     N games  Raw diff  Shrunken         p      BH-p
-   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Scott Foster                     241    -0.963    -1.053     0.002     0.004
-   Zach Zarba                       161    -0.932    -1.048     0.006     0.013
-   Monty McCutchen                  160    -0.863    -1.017     0.014     0.024
-   Kane Fitzgerald                   58    -0.500    -1.003     0.414     0.446
-   Jason Phillips                    96    -0.615    -0.938     0.148     0.183
-   Courtney Kirkland                 76    -0.316    -0.924     0.576     0.590
-   Tony Brothers                    198    -0.626    -0.886     0.070     0.099
-   David Guthrie                    113    -0.398    -0.859     0.367     0.405
-   Joe Forte                         51    +0.451    -0.833     0.527     0.553
-   Josh Tiven                        89    -0.112    -0.812     0.825     0.825
-
-   Era variance decomposition — does official spread compress over time?
-   Era            N off     Mean    Raw SD   True SD   Noise %
-   ──────────── ─────── ──────── ───────── ───────── ─────────
-   1995–01           14   -2.239     2.076     0.000      100%
-   2002–04           27   -0.781     1.813     0.722       84%
-   2005–17           42   -1.237     0.986     0.622       60%
-   2018–22           28   -0.912     0.930     0.000      100%
-   2023–25           20   -0.792     0.903     0.000      100%
-
-
-─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
-   Does more 3-point shooting reduce home court advantage?
-   Two angles: season-level correlation and game-level logistic regression.
-
-   Regular season  (n = 42 seasons)
-   Season-level Pearson r  = -0.898  (p = <0.001  ***)
-   Season-level Spearman ρ = -0.884  (p = <0.001  ***)
-
-   Era           Mean 3PA%    Home win%    n seasons
-   ---------- ------------ ------------ ------------
-   1984–94             6.8%         65.0%           11
-   1995–01            18.1%         60.1%            7
-   2002–04            18.3%         61.1%            3
-   2005–17            23.8%         59.5%           13
-   2018–22            37.5%         56.2%            5
-   2023–25            40.1%         55.6%            3
-
-   Game-level bivariate logistic  (N = 47,881 games)
-   coef = -0.0111 log-odds per pp of 3PA rate
-   ≈ -2.67 pp per 10 pp rise in 3PA rate  95% CI [-3.13, -2.20]
-   p = <0.001  ***
-
-   Controlling for era (within-era game-level effect):
-   coef = -0.0096  (≈ -2.31 pp per 10 pp 3PA)  p = <0.001  ***
-   (If this is small and insignificant, 3PA effect is fully explained
-    by the secular trend — higher 3PA and lower HCA happen at the same
-    time but 3PA does not predict outcomes within any given era.)
-
-   Playoffs  (n = 41 seasons)
-   Season-level Pearson r  = -0.468  (p = 0.002  **)
-   Season-level Spearman ρ = -0.390  (p = 0.012  *)
-
-   Era           Mean 3PA%    Home win%    n seasons
-   ---------- ------------ ------------ ------------
-   1984–94             8.7%         67.7%           11
-   1995–01            20.9%         64.1%            7
-   2002–04            20.8%         64.2%            3
-   2005–17            25.8%         64.3%           13
-   2018–22            38.6%         60.8%            4
-   2023–25            40.0%         58.4%            3
-
-   Game-level bivariate logistic  (N = 3,207 games)
-   coef = -0.0112 log-odds per pp of 3PA rate
-   ≈ -2.57 pp per 10 pp rise in 3PA rate  95% CI [-3.68, -1.45]
-   p = <0.001  ***
-
-   Controlling for era (within-era game-level effect):
-   coef = -0.0111  (≈ -2.54 pp per 10 pp 3PA)  p = 0.054  
-   (If this is small and insignificant, 3PA effect is fully explained
-    by the secular trend — higher 3PA and lower HCA happen at the same
-    time but 3PA does not predict outcomes within any given era.)
-
-
-─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
-   Does faster-paced play (more possessions per game) reduce home court advantage?
-   Season-level correlation plus game-level logistic regression.
-
-   Regular season  (n = 42 seasons)
-   Season-level Pearson r  = +0.280  (p = 0.072  )
-   Season-level Spearman ρ = +0.154  (p = 0.331  )
-
-   Era           Mean pace    Home win%    n seasons
-   ---------- ------------ ------------ ------------
-   1984–94           102.4          65.0%           11
-   1995–01            93.9          60.1%            7
-   2002–04            93.2          61.1%            3
-   2005–17            95.3          59.5%           13
-   2018–22           101.4          56.2%            5
-   2023–25           101.2          55.6%            3
-
-   Game-level bivariate logistic  (N = 47,879 games)
-   coef = +0.0099 log-odds per possession
-   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.17, +3.57]
-   p = <0.001  ***
-
-   Controlling for era (within-era game-level effect):
-   coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
-
-   Expected pace (LOO)  (N = 47,641 games)
-   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = 0.148  
-   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.065  
-
-   Playoffs  (n = 41 seasons)
-   Season-level Pearson r  = -0.115  (p = 0.474  )
-   Season-level Spearman ρ = -0.235  (p = 0.140  )
-
-   Era           Mean pace    Home win%    n seasons
-   ---------- ------------ ------------ ------------
-   1984–94            98.5          67.7%           11
-   1995–01            89.9          64.1%            7
-   2002–04            92.5          64.2%            3
-   2005–17            92.8          64.3%           13
-   2018–22            98.4          60.8%            4
-   2023–25            97.1          58.4%            3
-
-   Game-level bivariate logistic  (N = 3,207 games)
-   coef = -0.0038 log-odds per possession
-   ≈ -0.87 pp per 10 extra possessions  95% CI [-2.91, +1.17]
-   p = 0.402  
-
-   Controlling for era (within-era game-level effect):
-   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.251  
-
-   Expected pace (LOO)  (N = 3,207 games)
-   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.426  
-   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
-
-
-─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
-   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
-   Parity = std dev of all-team win percentages for the season.
-
-   N = 42 seasons
-   Pearson r  = -0.066  (p = 0.676  )
-   Spearman ρ = -0.020  (p = 0.899  )
-
-   Trend line: home_win_pct ~ parity_std_dev
-   Slope: -15.093 pp per unit std dev  (p = 0.676  )
-   R² = 0.0044
-
-   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
-
-   Era             Win% std dev    Home win %
-   ────────────  ──────────────  ────────────
-   1984–94               0.1551         65.0%
-   1995–01               0.1700         60.1%
-   2002–04               0.1393         61.1%
-   2005–17               0.1559         59.5%
-   2018–22               0.1461         56.2%
-   2023–25               0.1496         55.6%
-
-   ► Near-zero, non-significant correlation — parity (team win% disparity)
-     does not independently predict home court advantage across seasons.
-     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
-     home win % was already declining, and fell in 2002–04 while home win %
-     ticked back up. The two series do not move in lockstep.
-
-   Detrended checks (both series share a downward trend — remove it first):
-   First-differenced (Δparity vs. Δhome-win%):
-   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
-   Residual-on-year (detrended parity vs. detrended home-win%):
-   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
-
-   ► At least one detrended test is significant — some association
-     remains after removing the common trend. Interpret with caution
-     (N is small and first-differences amplify measurement noise).
-
 ─── FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN % ───────────────
    Which franchises benefit most from playing at home?
    HCA = home win% − road win% (controls for overall team quality).
@@ -819,6 +557,268 @@ All data from cache/ — same source as the plots above.
    tz_diff × post2014                -0.003    -0.1     0.865     
    ──────────────────────────────  ────────  ──────  ────────  ───
    post2014 (level shift)            -0.193    -4.6    <0.001  ***
+
+─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
+   Negative foul diff = refs call fewer fouls on the home team.
+   Trend = slope of trend line (change per season year); pp = percentage points.
+
+   Regular season  (N = 47,882 games)
+
+   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   1984–94              -1.23         +1.57         +1.56         -0.35         +1.12         +0.27
+   1995–01              -0.59         +1.16         +1.20         -0.11         +0.83         +0.35
+   2002–04              -0.52         +1.48         +1.62         +0.08         +1.66         +0.07
+   2005–17              -0.79         +1.17         +1.25         -0.10         +0.70         +0.26
+   2018–22              -0.33         +0.81         +0.93         +0.24         +0.46         -0.01
+   2023–25              -0.20         +0.72         +0.97         +0.37         +0.94         +0.66
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr         +0.023***     -0.020***     -0.015***     +0.017***     -0.007        -0.000   
+
+   Playoffs  (N = 3,207 games)
+
+   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   1984–94              -1.58         +1.56         +1.47         -0.85         -0.21         +0.52
+   1995–01              -1.22         +1.31         +1.40         -0.20         +1.55         +0.58
+   2002–04              -1.04         +1.92         +1.88         -0.32         +0.60         +0.00
+   2005–17              -1.43         +1.56         +1.57         -0.36         +0.39         +0.22
+   2018–22              -0.67         +1.00         +1.30         +0.88         +0.86         +0.26
+   2023–25              -0.70         +1.03         +1.19         -0.11         +1.00         +2.68
+   ────────────────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
+
+
+─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
+   Positive = home team takes a higher share of FGA from that zone.
+   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
+
+   Regular season  (N = 29 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.28             -1.24             +0.16             -0.20
+   2002–04                  +1.18             -1.24             +0.29             -0.23
+   2005–17                  +1.26             -1.19             +0.12             -0.19
+   2018–22                  +0.55             -0.77             +0.18             +0.04
+   2023–25                  +0.37             -0.77             +0.20             +0.21
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.037***         +0.024***         -0.000            +0.013  *
+
+   Playoffs  (N = 28 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.72             -1.70             +0.44             -0.46
+   2002–04                  +2.08             -1.82             +0.10             -0.36
+   2005–17                  +1.78             -1.50             +0.10             -0.39
+   2018–22                  +0.72             -1.62             +0.48             +0.42
+   2023–25                  +1.58             -1.42             +0.26             -0.41
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.030            +0.007            -0.000            +0.024   
+
+
+─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
+   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
+   Officials with <50 playoff games excluded.
+   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
+
+   42 officials with ≥50 playoff games
+   41/42 (98%) show negative mean foul diff (home-favoring)
+   Individually significant (p<0.05, real t-test):    29/42
+   Survive Benjamini-Hochberg correction (FDR 5%):    29/42
+   League mean foul_diff across officials: -1.195 fouls/game
+
+   Variance decomposition (career level, method of moments):
+   Observed SD across officials: 0.621 fouls/game
+   Mean within-official SE:      0.495 fouls/game
+   Estimated true between-SD:    0.376 fouls/game
+   ► Sampling noise explains 63% of observed spread.
+
+   Top 10 most home-favoring (by shrunken mean foul_diff):
+   Official                     N games  Raw diff  Shrunken         p      BH-p
+   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Ron Garretson                    143    -2.385    -1.736    <0.001    <0.001
+   Joe Crawford                     160    -2.288    -1.720    <0.001    <0.001
+   Eddie Rush                       100    -2.530    -1.673    <0.001    <0.001
+   Rodney Mott                       69    -2.232    -1.525    <0.001    <0.001
+   James Capers                     186    -1.823    -1.512    <0.001    <0.001
+   Bob Delaney                       80    -2.175    -1.450    <0.001     0.003
+   Sean Wright                       98    -1.796    -1.425    <0.001     0.002
+   Eric Lewis                        79    -1.759    -1.404    <0.001     0.003
+   Sean Corbin                       97    -1.619    -1.358    <0.001     0.003
+   Marc Davis                       203    -1.468    -1.340    <0.001    <0.001
+
+   Bottom 10 least home-favoring (by shrunken mean foul_diff):
+   Official                     N games  Raw diff  Shrunken         p      BH-p
+   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Scott Foster                     241    -0.963    -1.053     0.002     0.004
+   Zach Zarba                       161    -0.932    -1.048     0.006     0.013
+   Monty McCutchen                  160    -0.863    -1.017     0.014     0.024
+   Kane Fitzgerald                   58    -0.500    -1.003     0.414     0.446
+   Jason Phillips                    96    -0.615    -0.938     0.148     0.183
+   Courtney Kirkland                 76    -0.316    -0.924     0.576     0.590
+   Tony Brothers                    198    -0.626    -0.886     0.070     0.099
+   David Guthrie                    113    -0.398    -0.859     0.367     0.405
+   Joe Forte                         51    +0.451    -0.833     0.527     0.553
+   Josh Tiven                        89    -0.112    -0.812     0.825     0.825
+
+   Era variance decomposition — does official spread compress over time?
+   Era            N off     Mean    Raw SD   True SD   Noise %
+   ──────────── ─────── ──────── ───────── ───────── ─────────
+   1995–01           14   -2.239     2.076     0.000      100%
+   2002–04           27   -0.781     1.813     0.722       84%
+   2005–17           42   -1.237     0.986     0.622       60%
+   2018–22           28   -0.912     0.930     0.000      100%
+   2023–25           20   -0.792     0.903     0.000      100%
+
+
+─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
+   Does more 3-point shooting reduce home court advantage?
+   Two angles: season-level correlation and game-level logistic regression.
+
+   Regular season  (n = 42 seasons)
+   Season-level Pearson r  = -0.898  (p = <0.001  ***)
+   Season-level Spearman ρ = -0.884  (p = <0.001  ***)
+
+   Era           Mean 3PA%    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94             6.8%         65.0%           11
+   1995–01            18.1%         60.1%            7
+   2002–04            18.3%         61.1%            3
+   2005–17            23.8%         59.5%           13
+   2018–22            37.5%         56.2%            5
+   2023–25            40.1%         55.6%            3
+
+   Game-level bivariate logistic  (N = 47,881 games)
+   coef = -0.0111 log-odds per pp of 3PA rate
+   ≈ -2.67 pp per 10 pp rise in 3PA rate  95% CI [-3.13, -2.20]
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0096  (≈ -2.31 pp per 10 pp 3PA)  p = <0.001  ***
+   (If this is small and insignificant, 3PA effect is fully explained
+    by the secular trend — higher 3PA and lower HCA happen at the same
+    time but 3PA does not predict outcomes within any given era.)
+
+   Playoffs  (n = 41 seasons)
+   Season-level Pearson r  = -0.468  (p = 0.002  **)
+   Season-level Spearman ρ = -0.390  (p = 0.012  *)
+
+   Era           Mean 3PA%    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94             8.7%         67.7%           11
+   1995–01            20.9%         64.1%            7
+   2002–04            20.8%         64.2%            3
+   2005–17            25.8%         64.3%           13
+   2018–22            38.6%         60.8%            4
+   2023–25            40.0%         58.4%            3
+
+   Game-level bivariate logistic  (N = 3,207 games)
+   coef = -0.0112 log-odds per pp of 3PA rate
+   ≈ -2.57 pp per 10 pp rise in 3PA rate  95% CI [-3.68, -1.45]
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0111  (≈ -2.54 pp per 10 pp 3PA)  p = 0.054  
+   (If this is small and insignificant, 3PA effect is fully explained
+    by the secular trend — higher 3PA and lower HCA happen at the same
+    time but 3PA does not predict outcomes within any given era.)
+
+
+─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
+   Does faster-paced play (more possessions per game) reduce home court advantage?
+   Season-level correlation plus game-level logistic regression.
+
+   Regular season  (n = 42 seasons)
+   Season-level Pearson r  = +0.280  (p = 0.072  )
+   Season-level Spearman ρ = +0.154  (p = 0.331  )
+
+   Era           Mean pace    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94           102.4          65.0%           11
+   1995–01            93.9          60.1%            7
+   2002–04            93.2          61.1%            3
+   2005–17            95.3          59.5%           13
+   2018–22           101.4          56.2%            5
+   2023–25           101.2          55.6%            3
+
+   Game-level bivariate logistic  (N = 47,879 games)
+   coef = +0.0099 log-odds per possession
+   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.17, +3.57]
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
+
+   Expected pace (LOO)  (N = 47,641 games)
+   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = 0.148  
+   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.065  
+
+   Playoffs  (n = 41 seasons)
+   Season-level Pearson r  = -0.115  (p = 0.474  )
+   Season-level Spearman ρ = -0.235  (p = 0.140  )
+
+   Era           Mean pace    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94            98.5          67.7%           11
+   1995–01            89.9          64.1%            7
+   2002–04            92.5          64.2%            3
+   2005–17            92.8          64.3%           13
+   2018–22            98.4          60.8%            4
+   2023–25            97.1          58.4%            3
+
+   Game-level bivariate logistic  (N = 3,207 games)
+   coef = -0.0038 log-odds per possession
+   ≈ -0.87 pp per 10 extra possessions  95% CI [-2.91, +1.17]
+   p = 0.402  
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.251  
+
+   Expected pace (LOO)  (N = 3,207 games)
+   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.426  
+   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
+
+
+─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
+   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
+   Parity = std dev of all-team win percentages for the season.
+
+   N = 42 seasons
+   Pearson r  = -0.066  (p = 0.676  )
+   Spearman ρ = -0.020  (p = 0.899  )
+
+   Trend line: home_win_pct ~ parity_std_dev
+   Slope: -15.093 pp per unit std dev  (p = 0.676  )
+   R² = 0.0044
+
+   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
+
+   Era             Win% std dev    Home win %
+   ────────────  ──────────────  ────────────
+   1984–94               0.1551         65.0%
+   1995–01               0.1700         60.1%
+   2002–04               0.1393         61.1%
+   2005–17               0.1559         59.5%
+   2018–22               0.1461         56.2%
+   2023–25               0.1496         55.6%
+
+   ► Near-zero, non-significant correlation — parity (team win% disparity)
+     does not independently predict home court advantage across seasons.
+     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
+     home win % was already declining, and fell in 2002–04 while home win %
+     ticked back up. The two series do not move in lockstep.
+
+   Detrended checks (both series share a downward trend — remove it first):
+   First-differenced (Δparity vs. Δhome-win%):
+   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
+   Residual-on-year (detrended parity vs. detrended home-win%):
+   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
+
+   ► At least one detrended test is significant — some association
+     remains after removing the common trend. Interpret with caution
+     (N is small and first-differences amplify measurement noise).
 
 ════════════════════════════════════════════════════════════════════════
 

@@ -1948,11 +1948,27 @@ def run() -> None:
         run_quantile_margin_analysis(df)
         # §5 Playoff Series Structure
         run_series_breakdown(df)
-        # §6 Box-Score Differentials
+        # §6 Franchise Home Court Advantage
+        reg_hca_stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
+        )
+        po_hca_stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, "Playoffs",
+            skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
+        )
+        run_team_hca_analysis(reg_hca_stats, po_hca_stats)
+        run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
+        # §7 The Usual Suspects: Rest, Travel, Altitude, and Time Zones
+        run_rest_bucket_analysis(df)
+        run_travel_analysis(df)
+        run_factor_summary(df)
+        run_sequential_decomposition(df)
+        run_stability_analysis(df)
+        # §8 Box-Score Differentials
         run_differential_analysis(df)
-        # §7 Shot Zone Analysis
+        # §9 Shot Zone Analysis
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
-        # §8 Referee Patterns
+        # §10 Referee Patterns
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",
             skip_years=nba.SKIP_PLAYOFF_YEARS,
@@ -1968,28 +1984,12 @@ def run() -> None:
                 print("   No officials met the minimum-games threshold.\n")
         else:
             print("   No cached referee data — run the analysis first to fetch it.\n")
-        # §9 3-Point Shooting and Home Court Advantage
+        # §11 3-Point Shooting and Home Court Advantage
         run_3pa_analysis(df)
-        # §10 Pace and Home Court Advantage
+        # §12 Pace and Home Court Advantage
         run_pace_analysis(df)
-        # §11 Competitive Balance and Parity
+        # §13 Competitive Balance and Parity
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
-        # §12 Franchise Home Court Advantage
-        reg_hca_stats = nba.compute_team_hca_stats(
-            nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
-        )
-        po_hca_stats = nba.compute_team_hca_stats(
-            nba.START_YEAR, nba.END_YEAR, "Playoffs",
-            skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
-        )
-        run_team_hca_analysis(reg_hca_stats, po_hca_stats)
-        run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
-        # §13 The Usual Suspects: Rest, Travel, Altitude, and Time Zones
-        run_rest_bucket_analysis(df)
-        run_travel_analysis(df)
-        run_factor_summary(df)
-        run_sequential_decomposition(df)
-        run_stability_analysis(df)
 
         print("\n" + "═" * _W + "\n")
 
