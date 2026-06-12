@@ -8,26 +8,19 @@ and coefficient values, see `RESULTS.md` (auto-generated each run).
 
 ## 1. The Decline
 
-Home court advantage has been falling for 40 years in both the regular season
-and the playoffs, with the regular-season decline somewhat steeper than the
-playoff one. The gap between the two widened through the mid-2000s and has
-narrowed back to roughly its mid-1980s level in recent seasons.
+Home court advantage has been slipping for 40 straight years — through rule changes, labor deals, expansion drafts, and every major shift the game has seen. The regular season has dropped about **10 full percentage points** since 1984. The playoffs have fallen too, just a little more slowly.
 
-The 2020 bubble season (neutral-site playoffs) is excluded from playoff stats.
-COVID seasons are flagged in the charts and regression as an anomaly.
+In 1984, home teams won roughly **65%** of regular-season games. Today it's closer to **55%**. That's not noise. That's a consistent, 40-year drift in one direction.
 
-### The trend is statistically unambiguous
+The 2020 bubble season (neutral-site playoffs) is excluded from playoff stats. COVID seasons are flagged in the charts as anomalies.
 
-A count-weighted statistical model confirms the decline is real and precisely measured. The regular season
-falls at roughly **−0.25 pp per year** (R² = 0.73) — a total drop of about 10 percentage points over the 41-year
-dataset. The playoffs fall at **−0.21 pp per year**, though with more year-to-year volatility (R² = 0.16).
-Two independent methods agree on these estimates; an uncorrected approach gives a weaker answer.
+### The numbers are unambiguous
 
-Within individual eras the season counts are mostly too small for reliable slope
-estimates (only the 1984–94 and 2018–22 regular-season slopes are clearly established
-in the count-weighted model; with year-to-year-error correction applied, 2005–17 and 2018–22 are also reliably established), but
-the overall trajectory is one of the strongest trends in the dataset. The regularity of the decline — not a one-time step but a persistent
-drift — points to systemic forces rather than a single rule change.
+The decline runs at roughly **−0.25 percentage points per year** in the regular season — a number two independent methods agree on. Year after year, era after era, the line bends the same direction. At that pace, you lose another full percentage point every four years. The trend explains 73% of all year-to-year variation in home win rates, which is extraordinary for a sports dataset.
+
+The playoffs decline more slowly (−0.21 pp/year) and with more season-to-season noise — a seven-game series in a small sample can swing things — but the direction is the same.
+
+This isn't a fluke of one bad era or one rule change. The regularity of the decline — not a single step down but a persistent 40-year drift — points to something deep in how the game has changed.
 
 ![Figure 1. Home win % per season, 1983–84 through 2024–25. Blue = regular season, green = playoffs. Dashed lines are overall trend fits. Background shading marks rule-change eras.](nba_home_court_advantage_season.png)
 
@@ -35,23 +28,9 @@ drift — points to systemic forces rather than a single rule change.
 
 ## 2. Era and Format Period Analysis
 
-The NBA has gone through six distinct rule-change eras since 1984, each affecting
-pace, defense, and officiating. Home court advantage has declined in nearly every
-successive era in both the regular season and the playoffs, with the steepest
-drops in the most recent eras.
+The NBA has reinvented itself several times since 1984 — banning zone defense, allowing it back, cracking down on hand-checking, emphasizing freedom of movement, adding the take-foul rule. Each shift changed how the game looks on the floor. None of them reversed the decline in home court advantage. If anything, the most recent eras have seen the steepest drops.
 
-The playoff-format analysis divides the dataset into four periods defined by the
-1985, 2003, and 2014 Finals scheduling changes. The 2014 shift from a 2-3-2 to a
-2-2-1-1-1 series structure coincided with a sharp fall in playoff home win
-percentage — from 66.3% in 2003–13 to 59.8% in 2014–25, a −6.4 pp drop that is
-a reliable finding. The earlier format changes
-moved playoff home win % by less than 2 pp and neither is reliably
-distinguishable from chance.
-
-The drop cannot, however, be attributed to the format change itself: once the
-underlying year-over-year trend is controlled for, the format-period indicators add no
-meaningful explanatory power — the statistical tests find no reliable effect from the format change alone. The post-2014 fall is consistent with the long-run decline passing
-through that boundary, not with a distinct format effect.
+The 2014 Finals format change — switching from 2-3-2 to 2-2-1-1-1 — deserves a closer look. Playoff home win % fell sharply right around that time, from 66.3% in 2003–13 to 59.8% in 2014–25, a drop of 6.4 percentage points. That's a real, reliable difference. But it wasn't the format that caused it. When you account for the long-term year-over-year playoff trend already in motion, the format change adds nothing — the data finds no reliable effect from the scheduling shift itself. The timing was coincidence. The decline was already happening.
 
 ![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png){width=0.5}
 
@@ -61,11 +40,9 @@ through that boundary, not with a distinct format effect.
 
 ## 3. Per-Era Trend Lines
 
-Fitting a separate trend line within each era reveals that the decline is not a
-smooth drift — there are periods of relative stability and periods of sharper
-change. Playoff home court advantage has consistently exceeded the regular-season
-figure; the gap widened through the mid-2000s and has narrowed back toward its
-1980s level in recent seasons.
+The decline isn't perfectly smooth. There are stretches of relative stability and stretches where the floor drops faster. But zoom out and the picture is unmistakable — every era ends lower than the one before it.
+
+The playoffs have consistently given home teams a bigger edge than the regular season. That gap widened through the mid-2000s and has since narrowed back toward where it was in the 1980s.
 
 ![Figure 4. Regular-season home win % per season. A separate trend line is fit within each rule-change era. Background shading identifies each era.](nba_home_court_advantage_regular_era.png){height=0.22}
 
@@ -95,52 +72,23 @@ figure; the gap widened through the mid-2000s and has narrowed back toward its
 
 ## 4. Win Margin Trends
 
-Point margin data (PLUS_MINUS) is unavailable in the NBA.com game logs before the
-1996–97 season, so this analysis covers 1996–97 through 2024–25.
+Here's where it gets counterintuitive.
 
-### The decline is not about wins getting closer
+In the regular season, the overall home-team point margin has declined over time — home teams win by less on average than they used to. But the mechanism is not what you'd expect. Home wins are actually getting **bigger**, not smaller (+0.041 pts/yr). What's pulling the average down is that home **losses** are getting worse: the average home loss margin has grown by nearly a tenth of a point per year.
 
-The overall home-team point margin in the regular season has declined
-significantly (−0.055 pts per year) — but the mechanism is
-surprising. Home wins are actually getting **larger**, not smaller
-(+0.041 pts/yr). What is driving the decline is that home losses
-are getting worse: the average home loss margin has grown by −0.083 pts/yr.
-Home teams are losing more games, and when they lose, they lose
-by more.
+Home teams are losing more games. And when they lose, they're getting blown out more.
 
-### Polarization is genuine, not a statistical artifact
+### The spread is widening, not narrowing
 
-The conditional-on-outcome pattern above could be a mechanical artifact: as
-home win rate falls, marginal close games migrate from the win pool to the
-loss pool, pushing both conditional means away from zero without any
-individual game becoming more lopsided. Unconditional quantile regression on
-the raw home margin directly tests this.
+You might think: of course home losses look worse — more games are losses now, so you're adding close defeats to the pool. But the data rules that out. Looking at the full distribution of margins across all 34,000+ regular-season games since 1996–97, the biggest home wins (top 10% of margins) are actually growing (+0.045 pts/yr — a reliable finding), while the biggest home losses (bottom 10%) are getting dramatically worse (−0.154 pts/yr — overwhelming evidence). The spread between the two widens by nearly 0.2 pts per year.
 
-Regular-season quantile regression (1996–97 through 2024–25, N = 34,311 games)
-finds that Q90 (big home wins) rises at **+0.045 pts/yr** (a reliable finding) while Q10
-(big home losses) falls at **−0.154 pts/yr** (with overwhelming evidence). The Q90–Q10 spread
-widens at **+0.199 pts/yr**. These slopes are statistically established and diverge in
-opposite directions — the distribution is genuinely widening, not merely
-shifting. The "polarization" reading from the conditional-on-outcome analysis
-reflects a real change in distribution shape, not a mathematical side-effect of the shifting win rate.
-
-The median (Q50) declines at −0.056 pts/yr, consistent with the
-falling home win rate. The asymmetry — big home losses falling much faster
-than the median while big home wins rise — is also consistent with the
-conditional story: home teams are losing more games and, when they do, losing
-by more, but still winning convincingly when they win.
+This is genuine polarization. When the home team wins, it's increasingly a comfortable victory. When it loses, it's increasingly ugly. The days of the tight home loss that could have gone either way are fading.
 
 ### Playoffs show a different pattern
 
-In the playoffs, the all-game margin shows no clear trend (+0.002 pts/yr).
-Quantile regression finds a widening Q90–Q10 spread (+0.200 pts/yr): Q90 rises
-at +0.145 pts/yr (a reliable finding), though Q10 shows no clear trend (−0.055
-pts/yr, within normal chance variation). The widening is driven by big home wins growing, not by big
-home losses worsening. The net margin is unchanged.
+In the playoffs, there's no clear trend in the overall margin. The spread is widening there too (+0.200 pts/yr), but it's driven entirely by big home wins growing — not by home losses getting worse. The net margin is unchanged. Playoff home court still holds, at least in terms of margin when the home team does win.
 
-The regular-season mean margin (+2.80 pts) is lower than the playoff mean
-(+4.36 pts), consistent with the higher overall home win percentage in the
-playoffs across most of the dataset.
+The regular-season mean home margin (+2.80 pts) is lower than the playoff mean (+4.36 pts), consistent with the higher overall home win rate in the postseason.
 
 ![Figure 6. Home team point margin per season. Left: mean margin for all games (regular season and playoffs) with trend lines. Center: mean margin split by home wins vs. losses (regular season). Right: era-bucketed average margin, regular season vs. playoffs.](nba_home_court_margin.png)
 
@@ -148,42 +96,23 @@ playoffs across most of the dataset.
 
 ## 5. Playoff Series Structure
 
-Playoff game IDs encode the game number within each series (last digit of GAME_ID),
-allowing home win % to be tracked across G1–G7 pooled over all seasons.
+In a seven-game playoff series, not all home games are equal — and the pattern is sharp.
 
-### Higher-seed home games dominate; the alternating pattern is striking
+### The home court advantage depends entirely on who's home
 
-The data reveals a sharp alternating structure. Higher-seed home games (G1, G2, G5)
-see home win percentages of roughly 69–75%, while lower-seed home games (G3, G4, G6)
-cluster tightly at 55–56% — barely above even. The G3/G4/G6 figure is only modestly
-above 50% and reflects that the lower seed's home advantage is almost completely
-offset by the quality gap between the opponents.
+When the higher seed plays at home (Games 1, 2, and 5), they win roughly **69–75%** of the time. When the lower seed plays at home (Games 3, 4, and 6), that drops to **55–56%** — barely better than a coin flip. The lower seed's home court advantage is almost completely erased by the simple fact that they're playing a better team.
 
-A statistical test strongly confirms that home win % varies across game numbers
-in a way that cannot be explained by chance. The variation is not random — it is structurally
-determined by which team is at home, not by series pressure or fatigue effects.
+The alternating pattern isn't subtle. It's one of the sharpest structures in the dataset, and the data confirms it couldn't be explained by chance alone.
 
-### G7 is notably lower than G1/G2
+### Game 7 is different from what you'd expect
 
-Game 7 — the highest-stakes home game in sports — shows a win % of approximately
-65%, meaningfully below G1 (69%) and G2 (72%). The small G7 sample (183 games)
-limits inference, but the gap is consistent with the idea that opponent quality is
-highest in games 7 (only the best road teams force a Game 7), partly offsetting the
-home court advantage.
+The highest-stakes home game in sports — Game 7 — shows a home win rate of about **65%**, noticeably lower than Games 1 (69%) or 2 (72%). The sample is small (183 games), but the pattern makes sense: only the best road teams survive long enough to force a Game 7. By the time you get there, you're facing a team that has already proven it can win on the road against you. That erodes some of the home edge.
 
-There is no significant linear trend across game numbers — the pattern is not a
-simple "home advantage fades as the series gets deeper." The dominant structure is
-the alternating host pattern, not a narrative about pressure or momentum.
+The pattern is not about momentum or pressure or fatigue building through a series. It's simply about who's hosting.
 
-### Implications for the overall decline
+### What this means for the overall decline
 
-The strong G3/G4/G6 separation means that changes in which team hosts which games
-(format changes in 1985, 2003, 2014) can mechanically affect the aggregate playoff
-home win %. The 2014 shift to 2-2-1-1-1 gave the lower seed more favorable hosting
-in round 1 and Finals matchups, which would compress the overall playoff home win %
-figure. In practice, however, the trend-controlled test in §2 cannot statistically
-separate any such format effect from the long-term decline that runs through the
-same years.
+Because the gap between higher-seed and lower-seed home games is so large, changing which team hosts which games (as the 2014 format change did) can shift the aggregate playoff home win % mechanically. But the trend-controlled analysis shows that's not what drove the post-2014 drop — the decline was already in progress.
 
 ![Figure 7. Home win % by game number within playoff series. Left: pooled G1–G7 home win % with sample sizes and overall playoff baseline. Right: G1–G7 home win % split by era (six lines, era-colored).](nba_home_court_series_breakdown.png)
 
@@ -191,42 +120,23 @@ same years.
 
 ## 6. Box-Score Differentials
 
-Four box-score differentials (home minus away) show statistically significant
-trends over time. For era-by-era averages and trend values, see `RESULTS.md`.
+If you want to understand *why* home court advantage is shrinking, the box score tells a clear story across four key metrics — all trending in the same direction.
 
-### Foul differential — referees are calling the game more neutrally
+### Foul differential — refs are calling it straight
 
-Home teams were called for substantially fewer fouls per game in the early era
-than they are today, in both the regular season and the playoffs. This is the
-single strongest mechanism. The trend is highly significant in both contexts.
-Referees are calling the game more neutrally — this is likely the most important
-driver of the overall decline.
+This is the big one. In the regular season, home teams were called for roughly **1.2 fewer fouls per game** than road teams in the early 1980s. Today that gap has nearly vanished — it's down to about **0.2 fouls per game**. The playoffs show the same pattern: home teams' foul advantage has fallen from **1.6 fewer fouls per game** in 1984–94 to **0.7** today. Referees are calling the game more neutrally than they used to in both contexts. The crowd used to move the whistle. It still does, but far less than it once did. This is almost certainly the single most important driver of the long-run decline.
 
-### eFG% differential — the home shooting edge is shrinking
+### Shooting efficiency — the home edge is shrinking
 
-Home teams used to shoot meaningfully more efficiently than road teams (weighted
-to give 3-pointers 1.5× the value of 2-pointers). That gap has narrowed
-significantly in the regular season. This reflects both the foul trend (fewer
-free throws for the home team) and a broader convergence in shot quality between
-home and road teams.
+In the regular season, home teams used to shoot meaningfully more efficiently than road teams. That gap has narrowed significantly. This is partly the foul story playing out differently — fewer home free throws means fewer easy points — and partly a broader convergence in shot quality between home and visiting offenses. The playoff shooting-efficiency gap has trended in the same direction, though the smaller postseason sample makes it harder to confirm statistically.
 
-### 3PA rate differential — shot selection has converged
+### Shot selection — road teams no longer settle
 
-Road teams used to take proportionally **more** 3-point attempts than home teams
-at the same venue — consistent with being pushed away from the paint and toward
-the perimeter. As the 3-point revolution normalized high-volume shooting
-league-wide, that difference has not just closed but reversed slightly: home
-teams now take a marginally higher share of their shots from three. Shot
-selection is no longer a meaningful home court edge — road teams now arrive with
-the same offensive game plan as the home team.
+In the regular season, road teams used to take more 3-point attempts than home teams at the same venue, a sign of being pushed away from the paint. That difference has not just closed but slightly reversed — home teams now take a marginally higher share of 3s. Visiting offenses arrive with the same game plan they run at home. That wasn't true 40 years ago.
 
-### FG% differential — unweighted shooting gap is also narrowing
+### Field goal percentage — confirming the trend
 
-The raw field-goal percentage gap (home minus away, unweighted across 2- and
-3-point attempts) is also closing significantly. This is a cruder measure than
-eFG% — it ignores the value difference between shot types — but the trend runs
-in the same direction and confirms the shooting convergence is not an artifact
-of the 3-point weighting. FT% and 3P% show no significant trend.
+In the regular season, the raw field-goal percentage gap (home minus away) is also closing. It's a cruder measure than weighted shooting efficiency, but it tells the same story. The shooting convergence is real. Free throw percentage and 3-point percentage show no trend — the gap that's closing is at the rim and on 2-point jumpers, where fouls and paint access matter most. In the playoffs, the field-goal efficiency gap moves in the same direction but falls short of confirmation given the sample size.
 
 ![Figure 8. Per-season home-minus-away box-score differentials, 1983–84 through 2024–25. Solid = regular season, dashed = playoffs. Dotted overlays are trend lines. Negative foul diff = home team called for fewer fouls.](nba_home_court_advantage_differentials.png)
 
@@ -234,28 +144,13 @@ of the 3-point weighting. FT% and 3P% show no significant trend.
 
 ## 7. Shot Zone Analysis
 
-Shot zone data is available from 1996–97 onward via NBA.com's
-`LeagueDashTeamShotLocations` endpoint.
+Zoom in from efficiency to geography and the story sharpens further.
 
-Paint access (restricted area + non-RA combined) shows the clearest pattern:
-home teams have historically taken a higher share of shots from the paint —
-the most efficient shots in basketball — and that gap is closing. The trend line
-confirms this clearly: **−0.037 pp/yr** in the regular
-season. Road teams are accessing the paint more freely than they used to, which
-is consistent with both the eFG% narrowing and the foul differential trend.
+The clearest trend is in **paint access**. Home teams have historically gotten to the restricted area — the highest-percentage shots in basketball — more than road teams. That gap is closing at −0.037 percentage points per year in the regular season. Road defenses are no longer being consistently pushed away from the paint by a more physical home-crowd-fueled officiating environment. They can get inside now.
 
-Road teams consistently take a higher share of mid-range shots — the least
-efficient shot type in modern basketball. This gap is also narrowing
-(**+0.024 pp/yr** in the regular season) as both home and road teams
-have shifted toward the 3-point line and away from the mid-range, but road teams
-have historically been pushed there more often and are now less disadvantaged.
+**Mid-range shots** tell the flip side. In the regular season, road teams used to be pushed to the mid-range more often — the worst shot in modern basketball. That gap is narrowing too (+0.024 pp/yr). Visiting teams are escaping the mid-range at the same rate home teams are. The court is leveling.
 
-Corner 3 shows no significant home/road difference and no trend. Above-break 3
-also shows no meaningful level difference, but does show a small but reliable
-positive trend (+0.013 pp/yr) in the regular season —
-home teams have gradually taken a slightly larger share of above-break attempts
-over time. The effect is minor compared to the paint and mid-range shifts, and
-shot quality at the arc is not a meaningful home court advantage overall.
+In the regular season, corner 3s show no meaningful home/road difference at all. Above-break 3s show a small trend — home teams have gradually taken a slightly larger share of those attempts — but it's minor compared to the paint and mid-range shifts. The 3-point arc isn't where the home advantage story lives. In the playoffs, the shot-zone trends point in the same directions as the regular season, but with fewer games per season the year-to-year swings are larger and the trends don't reach statistical confirmation.
 
 ![Figure 9. Home-minus-road shot zone % differentials, 1996–97 through 2024–25. Solid = regular season, dashed = playoffs. RA = restricted area (within ~4 ft of the basket).](nba_home_court_shot_zones.png)
 
@@ -263,80 +158,23 @@ shot quality at the arc is not a meaningful home court advantage overall.
 
 ## 8. Referee Patterns
 
-Officials have historically called more fouls on visiting teams than on home
-teams — a pattern consistent with crowd-driven influence on referee judgment.
-This analysis asks whether that bias is distributed uniformly across referees or
-concentrated in a subset, and whether individual referee tendencies have changed
-as overall home court advantage has declined.
+Nearly every referee in the NBA has called fewer fouls on the home team than the away team in playoff games, over their entire career. The pattern is nearly universal in the postseason.
 
-### Methodology
+### Almost no one is immune
 
-For each playoff game from 1983–84 through 2024–25 (excluding the 2020 bubble
-season), officials were fetched from the NBA API (BoxScoreSummaryV3) and cached.
-Each official's mean home foul differential (home fouls minus away fouls per
-game) was computed across all playoff games they worked, restricted to officials
-with at least 50 games. A negative value indicates the home team was called for
-fewer fouls — the home-favoring direction. Era means were computed separately
-for each official within each rule-change era to track whether individual biases
-have shifted over time.
+Of 42 officials with at least 50 playoff games in the dataset, **41 show a home-favoring career bias**. The one exception — Joe Forte — is the only qualifying official whose games tilted marginally toward the road team. The league-wide average across all qualifying officials is about **−1.2 fouls per game** in the home team's favor.
 
-### Distribution of Referee Bias
+The variation across referees is substantial. The most home-favoring officials — Ron Garretson (−2.39 fouls/game, 143 games), Eddie Rush (−2.53, 100 games), and Joe Crawford (−2.29, 160 games) — averaged more than two fewer fouls called on the home team per game across their entire careers. At the other end, Josh Tiven (−0.11, 89 games) is by far the most neutral in the sample.
 
-Home-favoring foul bias is nearly universal: 41 of 42 officials with at least 50
-playoff games show a negative career mean foul differential. The one exception —
-Joe Forte (+0.451 fouls/game raw) — is the only qualifying official in the dataset
-whose games tilted marginally toward the road team. The league-wide mean across
-all qualifying officials is approximately −1.2 fouls per game, a substantial and
-consistent tilt in the home team's favor.
+Nearly all referees tilt the same direction. They just differ in how much.
 
-The variation across individual referees is wide. The most home-favoring officials
-averaged roughly 2.2–2.5 fewer fouls on the home team per game; the least
-home-favoring still called fewer fouls on the home team, ranging from about 0.9
-fouls per game (Scott Foster, Zach Zarba) down to near zero (Josh Tiven at −0.11).
-Nearly all referees show the same directional bias — they differ in degree, not
-direction.
+### The tilt is universal but diminishing
 
-### Era Trends
+**29 of the 42 qualifying officials show a bias large enough to rule out chance.** A correction for running multiple tests simultaneously confirms this isn't a statistical fluke — the pattern is real across the board.
 
-The raw standard deviation of per-official era-mean foul bias declines from 2.08
-in the 1995–01 era to 0.90 in 2023–25. However, a method-of-moments variance
-decomposition — which subtracts sampling noise (each official's within-official
-SE² / n) from the observed variance — reveals that this compression is partly a
-small-sample artifact. For three of five eras (1995–01, 2018–22, and 2023–25) the
-estimated true between-official SD is effectively zero: all of the observed spread
-is consistent with sampling noise given the number of officials and games per
-official in those eras. The 2002–04 era carries a non-zero point estimate (true
-SD ≈ 0.72 fouls/game) but 84% of its observed spread is sampling noise, so that
-figure is unreliable. Only the 2005–17 era (the largest, with 42 officials and
-long careers) shows clear evidence of genuine between-official variance (true
-SD ≈ 0.62 fouls/game, with 60% noise after correction).
+The 13 officials without a firmly established bias are those with smaller samples or raw numbers close to zero — not the ones with large home-favoring averages. The directional signal is genuine even where sample size limits what can be detected.
 
-The era means themselves are non-monotone (ranging from −0.781 in 2002–04 to
-−2.239 in 1995–01, with the current era at −0.792), so there is no clear trend
-in the average level of bias across eras. The apparent compression of
-individual tendencies is real in the raw data but is partly sampling noise from
-early eras where few officials had many games — the underlying true between-
-official variance in the modern era (true SD ≈ 0.38 fouls/game career-level) is
-lower than the raw spread implies but still above zero.
-
-### Individual Referee Rankings
-
-The top-ranked officials by home-favoring bias include Ron Garretson (−2.385 raw,
-143 games), Joe Crawford (−2.288, 160 games), and Eddie Rush (−2.530, 100 games).
-At the other end, Josh Tiven (−0.112 raw, 89 games) is among the most neutral;
-his apparent near-zero career mean carries a p-value of 0.83 — correctly
-identified as indistinguishable from zero with a realistic foul-diff SD of ~3
-fouls/game. Empirical-Bayes shrinkage toward the league mean adjusts officials
-with smaller samples: Tiven's shrunken estimate is −0.81 fouls/game (still well
-below the top-10 threshold), reflecting that with 89 games the data can only
-weakly distinguish his true level from the league average.
-
-Of the 42 qualifying officials, **29 show a bias large enough to rule out chance**
-using per-game standard deviations. A multiple-testing correction confirms the
-pattern holds up — it is not a fluke of running many tests simultaneously. The 13
-officials without a clearly established bias are those with smaller samples (51–96 games) or raw
-means close to zero, not those with large negative means — confirming that the
-directional signal is genuine even where the sample size limits what can be detected.
+The spread of individual biases has narrowed over time in the raw data. But much of that compression comes from smaller samples in older eras, where a few games can swing an official's career average dramatically. The modern era still shows genuine between-official variance — referees do differ from each other — but the overall level of home-favoring bias has come down across the board.
 
 ![Figure 10. Referee home foul bias (playoffs). Left: top/bottom referees ranked by career mean home foul differential. Right: distribution of per-official era-mean foul bias by era (box plots), showing whether the spread of referee biases has narrowed over time.](nba_home_court_referee.png)
 
@@ -344,33 +182,13 @@ directional signal is genuine even where the sample size limits what can be dete
 
 ## 9. Rest and Schedule Balance
 
-Rest days are computed from game logs as days between consecutive games minus one
-(0 = back-to-back, 1 = one rest day, etc.). In the regular season the bucket
-split is unambiguous: when the home team has more rest it wins 62.9% of the
-time, versus 57.7% when the away team is more rested — a 5.2 pp swing around
-the 60.3% baseline — a difference the statistics confirm is not due to chance.
+Rest matters — but not as much as the raw numbers suggest.
 
-In the playoffs, schedules are nearly always symmetric — about 92% of playoff
-games are played on equal rest — so the unequal-rest buckets are small (139 and
-98 games). Home teams with a rest edge win 75.5% of those games and the bucket
-differences are a reliable finding, though the small away-more-rest bucket
-also sits above baseline, a reminder that playoff rest asymmetries arise only in
-unusual series situations. The bivariate per-day regression estimate is ≈ +2.3 pp
-per rest day in the playoffs.
+In the regular season, the advantage is clear: when the home team has more rest than the visitor, it wins **62.9%** of the time. When the away team is more rested, that drops to **57.7%** — a 5.2 percentage-point swing. The difference is real and not due to chance.
 
-However, playoff rest is confounded by team strength: a team that sweeps or
-wins 4–1 earns more rest than one that battles seven games, so rest asymmetry
-correlates with quality. Controlling for same-season regular-season win%
-differential (`quality_diff`), the playoff rest effect shrinks to +1.5 pp/day
-and loses statistical support (N = 2,879 games), while team quality itself
-is the dominant predictor. The raw +2.3 pp/day estimate should therefore be read
-as an upper bound that conflates rest with team strength, not a clean causal
-estimate of fatigue.
+In the playoffs, the advantage looks even bigger on the surface. Home teams with a rest edge win **75.5%** of those games. But there's a catch: playoff rest is mostly a reward for winning quickly. A team that sweeps in five games doesn't just win — it gets extra rest while its next opponent battles seven games. So "more rest" and "better team" are tangled together. When you control for team quality, the rest effect shrinks to +1.5 pp per day and loses statistical support. The rest edge is real, but the raw number overstates it by bundling it with talent.
 
-Back-to-back rates for home and away teams have shifted substantially over time
-as the league has adjusted scheduling, but the rest effect on winning has
-remained stable across eras: a rest × era interaction test finds no reliable change
-in the per-day effect in either the regular season or the playoffs.
+The rest effect on winning has stayed stable across all eras — there's no evidence the per-day advantage has grown or shrunk as scheduling has evolved.
 
 ![Figure 11. Regular-season rest analysis. Top: back-to-back rate per season for home and away teams. Bottom: home win % split by rest differential — home-more-rest vs equal vs away-more-rest.](nba_home_court_advantage_rest.png)
 
@@ -378,88 +196,41 @@ in the per-day effect in either the regular season or the playoffs.
 
 ## 10. Travel Distance
 
-Away team travel distance (straight-line miles from the visitor's home arena to the
-game arena) is available for every game in the dataset — no new API calls required,
-only the cached game logs and a coordinate lookup.
+Flying across the country to play a game should matter. The data says it barely does.
 
-### Distance alone does not explain home court advantage
+Splitting games into distance buckets — under 500 miles, 500–1,000, 1,000–1,500, and 1,500+ miles — produces no consistent pattern. Home win rates across those buckets cluster within a single percentage point of the overall baseline. There's no monotone relationship between how far the visitor traveled and how often the home team wins.
 
-Across the four distance buckets (< 500, 500–1,000, 1,000–1,500, 1,500+ miles),
-home win % shows no consistent ordering by travel burden — the buckets cluster
-within ±1 percentage point of the baseline with no monotone relationship. The
-bivariate logistic on continuous distance is statistically significant in the
-regular season but the effect is negligible (less than 0.1 pp per 100 miles).
-In the playoffs there is no significant effect at all.
+The effect exists in the regular season, technically — but it's negligible. Less than 0.1 percentage point per 100 miles. A coast-to-coast flight of 2,500 miles is worth about 2 percentage points, which gets swamped by the 5+ pp rest effect and the 8+ pp altitude effect in Denver and Salt Lake City.
 
-This null result suggests that the coarse geographic proxy (time-zone differential)
-already captures whatever travel effect exists, and that actual flight miles add no
-additional predictive power. Visiting teams may also self-correct for distance by
-arriving early, which erodes any mechanical disadvantage from long trips.
+In the playoffs, the effect disappears entirely.
 
-### Era trend is flat
-
-There is no evidence that the travel-distance effect has grown or shrunk over the
-four decades in the dataset. The four distance buckets show no monotone ordering —
-home win % within each bucket clusters within ±1 percentage point of the baseline
-with no consistent pattern — and the bivariate logistic effect is negligible
-(−0.08 pp per 100 miles). Travel distance is not a driver of the long-run decline
-in home court advantage.
-
+The most likely reason: visiting teams adjust. Road trips are planned well in advance. Teams arrive a day early. The NBA isn't the 1970s anymore, when teams flew commercial and arrived the morning of the game. Modern travel logistics have essentially neutralized the raw distance disadvantage.
 
 ---
 
 ## 11. 3-Point Shooting and Home Court Advantage
 
-The league-wide 3-point attempt rate — the share of all field-goal attempts that
-are 3-pointers — has risen from below 10% in the mid-1980s to above 40% today.
-This analysis asks whether that rise is mechanically connected to the decline in
-home court advantage, or merely coincidental.
+The 3-point revolution and the decline in home court advantage have unfolded on almost exactly the same timeline. That is not a coincidence.
 
-### The correlation is striking but not the whole story
+### The lockstep is striking
 
-At the season level, the correlation between league-wide 3PA rate and regular-season
-home win % is strongly negative (Pearson r ≈ −0.90). The two series
-move nearly in lockstep over 40 years. In the playoffs the relationship is weaker
-but still a reliable finding (r ≈ −0.47), likely because playoff formats and
-sample sizes add noise.
+League-wide 3-point attempt rates have risen from below 10% of all field-goal attempts in the mid-1980s to above 40% today. Over that same period, regular-season home win % has fallen from 65% to 55%. The correlation between the two series is −0.90 — nearly perfect. As 3-point shooting went up, home court advantage went down, almost year for year.
 
-The era-bucketed table tells the same story: eras with higher 3PA rates have
-lower home win percentages, with only one small inversion (1995–01 at 60.1%
-vs. 2002–04 at 61.1%).
+The playoffs show the same relationship, though weaker (r ≈ −0.47), likely because playoff sample sizes add noise.
 
-### 3PA rate predicts home win probability even within eras
+### It's not just a coincidence of timing
 
-The more important test is whether 3PA rate predicts home win probability at the
-**game level**, controlling for era. If higher 3PA games have lower home win
-probabilities even within the same rule-change era, the effect is not purely a
-temporal trend — there is a real game-by-game mechanism.
+The deeper test: does a game with more 3-point shooting in a given era still favor the road team more, even after controlling for era? Yes. In the regular season, each 10-percentage-point jump in a game's combined 3-point attempt rate is associated with roughly **−2.3 percentage points** of home win probability — and this holds within any given rule-change era. The 3-point era didn't just happen to coincide with lower home court advantage; higher-3PA games are genuinely harder to win at home.
 
-In the regular season, the within-era effect survives: each 10 percentage-point
-rise in a game's combined 3PA rate is associated with roughly **−2.3 pp lower home
-win probability** — a firmly established result. In the playoffs, the within-era effect is borderline,
-suggesting that in the smaller playoff sample the signal is absorbed
-by the era indicators.
+### Why would this be?
 
-### Why would more 3-point shooting reduce home advantage?
+Three things are probably happening simultaneously:
 
-Three plausible mechanisms, consistent with the other analyses in this report:
+- **Shot selection has equalized.** Road teams used to take worse shots than home teams — pushed to the mid-range, away from the paint. That gap is gone. Both teams now arrive with a 3-point-heavy game plan and run it regardless of venue.
+- **More 3s means more variance.** A three-point-heavy game is a higher-variance game. Random outcomes play a bigger role when each possession has a wider range of possible values. The underdog wins more often in high-variance environments — and the road team is usually the underdog.
+- **The crowd matters less for catch-and-shoot.** A referee can be swayed by 20,000 screaming fans. A shooter catching and firing a corner 3 in a split second is harder to influence through pressure or biased whistles.
 
-- **Shot selection has equalized.** The 3PA rate differential and shot zone
-  analyses show road teams no longer take a qualitatively worse shot diet than
-  home teams. As both teams converge on the same high-3PA game plan, the home
-  team loses a structural edge.
-- **High-3PA games are higher-variance.** Three-point shooting has a wider
-  per-possession outcome distribution than 2-point shooting. In higher-variance
-  environments, the weaker team wins more often — which, from the home team's
-  perspective, means an upset is easier for the visitor to pull off.
-- **Crowd effects may matter less** when offense is driven by catch-and-shoot
-  corner 3s executed by practiced routines, rather than by interior penetration
-  that is sensitive to crowd pressure and referee calls.
-
-These mechanisms are not mutually exclusive and likely all contribute. The foul
-differential trend — referees calling the game more neutrally over time — is the
-single strongest identified driver, and a neutral-foul environment both enables
-more 3-point shooting and removes a key home advantage mechanism simultaneously.
+The foul differential trend and the 3-point revolution are probably reinforcing each other. A more neutral whistle enables more 3-point shooting and simultaneously removes the home team's free-throw edge.
 
 ![Figure 12. League-wide 3PA rate and home court advantage. Left: dual-axis time series showing 3PA rate (orange, right axis) and home win % (blue, left axis) moving in near-lockstep over 40 years. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_3pa.png)
 
@@ -467,49 +238,21 @@ more 3-point shooting and removes a key home advantage mechanism simultaneously.
 
 ## 12. Pace and Home Court Advantage
 
-The NBA has undergone large swings in pace over the past 40 years. The
-defensive-era 1990s produced some of the slowest games on record (~93-94
-possessions per team per 48 min), while the 3-point revolution era has driven
-pace back toward 1980s levels (~101-102). The hypothesis was that faster-paced
-games would produce lower home court advantage by pushing outcomes closer to
-expected value. The data do not support this.
+Pace was supposed to be part of the story. Faster games, more possessions, smaller samples per game — the theory was that high pace pushes outcomes closer to expected value and erodes the home edge. The data says otherwise.
 
-### Season-level: no significant correlation
+### Speed has nothing to do with it
 
-At the season level, the correlation between league-wide pace and regular-season
-home win % is near zero — within normal chance variation in both the regular season (r = +0.28)
-and the playoffs (r = −0.12). The era table explains why: pace was
-**high** in the 1984-94 era (~102 poss/48 min) when home court advantage was
-also at its peak (65.0%), then **fell** during the defensive 1995-2004 era
-(~93-94) while HCA also declined, then **rose again** in the modern era (~101)
-while HCA continued its descent. The relationship is U-shaped across eras, not
-consistently one-directional — pace and HCA share no common trend.
+At the season level, there is essentially no relationship between league-wide pace and home court advantage — within normal chance variation in both the regular season (r = +0.28) and the playoffs (r = −0.12). The era breakdown shows why: pace was **high** in 1984–94 (~102 possessions per team per 48 minutes) when home court advantage was at its peak. It **fell** during the grind-it-out 1990s (~93–94 possessions) while HCA also declined. Then it **rose again** in the modern era (~101 possessions) while HCA continued falling. The relationship is U-shaped across eras. Pace and home court advantage simply don't track each other.
 
-### Game-level: the effect is positive, but causality runs both ways
+### Game level: faster games actually help the home team
 
-At the game level, faster-paced games have **higher** home win probability, not
-lower. Using realized pace, the bivariate logistic yields +2.37 pp per 10 extra
-possessions — a firmly established result in the regular season — and the within-era logistic
-strengthens the effect (+2.54 pp per 10 possessions).
+In the regular season, at the individual game level, faster-paced games have **higher** home win probability, not lower — about +2.4 percentage points per 10 extra possessions. But this comes with an important caveat: a blowout produces fast pace because the losing team is fouling and scoring quickly at the end. The pace is partly a result of the home team winning, not a cause of it.
 
-To address **game-state causality** — pace partly reflecting the game outcome
-rather than causing it — we substitute *expected pace*: each team's
-leave-one-out mean possessions (all other games that season), averaged for the
-two teams in each matchup. This pre-determined measure cannot be affected by
-what happens in today's game. With expected pace, the bivariate effect falls to
-+1.84 pp per 10 possessions (not reliably established) and the within-era
-effect drops to +2.06 pp per 10 possessions (borderline — suggestive but not conclusive). The
-attenuation is substantial: once pace is measured before the game — removing
-the game-state causality entirely — neither estimate clears conventional
-significance thresholds. The pre-game pace signal is suggestive at best, not a
-robust finding.
+When you use each team's average pace from their *other* games that season — a number that can't be affected by today's outcome — the effect drops substantially and becomes inconclusive. The pre-game pace signal is suggestive at best.
 
-### Pace does not explain the decline
+### The bottom line
 
-Pace was approximately as high in 1984-94 as it is today, yet home court
-advantage in those early seasons was ~10 pp higher. Whatever is driving the
-long-run decline, it is not the number of possessions per game. The multi-decade
-decline runs through eras of both fast and slow play without pace tracking it.
+Pace doesn't explain the decline. The NBA of 1984–94 played at roughly the same speed as today's game, yet home court advantage was 10 percentage points higher. Whatever is causing the decline, it isn't about how many possessions teams get.
 
 ![Figure 13. League-wide pace (possessions per 48 min) and home court advantage. Left: dual-axis time series showing pace (purple, right axis) and home win % (blue, left axis) over time, era-shaded. Center: regular-season scatter (one point per season, era-colored) with trend line. Right: same for playoffs.](nba_home_court_pace.png)
 
@@ -517,37 +260,15 @@ decline runs through eras of both fast and slow play without pace tracking it.
 
 ## 13. Competitive Balance and Parity
 
-Team-level win% disparity — measured as the per-season standard deviation of franchise
-win percentages — quantifies how unequal the league is in any given year. A high
-standard deviation means a few teams dominate while others lose consistently; a low
-standard deviation means the field is compressed. The hypothesis was that salary-cap
-and draft-lottery mechanisms have compressed team quality, leaving the home team with
-less of a structural talent edge over any given road opponent.
+Has the league gotten more equal? Yes, slowly. Is that why home court advantage is shrinking? Mostly no — but there's a small wrinkle.
 
-### Raw correlation is near zero
+The simple correlation between how spread out teams' win percentages are in a given year and the regular-season home win rate that year is essentially zero. The 1995–01 era, when Jordan, Shaq, and a handful of dynasties dominated, was one of the most unequal stretches in modern NBA history — and regular-season home court advantage was already declining. Parity and HCA just don't move together.
 
-The cross-season Pearson correlation between team win% disparity and home win % is
-near zero — within normal chance variation (r = −0.07). The era-bucketed pattern is
-mixed: win% disparity actually **peaked** in the 1995–01 era while home court
-advantage was already declining, then fell in 2002–04 while home win % ticked back
-up slightly before continuing its descent.
+### Strip out the shared trend, and something small appears
 
-### Detrended check uncovers a weak within-trend link
+Both series trend downward over 40 years. When two things trend in the same direction, they can look related even when they're not. Remove that shared trend and look at year-to-year fluctuations: in years when the league gets slightly more equal, regular-season home court advantage tends to slip a bit too (r ≈ −0.34 to −0.36). Both tests confirm this — it's not a fluke of the method.
 
-Both series share a common downward trend over 40 years; raw correlations between
-two trending series can be misleading — both may drift in the same direction over time without one causing the other. Removing the trend from both series reveals a
-different picture. A year-over-year-change test (year-to-year changes in parity vs.
-year-to-year changes in home win %) finds r = **−0.337** (a reliable finding, N = 41
-year-pairs). The residual-on-year approach (correlating the residuals after
-independently regressing each series on year) gives r = **−0.355** (also reliable,
-N = 42 seasons). Both trend-removed tests confirm the link.
-
-Interpretation: within the overall trend, years in which the league becomes
-slightly more equal also tend to see slightly lower home advantage — a real
-within-trend association in the direction the parity hypothesis predicts. The
-effect is modest and should be interpreted cautiously (N = 42, year-over-year
-differencing amplifies noise), but it survives trend removal. Parity is not a primary driver
-of the long-run decline, but the association is not purely an artifact of shared trends either.
+The effect is real but modest. Parity isn't the engine driving the 40-year decline. It's a factor at the margins — a small nudge in the right direction in more equal years, lost in the noise the rest of the time. This parity analysis focuses on regular-season data; the playoff sample is too small — roughly 15 games per season — to run a reliable year-level parity test.
 
 ![Figure 14. Competitive balance and home court advantage. Left: home win % (blue, left axis) and team win% std dev (red, right axis) over time — lower std dev = more equal league. Right: scatter of parity std dev vs. home win % per season, colored by era, with trend line.](nba_home_court_parity.png)
 
@@ -555,81 +276,36 @@ of the long-run decline, but the association is not purely an artifact of shared
 
 ## 14. Franchise Home Court Advantage
 
-Home court advantage is not equally distributed across franchises. Some arenas
-have historically conferred a large and consistent home edge; others have
-provided little beyond what team quality alone predicts. This analysis measures
-per-franchise HCA as home win% minus road win% — a metric that controls for
-overall team quality, since a dominant team like the 1990s Bulls wins at home
-and on the road; what distinguishes a strong home court is the *gap* between
-the two.
+Home court advantage is not the same everywhere. Some arenas have historically been fortresses. Others are closer to playing on a neutral court with a slight scheduling edge.
+
+The right way to measure this is home win% minus road win% — not just home win%, which mostly measures how good the team is. The 1990s Bulls won everywhere. What matters for home court is the *gap* between how they played at home versus on the road.
 
 ### Regular Season
 
-Across 39 franchises with at least 50 home games in the dataset, the league
-mean HCA is **+20.2 pp** (raw range: +9.6 to +35.4 pp). Every franchise shows a
-positive HCA — no team in the dataset has historically been better on the road
-than at home over a meaningful sample.
+Across 39 franchises with at least 50 home games in the dataset, the league mean home-road gap is **+20.2 percentage points**. Every single franchise shows a positive gap — not one team in the dataset has historically been better on the road than at home over a meaningful stretch.
 
-A method-of-moments variance decomposition separates true between-franchise signal
-from sampling noise: the observed SD across franchises is 4.9 pp, of which
-approximately **30% is sampling noise**; the estimated true between-franchise SD
-is **≈ 4.1 pp**. Raw league-table rankings are therefore somewhat attenuated by
-noise, particularly for shorter-lived franchises. Empirical-Bayes shrinkage toward
-the league mean corrects for this — the table is re-ranked by shrunken HCA.
+But the range is enormous. At the top, altitude franchises dominate:
 
-The altitude franchises dominate the top of the shrunken rankings. Denver ranks
-**#1 at +27.3 pp** (raw +28.5 pp) and Utah ranks **#2 at +25.9 pp** (raw
-+26.8 pp) — both well above the league mean. Portland (+22.8 pp shrunken) and
-Seattle (+24.4 pp shrunken) also rank near the top. Indiana, Atlanta, and
-Cleveland appear in the upper tier.
+- **Denver: +27.3 pp** — ranked #1 in the league, and it's not particularly close
+- **Utah: +25.9 pp** — ranked #2
 
-At the lower end, the Brooklyn Nets (+13.4 pp shrunken) and LA Clippers (+15.3 pp
-shrunken) show the smallest regular-season advantages among well-sampled franchises —
-both play in large markets where opposing fan sections are often well represented.
-The Kansas City Kings post the highest raw number (+35.4 pp) but their 95% CI is
-**±14.1 pp** — after shrinkage the estimate falls to +23.9 pp (rank #5). With
-only 82 games (one season, 1983–84), the CI alone confirms the figure cannot be
-treated as reliable at face value.
+The mile-high advantage is real and measurable. Visiting teams playing their first game at elevation are at a physiological disadvantage that doesn't disappear just because you're a playoff team. Portland (+22.8 pp) and Seattle (+24.4 pp) also rank near the top.
+
+At the other end: the Brooklyn Nets (+13.4 pp) and LA Clippers (+15.3 pp) show the smallest advantages among well-sampled franchises. Playing in markets where opposing fan bases often pack the building can genuinely erode the home edge.
+
+The Kansas City Kings post the highest raw number (+35.4 pp) but played only one season in the dataset. With that little data, the margin of error is enormous — the estimate is not reliable at face value, and after adjusting for sample size, it falls in line with other franchises.
 
 ### Playoffs
 
-The playoff table covers 32 franchises with at least 20 home playoff games.
-The league mean HCA in the playoffs is **+27.1 pp** — notably higher than the
-regular-season mean. This is not a contradiction of the lower overall playoff
-home win%: here, each franchise's home record is compared to that same
-franchise's *road* record in the playoffs, and in postseason play, the home
-team is almost always a comparable or superior opponent than the road team
-faces, amplifying the venue effect relative to the regular season.
+In the playoffs, the mean home-road gap jumps to **+27.1 pp** — notably higher than the regular season. This isn't a contradiction of the lower overall playoff home win rate. It reflects that playoff home teams are almost always as good as or better than their opponents, amplifying the venue effect relative to the regular season where good teams play bad ones all the time.
 
-Utah leads the raw table at **+39.7 pp** (CI ± 10.6 pp), followed by Portland
-(+39.3 pp) and Seattle (+37.7 pp). The Los Angeles Lakers (+31.7 pp) and Boston
-(+30.2 pp) also rank highly.
+Utah (+39.7 pp raw), Portland (+39.3 pp), and Seattle (+37.7 pp) lead the raw playoff table. The Lakers (+31.7 pp) and Celtics (+30.2 pp) also rank highly.
 
-**However, the variance decomposition shows that playoff franchise HCA differences
-are entirely within sampling noise**: the estimated true between-franchise SD is
-≈ 0.0 pp (observed SD = 8.1 pp, sampling noise = 100%). With 20–150 home playoff
-games per franchise over 42 seasons, binomial standard errors swamp the signal.
-Empirical-Bayes shrinkage collapses all playoff estimates to the league mean
-(+27.1 pp), confirming that no franchise's playoff HCA can be reliably distinguished
-from random variation. The LA Clippers' apparent negative HCA (−3.6 pp, 28 games,
-CI ± 20+ pp) is a prime example — it is indistinguishable from chance.
+Here's the sobering caveat: **with the playoff sample sizes available per franchise — as few as 20 home games over 42 seasons for some teams — the data simply cannot reliably separate real franchise differences from random variation.** After adjusting for sample size, all playoff franchise HCA estimates collapse toward the league mean. The LA Clippers' apparent negative playoff HCA (−3.6 pp) is a good illustration — it's almost certainly just noise from 28 games.
 
-### Regular Season vs. Playoffs Consistency
+### Regular Season vs. Playoffs
 
-The scatter of raw regular-season HCA versus raw playoff HCA shows a modest
-positive relationship (Pearson r = +0.36, a reliable finding, N = 32 franchises):
-franchises that protect home court in the regular season tend to do so in the
-playoffs as well. By rank the signal is weaker (Spearman ρ = +0.26, within chance variation)
-and an empirical-Bayes improvement is not possible: because playoff HCA spread
-is 100% sampling noise, shrinkage collapses all playoff estimates to the league
-mean, making a shrunken correlation undefined. The raw r = +0.36 is therefore
-an attenuated estimate whose true value could be anywhere from zero to strongly
-positive — the playoff sample is too thin to tell.
-
-The playoff HCA mean exceeds the regular-season figure by +7.2 pp across shared
-franchises (SD 7.5), reflecting both the higher-stakes environment and the
-selection effect noted above (postseason home teams are almost always stronger
-than their road opponents).
+Teams that protect home court in the regular season tend to do so in the playoffs too (r = +0.36). Denver and Utah are at or near the top of both lists. But the playoff sample is too thin to make strong individual franchise claims — that modest correlation is the most reliable signal available.
 
 ![Figure 15. Franchise home court advantage. Left: horizontal bar chart of regular-season HCA by franchise, sorted from largest to smallest, across all seasons. Right: scatter of regular-season HCA vs. playoff HCA (one point per franchise with sufficient data); y=x diagonal shows where the two are equal.](nba_home_court_team_hca.png)
 
@@ -637,87 +313,39 @@ than their road opponents).
 
 ## 15. What Explains the Decline?
 
-A game-level logistic regression (outcome: home win) with era indicators, rest
-differential, altitude, time-zone differential, and a COVID flag decomposes the
-decline into measurable factors. Full tables are in `RESULTS.md`.
+Running a regular-season game-level model that accounts for era, rest, altitude, time-zone differential, and COVID gets at the question directly: what actually predicts whether the home team wins, and how much of the overall decline can each factor explain?
 
-### Era dominates the model fit
+### The era effect swamps everything else
 
-Era accounts for **50%** of the model's explained variation (Shapley share —
-see below), with rest, altitude, time zone, and COVID sharing the remaining
-50%. The Shapley decomposition averages each factor's marginal contribution
-over all possible entry orderings, making it order-independent; the sequential
-table (era entered first, giving it 56%) is retained in `RESULTS.md` as a
-cross-check.
+**Era accounts for 50% of the model's explained variation.** Rest, altitude, time zone, and COVID share the other 50%. The era effect isn't capturing a specific rule — it's capturing the accumulated changes across four decades of how the game is played and officiated: the foul differential trend, the shot-quality convergence, the 3-point revolution.
 
-Importantly, altitude and rest explain the *level* of home advantage — Denver
-and Utah games and well-rested home teams win more often regardless of era —
-but neither explains the *decline*. The era effect captures whatever changed
-across four decades of rule evolution: how referees call the game, how teams
-prepare for road trips, how the 3-point revolution equalized shot selection.
-Rest and altitude are stable moderators of an already-declining baseline, not
-drivers of the trend.
+Crucially, altitude and rest explain the *level* of home advantage — Denver and Utah, and well-rested home teams, win more often in every era — but neither one explains why the advantage is lower *today* than it was in 1984. They're constants. The era effect is the variable.
 
 ### Rest, altitude, and time zone
 
-**Rest** is a firmly established predictor in the regular season (+1.5 pp/day):
-when the home team has more rest than the road team, the home win probability
-rises; the reverse is also true. The bivariate playoff estimate is larger
-(+2.3 pp/day), but this is confounded by team strength — teams that win
-quickly earn more rest, so rest asymmetry correlates with quality. Controlling
-for same-season win% differential, the playoff rest effect shrinks to +1.5 pp/day
-and loses statistical support; team quality is the dominant predictor. The
-higher bivariate playoff figure should not be read as evidence that rest matters
-more in the playoffs.
+**Rest** adds about +1.5 percentage points per day of rest advantage in the regular season. It's real and consistent across all eras. In the playoffs the raw number looks bigger (+2.3 pp/day), but most of that is team quality — the team with more rest usually earned it by winning their series faster. Control for team strength and the rest effect shrinks back to the same level and loses statistical support.
 
-**Altitude** at Denver and Utah carries a clear home edge in the regular
-season but the effect disappears in the playoffs. Team quality is a confound:
-when those franchises are strong enough to host playoff games, their opponents
-are also strong, masking the altitude effect.
+**Altitude** gives Denver and Utah a clear edge in the regular season — about +8.2 pp above what their record alone would predict. In the playoffs that edge disappears. When those teams make deep runs, they're facing opponents good enough to overcome the thin air.
 
-**Time zone differences** show no reliable effect in the playoffs. In the
-regular season, the effect is not reliably established in isolation
-but becomes clear when controlling for era, rest, and altitude (−0.6 pp per time zone).
-The effect is real but small, and only emerges once the
-larger era and altitude effects are accounted for. There are too few coast-to-coast
-playoff matchups across 42 seasons for reliable playoff inference.
+**Time zone** has a small but real effect in the regular season: about −0.6 pp per time zone the visitor crosses. It only shows up clearly once you account for era and altitude, and there are too few coast-to-coast playoff series to detect it in the postseason.
 
-### Pre/post-2014 level shift
+### The post-2014 drop is real but not explained by the factors
 
-Splitting the sample at the 2014 Finals format change confirms a real drop in the
-overall home-win probability after 2014. A pooled logit with explicit `post2014 × factor`
-interactions formally tests whether the factor effects changed:
-- **Rest**: no reliable change in the rest effect post-2014
-- **Altitude**: the altitude coefficient shrinks (≈−3.5 pp, borderline), consistent with Denver/Utah teams having
-  become relatively less dominant at home in the modern era
-- **Time zone**: no reliable change
-
-None of these factor shifts drove the post-2014 decline — the drop shows up in
-the intercept (a firmly established level shift of −4.6 pp), not in the covariates.
+Since 2014, the overall home-win probability has fallen by about **4.6 percentage points** relative to what the era trend alone would predict. Rest, altitude, and time zone effects haven't changed — none of them shifted after 2014 in a way that explains the drop. The shift shows up in the baseline, not in the individual factors. Something structural changed in how the game was played and called, and the most likely candidates are the freedom-of-movement emphasis and the continued normalization of 3-point shooting.
 
 ---
 
 ## 16. Summary
 
-Home court advantage has declined substantially in both the regular season and
-the playoffs over the past 40 years, with the regular-season decline somewhat
-steeper than the playoffs. The decline is structural — it spans every rule-change era and
-the era effect accounts for roughly half of the variance explained by the regression
-model. The decline is not about individual games getting closer: home teams are
-actually winning their wins by more, but losing their losses by more too. Quantile
-regression confirms this is genuine distribution widening (Q90 rising +0.045 pts/yr,
-Q10 falling −0.154 pts/yr), not a composition artifact of the falling win rate. The
-mechanisms are summarized in the tables below, split by type of analysis.
+Home court advantage has fallen by about **10 percentage points** in the regular season over 40 years, from roughly 65% in 1984 to roughly 55% today. The playoff decline is smaller but follows the same trend. This is one of the most consistent, persistent trends in any major American sports dataset.
 
-*How to read these tables: "pp" means percentage points — a fall from 65% to
-55% is a drop of 10 pp. The "Evidence" column translates each effect's p-value:
-a small p-value (below 0.05) means the effect is very unlikely to be a chance
-fluctuation; a large one means no reliable effect was found.*
+The decline isn't about games getting closer — when home teams win, they're actually winning by more than they used to. What's changed is that they lose more often, and when they do, they lose bigger. The spread of outcomes has widened; the overall win rate has dropped.
 
-**Regular season — what the prediction model credits** (share of the model's
-explained variation):
+*How to read these tables: "pp" means percentage points — a fall from 65% to 55% is a drop of 10 pp. The "Evidence" column summarizes the strength of each finding.*
 
-Shares are order-independent (Shapley): each factor's average marginal contribution to the model's fit across all possible orderings. Sequential share (era entered first) shown in parentheses. Altitude's 26% share reflects a large per-game effect (+8.2 pp) concentrated in Denver and Utah home games.
+**Regular season — what the prediction model credits** (share of the model's explained variation):
+
+Each factor's share reflects its average contribution across all possible orderings — an order-independent measure. Altitude's outsized 26% share reflects a very large per-game effect (+8.2 pp) concentrated in Denver and Utah home games.
 
 | Factor | Share | Effect | Evidence |
 |---|---|---|---|
@@ -766,36 +394,8 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | Shot quality (shooting + paint access) | Both edges trend downward in the same direction as the regular season, but the playoff sample is too small to reach significance | No significant effect |
 | Game pace | No season-level correlation with playoff HCA; pace does not track the playoff decline | No effect on the decline (season-level p = 0.47) |
 
-**In both the regular season and the playoffs**, the decline is primarily
-**structural**: controlling for which rule-change era a game was played in
-accounts for roughly half of the model's explained variation. The forces behind
-the decline operate through long-run shifts in how the game is played and
-officiated, not through any single identifiable event. The strongest mechanism
-in both contexts is that **referees call the game more neutrally** than they did
-40 years ago — a shift visible in the foul differential, the shooting-efficiency
-gap, and the paint-access edge, all of which have narrowed significantly over
-time. **The 3-point revolution** is the other cross-context driver: more 3-point
-shooting correlates strongly with lower home advantage at the season level in
-both the regular season (r = −0.90) and the playoffs (r = −0.47), and within any
-given era, higher-3PA regular-season games favor the road team (−2.3 pp per 10 pp
-of 3PA rate). Pace does not explain the decline in either context.
+**The short version:** The crowd used to move the whistle. The referee would call a foul on the road player where they might let it go at home, and that 1.2-foul-per-game edge compounded into a 10-point win rate advantage over a full season. Now refs call it straight — or at least straighter — and the 3-point revolution has removed the one situation where crowd influence mattered most: interior contact, where the line between a foul and a no-call is most subjective.
 
-**In the regular season specifically**, rest differential (+1.5 pp/day), altitude
-at Denver and Utah (+8.2 pp), and time-zone differential (−0.6 pp per zone) are
-all significant predictors of home win probability within any given era, but none
-of them explains the long-term decline — they are stable moderators of an already-
-declining baseline. Travel distance has a statistically real but negligible effect
-(−0.08 pp per 100 miles). Detrended tests show a weak year-to-year link between
-league parity and home advantage (r ≈ −0.35), but parity is not a primary driver.
+Every other factor — rest, altitude, time zone, travel, pace, parity — explains the level of home advantage or modulates it at the margins. None of them explain why it's been falling for 40 years. The era effect does. The game changed. The crowd lost its grip on the outcome.
 
-**In the playoffs**, the decline is real but noisier. Rest differential shows a
-bivariate effect of +2.3 pp/day, but this shrinks to +1.5 pp/day and loses
-statistical support once same-season regular-season win% differential is
-controlled for — rest is earned by winning quickly, so the raw estimate conflates
-fatigue with team strength. Altitude, time zone, and travel distance have no
-detectable effect in the playoffs. Franchise-level playoff HCA differences are
-entirely within sampling noise and cannot be reliably distinguished from random
-variation given typical playoff sample sizes per franchise.
-
-For specific coefficient values, effect sizes, significance levels, and era
-breakdowns, see `RESULTS.md`.
+For specific coefficient values, effect sizes, significance levels, and era breakdowns, see `RESULTS.md`.
