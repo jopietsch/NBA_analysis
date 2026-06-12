@@ -731,34 +731,44 @@ Shares are order-independent (Shapley): each factor's average marginal contribut
 | COVID flag | 5% (seq: 1%) | Lower home win % in COVID-impacted seasons (2020–21) | Suggestive, not significant (p = 0.078) |
 | Time-zone differential | 2% (seq: 2%) | −0.6 pp per time zone the visitor crosses | Solid (p = 0.012) |
 
-**Regular season — mechanisms behind the decline**:
+**Regular season — confirmed mechanisms** (significant contributors to the decline):
 
 | Factor | What changed | Evidence |
 |---|---|---|
 | Referee fouls (refs more neutral) | Home teams' foul advantage shrank from 1.2 fewer fouls/game in 1984–94 to 0.2 today | Very strong (p < 0.001) |
 | Shot quality (shooting + paint access) | Home shooting-efficiency edge fell from +1.6 pp to +1.0 pp; home paint-access edge fell from +1.3 pp to +0.4 pp | Very strong (p < 0.001) |
 | League-wide 3-point shooting | Seasons with more 3-point shooting have lower home win % (correlation −0.90); even within an era, higher-3PA games favor the visitor (−2.3 pp per 10 pp of 3PA rate) | Very strong (p < 0.001) |
-| Travel distance | Longer trips barely hurt the visitor: −0.08 pp per 100 miles | Real but negligible (p = 0.010) |
-| Game pace (possessions/game) | No season-level correlation (p = 0.07); game-level effect is positive (faster games favor the home team: +2.4 pp per 10 possessions) but pace shows no common trend with HCA across eras — not a driver | Not a driver (no cross-era correlation) |
-| Competitive balance / parity | Raw cross-season correlation near zero (p = 0.68), but detrended tests show a weak negative link (r ≈ −0.35, p ≈ 0.02): more equal seasons tend to have slightly lower HCA | Weak within-trend association |
+
+**Regular season — tested, not a driver** (hypotheses examined and ruled out or negligible):
+
+| Factor | Finding | Evidence |
+|---|---|---|
+| Travel distance | Statistically real but negligible: −0.08 pp per 100 miles | Not a driver (p = 0.010, effect too small to matter) |
+| Game pace (possessions/game) | No season-level correlation with HCA; faster games favor the home team game-by-game, but pace has no common trend with the decline across eras | No effect on the decline (season-level p = 0.07) |
+| Competitive balance / parity | Raw cross-season correlation near zero; detrended tests show a weak year-to-year link (r ≈ −0.35, p ≈ 0.02) but parity explains none of the long-run trend | Not a primary driver (weak within-trend association only) |
 
 **Playoffs — what the prediction model credits**:
 
 | Factor | Effect | Evidence |
 |---|---|---|
-| Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (GLM p = 0.003, HAC p < 0.001, season-level trend) |
-| Rest differential | +2.3 pp/day bivariate, but shrinks to +1.5 pp/day (p = 0.146) controlling for team quality — effect likely confounded by team strength | Weaker than headline (bivariate p = 0.014, quality-controlled p = 0.146) |
-| Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | None — likely chance (p = 0.59) |
-| Time-zone / distance | No meaningful effect of either | None (p = 0.28 and p = 0.77) |
+| Era (structural decline) | Every era since 1984–94 has lower home advantage | Strong (GLM p = 0.003, HAC p < 0.001) |
+| Rest differential | +2.3 pp/day bivariate; shrinks to +1.5 pp/day and loses significance when same-season win% differential is controlled — effect is confounded by team strength | Confounded: bivariate p = 0.014, quality-controlled p = 0.146 (not significant) |
+| Altitude (Denver / Utah) | No altitude edge in the playoffs (−1.8 pp) | No significant effect (p = 0.59) |
+| Time-zone / distance | No meaningful effect of either | No significant effect (p = 0.28 and p = 0.77) |
 
-**Playoffs — mechanisms behind the decline**:
+**Playoffs — confirmed mechanisms** (significant contributors to the decline):
 
 | Factor | What changed | Evidence |
 |---|---|---|
 | Referee fouls (refs more neutral) | Home teams' foul advantage shrank from 1.6 fewer fouls/game in 1984–94 to 0.7 today | Strong (p < 0.01) |
-| League-wide 3-point shooting | Playoff seasons with more 3-point shooting have lower home win % (correlation −0.47) | Strong season-level (p = 0.002); weak within era (p = 0.054) |
-| Shot quality (shooting + paint access) | Both edges trend downward, but the playoff sample is too small to be sure | Not significant |
-| Game pace | No season-level correlation (p = 0.47); within-era game-level effect positive but small; pace does not track the playoff decline | Not a driver |
+| League-wide 3-point shooting | Playoff seasons with more 3-point shooting have lower home win % (correlation −0.47) | Strong season-level (p = 0.002); marginal within era (p = 0.054) |
+
+**Playoffs — tested, not a driver** (hypotheses examined and ruled out or inconclusive):
+
+| Factor | Finding | Evidence |
+|---|---|---|
+| Shot quality (shooting + paint access) | Both edges trend downward in the same direction as the regular season, but the playoff sample is too small to reach significance | No significant effect |
+| Game pace | No season-level correlation with playoff HCA; pace does not track the playoff decline | No effect on the decline (season-level p = 0.47) |
 
 **In both the regular season and the playoffs**, the decline is primarily
 **structural**: controlling for which rule-change era a game was played in
