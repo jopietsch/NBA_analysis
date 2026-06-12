@@ -253,7 +253,7 @@ def bucket_stats_by_era(seasons: list[str], stats: dict) -> tuple[dict, list[str
     """
     Average each per-season stat series within each rule-change era
     (ERA_DEFS). Works for any stats dict of the form {category: [per-season
-    values]} — used by both the altitude and time-zone analyses.
+    values]} — used by the margin analysis.
     """
     era_avgs: dict[str, list[float]] = {key: [] for key in stats}
     for _, y1, y2, _ in ERA_DEFS:
@@ -299,44 +299,6 @@ ALTITUDE_TEAMS = {
     "Denver Nuggets": 5280,
     "Utah Jazz": 4226,
 }
-
-
-def fetch_altitude_data(end_year: int, season_type: str) -> pd.DataFrame | None:
-    """
-    Per-home-game result from the cached game log, tagged with whether the
-    home team plays at elevation (Denver, Utah). HOME_WIN = 1 if the home
-    team won that game.
-    """
-    df = _load_game_log(end_year, season_type)
-    if df is None:
-        return None
-
-    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
-    if home.empty:
-        return None
-
-    home["HOME_WIN"] = (home["WL"] == "W").astype(int)
-    home["ALTITUDE"] = home["TEAM_NAME"].isin(ALTITUDE_TEAMS)
-    return home[["TEAM_NAME", "HOME_WIN", "ALTITUDE"]]
-
-
-def compute_altitude_stats(
-    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
-) -> tuple[list[str], dict]:
-    """Per-season home win % at each altitude city vs elsewhere."""
-    seasons: list[str] = []
-    stats: dict[str, list[float]] = {name: [] for name in ALTITUDE_TEAMS}
-    stats["other"] = []
-
-    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_altitude_data):
-        seasons.append(short_label(year))
-        other = g[~g["ALTITUDE"]]
-        stats["other"].append(100 * other["HOME_WIN"].mean() if len(other) else np.nan)
-        for name in ALTITUDE_TEAMS:
-            team_g = g[g["TEAM_NAME"] == name]
-            stats[name].append(100 * team_g["HOME_WIN"].mean() if len(team_g) else np.nan)
-
-    return seasons, stats
 
 
 # ── Time-zone analysis ────────────────────────────────────────────────────────

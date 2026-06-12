@@ -28,18 +28,7 @@ PANEL = "#ffffff"
 # One background shade per era (matches order of ERA_DEFS)
 ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
 
-# Display metadata for altitude, timezone, travel, and shot zone analyses
-ALTITUDE_COLORS = {
-    "Denver Nuggets": "#e8a33d",
-    "Utah Jazz":      "#7c6fce",
-    "other":          GRAY,
-}
-ALTITUDE_LABELS = {
-    "Denver Nuggets": "Denver (5,280 ft)",
-    "Utah Jazz":      "Utah (4,226 ft)",
-    "other":          "All other arenas (avg)",
-}
-
+# Display metadata for timezone, travel, and shot zone analyses
 TZ_COLORS = {"0": GRAY, "1": "#378add", "2": "#e8a33d", "3": "#e24b4a"}
 TZ_LABELS = {
     "0": "Same time zone",
