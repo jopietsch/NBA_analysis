@@ -51,7 +51,7 @@ Before updating FINDINGS.md, verify that the analysis outputs are current:
 3. Read the current FINDINGS.md.
 
 4. Update FINDINGS.md to reflect the current analysis. Rules:
-   - FINDINGS.md has fifteen ## sections (§1–§14 analyses + §15 synthesis + §16 summary).
+   - FINDINGS.md has thirteen ## sections (§1–§12 analyses + §13 summary).
      Do not rename or renumber sections without also updating any cross-references.
    - ### subheadings within a section are rendered as sub-headers in the PDF.
    - No specific coefficient values, R² values, or percentage points — those

@@ -190,7 +190,7 @@ All data from cache/ — same source as the plots above.
    ► Overall reg-season mean margin: +2.80 pts.
    ► Overall playoff mean margin:    +4.36 pts.
 
-─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§4 check) 
+─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§3 check) 
    home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.
    Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.
    All quantiles parallel → pure level effect (conditional divergence is artifact).
@@ -208,7 +208,7 @@ All data from cache/ — same source as the plots above.
 
    IQR change rate (Q90 − Q10 slope diff): +0.199 pts/yr
    ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
-     The conditional-on-outcome divergence in §4 reflects a real change in
+     The conditional-on-outcome divergence in §3 reflects a real change in
      distribution shape, not just a composition effect.
 
    Playoffs  (N = 2,272 games, 1997–2025)
@@ -223,7 +223,7 @@ All data from cache/ — same source as the plots above.
 
    IQR change rate (Q90 − Q10 slope diff): +0.200 pts/yr
    ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
-     The conditional-on-outcome divergence in §4 reflects a real change in
+     The conditional-on-outcome divergence in §3 reflects a real change in
      distribution shape, not just a composition effect.
 
 

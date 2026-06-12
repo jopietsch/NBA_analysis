@@ -173,52 +173,6 @@ def _add_trend_line(
             linewidth=linewidth, alpha=alpha, zorder=zorder)
 
 
-def _plot_season_era_panel(
-    ax: plt.Axes,
-    seasons: list[str],
-    pcts: list[float],
-    color: str,
-    title: str,
-    format_markers: bool = False,
-) -> None:
-    x = np.arange(len(seasons))
-    tick_step = max(1, len(seasons) // 14)
-    pt_colors = [RED if s in COVID_SEASONS else color for s in seasons]
-
-    ax.plot(x, pcts, color=color, linewidth=2, zorder=2)
-    ax.scatter(x, pcts, c=pt_colors, s=40, zorder=3, edgecolors="white", linewidths=0.8)
-
-    pcts_arr = np.array(pcts, dtype=float)
-    _shade_eras(ax, seasons)
-
-    for (_, y1, y2, _), era_color in zip(ERA_DEFS, ERA_COLORS):
-        era_idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
-        if len(era_idx) >= 2:
-            era_x = np.array(era_idx)
-            ze = np.polyfit(era_x, pcts_arr[era_x], 1)
-            ax.plot(era_x, np.poly1d(ze)(era_x), "--", color=era_color, linewidth=1.8, alpha=0.8)
-
-    covid_idx = [i for i, s in enumerate(seasons) if s in COVID_SEASONS]
-    if covid_idx:
-        ax.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5, alpha=0.12, color=RED, zorder=1)
-
-    if format_markers:
-        for change_year, change_label in PLAYOFF_FORMAT_CHANGES:
-            idx = next((i for i, s in enumerate(seasons) if label_to_year(s) == change_year), None)
-            if idx is None:
-                continue
-            ax.axvline(idx - 0.5, color="#444444", linestyle="-.", linewidth=1, alpha=0.6, zorder=1)
-            ax.text(idx - 0.4, 79, change_label, rotation=90, ha="left", va="top",
-                    fontsize=6.5, color="#444444", linespacing=1.2)
-
-    ax.set_title(title, fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
-    ax.set_xticks(x[::tick_step])
-    ax.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax.set_ylim(45, 80)
-    ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
-    ax.set_ylabel("Home win %", fontsize=10)
-
-
 # ── Plot functions ────────────────────────────────────────────────────────────
 def plot_results(
     reg_seasons: list[str], reg_pcts: list[float],
@@ -226,7 +180,7 @@ def plot_results(
     era_reg_avg: list[float], era_po_avg: list[float], era_labels_short: list[str],
     format_reg_avg: list[float], format_po_avg: list[float], format_labels_short: list[str],
 ) -> None:
-    """Build the 5-panel figure and save/show it."""
+    """Build the 3-panel figure and save/show it."""
     plt.rcParams.update({
         "font.family":        "DejaVu Sans",
         "axes.spines.top":    False,
@@ -239,43 +193,27 @@ def plot_results(
         "axes.axisbelow":     True,
     })
 
-    fig = plt.figure(figsize=(22.5, 17.5))
+    fig = plt.figure(figsize=(22.5, 11))
     fig.suptitle("NBA Home Court Advantage — A 40-Year Decline",
                  fontsize=18, fontweight="bold", y=0.995, color="#2c2c2a")
-    fig.text(0.5, 0.965,
+    fig.text(0.5, 0.955,
              "Data: NBA.com  |  Regular season & playoffs  |  1983-84 through 2024-25",
              ha="center", fontsize=9, color=GRAY)
 
-    gs = fig.add_gridspec(4, 4, hspace=0.4, wspace=0.32,
-                          height_ratios=[1, 0.45, 0.45, 1],
-                          left=0.07, right=0.97, top=0.94, bottom=0.09)
+    gs = fig.add_gridspec(2, 4, hspace=0.4, wspace=0.32,
+                          left=0.07, right=0.97, top=0.91, bottom=0.14)
 
     # ── Panel 1: season-by-season regular season vs playoffs ─────────────────
     ax1 = fig.add_subplot(gs[0, 1:3])
     _draw_season_overview(ax1, reg_seasons, reg_pcts, po_seasons, po_pcts)
 
-    # ── Panel 2: playoffs only, with a trend line per era ────────────────────
-    ax3 = fig.add_subplot(gs[1, 1:3])
-    _plot_season_era_panel(
-        ax3, po_seasons, po_pcts, GREEN,
-        "Playoffs: home win % per season, with a trend line per era",
-        format_markers=True,
-    )
-
-    # ── Panel 3: regular season only, with a trend line per era ──────────────
-    ax4 = fig.add_subplot(gs[2, 1:3])
-    _plot_season_era_panel(
-        ax4, reg_seasons, reg_pcts, BLUE,
-        "Regular season: home win % per season, with a trend line per era",
-    )
-
-    # ── Panel 4: era grouped bar chart ────────────────────────────────────────
-    ax2 = fig.add_subplot(gs[3, 0:2])
+    # ── Panel 2: era grouped bar chart ────────────────────────────────────────
+    ax2 = fig.add_subplot(gs[1, 0:2])
     _draw_paired_bars(ax2, era_reg_avg, era_po_avg, era_labels_short,
                       "Regular season vs playoffs\nhome win % by era")
 
-    # ── Panel 5: home win % by playoff-format period ──────────────────────────
-    ax5 = fig.add_subplot(gs[3, 2:4])
+    # ── Panel 3: home win % by playoff-format period ──────────────────────────
+    ax5 = fig.add_subplot(gs[1, 2:4])
     _draw_paired_bars(ax5, format_reg_avg, format_po_avg, format_labels_short,
                       "Regular season vs playoffs\nhome win % by playoff format period")
 
@@ -284,7 +222,7 @@ def plot_results(
     fig.text(0.5, 0.045, era_notes, ha="center", va="top",
              fontsize=7.5, color=GRAY, linespacing=1.6)
 
-    # Footnote: explain the playoff format changes marked on the playoffs panel
+    # Footnote: explain the playoff format changes behind the format-period panel
     format_notes = "  |  ".join(
         change_label.replace("\n", " ") for _, change_label in PLAYOFF_FORMAT_CHANGES
     )
@@ -309,17 +247,6 @@ def plot_results(
     _save("nba_home_court_advantage_season.png",
           lambda ax: _draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts),
           (14, 7))
-    _save("nba_home_court_advantage_playoffs_era.png",
-          lambda ax: _plot_season_era_panel(
-              ax, po_seasons, po_pcts, GREEN,
-              "Playoffs: home win % per season, with a trend line per era",
-              format_markers=True),
-          (14, 6))
-    _save("nba_home_court_advantage_regular_era.png",
-          lambda ax: _plot_season_era_panel(
-              ax, reg_seasons, reg_pcts, BLUE,
-              "Regular season: home win % per season, with a trend line per era"),
-          (14, 6))
     _save("nba_home_court_advantage_era_bars.png",
           lambda ax: _draw_paired_bars(ax, era_reg_avg, era_po_avg, era_labels_short,
                                        "Regular season vs playoffs\nhome win % by era"),

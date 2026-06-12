@@ -1160,7 +1160,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
 # ── Analysis 4b: Unconditional quantile regression on margins ─────────────────
 
 def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
-    """Unconditional quantile regression — tests whether 'polarization' in §4
+    """Unconditional quantile regression — tests whether 'polarization' in §3
     is genuine distribution widening or a composition artifact of the declining
     home win rate. (PLAN-STATS item 3.)
 
@@ -1169,7 +1169,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
     Lower quantiles declining while upper quantiles rise or hold → genuine
     variance widening (polarization confirmed).
     """
-    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§4 check)")
+    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§3 check)")
     print("   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.")
     print("   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.")
     print("   All quantiles parallel → pure level effect (conditional divergence is artifact).")
@@ -1210,7 +1210,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
             print(f"\n   IQR change rate (Q90 − Q10 slope diff): {spread_chg:+.3f} pts/yr")
             if spread_chg > 0.02:
                 print(f"   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).")
-                print(f"     The conditional-on-outcome divergence in §4 reflects a real change in")
+                print(f"     The conditional-on-outcome divergence in §3 reflects a real change in")
                 print(f"     distribution shape, not just a composition effect.")
             elif spread_chg < -0.02:
                 print(f"   ► Q90 falls / Q10 rises — distribution compressing.")
@@ -1219,7 +1219,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
                 rng = max(all_slopes) - min(all_slopes)
                 if rng < 0.05:
                     print(f"   ► All quantiles shift in parallel (spread change ≈ 0).")
-                    print(f"     The §4 conditional divergence is a composition artifact:")
+                    print(f"     The §3 conditional divergence is a composition artifact:")
                     print(f"     as home win % declines, marginal games flip sides and push")
                     print(f"     the conditional-win and conditional-loss means apart without")
                     print(f"     any genuine change in the distribution's shape.")
@@ -1943,12 +1943,12 @@ def run() -> None:
         # §2 Era and Format Period Analysis
         run_format_period_analysis(df)
         run_era_analysis(df)
-        # §4 Win Margin Trends
+        # §3 Win Margin Trends
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
-        # §5 Playoff Series Structure
+        # §4 Playoff Series Structure
         run_series_breakdown(df)
-        # §6 Franchise Home Court Advantage
+        # §5 Franchise Home Court Advantage
         reg_hca_stats = nba.compute_team_hca_stats(
             nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
         )
@@ -1958,17 +1958,17 @@ def run() -> None:
         )
         run_team_hca_analysis(reg_hca_stats, po_hca_stats)
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
-        # §7 The Usual Suspects: Rest, Travel, Altitude, and Time Zones
+        # §6 The Usual Suspects: Rest, Travel, Altitude, and Time Zones
         run_rest_bucket_analysis(df)
         run_travel_analysis(df)
         run_factor_summary(df)
         run_sequential_decomposition(df)
         run_stability_analysis(df)
-        # §8 Box-Score Differentials
+        # §7 Box-Score Differentials
         run_differential_analysis(df)
-        # §9 Shot Zone Analysis
+        # §8 Shot Zone Analysis
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
-        # §10 Referee Patterns
+        # §9 Referee Patterns
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",
             skip_years=nba.SKIP_PLAYOFF_YEARS,
@@ -1984,11 +1984,11 @@ def run() -> None:
                 print("   No officials met the minimum-games threshold.\n")
         else:
             print("   No cached referee data — run the analysis first to fetch it.\n")
-        # §11 3-Point Shooting and Home Court Advantage
+        # §10 3-Point Shooting and Home Court Advantage
         run_3pa_analysis(df)
-        # §12 Pace and Home Court Advantage
+        # §11 Pace and Home Court Advantage
         run_pace_analysis(df)
-        # §13 Competitive Balance and Parity
+        # §12 Competitive Balance and Parity
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
 
         print("\n" + "═" * _W + "\n")
