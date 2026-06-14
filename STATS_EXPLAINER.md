@@ -21,17 +21,18 @@ playoffs, assembled from the cached game logs. Each row carries:
 - `altitude_home` — 1 if the home team is Denver or Utah
 - `tz_diff` — absolute time-zone difference between the two franchises
 - box-score differentials (home minus away): fouls, FG%, eFG%, 3PA rate, 3P%, FT%
+- `tov_diff`, `reb_diff` — home-minus-away turnovers and total rebounds (the extra channels used by the mediation decomposition)
 - `margin` — home point differential
 - `game_in_series` — for playoff games, the game number (parsed from the game ID)
 - `distance_miles` — haversine distance from the away team's home arena to the game arena
 - `tpa_rate_avg` — both teams' combined 3PA as a share of combined FGA
 - `pace_avg` — estimated possessions per game (FGA − OREB + TOV + 0.44·FTA, averaged across both teams)
-- `expected_pace` — leave-one-out pace: each team's average pace across all its *other* games that season, averaged for the two teams in this game. This matters for the pace analysis (Section 18): realized pace in a game is partly *caused* by the outcome (blowouts produce garbage-time possessions), so using each team's typical pace from other games removes that endogeneity.
+- `expected_pace` — leave-one-out pace: each team's average pace across all its *other* games that season, averaged for the two teams in this game. This matters for the pace analysis (Section 20): realized pace in a game is partly *caused* by the outcome (blowouts produce garbage-time possessions), so using each team's typical pace from other games removes that endogeneity.
 
-For playoff rest analyses, `quality_diff` is added: home team regular-season
-win% minus away team regular-season win% in the same season. Playoff rest is
-earned by winning series quickly, so rest and team strength are confounded;
-this column is the control.
+For playoff rest and seeding analyses, `quality_diff` is added: home team
+regular-season win% minus away team regular-season win% in the same season.
+Playoff rest is earned by winning series quickly, so rest and team strength are
+confounded; this column is the control.
 
 ---
 
@@ -71,45 +72,15 @@ No individual playoff era reaches significance — single playoff eras are just
 
 ---
 
-## 2. Playoff Format Periods (`run_format_period_analysis`)
-
-**The data.** Playoff games only (3,207), grouped by the league's playoff
-scheduling formats: 1984, 1985–02, 2003–13, and 2014–25 (the 2014 change moved
-the Finals from 2-3-2 back to 2-2-1-1-1).
-
-**The approach.** Three layers:
-
-1. Raw home win % per format period.
-2. **Two-proportion z-tests** between consecutive periods — the simplest test of
-   whether the win rate actually moved at each boundary.
-3. A **logistic regression** of `home_win ~ year + format_period`, plus a
-   **likelihood-ratio (LR) test** comparing it against `home_win ~ year` alone.
-
-**Why.** The raw comparison (step 2) shows a big, significant drop at the 2014
-boundary (−6.4 pp, p = 0.004). But HCA was *also* declining smoothly throughout —
-so any late-period dummy would look negative even if the format change did
-nothing. Step 3 separates the two stories: if the format dummies still matter
-after the year trend is in the model, the change had its own effect; if not, the
-drop is just the trend passing through the boundary.
-
-**What the results mean.** Once the year trend is controlled, no format dummy is
-significant (all p ≈ 0.29) and the LR test for the dummies jointly is p = 0.235.
-The post-2014 playoff drop is fully consistent with the secular decline; the
-format change itself is exonerated. This is the canonical example in this project
-of why "raw difference between periods" and "effect of the boundary" are
-different questions.
-
----
-
-## 3. Rule-Change Eras (`run_era_analysis`)
+## 2. Rule-Change Eras (`run_era_analysis`)
 
 **The data.** All games, split by the six rule-change eras (1984–94, 1995–01,
 2002–04, 2005–17, 2018–22, 2023–25), run separately for regular season (47,882
 games) and playoffs (3,207).
 
-**The approach.** Identical to Section 2 but with era boundaries instead of
-format boundaries: raw win % per era, two-proportion z-tests between consecutive
-eras, then `home_win ~ year + C(era)` with an LR test against year-only.
+**The approach.** Raw win % per era, two-proportion z-tests between consecutive
+eras, then `home_win ~ year + C(era)` with a **likelihood-ratio (LR) test**
+against year-only.
 
 **Why.** The question is whether the 40-year decline happened as a *smooth
 drift* or in *discrete steps* at specific rule changes. The z-tests find the
@@ -124,11 +95,12 @@ decline is mostly smooth drift *plus one genuine discrete drop* at the 1994–95
 hand-checking rules. In the playoffs, nothing survives: no z-test is significant
 and the LR test is p = 0.879 — the playoff decline is pure drift, with no
 rule-change fingerprints. (Small samples mean limited power, but there is simply
-no signal there.)
+no signal there.) The same trend-vs-boundary logic recurs for the 2014 Finals
+format change in Section 16.
 
 ---
 
-## 4. Win Margin Trends (`run_margin_analysis`)
+## 3. Win Margin Trends (`run_margin_analysis`)
 
 **The data.** Home point differential per game, available from 1996–97 onward
 (34,311 regular-season and 2,272 playoff games), split three ways: all games,
@@ -149,24 +121,24 @@ significant. The playoffs show the same conditional divergence (wins +0.152
 pts/yr, losses −0.076) with a flat overall margin. But conditional-on-outcome
 means have a built-in artifact: as the home win rate falls, games near zero
 margin flip from narrow wins to narrow losses, which mechanically pushes both
-conditional means apart. Section 5 exists to test whether the divergence is
+conditional means apart. Section 4 exists to test whether the divergence is
 real or just that artifact.
 
 ---
 
-## 5. Win Margin Polarization (`run_quantile_margin_analysis`)
+## 4. Win Margin Polarization (`run_quantile_margin_analysis`)
 
-**The data.** The same margin data as Section 4.
+**The data.** The same margin data as Section 3.
 
 **The approach.** **Quantile regression** of margin on year at q = 0.10, 0.25,
 0.50, 0.75, 0.90 — fitting a separate trend line through each part of the margin
 distribution, *unconditional* on who won.
 
-**Why.** This is the clean test of the artifact problem in Section 4. Quantiles
+**Why.** This is the clean test of the artifact problem in Section 3. Quantiles
 of the full distribution don't condition on the outcome, so they can't be fooled
 by games switching sides. Two diagnostic patterns: if all five quantile slopes
 are parallel, the distribution is just shifting down (a pure level effect, and
-the Section 4 divergence is a composition artifact). If the bottom quantile
+the Section 3 divergence is a composition artifact). If the bottom quantile
 falls while the top rises, the distribution is genuinely widening —
 polarization is real.
 
@@ -180,93 +152,87 @@ bookkeeping artifact.
 
 ---
 
-## 6. Playoff Series Structure (`run_series_breakdown`)
+## 5. Foul & Shooting Differentials by Era (`run_differential_analysis`)
 
-**The data.** All playoff games with a parseable game number, G1 through G7
-(494 down to 183 games as series lengths thin out).
+**The data.** Per-game home-minus-away differentials in six box-score metrics —
+personal fouls, FG%, eFG%, 3PA rate, 3P%, FT% — for all games in both contexts.
 
-**The approach.** Home win % per game number; a **chi-square contingency test**
-of whether home win % is uniform across game numbers; and a **weighted OLS trend**
-of home win % on game number (weights = games per game number).
+**The approach.** Era-bucketed means per metric, plus an **OLS trend on year**
+per metric with significance stars. Negative foul diff = referees call fewer
+fouls on the home team.
 
-**Why.** Two distinct hypotheses live here. The chi-square asks "does game
-number matter at all?" The trend line asks the specific popular theory that
-road teams adapt as a series progresses (which would show as a negative slope —
-home win % falling in later games).
+**Why.** These differentials are the *mechanisms* of HCA — the measurable things
+home teams get on the court. The era means show levels; the year trends show
+which mechanisms are eroding, which is the heart of research question 3.
 
-**What the results mean.** Game number matters enormously (χ²(6) = 80.4,
-p < 0.001) but there is no monotonic trend (−0.99 pp/game, p = 0.58). The
-pattern is entirely venue alternation: G1/G2/G5 at the higher seed run 69–75%
-home win rates; G3/G4/G6 at the lower seed run 55–56%. G7, back at the higher
-seed, is 64.5%. The "road teams figure it out by game 6" story has no support —
-what looks like series dynamics is just which arena the game is in, plus the
-fact that the higher seed is usually the better team.
+**What the results mean.** Two mechanisms are clearly eroding and one is not:
 
----
+- **Foul bias** collapsed: regular-season home foul advantage went from −1.23
+  fouls/game (1984–94) to −0.20 (2023–25), trend +0.023/yr, p < 0.001 — an ~83%
+  reduction. The playoffs show the same direction (−1.58 → −0.70, trend
+  +0.020/yr, p < 0.01) but retain about twice the residual bias.
+- **The shooting edge** is shrinking in the regular season: FG% diff trend
+  −0.020 pp/yr and eFG% −0.015 pp/yr (both p < 0.001), from ~+1.6 pp to
+  ~+0.7–1.0 pp. Playoff shooting trends point the same way but aren't
+  significant — the playoff shooting edge has held up better.
+- **3PA rate diff** trends positive (home teams historically took *fewer*
+  threes than visitors; that gap is closing), consistent with league-wide
+  shot-selection convergence. 3P% and FT% diffs show no significant trend —
+  those were never large or changing.
 
-## 7. Franchise Home Court Advantage (`run_team_hca_analysis`)
-
-**The data.** Per-franchise career totals across all 42 seasons: home win %,
-road win %, and HCA = home% − road% (subtracting road win % controls for the
-franchise just being good). 39 regular-season franchises (≥50 home games) and
-32 playoff franchises (≥20).
-
-**The approach.** Three pieces:
-
-1. **Binomial confidence intervals** on each franchise's raw HCA.
-2. A **method-of-moments variance decomposition**: the observed variance of HCA
-   across franchises = true between-franchise variance + average sampling
-   variance. Subtracting the (computable) sampling part estimates how much
-   real spread exists.
-3. **Empirical-Bayes shrinkage**: each franchise's estimate is pulled toward
-   the league mean in proportion to how noisy it is —
-   weight = true_var / (true_var + sampling_var). Noisy estimates (few games)
-   get pulled hard; precise ones barely move.
-
-**Why.** Raw franchise HCA tables are leaderboard bait: small-sample franchises
-land at the extremes purely by luck (the Kansas City Kings' +35.4 raw HCA rests
-on 82 home games). Shrinkage produces rankings you'd actually bet on, and the
-variance decomposition says upfront whether *any* real franchise differences
-exist before ranking them.
-
-**What the results mean.** The two contexts give opposite answers. In the
-regular season, true between-franchise spread is real: observed SD 4.9 pp, only
-30% of it sampling noise, true SD ≈ 4.1 pp. Denver (+27.3 shrunken) and Utah
-(+25.9) genuinely top the table — consistent with the altitude finding in
-Section 11. In the playoffs, sampling noise accounts for 100% of the observed
-spread: true between-franchise SD ≈ 0, and shrinkage collapses every franchise
-to the league mean (+27.1 pp). Utah's raw +39.7 playoff HCA and the Clippers'
-raw −3.6 are both indistinguishable from the same underlying value. No franchise
-has demonstrably special playoff home court.
+Section 6 takes these differentials and quantifies how much of the HCA level and
+its decline each one accounts for.
 
 ---
 
-## 8. Franchise HCA Consistency (`run_hca_consistency_analysis`)
+## 6. Mediation — Box-Score Channels (`run_mediation_analysis`)
 
-**The data.** The 32 franchises that appear in both tables from Section 7.
+**The data.** All games with the four home-minus-away channel differentials:
+eFG% (shooting), fouls (which carries the free-throw-attempt channel),
+turnovers, and rebounds — 47,879 regular-season and 3,207 playoff games. FT%
+diff is excluded as negligible (mean ≈ +0.3 pp).
 
-**The approach.** **Pearson and Spearman correlations** between regular-season
-and playoff HCA across franchises, computed on raw values and (where defined)
-on shrunken values — shrinkage reduces the attenuation bias that measurement
-noise inflicts on correlations.
+**The approach.** A **linear-probability model (LPM)** — OLS of `home_win` on the
+four differentials — with cluster-robust SEs by season, used to drive two exact
+accounting identities:
 
-**Why.** If home court advantage is a stable property of an arena/fanbase, the
-same franchises should top both lists. The two correlation flavors check
-robustness: Pearson for the linear relationship, Spearman for rank agreement
-(insensitive to outliers).
+1. **Level identity:** mean win % = intercept + Σ (coef × mean diff). This splits
+   the home edge (the amount above a coin flip) into a contribution from each
+   channel.
+2. **Trend identity:** total pp/yr = unmediated pp/yr + Σ (coef × channel
+   trend/yr). This splits the *decline* into per-channel contributions, using
+   each channel differential's own year-trend (from the Section 5 template).
 
-**What the results mean.** The raw Pearson correlation is positive and just
-significant (r = +0.356, p = 0.045) but Spearman is not (p = 0.148) — weak
-evidence that regular-season home-court strength carries into the playoffs.
-The shrunken correlation is undefined because playoff true variance is zero
-(Section 7), which is itself the deeper finding: there is no reliable
-franchise-level playoff signal to correlate. One solid descriptive fact: playoff
-HCA runs about +7.2 pp higher than regular-season HCA for the same franchises —
-home court is worth more in the postseason, uniformly, for everyone.
+**Why an LPM, not a logit.** The whole point is the additive decomposition —
+contributions that sum exactly to the level and to the trend. That additivity
+holds only in a linear model; a logit's nonlinearity breaks the identity. The
+usual LPM cost (fitted probabilities can leave [0,1]) is irrelevant for an
+accounting exercise. The output is careful to call these channels *proximate* —
+how HCA expresses itself in the box score — so this is mediation in the
+accounting sense, not deep causal identification.
+
+**What the results mean.** The four channels capture nearly all of HCA's level in
+both contexts and nearly all of its regular-season decline:
+
+- **Regular-season level:** channels carry 95% of the +10.3 pp home edge.
+  Shooting (eFG%) is the largest single channel at 43% (+4.4 pp), then rebounds
+  25% (+2.6 pp), fouls 14% (+1.5 pp), turnovers 13% (+1.3 pp); 5% unexplained.
+- **Regular-season trend:** channels carry 95% of the −0.245 pp/yr decline,
+  spread fairly evenly across rebounds (29%), turnovers (28%), shooting (21%),
+  and fouls (18%); only 5% is unmediated.
+- **Playoffs:** channels carry 94% of the level but only 65% of the decline —
+  35% of the playoff decline runs outside the measured box-score channels.
+
+Two cautions. First, turnovers and rebounds surface as large contributors here
+even though `FINDINGS.md` doesn't headline them as "drivers": their trends are
+plausibly downstream of the same shifts (officiating, the move to the perimeter),
+so an accounting share is not a causal claim. Second, the playoff numbers fold in
+the seed-quality gap — the home team is usually the better team — which Section 15
+isolates and controls.
 
 ---
 
-## 9. Rest Differential — Buckets and Era Stability (`run_rest_bucket_analysis`)
+## 7. Rest Differential — Buckets and Era Stability (`run_rest_bucket_analysis`)
 
 **The data.** All games with computable rest for both teams (47,215 regular
 season, 2,879 playoffs), bucketed into away-more-rested / equal / home-more-rested.
@@ -285,39 +251,14 @@ could have contributed to the HCA decline?
 57.7% (away more rested) to 62.9% (home more rested), χ² p < 0.001, roughly
 +1–3 pp per day of rest edge in every era. The playoff buckets are more extreme
 (75.5% when home has more rest) but tiny (139 games) — and confounded, see
-Section 11. The key result is the interaction test: p = 0.434 (RS) and 0.750
+Section 8. The key result is the interaction test: p = 0.434 (RS) and 0.750
 (playoffs) — **no evidence the rest effect changed across eras**. Rest is a
 real component of any given night's HCA, but a stable one; it cannot explain
 the 40-year decline.
 
 ---
 
-## 10. Travel Distance (`run_travel_analysis`)
-
-**The data.** All games with arena coordinates for both teams; distance is the
-haversine (great-circle) miles from the away team's home arena to the game arena.
-
-**The approach.** Win % by distance bucket (0–500, 500–1000, 1000–1500, 1500+
-miles), plus a **bivariate logistic regression** of `home_win ~ distance_miles`
-with **cluster-robust standard errors clustered on season** — games within a
-season share league-wide conditions, so treating them as independent would
-understate the standard errors.
-
-**Why.** "The road team is tired from the flight" is one of the oldest HCA
-folk theories, and distance is cleanly measurable. Buckets show the shape;
-the logistic puts a per-mile number and CI on it.
-
-**What the results mean.** Nearly nothing. The regular-season coefficient is
-statistically significant (p = 0.010) but practically trivial: −0.08 pp per 100
-miles, so a 2,500-mile cross-country trip costs the visitor about 2 pp — and the
-buckets don't even decline monotonically (500–1000 miles has the *highest* home
-win rate). With N = 47,882, significance is cheap; the effect size is the story.
-In the playoffs the effect is null outright (p = 0.708). Travel does not explain
-HCA's existence or its decline.
-
----
-
-## 11. Rest, Altitude, and Time Zone (`run_factor_summary`)
+## 8. Rest, Altitude, and Time Zone (`run_factor_summary`)
 
 **The data.** Games with complete rest and time-zone features: 47,215 regular
 season, 2,879 playoffs.
@@ -328,7 +269,7 @@ targeted follow-up: playoff rest re-estimated with `quality_diff` (the home–aw
 gap in regular-season win %) added as a control.
 
 **Why bivariate.** This section answers "does each factor matter at all?" in
-its simplest form; the multivariable versions live in Section 12. The playoff
+its simplest form; the multivariable versions live in Section 9. The playoff
 quality control exists because playoff rest is endogenous: teams earn extra rest
 by sweeping, and teams that sweep are better teams. Without the control, the
 rest coefficient absorbs team quality.
@@ -351,7 +292,7 @@ rest coefficient absorbs team quality.
 
 ---
 
-## 12. What Explains the Regular-Season Decline? (`run_sequential_decomposition`)
+## 9. What Explains the Regular-Season Decline? (`run_sequential_decomposition`)
 
 **The data.** Regular-season games with complete features (47,215).
 
@@ -382,11 +323,11 @@ by going first), altitude 26%, rest 18%, with time zone and COVID under 5%
 each. Reading it back: the situational factors (rest, altitude) explain which
 *games* home teams win, but the era structure — the thing that changed over
 40 years — is half the story, and none of the situational factors changed
-(Sections 9, 13), so they can't be what drove the decline.
+(Sections 7, 10), so they can't be what drove the decline.
 
 ---
 
-## 13. Pre/Post-2014 Coefficient Stability (`run_stability_analysis`)
+## 10. Pre/Post-2014 Coefficient Stability (`run_stability_analysis`)
 
 **The data.** Regular-season games with complete features, split at 2014
 (32,975 before, 14,240 after).
@@ -407,68 +348,12 @@ significant (rest p = 0.154, altitude p = 0.083, tz p = 0.865), but the post-201
 level shift is large and unambiguous (−4.6 pp, p < 0.001). Home teams kept their
 rest and altitude edges at full strength; they simply started winning less for
 reasons those factors don't capture — pointing to the foul-bias and shot-selection
-channels in Sections 14–15. (Altitude's −3.5 pp interaction is the closest call
+channels in Sections 5 and 12. (Altitude's −3.5 pp interaction is the closest call
 and worth a glance if more data arrives, but it doesn't reach significance.)
 
 ---
 
-## 14. Foul & Shooting Differentials by Era (`run_differential_analysis`)
-
-**The data.** Per-game home-minus-away differentials in six box-score metrics —
-personal fouls, FG%, eFG%, 3PA rate, 3P%, FT% — for all games in both contexts.
-
-**The approach.** Era-bucketed means per metric, plus an **OLS trend on year**
-per metric with significance stars. Negative foul diff = referees call fewer
-fouls on the home team.
-
-**Why.** These differentials are the *mechanisms* of HCA — the measurable things
-home teams get on the court. The era means show levels; the year trends show
-which mechanisms are eroding, which is the heart of research question 3.
-
-**What the results mean.** Two mechanisms are clearly eroding and one is not:
-
-- **Foul bias** collapsed: regular-season home foul advantage went from −1.23
-  fouls/game (1984–94) to −0.20 (2023–25), trend +0.023/yr, p < 0.001 — an ~83%
-  reduction. The playoffs show the same direction (−1.58 → −0.70, trend
-  +0.020/yr, p < 0.01) but retain about twice the residual bias.
-- **The shooting edge** is shrinking in the regular season: FG% diff trend
-  −0.020 pp/yr and eFG% −0.015 pp/yr (both p < 0.001), from ~+1.6 pp to
-  ~+0.7–1.0 pp. Playoff shooting trends point the same way but aren't
-  significant — the playoff shooting edge has held up better.
-- **3PA rate diff** trends positive (home teams historically took *fewer*
-  threes than visitors; that gap is closing), consistent with league-wide
-  shot-selection convergence. 3P% and FT% diffs show no significant trend —
-  those were never large or changing.
-
----
-
-## 15. Shot Zone Differentials by Era (`run_shot_zone_analysis`)
-
-**The data.** Season-level (not game-level) home-minus-road differences in the
-share of FGA taken from four zones — paint, mid-range, corner 3, above-break 3 —
-from the NBA's shot-location tables, available only from 1996–97 (29 regular
-seasons, 28 playoff seasons).
-
-**The approach.** Same template as Section 14: era means per zone plus an OLS
-trend on year. N is seasons, not games, so power is much lower.
-
-**Why.** Section 14 shows home teams shoot *better*; this section shows they
-historically also shot from *better places*. Zone shares isolate shot selection
-from shot making.
-
-**What the results mean.** The home paint advantage is evaporating in the
-regular season: +1.28 pp of FGA share in 1995–01 down to +0.37 in 2023–25
-(trend −0.037/yr, p < 0.001), with the mid-range deficit shrinking in mirror
-image (+0.024/yr, p < 0.001). Visiting teams now generate paint shots nearly as
-well as home teams — analytics-driven offense doesn't care where it's played.
-The playoff trends point the same direction (paint −0.030/yr) but are not
-significant on only 28 seasons of noisier data; the 2023–25 playoff paint edge
-(+1.58) remains near its historical level, so the convergence is only firmly
-established for the regular season.
-
----
-
-## 16. Referee Crew Home Foul Bias — Playoffs (`run_referee_analysis`)
+## 11. Referee Crew Home Foul Bias — Playoffs (`run_referee_analysis`)
 
 **The data.** Per-official playoff records built from box-score officials data:
 for each of the 42 officials with ≥50 playoff games, the mean and SD of
@@ -506,13 +391,39 @@ loosely. The era decomposition shows compression over time: mean bias fell from
 −2.24 (1995–01) to −0.79 (2023–25), and in the recent eras the true
 between-official SD estimates hit zero — modern officials are both less
 home-favoring and more uniform. (The headline numbers in `FINDINGS.md` quoting
-"−1.6 → −0.7" come from Section 14's game-level playoff table; this section's
+"−1.6 → −0.7" come from Section 5's game-level playoff table; this section's
 −1.20 league mean is an *across-officials* average and differs slightly by
 construction.)
 
 ---
 
-## 17. League-Wide 3-Point Shooting (`run_3pa_analysis`)
+## 12. Shot Zone Differentials by Era (`run_shot_zone_analysis`)
+
+**The data.** Season-level (not game-level) home-minus-road differences in the
+share of FGA taken from four zones — paint, mid-range, corner 3, above-break 3 —
+from the NBA's shot-location tables, available only from 1996–97 (29 regular
+seasons, 28 playoff seasons).
+
+**The approach.** Same template as Section 5: era means per zone plus an OLS
+trend on year. N is seasons, not games, so power is much lower.
+
+**Why.** Section 5 shows home teams shoot *better*; this section shows they
+historically also shot from *better places*. Zone shares isolate shot selection
+from shot making.
+
+**What the results mean.** The home paint advantage is evaporating in the
+regular season: +1.28 pp of FGA share in 1995–01 down to +0.37 in 2023–25
+(trend −0.037/yr, p < 0.001), with the mid-range deficit shrinking in mirror
+image (+0.024/yr, p < 0.001). Visiting teams now generate paint shots nearly as
+well as home teams — analytics-driven offense doesn't care where it's played.
+The playoff trends point the same direction (paint −0.030/yr) but are not
+significant on only 28 seasons of noisier data; the 2023–25 playoff paint edge
+(+1.58) remains near its historical level, so the convergence is only firmly
+established for the regular season.
+
+---
+
+## 13. League-Wide 3-Point Shooting (`run_3pa_analysis`)
 
 **The data.** Per-game combined 3PA rate (`tpa_rate_avg`: both teams' threes as
 a share of both teams' FGA), in both contexts.
@@ -545,12 +456,191 @@ the decline.
 
 ---
 
-## 18. Pace (`run_pace_analysis`)
+## 14. Playoff Series Structure (`run_series_breakdown`)
+
+**The data.** All playoff games with a parseable game number, G1 through G7
+(494 down to 183 games as series lengths thin out).
+
+**The approach.** Home win % per game number; a **chi-square contingency test**
+of whether home win % is uniform across game numbers; and a **weighted OLS trend**
+of home win % on game number (weights = games per game number).
+
+**Why.** Two distinct hypotheses live here. The chi-square asks "does game
+number matter at all?" The trend line asks the specific popular theory that
+road teams adapt as a series progresses (which would show as a negative slope —
+home win % falling in later games).
+
+**What the results mean.** Game number matters enormously (χ²(6) = 80.4,
+p < 0.001) but there is no monotonic trend (−0.99 pp/game, p = 0.58). The
+pattern is entirely venue alternation: G1/G2/G5 at the higher seed run 69–75%
+home win rates; G3/G4/G6 at the lower seed run 55–56%. G7, back at the higher
+seed, is 64.5%. The "road teams figure it out by game 6" story has no support —
+what looks like series dynamics is just which arena the game is in, plus the
+fact that the higher seed is usually the better team.
+
+---
+
+## 15. Playoff HCA — Seeding Quality Decomposition (`run_playoff_quality_decomposition`)
+
+**The data.** All 3,207 playoff games with `quality_diff` = home team's
+regular-season win % minus the away team's, same season.
+
+**The approach.** Three pieces:
+
+1. **Year-trend comparison across three logits** — year only, quality only,
+   year + quality_diff — to see how much of the playoff decline is *absorbed*
+   once the team-quality gap is in the model (reported as "% of the year
+   coefficient retained").
+2. **A trend test on mean `quality_diff` over seasons** — has the seed-quality
+   gap itself narrowed over time, which could mimic a home-court decline?
+3. **A lower-seed-at-home check** — home win % in G3/G4 games where the home
+   team is objectively the weaker side (`quality_diff < 0`), which strips team
+   quality out entirely and leaves only the venue.
+
+**Why.** The playoff decline could be an artifact rather than real home-court
+weakening: if top seeds no longer outclass their opponents as much, the playoff
+home team (usually the better team) would win less *without home court itself
+changing*. `quality_diff` is the control that separates "home court is genuinely
+weakening" from "seeds are more evenly matched." This is the playoff counterpart
+to Section 9's regular-season decomposition.
+
+**What the results mean.** The decline is genuine home-court weakening, not seed
+compression. Adding `quality_diff` barely moves the year coefficient
+(−0.209 → −0.210 pp/yr; 101% retained, ≈ −1% absorbed), even though quality_diff
+itself is a massive predictor of any single game (+112 pp per unit of win-% gap,
+p < 0.001). The seed-quality gap *has* trended down slightly (−0.00028/yr,
+p < 0.001), but that drift doesn't account for the home-win decline. The clincher
+is the lower-seed-at-home check: when the objectively weaker team hosts G3/G4, it
+still wins 51.8% — a pure venue effect with quality stripped out. This dovetails
+with Section 6 (playoff channels carry only 65% of the decline) and Section 8
+(playoff rest is confounded with quality, but the decline is not).
+
+---
+
+## 16. Playoff Format Periods (`run_format_period_analysis`)
+
+**The data.** Playoff games only (3,207), grouped by the league's playoff
+scheduling formats: 1984, 1985–02, 2003–13, and 2014–25 (the 2014 change moved
+the Finals from 2-3-2 back to 2-2-1-1-1).
+
+**The approach.** Three layers:
+
+1. Raw home win % per format period.
+2. **Two-proportion z-tests** between consecutive periods — the simplest test of
+   whether the win rate actually moved at each boundary.
+3. A **logistic regression** of `home_win ~ year + format_period`, plus a
+   **likelihood-ratio (LR) test** comparing it against `home_win ~ year` alone.
+
+**Why.** The raw comparison (step 2) shows a big, significant drop at the 2014
+boundary (−6.4 pp, p = 0.004). But HCA was *also* declining smoothly throughout —
+so any late-period dummy would look negative even if the format change did
+nothing. Step 3 separates the two stories: if the format dummies still matter
+after the year trend is in the model, the change had its own effect; if not, the
+drop is just the trend passing through the boundary.
+
+**What the results mean.** Once the year trend is controlled, no format dummy is
+significant (all p ≈ 0.29) and the LR test for the dummies jointly is p = 0.235.
+The post-2014 playoff drop is fully consistent with the secular decline; the
+format change itself is exonerated. This is the canonical example in this project
+of why "raw difference between periods" and "effect of the boundary" are
+different questions — the same logic the era analysis (Section 2) applies to
+rule changes.
+
+---
+
+## 17. Franchise Home Court Advantage (`run_team_hca_analysis`)
+
+**The data.** Per-franchise career totals across all 42 seasons: home win %,
+road win %, and HCA = home% − road% (subtracting road win % controls for the
+franchise just being good). 39 regular-season franchises (≥50 home games) and
+32 playoff franchises (≥20).
+
+**The approach.** Three pieces:
+
+1. **Binomial confidence intervals** on each franchise's raw HCA.
+2. A **method-of-moments variance decomposition**: the observed variance of HCA
+   across franchises = true between-franchise variance + average sampling
+   variance. Subtracting the (computable) sampling part estimates how much
+   real spread exists.
+3. **Empirical-Bayes shrinkage**: each franchise's estimate is pulled toward
+   the league mean in proportion to how noisy it is —
+   weight = true_var / (true_var + sampling_var). Noisy estimates (few games)
+   get pulled hard; precise ones barely move.
+
+**Why.** Raw franchise HCA tables are leaderboard bait: small-sample franchises
+land at the extremes purely by luck (the Kansas City Kings' +35.4 raw HCA rests
+on 82 home games). Shrinkage produces rankings you'd actually bet on, and the
+variance decomposition says upfront whether *any* real franchise differences
+exist before ranking them.
+
+**What the results mean.** The two contexts give opposite answers. In the
+regular season, true between-franchise spread is real: observed SD 4.9 pp, only
+30% of it sampling noise, true SD ≈ 4.1 pp. Denver (+27.3 shrunken) and Utah
+(+25.9) genuinely top the table — consistent with the altitude finding in
+Section 8. In the playoffs, sampling noise accounts for 100% of the observed
+spread: true between-franchise SD ≈ 0, and shrinkage collapses every franchise
+to the league mean (+27.1 pp). Utah's raw +39.7 playoff HCA and the Clippers'
+raw −3.6 are both indistinguishable from the same underlying value. No franchise
+has demonstrably special playoff home court.
+
+---
+
+## 18. Franchise HCA Consistency (`run_hca_consistency_analysis`)
+
+**The data.** The 32 franchises that appear in both tables from Section 17.
+
+**The approach.** **Pearson and Spearman correlations** between regular-season
+and playoff HCA across franchises, computed on raw values and (where defined)
+on shrunken values — shrinkage reduces the attenuation bias that measurement
+noise inflicts on correlations.
+
+**Why.** If home court advantage is a stable property of an arena/fanbase, the
+same franchises should top both lists. The two correlation flavors check
+robustness: Pearson for the linear relationship, Spearman for rank agreement
+(insensitive to outliers).
+
+**What the results mean.** The raw Pearson correlation is positive and just
+significant (r = +0.356, p = 0.045) but Spearman is not (p = 0.148) — weak
+evidence that regular-season home-court strength carries into the playoffs.
+The shrunken correlation is undefined because playoff true variance is zero
+(Section 17), which is itself the deeper finding: there is no reliable
+franchise-level playoff signal to correlate. One solid descriptive fact: playoff
+HCA runs about +7.2 pp higher than regular-season HCA for the same franchises —
+home court is worth more in the postseason, uniformly, for everyone.
+
+---
+
+## 19. Travel Distance (`run_travel_analysis`)
+
+**The data.** All games with arena coordinates for both teams; distance is the
+haversine (great-circle) miles from the away team's home arena to the game arena.
+
+**The approach.** Win % by distance bucket (0–500, 500–1000, 1000–1500, 1500+
+miles), plus a **bivariate logistic regression** of `home_win ~ distance_miles`
+with **cluster-robust standard errors clustered on season** — games within a
+season share league-wide conditions, so treating them as independent would
+understate the standard errors.
+
+**Why.** "The road team is tired from the flight" is one of the oldest HCA
+folk theories, and distance is cleanly measurable. Buckets show the shape;
+the logistic puts a per-mile number and CI on it.
+
+**What the results mean.** Nearly nothing. The regular-season coefficient is
+statistically significant (p = 0.010) but practically trivial: −0.08 pp per 100
+miles, so a 2,500-mile cross-country trip costs the visitor about 2 pp — and the
+buckets don't even decline monotonically (500–1000 miles has the *highest* home
+win rate). With N = 47,882, significance is cheap; the effect size is the story.
+In the playoffs the effect is null outright (p = 0.708). Travel does not explain
+HCA's existence or its decline.
+
+---
+
+## 20. Pace (`run_pace_analysis`)
 
 **The data.** Per-game average possessions (`pace_avg`) and the leave-one-out
 `expected_pace` described in Section 0.
 
-**The approach.** The same three-layer template as Section 17 (season
+**The approach.** The same three-layer template as Section 13 (season
 correlations, game-level logit, within-era logit), plus a fourth layer: the
 same logits re-run on **expected pace** instead of realized pace.
 
@@ -574,7 +664,7 @@ Pace did not drive the decline.
 
 ---
 
-## 19. Competitive Balance / Parity (`run_parity_correlation`)
+## 21. Competitive Balance / Parity (`run_parity_correlation`)
 
 **The data.** Season-level: the standard deviation of all 30 teams' win
 percentages (the parity measure — lower = more equal league) and the season's
@@ -588,7 +678,7 @@ regular-season home win %, 42 seasons.
 4. **Residual-on-year correlation**: each series detrended by its own linear
    year fit, then the residuals correlated.
 
-**Why the detrending layers.** Same trap as Section 17: any two series that
+**Why the detrending layers.** Same trap as Section 13: any two series that
 both trend over 40 years will correlate spuriously. The raw correlation here
 happens to be near zero anyway, but the detrended checks are the proper test of
 the year-to-year relationship — first-differencing and residualizing are the
@@ -615,6 +705,10 @@ conclusion that parity didn't drive the structural decline.
   outcome. Coefficients are in log-odds; the code converts them to approximate
   percentage points via the marginal effect at the mean,
   `pp ≈ coef × p̄ × (1−p̄) × 100`.
+- **Linear probability model (LPM):** OLS with a 0/1 outcome, used in the
+  mediation decomposition (Section 6) because its coefficients are additive —
+  the only way to make channel contributions sum exactly to the HCA level and
+  trend. Logits can't deliver that identity.
 - **Cluster-robust SEs (clusters = season):** used whenever game-level models
   pool many seasons; games within a season share league conditions, violating
   independence.
