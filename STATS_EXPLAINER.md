@@ -228,7 +228,7 @@ differ by channel:
 So the earlier worry that the turnover/rebound shares were "just downstream" was
 half right (turnovers, partly) and half wrong (rebounding is its own thing). One
 remaining caution: the playoff numbers fold in the seed-quality gap — the home
-team is usually the better team — which Section 18 isolates and controls.
+team is usually the better team — which Section 19 isolates and controls.
 
 ---
 
@@ -482,7 +482,7 @@ hand-checking rules. In the playoffs, nothing survives: no z-test is significant
 and the LR test is p = 0.879 — the playoff decline is pure drift, with no
 rule-change fingerprints. (Small samples mean limited power, but there is simply
 no signal there.) The same trend-vs-boundary logic recurs for the 2014 Finals
-format change in Section 19.
+format change in Section 20.
 
 ---
 
@@ -575,7 +575,52 @@ conclusion that parity didn't drive the structural decline.
 
 ---
 
-## 17. Playoff Series Structure (`run_series_breakdown`)
+## 17. Arena Attendance (`run_attendance_analysis`)
+
+**The data.** Per-game attendance scraped from Basketball-Reference, which —
+unlike NBA.com — publishes the gate for every game. It is reliable only from
+about 1999–2000 on, so this is a ~25-season series (26 seasons cached), not the
+full 40. Two slices: (A) league average attendance per game per season vs. the
+season's regular-season home win %; (B) every 2020–21 game's attendance paired
+with its home_win, the one season when crowd size swung game to game.
+
+**The approach.** Two questions, deliberately separated:
+
+1. **Part A — does crowd *size* track HCA?** Same four-layer detrending battery
+   as Section 16: Pearson and Spearman correlations, then a first-differenced
+   and a residual-on-year correlation to strip the shared long-run trend.
+2. **Part B — what is crowd *presence* worth?** A **logistic regression** of
+   home_win on attendance (scaled per 1,000 fans) across the 2020–21 games,
+   reported as a marginal effect in pp, alongside the raw empty-vs-present home
+   win split.
+
+**Why split size from presence.** They are different hypotheses and the data
+answers them differently. Season-level attendance is nearly constant (every
+arena runs near capacity), so it can rule a *size* effect in or out but can say
+nothing about what a crowd is worth — there is no variation to exploit. The
+2020–21 season supplied that missing variation by accident: COVID rules left
+some buildings empty and others partly filled, a quasi-natural experiment that
+isolates presence from everything else. Part B is closer to causal evidence
+than anything else in the report; the trade-off is a single season and a
+binary-ish exposure, so it is read cautiously.
+
+**What the results mean.** Part A is a clean rule-out: the raw correlation is
+weak and non-significant (Pearson r = +0.28, p = 0.17), and both detrended
+checks are null (first-differenced r = +0.07, p = 0.73; residual-on-year
+r = +0.33, p = 0.10). The lone significant number, Spearman ρ = −0.47
+(p = 0.02), runs *against* the crowd-size story — attendance climbed to record
+highs in the 2020s exactly as HCA bottomed out, so by rank the two move
+opposite. Crowd size is not behind the decline. Part B is where the crowd shows
+up: with the arena empty, home teams won just 51.0% (n = 573); with any fans
+present, 58.5% (n = 591). The per-1,000-fans logistic slope is small and not
+significant (+0.51 pp, p = 0.18), which is the point — the effect rides on the
+*presence* of a crowd, not its exact size, and it vanished the moment arenas
+refilled in 2021–22. A real ingredient of home court, but a switch, not the
+four-decade dial.
+
+---
+
+## 18. Playoff Series Structure (`run_series_breakdown`)
 
 **The data.** All playoff games with a parseable game number, G1 through G7
 (494 down to 183 games as series lengths thin out).
@@ -599,7 +644,7 @@ fact that the higher seed is usually the better team.
 
 ---
 
-## 18. Playoff HCA — Seeding Quality Decomposition (`run_playoff_quality_decomposition`)
+## 19. Playoff HCA — Seeding Quality Decomposition (`run_playoff_quality_decomposition`)
 
 **The data.** All 3,207 playoff games with `quality_diff` = home team's
 regular-season win % minus the away team's, same season.
@@ -636,7 +681,7 @@ with Section 5 (playoff channels carry only 65% of the decline) and Section 7
 
 ---
 
-## 19. Playoff Format Periods (`run_format_period_analysis`)
+## 20. Playoff Format Periods (`run_format_period_analysis`)
 
 **The data.** Playoff games only (3,207), grouped by the league's playoff
 scheduling formats: 1984, 1985–02, 2003–13, and 2014–25 (the 2014 change moved
@@ -667,7 +712,7 @@ rule changes.
 
 ---
 
-## 20. Franchise Home Court Advantage (`run_team_hca_analysis`)
+## 21. Franchise Home Court Advantage (`run_team_hca_analysis`)
 
 **The data.** Per-franchise career totals across all 42 seasons: home win %,
 road win %, and HCA = home% − road% (subtracting road win % controls for the
@@ -704,9 +749,9 @@ has demonstrably special playoff home court.
 
 ---
 
-## 21. Franchise HCA Consistency (`run_hca_consistency_analysis`)
+## 22. Franchise HCA Consistency (`run_hca_consistency_analysis`)
 
-**The data.** The 32 franchises that appear in both tables from Section 20.
+**The data.** The 32 franchises that appear in both tables from Section 21.
 
 **The approach.** **Pearson and Spearman correlations** between regular-season
 and playoff HCA across franchises, computed on raw values and (where defined)
@@ -722,7 +767,7 @@ robustness: Pearson for the linear relationship, Spearman for rank agreement
 significant (r = +0.356, p = 0.045) but Spearman is not (p = 0.148) — weak
 evidence that regular-season home-court strength carries into the playoffs.
 The shrunken correlation is undefined because playoff true variance is zero
-(Section 20), which is itself the deeper finding: there is no reliable
+(Section 21), which is itself the deeper finding: there is no reliable
 franchise-level playoff signal to correlate. One solid descriptive fact: playoff
 HCA runs about +7.2 pp higher than regular-season HCA for the same franchises —
 home court is worth more in the postseason on average, though the gap varies

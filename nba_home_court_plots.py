@@ -1042,3 +1042,94 @@ def plot_referee_analysis(bias_stats: list[dict]) -> None:
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
+
+
+def plot_attendance(
+    att_seasons: list[str], att_avg: list[float],
+    reg_seasons: list[str], reg_pcts: list[float],
+    dose_df,
+) -> None:
+    """
+    2-panel figure on the crowd as an ingredient of home court advantage.
+
+    Panel 1: dual-axis time series — league average attendance per game
+             (right axis) vs. regular-season home win % (left axis), ~2000–2025.
+             Attendance sits near capacity and flat while HCA falls → crowd
+             *size* is not behind the decline. COVID seasons marked in red.
+    Panel 2: 2020-21 dose-response — home win % by attendance bucket, the
+             accidental experiment in what the crowd alone is worth.
+    """
+    ORANGE = "#e8a33d"
+
+    # Align attendance seasons to those with a home-win % value.
+    pct_map = dict(zip(reg_seasons, reg_pcts))
+    seasons = [s for s in att_seasons if s in pct_map]
+    att = np.array([att_avg[att_seasons.index(s)] for s in seasons], dtype=float)
+    pct = np.array([pct_map[s] for s in seasons], dtype=float)
+    x = np.arange(len(seasons))
+    tick_step = max(1, len(seasons) // 12)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    fig.suptitle("The Crowd and Home Court Advantage: Size vs. Presence",
+                 fontsize=14, fontweight="bold", y=1.02, color="#2c2c2a")
+    fig.text(0.5, 0.96,
+             "Attendance: Basketball-Reference  |  Home win %: NBA.com  "
+             "|  Dose-response: 2020–21, crowds limited by local rule",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: attendance vs. home win % over time ────────────────────────
+    pt_colors = [RED if s in COVID_SEASONS else BLUE for s in seasons]
+    ax1.plot(x, pct, color=BLUE, linewidth=2, zorder=2)
+    ax1.scatter(x, pct, c=pt_colors, s=28, zorder=3)
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_ylabel("Regular-season home win %", color=BLUE, fontsize=10)
+    ax1.tick_params(axis="y", labelcolor=BLUE)
+    ax1.set_title("Crowd size held flat while home court advantage fell",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    ax1r = ax1.twinx()
+    ax1r.plot(x, att / 1000.0, color=ORANGE, linewidth=2, zorder=2, alpha=0.9)
+    ax1r.set_ylabel("Avg. attendance per game (thousands)", color=ORANGE, fontsize=10)
+    ax1r.tick_params(axis="y", labelcolor=ORANGE)
+    ax1r.set_ylim(0, max(att / 1000.0) * 1.15)
+    ax1.legend(handles=[
+        mpatches.Patch(color=BLUE,   label="Home win % (left)"),
+        mpatches.Patch(color=ORANGE, label="Attendance (right)"),
+        mpatches.Patch(color=RED,    label="COVID seasons"),
+    ], fontsize=9, framealpha=0.85, edgecolor="#ddd", loc="lower left")
+
+    # ── Panel 2: 2020-21 dose-response ──────────────────────────────────────
+    edges  = [-1, 0, 2500, 5000, 10000, np.inf]
+    labels = ["Empty\n(0)", "1–2.5k", "2.5–5k", "5–10k", "10k+"]
+    win_pct, ns = [], []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        grp = dose_df[(dose_df["attendance"] > lo) & (dose_df["attendance"] <= hi)]
+        win_pct.append(100 * grp["home_win"].mean() if len(grp) else np.nan)
+        ns.append(len(grp))
+    xb = np.arange(len(labels))
+    bar_colors = [RED] + [BLUE] * (len(labels) - 1)
+    bars = ax2.bar(xb, win_pct, color=bar_colors, width=0.7, zorder=2)
+    ax2.axhline(50, color=GRAY, linestyle="--", linewidth=1, zorder=1)
+    ax2.text(len(labels) - 0.5, 50.4, "coin flip", ha="right", va="bottom",
+             fontsize=8, color=GRAY)
+    for bar, wp, n in zip(bars, win_pct, ns):
+        if not np.isnan(wp):
+            ax2.text(bar.get_x() + bar.get_width() / 2, wp + 0.4,
+                     f"{wp:.0f}%\nn={n:,}", ha="center", va="bottom",
+                     fontsize=8, color="#2c2c2a")
+    ax2.set_xticks(xb)
+    ax2.set_xticklabels(labels, fontsize=9)
+    ax2.set_xlabel("2020–21 game attendance", fontsize=10)
+    ax2.set_ylabel("Home win %", fontsize=10)
+    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax2.set_ylim(0, max(w for w in win_pct if not np.isnan(w)) * 1.18)
+    ax2.set_title("Empty arenas erased home court — fans restored it",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_attendance.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()

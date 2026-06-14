@@ -1599,6 +1599,96 @@ def run_parity_correlation(
         print(f"     (N is small and first-differences amplify measurement noise).")
 
 
+def run_attendance_analysis(
+    att_seasons: list[str], att_avg: list[float],
+    reg_seasons: list[str], reg_pcts: list[float],
+    dose_df: pd.DataFrame,
+) -> None:
+    """Two questions: does crowd *size* track HCA across seasons (ruled-out
+    factor), and what is one fan worth (2020-21 dose-response)?"""
+    from scipy import stats as scipy_stats
+
+    _section("ARENA ATTENDANCE AND HOME COURT ADVANTAGE")
+    print("   Source: Basketball-Reference per-game attendance (~2000 onward).")
+    print("   Part A: does league attendance track home win % across seasons?")
+    print("   Part B: 2020-21 dose-response — crowd size varied by local rule.\n")
+
+    # ── Part A: season-level crowd size vs. home win % ─────────────────────────
+    att_map = dict(zip(att_seasons, att_avg))
+    shared = [s for s in reg_seasons if s in att_map]
+    if len(shared) < 5:
+        print("   Insufficient attendance data for season-trend correlation.\n")
+    else:
+        att_vals  = np.array([att_map[s] for s in shared], dtype=float)
+        home_vals = np.array([reg_pcts[reg_seasons.index(s)] for s in shared])
+
+        r_p, p_p = scipy_stats.pearsonr(att_vals, home_vals)
+        r_s, p_s = scipy_stats.spearmanr(att_vals, home_vals)
+        print(f"   N = {len(shared)} seasons "
+              f"(avg crowd {int(att_vals.min()):,}–{int(att_vals.max()):,}/game)")
+        print(f"   Pearson r  = {r_p:+.3f}  (p = {_fmt_p(p_p)}  {_stars(p_p).strip()})")
+        print(f"   Spearman ρ = {r_s:+.3f}  (p = {_fmt_p(p_s)}  {_stars(p_s).strip()})\n")
+
+        # Detrended checks — both series can share a long-run drift.
+        years = np.array([nba.label_to_year(s) for s in shared])
+        order = np.argsort(years)
+        y, a, h = years[order], att_vals[order], home_vals[order]
+        d_a, d_h = np.diff(a), np.diff(h)
+        r_fd, p_fd = scipy_stats.pearsonr(d_a, d_h)
+        from scipy.stats import linregress
+        sl_a, ic_a, *_ = linregress(y, a)
+        sl_h, ic_h, *_ = linregress(y, h)
+        r_rd, p_rd = scipy_stats.pearsonr(a - (sl_a * y + ic_a), h - (sl_h * y + ic_h))
+        print(f"   Detrended (remove shared drift):")
+        print(f"   First-differenced  r = {r_fd:+.3f}  (p = {_fmt_p(p_fd)}  {_stars(p_fd).strip()})"
+              f"  N = {len(d_a)} year-pairs")
+        print(f"   Residual-on-year   r = {r_rd:+.3f}  (p = {_fmt_p(p_rd)}  {_stars(p_rd).strip()})"
+              f"  N = {len(shared)} seasons")
+
+        if (abs(r_p) < 0.15 or p_p >= 0.05) and p_fd >= 0.05 and p_rd >= 0.05:
+            print(f"\n   ► Crowd *size* does not track home court advantage. Attendance has")
+            print(f"     held near arena capacity for 25 years while HCA fell — the level is")
+            print(f"     flat where the advantage is not. Crowd size is not behind the decline.")
+        elif r_p > 0:
+            print(f"\n   ► Positive association, but see Part B: it is the *presence* of a crowd,")
+            print(f"     not its size, that moves the needle — and size has barely changed.")
+        else:
+            print(f"\n   ► Negative association — counter to the crowd-size hypothesis.")
+
+    # ── Part B: 2020-21 empty-arena dose-response ──────────────────────────────
+    print()
+    if dose_df.empty or dose_df["home_win"].nunique() < 2:
+        print("   No usable 2020-21 attendance data for the dose-response.\n")
+        return
+
+    empty = dose_df[dose_df["attendance"] == 0]
+    crowd = dose_df[dose_df["attendance"] > 0]
+    p_bar = float(dose_df["home_win"].mean())
+    print(f"   2020-21 home win %:  empty arena {100*empty['home_win'].mean():.1f}% "
+          f"(n={len(empty)})  vs.  fans present {100*crowd['home_win'].mean():.1f}% "
+          f"(n={len(crowd)})")
+
+    d = dose_df.copy()
+    d["att_k"] = d["attendance"] / 1000.0  # coefficient = effect per 1,000 fans
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m = smf.logit("home_win ~ att_k", data=d).fit(disp=0)
+    coef, pval = m.params["att_k"], m.pvalues["att_k"]
+    pp = _pp(coef, p_bar)
+    lo, hi = _ci_lo_hi(m, "att_k", p_bar)
+    print(f"   Logit home_win ~ attendance (per 1,000 fans):")
+    print(f"   Effect: {pp:+.2f} pp per 1,000 fans  [95% CI {lo:+.2f}, {hi:+.2f}]"
+          f"  (p = {_fmt_p(pval)}  {_stars(pval).strip()})")
+
+    if pval < 0.05 and coef > 0:
+        print(f"\n   ► A direct measure of the crowd. With arenas empty, home court nearly")
+        print(f"     vanished ({100*empty['home_win'].mean():.0f}%); letting fans back in")
+        print(f"     restored it. The crowd is a real ingredient — but a 2020-21 swing that")
+        print(f"     reversed when fans returned, not part of the four-decade slide.")
+    else:
+        print(f"\n   ► No significant within-season attendance effect detected.")
+
+
 # ── Analysis 7: Playoff series structure ─────────────────────────────────────
 
 def run_series_breakdown(df: pd.DataFrame) -> None:
@@ -2297,6 +2387,10 @@ def run(df: pd.DataFrame | None = None) -> None:
         parity_seasons, parity_std = nba.compute_parity_stats(
             nba.START_YEAR, nba.END_YEAR, "Regular Season"
         )
+        att_seasons, att_avg = nba.compute_attendance_season_stats(
+            nba.BBR_START_YEAR, nba.END_YEAR
+        )
+        dose_df = nba.compute_attendance_covid_doseresponse(2021)
         reg_by_year = df[df["is_playoff"] == 0].groupby("year")["home_win"].mean() * 100
         reg_pcts_by_season = {nba.short_label(y): float(pct) for y, pct in reg_by_year.items()}
         reg_seasons_sorted = sorted(reg_pcts_by_season)
@@ -2346,6 +2440,7 @@ def run(df: pd.DataFrame | None = None) -> None:
         run_travel_analysis(df)
         run_pace_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
+        run_attendance_analysis(att_seasons, att_avg, reg_seasons_sorted, reg_pcts_sorted, dose_df)
 
         # §5 The Playoff Picture
         run_series_breakdown(df)

@@ -5,12 +5,15 @@ Fetches game logs from NBA.com via nba_api, caches them as CSVs, and provides
 fetch_* and compute_* functions consumed by nba_home_court_plots and
 nba_home_court_regression.
 
-Data source: NBA.com via the nba_api package
-  - LeagueGameFinder: pulls every game result for a given season
-  - Covers 1983-84 through 2024-25
+Data sources:
+  - NBA.com via the nba_api package (LeagueGameFinder etc.): every game result,
+    1983-84 through 2024-25
+  - Basketball-Reference (scraped): per-game attendance, ~1999-2000 onward
+    (NBA.com does not expose attendance)
 """
 
 import os
+import sys
 import time
 import pandas as pd
 import numpy as np
@@ -18,11 +21,29 @@ import numpy as np
 from nba_api.stats.endpoints import leaguegamefinder
 from nba_api.stats.library.parameters import SeasonType
 
+import requests
+from bs4 import BeautifulSoup
+
 
 # ── Config ────────────────────────────────────────────────────────────────────
 START_YEAR = 1984   # season ending in this year = 1983-84
 END_YEAR   = 2025   # season ending in this year = 2024-25
 SLEEP_SEC  = 1.0    # polite pause between API calls
+
+# Basketball-Reference attendance scrape (NBA.com does not expose attendance).
+# Per-game attendance is only reliably populated from ~1999-2000 onward, so the
+# attendance series is ~25 seasons, not the full 40.
+BBR_START_YEAR  = 2000   # first season with reliable per-game attendance
+BBR_SLEEP_SEC   = 6.0    # ~10 req/min — BBR 429s near its 20/min ceiling, so stay well under
+BBR_BACKOFF_SEC = 45.0   # base wait after a 429 before retrying (grows per attempt)
+BBR_MAX_RETRIES = 3      # retries on a 429 before giving up (season retries next run)
+BBR_BASE       = "https://www.basketball-reference.com"
+BBR_HEADERS    = {  # BBR blocks the default python-requests UA
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
+    )
+}
 
 # 2020 bubble playoffs: all games at neutral site — exclude from playoff stats
 SKIP_PLAYOFF_YEARS = {2020}
@@ -1108,3 +1129,155 @@ def compute_referee_bias_stats(
 
     result.sort(key=lambda x: x["mean_foul_diff"], reverse=True)
     return result
+
+
+# ── Attendance (Basketball-Reference) ─────────────────────────────────────────
+# NBA.com does not expose attendance, so we scrape Basketball-Reference's monthly
+# schedule pages. Per-game attendance is reliable from ~1999-2000 onward. Each
+# season is cached as cache/attendance_{season}.csv so the scrape runs only once.
+
+def _bbr_get(url: str) -> BeautifulSoup | None:
+    """
+    GET a Basketball-Reference page with a polite pause and browser UA.
+    On HTTP 429 (rate-limited) it backs off and retries a few times; if the
+    throttle persists it returns None so the caller skips caching and retries
+    on a later run.
+    """
+    # Operational logging goes to stderr, not stdout: run() captures stdout into
+    # RESULTS.md, so fetch progress/errors must stay out of that file while still
+    # being visible in the terminal.
+    for attempt in range(BBR_MAX_RETRIES + 1):
+        try:
+            r = requests.get(url, headers=BBR_HEADERS, timeout=30)
+        except Exception as e:
+            print(f"    ERROR fetching {url}: {e}", file=sys.stderr)
+            return None
+        time.sleep(BBR_SLEEP_SEC)  # polite pause, only on a real network hit
+        if r.status_code == 200:
+            return BeautifulSoup(r.text, "lxml")
+        if r.status_code == 429 and attempt < BBR_MAX_RETRIES:
+            backoff = BBR_BACKOFF_SEC * (attempt + 1)
+            print(f"    BBR 429 for {url} — backing off {backoff:.0f}s "
+                  f"(retry {attempt + 1}/{BBR_MAX_RETRIES})", file=sys.stderr, flush=True)
+            time.sleep(backoff)
+            continue
+        print(f"    BBR {r.status_code} for {url}", file=sys.stderr)
+        return None
+    return None
+
+
+def _parse_bbr_schedule(soup: BeautifulSoup) -> list[dict]:
+    """Pull game rows from one monthly schedule page's #schedule table."""
+    table = soup.find("table", id="schedule")
+    if table is None or table.tbody is None:
+        return []
+
+    rows: list[dict] = []
+    for tr in table.tbody.find_all("tr"):
+        if "thead" in (tr.get("class") or []):
+            continue  # repeated mid-table header
+        cells = {c.get("data-stat"): c.get_text(strip=True)
+                 for c in tr.find_all(["th", "td"])}
+        away_pts, home_pts = cells.get("visitor_pts", ""), cells.get("home_pts", "")
+        if not away_pts or not home_pts:
+            continue  # unplayed / postponed game
+
+        att_raw = cells.get("attendance", "").replace(",", "")
+        attendance = float(att_raw) if att_raw.isdigit() else np.nan
+        rows.append({
+            "game_date":  cells.get("date_game", ""),
+            "away_team":  cells.get("visitor_team_name", ""),
+            "home_team":  cells.get("home_team_name", ""),
+            "away_pts":   int(away_pts),
+            "home_pts":   int(home_pts),
+            "attendance": attendance,
+            "home_win":   int(int(home_pts) > int(away_pts)),
+        })
+    return rows
+
+
+def fetch_attendance(end_year: int) -> pd.DataFrame | None:
+    """
+    Per-game attendance for one season, scraped from Basketball-Reference.
+    Crawls the season index for its month links, parses each monthly schedule
+    page, and caches the result as cache/attendance_{season}.csv (an empty file
+    is written on a miss so we never re-fetch).
+    """
+    path = os.path.join(CACHE_DIR, f"attendance_{season_str(end_year)}.csv")
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+
+    # A transient failure (rate-limit/network) must NOT be cached as a miss, or
+    # the season is permanently skipped. Only a page that loads but genuinely
+    # has no data is cached empty so we don't retry it.
+    index = _bbr_get(f"{BBR_BASE}/leagues/NBA_{end_year}_games.html")
+    if index is None:
+        return None  # transient — retry on the next run
+
+    filt = index.find("div", class_="filter")
+    month_hrefs = [a.get("href") for a in filt.find_all("a")] if filt else []
+    if not month_hrefs:
+        pd.DataFrame().to_csv(path, index=False)  # genuine miss
+        return None
+
+    print(f"  Fetching attendance: {season_str(end_year)} "
+          f"({len(month_hrefs)} month pages)...", file=sys.stderr, flush=True)
+    records: list[dict] = []
+    for href in month_hrefs:
+        soup = _bbr_get(f"{BBR_BASE}{href}")
+        if soup is None:
+            return None  # transient mid-season — abort without caching a partial season
+        records.extend(_parse_bbr_schedule(soup))
+
+    if not records:
+        pd.DataFrame().to_csv(path, index=False)  # genuine miss
+        return None
+
+    df = pd.DataFrame(records)
+    df.to_csv(path, index=False)
+    return df
+
+
+def compute_attendance_season_stats(
+    start_year: int = BBR_START_YEAR, end_year: int = END_YEAR,
+) -> tuple[list[str], list[float]]:
+    """
+    League average attendance per game, per season (short labels).
+    Averages only games with a reported crowd (>0); a 0 means an empty or
+    unreported arena, so it is excluded from the mean but kept in the raw cache
+    for the dose-response below.
+    """
+    seasons: list[str] = []
+    avg_attendance: list[float] = []
+    for year in range(start_year, end_year + 1):
+        df = fetch_attendance(year)
+        if df is None or df.empty:
+            continue
+        played = df.loc[df["attendance"] > 0, "attendance"]
+        if played.empty:
+            continue
+        seasons.append(short_label(year))
+        avg_attendance.append(round(float(played.mean()), 0))
+    return seasons, avg_attendance
+
+
+def compute_attendance_covid_doseresponse(end_year: int = 2021) -> pd.DataFrame:
+    """
+    Per-game attendance vs. home_win for the COVID season (default 2020-21),
+    when crowd size varied game-to-game by local restriction — a natural
+    dose-response test of what the crowd is worth. Zero-attendance games are
+    kept; rows with unreported (NaN) attendance are dropped.
+    """
+    df = fetch_attendance(end_year)
+    if df is None or df.empty:
+        return pd.DataFrame(columns=["attendance", "home_win"])
+    out = df.loc[df["attendance"].notna(), ["attendance", "home_win"]].copy()
+    out["attendance"] = out["attendance"].astype(float)
+    out["home_win"] = out["home_win"].astype(int)
+    return out.reset_index(drop=True)

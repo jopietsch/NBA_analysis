@@ -15,7 +15,7 @@ import numpy as np
 from nba_api.stats.library.parameters import SeasonType
 
 from nba_home_court_data import (
-    START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS,
+    START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, BBR_START_YEAR,
     fetch_all_seasons,
     compute_era_averages, compute_playoff_format_averages,
     compute_differential_stats, compute_margin_stats,
@@ -23,12 +23,14 @@ from nba_home_court_data import (
     compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats,
     fetch_all_referee_data, compute_referee_bias_stats,
+    compute_attendance_season_stats, compute_attendance_covid_doseresponse,
 )
 from nba_home_court_plots import (
     plot_results, plot_mediation,
     plot_differential_analysis, plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
+    plot_attendance,
 )
 
 
@@ -64,6 +66,14 @@ def main() -> None:
 
     parity_seasons, parity_std = compute_parity_stats(START_YEAR, END_YEAR, SeasonType.regular)
     plot_parity_analysis(parity_seasons, parity_std, reg_seasons, reg_pcts)
+
+    print("\nFetching attendance data (Basketball-Reference, cached under cache/)...")
+    att_seasons, att_avg = compute_attendance_season_stats(BBR_START_YEAR, END_YEAR)
+    att_dose_df = compute_attendance_covid_doseresponse(2021)
+    if att_seasons:
+        plot_attendance(att_seasons, att_avg, reg_seasons, reg_pcts, att_dose_df)
+    else:
+        print("  No attendance data returned — check BBR availability.")
 
     game_nums, series_pcts, game_counts = compute_series_stats(
         START_YEAR, END_YEAR, skip_years=SKIP_PLAYOFF_YEARS

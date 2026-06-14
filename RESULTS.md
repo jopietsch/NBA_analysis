@@ -738,6 +738,29 @@ All data from cache/ — same source as the plots above.
      remains after removing the common trend. Interpret with caution
      (N is small and first-differences amplify measurement noise).
 
+─── ARENA ATTENDANCE AND HOME COURT ADVANTAGE ──────────────────────────
+   Source: Basketball-Reference per-game attendance (~2000 onward).
+   Part A: does league attendance track home win % across seasons?
+   Part B: 2020-21 dose-response — crowd size varied by local rule.
+
+   N = 26 seasons (avg crowd 4,600–18,384/game)
+   Pearson r  = +0.279  (p = 0.167  )
+   Spearman ρ = -0.465  (p = 0.017  *)
+
+   Detrended (remove shared drift):
+   First-differenced  r = +0.074  (p = 0.726  )  N = 25 year-pairs
+   Residual-on-year   r = +0.331  (p = 0.099  )  N = 26 seasons
+
+   ► Crowd *size* does not track home court advantage. Attendance has
+     held near arena capacity for 25 years while HCA fell — the level is
+     flat where the advantage is not. Crowd size is not behind the decline.
+
+   2020-21 home win %:  empty arena 51.0% (n=573)  vs.  fans present 58.5% (n=591)
+   Logit home_win ~ attendance (per 1,000 fans):
+   Effect: +0.51 pp per 1,000 fans  [95% CI -0.24, +1.25]  (p = 0.184  )
+
+   ► No significant within-season attendance effect detected.
+
 ─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
    Does home court advantage vary by game number within a series (G1–G7)?
    G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).

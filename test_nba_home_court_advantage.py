@@ -1392,3 +1392,100 @@ class TestFetchAllSeasons:
         reg_seasons, reg_pcts, po_seasons, po_pcts = nba.fetch_all_seasons()
 
         assert reg_seasons == reg_pcts == po_seasons == po_pcts == []
+
+
+def _write_attendance_cache(cache_dir, end_year, rows):
+    """Write a synthetic per-game attendance cache file for one season."""
+    path = os.path.join(cache_dir, f"attendance_{nba.season_str(end_year)}.csv")
+    pd.DataFrame(rows, columns=[
+        "game_date", "away_team", "home_team",
+        "away_pts", "home_pts", "attendance", "home_win",
+    ]).to_csv(path, index=False)
+
+
+class TestComputeAttendanceSeasonStats:
+    def test_averages_only_reported_crowds_and_drops_empty_seasons(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # 2024: crowds 10,000 / 20,000 / a 0 (unreported) -> mean of the two >0 = 15,000
+        _write_attendance_cache(str(tmp_path), 2024, [
+            ["d1", "A", "B", 90, 100, 10000, 1],
+            ["d2", "C", "D", 88, 99, 20000, 1],
+            ["d3", "E", "F", 95, 80, 0, 1],   # 0 excluded from the mean
+        ])
+        # 2025: all zero attendance -> no reported crowd -> season skipped
+        _write_attendance_cache(str(tmp_path), 2025, [
+            ["d1", "A", "B", 90, 100, 0, 1],
+        ])
+
+        seasons, avg = nba.compute_attendance_season_stats(2024, 2025)
+
+        assert seasons == ["23–24"]
+        assert avg == [15000.0]
+
+    def test_missing_season_is_skipped(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        _write_attendance_cache(str(tmp_path), 2024, [
+            ["d1", "A", "B", 90, 100, 12000, 1],
+        ])
+        # 2023 has no cache file and no network is hit because we never request it
+        seasons, avg = nba.compute_attendance_season_stats(2024, 2024)
+        assert seasons == ["23–24"]
+        assert avg == [12000.0]
+
+
+class TestComputeAttendanceCovidDoseResponse:
+    def test_keeps_zeros_drops_nan_and_returns_two_columns(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        _write_attendance_cache(str(tmp_path), 2021, [
+            ["d1", "A", "B", 90, 100, 0, 1],       # empty arena kept
+            ["d2", "C", "D", 99, 88, 3000, 0],     # crowd kept
+            ["d3", "E", "F", 80, 95, "", 1],       # NaN attendance dropped
+        ])
+        out = nba.compute_attendance_covid_doseresponse(2021)
+
+        assert list(out.columns) == ["attendance", "home_win"]
+        assert len(out) == 2  # NaN row dropped, zero row kept
+        assert set(out["attendance"]) == {0.0, 3000.0}
+
+    def test_returns_empty_frame_when_no_cache(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # cache the miss so fetch_attendance never reaches the network
+        pd.DataFrame().to_csv(
+            os.path.join(str(tmp_path), f"attendance_{nba.season_str(2021)}.csv"), index=False
+        )
+        out = nba.compute_attendance_covid_doseresponse(2021)
+        assert out.empty
+        assert list(out.columns) == ["attendance", "home_win"]
+
+
+class TestFetchAttendanceCaching:
+    def test_empty_cache_file_returns_none_without_network(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # a cached miss (empty file) must short-circuit before any BBR request
+        def _boom(*_a, **_k):
+            raise AssertionError("network must not be hit when cache exists")
+        monkeypatch.setattr(nba, "_bbr_get", _boom)
+        pd.DataFrame().to_csv(
+            os.path.join(str(tmp_path), f"attendance_{nba.season_str(2024)}.csv"), index=False
+        )
+        assert nba.fetch_attendance(2024) is None
+
+    def test_transient_failure_is_not_cached(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba, "_bbr_get", lambda url: None)  # 429/network failure
+        assert nba.fetch_attendance(2024) is None
+        # a transient failure must NOT write a miss file, so the season retries
+        assert not os.path.exists(
+            os.path.join(str(tmp_path), f"attendance_{nba.season_str(2024)}.csv")
+        )
+
+    def test_genuine_miss_is_cached(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        from bs4 import BeautifulSoup
+        # index loads (200) but has no month-filter links -> genuine empty season
+        monkeypatch.setattr(nba, "_bbr_get",
+                            lambda url: BeautifulSoup("<html></html>", "lxml"))
+        assert nba.fetch_attendance(2024) is None
+        assert os.path.exists(
+            os.path.join(str(tmp_path), f"attendance_{nba.season_str(2024)}.csv")
+        )

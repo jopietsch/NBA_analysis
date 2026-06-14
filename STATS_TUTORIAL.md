@@ -930,6 +930,37 @@ differentials and shot-zone sections). An interaction test is how you ask "did
 
 ---
 
+## 7.5 Natural experiments (when you can't randomize)
+
+**The question:** almost every rule-out in this report is correlational. We can
+see that crowd size moves with HCA (or doesn't), but we never get to *assign* a
+team its crowd, so we can't truly prove the crowd causes anything. Without a lab,
+can we ever get closer to cause and effect?
+
+**The intuition.** A **natural experiment** is when something outside the system
+— a policy, a disaster, a scheduling quirk — changes one variable for reasons
+unrelated to everything else, mimicking the random assignment of a real
+experiment. If whether a game got the "treatment" is decided by an outside force
+rather than by the teams, then a difference in outcomes reads as closer to
+*causal*, because the usual confounders didn't pick who got treated.
+
+**The example.** COVID did the randomizing. In 2020–21, local health rules — not
+team quality, market, or standings — left some arenas empty and others partly
+full, game to game. Comparing empty-arena games (home win **51.0%**) with
+fans-present games (**58.5%**) isolates the crowd's own contribution in a way no
+season-long correlation can. That ~7-point gap is the report's one near-direct
+measurement of what the crowd is worth.
+
+**The caveats.** It is still not a true randomized trial: a single season, a
+small and lumpy set of "doses," and attendance that partly tracks market and
+date. So the result is read as *suggestive causal* and weighted accordingly —
+but it is the strongest causal evidence in the report, which is why the
+empty-arena finding earns more interpretive weight than, say, the pace
+correlation. When you can't randomize, you look for a shock that did the
+randomizing for you.
+
+---
+
 # Quick reference — which method, and why
 
 | You see this in `RESULTS.md` | It's doing this | Read more |
@@ -952,6 +983,7 @@ differentials and shot-zone sections). An interaction test is how you ask "did
 | first-differenced, residual-on-year | removing a shared time trend | §7.2 |
 | expected pace (LOO) | breaking reverse causality | §7.3 |
 | × post2014 interaction | did an effect *change* over time? | §7.4 |
+| empty-arena (2020–21) dose-response | a natural experiment isolating cause | §7.5 |
 
 **The three ideas worth carrying away:**
 
