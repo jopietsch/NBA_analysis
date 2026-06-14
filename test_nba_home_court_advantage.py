@@ -1489,3 +1489,55 @@ class TestFetchAttendanceCaching:
         assert os.path.exists(
             os.path.join(str(tmp_path), f"attendance_{nba.season_str(2024)}.csv")
         )
+
+
+class TestComputeLeague3paStats:
+    def test_rate_and_home_pct_per_season(self, monkeypatch):
+        # 2010: FG3A 40 of FGA 200 -> 20% 3PA rate; merged 3/4 home wins -> 75%
+        def fake_load(year, season_type):
+            if year == 2010:
+                return pd.DataFrame({"FGA": [100, 100], "FG3A": [25, 15]})
+            return None
+        monkeypatch.setattr(nba, "_load_game_log", fake_load)
+        monkeypatch.setattr(nba, "_merge_home_away_rows",
+                            lambda df: pd.DataFrame({"WL_home": ["W", "L", "W", "W"]}))
+
+        seasons, rates, pcts = nba.compute_league_3pa_stats(2009, 2011, "Regular Season")
+        assert seasons == [nba.short_label(2010)]   # 2009/2011 load None -> skipped
+        assert rates == pytest.approx([20.0])
+        assert pcts == pytest.approx([75.0])
+
+    def test_zero_fga_season_skipped(self, monkeypatch):
+        monkeypatch.setattr(nba, "_load_game_log",
+                            lambda y, st: pd.DataFrame({"FGA": [0, 0], "FG3A": [0, 0]}))
+        monkeypatch.setattr(nba, "_merge_home_away_rows",
+                            lambda df: pd.DataFrame({"WL_home": ["W"]}))
+        seasons, rates, pcts = nba.compute_league_3pa_stats(2010, 2010, "Regular Season")
+        assert seasons == [] and rates == [] and pcts == []
+
+
+class TestComputeSeriesStatsByEra:
+    def test_buckets_by_era_with_min_game_threshold(self, monkeypatch):
+        # game 1: 6 games (4 home wins -> 66.7%); game 2: 3 games (< 5 -> dropped)
+        def fake_fetch(year):
+            if year == 2010:
+                return pd.DataFrame({
+                    "game_in_series": [1] * 6 + [2] * 3,
+                    "HOME_WIN":       [1, 1, 1, 1, 0, 0] + [1, 1, 1],
+                })
+            return None
+        monkeypatch.setattr(nba, "fetch_series_data", fake_fetch)
+
+        result = nba.compute_series_stats_by_era(2009, 2011)
+        era = next(lbl for lbl, y1, y2, _ in nba.ERA_DEFS if y1 <= 2010 <= y2)
+        assert result[era][1] == pytest.approx(100 * 4 / 6)
+        assert 2 not in result[era]                 # below 5-game threshold
+        # eras with no underlying data are omitted entirely
+        assert set(result) == {era}
+
+    def test_skip_years_excluded(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_series_data",
+                            lambda y: pd.DataFrame({"game_in_series": [1] * 6,
+                                                    "HOME_WIN": [1] * 6}))
+        result = nba.compute_series_stats_by_era(2010, 2010, skip_years={2010})
+        assert result == {}
