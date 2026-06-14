@@ -12,7 +12,7 @@ import matplotlib.ticker as mticker
 from scipy.stats import pearsonr
 
 from nba_home_court_data import (
-    ERA_DEFS, PLAYOFF_FORMAT_CHANGES, COVID_SEASONS,
+    ERA_DEFS, COVID_SEASONS,
     label_to_year, bucket_stats_by_era, _align_to_seasons,
 )
 
@@ -180,7 +180,7 @@ def plot_results(
     era_reg_avg: list[float], era_po_avg: list[float], era_labels_short: list[str],
     format_reg_avg: list[float], format_po_avg: list[float], format_labels_short: list[str],
 ) -> None:
-    """Build the 3-panel figure and save/show it."""
+    """Save the standalone season, era, and format-period panels."""
     plt.rcParams.update({
         "font.family":        "DejaVu Sans",
         "axes.spines.top":    False,
@@ -192,47 +192,6 @@ def plot_results(
         "grid.linewidth":     0.6,
         "axes.axisbelow":     True,
     })
-
-    fig = plt.figure(figsize=(22.5, 11))
-    fig.suptitle("NBA Home Court Advantage — A 40-Year Decline",
-                 fontsize=18, fontweight="bold", y=0.995, color="#2c2c2a")
-    fig.text(0.5, 0.955,
-             "Data: NBA.com  |  Regular season & playoffs  |  1983-84 through 2024-25",
-             ha="center", fontsize=9, color=GRAY)
-
-    gs = fig.add_gridspec(2, 4, hspace=0.4, wspace=0.32,
-                          left=0.07, right=0.97, top=0.91, bottom=0.14)
-
-    # ── Panel 1: season-by-season regular season vs playoffs ─────────────────
-    ax1 = fig.add_subplot(gs[0, 1:3])
-    _draw_season_overview(ax1, reg_seasons, reg_pcts, po_seasons, po_pcts)
-
-    # ── Panel 2: era grouped bar chart ────────────────────────────────────────
-    ax2 = fig.add_subplot(gs[1, 0:2])
-    _draw_paired_bars(ax2, era_reg_avg, era_po_avg, era_labels_short,
-                      "Regular season vs playoffs\nhome win % by era")
-
-    # ── Panel 3: home win % by playoff-format period ──────────────────────────
-    ax5 = fig.add_subplot(gs[1, 2:4])
-    _draw_paired_bars(ax5, format_reg_avg, format_po_avg, format_labels_short,
-                      "Regular season vs playoffs\nhome win % by playoff format period")
-
-    # Footnote: explain what each era represents
-    era_notes = "\n".join(f"{label}: {desc}" for label, _, _, desc in ERA_DEFS)
-    fig.text(0.5, 0.045, era_notes, ha="center", va="top",
-             fontsize=7.5, color=GRAY, linespacing=1.6)
-
-    # Footnote: explain the playoff format changes behind the format-period panel
-    format_notes = "  |  ".join(
-        change_label.replace("\n", " ") for _, change_label in PLAYOFF_FORMAT_CHANGES
-    )
-    fig.text(0.5, -0.01, format_notes, ha="center", va="top",
-             fontsize=7.5, color="#444444", linespacing=1.6)
-
-    # ── Save combined ─────────────────────────────────────────────────────────
-    plt.savefig("nba_home_court_advantage.png", dpi=150, bbox_inches="tight", facecolor=BG)
-    print("\nSaved → nba_home_court_advantage.png")
-    plt.close()
 
     # ── Save individual panels ────────────────────────────────────────────────
     def _save(path: str, draw_fn, figsize: tuple) -> None:
