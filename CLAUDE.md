@@ -9,7 +9,8 @@ Our main questions for all this analysis and the output is 1: has HCA changed ov
 ## Key files
 
 - `FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, the playoff picture, other findings, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
-- `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
+- `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh. **Whenever `RESULTS.md` changes, update `STATS_EXPLAINER.md`** so every number, p-value, and conclusion it quotes still matches (it cites `RESULTS.md` row by row); then regenerate its PDF. `STATS_TUTORIAL.md`'s worked examples also reproduce `RESULTS.md` rows — check those too
+- `STATS_EXPLAINER.md` / `STATS_TUTORIAL.md` — hand-edited methods companions to `RESULTS.md`; each has a generated PDF (`STATS_EXPLAINER.pdf`, `STATS_TUTORIAL.pdf`). **Whenever either markdown is edited, regenerate its PDF** with `python3 generate_doc_pdf.py <FILE>.md` (see Commands)
 
 ## Commands
 
@@ -19,6 +20,10 @@ MPLBACKEND=Agg python3 nba_home_court_advantage.py
 
 # Generate the PDF report (run after the above)
 python3 generate_report.py
+
+# Regenerate a stats doc PDF (run after editing STATS_EXPLAINER.md or STATS_TUTORIAL.md)
+python3 generate_doc_pdf.py STATS_EXPLAINER.md
+python3 generate_doc_pdf.py STATS_TUTORIAL.md
 
 # Run tests
 python3 -m pytest
