@@ -10,6 +10,13 @@ bulleted lists, blockquotes, tables, and embedded images.
 
     python3 generate_doc_pdf.py STATS_TUTORIAL.md
     python3 generate_doc_pdf.py STATS_EXPLAINER.md [output.pdf]
+    python3 generate_doc_pdf.py STATS_EXPLAINER.md --appendix RESULTS.md
+
+Pass --appendix <file> to reproduce a RESULTS-style file (the ``` fenced
+regression output) verbatim at the back of the PDF, one code block per section —
+the same Appendix A treatment generate_report.py gives the findings report. The
+appendix source is read at build time, so the tables stay in sync with the
+auto-generated original.
 
 Embedded images (![alt](file.png)) must exist relative to the working directory;
 the tutorial's figures come from generate_tutorial_figures.py and the analysis
@@ -319,6 +326,77 @@ def md_to_flowables(md: str) -> list:
     return out
 
 
+# ── Appendix: RESULTS.md verbatim ─────────────────────────────────────────────
+
+def _results_text(path: str) -> str:
+    """Read a RESULTS-style file and return the raw text inside its ``` fence."""
+    with open(path) as f:
+        lines = f.readlines()
+    content, in_block = [], False
+    for line in lines:
+        if line.strip() == "```":
+            in_block = not in_block
+            continue
+        if in_block:
+            content.append(line.rstrip("\n"))
+    # No fence found → treat the whole file as the body.
+    return "\n".join(content) if content else "".join(lines)
+
+
+def _parse_regression_sections(text: str) -> list[tuple[str | None, str]]:
+    """Split regression output into (title, body) pairs on '─── TITLE ───' lines.
+    Pure box-drawing separator lines (═══, ───) are stripped from bodies."""
+    section_re = re.compile(r"^─{3,}\s+(.*?)\s*─*\s*$")
+    sep_re = re.compile(r"^[═─]+\s*$")
+
+    sections: list[tuple[str | None, str]] = []
+    current_title: str | None = None
+    current_lines: list[str] = []
+
+    for line in text.split("\n"):
+        m = section_re.match(line)
+        if m:
+            body = "\n".join(current_lines).strip()
+            if body:
+                sections.append((current_title, body))
+            current_title = m.group(1).strip()
+            current_lines = []
+        elif sep_re.match(line.strip()):
+            pass  # drop pure separator lines — titles replace them
+        else:
+            current_lines.append(line)
+
+    body = "\n".join(current_lines).strip()
+    if body:
+        sections.append((current_title, body))
+    return sections
+
+
+def _appendix(path: str) -> list:
+    """Render a RESULTS-style file as an appendix: one code block per section."""
+    if not os.path.exists(path):
+        return [Paragraph(f"[Appendix source not found: {_esc(path)}]",
+                          _STYLES["caption"])]
+    out: list = [
+        PageBreak(),
+        Paragraph(f"Appendix: {os.path.basename(path)}", _STYLES["h1"]),
+        HRFlowable(width="100%", thickness=0.5,
+                   color=colors.HexColor("#dddddd"), spaceAfter=8),
+        Paragraph(
+            f"Full regression output, reproduced verbatim from "
+            f"<font name=\"Courier\">{_esc(os.path.basename(path))}</font>. "
+            "Sections appear in the same order as this document.",
+            _STYLES["body"]),
+        Spacer(1, 0.1 * inch),
+    ]
+    for title, body in _parse_regression_sections(_results_text(path)):
+        if title:
+            out.append(Spacer(1, 0.08 * inch))
+            out.append(Paragraph(_esc(title), _STYLES["h3"]))
+        out.append(Preformatted(body, _STYLES["code"]))
+    return out
+
+
 # ── Cover + footer ────────────────────────────────────────────────────────────
 
 def _cover(title: str) -> list:
@@ -344,7 +422,8 @@ def _draw_footer(canvas, doc):
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-def build(md_path: str, output_path: str | None = None) -> str:
+def build(md_path: str, output_path: str | None = None,
+          appendix_path: str | None = None) -> str:
     if not os.path.exists(md_path):
         sys.exit(f"ERROR: {md_path} not found")
     with open(md_path) as f:
@@ -360,6 +439,8 @@ def build(md_path: str, output_path: str | None = None) -> str:
         output_path = os.path.splitext(md_path)[0] + ".pdf"
 
     story = [*_cover(title), *md_to_flowables(md)]
+    if appendix_path:
+        story += _appendix(appendix_path)
     SimpleDocTemplate(
         output_path, pagesize=letter,
         leftMargin=MARGIN, rightMargin=MARGIN,
@@ -371,6 +452,16 @@ def build(md_path: str, output_path: str | None = None) -> str:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        sys.exit("usage: python3 generate_doc_pdf.py <markdown_file> [output.pdf]")
-    build(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
+    args = sys.argv[1:]
+    appendix = None
+    if "--appendix" in args:
+        idx = args.index("--appendix")
+        try:
+            appendix = args[idx + 1]
+        except IndexError:
+            sys.exit("usage: --appendix requires a path (e.g. --appendix RESULTS.md)")
+        del args[idx:idx + 2]
+    if not args:
+        sys.exit("usage: python3 generate_doc_pdf.py <markdown_file> "
+                 "[output.pdf] [--appendix RESULTS.md]")
+    build(args[0], args[1] if len(args) > 1 else None, appendix_path=appendix)
