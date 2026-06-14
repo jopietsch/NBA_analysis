@@ -77,7 +77,7 @@ The playoff referee chart makes the generational shift visible. The officials wi
 
 ![Figure 6. Shot zone differentials (home minus road), regular season vs. playoffs.](nba_home_court_shot_zones.png)
 
-**The three-point revolution.** No stylistic change in league history matches the rise of three-point shooting, and it tracks almost perfectly with the decline in home court advantage. When about 7% of all field goal attempts were threes in the 1980s, home teams won 65% of games. When 40% of attempts are threes today, home teams win 55%.
+**The three-point revolution.** No stylistic change in league history matches the rise of three-point shooting, and it tracks almost perfectly with the decline in home court advantage. When about 7% of all field goal attempts were threes in the 1980s, home teams won 65% of games. When 40% of attempts are threes today, home teams win 55%. The timing also explains the second wave from Section 1: the three-point share leapt from about a quarter of all shots to nearly half right after 2017 — the very years home court began its second slide below 56%.
 
 This is not just a coincidence of timing. Even within any given era — controlling for all the gradual year-by-year drift — games in which teams attempt more threes show measurably lower home win rates. Each 10-percentage-point rise in three-point attempt rate translates to about 2 fewer home wins per 100 games. The more the game spreads to the perimeter, the less the home crowd, the familiar floor, and the referee's subconscious seem to matter.
 
