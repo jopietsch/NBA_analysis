@@ -14,7 +14,7 @@ Throughout, the regular season and the playoffs are tracked separately — they 
 
 The home team in an NBA game used to win about 65 out of every 100. Today it wins about 55. That 10-point drop unfolded at roughly a quarter of a percentage point per year and the data leaves no room to doubt it.
 
-The playoffs tell the same story with a slight lag. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today — a drop of close to 10 points, comparable to the regular season but with more year-to-year noise given the smaller number of games.
+The playoffs tell the same story with a slight lag. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today — a drop of roughly 9 points, comparable to the regular season but with more year-to-year noise given the smaller number of games.
 
 ![Figure 1. Regular season vs. playoff home win % per season, 1983–84 through 2024–25. Dashed lines are overall trend fits; background shading marks rule-change eras.](nba_home_court_advantage_season.png)
 
@@ -51,7 +51,7 @@ The playoff referee data makes the universality of this clear: 41 of 42 official
 
 **Shooting edge.** Home teams have consistently shot the ball better than road teams — better than a percentage point in field goal percentage across the full period, with a similar gap in effective field goal percentage. Part of this reflects psychological comfort, part reflects familiarity with the floor and backdrop of a specific arena. The effect has been consistent across eras in both regular season and playoffs.
 
-**Shot selection.** Historically, home teams have gotten more of their field goal attempts from close range and fewer from the perimeter. A paint shot is more efficient than a jump shot, so home teams have started each possession with a small structural advantage in expected scoring — independent of how well they shoot from any given spot.
+**Shot selection.** Historically, home teams have gotten more of their field goal attempts from close range and fewer from mid-range. A paint shot is more efficient than a mid-range jumper, so home teams have started each possession with a small structural advantage in expected scoring — independent of how well they shoot from any given spot.
 
 **Rebounding and ball control.** Quieter than the others but just as real, home teams have pulled down more rebounds and committed fewer turnovers than their visitors — about one and a half extra boards and a third of a turnover per game in the home team's favor. Neither edge is dramatic on its own, but both hand the home team extra possessions, and together they rival the shooting advantage in size. As Section 3 will show, this unglamorous pair turns out to matter more than its modest billing suggests.
 
@@ -73,7 +73,7 @@ The playoff referee chart makes the generational shift visible. The officials wi
 
 ![Figure 5. Referee home foul bias by official and era, playoffs.](nba_home_court_referee.png)
 
-**The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their field goal attempts from the paint than road teams. By 2023–25, that gap has shrunk to just 0.4 points in the regular season and has similarly contracted in the playoffs. Away teams now attack the basket nearly as aggressively as home teams. The league-wide shift toward analytics-driven offense has standardized shot selection across venues — whether you're playing at home or on the road, the right shot is the right shot.
+**The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their field goal attempts from the paint than road teams. By 2023–25, that gap has shrunk to just 0.4 points in the regular season — away teams now attack the basket nearly as aggressively as home teams. The league-wide shift toward analytics-driven offense has standardized shot selection across venues: whether you're playing at home or on the road, the right shot is the right shot. The playoffs are a different story. The postseason gap narrowed in the late 2010s but has since rebounded close to its old level, and the downward drift there isn't statistically established — for now, shot-selection convergence is a regular-season phenomenon.
 
 ![Figure 6. Shot zone differentials (home minus road), regular season vs. playoffs.](nba_home_court_shot_zones.png)
 
@@ -85,7 +85,7 @@ In the playoffs, the pattern holds directionally but the within-era signal is we
 
 ![Figure 7. League three-point attempt rate vs. home win %, regular season and playoffs.](nba_home_court_3pa.png)
 
-**A quieter fourth strand: the glass.** The three forces above are the headline, but the box score insists on one more. The home team's rebounding edge has shrunk steadily for 40 years — and unlike the shooting edge, it is not the three-point story in disguise. Hold each game's three-point volume constant and the fading home *shooting* advantage disappears entirely, confirming it was a byproduct of the move to the perimeter. Do the same to the home *rebounding* edge and it barely moves — a separate four-decade slide in its own right. The home turnover edge has eroded too, about half of it independent of the perimeter shift. We can't name the cause the way we can for the whistle and the arc, but the accounting is unambiguous: home court's hold on the glass and on loose balls has loosened on its own, and together they account for a real slice of the decline. In the playoffs the rebounding fade is, if anything, sharper.
+**A quieter fourth strand: the glass.** The three forces above are the headline, but the box score insists on one more. The home team's rebounding edge has shrunk steadily for 40 years — and unlike the shooting edge, it is not the three-point story in disguise. Hold each game's three-point volume constant and the fading home *shooting* advantage disappears entirely, confirming it was a byproduct of the move to the perimeter. Do the same to the home *rebounding* edge and it barely moves — a separate four-decade slide in its own right. The home turnover edge has eroded too, about half of it independent of the perimeter shift. We can't name the cause the way we can for the whistle and the arc, but the accounting is unambiguous: home court's hold on the glass and on loose balls has loosened on its own, and together they account for a real slice of the decline. The same holds in the playoffs, where rebounding carries a comparable share of the drop and survives the three-point control just as cleanly.
 
 **Adding it up.** Stack the four channels together and they account for roughly 95% of the entire regular-season decline — and the surprise is which ones carry it. The two that get the headlines explain about 21% and 18%: shooting, which is where the converging shot selection and the three-point shift register on the box score, and the narrowing whistle. The quieter pair, rebounding and turnovers, carry the most: roughly 29% and 28%, more than half the drop between them. In the regular season, almost nothing is left over.
 
@@ -103,7 +103,7 @@ Several popular explanations for the decline turn out not to hold up.
 
 **Travel and time zones.** The effect of travel distance is detectable in the regular season but negligibly small — about 0.08 percentage points per 100 miles of road travel — and it doesn't even point consistently in the intuitive direction. Practically speaking, a team flying cross-country has nearly the same odds of winning as one driving two hours. In the playoffs, travel distance has no measurable effect at all. Time zones are similarly flat in both contexts: crossing from one coast to the other adds essentially nothing to the home team's edge.
 
-**Pace of play.** The game slowed dramatically from the 1980s to the mid-1990s and has sped back up since 2015 — yet home court advantage moved independently of both shifts. Season by season, the pace of play shows no meaningful correlation with home win rates. Faster or slower basketball does not predict whether the home team wins. The same holds in the playoffs.
+**Pace of play.** The game slowed dramatically from the 1980s to the mid-1990s and has sped back up since 2015 — yet home court advantage moved independently of both shifts. Season by season, the pace of play shows no meaningful correlation with home win rates — the league sped up, slowed down, and sped up again while home court fell in a near-straight line. Whatever pace does within a single game, it didn't drive the four-decade decline. The same holds in the playoffs.
 
 ![Figure 9. Pace of play vs. home win %, regular season and playoffs.](nba_home_court_pace.png)
 
