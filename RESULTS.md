@@ -296,6 +296,33 @@ All data from cache/ — same source as the plots above.
      home team is usually the better team) — see the seeding
      decomposition for that control.
 
+   ─ Are the channel trends downstream of the 3-point shift? ─
+   Each differential's year-trend, before and after controlling for the
+   game's 3PA rate. A trend that survives the control is an independent
+   driver; one that collapses faded with the move to the perimeter.
+
+   Regular season  (N = 47,879 games)
+   Channel              Trend/yr    Trend/yr | 3PA   Absorbed
+   ────────────────  ───────────  ────────────────  ─────────
+   eFG% diff (pp)      -0.0148***         +0.0176*        219%
+   Foul diff           +0.0225***         +0.0119**        47%
+   TOV diff            +0.0199***         +0.0095*         52%
+   REB diff            -0.0421***         -0.0376***        11%
+
+   ► Survives the 3PA control: TOV diff, REB diff — not fully
+     explained by the shooting revolution.
+
+   Playoffs  (N = 3,207 games)
+   Channel              Trend/yr    Trend/yr | 3PA   Absorbed
+   ────────────────  ───────────  ────────────────  ─────────
+   eFG% diff (pp)      -0.0058           +0.0058         200%
+   Foul diff           +0.0196**         +0.0015          92%
+   TOV diff            +0.0073           -0.0038         153%
+   REB diff            -0.0330*          -0.0548*        -66%
+
+   ► Survives the 3PA control: REB diff — not fully
+     explained by the shooting revolution.
+
 
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home

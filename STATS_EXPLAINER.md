@@ -203,13 +203,24 @@ accounting identities:
    trend/yr). This splits the *decline* into per-channel contributions, using
    each channel differential's own year-trend (from the Section 5 template).
 
+A third block — a **3PA-control diagnostic** — was added to settle whether the
+turnover and rebounding contributions are independent or merely downstream of the
+three-point revolution. For each channel it refits the differential's year-trend
+twice, `channel ~ year` and `channel ~ year + tpa_rate_avg`, with season-clustered
+SEs, and reports how much of the year-trend the game-level 3PA rate absorbs.
+Game-to-game 3PA variation *within* a season gives the control real identifying
+power (season means alone would be near-collinear with year). The test is
+asymmetric: a trend that **survives** the control is strong evidence of an
+independent driver; heavy absorption is only weakly informative because 3PA and
+the calendar move together.
+
 **Why an LPM, not a logit.** The whole point is the additive decomposition —
 contributions that sum exactly to the level and to the trend. That additivity
 holds only in a linear model; a logit's nonlinearity breaks the identity. The
 usual LPM cost (fitted probabilities can leave [0,1]) is irrelevant for an
-accounting exercise. The output is careful to call these channels *proximate* —
-how HCA expresses itself in the box score — so this is mediation in the
-accounting sense, not deep causal identification.
+accounting exercise. The channels are *proximate* — how HCA expresses itself in
+the box score — so the level/trend split is mediation in the accounting sense;
+the 3PA-control diagnostic is what adds a causal-ordering question on top.
 
 **What the results mean.** The four channels capture nearly all of HCA's level in
 both contexts and nearly all of its regular-season decline:
@@ -223,12 +234,25 @@ both contexts and nearly all of its regular-season decline:
 - **Playoffs:** channels carry 94% of the level but only 65% of the decline —
   35% of the playoff decline runs outside the measured box-score channels.
 
-Two cautions. First, turnovers and rebounds surface as large contributors here
-even though `FINDINGS.md` doesn't headline them as "drivers": their trends are
-plausibly downstream of the same shifts (officiating, the move to the perimeter),
-so an accounting share is not a causal claim. Second, the playoff numbers fold in
-the seed-quality gap — the home team is usually the better team — which Section 15
-isolates and controls.
+The 3PA-control diagnostic then resolves the obvious follow-up — are rebounds and
+turnovers real drivers or just downstream of the perimeter shift? The answers
+differ by channel:
+
+- **Shooting** is fully downstream: controlling for 3PA, the home eFG% trend
+  doesn't just vanish, it flips sign (absorbed ≈ 219%). The fading home shooting
+  edge *is* the three-point story.
+- **Rebounding** is independent: only ≈11% of its year-trend is absorbed and it
+  stays highly significant (p < 0.001). The home team's rebounding edge has slid
+  for reasons the perimeter shift does not explain — a genuine fourth strand of
+  the decline, now reflected in `FINDINGS.md` §4 and §7. In the playoffs the
+  rebounding fade is, if anything, sharper net of 3PA.
+- **Fouls and turnovers** are roughly half-and-half (≈47% and ≈52% absorbed) but
+  both survive — partly the perimeter story, partly their own.
+
+So the earlier worry that the turnover/rebound shares were "just downstream" was
+half right (turnovers, partly) and half wrong (rebounding is its own thing). One
+remaining caution: the playoff numbers fold in the seed-quality gap — the home
+team is usually the better team — which Section 15 isolates and controls.
 
 ---
 

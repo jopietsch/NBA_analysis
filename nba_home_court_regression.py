@@ -1151,6 +1151,60 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             print("     decomposition for that control.")
         print()
 
+    # ── Diagnostic: are the channel trends downstream of the 3-point shift? ──
+    # The trend decomposition credits rebounding and turnovers with large shares
+    # of the decline, but those edges may simply be fading because the game moved
+    # to the perimeter. Re-fit each channel differential's year-trend with the
+    # game's 3PA rate added. Game-to-game 3PA variation within a season gives the
+    # control real identifying power. A trend that SURVIVES the control is an
+    # independent driver; one that collapses is downstream of the shooting shift.
+    # (Caveat: season-mean 3PA is near-collinear with year, so high absorption is
+    #  expected and only weakly informative — survival is the strong signal.)
+    print("   ─ Are the channel trends downstream of the 3-point shift? ─")
+    print("   Each differential's year-trend, before and after controlling for the")
+    print("   game's 3PA rate. A trend that survives the control is an independent")
+    print("   driver; one that collapses faded with the move to the perimeter.\n")
+
+    for label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        d = sub.dropna(subset=keys + ["year", "tpa_rate_avg"])
+        if len(d) < 100:
+            continue
+        print(f"   {label}  (N = {len(d):,} games)")
+        print(f"   {'Channel':<16}  {'Trend/yr':>11}  {'Trend/yr | 3PA':>16}  {'Absorbed':>9}")
+        print(f"   {'─'*16}  {'─'*11}  {'─'*16}  {'─'*9}")
+        absorbed_by: dict[str, tuple[float, float]] = {}
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cl = {"groups": d["year"]}
+            for k, lbl in channels:
+                m_raw  = smf.ols(f"{k} ~ year", data=d).fit(cov_type="cluster", cov_kwds=cl)
+                m_ctrl = smf.ols(f"{k} ~ year + tpa_rate_avg", data=d).fit(
+                    cov_type="cluster", cov_kwds=cl)
+                g_raw, g_ctrl = m_raw.params["year"], m_ctrl.params["year"]
+                s_raw  = _stars(m_raw.pvalues["year"]).strip()
+                s_ctrl = _stars(m_ctrl.pvalues["year"]).strip()
+                absorbed = 100 * (1 - g_ctrl / g_raw) if g_raw != 0 else float("nan")
+                absorbed_by[k] = (absorbed, m_ctrl.pvalues["year"])
+                print(f"   {lbl:<16}  {g_raw:>+9.4f}{s_raw:<2}  {g_ctrl:>+14.4f}{s_ctrl:<2}  "
+                      f"{absorbed:>8.0f}%")
+
+        reb_p = absorbed_by["reb_diff"][1]
+        tov_p = absorbed_by["tov_diff"][1]
+        if reb_p > 0.05 and tov_p > 0.05:
+            print(f"\n   ► With 3PA controlled, neither the rebounding nor the turnover")
+            print(f"     trend stays significant — both edges faded with the move to the")
+            print(f"     perimeter, not as independent drivers.")
+        else:
+            survivors = [lbl for k, (_, p) in absorbed_by.items()
+                         for kk, lbl in channels if kk == k and p < 0.05
+                         and k in ("reb_diff", "tov_diff")]
+            print(f"\n   ► Survives the 3PA control: {', '.join(survivors)} — not fully")
+            print(f"     explained by the shooting revolution.")
+        print()
+
 
 # ── Analysis 6: Shot zone differentials ──────────────────────────────────────
 
