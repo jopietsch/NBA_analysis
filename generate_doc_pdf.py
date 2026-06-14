@@ -406,6 +406,7 @@ def _cover(title: str) -> list:
         Spacer(1, 0.2 * inch),
         HRFlowable(width="60%", thickness=0.6, color=colors.HexColor("#dddddd")),
         Spacer(1, 0.2 * inch),
+        Paragraph("Justin Pietsch", _STYLES["cover_sub"]),
         Paragraph(f"Generated {datetime.now().strftime('%B %d, %Y')}",
                   _STYLES["cover_sub"]),
         PageBreak(),

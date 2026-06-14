@@ -281,6 +281,8 @@ def _cover(sections: dict) -> list:
         Spacer(1, 0.5 * inch),
         Paragraph("NBA Home Court Advantage", _STYLES["cover_title"]),
         Paragraph("A 40-Year Decline", _STYLES["cover_sub"]),
+        Spacer(1, 0.15 * inch),
+        Paragraph("Justin Pietsch", _STYLES["cover_sub"]),
         Spacer(1, 0.25 * inch),
         _hr(),
         Spacer(1, 0.15 * inch),

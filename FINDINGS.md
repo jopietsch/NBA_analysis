@@ -33,7 +33,7 @@ A word on the era labels used throughout this report. The charts bucket seasons 
 
 Whether any of these rule changes actually caused the decline is a separate question — taken up in Section 4. For now they are just the calendar the rest of the report runs on.
 
-![Figure 2. Home win % by era, regular season vs. playoffs.](nba_home_court_advantage_era_bars.png)
+![Figure 2. Home win % by era, regular season vs. playoffs.](nba_home_court_advantage_era_bars.png){width=0.5}
 
 One counterintuitive wrinkle: even as home teams win less often, the margin when they do win has grown. Home wins are getting bigger, and home losses are getting worse. The obvious objection — that losses only look worse because more games are losses now — doesn't survive a closer look. Tracking the full spread of margins regardless of who won, the gap between the biggest wins and the biggest losses widens by about 0.2 points a year in both the regular season and the playoffs. In the regular season the blowouts grow in both directions at once; in the playoffs the spread widens mainly because the big home wins keep getting bigger. Either way, the era of close games is becoming an era of blowouts — fewer home wins overall, but the ones that happen are more decisive.
 
@@ -140,7 +140,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 The most recent shift, in 2014, coincided with the sharpest period of playoff HCA decline — a 6-point raw drop from the 2003–13 period to the 2014–25 period. But when the year-by-year secular trend is accounted for, the format change has no independent effect. The playoff drop would have arrived on roughly the same schedule regardless. Format was not the cause.
 
-![Figure 12. Home win % by playoff format period, regular season vs. playoffs.](nba_home_court_advantage_format_bars.png)
+![Figure 12. Home win % by playoff format period, regular season vs. playoffs.](nba_home_court_advantage_format_bars.png){width=0.5}
 
 ---
 

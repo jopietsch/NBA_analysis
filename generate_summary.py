@@ -210,6 +210,8 @@ def build_summary(output="nba_home_court_advantage_summary.pdf"):
     story = []
     for i, page_text in enumerate(pages):
         story += _page_to_flowables(page_text, is_cover=(i == 0), S=S)
+        if i == 0:
+            story.append(Paragraph("Justin Pietsch", S["cover_hook"]))
         if i < len(pages) - 1:
             story.append(PageBreak())
 
