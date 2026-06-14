@@ -3,7 +3,6 @@ __pycache__/
 .coverage
 .pytest_cache/
 cache/
-nba_home_court_advantage.png
 nba_home_court_advantage_season.png
 nba_home_court_advantage_era_bars.png
 nba_home_court_advantage_format_bars.png
