@@ -3,7 +3,7 @@
 ## Introduction (Intro / TL;DR)
 - **Three guiding questions:** (1) Has HCA really changed? (2) What makes home court an advantage? (3) What's driving the decline — and what isn't?
 - **Headline answers:**
-  - Change is real & steady: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**.
+  - Change is real & one-directional: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**. Shape = a slow gradual erosion + **two sharper one-time drops** layered on top.
   - HCA is built from: referee foul calls, shooting/shot-selection edge, plus smaller rest & altitude boosts.
   - Decline drivers: neutral whistle, converging shot selection, three-point revolution draining variance.
 - **Ruled-out suspects:** rule changes, travel, time zones, pace, competitive balance, crowd size, 2014 playoff format.
@@ -17,10 +17,13 @@
 - **Core stat:** Home win rate ~65 → ~55 per 100; ~quarter-point/year.
   - *RESULTS:* Reg season GLM **−0.245 pp/yr** [−0.282, −0.208], p<0.001, total ≈ **−10.0 pp**; OLS −0.251 pp/yr, R²=0.733.
   - *RESULTS:* Playoffs GLM **−0.209 pp/yr** [−0.348, −0.070], p=0.003, total ≈ **−8.6 pp**; peaked ~68% → 58% today (~9 pt drop, noisier).
-- **Two waves of decline:**
-  - First wave: sharp mid-1990s drop ~65% → 60% (steepest move). *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
-  - Flat for ~two decades.
-  - Second wave: after 2017, below 56%. *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–25 −1.802 pp/yr.*
+- **Two speeds — gradual drift vs. abrupt waves** (key framing for the whole report):
+  - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 on-court channels grinding down.
+  - **Abrupt — two waves** layered on top, each a moment one force shoved the same trend harder:
+    - First wave: sharp mid-1990s drop ~65% → 60% (steepest move). Cause = **1994–95 hand-check rule shock** (§4) — a *discrete event, outside* the box-score channels. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+    - Flat for ~two decades.
+    - Second wave: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the channels (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–25 −1.802 pp/yr.*
+  - Waves are not extra causes — they're the same channels' story told at faster speed. Asymmetry (wave-1 cause outside channels in §4, wave-2 cause inside them in §3) is why each is explained in a different section.
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
 - **Era table** (6 eras, 1984–94 through 2023–25, defined by major rule changes — used as calendar only; causation deferred to §4).
 - **Counterintuitive finding — margins polarizing:** home wins bigger, home losses worse.
@@ -148,6 +151,7 @@
 
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → 55.6%**, playoffs **~68% → 58%**.
+- Shape: slow four-decade erosion + two sharper drops — 1994–95 hand-check jolt (discrete, outside channels) and post-2017 three-point surge (inside channels, shooting line).
 - Three main drivers + quiet fourth: (1) fairer refs (largest single change), (2) converged shot selection, (3) three-point variance, (4) rebounding edge slipping independently.
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
 - Playoffs follow reg season with ~decade lag; accelerated since 2018; genuine erosion (weaker host still winning less); no sign of bottoming out.
