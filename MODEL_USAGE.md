@@ -6,6 +6,10 @@ written to be over-specified precisely so a cheaper model or lower effort can
 execute most of it — concentrate the expensive capability on the items where
 errors are silent and on every FINDINGS rewrite.
 
+These notes reference each analysis by name rather than by section number,
+because `FINDINGS.md` and `RESULTS.md` get reordered as the report evolves and
+fixed numbers go stale.
+
 ## Pricing context (as of June 2026)
 
 | Model | Input $/MTok | Output $/MTok | Notes |
@@ -20,10 +24,10 @@ favor smaller models for mechanical work.
 ## The deciding principle
 
 The failure mode in this codebase is not code that crashes — it is code that
-runs and prints plausible-looking wrong numbers. The §7 referee t-test bug ran
-cleanly for months, produced significance stars in every row, and propagated
-into published FINDINGS prose. Model capability matters exactly where that
-silent-failure shape exists, and on the prose steps where claims must be
+runs and prints plausible-looking wrong numbers. The referee foul-bias t-test
+bug ran cleanly for months, produced significance stars in every row, and
+propagated into published FINDINGS prose. Model capability matters exactly where
+that silent-failure shape exists, and on the prose steps where claims must be
 calibrated to evidence. It matters much less where the plan already specifies
 the formula, the file, and the acceptance criteria.
 
@@ -31,12 +35,12 @@ the formula, the file, and the acceptance criteria.
 
 | PLAN-STATS batch | Risk shape | Model |
 |---|---|---|
-| Batch 1 (items 1–2: referee fix, variance decomposition / shrinkage) | Conclusion genuinely in play; silent-failure math (shrinkage weights, variance floors) | Fable 5, or Opus 4.8 to economize |
-| Batch 2 (items 3–4: quantile regression, Shapley decomposition) | Interpretation drives §4/§15/§16 rewrites; combinatorial bookkeeping | Fable 5, or Opus 4.8 |
-| Batch 3 (items 5–8, 12: inference upgrades + CIs) | Tightly specified; conclusions probably hold | Sonnet 4.6 is fine |
-| Batch 4 (items 9–11: §10, §14, cluster-SE sweep) | Mostly one-line changes copying existing patterns | Sonnet 4.6 is fine |
+| Batch 1 (referee t-test fix, variance decomposition / shrinkage) | Conclusion genuinely in play; silent-failure math (shrinkage weights, variance floors) | Fable 5, or Opus 4.8 to economize |
+| Batch 2 (quantile regression, Shapley decomposition) | Interpretation drives the margin-polarization and combined situational-vs-era rewrites; combinatorial bookkeeping | Fable 5, or Opus 4.8 |
+| Batch 3 (inference upgrades + confidence intervals) | Tightly specified; conclusions probably hold | Sonnet 4.6 is fine |
+| Batch 4 (perimeter / situational analyses + cluster-SE sweep) | Mostly one-line changes copying existing patterns | Sonnet 4.6 is fine |
 
-Watch item 6 (leave-one-out expected pace) inside Batch 3 — it has the silent
+Watch the leave-one-out expected-pace item inside Batch 3 — it has the silent
 leakage-risk shape even though the batch is otherwise mechanical.
 
 **Alternative pattern:** implement everything on Sonnet, then have Fable (or
@@ -56,7 +60,7 @@ context, which sidesteps the mid-batch-switch problem entirely.
 | Work | Effort | Why |
 |---|---|---|
 | Batches 3–4 implementation | `medium` | The plan did the thinking; lower effort means fewer, more consolidated tool calls. High effort on routine work risks over-exploration and unrequested tidying at Fable prices. |
-| Batches 1–2 | `high` | The benefit is verification behavior: rechecking shrinkage weights by hand, sanity-checking that the 32 Shapley fits sum correctly, noticing when a quantile slope contradicts the prose it's about to support. |
+| Batches 1–2 | `high` | The benefit is verification behavior: rechecking shrinkage weights by hand, sanity-checking that the Shapley fits sum correctly, noticing when a quantile slope contradicts the prose it's about to support. |
 | Every end-of-batch FINDINGS rewrite | `high` | Translating new numbers into prose claims is judgment work — it's where all the overclaiming was found. Bump up even if the batch ran at `medium`. |
 | `xhigh` / `max` | Skip by default | They earn their cost on open-ended, underspecified problems; PLAN-STATS is deliberately the opposite. Exception: a Batch 1 result that collapses the existing narrative (e.g. negative true variance in most eras) and needs a from-scratch rethink rather than plan execution. |
 
