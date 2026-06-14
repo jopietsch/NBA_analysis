@@ -2,9 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-This is for a python system to get data, and analyze to produce a report with graphs and statistics to understand NBA home court advantage and how and why it has changed over time.
+This is for a python system to get data, and analyze to produce one or more reports with graphs and statistics to understand NBA home court advantage and how and why it has changed over time.
 
-Our main questions for all this analysis and the output is 1: has HCA changed over time? 2: what makes up HCA? 3: what contributes to it's change over time, and what does not, but people might thing that it does.
+Our main questions for all this analysis and the output is 1: has HCA changed over time? 2: what makes up HCA? 3: what contributes to it's change over time, and what does not, but people might think that it does. All our analysis and descriptions should make clear what is going on in the Regular Season vs the Playoffs. Also, we have come across other interesting findings that aren't a part of these questions, make sure we talk about them, but in seperate sections. Since this will be a long report, if some of the conlusions make sense to put in the introduction, please do that, or readers will get bored and not read the report.
 
 ## Key files
 

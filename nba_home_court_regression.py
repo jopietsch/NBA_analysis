@@ -85,6 +85,13 @@ def build_game_dataset() -> pd.DataFrame:
             merged[diffs.columns] = diffs
             merged["margin"] = merged["PLUS_MINUS_home"]
 
+            if {"TOV_home", "TOV_away", "REB_home", "REB_away"}.issubset(merged.columns):
+                merged["tov_diff"] = merged["TOV_home"] - merged["TOV_away"]
+                merged["reb_diff"] = merged["REB_home"] - merged["REB_away"]
+            else:
+                merged["tov_diff"] = np.nan
+                merged["reb_diff"] = np.nan
+
             total_fga  = merged["FGA_home"]  + merged["FGA_away"]
             total_fg3a = merged["FG3A_home"] + merged["FG3A_away"]
             merged["tpa_rate_avg"] = 100.0 * total_fg3a / total_fga.replace(0, np.nan)
@@ -143,7 +150,7 @@ def build_game_dataset() -> pd.DataFrame:
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
-                "fg3_pct_diff", "ft_pct_diff",
+                "fg3_pct_diff", "ft_pct_diff", "tov_diff", "reb_diff",
                 "margin", "game_in_series", "distance_miles", "tpa_rate_avg",
                 "pace_avg", "expected_pace",
                 "TEAM_NAME_home", "TEAM_NAME_away",
@@ -1030,6 +1037,121 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+def run_mediation_analysis(df: pd.DataFrame) -> None:
+    """Convert box-score channels into win-% shares of the HCA level and trend.
+
+    Linear-probability model (OLS on home_win) so both decompositions are
+    exact identities:
+      level: mean win % = intercept + Σ coef × mean differential
+      trend: year slope (bivariate) = year slope (full model)
+             + Σ coef × (channel trend per year)   [omitted-variable identity]
+    Channels are proximate — they are how home advantage shows up in the box
+    score — so this is an accounting decomposition, not deep causation.
+    """
+    channels = [
+        ("efg_pct_diff", "eFG% diff (pp)"),
+        ("foul_diff",    "Foul diff"),
+        ("tov_diff",     "TOV diff"),
+        ("reb_diff",     "REB diff"),
+    ]
+    keys = [k for k, _ in channels]
+    rhs = " + ".join(keys)
+
+    _section("MEDIATION — BOX-SCORE CHANNELS AS SHARES OF HCA LEVEL AND TREND")
+    print("   How much of the home edge, and of its decline, flows through the")
+    print("   measured channels: shooting (eFG%), referee fouls, turnovers, and")
+    print("   rebounds? Linear-probability model of home_win on the four")
+    print("   home-minus-away differentials; cluster-robust SEs by season.")
+    print("   Level identity:  mean win % = intercept + Σ coef × mean diff.")
+    print("   Trend identity:  total pp/yr = unmediated pp/yr + Σ coef × channel trend/yr.")
+    print("   Foul diff carries the free-throw-attempt channel; FT% diff is")
+    print("   excluded (mean ≈ +0.3 pp, negligible). Channels are proximate —")
+    print("   how HCA expresses itself in the box score — so this is an")
+    print("   accounting decomposition, not deep causation.\n")
+
+    for label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        d = sub.dropna(subset=keys + ["home_win", "year"])
+        if len(d) < 100:
+            print(f"   {label}: insufficient data.\n")
+            continue
+
+        hw = d["home_win"].mean() * 100
+        level = hw - 50.0
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cl = {"groups": d["year"]}
+            m_chan = smf.ols(f"home_win ~ {rhs}", data=d).fit(
+                cov_type="cluster", cov_kwds=cl)
+            m_year = smf.ols("home_win ~ year", data=d).fit(
+                cov_type="cluster", cov_kwds=cl)
+            m_full = smf.ols(f"home_win ~ year + {rhs}", data=d).fit(
+                cov_type="cluster", cov_kwds=cl)
+            chan_trends = {
+                k: smf.ols(f"{k} ~ year", data=d).fit(
+                    cov_type="cluster", cov_kwds=cl)
+                for k in keys
+            }
+
+        print(f"   {label}  (N = {len(d):,} games, home win % = {hw:.1f}, "
+              f"level above coin flip = {level:+.1f} pp)")
+        print(f"   Channel-model R² = {m_chan.rsquared:.3f} — share of game-outcome "
+              f"variance the four channels carry.\n")
+
+        print(f"   Level decomposition  (coef × mean diff):")
+        print(f"   {'Channel':<16}  {'Mean diff':>10}  {'pp per unit':>12}  "
+              f"{'Contribution':>13}  {'% of level':>10}")
+        print(f"   {'─'*16}  {'─'*10}  {'─'*12}  {'─'*13}  {'─'*10}")
+        for k, lbl in channels:
+            b_pp = m_chan.params[k] * 100
+            mu = d[k].mean()
+            contrib = b_pp * mu
+            stars = _stars(m_chan.pvalues[k]).strip()
+            print(f"   {lbl:<16}  {mu:>+10.2f}  {b_pp:>+9.2f} {stars:<3}"
+                  f"{contrib:>+10.1f} pp  {100*contrib/level:>9.0f}%")
+        resid_level = m_chan.params["Intercept"] * 100 - 50.0
+        print(f"   {'─'*16}  {'─'*10}  {'─'*12}  {'─'*13}  {'─'*10}")
+        print(f"   {'Unexplained':<16}  {'':>10}  {'':>12}  {resid_level:>+10.1f} pp  "
+              f"{100*resid_level/level:>9.0f}%")
+
+        t_total = m_year.params["year"] * 100
+        t_resid = m_full.params["year"] * 100
+        p_total = m_year.pvalues["year"]
+
+        print(f"\n   Trend decomposition  (pp of home win % per year):")
+        print(f"   Total trend (home_win ~ year): {t_total:+.3f} pp/yr  "
+              f"(p = {_fmt_p(p_total)}  {_stars(p_total).strip()})\n")
+        print(f"   {'Channel':<16}  {'Trend in diff/yr':>16}  {'Contribution':>15}  "
+              f"{'% of trend':>10}")
+        print(f"   {'─'*16}  {'─'*16}  {'─'*15}  {'─'*10}")
+        mediated = 0.0
+        for k, lbl in channels:
+            gamma = chan_trends[k].params["year"]
+            stars = _stars(chan_trends[k].pvalues["year"]).strip()
+            contrib = m_full.params[k] * 100 * gamma
+            mediated += contrib
+            print(f"   {lbl:<16}  {gamma:>+12.4f} {stars:<3}  {contrib:>+9.4f} pp/yr  "
+                  f"{100*contrib/t_total:>9.0f}%")
+        print(f"   {'─'*16}  {'─'*16}  {'─'*15}  {'─'*10}")
+        print(f"   {'Sum, channels':<16}  {'':>16}  {mediated:>+9.4f} pp/yr  "
+              f"{100*mediated/t_total:>9.0f}%")
+        print(f"   {'Unmediated':<16}  {'':>16}  {t_resid:>+9.4f} pp/yr  "
+              f"{100*t_resid/t_total:>9.0f}%")
+
+        pct_level = 100 * (level - resid_level) / level
+        pct_trend = 100 * mediated / t_total
+        print(f"\n   ► {label}: channels carry {pct_level:.0f}% of the HCA level "
+              f"and {pct_trend:.0f}% of its decline.")
+        if label == "Playoffs":
+            print("   ► Note: playoff differentials fold in the seed-quality gap (the")
+            print("     home team is usually the better team) — see the seeding")
+            print("     decomposition for that control.")
+        print()
+
+
 # ── Analysis 6: Shot zone differentials ──────────────────────────────────────
 
 def run_shot_zone_analysis(
@@ -1160,7 +1282,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
 # ── Analysis 4b: Unconditional quantile regression on margins ─────────────────
 
 def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
-    """Unconditional quantile regression — tests whether 'polarization' in §3
+    """Unconditional quantile regression — tests whether 'polarization' in §2
     is genuine distribution widening or a composition artifact of the declining
     home win rate. (PLAN-STATS item 3.)
 
@@ -1169,7 +1291,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
     Lower quantiles declining while upper quantiles rise or hold → genuine
     variance widening (polarization confirmed).
     """
-    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§3 check)")
+    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§2 check)")
     print("   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.")
     print("   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.")
     print("   All quantiles parallel → pure level effect (conditional divergence is artifact).")
@@ -1210,7 +1332,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
             print(f"\n   IQR change rate (Q90 − Q10 slope diff): {spread_chg:+.3f} pts/yr")
             if spread_chg > 0.02:
                 print(f"   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).")
-                print(f"     The conditional-on-outcome divergence in §3 reflects a real change in")
+                print(f"     The conditional-on-outcome divergence in §2 reflects a real change in")
                 print(f"     distribution shape, not just a composition effect.")
             elif spread_chg < -0.02:
                 print(f"   ► Q90 falls / Q10 rises — distribution compressing.")
@@ -1219,7 +1341,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
                 rng = max(all_slopes) - min(all_slopes)
                 if rng < 0.05:
                     print(f"   ► All quantiles shift in parallel (spread change ≈ 0).")
-                    print(f"     The §3 conditional divergence is a composition artifact:")
+                    print(f"     The §2 conditional divergence is a composition artifact:")
                     print(f"     as home win % declines, marginal games flip sides and push")
                     print(f"     the conditional-win and conditional-loss means apart without")
                     print(f"     any genuine change in the distribution's shape.")
@@ -1397,6 +1519,110 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
         g7_diff = g7_pct - g1_pct
         print(f"\n   ► G7 home win % = {g7_pct:.1f}%  (vs. G1 = {g1_pct:.1f}%, diff = {g7_diff:+.1f} pp)")
         print(f"     G7 n = {total_by_game[7]:,} games (series that went to 7)")
+
+
+# ── Analysis: Playoff HCA — seeding quality decomposition ────────────────────
+
+def run_playoff_quality_decomposition(df: pd.DataFrame) -> None:
+    """Decompose the playoff HCA year trend into team-quality vs. true home-court.
+
+    Compares year coefficients before and after controlling for quality_diff
+    (home RS win% − away RS win%). If the year coefficient shrinks substantially,
+    the decline is partly explained by seed-quality gaps compressing; if it
+    barely moves, the decline is genuine HCA erosion.
+    """
+    po = df[(df["is_playoff"] == 1)].dropna(subset=["quality_diff"])
+    if po.empty:
+        _section("PLAYOFF HCA — SEEDING QUALITY DECOMPOSITION")
+        print("   No playoff data with quality_diff available.\n")
+        return
+
+    p_bar = po["home_win"].mean()
+
+    _section("PLAYOFF HCA — SEEDING QUALITY DECOMPOSITION")
+    print("   Does the playoff HCA decline reflect true home-court weakening, or do")
+    print("   better seeds simply fail to dominate lower seeds as they once did?")
+    print("   quality_diff = home RS win% − away RS win% (same season).")
+    print(f"   N = {len(po):,} playoff games with complete quality data.\n")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m_year = smf.logit("home_win ~ year", data=po).fit(disp=0)
+        m_qual = smf.logit("home_win ~ quality_diff", data=po).fit(disp=0)
+        m_full = smf.logit("home_win ~ year + quality_diff", data=po).fit(disp=0)
+
+    c_yr_base  = m_year.params["year"]
+    c_yr_full  = m_full.params["year"]
+    p_yr_base  = m_year.pvalues["year"]
+    p_yr_full  = m_full.pvalues["year"]
+    p_qual_biv = m_qual.pvalues["quality_diff"]
+    p_qual_ful = m_full.pvalues["quality_diff"]
+
+    pp_yr_base  = _pp(c_yr_base,  p_bar)
+    pp_yr_full  = _pp(c_yr_full,  p_bar)
+    pp_qual_biv = _pp(m_qual.params["quality_diff"], p_bar)
+    pp_qual_ful = _pp(m_full.params["quality_diff"], p_bar)
+
+    pct_retained = 100.0 * c_yr_full / c_yr_base if c_yr_base != 0 else np.nan
+
+    print(f"   Model comparison — year trend before and after quality control:\n")
+    print(f"   {'Model':<30}  {'year (pp/yr)':>13}  {'p':>8}  {'McF. R²':>8}")
+    print(f"   {'─'*30}  {'─'*13}  {'─'*8}  {'─'*8}")
+    print(f"   {'Year only':<30}  {pp_yr_base:>+13.3f}  {_fmt_p(p_yr_base):>8}  {_mcfadden(m_year):>8.4f}")
+    print(f"   {'Quality only':<30}  {'—':>13}  {'—':>8}  {_mcfadden(m_qual):>8.4f}")
+    print(f"   {'Year + quality_diff':<30}  {pp_yr_full:>+13.3f}  {_fmt_p(p_yr_full):>8}  {_mcfadden(m_full):>8.4f}")
+
+    print(f"\n   quality_diff (bivariate):  {pp_qual_biv:>+.2f} pp per unit  "
+          f"(p = {_fmt_p(p_qual_biv)}  {_stars(p_qual_biv).strip()})")
+    print(f"   quality_diff (full model): {pp_qual_ful:>+.2f} pp per unit  "
+          f"(p = {_fmt_p(p_qual_ful)}  {_stars(p_qual_ful).strip()})")
+    print(f"   Year trend retained after quality control: {pct_retained:.0f}%")
+    print(f"   Absorbed by quality_diff: {100.0 - pct_retained:.0f}%")
+
+    # Has quality_diff itself trended over time?
+    by_year = po.groupby("year")["quality_diff"].mean().reset_index()
+    by_year.columns = ["year", "mean_qdiff"]
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m_qdrift = smf.ols("mean_qdiff ~ year", data=by_year).fit()
+    c_qdrift = m_qdrift.params["year"]
+    p_qdrift = m_qdrift.pvalues["year"]
+
+    print(f"\n   Has the seed-quality gap itself trended over time?")
+    print(f"   Trend in mean quality_diff per season: {c_qdrift:>+.5f} per yr  "
+          f"(p = {_fmt_p(p_qdrift)}  {_stars(p_qdrift).strip()},  R² = {m_qdrift.rsquared:.4f})")
+
+    print(f"\n   Era breakdown — mean quality_diff and playoff home win %:")
+    print(f"   {'Era':<12}  {'N':>6}  {'Mean quality_diff':>18}  {'Home win %':>11}")
+    print(f"   {'─'*12}  {'─'*6}  {'─'*18}  {'─'*11}")
+    for era_label, y1, y2, _ in nba.ERA_DEFS:
+        era_rows = po[(po["year"] >= y1) & (po["year"] <= y2)]
+        if era_rows.empty:
+            continue
+        mq = era_rows["quality_diff"].mean()
+        hw = era_rows["home_win"].mean() * 100
+        print(f"   {era_label:<12}  {len(era_rows):>6,}  {mq:>+18.4f}  {hw:>10.1f}%")
+
+    # G3/G4: lower seed at home, quality_diff < 0 → pure venue effect
+    g34 = po[po["game_in_series"].isin([3.0, 4.0])].dropna(subset=["quality_diff"])
+    g34_neg = g34[g34["quality_diff"] < 0]
+    if not g34_neg.empty:
+        hw_g34 = g34_neg["home_win"].mean() * 100
+        print(f"\n   Lower-seed-at-home check (G3+G4 where quality_diff < 0):")
+        print(f"   N = {len(g34_neg):,} games  Home win % = {hw_g34:.1f}%")
+        print(f"   ► Even when the objectively weaker team is at home, they win {hw_g34:.0f}% — pure venue effect.")
+
+    if np.isnan(pct_retained):
+        pass
+    elif 100.0 - pct_retained < 15:
+        print(f"\n   ► Quality control barely moves the year coefficient ({pct_retained:.0f}% retained) —")
+        print(f"     the playoff decline is primarily genuine home-court weakening, not seed compression.")
+    elif 100.0 - pct_retained < 40:
+        print(f"\n   ► Partial explanation: {100.0 - pct_retained:.0f}% of the trend absorbed by quality_diff —")
+        print(f"     some decline reflects seed gaps compressing, but most is genuine HCA erosion.")
+    else:
+        print(f"\n   ► Substantial absorption: {100.0 - pct_retained:.0f}% of the trend absorbed by quality_diff —")
+        print(f"     a major part of the playoff decline reflects seed-quality compression, not pure HCA.")
 
 
 # ── Analysis 8: Travel distance ───────────────────────────────────────────────
@@ -1938,37 +2164,23 @@ def run() -> None:
             nba.START_YEAR, nba.END_YEAR, "Playoffs", skip_years=nba.SKIP_PLAYOFF_YEARS
         )
 
-        # §1 The Decline
+        # §1 The 40-Year Decline
         run_decline_trend(df)
-        # §2 Era and Format Period Analysis
-        run_format_period_analysis(df)
+
+        # §2 How the Drop Unfolded
         run_era_analysis(df)
-        # §3 Win Margin Trends
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
-        # §4 Playoff Series Structure
-        run_series_breakdown(df)
-        # §5 Franchise Home Court Advantage
-        reg_hca_stats = nba.compute_team_hca_stats(
-            nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
-        )
-        po_hca_stats = nba.compute_team_hca_stats(
-            nba.START_YEAR, nba.END_YEAR, "Playoffs",
-            skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
-        )
-        run_team_hca_analysis(reg_hca_stats, po_hca_stats)
-        run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
-        # §6 The Usual Suspects: Rest, Travel, Altitude, and Time Zones
+
+        # §3 What Creates Home Court Advantage
+        run_differential_analysis(df)
+        run_mediation_analysis(df)
         run_rest_bucket_analysis(df)
-        run_travel_analysis(df)
         run_factor_summary(df)
+
+        # §4 What's Driving the Decline
         run_sequential_decomposition(df)
         run_stability_analysis(df)
-        # §7 Box-Score Differentials
-        run_differential_analysis(df)
-        # §8 Shot Zone Analysis
-        run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
-        # §9 Referee Patterns
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",
             skip_years=nba.SKIP_PLAYOFF_YEARS,
@@ -1984,11 +2196,26 @@ def run() -> None:
                 print("   No officials met the minimum-games threshold.\n")
         else:
             print("   No cached referee data — run the analysis first to fetch it.\n")
-        # §10 3-Point Shooting and Home Court Advantage
+        run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
         run_3pa_analysis(df)
-        # §11 Pace and Home Court Advantage
+
+        # §5 The Playoff Picture
+        run_series_breakdown(df)
+        run_playoff_quality_decomposition(df)
+        run_format_period_analysis(df)
+        reg_hca_stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
+        )
+        po_hca_stats = nba.compute_team_hca_stats(
+            nba.START_YEAR, nba.END_YEAR, "Playoffs",
+            skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
+        )
+        run_team_hca_analysis(reg_hca_stats, po_hca_stats)
+        run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
+
+        # §6 What Didn't Drive the Change
+        run_travel_analysis(df)
         run_pace_analysis(df)
-        # §12 Competitive Balance and Parity
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
 
         print("\n" + "═" * _W + "\n")
