@@ -152,7 +152,7 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 **Denver and Utah own the best home court in the league — and altitude is the reason.** Across 40 seasons, the Nuggets and Jazz hold the largest regular-season home edges of any franchise: about 27 and 26 percentage points above their own road win rates after accounting for sample size, against a league average near 20. They are also the two highest-elevation arenas in the NBA. The franchise spread is real — roughly 70% of the variation across teams reflects genuine differences rather than noise — and altitude sits right at the top of it. (This 27-point figure is their full home-minus-road gap; the altitude piece on its own, isolated in Section 2, accounts for about 8 of those points.)
 
-![Figure 13. Franchise home court advantage, regular season and playoffs.](nba_home_court_team_hca.png)
+![Figure 13. Franchise home court advantage, regular season and playoffs. Bars and points carry 95% confidence bands: in the regular season most franchises sit clearly apart, but in the playoffs the bands are wide and overlapping — the franchise differences there are mostly noise.](nba_home_court_team_hca.png)
 
 **In the playoffs, every franchise's home court looks the same — the differences are an illusion.** That real regular-season spread vanishes in the postseason. With fewer than 150 playoff home games on record for most franchises, the apparent gaps — from Utah near the top to a couple of teams below average — are entirely explained by small samples; the true spread between franchises is statistically indistinguishable from zero. A team's reputation for being a postseason fortress is mostly a reflection of being a good team, and good teams simply play more home games.
 

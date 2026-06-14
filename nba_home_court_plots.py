@@ -888,8 +888,16 @@ def plot_team_hca_analysis(
     Panel 2: Scatter of regular-season HCA vs. playoff HCA per franchise,
              with a y=x diagonal reference line.
     """
+    def _ci_hw(s: dict) -> float:
+        """95% CI half-width (pp) for a franchise's HCA — binomial variance,
+        same formula as the regression module's _shrink_hca."""
+        ph, pr = s["home_pct"] / 100.0, s["road_pct"] / 100.0
+        var = 1e4 * (ph * (1.0 - ph) / s["n_home"] + pr * (1.0 - pr) / s["n_road"])
+        return 1.96 * float(np.sqrt(var))
+
     sorted_teams = sorted(reg_stats, key=lambda t: reg_stats[t]["hca"], reverse=True)
     hcas   = [reg_stats[t]["hca"] for t in sorted_teams]
+    errs   = [_ci_hw(reg_stats[t]) for t in sorted_teams]
     colors = [GREEN if h >= 0 else RED for h in hcas]
 
     height = max(10, len(sorted_teams) * 0.33 + 2)
@@ -908,7 +916,8 @@ def plot_team_hca_analysis(
 
     # ── Panel 1: horizontal bar chart (regular season) ────────────────────────
     y = np.arange(len(sorted_teams))
-    bars = ax1.barh(y, hcas, color=colors, edgecolor="white", linewidth=0.5, height=0.7)
+    bars = ax1.barh(y, hcas, color=colors, edgecolor="white", linewidth=0.5, height=0.7,
+                    xerr=errs, error_kw={"ecolor": "#888", "elinewidth": 0.8, "capsize": 2})
     ax1.axvline(0, color=GRAY, linewidth=1.0, zorder=1)
     ax1.set_yticks(y)
     ax1.set_yticklabels(sorted_teams, fontsize=8)
@@ -936,6 +945,10 @@ def plot_team_hca_analysis(
         ax2.axhline(0, color=GRAY, linewidth=0.7, linestyle="--", alpha=0.4)
         ax2.axvline(0, color=GRAY, linewidth=0.7, linestyle="--", alpha=0.4)
 
+        x_err = [_ci_hw(reg_stats[t]) for t in common]
+        y_err = [_ci_hw(po_stats[t])  for t in common]
+        ax2.errorbar(x_vals, y_vals, xerr=x_err, yerr=y_err, fmt="none",
+                     ecolor="#bbb", elinewidth=0.7, capsize=0, zorder=2)
         ax2.scatter(x_vals, y_vals, color=BLUE, s=55, zorder=3,
                     edgecolors="white", linewidths=0.8)
 
