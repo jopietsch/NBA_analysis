@@ -8,7 +8,7 @@ Our main questions for all this analysis and the output is 1: has HCA changed ov
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, the playoff picture, other findings, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh
 
 ## Commands

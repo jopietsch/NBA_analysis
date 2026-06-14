@@ -20,5 +20,9 @@ summary_decline.png
 summary_whistle.png
 summary_3point.png
 summary_franchises.png
+tutorial_logistic_curve.png
+tutorial_shrinkage.png
+tutorial_quantile_diagnostic.png
+tutorial_spurious_detrend.png
 *.pdf
 .DS_Store

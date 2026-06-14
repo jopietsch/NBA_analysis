@@ -45,85 +45,6 @@ All data from cache/ — same source as the plots above.
    2023–25          3      -1.191     0.754      -1.190     0.026     
 
 
-─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
-   Home win % by rule-change era; pairwise tests between consecutive eras.
-   Trend-controlled model: home_win ~ year + C(era).
-   LR test: do era dummies jointly add explanatory power beyond the year trend?
-   (If not, the decline is a smooth drift; if yes, specific rules caused jumps.)
-
-   Regular season  (N = 47,882 games)
-
-   Era            N games   Home win %
-   ────────────  ────────  ───────────
-   1984–94         11,275        64.9%
-   1995–01          7,777        59.9%
-   2002–04          3,567        61.1%
-   2005–17         15,749        59.5%
-   2018–22          5,829        56.3%
-   2023–25          3,685        55.6%
-
-   Consecutive eras — two-proportion z-tests:
-    1984–94 → 1995–01    -4.9 pp   (z = +6.95, p = <0.001  ***)
-    1995–01 → 2002–04    +1.2 pp   (z = -1.21, p = 0.227  )
-    2002–04 → 2005–17    -1.6 pp   (z = +1.79, p = 0.074  )
-    2005–17 → 2018–22    -3.2 pp   (z = +4.24, p = <0.001  ***)
-    2018–22 → 2023–25    -0.7 pp   (z = +0.65, p = 0.513  )
-
-   Trend-controlled logistic: home_win ~ year + C(era)
-   (reference era = 1984–94)
-
-   Predictor                     log-odds     ≈pp         p     
-   ────────────────────────────  ────────  ──────  ────────  ───
-   era: 1995–01                    -0.108    -2.6     0.010    *
-   era: 2002–04                    +0.002    +0.0     0.973     
-   era: 2005–17                    +0.029    +0.7     0.705     
-   era: 2018–22                    +0.004    +0.1     0.971     
-   era: 2023–25                    +0.024    +0.6     0.844     
-   year trend (per yr)             -0.012    -0.3    <0.001  ***
-
-   LR test — era dummies jointly vs. year-only model: χ²(5) = 20.70,  p = <0.001  ***
-
-   ► Era dummies are jointly significant beyond the year trend —
-     specific rule-change periods show a level shift above or below
-     what the underlying trend alone would predict.
-
-   Playoffs  (N = 3,207 games)
-
-   Era            N games   Home win %
-   ────────────  ────────  ───────────
-   1984–94            794        67.9%
-   1995–01            496        64.1%
-   2002–04            241        64.3%
-   2005–17          1,090        64.3%
-   2018–22            336        60.7%
-   2023–25            250        58.4%
-
-   Consecutive eras — two-proportion z-tests:
-    1984–94 → 1995–01    -3.8 pp   (z = +1.40, p = 0.163  )
-    1995–01 → 2002–04    +0.2 pp   (z = -0.05, p = 0.957  )
-    2002–04 → 2005–17    -0.0 pp   (z = +0.00, p = 0.999  )
-    2005–17 → 2018–22    -3.6 pp   (z = +1.20, p = 0.231  )
-    2018–22 → 2023–25    -2.3 pp   (z = +0.56, p = 0.572  )
-
-   Trend-controlled logistic: home_win ~ year + C(era)
-   (reference era = 1984–94)
-
-   Predictor                     log-odds     ≈pp         p     
-   ────────────────────────────  ────────  ──────  ────────  ───
-   era: 1995–01                    -0.095    -2.2     0.570     
-   era: 2002–04                    -0.045    -1.0     0.850     
-   era: 2005–17                    +0.020    +0.5     0.947     
-   era: 2018–22                    -0.060    -1.4     0.887     
-   era: 2023–25                    -0.124    -2.8     0.794     
-   year trend (per yr)             -0.008    -0.2     0.526     
-
-   LR test — era dummies jointly vs. year-only model: χ²(5) = 1.78,  p = 0.879  
-
-   ► Era dummies do not add significant explanatory power beyond
-     the year trend (p = 0.879) — the decline is well-described
-     as a continuous drift without discrete era-level jumps.
-
-
 ─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
    Positive = home team winning by more.
    Trend = slope of trend line (change per season year).
@@ -157,7 +78,7 @@ All data from cache/ — same source as the plots above.
    ► Overall reg-season mean margin: +2.80 pts.
    ► Overall playoff mean margin:    +4.36 pts.
 
-─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§2 check) 
+─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§1 check) 
    home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.
    Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.
    All quantiles parallel → pure level effect (conditional divergence is artifact).
@@ -175,7 +96,7 @@ All data from cache/ — same source as the plots above.
 
    IQR change rate (Q90 − Q10 slope diff): +0.199 pts/yr
    ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
-     The conditional-on-outcome divergence in §2 reflects a real change in
+     The conditional-on-outcome divergence in §1 reflects a real change in
      distribution shape, not just a composition effect.
 
    Playoffs  (N = 2,272 games, 1997–2025)
@@ -190,7 +111,7 @@ All data from cache/ — same source as the plots above.
 
    IQR change rate (Q90 − Q10 slope diff): +0.200 pts/yr
    ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
-     The conditional-on-outcome divergence in §2 reflects a real change in
+     The conditional-on-outcome divergence in §1 reflects a real change in
      distribution shape, not just a composition effect.
 
 
@@ -618,6 +539,206 @@ All data from cache/ — same source as the plots above.
     time but 3PA does not predict outcomes within any given era.)
 
 
+─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
+   Home win % by rule-change era; pairwise tests between consecutive eras.
+   Trend-controlled model: home_win ~ year + C(era).
+   LR test: do era dummies jointly add explanatory power beyond the year trend?
+   (If not, the decline is a smooth drift; if yes, specific rules caused jumps.)
+
+   Regular season  (N = 47,882 games)
+
+   Era            N games   Home win %
+   ────────────  ────────  ───────────
+   1984–94         11,275        64.9%
+   1995–01          7,777        59.9%
+   2002–04          3,567        61.1%
+   2005–17         15,749        59.5%
+   2018–22          5,829        56.3%
+   2023–25          3,685        55.6%
+
+   Consecutive eras — two-proportion z-tests:
+    1984–94 → 1995–01    -4.9 pp   (z = +6.95, p = <0.001  ***)
+    1995–01 → 2002–04    +1.2 pp   (z = -1.21, p = 0.227  )
+    2002–04 → 2005–17    -1.6 pp   (z = +1.79, p = 0.074  )
+    2005–17 → 2018–22    -3.2 pp   (z = +4.24, p = <0.001  ***)
+    2018–22 → 2023–25    -0.7 pp   (z = +0.65, p = 0.513  )
+
+   Trend-controlled logistic: home_win ~ year + C(era)
+   (reference era = 1984–94)
+
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   era: 1995–01                    -0.108    -2.6     0.010    *
+   era: 2002–04                    +0.002    +0.0     0.973     
+   era: 2005–17                    +0.029    +0.7     0.705     
+   era: 2018–22                    +0.004    +0.1     0.971     
+   era: 2023–25                    +0.024    +0.6     0.844     
+   year trend (per yr)             -0.012    -0.3    <0.001  ***
+
+   LR test — era dummies jointly vs. year-only model: χ²(5) = 20.70,  p = <0.001  ***
+
+   ► Era dummies are jointly significant beyond the year trend —
+     specific rule-change periods show a level shift above or below
+     what the underlying trend alone would predict.
+
+   Playoffs  (N = 3,207 games)
+
+   Era            N games   Home win %
+   ────────────  ────────  ───────────
+   1984–94            794        67.9%
+   1995–01            496        64.1%
+   2002–04            241        64.3%
+   2005–17          1,090        64.3%
+   2018–22            336        60.7%
+   2023–25            250        58.4%
+
+   Consecutive eras — two-proportion z-tests:
+    1984–94 → 1995–01    -3.8 pp   (z = +1.40, p = 0.163  )
+    1995–01 → 2002–04    +0.2 pp   (z = -0.05, p = 0.957  )
+    2002–04 → 2005–17    -0.0 pp   (z = +0.00, p = 0.999  )
+    2005–17 → 2018–22    -3.6 pp   (z = +1.20, p = 0.231  )
+    2018–22 → 2023–25    -2.3 pp   (z = +0.56, p = 0.572  )
+
+   Trend-controlled logistic: home_win ~ year + C(era)
+   (reference era = 1984–94)
+
+   Predictor                     log-odds     ≈pp         p     
+   ────────────────────────────  ────────  ──────  ────────  ───
+   era: 1995–01                    -0.095    -2.2     0.570     
+   era: 2002–04                    -0.045    -1.0     0.850     
+   era: 2005–17                    +0.020    +0.5     0.947     
+   era: 2018–22                    -0.060    -1.4     0.887     
+   era: 2023–25                    -0.124    -2.8     0.794     
+   year trend (per yr)             -0.008    -0.2     0.526     
+
+   LR test — era dummies jointly vs. year-only model: χ²(5) = 1.78,  p = 0.879  
+
+   ► Era dummies do not add significant explanatory power beyond
+     the year trend (p = 0.879) — the decline is well-described
+     as a continuous drift without discrete era-level jumps.
+
+
+─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
+   Distance = haversine miles from away team's home arena to game arena.
+   Does longer travel reduce the visiting team's winning odds?
+
+   Regular season  (N = 47,882, baseline home win % = 60.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500    10,957        60.5%          +0.3 pp
+       500–1000    15,300        61.0%          +0.8 pp
+      1000–1500     9,615        59.4%          -0.9 pp
+          1500+    12,010        59.7%          -0.6 pp
+
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.02]),  p = 0.010  *
+
+   Playoffs  (N = 3,207, baseline home win % = 64.3%)
+
+         Bucket         N   Home win %   vs. baseline
+   ────────────  ────────  ───────────  ─────────────
+          0–500       887        62.5%          -1.9 pp
+       500–1000     1,227        65.9%          +1.5 pp
+      1000–1500       717        63.7%          -0.6 pp
+          1500+       376        64.9%          +0.6 pp
+
+   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
+
+
+─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
+   Does faster-paced play (more possessions per game) reduce home court advantage?
+   Season-level correlation plus game-level logistic regression.
+
+   Regular season  (n = 42 seasons)
+   Season-level Pearson r  = +0.280  (p = 0.072  )
+   Season-level Spearman ρ = +0.154  (p = 0.331  )
+
+   Era           Mean pace    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94           102.4          65.0%           11
+   1995–01            93.9          60.1%            7
+   2002–04            93.2          61.1%            3
+   2005–17            95.3          59.5%           13
+   2018–22           101.4          56.2%            5
+   2023–25           101.2          55.6%            3
+
+   Game-level bivariate logistic  (N = 47,879 games)
+   coef = +0.0099 log-odds per possession
+   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.17, +3.57]
+   p = <0.001  ***
+
+   Controlling for era (within-era game-level effect):
+   coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
+
+   Expected pace (LOO)  (N = 47,641 games)
+   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = 0.148  
+   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.065  
+
+   Playoffs  (n = 41 seasons)
+   Season-level Pearson r  = -0.115  (p = 0.474  )
+   Season-level Spearman ρ = -0.235  (p = 0.140  )
+
+   Era           Mean pace    Home win%    n seasons
+   ---------- ------------ ------------ ------------
+   1984–94            98.5          67.7%           11
+   1995–01            89.9          64.1%            7
+   2002–04            92.5          64.2%            3
+   2005–17            92.8          64.3%           13
+   2018–22            98.4          60.8%            4
+   2023–25            97.1          58.4%            3
+
+   Game-level bivariate logistic  (N = 3,207 games)
+   coef = -0.0038 log-odds per possession
+   ≈ -0.87 pp per 10 extra possessions  95% CI [-2.91, +1.17]
+   p = 0.402  
+
+   Controlling for era (within-era game-level effect):
+   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.251  
+
+   Expected pace (LOO)  (N = 3,207 games)
+   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.426  
+   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
+
+
+─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
+   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
+   Parity = std dev of all-team win percentages for the season.
+
+   N = 42 seasons
+   Pearson r  = -0.066  (p = 0.676  )
+   Spearman ρ = -0.020  (p = 0.899  )
+
+   Trend line: home_win_pct ~ parity_std_dev
+   Slope: -15.093 pp per unit std dev  (p = 0.676  )
+   R² = 0.0044
+
+   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
+
+   Era             Win% std dev    Home win %
+   ────────────  ──────────────  ────────────
+   1984–94               0.1551         65.0%
+   1995–01               0.1700         60.1%
+   2002–04               0.1393         61.1%
+   2005–17               0.1559         59.5%
+   2018–22               0.1461         56.2%
+   2023–25               0.1496         55.6%
+
+   ► Near-zero, non-significant correlation — parity (team win% disparity)
+     does not independently predict home court advantage across seasons.
+     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
+     home win % was already declining, and fell in 2002–04 while home win %
+     ticked back up. The two series do not move in lockstep.
+
+   Detrended checks (both series share a downward trend — remove it first):
+   First-differenced (Δparity vs. Δhome-win%):
+   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
+   Residual-on-year (detrended parity vs. detrended home-win%):
+   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
+
+   ► At least one detrended test is significant — some association
+     remains after removing the common trend. Interpret with caution
+     (N is small and first-differences amplify measurement noise).
+
 ─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
    Does home court advantage vary by game number within a series (G1–G7)?
    G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
@@ -836,127 +957,6 @@ All data from cache/ — same source as the plots above.
      franchises that protect home court in the regular season tend to do so
      in the playoffs too, though playoff sample sizes are too small for
      franchise-level shrinkage to improve on raw estimates.
-
-─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
-   Distance = haversine miles from away team's home arena to game arena.
-   Does longer travel reduce the visiting team's winning odds?
-
-   Regular season  (N = 47,882, baseline home win % = 60.3%)
-
-         Bucket         N   Home win %   vs. baseline
-   ────────────  ────────  ───────────  ─────────────
-          0–500    10,957        60.5%          +0.3 pp
-       500–1000    15,300        61.0%          +0.8 pp
-      1000–1500     9,615        59.4%          -0.9 pp
-          1500+    12,010        59.7%          -0.6 pp
-
-   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.02]),  p = 0.010  *
-
-   Playoffs  (N = 3,207, baseline home win % = 64.3%)
-
-         Bucket         N   Home win %   vs. baseline
-   ────────────  ────────  ───────────  ─────────────
-          0–500       887        62.5%          -1.9 pp
-       500–1000     1,227        65.9%          +1.5 pp
-      1000–1500       717        63.7%          -0.6 pp
-          1500+       376        64.9%          +0.6 pp
-
-   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
-
-
-─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
-   Does faster-paced play (more possessions per game) reduce home court advantage?
-   Season-level correlation plus game-level logistic regression.
-
-   Regular season  (n = 42 seasons)
-   Season-level Pearson r  = +0.280  (p = 0.072  )
-   Season-level Spearman ρ = +0.154  (p = 0.331  )
-
-   Era           Mean pace    Home win%    n seasons
-   ---------- ------------ ------------ ------------
-   1984–94           102.4          65.0%           11
-   1995–01            93.9          60.1%            7
-   2002–04            93.2          61.1%            3
-   2005–17            95.3          59.5%           13
-   2018–22           101.4          56.2%            5
-   2023–25           101.2          55.6%            3
-
-   Game-level bivariate logistic  (N = 47,879 games)
-   coef = +0.0099 log-odds per possession
-   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.17, +3.57]
-   p = <0.001  ***
-
-   Controlling for era (within-era game-level effect):
-   coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
-
-   Expected pace (LOO)  (N = 47,641 games)
-   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = 0.148  
-   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.065  
-
-   Playoffs  (n = 41 seasons)
-   Season-level Pearson r  = -0.115  (p = 0.474  )
-   Season-level Spearman ρ = -0.235  (p = 0.140  )
-
-   Era           Mean pace    Home win%    n seasons
-   ---------- ------------ ------------ ------------
-   1984–94            98.5          67.7%           11
-   1995–01            89.9          64.1%            7
-   2002–04            92.5          64.2%            3
-   2005–17            92.8          64.3%           13
-   2018–22            98.4          60.8%            4
-   2023–25            97.1          58.4%            3
-
-   Game-level bivariate logistic  (N = 3,207 games)
-   coef = -0.0038 log-odds per possession
-   ≈ -0.87 pp per 10 extra possessions  95% CI [-2.91, +1.17]
-   p = 0.402  
-
-   Controlling for era (within-era game-level effect):
-   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.251  
-
-   Expected pace (LOO)  (N = 3,207 games)
-   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.426  
-   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
-
-
-─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
-   Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
-   Parity = std dev of all-team win percentages for the season.
-
-   N = 42 seasons
-   Pearson r  = -0.066  (p = 0.676  )
-   Spearman ρ = -0.020  (p = 0.899  )
-
-   Trend line: home_win_pct ~ parity_std_dev
-   Slope: -15.093 pp per unit std dev  (p = 0.676  )
-   R² = 0.0044
-
-   Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
-
-   Era             Win% std dev    Home win %
-   ────────────  ──────────────  ────────────
-   1984–94               0.1551         65.0%
-   1995–01               0.1700         60.1%
-   2002–04               0.1393         61.1%
-   2005–17               0.1559         59.5%
-   2018–22               0.1461         56.2%
-   2023–25               0.1496         55.6%
-
-   ► Near-zero, non-significant correlation — parity (team win% disparity)
-     does not independently predict home court advantage across seasons.
-     The era-bucketed pattern is mixed: disparity peaked in 1995–01 while
-     home win % was already declining, and fell in 2002–04 while home win %
-     ticked back up. The two series do not move in lockstep.
-
-   Detrended checks (both series share a downward trend — remove it first):
-   First-differenced (Δparity vs. Δhome-win%):
-   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
-   Residual-on-year (detrended parity vs. detrended home-win%):
-   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
-
-   ► At least one detrended test is significant — some association
-     remains after removing the common trend. Interpret with caution
-     (N is small and first-differences amplify measurement noise).
 
 ════════════════════════════════════════════════════════════════════════
 

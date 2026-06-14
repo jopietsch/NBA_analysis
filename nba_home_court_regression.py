@@ -1336,7 +1336,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
 # ── Analysis 4b: Unconditional quantile regression on margins ─────────────────
 
 def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
-    """Unconditional quantile regression — tests whether 'polarization' in §2
+    """Unconditional quantile regression — tests whether 'polarization' in §1
     is genuine distribution widening or a composition artifact of the declining
     home win rate. (PLAN-STATS item 3.)
 
@@ -1345,7 +1345,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
     Lower quantiles declining while upper quantiles rise or hold → genuine
     variance widening (polarization confirmed).
     """
-    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§2 check)")
+    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§1 check)")
     print("   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.")
     print("   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.")
     print("   All quantiles parallel → pure level effect (conditional divergence is artifact).")
@@ -1386,7 +1386,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
             print(f"\n   IQR change rate (Q90 − Q10 slope diff): {spread_chg:+.3f} pts/yr")
             if spread_chg > 0.02:
                 print(f"   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).")
-                print(f"     The conditional-on-outcome divergence in §2 reflects a real change in")
+                print(f"     The conditional-on-outcome divergence in §1 reflects a real change in")
                 print(f"     distribution shape, not just a composition effect.")
             elif spread_chg < -0.02:
                 print(f"   ► Q90 falls / Q10 rises — distribution compressing.")
@@ -1395,7 +1395,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
                 rng = max(all_slopes) - min(all_slopes)
                 if rng < 0.05:
                     print(f"   ► All quantiles shift in parallel (spread change ≈ 0).")
-                    print(f"     The §2 conditional divergence is a composition artifact:")
+                    print(f"     The §1 conditional divergence is a composition artifact:")
                     print(f"     as home win % declines, marginal games flip sides and push")
                     print(f"     the conditional-win and conditional-loss means apart without")
                     print(f"     any genuine change in the distribution's shape.")
@@ -2218,21 +2218,18 @@ def run() -> None:
             nba.START_YEAR, nba.END_YEAR, "Playoffs", skip_years=nba.SKIP_PLAYOFF_YEARS
         )
 
-        # §1 The 40-Year Decline
+        # §1 The 40-Year Decline (magnitude, shape/timing, blowout polarization)
         run_decline_trend(df)
-
-        # §2 How the Drop Unfolded
-        run_era_analysis(df)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
 
-        # §3 What Creates Home Court Advantage
+        # §2 What Creates Home Court Advantage
         run_differential_analysis(df)
         run_mediation_analysis(df)
         run_rest_bucket_analysis(df)
         run_factor_summary(df)
 
-        # §4 What's Driving the Decline
+        # §3 What's Driving the Decline
         run_sequential_decomposition(df)
         run_stability_analysis(df)
         ref_df = nba.fetch_all_referee_data(
@@ -2253,6 +2250,12 @@ def run() -> None:
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
         run_3pa_analysis(df)
 
+        # §4 What Didn't Drive the Change (rule changes lead, then travel/pace/parity)
+        run_era_analysis(df)
+        run_travel_analysis(df)
+        run_pace_analysis(df)
+        run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
+
         # §5 The Playoff Picture
         run_series_breakdown(df)
         run_playoff_quality_decomposition(df)
@@ -2266,11 +2269,6 @@ def run() -> None:
         )
         run_team_hca_analysis(reg_hca_stats, po_hca_stats)
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
-
-        # §6 What Didn't Drive the Change
-        run_travel_analysis(df)
-        run_pace_analysis(df)
-        run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
 
         print("\n" + "═" * _W + "\n")
 
