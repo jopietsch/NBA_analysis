@@ -639,7 +639,7 @@ The four channels split three ways:
 
 So the earlier "it's probably all downstream" hunch was half right (turnovers,
 partly) and half wrong: **rebounding stands on its own**, and `FINDINGS.md` now
-treats it as a separate driver (its §4 and §7). This is the template for going
+treats it as a separate driver (its §3 and §7). This is the template for going
 *past* a decomposition — when a share is ambiguous, add the suspected common cause
 as a control and see what survives.
 

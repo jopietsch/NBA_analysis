@@ -65,8 +65,10 @@ year alone explains nearly three-quarters of season-to-season variation in HCA).
 The playoffs decline at a similar rate (−0.21 pp/yr, total ≈ −8.6 pp) but with
 much wider confidence intervals and a far lower R² (0.16), because each playoff
 season is only ~80 games of data. The per-era table shows the decline was not
-uniform: in the regular season it was steepest in 1984–94 (−0.52 pp/yr) and
-2018–22 (−1.18 pp/yr), with a flat-to-positive plateau between 1995 and 2004.
+uniform: in the regular season the steepest significant declines were in
+1984–94 (−0.52 pp/yr) and 2018–22 (−1.18 pp/yr) — the 2023–25 slope is steeper
+still (−1.80 pp/yr) but rests on only 3 seasons and isn't significant (p = 0.073)
+— with a flat-to-positive plateau between 1995 and 2004.
 No individual playoff era reaches significance — single playoff eras are just
 3–13 small seasons — so the playoff conclusion rests on the full 41-season trend.
 
@@ -118,9 +120,11 @@ polarization is real.
 season, Q10 falls at −0.154 pts/yr while Q90 rises at +0.045 (both significant);
 the Q90−Q10 spread widens by +0.20 pts/yr. The playoffs show the same spread
 widening (+0.20 pts/yr), driven by the top of the distribution (Q75 and Q90
-rising significantly). Home blowout wins and home blowout losses are both
-becoming more common — a genuine change in the shape of game outcomes, not a
-bookkeeping artifact.
+rising significantly; the bottom tail, Q10 −0.055, p = 0.337, is flat). In the
+regular season both tails move — home blowout wins and home blowout losses are
+both becoming more common; in the playoffs the widening is one-sided, driven by
+the growing blowout wins alone. Either way it is a genuine change in the shape of
+game outcomes, not a bookkeeping artifact.
 
 ---
 
@@ -142,7 +146,7 @@ which mechanisms are eroding, which is the heart of research question 3.
 - **Foul bias** collapsed: regular-season home foul advantage went from −1.23
   fouls/game (1984–94) to −0.20 (2023–25), trend +0.023/yr, p < 0.001 — an ~83%
   reduction. The playoffs show the same direction (−1.58 → −0.70, trend
-  +0.020/yr, p < 0.01) but retain about twice the residual bias.
+  +0.020/yr, p < 0.01) but retain about 3.5× the residual bias (−0.70 vs. −0.20).
 - **The shooting edge** is shrinking in the regular season: FG% diff trend
   −0.020 pp/yr and eFG% −0.015 pp/yr (both p < 0.001), from ~+1.6 pp to
   ~+0.7–1.0 pp. Playoff shooting trends point the same way but aren't
@@ -721,7 +725,8 @@ The shrunken correlation is undefined because playoff true variance is zero
 (Section 20), which is itself the deeper finding: there is no reliable
 franchise-level playoff signal to correlate. One solid descriptive fact: playoff
 HCA runs about +7.2 pp higher than regular-season HCA for the same franchises —
-home court is worth more in the postseason, uniformly, for everyone.
+home court is worth more in the postseason on average, though the gap varies
+widely by franchise (SD 7.5 pp, larger than the mean itself).
 
 ---
 
