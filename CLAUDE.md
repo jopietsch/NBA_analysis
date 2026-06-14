@@ -8,7 +8,8 @@ Our main questions for all this analysis and the output is 1: has HCA changed ov
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, the playoff picture, other findings, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes
+- `FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, the playoff picture, other findings, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes. **Whenever `FINDINGS.md` changes, update `FINDINGS_OUTLINE.md`** to match
+- `FINDINGS_OUTLINE.md` — condensed section-by-section outline of `FINDINGS.md` with every stat and conclusion, cross-referenced to `RESULTS.md`; has a generated PDF (`FINDINGS_OUTLINE.pdf`). **Whenever `FINDINGS_OUTLINE.md` changes, regenerate its PDF** with `python3 generate_doc_pdf.py FINDINGS_OUTLINE.md` (the general Markdown renderer — no dedicated script)
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh. **Whenever `RESULTS.md` changes, update `STATS_EXPLAINER.md`** so every number, p-value, and conclusion it quotes still matches (it cites `RESULTS.md` row by row); then regenerate its PDF. `STATS_TUTORIAL.md`'s worked examples also reproduce `RESULTS.md` rows — check those too
 - `STATS_EXPLAINER.md` / `STATS_TUTORIAL.md` — hand-edited methods companions to `RESULTS.md`; each has a generated PDF (`STATS_EXPLAINER.pdf`, `STATS_TUTORIAL.pdf`). **Whenever either markdown is edited, regenerate its PDF** with `python3 generate_doc_pdf.py <FILE>.md` (see Commands)
 
@@ -24,6 +25,9 @@ python3 generate_report.py
 # Regenerate a stats doc PDF (run after editing STATS_EXPLAINER.md or STATS_TUTORIAL.md)
 python3 generate_doc_pdf.py STATS_EXPLAINER.md
 python3 generate_doc_pdf.py STATS_TUTORIAL.md
+
+# Regenerate the findings outline PDF (run after editing FINDINGS_OUTLINE.md)
+python3 generate_doc_pdf.py FINDINGS_OUTLINE.md
 
 # Run tests
 python3 -m pytest
@@ -70,6 +74,7 @@ Every analysis follows the same steps, in this order:
 - do not overexplain statistical analysis. make sure everything you write is backed up by the data.
 - throughout FINDINGS.md, make sure that both regular season and playoffs are mentinoned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.
 - when FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`
+- when FINDINGS.md is edited, also update `FINDINGS_OUTLINE.md` to match (it's a condensed outline of every stat and conclusion); then regenerate the outline PDF with `python3 generate_doc_pdf.py FINDINGS_OUTLINE.md`
 
 ## nba_api quirks
 
