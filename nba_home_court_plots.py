@@ -257,6 +257,79 @@ def plot_results(
           (5, 3))
 
 
+def plot_mediation(decomp: dict) -> None:
+    """
+    Two-panel decomposition: each box-score channel's share of the home-court
+    level (left) and of its 40-year decline (right), regular season vs playoffs.
+
+    Renders the same numbers RESULTS.md prints — the dict comes from
+    nba_home_court_regression.compute_mediation_decomposition(). Bars are
+    normalized to 100% (the shares sum to 100 by accounting identity); the
+    headline at each bar's end is how much of the level/decline the four
+    channels capture.
+    """
+    seg_order  = ["Shooting", "Rebounding", "Fouls", "Turnovers"]
+    seg_colors = {"Shooting": BLUE, "Rebounding": GREEN, "Fouls": RED,
+                  "Turnovers": "#e8a33d"}
+    RESID = GRAY
+    contexts = ["Regular season", "Playoffs"]
+    y_pos = {"Regular season": 1.0, "Playoffs": 0.0}
+
+    def shares(ctx_key: str, which: str):
+        ctx  = decomp[ctx_key]
+        rows = {r["chart_label"]: r["pct"] for r in ctx[which]}
+        seq  = [(lbl, rows[lbl]) for lbl in seg_order]
+        resid = "Unexplained" if which == "level" else "Unmediated"
+        seq.append((resid, ctx[f"{which}_{'unexplained' if which == 'level' else 'unmediated'}"]["pct"]))
+        return seq
+
+    def draw_panel(ax, which: str, title: str, headline_key: str, verb: str):
+        for ctx_key in contexts:
+            y, left = y_pos[ctx_key], 0.0
+            for lbl, pct in shares(ctx_key, which):
+                color = RESID if lbl in ("Unexplained", "Unmediated") else seg_colors[lbl]
+                ax.barh(y, pct, left=left, height=0.5, color=color,
+                        edgecolor="white", linewidth=1.0, zorder=2)
+                if pct >= 6:
+                    ax.text(left + pct / 2, y, f"{pct:.0f}%", ha="center", va="center",
+                            fontsize=9, color="white", fontweight="bold", zorder=3)
+                left += pct
+            ax.text(102, y, f"{decomp[ctx_key][headline_key]:.0f}% {verb}",
+                    ha="left", va="center", fontsize=9.5, color="#2c2c2a", fontweight="bold")
+        ax.set_yticks([y_pos[c] for c in contexts])
+        ax.set_yticklabels(contexts, fontsize=10)
+        ax.set_xlim(0, 118)
+        ax.set_ylim(-0.6, 1.6)
+        ax.set_xticks([0, 25, 50, 75, 100])
+        ax.xaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+        ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+        for spine in ("top", "right", "left"):
+            ax.spines[spine].set_visible(False)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 5.5))
+    fig.patch.set_facecolor(BG)
+    fig.suptitle("Where Home Court Comes From — and Where It's Going",
+                 fontsize=14, fontweight="bold", y=1.05, color="#2c2c2a")
+    fig.text(0.5, 0.965,
+             "Box-score channel shares of the home-court edge (left) and of its 40-year decline (right)  |  "
+             "shares sum to 100% by accounting identity",
+             ha="center", fontsize=9, color=GRAY)
+
+    draw_panel(ax1, "level", "What creates the home edge",   "pct_level", "explained")
+    draw_panel(ax2, "trend", "What's driving the decline",   "pct_trend", "mediated")
+
+    handles = [mpatches.Patch(color=seg_colors[l], label=l) for l in seg_order]
+    handles.append(mpatches.Patch(color=RESID, label="Unexplained / unmediated"))
+    fig.legend(handles=handles, fontsize=9, ncol=5, loc="lower center",
+               framealpha=0.85, edgecolor="#ddd", bbox_to_anchor=(0.5, -0.04))
+
+    plt.tight_layout(rect=(0, 0.05, 1, 0.95))
+    output_path = "nba_home_court_mediation.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_differential_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,

@@ -1075,46 +1075,30 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
         print()
 
 
-def run_mediation_analysis(df: pd.DataFrame) -> None:
-    """Convert box-score channels into win-% shares of the HCA level and trend.
+def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
+    """Box-score channel shares of the HCA level and its trend, RS and playoffs.
 
-    Linear-probability model (OLS on home_win) so both decompositions are
-    exact identities:
-      level: mean win % = intercept + Σ coef × mean differential
-      trend: year slope (bivariate) = year slope (full model)
-             + Σ coef × (channel trend per year)   [omitted-variable identity]
-    Channels are proximate — they are how home advantage shows up in the box
-    score — so this is an accounting decomposition, not deep causation.
+    The numbers run_mediation_analysis prints, returned in a structure the plot
+    layer renders directly — so the chart and RESULTS.md never diverge. Each
+    channel row carries both a table_label (for RESULTS.md) and a chart_label
+    (for the plot). Linear-probability identities; see run_mediation_analysis.
     """
     channels = [
-        ("efg_pct_diff", "eFG% diff (pp)"),
-        ("foul_diff",    "Foul diff"),
-        ("tov_diff",     "TOV diff"),
-        ("reb_diff",     "REB diff"),
+        ("efg_pct_diff", "eFG% diff (pp)", "Shooting"),
+        ("foul_diff",    "Foul diff",      "Fouls"),
+        ("tov_diff",     "TOV diff",       "Turnovers"),
+        ("reb_diff",     "REB diff",       "Rebounding"),
     ]
-    keys = [k for k, _ in channels]
+    keys = [k for k, _, _ in channels]
     rhs = " + ".join(keys)
-    ft_mean = df.loc[df["is_playoff"] == 0, "ft_pct_diff"].mean()
 
-    _section("MEDIATION — BOX-SCORE CHANNELS AS SHARES OF HCA LEVEL AND TREND")
-    print("   How much of the home edge, and of its decline, flows through the")
-    print("   measured channels: shooting (eFG%), referee fouls, turnovers, and")
-    print("   rebounds? Linear-probability model of home_win on the four")
-    print("   home-minus-away differentials; cluster-robust SEs by season.")
-    print("   Level identity:  mean win % = intercept + Σ coef × mean diff.")
-    print("   Trend identity:  total pp/yr = unmediated pp/yr + Σ coef × channel trend/yr.")
-    print("   Foul diff carries the free-throw-attempt channel; FT% diff is")
-    print(f"   excluded (mean ≈ {ft_mean:+.1f} pp, negligible). Channels are proximate —")
-    print("   how HCA expresses itself in the box score — so this is an")
-    print("   accounting decomposition, not deep causation.\n")
-
+    out: dict = {"channels": [(k, tl, cl) for k, tl, cl in channels]}
     for label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
         ("Playoffs",       df[df["is_playoff"] == 1]),
     ]:
         d = sub.dropna(subset=keys + ["home_win", "year"])
         if len(d) < 100:
-            print(f"   {label}: insufficient data.\n")
             continue
 
         hw = d["home_win"].mean() * 100
@@ -1135,60 +1119,127 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                 for k in keys
             }
 
-        print(f"   {label}  (N = {len(d):,} games, home win % = {hw:.1f}, "
+        level_rows = []
+        for k, tl, clab in channels:
+            b_pp = m_chan.params[k] * 100
+            mu = d[k].mean()
+            contrib = b_pp * mu
+            level_rows.append({
+                "key": k, "table_label": tl, "chart_label": clab,
+                "mean_diff": mu, "pp_per_unit": b_pp,
+                "contrib": contrib, "pct": 100 * contrib / level,
+                "stars": _stars(m_chan.pvalues[k]).strip(),
+            })
+        resid_level = m_chan.params["Intercept"] * 100 - 50.0
+
+        t_total = m_year.params["year"] * 100
+        t_resid = m_full.params["year"] * 100
+        trend_rows = []
+        mediated = 0.0
+        for k, tl, clab in channels:
+            gamma = chan_trends[k].params["year"]
+            contrib = m_full.params[k] * 100 * gamma
+            mediated += contrib
+            trend_rows.append({
+                "key": k, "table_label": tl, "chart_label": clab,
+                "gamma": gamma, "contrib": contrib, "pct": 100 * contrib / t_total,
+                "stars": _stars(chan_trends[k].pvalues["year"]).strip(),
+            })
+
+        out[label] = {
+            "n": len(d), "home_win_pct": hw, "level_pp": level,
+            "chan_r2": m_chan.rsquared,
+            "level": level_rows,
+            "level_unexplained": {"contrib": resid_level, "pct": 100 * resid_level / level},
+            "trend_total_pp": t_total, "trend_total_p": m_year.pvalues["year"],
+            "trend": trend_rows,
+            "trend_unmediated": {"contrib": t_resid, "pct": 100 * t_resid / t_total},
+            "pct_level": 100 * (level - resid_level) / level,
+            "pct_trend": 100 * mediated / t_total,
+        }
+    return out
+
+
+def run_mediation_analysis(df: pd.DataFrame) -> None:
+    """Convert box-score channels into win-% shares of the HCA level and trend.
+
+    Linear-probability model (OLS on home_win) so both decompositions are
+    exact identities:
+      level: mean win % = intercept + Σ coef × mean differential
+      trend: year slope (bivariate) = year slope (full model)
+             + Σ coef × (channel trend per year)   [omitted-variable identity]
+    Channels are proximate — they are how home advantage shows up in the box
+    score — so this is an accounting decomposition, not deep causation.
+    """
+    ft_mean = df.loc[df["is_playoff"] == 0, "ft_pct_diff"].mean()
+
+    _section("MEDIATION — BOX-SCORE CHANNELS AS SHARES OF HCA LEVEL AND TREND")
+    print("   How much of the home edge, and of its decline, flows through the")
+    print("   measured channels: shooting (eFG%), referee fouls, turnovers, and")
+    print("   rebounds? Linear-probability model of home_win on the four")
+    print("   home-minus-away differentials; cluster-robust SEs by season.")
+    print("   Level identity:  mean win % = intercept + Σ coef × mean diff.")
+    print("   Trend identity:  total pp/yr = unmediated pp/yr + Σ coef × channel trend/yr.")
+    print("   Foul diff carries the free-throw-attempt channel; FT% diff is")
+    print(f"   excluded (mean ≈ {ft_mean:+.1f} pp, negligible). Channels are proximate —")
+    print("   how HCA expresses itself in the box score — so this is an")
+    print("   accounting decomposition, not deep causation.\n")
+
+    decomp = compute_mediation_decomposition(df)
+    for label in ("Regular season", "Playoffs"):
+        ctx = decomp.get(label)
+        if ctx is None:
+            print(f"   {label}: insufficient data.\n")
+            continue
+
+        level = ctx["level_pp"]
+        print(f"   {label}  (N = {ctx['n']:,} games, home win % = {ctx['home_win_pct']:.1f}, "
               f"level above coin flip = {level:+.1f} pp)")
-        print(f"   Channel-model R² = {m_chan.rsquared:.3f} — share of game-outcome "
+        print(f"   Channel-model R² = {ctx['chan_r2']:.3f} — share of game-outcome "
               f"variance the four channels carry.\n")
 
         print(f"   Level decomposition  (coef × mean diff):")
         print(f"   {'Channel':<16}  {'Mean diff':>10}  {'pp per unit':>12}  "
               f"{'Contribution':>13}  {'% of level':>10}")
         print(f"   {'─'*16}  {'─'*10}  {'─'*12}  {'─'*13}  {'─'*10}")
-        for k, lbl in channels:
-            b_pp = m_chan.params[k] * 100
-            mu = d[k].mean()
-            contrib = b_pp * mu
-            stars = _stars(m_chan.pvalues[k]).strip()
-            print(f"   {lbl:<16}  {mu:>+10.2f}  {b_pp:>+9.2f} {stars:<3}"
-                  f"{contrib:>+10.1f} pp  {100*contrib/level:>9.0f}%")
-        resid_level = m_chan.params["Intercept"] * 100 - 50.0
+        for r in ctx["level"]:
+            print(f"   {r['table_label']:<16}  {r['mean_diff']:>+10.2f}  "
+                  f"{r['pp_per_unit']:>+9.2f} {r['stars']:<3}"
+                  f"{r['contrib']:>+10.1f} pp  {r['pct']:>9.0f}%")
+        ru = ctx["level_unexplained"]
         print(f"   {'─'*16}  {'─'*10}  {'─'*12}  {'─'*13}  {'─'*10}")
-        print(f"   {'Unexplained':<16}  {'':>10}  {'':>12}  {resid_level:>+10.1f} pp  "
-              f"{100*resid_level/level:>9.0f}%")
+        print(f"   {'Unexplained':<16}  {'':>10}  {'':>12}  {ru['contrib']:>+10.1f} pp  "
+              f"{ru['pct']:>9.0f}%")
 
-        t_total = m_year.params["year"] * 100
-        t_resid = m_full.params["year"] * 100
-        p_total = m_year.pvalues["year"]
-
+        t_total = ctx["trend_total_pp"]
         print(f"\n   Trend decomposition  (pp of home win % per year):")
         print(f"   Total trend (home_win ~ year): {t_total:+.3f} pp/yr  "
-              f"(p = {_fmt_p(p_total)}  {_stars(p_total).strip()})\n")
+              f"(p = {_fmt_p(ctx['trend_total_p'])}  {_stars(ctx['trend_total_p']).strip()})\n")
         print(f"   {'Channel':<16}  {'Trend in diff/yr':>16}  {'Contribution':>15}  "
               f"{'% of trend':>10}")
         print(f"   {'─'*16}  {'─'*16}  {'─'*15}  {'─'*10}")
-        mediated = 0.0
-        for k, lbl in channels:
-            gamma = chan_trends[k].params["year"]
-            stars = _stars(chan_trends[k].pvalues["year"]).strip()
-            contrib = m_full.params[k] * 100 * gamma
-            mediated += contrib
-            print(f"   {lbl:<16}  {gamma:>+12.4f} {stars:<3}  {contrib:>+9.4f} pp/yr  "
-                  f"{100*contrib/t_total:>9.0f}%")
+        for r in ctx["trend"]:
+            print(f"   {r['table_label']:<16}  {r['gamma']:>+12.4f} {r['stars']:<3}  "
+                  f"{r['contrib']:>+9.4f} pp/yr  {r['pct']:>9.0f}%")
+        mu = ctx["trend_unmediated"]
+        mediated_pp = sum(r["contrib"] for r in ctx["trend"])
+        mediated_pct = sum(r["pct"] for r in ctx["trend"])
         print(f"   {'─'*16}  {'─'*16}  {'─'*15}  {'─'*10}")
-        print(f"   {'Sum, channels':<16}  {'':>16}  {mediated:>+9.4f} pp/yr  "
-              f"{100*mediated/t_total:>9.0f}%")
-        print(f"   {'Unmediated':<16}  {'':>16}  {t_resid:>+9.4f} pp/yr  "
-              f"{100*t_resid/t_total:>9.0f}%")
+        print(f"   {'Sum, channels':<16}  {'':>16}  {mediated_pp:>+9.4f} pp/yr  "
+              f"{mediated_pct:>9.0f}%")
+        print(f"   {'Unmediated':<16}  {'':>16}  {mu['contrib']:>+9.4f} pp/yr  "
+              f"{mu['pct']:>9.0f}%")
 
-        pct_level = 100 * (level - resid_level) / level
-        pct_trend = 100 * mediated / t_total
-        print(f"\n   ► {label}: channels carry {pct_level:.0f}% of the HCA level "
-              f"and {pct_trend:.0f}% of its decline.")
+        print(f"\n   ► {label}: channels carry {ctx['pct_level']:.0f}% of the HCA level "
+              f"and {ctx['pct_trend']:.0f}% of its decline.")
         if label == "Playoffs":
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
             print("     home team is usually the better team) — see the seeding")
             print("     decomposition for that control.")
         print()
+
+    channels = [(k, tl) for k, tl, _ in decomp["channels"]]
+    keys = [k for k, _ in channels]
 
     # ── Diagnostic: are the channel trends downstream of the 3-point shift? ──
     # The trend decomposition credits rebounding and turnovers with large shares
@@ -2228,7 +2279,7 @@ def run_referee_analysis(bias_stats: list) -> None:
 _RESULTS_PATH = "RESULTS.md"
 
 
-def run() -> None:
+def run(df: pd.DataFrame | None = None) -> None:
     buf = io.StringIO()
 
     with contextlib.redirect_stdout(buf):
@@ -2236,7 +2287,8 @@ def run() -> None:
         print("Game-level logistic regression. Outcome: home_win (1/0) per game.")
         print("All data from cache/ — same source as the plots above.\n")
 
-        df = build_game_dataset()
+        if df is None:
+            df = build_game_dataset()
         if df.empty:
             print("No game data found in cache/. Run the main script first to populate it.")
             return

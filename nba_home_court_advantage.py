@@ -25,7 +25,7 @@ from nba_home_court_data import (
     fetch_all_referee_data, compute_referee_bias_stats,
 )
 from nba_home_court_plots import (
-    plot_results,
+    plot_results, plot_mediation,
     plot_differential_analysis, plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
@@ -51,6 +51,10 @@ def main() -> None:
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
     plot_differential_analysis(reg_diff_seasons, reg_diff_stats, po_diff_seasons, po_diff_stats)
+
+    import nba_home_court_regression as _reg
+    game_df = _reg.build_game_dataset()
+    plot_mediation(_reg.compute_mediation_decomposition(game_df))
 
     reg_margin_seasons, reg_margin_stats = compute_margin_stats(START_YEAR, END_YEAR, SeasonType.regular)
     po_margin_seasons, po_margin_stats = compute_margin_stats(
@@ -122,8 +126,7 @@ def main() -> None:
     else:
         print("  No referee data cached yet — will fetch during next run.")
 
-    import nba_home_court_regression
-    nba_home_court_regression.run()
+    _reg.run(game_df)
 
 
 if __name__ == "__main__":

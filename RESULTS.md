@@ -11,7 +11,6 @@ NBA HOME COURT ADVANTAGE — REGRESSION ANALYSIS
 Game-level logistic regression. Outcome: home_win (1/0) per game.
 All data from cache/ — same source as the plots above.
 
-  Building game-level dataset from cache... 51,089 game rows (50,094 with complete features).
 
 ─── THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ────────────────────
    Primary: binomial GLM (events/trials per season, weights by game count).
@@ -311,8 +310,8 @@ All data from cache/ — same source as the plots above.
    Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
                     95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
 
-   ► Rest matters in both contexts — effect is larger in playoffs
-     (≈2.3 pp/day) than regular season (≈1.5 pp/day).
+   ► Rest matters in both contexts — +1.5 pp/day regular
+     season, +2.3 pp/day playoffs (larger in playoffs).
    ► Altitude home advantage is real in the regular season (+8.2 pp)
      but absent in playoffs — Denver/Utah team strength is a confound.
    ► Time zones show no significant effect in either context.
