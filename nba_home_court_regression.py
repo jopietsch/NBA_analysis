@@ -850,6 +850,7 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     print(f"   {'─'*LW}  {'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}  "
           f"{'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}")
 
+    res: dict[str, dict[str, float]] = {}
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         for raw, label in factors:
@@ -857,25 +858,62 @@ def run_factor_summary(df: pd.DataFrame) -> None:
             m_po = smf.logit(f"home_win ~ {raw}", data=po).fit(disp=0)
             c_re, p_re_ = m_re.params[raw], m_re.pvalues[raw]
             c_po, p_po_ = m_po.params[raw], m_po.pvalues[raw]
+            pp_re, pp_po = _pp(c_re, p_re), _pp(c_po, p_po)
+            res[raw] = {"pp_re": pp_re, "p_re": p_re_, "pp_po": pp_po, "p_po": p_po_}
             pv_re = _fmt_p(p_re_)
             pv_po = _fmt_p(p_po_)
             ci_re = _ci_lo_hi(m_re, raw, p_re)
             ci_po = _ci_lo_hi(m_po, raw, p_po)
-            print(f"   {label:<{LW}}  {c_re:+8.3f}  {_pp(c_re, p_re):+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
-                  f"{c_po:+8.3f}  {_pp(c_po, p_po):+5.1f}  {pv_po:>8}  {_stars(p_po_)}")
+            print(f"   {label:<{LW}}  {c_re:+8.3f}  {pp_re:+5.1f}  {pv_re:>8}  {_stars(p_re_)}  "
+                  f"{c_po:+8.3f}  {pp_po:+5.1f}  {pv_po:>8}  {_stars(p_po_)}")
             print(f"   {'95% CI (pp)':>{LW}}  {'':8}  [{ci_re[0]:+4.1f},{ci_re[1]:+4.1f}]  {'':8}  {'':3}  "
                   f"{'':8}  [{ci_po[0]:+4.1f},{ci_po[1]:+4.1f}]")
 
-    # Coast-to-coast playoff game count for context
+    # Coast-to-coast game counts and full season span for context
     n_cc_po = int((po["tz_diff"] == 3).sum())
     n_cc_re = int((re["tz_diff"] == 3).sum())
+    n_seasons = int(df["year"].nunique())
 
-    print(f"\n   ► Rest matters in both contexts — effect is larger in playoffs")
-    print(f"     (≈2.3 pp/day) than regular season (≈1.5 pp/day).")
-    print(f"   ► Altitude home advantage is real in the regular season (+8.2 pp)")
-    print(f"     but absent in playoffs — Denver/Utah team strength is a confound.")
-    print(f"   ► Time zones show no significant effect in either context.")
-    print(f"     Only {n_cc_po} coast-to-coast playoff games exist across 42 seasons")
+    rest, alt, tz = res["rest_diff"], res["altitude_home"], res["tz_diff"]
+
+    # Rest verdict — driven by the computed p-values
+    rest_re_sig, rest_po_sig = rest["p_re"] < 0.05, rest["p_po"] < 0.05
+    if rest_re_sig and rest_po_sig:
+        bigger = "playoffs" if abs(rest["pp_po"]) > abs(rest["pp_re"]) else "the regular season"
+        print(f"\n   ► Rest matters in both contexts — {rest['pp_re']:+.1f} pp/day regular")
+        print(f"     season, {rest['pp_po']:+.1f} pp/day playoffs (larger in {bigger}).")
+    elif rest_re_sig or rest_po_sig:
+        ctx, pp = (("the regular season", rest["pp_re"]) if rest_re_sig
+                   else ("the playoffs", rest["pp_po"]))
+        print(f"\n   ► Rest matters only in {ctx} ({pp:+.1f} pp/day).")
+    else:
+        print(f"\n   ► Rest shows no significant effect in either context.")
+
+    # Altitude verdict
+    alt_re_sig, alt_po_sig = alt["p_re"] < 0.05, alt["p_po"] < 0.05
+    if alt_re_sig and not alt_po_sig:
+        print(f"   ► Altitude home advantage is real in the regular season "
+              f"({alt['pp_re']:+.1f} pp)")
+        print(f"     but absent in playoffs — Denver/Utah team strength is a confound.")
+    elif alt_re_sig and alt_po_sig:
+        print(f"   ► Altitude home advantage is significant in both contexts "
+              f"({alt['pp_re']:+.1f} pp")
+        print(f"     regular season, {alt['pp_po']:+.1f} pp playoffs).")
+    else:
+        print(f"   ► Altitude home advantage is not statistically significant "
+              f"({alt['pp_re']:+.1f} pp regular season).")
+
+    # Time zone verdict
+    tz_re_sig, tz_po_sig = tz["p_re"] < 0.05, tz["p_po"] < 0.05
+    if not tz_re_sig and not tz_po_sig:
+        print(f"   ► Time zones show no significant effect in either context.")
+    elif tz_re_sig and not tz_po_sig:
+        print(f"   ► Time zones matter in the regular season ({tz['pp_re']:+.1f} pp/zone)")
+        print(f"     but not the playoffs.")
+    else:
+        print(f"   ► Time zones show a significant effect "
+              f"({tz['pp_re']:+.1f} pp RS, {tz['pp_po']:+.1f} pp playoffs).")
+    print(f"     Only {n_cc_po} coast-to-coast playoff games exist across {n_seasons} seasons")
     print(f"     ({n_cc_re:,} regular-season) — too sparse for reliable playoff inference.")
 
     # Playoff rest: control for team quality (RS win% differential)
@@ -1056,6 +1094,7 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
     ]
     keys = [k for k, _ in channels]
     rhs = " + ".join(keys)
+    ft_mean = df.loc[df["is_playoff"] == 0, "ft_pct_diff"].mean()
 
     _section("MEDIATION — BOX-SCORE CHANNELS AS SHARES OF HCA LEVEL AND TREND")
     print("   How much of the home edge, and of its decline, flows through the")
@@ -1065,7 +1104,7 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
     print("   Level identity:  mean win % = intercept + Σ coef × mean diff.")
     print("   Trend identity:  total pp/yr = unmediated pp/yr + Σ coef × channel trend/yr.")
     print("   Foul diff carries the free-throw-attempt channel; FT% diff is")
-    print("   excluded (mean ≈ +0.3 pp, negligible). Channels are proximate —")
+    print(f"   excluded (mean ≈ {ft_mean:+.1f} pp, negligible). Channels are proximate —")
     print("   how HCA expresses itself in the box score — so this is an")
     print("   accounting decomposition, not deep causation.\n")
 
