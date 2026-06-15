@@ -1,0 +1,1360 @@
+"""
+nba_home_court_data.py — data pipeline for NBA home court advantage analysis.
+
+Fetches game logs from NBA.com via nba_api, caches them as CSVs, and provides
+fetch_* and compute_* functions consumed by nba_home_court_plots and
+nba_home_court_regression.
+
+Data sources:
+  - NBA.com via the nba_api package (LeagueGameFinder etc.): every game result,
+    1983-84 through 2025-26
+  - Basketball-Reference (scraped): per-game attendance, ~1999-2000 onward
+    (NBA.com does not expose attendance)
+"""
+
+import os
+import sys
+import time
+import pandas as pd
+import numpy as np
+
+from nba_api.stats.endpoints import leaguegamefinder
+from nba_api.stats.library.parameters import SeasonType
+
+import requests
+from bs4 import BeautifulSoup
+
+
+# ── Config ────────────────────────────────────────────────────────────────────
+START_YEAR = 1984   # season ending in this year = 1983-84
+END_YEAR   = 2026   # season ending in this year = 2025-26
+SLEEP_SEC  = 1.0    # polite pause between API calls
+
+# Basketball-Reference attendance scrape (NBA.com does not expose attendance).
+# Per-game attendance is only reliably populated from ~1999-2000 onward, so the
+# attendance series is ~25 seasons, not the full 40.
+BBR_START_YEAR  = 2000   # first season with reliable per-game attendance
+BBR_SLEEP_SEC   = 6.0    # ~10 req/min — BBR 429s near its 20/min ceiling, so stay well under
+BBR_BACKOFF_SEC = 45.0   # base wait after a 429 before retrying (grows per attempt)
+BBR_MAX_RETRIES = 3      # retries on a 429 before giving up (season retries next run)
+BBR_BASE       = "https://www.basketball-reference.com"
+BBR_HEADERS    = {  # BBR blocks the default python-requests UA
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
+    )
+}
+
+# 2020 bubble playoffs: all games at neutral site — exclude from playoff stats
+SKIP_PLAYOFF_YEARS = {2020}
+
+# Seasons with limited/no fans (COVID) — highlighted in the chart
+COVID_SEASONS = {"19–20", "20–21"}
+
+# Raw game logs are cached here as CSVs to avoid re-fetching from NBA.com
+CACHE_DIR = "cache"
+
+
+def season_str(end_year: int) -> str:
+    """2024 -> '2023-24'  (NBA API format)"""
+    return f"{end_year - 1}-{str(end_year)[-2:]}"
+
+
+def short_label(end_year: int) -> str:
+    """2024 -> '23–24'  (chart axis label)"""
+    return f"{str(end_year - 1)[-2:]}–{str(end_year)[-2:]}"
+
+
+def season_range_label() -> str:
+    """e.g. '1983–84 through 2025–26' — derived from START_YEAR/END_YEAR"""
+    start = f"{START_YEAR - 1}–{str(START_YEAR)[-2:]}"
+    end   = f"{END_YEAR - 1}–{str(END_YEAR)[-2:]}"
+    return f"{start} through {end}"
+
+
+def cache_path(end_year: int, season_type: str) -> str:
+    season = season_str(end_year)
+    return os.path.join(CACHE_DIR, f"{season}_{season_type.replace(' ', '_')}.csv")
+
+
+def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
+    """
+    Pull every game log for one season/type, keep only home games,
+    and return the fraction won.
+
+    nba_api returns one row per team per game.  For a home game the
+    MATCHUP field looks like  'BOS vs. MIA'  (vs. = home)
+    and for away games        'BOS @ MIA'    (@ = away).
+    WL is 'W' or 'L'.
+
+    Game logs are cached as CSVs under CACHE_DIR so repeat runs don't
+    re-fetch from NBA.com.
+    """
+    season = season_str(end_year)
+    path = cache_path(end_year, season_type)
+
+    if os.path.exists(path):
+        df = pd.read_csv(path)
+    else:
+        try:
+            finder = leaguegamefinder.LeagueGameFinder(
+                season_nullable=season,
+                season_type_nullable=season_type,
+                timeout=60,
+            )
+            df = finder.get_data_frames()[0]
+        except Exception as e:
+            print(f"    ERROR fetching {season} {season_type}: {e}")
+            return None
+
+        os.makedirs(CACHE_DIR, exist_ok=True)
+        df.to_csv(path, index=False)
+        time.sleep(SLEEP_SEC)  # polite pause, only needed after a real API call
+
+    if df.empty:
+        return None
+
+    # Home games have 'vs.' in MATCHUP
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
+    if home.empty:
+        return None
+
+    wins  = (home["WL"] == "W").sum()
+    total = len(home)
+    return round(100 * wins / total, 1)
+
+
+# ── Era definitions ───────────────────────────────────────────────────────────
+# Eras are bounded by major NBA rule changes affecting pace/defense. Sources:
+#   - Hand-checking restrictions (1994-95): https://theballzone.com/when-was-hand-checking-banned-in-the-nba/
+#   - Illegal defense eliminated / zone legalized / defensive 3-sec (2001-02):
+#       https://en.wikipedia.org/wiki/Defensive_three-second_violation
+#   - Perimeter hand-checking ban (2004-05):
+#       https://www.basketballnetwork.net/old-school/how-removing-the-hand-check-rule-changed-the-nba-forever
+#   - Freedom-of-movement emphasis (2017-18) / transition take-foul rule (2022-23):
+#       https://videorulebook.nba.com/rule/transition-take-fouls/
+ERA_DEFS = [
+    ("1984–94", 1984, 1994, "Illegal defense rules (no zone defense)"),
+    ("1995–01", 1995, 2001, "Hand-checking restrictions; zone still illegal"),
+    ("2002–04", 2002, 2004, "Zone defense legalized, defensive 3-sec added"),
+    ("2005–17", 2005, 2017, "Perimeter hand-checking banned (pace-and-space)"),
+    ("2018–22", 2018, 2022, "Freedom-of-movement emphasis"),
+    (f"2023–{str(END_YEAR)[-2:]}", 2023, END_YEAR, "Transition take-foul rule added"),
+]
+
+# Playoff series-format / scheduling changes (separate from the defensive-rule
+# eras above — these only affect the playoff data). Marked as vertical lines
+# on the playoffs panel rather than background shading to avoid clutter.
+# Sources:
+#   - 1985: Finals move to 2-3-2 format; home-court advantage based on
+#       regular-season record instead of alternating by conference:
+#       https://en.wikipedia.org/wiki/2%E2%80%933%E2%80%932_format
+#   - 2003: First round expanded from best-of-5 to best-of-7:
+#       https://en.wikipedia.org/wiki/NBA_playoffs
+#   - 2014: Finals revert to 2-2-1-1-1 (same format as all other rounds):
+#       https://en.wikipedia.org/wiki/2%E2%80%933%E2%80%932_format
+PLAYOFF_FORMAT_CHANGES = [
+    (1985, "'85: Finals → 2-3-2,\nhome court by record"),
+    (2003, "'03: Round 1 →\nbest-of-7"),
+    (2014, "'14: Finals →\n2-2-1-1-1"),
+]
+
+# Playoff format "periods" — the spans of seasons between the format changes
+# above, used to bucket playoff home win % by which format was in effect.
+PLAYOFF_FORMAT_PERIODS = [
+    ("1984",     1984, 1984, "Best-of-5 R1, 2-2-1-1-1 Finals (alternating home court)"),
+    ("1985–02",  1985, 2002, "Best-of-5 R1, 2-3-2 Finals (home court by record)"),
+    ("2003–13",  2003, 2013, "Best-of-7 R1, 2-3-2 Finals"),
+    (f"2014–{str(END_YEAR)[-2:]}", 2014, END_YEAR, "Best-of-7 R1, 2-2-1-1-1 Finals"),
+]
+
+
+def label_to_year(lbl: str) -> int:
+    suffix = int(lbl.split("–")[1])
+    return (2000 + suffix) if suffix < 50 else (1900 + suffix)
+
+
+def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]:
+    """Fetch home win % for every season/type in [START_YEAR, END_YEAR]."""
+    print("Fetching NBA data via nba_api (NBA.com)...")
+    print(f"Seasons: {season_str(START_YEAR)} → {season_str(END_YEAR)}")
+    print("(~2 API calls per season, should take 2–4 minutes)\n")
+
+    reg_seasons:  list[str]   = []
+    reg_pcts:     list[float] = []
+    po_seasons:   list[str]   = []
+    po_pcts:      list[float] = []
+
+    for year in range(START_YEAR, END_YEAR + 1):
+        label = short_label(year)
+
+        # Regular season
+        pct = fetch_season_home_pct(year, SeasonType.regular)
+        if pct is not None:
+            reg_seasons.append(label)
+            reg_pcts.append(pct)
+
+        # Playoffs
+        if year not in SKIP_PLAYOFF_YEARS:
+            pct_po = fetch_season_home_pct(year, "Playoffs")
+            if pct_po is not None:
+                po_seasons.append(label)
+                po_pcts.append(pct_po)
+
+    print(f"\nRegular season: {len(reg_seasons)} seasons fetched")
+    print(f"Playoffs:       {len(po_seasons)} seasons fetched")
+
+    return reg_seasons, reg_pcts, po_seasons, po_pcts
+
+
+def _compute_period_averages(
+    period_defs: list,
+    reg_seasons: list[str], reg_pcts: list[float],
+    po_seasons: list[str], po_pcts: list[float],
+) -> tuple[list[float], list[float], list[str]]:
+    reg_avg, po_avg = [], []
+    for _, y1, y2, _ in period_defs:
+        rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
+        pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
+        reg_avg.append(round(np.mean(rv), 1) if rv else 0)
+        po_avg.append( round(np.mean(pv), 1) if pv else 0)
+    return reg_avg, po_avg, [p[0] for p in period_defs]
+
+
+def compute_era_averages(
+    reg_seasons: list[str], reg_pcts: list[float],
+    po_seasons: list[str], po_pcts: list[float],
+) -> tuple[list[float], list[float], list[str]]:
+    """Average regular-season and playoff home win % within each era."""
+    return _compute_period_averages(ERA_DEFS, reg_seasons, reg_pcts, po_seasons, po_pcts)
+
+
+def compute_playoff_format_averages(
+    reg_seasons: list[str], reg_pcts: list[float],
+    po_seasons: list[str], po_pcts: list[float],
+) -> tuple[list[float], list[float], list[str]]:
+    """Average regular-season and playoff home win % within each playoff-format period."""
+    return _compute_period_averages(PLAYOFF_FORMAT_PERIODS, reg_seasons, reg_pcts, po_seasons, po_pcts)
+
+
+# ── Shared helpers for per-game analyses ─────────────────────────────────────
+def _load_game_log(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """Load one season/type's cached game log (one row per team per game)."""
+    path = cache_path(end_year, season_type)
+    if not os.path.exists(path):
+        return None
+
+    df = pd.read_csv(path)
+    if df.empty:
+        return None
+    return df
+
+
+def _merge_home_away_rows(df: pd.DataFrame) -> pd.DataFrame | None:
+    """
+    Collapse a per-team-per-game log into one row per game by joining each
+    game's home and away rows on GAME_ID (columns get '_home'/'_away'
+    suffixes). Returns None if either side has no rows.
+    """
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)]
+    away = df[df["MATCHUP"].str.contains(" @ ", regex=False, na=False)]
+    if home.empty or away.empty:
+        return None
+
+    merged = home.merge(away, on="GAME_ID", suffixes=("_home", "_away"))
+    if merged.empty:
+        return None
+    return merged
+
+
+def _add_rest_days(df: pd.DataFrame) -> pd.DataFrame:
+    """Add a REST column: days since each team's previous game minus 1 (0 = back-to-back)."""
+    df = df.copy()
+    df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
+    df = df.sort_values(["TEAM_ID", "GAME_DATE"])
+    df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
+    df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
+    return df
+
+
+def bucket_stats_by_era(seasons: list[str], stats: dict) -> tuple[dict, list[str]]:
+    """
+    Average each per-season stat series within each rule-change era
+    (ERA_DEFS). Works for any stats dict of the form {category: [per-season
+    values]} — used by the margin analysis.
+    """
+    era_avgs: dict[str, list[float]] = {key: [] for key in stats}
+    for _, y1, y2, _ in ERA_DEFS:
+        idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
+        for key, values in stats.items():
+            vals = [values[i] for i in idx if not np.isnan(values[i])]
+            era_avgs[key].append(round(np.mean(vals), 1) if vals else 0)
+
+    era_labels_short = [e[0] for e in ERA_DEFS]
+    return era_avgs, era_labels_short
+
+
+def _align_to_seasons(
+    ref_seasons: list[str], target_seasons: list[str],
+    target_stats: dict, key: str,
+) -> np.ndarray:
+    """Align a per-season stat series to a reference season list, filling gaps with NaN."""
+    lookup = {s: i for i, s in enumerate(target_seasons)}
+    return np.array(
+        [target_stats[key][lookup[s]] if s in lookup else np.nan for s in ref_seasons],
+        dtype=float,
+    )
+
+
+def _iter_season_frames(start_year, end_year, season_type, skip_years, fetch):
+    """Yield (year, frame) for each season that has cached data."""
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch(year, season_type)
+        if g is None or g.empty:
+            continue
+        yield year, g
+
+
+# ── Altitude analysis ─────────────────────────────────────────────────────────
+# Home arenas at significant elevation, used to test whether visiting teams
+# are specifically disadvantaged at altitude (vs. just facing good teams).
+# Matched on TEAM_NAME since the Jazz's abbreviation changed (UTH -> UTA)
+# partway through the dataset, but TEAM_NAME has stayed constant.
+# Source: https://en.wikipedia.org/wiki/List_of_NBA_arenas
+ALTITUDE_TEAMS = {
+    "Denver Nuggets": 5280,
+    "Utah Jazz": 4226,
+}
+
+
+# ── Time-zone analysis ────────────────────────────────────────────────────────
+# Time zone for each franchise that has appeared in the dataset, numbered
+# 0 (Eastern) through 3 (Pacific). Used to measure how many time zones a
+# visiting team crossed to play a given game. DST is ignored, and Arizona
+# (no DST) is grouped with Mountain — both approximations are fine for a
+# zones-crossed count.
+# Source: https://en.wikipedia.org/wiki/Time_in_the_United_States
+TEAM_TIMEZONES = {
+    # Eastern
+    "Atlanta Hawks": 0, "Boston Celtics": 0, "Brooklyn Nets": 0,
+    "Charlotte Bobcats": 0, "Charlotte Hornets": 0, "Cleveland Cavaliers": 0,
+    "Detroit Pistons": 0, "Indiana Pacers": 0, "Miami Heat": 0,
+    "New Jersey Nets": 0, "New York Knicks": 0, "Orlando Magic": 0,
+    "Philadelphia 76ers": 0, "Toronto Raptors": 0, "Washington Bullets": 0,
+    "Washington Wizards": 0,
+    # Central
+    "Chicago Bulls": 1, "Dallas Mavericks": 1, "Houston Rockets": 1,
+    "Kansas City Kings": 1, "Memphis Grizzlies": 1, "Milwaukee Bucks": 1,
+    "Minnesota Timberwolves": 1, "New Orleans Hornets": 1,
+    "New Orleans Pelicans": 1, "New Orleans/Oklahoma City Hornets": 1,
+    "Oklahoma City Thunder": 1, "San Antonio Spurs": 1,
+    # Mountain (incl. Arizona, which doesn't observe DST)
+    "Denver Nuggets": 2, "Phoenix Suns": 2, "Utah Jazz": 2,
+    # Pacific
+    "Golden State Warriors": 3, "LA Clippers": 3, "Los Angeles Clippers": 3,
+    "Los Angeles Lakers": 3, "Portland Trail Blazers": 3,
+    "Sacramento Kings": 3, "San Diego Clippers": 3, "Seattle SuperSonics": 3,
+    "Vancouver Grizzlies": 3,
+}
+
+# ── Travel distance analysis ──────────────────────────────────────────────────
+# Haversine distance from the away team's home arena to the game arena,
+# used to test whether longer road trips reduce the visiting team's odds.
+# Coordinates are approximate arena lat/lon; small errors (< 20 mi) don't
+# affect the broad distance-bucket analysis. Franchise names must match
+# TEAM_NAME strings in the cached CSVs.
+ARENA_COORDS: dict[str, tuple[float, float]] = {
+    # Eastern
+    "Atlanta Hawks":           (33.757,  -84.396),
+    "Boston Celtics":          (42.366,  -71.062),
+    "Brooklyn Nets":           (40.683,  -73.975),
+    "Charlotte Bobcats":       (35.225,  -80.839),
+    "Charlotte Hornets":       (35.225,  -80.839),
+    "Cleveland Cavaliers":     (41.497,  -81.688),
+    "Detroit Pistons":         (42.697,  -83.245),   # Palace of Auburn Hills (most of dataset)
+    "Indiana Pacers":          (39.764,  -86.156),
+    "Miami Heat":              (25.781,  -80.188),
+    "New Jersey Nets":         (40.814,  -74.067),   # Meadowlands (East Rutherford, NJ)
+    "New York Knicks":         (40.750,  -73.994),
+    "Orlando Magic":           (28.539,  -81.384),
+    "Philadelphia 76ers":      (39.901,  -75.172),
+    "Toronto Raptors":         (43.643,  -79.379),
+    "Washington Bullets":      (38.898,  -77.021),
+    "Washington Wizards":      (38.898,  -77.021),
+    # Central
+    "Chicago Bulls":           (41.881,  -87.674),
+    "Dallas Mavericks":        (32.791,  -96.810),
+    "Houston Rockets":         (29.751,  -95.362),
+    "Kansas City Kings":       (39.076,  -94.578),
+    "Memphis Grizzlies":       (35.138,  -90.051),
+    "Milwaukee Bucks":         (43.044,  -87.917),
+    "Minnesota Timberwolves":  (44.979,  -93.276),
+    "New Orleans Hornets":     (29.949,  -90.082),
+    "New Orleans Pelicans":    (29.949,  -90.082),
+    "New Orleans/Oklahoma City Hornets": (29.949,  -90.082),  # NOLA home base
+    "Oklahoma City Thunder":   (35.463,  -97.515),
+    "San Antonio Spurs":       (29.427,  -98.438),
+    # Mountain
+    "Denver Nuggets":          (39.749, -104.983),
+    "Phoenix Suns":            (33.446, -112.071),
+    "Utah Jazz":               (40.768, -111.901),
+    # Pacific
+    "Golden State Warriors":   (37.750, -122.201),   # Oakland (majority of dataset)
+    "LA Clippers":             (34.043, -118.267),
+    "Los Angeles Clippers":    (34.043, -118.267),
+    "Los Angeles Lakers":      (34.043, -118.267),
+    "Portland Trail Blazers":  (45.532, -122.667),
+    "Sacramento Kings":        (38.580, -121.500),
+    "San Diego Clippers":      (32.710, -117.157),
+    "Seattle SuperSonics":     (47.622, -122.354),
+    "Vancouver Grizzlies":     (49.278, -123.109),
+}
+
+def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance in miles between two lat/lon points."""
+    R = 3958.8  # Earth radius in miles
+    phi1, phi2 = np.radians(lat1), np.radians(lat2)
+    dphi    = np.radians(lat2 - lat1)
+    dlambda = np.radians(lon2 - lon1)
+    a = np.sin(dphi / 2) ** 2 + np.cos(phi1) * np.cos(phi2) * np.sin(dlambda / 2) ** 2
+    return float(2 * R * np.arcsin(np.sqrt(a)))
+
+
+# ── Box-score differential analysis ──────────────────────────────────────────
+
+def _compute_box_differentials(merged: pd.DataFrame) -> pd.DataFrame:
+    """Home-minus-away box-score differentials for fouls and shooting."""
+    fg3a_home = merged["FG3A_home"].replace(0, np.nan)
+    fg3a_away = merged["FG3A_away"].replace(0, np.nan)
+    fta_home  = merged["FTA_home"].replace(0, np.nan)
+    fta_away  = merged["FTA_away"].replace(0, np.nan)
+    return pd.DataFrame({
+        "foul_diff":     merged["PF_home"] - merged["PF_away"],
+        "fg_pct_diff":   100 * (merged["FGM_home"] / merged["FGA_home"]
+                                - merged["FGM_away"] / merged["FGA_away"]),
+        "efg_pct_diff":  100 * ((merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
+                                - (merged["FGM_away"] + 0.5 * merged["FG3M_away"]) / merged["FGA_away"]),
+        "tpa_rate_diff": 100 * (merged["FG3A_home"] / merged["FGA_home"]
+                                - merged["FG3A_away"] / merged["FGA_away"]),
+        "fg3_pct_diff":  100 * (merged["FG3M_home"] / fg3a_home
+                                - merged["FG3M_away"] / fg3a_away),
+        "ft_pct_diff":   100 * (merged["FTM_home"]  / fta_home
+                                - merged["FTM_away"]  / fta_away),
+    })
+
+
+def fetch_differential_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Per-game home-minus-away differentials for fouls and shooting efficiency
+    (shooting % in percentage points). Computed from raw M/A columns so games
+    with zero attempts (e.g., 0 FG3A) become NaN rather than zero.
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+    return _compute_box_differentials(merged)
+
+
+def compute_differential_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season mean home-minus-away differentials for fouls and shooting %."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "foul_diff": [], "fg_pct_diff": [], "efg_pct_diff": [], "tpa_rate_diff": [],
+        "fg3_pct_diff": [], "ft_pct_diff": [],
+    }
+
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_differential_data):
+        seasons.append(short_label(year))
+        for key in stats:
+            stats[key].append(g[key].mean(skipna=True))
+
+    return seasons, stats
+
+
+# ── Rebounding decomposition ──────────────────────────────────────────────────
+
+def _compute_rebound_components(merged: pd.DataFrame) -> pd.DataFrame:
+    """Home-minus-away rebounding components, plus rebound-share and league context.
+
+    reb_share_edge is the home team's share of available offensive rebounds minus
+    the away team's share (percentage points). Measuring rebounding as a share of
+    available boards removes the pace/shot-volume confound that inflates raw counts.
+    league_oreb_rate is the game's league-wide offensive-rebound rate (both teams) —
+    the context that the home edge's decline tracks.
+    """
+    oreb_h, oreb_a = merged["OREB_home"], merged["OREB_away"]
+    dreb_h, dreb_a = merged["DREB_home"], merged["DREB_away"]
+    home_oreb_chance = (oreb_h + dreb_a).replace(0, np.nan)
+    away_oreb_chance = (oreb_a + dreb_h).replace(0, np.nan)
+    total_reb = (oreb_h + oreb_a + dreb_h + dreb_a).replace(0, np.nan)
+    return pd.DataFrame({
+        "oreb_diff":        oreb_h - oreb_a,
+        "dreb_diff":        dreb_h - dreb_a,
+        "reb_diff":         merged["REB_home"] - merged["REB_away"],
+        "reb_share_edge":   100 * (oreb_h / home_oreb_chance - oreb_a / away_oreb_chance),
+        "league_oreb_rate": 100 * (oreb_h + oreb_a) / total_reb,
+    })
+
+
+def fetch_rebound_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """Per-game home-minus-away rebounding components (see _compute_rebound_components)."""
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+    return _compute_rebound_components(merged)
+
+
+def compute_rebound_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season mean home-minus-away rebounding components."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "oreb_diff": [], "dreb_diff": [], "reb_diff": [],
+        "reb_share_edge": [], "league_oreb_rate": [],
+    }
+
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_rebound_data):
+        seasons.append(short_label(year))
+        for key in stats:
+            stats[key].append(g[key].mean(skipna=True))
+
+    return seasons, stats
+
+
+# ── Player-tracking rebounding (mechanism, tracking era only) ─────────────────
+# Tests *why* the home rebounding edge faded, using NBA player-tracking and
+# hustle endpoints split Home vs Road (location_nullable). These cover only the
+# tracking era (~2014 on; box-outs ~2016 on) — far shorter than the 40-year
+# box-score series — so they corroborate the modern mechanism, not the full
+# decline. Each metric's home edge = mean across teams of (home − road), so no
+# per-game merge is needed.
+
+TRACKING_START_YEAR = 2014  # 2013-14, first player-tracking season
+
+
+def _fetch_tracking_cached(path: str, build_df, keep_cols: list[str]) -> pd.DataFrame | None:
+    """Shared cache/error wrapper for one season/location tracking pull.
+
+    Caches the miss (empty CSV) so unavailable seasons aren't re-fetched.
+    """
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    try:
+        df = build_df()
+    except Exception as e:
+        print(f"    ERROR fetching {os.path.basename(path)}: {e}")
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    if df.empty or "TEAM_ID" not in df.columns:
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    present = ["TEAM_ID"] + [c for c in keep_cols if c in df.columns and c != "TEAM_ID"]
+    df = df[present].copy()
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def fetch_tracking_rebounding(end_year: int, location: str) -> pd.DataFrame | None:
+    """Team rebound-tracking (LeagueDashPtStats, Rebounding), Home/Road split."""
+    path = os.path.join(CACHE_DIR, f"tracking_reb_{season_str(end_year)}_{location}.csv")
+
+    def build():
+        from nba_api.stats.endpoints import leaguedashptstats
+        return leaguedashptstats.LeagueDashPtStats(
+            season=season_str(end_year), season_type_all_star="Regular Season",
+            pt_measure_type="Rebounding", player_or_team="Team",
+            per_mode_simple="PerGame", location_nullable=location, timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_tracking_cached(path, build, ["OREB_CHANCE_PCT", "REB_CONTEST", "AVG_REB_DIST"])
+
+
+def fetch_hustle_rebounding(end_year: int, location: str) -> pd.DataFrame | None:
+    """Team hustle stats (LeagueHustleStatsTeam): box-outs etc., Home/Road split."""
+    path = os.path.join(CACHE_DIR, f"tracking_hustle_{season_str(end_year)}_{location}.csv")
+
+    def build():
+        from nba_api.stats.endpoints import leaguehustlestatsteam
+        return leaguehustlestatsteam.LeagueHustleStatsTeam(
+            season=season_str(end_year), season_type_all_star="Regular Season",
+            per_mode_time="PerGame", location_nullable=location, timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_tracking_cached(path, build, ["BOX_OUTS", "OFF_BOXOUTS"])
+
+
+def fetch_second_chance(end_year: int, location: str) -> pd.DataFrame | None:
+    """Team Misc stats (LeagueDashTeamStats, Misc): second-chance points, Home/Road split."""
+    path = os.path.join(CACHE_DIR, f"tracking_misc_{season_str(end_year)}_{location}.csv")
+
+    def build():
+        from nba_api.stats.endpoints import leaguedashteamstats
+        return leaguedashteamstats.LeagueDashTeamStats(
+            season=season_str(end_year), season_type_all_star="Regular Season",
+            measure_type_detailed_defense="Misc", per_mode_detailed="PerGame",
+            location_nullable=location, timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_tracking_cached(path, build, ["PTS_2ND_CHANCE"])
+
+
+def compute_tracking_rebound_stats(
+    start_year: int = TRACKING_START_YEAR, end_year: int = END_YEAR,
+) -> tuple[list[str], dict]:
+    """Per-season home-minus-road tracking rebounding edges (regular season).
+
+    Each edge is the mean across teams of (home metric − road metric). Seasons
+    before a metric exists yield NaN. OREB_CHANCE_PCT is rescaled to percentage
+    points; box-outs and second-chance points stay per game.
+    """
+    # (key, fetch_fn, source_column, scale)
+    specs = [
+        ("oreb_chance_pct_edge", fetch_tracking_rebounding, "OREB_CHANCE_PCT", 100.0),
+        ("boxout_edge",          fetch_hustle_rebounding,   "BOX_OUTS",        1.0),
+        ("second_chance_edge",   fetch_second_chance,       "PTS_2ND_CHANCE",  1.0),
+    ]
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {key: [] for key, _, _, _ in specs}
+
+    for year in range(start_year, end_year + 1):
+        seasons.append(short_label(year))
+        for key, fetch, col, scale in specs:
+            home = fetch(year, "Home")
+            road = fetch(year, "Road")
+            if (home is None or road is None
+                    or col not in home.columns or col not in road.columns):
+                stats[key].append(np.nan)
+                continue
+            m = home[["TEAM_ID", col]].merge(
+                road[["TEAM_ID", col]], on="TEAM_ID", suffixes=("_h", "_r"))
+            stats[key].append(scale * (m[f"{col}_h"] - m[f"{col}_r"]).mean()
+                              if len(m) else np.nan)
+
+    return seasons, stats
+
+
+def compute_league_3pa_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], list[float], list[float]]:
+    """
+    Per-season league-wide 3PA rate (% of all FGA) and home win %.
+    Returns (seasons, tpa_rates, home_win_pcts).
+    """
+    seasons: list[str] = []
+    tpa_rates: list[float] = []
+    home_win_pcts: list[float] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+        total_fga = df["FGA"].sum()
+        if total_fga == 0:
+            continue
+        tpa_rate = 100.0 * df["FG3A"].sum() / total_fga
+        merged = _merge_home_away_rows(df)
+        if merged is None:
+            continue
+        hw_pct = 100.0 * (merged["WL_home"] == "W").mean()
+        seasons.append(short_label(year))
+        tpa_rates.append(tpa_rate)
+        home_win_pcts.append(hw_pct)
+
+    return seasons, tpa_rates, home_win_pcts
+
+
+def compute_league_pace_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], list[float], list[float]]:
+    """
+    Per-season league-wide pace (possessions per 48 min, per team) and home win %.
+    Pace = (FGA − OREB + TOV + 0.44×FTA) / MIN × 240.
+    Returns (seasons, pace_vals, home_win_pcts).
+    """
+    seasons: list[str] = []
+    pace_vals: list[float] = []
+    home_win_pcts: list[float] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None or df.empty:
+            continue
+        if not {"FGA", "OREB", "TOV", "FTA", "MIN"}.issubset(df.columns):
+            continue
+        df = df.copy()
+        poss = df["FGA"] - df["OREB"] + df["TOV"] + 0.44 * df["FTA"]
+        pace = poss * 240.0 / df["MIN"].replace(0, np.nan)
+        avg_pace = float(pace.dropna().mean())
+        if np.isnan(avg_pace):
+            continue
+        merged = _merge_home_away_rows(df)
+        if merged is None:
+            continue
+        hw_pct = 100.0 * (merged["WL_home"] == "W").mean()
+        seasons.append(short_label(year))
+        pace_vals.append(avg_pace)
+        home_win_pcts.append(float(hw_pct))
+
+    return seasons, pace_vals, home_win_pcts
+
+
+# ── Team home court advantage analysis ───────────────────────────────────────
+
+def compute_team_hca_stats(
+    start_year: int, end_year: int, season_type: str,
+    skip_years: set[int] = frozenset(), min_games: int = 50,
+) -> dict[str, dict]:
+    """
+    All-time per-franchise home and road win% aggregated across seasons.
+    Returns dict: TEAM_NAME -> {home_pct, road_pct, hca, n_home, n_road}.
+    Franchises with fewer than min_games home games are excluded.
+    """
+    home_wins:  dict[str, int] = {}
+    home_total: dict[str, int] = {}
+    road_wins:  dict[str, int] = {}
+    road_total: dict[str, int] = {}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+
+        is_home = df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)
+        is_road = df["MATCHUP"].str.contains(" @ ", regex=False, na=False)
+
+        for subset, w_dict, t_dict in [
+            (df[is_home], home_wins, home_total),
+            (df[is_road], road_wins, road_total),
+        ]:
+            for team, grp in subset.groupby("TEAM_NAME", sort=False):
+                t_dict[team] = t_dict.get(team, 0) + len(grp)
+                w_dict[team] = w_dict.get(team, 0) + int((grp["WL"] == "W").sum())
+
+    result: dict[str, dict] = {}
+    for team in sorted(set(home_total) | set(road_total)):
+        n_h = home_total.get(team, 0)
+        n_r = road_total.get(team, 0)
+        if n_h < min_games or n_r < min_games:
+            continue
+        h_pct = 100.0 * home_wins.get(team, 0) / n_h
+        r_pct = 100.0 * road_wins.get(team, 0) / n_r
+        result[team] = {
+            "home_pct": round(h_pct, 1),
+            "road_pct": round(r_pct, 1),
+            "hca":      round(h_pct - r_pct, 1),
+            "n_home":   n_h,
+            "n_road":   n_r,
+        }
+    return result
+
+
+def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Per-home-game point margin from the cached game log.
+    PLUS_MINUS for a home row equals home_pts − away_pts exactly.
+    Returns a DataFrame with columns ['margin', 'WL']; None if no data.
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
+    if home.empty:
+        return None
+    return home[["PLUS_MINUS", "WL"]].rename(columns={"PLUS_MINUS": "margin"})
+
+
+def compute_margin_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season home team point-differential statistics."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "all_games_mean": [], "home_wins_mean": [], "home_losses_mean": [], "std_dev": [],
+    }
+
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_margin_data):
+        seasons.append(short_label(year))
+        stats["all_games_mean"].append(g["margin"].mean())
+        wins   = g[g["WL"] == "W"]
+        losses = g[g["WL"] == "L"]
+        stats["home_wins_mean"].append(  wins["margin"].mean()   if len(wins)   else np.nan)
+        stats["home_losses_mean"].append(losses["margin"].mean() if len(losses) else np.nan)
+        stats["std_dev"].append(g["margin"].std())
+
+    return seasons, stats
+
+
+def compute_parity_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], list[float]]:
+    """Per-season std dev of team win%, a measure of competitive balance (lower = more parity)."""
+    seasons: list[str] = []
+    std_devs: list[float] = []
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None or df.empty:
+            continue
+
+        team_wins = df.groupby("TEAM_ID")["WL"].apply(lambda x: (x == "W").mean())
+        if len(team_wins) < 2:
+            continue
+
+        seasons.append(short_label(year))
+        std_devs.append(float(team_wins.std()))
+
+    return seasons, std_devs
+
+
+# ── Playoff series structure analysis ─────────────────────────────────────────
+
+def fetch_series_data(end_year: int) -> pd.DataFrame | None:
+    """
+    Load cached playoffs game log and derive game-within-series number from
+    GAME_ID (last digit), series key (second-to-last two digits), and
+    HOME_WIN from WL. Returns home-rows-only with columns
+    ['GAME_ID', 'game_in_series', 'series_key', 'HOME_WIN'].
+    """
+    df = _load_game_log(end_year, "Playoffs")
+    if df is None:
+        return None
+
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
+    if home.empty:
+        return None
+
+    # GAME_ID may be int64 in cache; str(int(float(x))) handles int, float, str
+    game_id = home["GAME_ID"].apply(lambda x: str(int(float(x))))
+    home = home.copy()
+    home["game_in_series"] = game_id.str[-1].astype(int)
+    home["series_key"]     = game_id.str[-3:-1]
+    home["HOME_WIN"]       = (home["WL"] == "W").astype(int)
+
+    return home[["GAME_ID", "game_in_series", "series_key", "HOME_WIN"]]
+
+
+def compute_series_stats(
+    start_year: int, end_year: int, skip_years: set[int] = frozenset(),
+) -> tuple[list[int], list[float], list[int]]:
+    """
+    Home win % and game count per game-within-series number (1–7), pooled
+    across all seasons. Returns (game_numbers, home_win_pcts, game_counts).
+    """
+    wins  = {g: 0 for g in range(1, 8)}
+    total = {g: 0 for g in range(1, 8)}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        g = fetch_series_data(year)
+        if g is None or g.empty:
+            continue
+        for gnum, win in zip(g["game_in_series"], g["HOME_WIN"]):
+            if 1 <= gnum <= 7:
+                wins[gnum]  += int(win)
+                total[gnum] += 1
+
+    game_nums = [g for g in range(1, 8) if total[g] > 0]
+    win_pcts  = [100.0 * wins[g] / total[g] for g in game_nums]
+    counts    = [total[g] for g in game_nums]
+    return game_nums, win_pcts, counts
+
+
+def compute_series_stats_by_era(
+    start_year: int, end_year: int, skip_years: set[int] = frozenset(),
+) -> dict[str, dict[int, float]]:
+    """
+    Home win % per game-within-series number split by era.
+    Returns {era_label: {game_num: home_win_pct}}.
+    Game numbers with fewer than 5 games in an era are excluded.
+    """
+    era_wins  = {e[0]: {g: 0 for g in range(1, 8)} for e in ERA_DEFS}
+    era_total = {e[0]: {g: 0 for g in range(1, 8)} for e in ERA_DEFS}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        era_label = next(
+            (lbl for lbl, y1, y2, _ in ERA_DEFS if y1 <= year <= y2), None
+        )
+        if era_label is None:
+            continue
+
+        g = fetch_series_data(year)
+        if g is None or g.empty:
+            continue
+
+        for gnum, win in zip(g["game_in_series"], g["HOME_WIN"]):
+            if 1 <= gnum <= 7:
+                era_wins[era_label][gnum]  += int(win)
+                era_total[era_label][gnum] += 1
+
+    result: dict[str, dict[int, float]] = {}
+    for era_label in era_wins:
+        pcts = {
+            g: 100.0 * era_wins[era_label][g] / era_total[era_label][g]
+            for g in range(1, 8)
+            if era_total[era_label][g] >= 5
+        }
+        if pcts:
+            result[era_label] = pcts
+    return result
+
+
+# ── Shot-zone analysis ────────────────────────────────────────────────────────
+# LeagueDashTeamShotLocations column names for each shot zone's FGA.
+# RA = Restricted Area, PITP = Paint In The Paint (non-RA), MR = Mid-Range,
+# LC3/RC3 = Left/Right Corner 3, ATB3 = Above the Break 3, BC = Back Court.
+# Mapping from the API's MultiIndex (zone, stat) column tuples to flat CSV names.
+_ZONE_COL_MAP: dict[tuple[str, str], str] = {
+    ("Restricted Area",       "FGA"): "FGA_RA",
+    ("In The Paint (Non-RA)", "FGA"): "FGA_NON_RA",
+    ("Mid-Range",             "FGA"): "FGA_MR",
+    ("Left Corner 3",         "FGA"): "FGA_LC3",
+    ("Right Corner 3",        "FGA"): "FGA_RC3",
+    ("Above the Break 3",     "FGA"): "FGA_ATB3",
+    ("Backcourt",             "FGA"): "FGA_BC",
+}
+
+SHOT_ZONE_GROUPS: dict[str, list[str]] = {
+    "paint":    ["FGA_RA", "FGA_NON_RA"],
+    "midrange": ["FGA_MR"],
+    "corner3":  ["FGA_LC3", "FGA_RC3"],
+    "above3":   ["FGA_ATB3"],
+    # FGA_BC excluded — backcourt heaves are noise
+}
+
+
+def fetch_shot_zones(end_year: int, season_type: str, location: str) -> pd.DataFrame | None:
+    """
+    Fetch team-level shot zone FGA totals from LeagueDashTeamShotLocations,
+    split by location ('Home' or 'Road'). Cached as shot_zones_*.csv.
+    """
+    path = os.path.join(
+        CACHE_DIR,
+        f"shot_zones_{season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv",
+    )
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+
+    try:
+        from nba_api.stats.endpoints import leaguedashteamshotlocations
+        result = leaguedashteamshotlocations.LeagueDashTeamShotLocations(
+            season=season_str(end_year),
+            season_type_all_star=season_type,
+            location_nullable=location,
+            per_mode_detailed="Totals",
+            timeout=60,
+        )
+        df = result.get_data_frames()[0]
+    except Exception as e:
+        print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}")
+        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
+        return None
+
+    if df.empty:
+        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
+        return None
+
+    # The API returns a MultiIndex DataFrame: columns are (zone_name, stat) tuples.
+    # Flatten to simple names before caching so the CSV round-trips cleanly.
+    id_map = {("", "TEAM_ID"): "TEAM_ID", ("", "TEAM_NAME"): "TEAM_NAME"}
+    col_map = {**id_map, **_ZONE_COL_MAP}
+    present = [c for c in col_map if c in df.columns]
+    df = df[present].copy()
+    df.columns = [col_map[c] for c in present]
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def _zone_pcts(df: pd.DataFrame) -> dict[str, float]:
+    """League-wide shot zone percentages (share of total FGA) from a team-level DataFrame."""
+    totals = {
+        zone: sum(df[col].sum() for col in cols if col in df.columns)
+        for zone, cols in SHOT_ZONE_GROUPS.items()
+    }
+    total_fga = sum(totals.values())
+    if total_fga == 0:
+        return {k: np.nan for k in SHOT_ZONE_GROUPS}
+    return {k: 100.0 * v / total_fga for k, v in totals.items()}
+
+
+def compute_shot_zone_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """
+    Per-season home-minus-road shot zone % differentials.
+    Each value is the pp difference in that zone's share of total FGA (home − road).
+    """
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {zone: [] for zone in SHOT_ZONE_GROUPS}
+
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        home_df = fetch_shot_zones(year, season_type, "Home")
+        road_df = fetch_shot_zones(year, season_type, "Road")
+        if home_df is None or road_df is None:
+            continue
+
+        home_pcts = _zone_pcts(home_df)
+        road_pcts = _zone_pcts(road_df)
+        if any(np.isnan(v) for v in {**home_pcts, **road_pcts}.values()):
+            continue
+
+        seasons.append(short_label(year))
+        for zone in SHOT_ZONE_GROUPS:
+            stats[zone].append(home_pcts[zone] - road_pcts[zone])
+
+    return seasons, stats
+
+
+# ── Referee crew analysis ─────────────────────────────────────────────────────
+
+def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """
+    Fetch officials for every game in the cached game log via BoxScoreSummaryV3
+    (data_sets[3]). Caches one row per official per game as
+    cache/referee_{season}_{type}.csv with columns [GAME_ID, personId, name].
+    Returns None if no game log or no officials found.
+    """
+    cache_file = os.path.join(
+        CACHE_DIR,
+        f"referee_{season_str(end_year)}_{season_type.replace(' ', '_')}.csv",
+    )
+    if os.path.exists(cache_file):
+        try:
+            df = pd.read_csv(cache_file)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    game_log = _load_game_log(end_year, season_type)
+    if game_log is None:
+        return None
+
+    game_ids = sorted(game_log["GAME_ID"].unique())
+    from nba_api.stats.endpoints import boxscoresummaryv3
+
+    records: list[dict] = []
+    failed = 0
+    print(f"  Fetching referee data: {season_str(end_year)} {season_type} "
+          f"({len(game_ids)} games)...", flush=True)
+    for i, gid in enumerate(game_ids, 1):
+        gid_str = f"{int(float(gid)):010d}"
+        try:
+            b = boxscoresummaryv3.BoxScoreSummaryV3(game_id=gid_str, timeout=60)
+            for _, row in b.data_sets[3].get_data_frame().iterrows():
+                records.append({
+                    "GAME_ID":   gid_str,
+                    "personId":  int(row["personId"]),
+                    "name":      str(row["name"]),
+                })
+        except Exception as e:
+            failed += 1
+            if failed <= 3:
+                print(f"    WARN {gid_str}: {e!r}")
+        time.sleep(SLEEP_SEC)
+        if i % 100 == 0:
+            print(f"    ...{i}/{len(game_ids)}", flush=True)
+
+    if failed:
+        print(f"    {failed} games failed (API errors)")
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    if not records:
+        pd.DataFrame().to_csv(cache_file, index=False)
+        return None
+
+    df = pd.DataFrame(records)
+    df.to_csv(cache_file, index=False)
+    return df
+
+
+def fetch_all_referee_data(
+    start_year: int,
+    end_year: int,
+    season_type: str,
+    skip_years: set[int] = frozenset(),
+) -> pd.DataFrame | None:
+    """
+    Fetch referee data for all seasons and return a concatenated DataFrame with
+    columns [GAME_ID, personId, name, year], or None if nothing is cached.
+    """
+    chunks: list[pd.DataFrame] = []
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = fetch_referee_data(year, season_type)
+        if df is None or df.empty:
+            continue
+        df = df.copy()
+        df["year"] = year
+        chunks.append(df)
+    if not chunks:
+        return None
+    return pd.concat(chunks, ignore_index=True)
+
+
+def compute_referee_bias_stats(
+    ref_df: pd.DataFrame,
+    start_year: int,
+    end_year: int,
+    season_type: str,
+    skip_years: set[int] = frozenset(),
+    min_games: int = 50,
+) -> list[dict]:
+    """
+    Per-official home foul bias aggregated across all games they worked.
+    Loads game logs internally to compute foul_diff (PF_home − PF_away) so this
+    function does not depend on the regression game dataset.
+
+    Returns a list of dicts sorted by mean_foul_diff descending, each with:
+      {personId, name, n_games, mean_foul_diff, era_means: {era_label: mean}}
+    Officials with fewer than min_games games are excluded.
+    """
+    def _norm(gid) -> str:
+        return f"{int(float(gid)):010d}"
+
+    foul_chunks: list[pd.DataFrame] = []
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+        merged = _merge_home_away_rows(df)
+        if merged is None:
+            continue
+        era_label = next(
+            (lbl for lbl, y1, y2, _ in ERA_DEFS if y1 <= year <= y2), "other"
+        )
+        diffs = _compute_box_differentials(merged)
+        foul_chunks.append(pd.DataFrame({
+            "GAME_ID":    merged["GAME_ID"].apply(_norm),
+            "foul_diff":  diffs["foul_diff"].values,
+            "era":        era_label,
+        }))
+
+    if not foul_chunks:
+        return []
+
+    foul_data = pd.concat(foul_chunks, ignore_index=True)
+
+    ref = ref_df.copy()
+    ref["GAME_ID"] = ref["GAME_ID"].apply(_norm)
+    joined = ref.merge(foul_data, on="GAME_ID", how="inner")
+
+    result: list[dict] = []
+    for (pid, name), grp in joined.groupby(["personId", "name"]):
+        if len(grp) < min_games:
+            continue
+        era_means = grp.groupby("era")["foul_diff"].mean().to_dict()
+        # era_sd / era_n: needed for method-of-moments variance decomposition.
+        # std(ddof=1) is NaN when n==1; filter those out so callers get clean dicts.
+        era_sd_raw = grp.groupby("era")["foul_diff"].std(ddof=1).to_dict()
+        era_n_raw  = grp.groupby("era")["foul_diff"].count().to_dict()
+        era_sd = {k: float(v) for k, v in era_sd_raw.items() if not (isinstance(v, float) and np.isnan(v))}
+        era_n  = {k: int(v)   for k, v in era_n_raw.items()}
+        result.append({
+            "personId":       int(pid),
+            "name":           str(name),
+            "n_games":        len(grp),
+            "mean_foul_diff": float(grp["foul_diff"].mean()),
+            "sd_foul_diff":   float(grp["foul_diff"].std(ddof=1)) if len(grp) > 1 else 0.0,
+            "era_means":      era_means,
+            "era_sd":         era_sd,
+            "era_n":          era_n,
+        })
+
+    result.sort(key=lambda x: x["mean_foul_diff"], reverse=True)
+    return result
+
+
+# ── Attendance (Basketball-Reference) ─────────────────────────────────────────
+# NBA.com does not expose attendance, so we scrape Basketball-Reference's monthly
+# schedule pages. Per-game attendance is reliable from ~1999-2000 onward. Each
+# season is cached as cache/attendance_{season}.csv so the scrape runs only once.
+
+def _bbr_get(url: str) -> BeautifulSoup | None:
+    """
+    GET a Basketball-Reference page with a polite pause and browser UA.
+    On HTTP 429 (rate-limited) it backs off and retries a few times; if the
+    throttle persists it returns None so the caller skips caching and retries
+    on a later run.
+    """
+    # Operational logging goes to stderr, not stdout: run() captures stdout into
+    # RESULTS.md, so fetch progress/errors must stay out of that file while still
+    # being visible in the terminal.
+    for attempt in range(BBR_MAX_RETRIES + 1):
+        try:
+            r = requests.get(url, headers=BBR_HEADERS, timeout=30)
+        except Exception as e:
+            print(f"    ERROR fetching {url}: {e}", file=sys.stderr)
+            return None
+        time.sleep(BBR_SLEEP_SEC)  # polite pause, only on a real network hit
+        if r.status_code == 200:
+            return BeautifulSoup(r.text, "lxml")
+        if r.status_code == 429 and attempt < BBR_MAX_RETRIES:
+            backoff = BBR_BACKOFF_SEC * (attempt + 1)
+            print(f"    BBR 429 for {url} — backing off {backoff:.0f}s "
+                  f"(retry {attempt + 1}/{BBR_MAX_RETRIES})", file=sys.stderr, flush=True)
+            time.sleep(backoff)
+            continue
+        print(f"    BBR {r.status_code} for {url}", file=sys.stderr)
+        return None
+    return None
+
+
+def _parse_bbr_schedule(soup: BeautifulSoup) -> list[dict]:
+    """Pull game rows from one monthly schedule page's #schedule table."""
+    table = soup.find("table", id="schedule")
+    if table is None or table.tbody is None:
+        return []
+
+    rows: list[dict] = []
+    for tr in table.tbody.find_all("tr"):
+        if "thead" in (tr.get("class") or []):
+            continue  # repeated mid-table header
+        cells = {c.get("data-stat"): c.get_text(strip=True)
+                 for c in tr.find_all(["th", "td"])}
+        away_pts, home_pts = cells.get("visitor_pts", ""), cells.get("home_pts", "")
+        if not away_pts or not home_pts:
+            continue  # unplayed / postponed game
+
+        att_raw = cells.get("attendance", "").replace(",", "")
+        attendance = float(att_raw) if att_raw.isdigit() else np.nan
+        rows.append({
+            "game_date":  cells.get("date_game", ""),
+            "away_team":  cells.get("visitor_team_name", ""),
+            "home_team":  cells.get("home_team_name", ""),
+            "away_pts":   int(away_pts),
+            "home_pts":   int(home_pts),
+            "attendance": attendance,
+            "home_win":   int(int(home_pts) > int(away_pts)),
+        })
+    return rows
+
+
+def fetch_attendance(end_year: int) -> pd.DataFrame | None:
+    """
+    Per-game attendance for one season, scraped from Basketball-Reference.
+    Crawls the season index for its month links, parses each monthly schedule
+    page, and caches the result as cache/attendance_{season}.csv (an empty file
+    is written on a miss so we never re-fetch).
+    """
+    path = os.path.join(CACHE_DIR, f"attendance_{season_str(end_year)}.csv")
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+
+    # A transient failure (rate-limit/network) must NOT be cached as a miss, or
+    # the season is permanently skipped. Only a page that loads but genuinely
+    # has no data is cached empty so we don't retry it.
+    index = _bbr_get(f"{BBR_BASE}/leagues/NBA_{end_year}_games.html")
+    if index is None:
+        return None  # transient — retry on the next run
+
+    filt = index.find("div", class_="filter")
+    month_hrefs = [a.get("href") for a in filt.find_all("a")] if filt else []
+    if not month_hrefs:
+        pd.DataFrame().to_csv(path, index=False)  # genuine miss
+        return None
+
+    print(f"  Fetching attendance: {season_str(end_year)} "
+          f"({len(month_hrefs)} month pages)...", file=sys.stderr, flush=True)
+    records: list[dict] = []
+    for href in month_hrefs:
+        soup = _bbr_get(f"{BBR_BASE}{href}")
+        if soup is None:
+            return None  # transient mid-season — abort without caching a partial season
+        records.extend(_parse_bbr_schedule(soup))
+
+    if not records:
+        pd.DataFrame().to_csv(path, index=False)  # genuine miss
+        return None
+
+    df = pd.DataFrame(records)
+    df.to_csv(path, index=False)
+    return df
+
+
+def compute_attendance_season_stats(
+    start_year: int = BBR_START_YEAR, end_year: int = END_YEAR,
+) -> tuple[list[str], list[float]]:
+    """
+    League average attendance per game, per season (short labels).
+    Averages only games with a reported crowd (>0); a 0 means an empty or
+    unreported arena, so it is excluded from the mean but kept in the raw cache
+    for the dose-response below.
+    """
+    seasons: list[str] = []
+    avg_attendance: list[float] = []
+    for year in range(start_year, end_year + 1):
+        df = fetch_attendance(year)
+        if df is None or df.empty:
+            continue
+        played = df.loc[df["attendance"] > 0, "attendance"]
+        if played.empty:
+            continue
+        seasons.append(short_label(year))
+        avg_attendance.append(round(float(played.mean()), 0))
+    return seasons, avg_attendance
+
+
+def compute_attendance_covid_doseresponse(end_year: int = 2021) -> pd.DataFrame:
+    """
+    Per-game attendance vs. home_win for the COVID season (default 2020-21),
+    when crowd size varied game-to-game by local restriction — a natural
+    dose-response test of what the crowd is worth. Zero-attendance games are
+    kept; rows with unreported (NaN) attendance are dropped.
+    """
+    df = fetch_attendance(end_year)
+    if df is None or df.empty:
+        return pd.DataFrame(columns=["attendance", "home_win"])
+    out = df.loc[df["attendance"].notna(), ["attendance", "home_win"]].copy()
+    out["attendance"] = out["attendance"].astype(float)
+    out["home_win"] = out["home_win"].astype(int)
+    return out.reset_index(drop=True)
