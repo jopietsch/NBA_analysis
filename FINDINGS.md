@@ -39,10 +39,6 @@ Whether any of these rule changes actually caused the decline is a separate ques
 
 ![Figure 2. Home win % by era, regular season vs. playoffs.](nba_home_court_advantage_era_bars.png){width=0.5}
 
-One counterintuitive wrinkle: even as home teams win less often, the margin when they do win has grown. Home wins are getting bigger, and home losses are getting worse. The obvious objection — that losses only look worse because more games are losses now — doesn't survive a closer look. Tracking the full spread of margins regardless of who won, the gap between the biggest wins and the biggest losses widens by about 0.2 points a year in both the regular season and the playoffs. In the regular season the blowouts grow in both directions at once; in the playoffs the spread widens mainly because the big home wins keep getting bigger. Either way, the era of close games is becoming an era of blowouts — fewer home wins overall, but the ones that happen are more decisive.
-
-![Figure 3. Home team win margin trends — mean margin per season and by era (regular season and playoffs), with the win-only vs. loss-only split for the regular season.](nba_home_court_margin.png)
-
 ---
 
 ## 2. What Creates Home Court Advantage
@@ -59,7 +55,7 @@ The playoff referee data makes the universality of this clear: 45 of 47 official
 
 **Rebounding and ball control.** Quieter than the others but just as real, home teams have pulled down more rebounds and committed fewer turnovers than their visitors — about one and a half extra boards and a third of a turnover per game in the home team's favor. Neither edge is dramatic on its own, but both hand the home team extra possessions, and together they rival the shooting advantage in size. As Section 3 will show, this unglamorous pair turns out to matter more than its modest billing suggests.
 
-![Figure 4. Home vs. away box-score differentials — foul rate, FG%, eFG%, 3PA rate, 3P%, FT%.](nba_home_court_advantage_differentials.png)
+![Figure 3. Home vs. away box-score differentials — foul rate, FG%, eFG%, 3PA rate, 3P%, FT%.](nba_home_court_advantage_differentials.png)
 
 **It all shows up in the box score.** Home court is not mysterious. Add up the four on-court channels — shooting, rebounding, foul calls, and ball control — and together they account for about 95% of the entire home edge in the regular season, and a similar share in the playoffs. Shooting is the single biggest piece, more than 40% of it, followed by rebounding. Whatever the crowd and the familiar rims actually do, it reaches the scoreboard almost entirely through these measurable advantages.
 
@@ -75,11 +71,11 @@ The same edges that create home court advantage are the ones eroding it. Three c
 
 The playoff referee chart makes the generational shift visible. The officials with the most pronounced home-favoring patterns — Ron Garretson, Joe Crawford, Eddie Rush — all worked primarily in the 1990s and early 2000s. The distribution across individual referees has compressed over time, not just shifted. Newer officials are not only less biased on average; they are also more uniform in their calling.
 
-![Figure 5. Referee home foul bias by official and era, playoffs.](nba_home_court_referee.png)
+![Figure 4. Referee home foul bias by official and era, playoffs.](nba_home_court_referee.png)
 
 **The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their field goal attempts from the paint than road teams. By 2023–26, that gap has shrunk to just 0.2 points in the regular season — away teams now attack the basket nearly as aggressively as home teams. The league-wide shift toward analytics-driven offense has standardized shot selection across venues: whether you're playing at home or on the road, the right shot is the right shot. The playoffs are a different story. The postseason gap narrowed in the late 2010s but has since rebounded close to its old level, and the downward drift there isn't statistically established — for now, shot-selection convergence is a regular-season phenomenon.
 
-![Figure 6. Shot zone differentials (home minus road), regular season vs. playoffs.](nba_home_court_shot_zones.png)
+![Figure 5. Shot zone differentials (home minus road), regular season vs. playoffs.](nba_home_court_shot_zones.png)
 
 **The three-point revolution.** No stylistic change in league history matches the rise of three-point shooting, and it tracks almost perfectly with the decline in home court advantage. When about 7% of all field goal attempts were threes in the 1980s, home teams won 65% of games. When 40% of attempts are threes today, home teams win 55%. The timing also explains the second wave from Section 1: the three-point share leapt from about a quarter of all shots to nearly half right after 2017 — the very years home court began its second slide below 56%.
 
@@ -87,7 +83,7 @@ This is not just a coincidence of timing. Even within any given era — controll
 
 In the playoffs, the pattern holds directionally but the within-era signal is weaker — in the postseason, team quality dominates game outcomes more than stylistic factors.
 
-![Figure 7. League three-point attempt rate vs. home win %, regular season and playoffs.](nba_home_court_3pa.png)
+![Figure 6. League three-point attempt rate vs. home win %, regular season and playoffs.](nba_home_court_3pa.png)
 
 **A quieter fourth strand: the glass.** The three forces above are the headline, but the box score insists on one more. The home team's rebounding edge has shrunk steadily for 40 years — and unlike the shooting edge, it is not the three-point story in disguise. Hold each game's three-point volume constant and the fading home *shooting* advantage disappears entirely, confirming it was a byproduct of the move to the perimeter. Do the same to the home *rebounding* edge and it barely moves — a separate four-decade slide in its own right. The home turnover edge has eroded too, about half of it independent of the perimeter shift. We can't name the cause the way we can for the whistle and the arc, but the accounting is unambiguous: home court's hold on the glass and on loose balls has loosened on its own, and together they account for a real slice of the decline. The same holds in the playoffs, where rebounding carries a comparable share of the drop and survives the three-point control just as cleanly.
 
@@ -95,7 +91,7 @@ In the playoffs, the pattern holds directionally but the within-era signal is we
 
 The playoffs don't close so neatly. The same four channels capture only about 67% of the postseason decline, leaving roughly a third of it unaccounted for — a gap that doesn't surface in any single box-score column. It most likely reflects something the numbers can't see: a crowd-effect compression that set in after 2018, as playoff road teams became more battle-tested and harder to rattle in hostile buildings. For the regular season the books essentially balance; for the playoffs, an honest share of the decline remains unexplained.
 
-![Figure 8. Box-score channel shares of the home-court edge and of its decline, regular season vs. playoffs. The left panel is what creates the edge; the right is what's eroding it. Bars sum to 100% by accounting identity.](nba_home_court_mediation.png)
+![Figure 7. Box-score channel shares of the home-court edge and of its decline, regular season vs. playoffs. The left panel is what creates the edge; the right is what's eroding it. Bars sum to 100% by accounting identity.](nba_home_court_mediation.png)
 
 ---
 
@@ -109,17 +105,17 @@ Several popular explanations for the decline turn out not to hold up.
 
 **Pace of play.** The game slowed dramatically from the 1980s to the mid-1990s and has sped back up since 2015 — yet home court advantage moved independently of both shifts. Season by season, the pace of play shows no meaningful correlation with home win rates — the league sped up, slowed down, and sped up again while home court fell in a near-straight line. Whatever pace does within a single game, it didn't drive the four-decade decline. The same holds in the playoffs.
 
-![Figure 9. Pace of play vs. home win %, regular season and playoffs.](nba_home_court_pace.png)
+![Figure 8. Pace of play vs. home win %, regular season and playoffs.](nba_home_court_pace.png)
 
 **Competitive balance.** A widely cited argument holds that more parity compresses game outcomes toward 50-50, reducing home court advantage. The raw correlation across seasons is near zero, and the era breakdown makes a mess of the theory: the most unequal era (1995–01) had already seen HCA fall sharply, while the most balanced era (2002–04) saw it tick back up. The two don't move together. There is a small wrinkle: both series share a downward trend over 40 years, and once that common trend is removed, a weak year-to-year association does emerge — in years when the league gets slightly more equal, HCA tends to dip slightly too. But the effect is modest and doesn't come close to explaining the magnitude of the 40-year decline.
 
-![Figure 10. Competitive balance (team win% spread) vs. home win %, regular season.](nba_home_court_parity.png)
+![Figure 9. Competitive balance (team win% spread) vs. home win %, regular season.](nba_home_court_parity.png)
 
 **Crowd size — the obvious thing to blame, and it's innocent.** If a thinning or quieter crowd were draining home court, attendance should have fallen alongside it. It hasn't. Across the 25 seasons with reliable gate figures, NBA arenas have run at or near capacity the whole time — roughly 17,000 a night in the early 2000s, climbing to record highs above 18,000 in the 2020s, the very years home win rates sank to their lowest. Season to season the two are unrelated, and if anything they drift in opposite directions: buildings have never been fuller while the edge has never been smaller. Crowd *size* is simply not what changed. The playoffs make the point even more cleanly — postseason games are near-guaranteed sellouts, so crowd size barely varies at all, yet postseason home court has eroded right alongside the regular season.
 
 **The empty-arena experiment.** Size is not the same as presence, though — and the pandemic ran an accidental test of presence that no other section can match. In 2020–21, local health rules left some arenas empty and others partly filled, game to game. The split is stark: with the building empty, home teams won just 51% of the time — a coin flip, home court all but gone. With any crowd at all, they won 58.5%, right back at the modern norm. The jump comes from the *presence* of fans rather than the exact count — going from a few thousand to a full house adds little beyond what those first fans restore. Then the whole effect vanished the moment arenas refilled the next season. Crowd noise is a genuine ingredient of home court — worth the better part of those seven points on the night — but it is a switch that flips with the doors, not a dial that has been slowly turning down for 40 years.
 
-![Figure 11. Left: league average attendance per game vs. regular-season home win %, 2000–2026 — crowds hold near capacity (and lately set records) while home court keeps falling. Right: 2020–21 home win % by game attendance — an empty arena erases the edge that even a small crowd restores.](nba_home_court_attendance.png)
+![Figure 10. Left: league average attendance per game vs. regular-season home win %, 2000–2026 — crowds hold near capacity (and lately set records) while home court keeps falling. Right: 2020–21 home win % by game attendance — an empty arena erases the edge that even a small crowd restores.](nba_home_court_attendance.png)
 
 **Put it all together, and the decline still stands alone.** Each suspect above fails on its own. They also fail together. Feed a single model every situational factor at once — rest, altitude, time zones, even the empty-arena COVID seasons — and ask what is left to explain. Roughly half of the model's predictive power belongs to those situational factors combined; the other half belongs to *which era the game was played in* — and that era effect is just the decline itself, measured. Home advantage is about 9 points lower in 2023–26 than in 1984–94 even after every one of those factors is given its due.
 
@@ -133,7 +129,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 **Who is playing at home matters more than anything else.** Across all eras, the single strongest predictor of a playoff game outcome is which team has home court. Games 1 and 2 — played at the higher seed's arena — go to the home team 69% and 72% of the time. Games 3 and 4 — at the lower seed's arena — are barely better than coin flips for the team playing there (55–56%). Game 5, back at the top seed, is the most lopsided of all: 75%. Even Game 7, the highest-pressure game in basketball, still goes to the home team 64% of the time. There is no evidence that road teams adapt as a series deepens. The home-away split explains the pattern entirely.
 
-![Figure 12. Playoff home win % by game number, all eras and by era.](nba_home_court_series_breakdown.png)
+![Figure 11. Playoff home win % by game number, all eras and by era.](nba_home_court_series_breakdown.png)
 
 **The playoff decline is real home-court weakening, not weaker seeds.** A natural objection: maybe playoff home teams win less now simply because top seeds no longer outclass their opponents the way they once did. The data says no. Account for the gap in regular-season quality between the two teams and the year-by-year playoff decline doesn't budge at all — none of it is explained away by seeds bunching together. The cleanest proof is the lower seed's home games: when the objectively weaker team hosts Games 3 and 4, it still wins 51.5% of the time. Strip team quality out entirely and home court alone is still worth a coin-flip-beating edge — and that edge is what has been eroding.
 
@@ -148,7 +144,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 The most recent shift, in 2014, coincided with the sharpest period of playoff HCA decline — a nearly 7-point raw drop from the 2003–13 period to the 2014–26 period. But when the year-by-year secular trend is accounted for, the format change has no independent effect. The playoff drop would have arrived on roughly the same schedule regardless. Format was not the cause.
 
-![Figure 13. Home win % by playoff format period, regular season vs. playoffs.](nba_home_court_advantage_format_bars.png){width=0.5}
+![Figure 12. Home win % by playoff format period, regular season vs. playoffs.](nba_home_court_advantage_format_bars.png){width=0.5}
 
 ---
 
@@ -160,11 +156,15 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 **Denver and Utah own the best home court in the league — and altitude is the reason.** Across 40 seasons, the Nuggets and Jazz hold the largest regular-season home edges of any franchise: about 27 and 26 percentage points above their own road win rates after accounting for sample size, against a league average near 20. They are also the two highest-elevation arenas in the NBA. The franchise spread is real — roughly 70% of the variation across teams reflects genuine differences rather than noise — and altitude sits right at the top of it. (This 27-point figure is their full home-minus-road gap; the altitude piece on its own, isolated in Section 2, accounts for about 8 of those points.)
 
-![Figure 14. Franchise home court advantage, regular season and playoffs. Bars and points carry 95% confidence bands: in the regular season most franchises sit clearly apart, but in the playoffs the bands are wide and overlapping — the franchise differences there are mostly noise.](nba_home_court_team_hca.png)
+![Figure 13. Franchise home court advantage, regular season and playoffs. Bars and points carry 95% confidence bands: in the regular season most franchises sit clearly apart, but in the playoffs the bands are wide and overlapping — the franchise differences there are mostly noise.](nba_home_court_team_hca.png)
 
 **In the playoffs, every franchise's home court looks the same — the differences are an illusion.** That real regular-season spread vanishes in the postseason. With fewer than 150 playoff home games on record for most franchises, the apparent gaps — from Utah near the top to a couple of teams below average — are entirely explained by small samples; the true spread between franchises is statistically indistinguishable from zero. A team's reputation for being a postseason fortress is mostly a reflection of being a good team, and good teams simply play more home games.
 
 **Home court is worth more in the playoffs than in the regular season.** Among the franchises with both records, home court is worth about 20 points in the regular season but 27 in the playoffs — a 7-point postseason premium. Teams that protect their building in the regular season tend to do so in the playoffs as well, but only loosely (the correlation is positive but weak). The crowd, the stakes, and the familiar floor all count for more when the games matter most.
+
+**The blowouts are getting bigger — even as home teams win less.** As home court advantage has faded, the margin when the home team *does* win has grown. Home wins are getting bigger, and home losses are getting worse. The obvious objection — that losses only look worse because more games are losses now — doesn't survive a closer look. Tracking the full spread of margins regardless of who won, the gap between the biggest wins and the biggest losses widens by about 0.2 points a year in both the regular season and the playoffs. In the regular season the blowouts grow in both directions at once; in the playoffs the spread widens mainly because the big home wins keep getting bigger. Either way, the era of close games is becoming an era of blowouts — fewer home wins overall, but the ones that happen are more decisive.
+
+![Figure 14. Home team win margin trends — mean margin per season and by era (regular season and playoffs), with the win-only vs. loss-only split for the regular season.](nba_home_court_margin.png)
 
 ---
 
