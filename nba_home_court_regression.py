@@ -1556,16 +1556,16 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
 # ── Analysis 4b: Unconditional quantile regression on margins ─────────────────
 
 def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
-    """Unconditional quantile regression — tests whether 'polarization' in §1
-    is genuine distribution widening or a composition artifact of the declining
-    home win rate. (PLAN-STATS item 3.)
+    """Unconditional quantile regression — tests whether the margin
+    'polarization' reported in §6 is genuine distribution widening or a
+    composition artifact of the declining home win rate. (PLAN-STATS item 3.)
 
     All quantiles drifting down in parallel → pure level effect (wins appeared
     bigger / losses appeared worse only because marginal games changed sides).
     Lower quantiles declining while upper quantiles rise or hold → genuine
     variance widening (polarization confirmed).
     """
-    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§1 check)")
+    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§6 check)")
     print("   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.")
     print("   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.")
     print("   All quantiles parallel → pure level effect (conditional divergence is artifact).")
@@ -1606,7 +1606,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
             print(f"\n   IQR change rate (Q90 − Q10 slope diff): {spread_chg:+.3f} pts/yr")
             if spread_chg > 0.02:
                 print(f"   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).")
-                print(f"     The conditional-on-outcome divergence in §1 reflects a real change in")
+                print(f"     The conditional-on-outcome divergence in §6 reflects a real change in")
                 print(f"     distribution shape, not just a composition effect.")
             elif spread_chg < -0.02:
                 print(f"   ► Q90 falls / Q10 rises — distribution compressing.")
@@ -1615,7 +1615,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
                 rng = max(all_slopes) - min(all_slopes)
                 if rng < 0.05:
                     print(f"   ► All quantiles shift in parallel (spread change ≈ 0).")
-                    print(f"     The §1 conditional divergence is a composition artifact:")
+                    print(f"     The §6 conditional divergence is a composition artifact:")
                     print(f"     as home win % declines, marginal games flip sides and push")
                     print(f"     the conditional-win and conditional-loss means apart without")
                     print(f"     any genuine change in the distribution's shape.")
