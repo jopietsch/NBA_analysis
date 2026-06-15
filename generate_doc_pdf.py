@@ -57,6 +57,30 @@ ACCENT = BLUE
 CODEBG = "#f4f4f2"
 
 
+# ── Monospace font ──────────────────────────────────────────────────────────────
+# Courier (a built-in PDF font) lacks the math/box-drawing glyphs the teaching
+# docs use in code fences (√, p̄, subscripts, ─│┤, ∞, Σ, ≈, ×, −), rendering them
+# as black boxes. DejaVu Sans Mono ships with matplotlib and covers them all.
+
+def _register_mono() -> str:
+    try:
+        import matplotlib
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+
+        ttf = os.path.join(os.path.dirname(matplotlib.__file__),
+                           "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf")
+        if os.path.exists(ttf):
+            pdfmetrics.registerFont(TTFont("DejaVuSansMono", ttf))
+            return "DejaVuSansMono"
+    except Exception:
+        pass
+    return "Courier"
+
+
+MONO = _register_mono()
+
+
 # ── Styles ────────────────────────────────────────────────────────────────────
 
 def _build_styles() -> dict:
@@ -110,7 +134,7 @@ def _build_styles() -> dict:
         "code": ParagraphStyle(
             "code", parent=base["Code"],
             fontSize=8, leading=10.5, textColor=colors.HexColor(DARK),
-            fontName="Courier", spaceAfter=0,
+            fontName=MONO, spaceAfter=0,
         ),
         "table_header": ParagraphStyle(
             "table_header", parent=base["Normal"],
@@ -152,7 +176,7 @@ def _md_inline(text: str) -> str:
     # [text](target) → just the text (these docs link to sibling files, not URLs)
     text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)
     text = re.sub(r"\x00(\d+)\x00",
-                  lambda m: f'<font name="Courier">{spans[int(m.group(1))]}</font>',
+                  lambda m: f'<font name="{MONO}">{spans[int(m.group(1))]}</font>',
                   text)
     return text
 

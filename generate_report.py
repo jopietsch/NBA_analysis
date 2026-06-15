@@ -45,6 +45,30 @@ FINDINGS_PATH = "FINDINGS.md"
 RESULTS_PATH  = "RESULTS.md"
 
 
+# ── Monospace font ──────────────────────────────────────────────────────────────
+# Courier (a built-in PDF font) lacks the box-drawing glyphs RESULTS.md uses in
+# its section headers (───), rendering them as black boxes in Appendix A. DejaVu
+# Sans Mono ships with matplotlib and covers them.
+
+def _register_mono() -> str:
+    try:
+        import matplotlib
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+
+        ttf = os.path.join(os.path.dirname(matplotlib.__file__),
+                           "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf")
+        if os.path.exists(ttf):
+            pdfmetrics.registerFont(TTFont("DejaVuSansMono", ttf))
+            return "DejaVuSansMono"
+    except Exception:
+        pass
+    return "Courier"
+
+
+MONO = _register_mono()
+
+
 # ── Styles (built once at import) ─────────────────────────────────────────────
 
 def _build_styles() -> dict:
@@ -103,7 +127,7 @@ def _build_styles() -> dict:
             "code", parent=base["Code"],
             fontSize=7, leading=9.5,
             textColor=colors.HexColor(DARK),
-            fontName="Courier",
+            fontName=MONO,
             spaceAfter=0,
         ),
         "appendix_section": ParagraphStyle(
@@ -152,7 +176,7 @@ def _md_inline(text: str) -> str:
     """Convert inline markdown to reportlab XML markup."""
     text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
     text = re.sub(r'\*([^*\n]+?)\*', r'<i>\1</i>', text)
-    text = re.sub(r'`([^`]+)`', r'<font name="Courier">\1</font>', text)
+    text = re.sub(r'`([^`]+)`', rf'<font name="{MONO}">\1</font>', text)
     return text
 
 
