@@ -14,6 +14,8 @@ import re
 import sys
 from datetime import datetime
 
+import nba_home_court_data as nba
+
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
@@ -44,6 +46,17 @@ ACCENT = BLUE
 FINDINGS_PATH = "FINDINGS.md"
 RESULTS_PATH  = "RESULTS.md"
 OUTPUT_DIR    = "generated"
+
+
+def _count_regular_season_games() -> int:
+    """Count total regular-season games from cached CSVs (each game = 2 rows)."""
+    import pandas as pd
+    total = 0
+    for year in range(nba.START_YEAR, nba.END_YEAR + 1):
+        path = nba.cache_path(year, "Regular Season")
+        if os.path.exists(path):
+            total += len(pd.read_csv(path, usecols=[0]))
+    return total // 2
 
 
 # ── Monospace font ──────────────────────────────────────────────────────────────
@@ -312,7 +325,7 @@ def _cover(sections: dict) -> list:
         _hr(),
         Spacer(1, 0.15 * inch),
         Paragraph(
-            "Data: NBA.com  ·  1983–84 through 2025–26  ·  52,399 games",
+            f"Data: NBA.com  ·  {nba.season_range_label()}  ·  {_count_regular_season_games():,} games",
             _STYLES["cover_sub"],
         ),
         Paragraph(
@@ -443,7 +456,7 @@ def build_report(output_path=os.path.join(OUTPUT_DIR, "nba_home_court_advantage_
         Spacer(1, 0.3 * inch),
         _hr(),
         Paragraph(
-            "Data: NBA.com. Analysis covers 1983–84 through 2025–26. "
+            f"Data: NBA.com. Analysis covers {nba.season_range_label()}. "
             "Shot zone data available from 1996–97. "
             "Logistic regression uses McFadden R²; marginal effects at the mean. "
             "See Appendix A for full tables and coefficient values.",

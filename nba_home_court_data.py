@@ -65,6 +65,13 @@ def short_label(end_year: int) -> str:
     return f"{str(end_year - 1)[-2:]}–{str(end_year)[-2:]}"
 
 
+def season_range_label() -> str:
+    """e.g. '1983–84 through 2025–26' — derived from START_YEAR/END_YEAR"""
+    start = f"{START_YEAR - 1}–{str(START_YEAR)[-2:]}"
+    end   = f"{END_YEAR - 1}–{str(END_YEAR)[-2:]}"
+    return f"{start} through {end}"
+
+
 def cache_path(end_year: int, season_type: str) -> str:
     season = season_str(end_year)
     return os.path.join(CACHE_DIR, f"{season}_{season_type.replace(' ', '_')}.csv")
@@ -132,7 +139,7 @@ ERA_DEFS = [
     ("2002–04", 2002, 2004, "Zone defense legalized, defensive 3-sec added"),
     ("2005–17", 2005, 2017, "Perimeter hand-checking banned (pace-and-space)"),
     ("2018–22", 2018, 2022, "Freedom-of-movement emphasis"),
-    ("2023–26", 2023, 2026, "Transition take-foul rule added"),
+    (f"2023–{str(END_YEAR)[-2:]}", 2023, END_YEAR, "Transition take-foul rule added"),
 ]
 
 # Playoff series-format / scheduling changes (separate from the defensive-rule
@@ -158,7 +165,7 @@ PLAYOFF_FORMAT_PERIODS = [
     ("1984",     1984, 1984, "Best-of-5 R1, 2-2-1-1-1 Finals (alternating home court)"),
     ("1985–02",  1985, 2002, "Best-of-5 R1, 2-3-2 Finals (home court by record)"),
     ("2003–13",  2003, 2013, "Best-of-7 R1, 2-3-2 Finals"),
-    ("2014–26",  2014, 2026, "Best-of-7 R1, 2-2-1-1-1 Finals"),
+    (f"2014–{str(END_YEAR)[-2:]}", 2014, END_YEAR, "Best-of-7 R1, 2-2-1-1-1 Finals"),
 ]
 
 

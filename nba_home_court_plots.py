@@ -15,7 +15,7 @@ from scipy.stats import pearsonr
 
 from nba_home_court_data import (
     ERA_DEFS, COVID_SEASONS,
-    label_to_year, bucket_stats_by_era, _align_to_seasons,
+    label_to_year, bucket_stats_by_era, _align_to_seasons, season_range_label,
 )
 
 # All generated PNG charts are written here.
@@ -323,7 +323,7 @@ def plot_differential_analysis(
     fig.suptitle("Home vs Away Box-Score Differentials — Are the Gaps Closing?",
                  fontsize=15, fontweight="bold", y=0.99, color="#2c2c2a")
     fig.text(0.5, 0.955,
-             "Data: NBA.com  |  Positive = home team higher  |  1983-84 through 2025-26",
+             f"Data: NBA.com  |  Positive = home team higher  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
     for ax, (key, title, ylabel, note) in zip(axes.flat, panels):
@@ -374,7 +374,7 @@ def plot_rebound_decomposition(
     fig.suptitle("Why the Home Rebounding Edge Faded",
                  fontsize=15, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.955,
-             "Data: NBA.com  |  Positive = home team higher  |  1983-84 through 2025-26",
+             f"Data: NBA.com  |  Positive = home team higher  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
     # ── Panel 1: OREB vs DREB home edge by era ────────────────────────────────
@@ -508,7 +508,7 @@ def plot_margin_analysis(
     fig.suptitle("Home Team Point Margin — Are Wins Getting Closer?",
                  fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Data: NBA.com  |  Positive = home team winning by more  |  1983-84 through 2025-26",
+             f"Data: NBA.com  |  Positive = home team winning by more  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
     # Panel 1: all-game mean margin per season (reg + playoffs aligned)
@@ -693,7 +693,7 @@ def plot_series_breakdown(
     fig.suptitle("Playoff Series Structure — Home Win % by Game Number",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Data: NBA.com  |  Playoffs 1983–84 through 2025–26  |  2020 bubble excluded  |  "
+             f"Data: NBA.com  |  Playoffs {season_range_label()}  |  2020 bubble excluded  |  "
              "G1/G2 at higher seed; G3/G4 at lower seed (2-2-1-1-1 format)",
              ha="center", fontsize=9, color=GRAY)
 
@@ -765,7 +765,7 @@ def plot_shot_zone_analysis(
     fig.suptitle("Shot Zone Differentials: Home vs Road — Are Away Teams Getting Better Looks?",
                  fontsize=14, fontweight="bold", y=0.99, color="#2c2c2a")
     fig.text(0.5, 0.955,
-             "Data: NBA.com  |  Positive = home team higher share of FGA  |  1983-84 through 2025-26",
+             f"Data: NBA.com  |  Positive = home team higher share of FGA  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
     for ax, (zone, label) in zip(axes.flat, SHOT_ZONE_LABELS.items()):
@@ -870,8 +870,8 @@ def plot_3pa_hca_analysis(
     fig.suptitle("Does League-Wide 3-Point Shooting Explain the Decline in Home Court Advantage?",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Data: NBA.com  |  3PA rate = share of all field-goal attempts that are 3-pointers  "
-             "|  1983–84 through 2025–26",
+             f"Data: NBA.com  |  3PA rate = share of all field-goal attempts that are 3-pointers  "
+             f"|  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
     # ── Panel 1: dual-axis time series (regular season) ─────────────────────
@@ -936,8 +936,8 @@ def plot_pace_hca_analysis(
     fig.suptitle("Does League-Wide Pace Explain the Decline in Home Court Advantage?",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Data: NBA.com  |  Pace = estimated possessions per 48 min per team  "
-             "|  1983–84 through 2025–26",
+             f"Data: NBA.com  |  Pace = estimated possessions per 48 min per team  "
+             f"|  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
     # ── Panel 1: dual-axis time series (regular season) ─────────────────────
@@ -1009,7 +1009,7 @@ def plot_team_hca_analysis(
                  fontsize=14, fontweight="bold", y=1.02, color="#2c2c2a")
     fig.text(
         0.5, 0.965,
-        "Data: NBA.com  |  HCA = home win% − road win%  |  1983–84 through 2025–26  |"
+        f"Data: NBA.com  |  HCA = home win% − road win%  |  {season_range_label()}  |"
         "  Historical franchises shown separately",
         ha="center", fontsize=9, color=GRAY,
     )
