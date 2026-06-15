@@ -158,7 +158,7 @@ year** (the OLS line in `RESULTS.md`'s decline section). The
 `nba_home_court_advantage_season.png` figure is literally this line drawn through
 the season dots.
 
-![Season-level home win % with fitted decline](nba_home_court_advantage_season.png)
+![Season-level home win % with fitted decline](generated/nba_home_court_advantage_season.png)
 
 **R² — how tight is the fit?** Alongside the slope you'll see **R² = 0.745**.
 R² ("R-squared") is the share of the up-and-down variation in the points that the
@@ -315,7 +315,7 @@ probability with the S-shaped logistic curve. Predictions can never escape [0, 1
         favors road  ←  log-odds  →  favors home
 ```
 
-![The logistic curve: log-odds map to probability](tutorial_logistic_curve.png)
+![The logistic curve: log-odds map to probability](generated/tutorial_logistic_curve.png)
 
 The green arrows make the key quirk visible: **the same +1 step in log-odds is
 worth ~23 pp near a 50/50 game but only ~5 pp out in the tail.** That's why
@@ -685,7 +685,7 @@ slope over the years.
                                                         genuine polarization.
 ```
 
-![Pure level shift vs. genuine polarization](tutorial_quantile_diagnostic.png)
+![Pure level shift vs. genuine polarization](generated/tutorial_quantile_diagnostic.png)
 
 The left panel is the hypothetical "boring" outcome — every quantile sliding down
 in parallel at the median's rate. The right panel is the *actual* regular-season
@@ -785,7 +785,7 @@ true variance ≈ 4.1² = 16.8 and the league mean +20.0 pp:
 That's the whole idea: shrinkage demotes lucky small samples (Kansas City) while
 leaving well-measured ones (Denver) essentially untouched.
 
-![Shrinkage pulls noisy estimates toward the league mean](tutorial_shrinkage.png)
+![Shrinkage pulls noisy estimates toward the league mean](generated/tutorial_shrinkage.png)
 
 Read the figure as "length of the red arrow = how much we distrust the raw
 number." Kansas City's huge error bar (only 82 games) earns an 11.6 pp pull;
@@ -863,7 +863,7 @@ gets more equal, HCA dips a little. `RESULTS.md` flags this itself as
 differencing amplifies measurement noise. The discipline to report it *and*
 caveat it is the model to imitate.
 
-![A correlation that is really just a shared trend](tutorial_spurious_detrend.png)
+![A correlation that is really just a shared trend](generated/tutorial_spurious_detrend.png)
 
 The figure walks the trap end to end (using two illustrative trending series).
 Left: both just drift over the decades. Middle: plot one against the other and you

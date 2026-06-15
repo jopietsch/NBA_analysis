@@ -28,9 +28,9 @@
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
 **Figures:**
 
-![Fig 1 — season trends](nba_home_court_advantage_season.png)
+![Fig 1 — season trends](generated/nba_home_court_advantage_season.png)
 
-![Fig 2 — era bars](nba_home_court_advantage_era_bars.png)
+![Fig 2 — era bars](generated/nba_home_court_advantage_era_bars.png)
 
 ---
 
@@ -52,7 +52,7 @@
   - Playoff rest confounded: controlling for quality, rest shrinks to nothing (RESULTS rest +1.6 pp p=0.113; quality_diff dominant).
 **Figure:**
 
-![Fig 3 — box-score differentials](nba_home_court_advantage_differentials.png)
+![Fig 3 — box-score differentials](generated/nba_home_court_advantage_differentials.png)
 
 ---
 
@@ -85,15 +85,15 @@
 - **Why the 3-point revolution is NOT the main driver:** near-perfect raw 3PA↔HCA correlation is partly shared 40-yr trend; within-season effect is real but modest and lands almost entirely on the shooting line. Shooting = only ~21% of decline; REB+TOV (the bigger half) barely move under the 3PA control. Threes drove one channel (shooting), not the whole decline. Playoffs: within-game 3-pt signal fainter, ⅓ of decline off the box score entirely.
 **Figures:**
 
-![Fig 4 — referee bias](nba_home_court_referee.png)
+![Fig 4 — referee bias](generated/nba_home_court_referee.png)
 
-![Fig 5 — shot zones](nba_home_court_shot_zones.png)
+![Fig 5 — shot zones](generated/nba_home_court_shot_zones.png)
 
-![Fig 6 — 3PA vs HCA](nba_home_court_3pa.png)
+![Fig 6 — 3PA vs HCA](generated/nba_home_court_3pa.png)
 
-![Fig 7 — rebounding decomposition (OREB/DREB, share edge, league OREB corr)](nba_home_court_rebounding.png)
+![Fig 7 — rebounding decomposition (OREB/DREB, share edge, league OREB corr)](generated/nba_home_court_rebounding.png)
 
-![Fig 8 — mediation shares](nba_home_court_mediation.png)
+![Fig 8 — mediation shares](generated/nba_home_court_mediation.png)
 
 ---
 
@@ -107,15 +107,15 @@
 - **Back-to-backs / load management:** visitor B2B rate fell **35.0% → 18.8%** (1984–94 → 2023–26), confirming the blog's premise. But shift-share of the −9.29 pp RS decline: frequency component only **−0.71 pp (~8%)**; win-rate component −8.59 pp (~92%). Per-situation home win%: visitor-B2B-only 64.7% vs neither 59.1% (narrow gap). RS only (B2Bs rare in playoffs). Scheduling nudged HCA, didn't drive it.
 - **Pace of play:** moves independently of HCA. *RESULTS reg season-level r=+0.241 (p=0.120, wrong direction); playoffs r=−0.142 (ns).*
 
-![Fig 9 — pace vs HCA](nba_home_court_pace.png)
+![Fig 9 — pace vs HCA](generated/nba_home_court_pace.png)
 
 - **Competitive balance:** raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, can't explain magnitude.
 
-![Fig 10 — parity vs HCA](nba_home_court_parity.png)
+![Fig 10 — parity vs HCA](generated/nba_home_court_parity.png)
 
 - **Crowd size:** arenas near capacity throughout (~17k→18k+), records set as HCA hit lows. *RESULTS r=+0.248 (p=0.212); detrended ns.* Playoffs ~guaranteed sellouts yet eroded too.
 
-![Fig 11 — attendance & empty-arena](nba_home_court_attendance.png)
+![Fig 11 — attendance & empty-arena](generated/nba_home_court_attendance.png)
 - **Empty-arena experiment (2020–21):** empty **51.0%** vs. fans present **58.5%** (RESULTS n=573 vs 591). Presence > count (dose-response +0.51 pp/1000 fans, p=0.184 ns). Vanished when arenas refilled → a switch, not a slow dial.
 - **All together:** full model — era effect ≈ half of predictive power; situational factors ≈ other half. *RESULTS Shapley: Era 53%, Rest 17.9%, Altitude 23.7%, TZ 1.4%, COVID 4.5%.* Net era decline **−9.0 pp** (1984–94 → 2023–26) after all controls.
 - **Pre/post-2014 test:** rest/altitude/TZ effects statistically unchanged across line; baseline home edge dropped **~4.7 pp** anyway (RESULTS post2014 level shift −0.196, −4.7 pp p<0.001; rest & TZ interactions ns, altitude weakened p=0.026). Situational factors held still while floor fell.
@@ -128,14 +128,14 @@
   - *RESULTS by game:* G1 **69.4%**, G2 **71.9%**, G3 **55.0%**, G4 **55.3%**, G5 **74.5%**, G6 **55.5%**, G7 **63.8%**. χ²(6)=84.54, p<0.001.
   - No evidence road teams adapt as series deepens; home-away split explains it entirely.
 
-![Fig 12 — playoff win % by game number](nba_home_court_series_breakdown.png)
+![Fig 12 — playoff win % by game number](generated/nba_home_court_series_breakdown.png)
 - **Decline is real weakening, not weaker seeds:**
   - *RESULTS:* year trend retained **102%** after quality control; quality absorbs −2%.
   - Lower-seed-at-home (G3+G4): still wins **51.5%** (n=827) — pure venue effect.
   - Seed-quality gap did trend slightly (−0.00026/yr, p<0.001) but doesn't explain HCA decline.
 - **2014 format change didn't cause drop:** raw −6.8 pp from 2003–13 → 2014–26 (z=3.10, p=0.002), but trend-controlled dummy ns (p=0.298); LR χ²(3)=4.68, p=0.197. Format table (4 periods).
 
-![Fig 13 — win % by format period](nba_home_court_advantage_format_bars.png)
+![Fig 13 — win % by format period](generated/nba_home_court_advantage_format_bars.png)
 
 ---
 
@@ -144,7 +144,7 @@
 - **Referee differences real but overstated:** 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing.
 - **Denver & Utah best home court — altitude is why:** Nuggets **+26.8 pp**, Jazz **+25.7 pp** shrunken (league mean +20.0). ~70% of franchise variation is real (true SD ≈4.1 pp). Altitude piece ≈8 of those points.
 
-![Fig 14 — franchise HCA](nba_home_court_team_hca.png)
+![Fig 14 — franchise HCA](generated/nba_home_court_team_hca.png)
 - **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Fortress reputation = being a good team that plays more home games.
 - **Home court worth more in playoffs:** reg **~20 pp** vs. playoffs **~27 pp** → **+7 pp postseason premium** (RESULTS +7.2 pp, SD 7.4). Reg/playoff consistency positive but weak (raw r=+0.362, p=0.042).
 - **Margins polarizing — blowouts getting bigger:** home wins bigger, home losses worse, even as home teams win less.
@@ -153,7 +153,7 @@
   - *RESULTS playoffs:* Q10 −0.104 (ns), Q90 +0.222 pt/yr; IQR widening **+0.326 pts/yr** — playoff spread driven mainly by big home wins growing (Home wins trend +0.149***/yr).
   - ~0.2–0.3 pts/yr widening in both contexts. Era of close games → era of blowouts.
 
-![Fig 15 — margin trends](nba_home_court_margin.png)
+![Fig 15 — margin trends](generated/nba_home_court_margin.png)
 
 ---
 

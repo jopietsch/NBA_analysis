@@ -36,11 +36,12 @@ MID    = "#666666"
 ORANGE = "#e8a33d"
 
 SUMMARY_PATH = "SUMMARY.md"
+OUTPUT_DIR   = "generated"
 SUMMARY_PNGS = [
-    "summary_decline.png",
-    "summary_whistle.png",
-    "summary_3point.png",
-    "summary_franchises.png",
+    os.path.join(OUTPUT_DIR, "summary_decline.png"),
+    os.path.join(OUTPUT_DIR, "summary_whistle.png"),
+    os.path.join(OUTPUT_DIR, "summary_3point.png"),
+    os.path.join(OUTPUT_DIR, "summary_franchises.png"),
 ]
 
 
@@ -198,7 +199,8 @@ def _draw_footer(canvas, doc):
     canvas.restoreState()
 
 
-def build_summary(output="nba_home_court_advantage_summary.pdf"):
+def build_summary(output=os.path.join(OUTPUT_DIR, "nba_home_court_advantage_summary.pdf")):
+    os.makedirs(os.path.dirname(output) or ".", exist_ok=True)
     _check_prerequisites()
     S = _build_styles()
 

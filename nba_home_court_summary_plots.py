@@ -7,6 +7,8 @@ Run directly to generate all four summary PNGs:
     MPLBACKEND=Agg python3 nba_home_court_summary_plots.py
 """
 
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -24,6 +26,15 @@ from nba_home_court_data import (
     compute_referee_bias_stats,
     _align_to_seasons,
 )
+
+OUTPUT_DIR = "generated"
+
+
+def _output_path(name: str) -> str:
+    """Return the path under OUTPUT_DIR for a chart file, creating the dir."""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    return os.path.join(OUTPUT_DIR, name)
+
 
 BLUE   = "#378add"
 GREEN  = "#1d9e75"
@@ -121,8 +132,8 @@ def plot_summary_decline():
                  fontsize=20, fontweight="bold", color="#2c2c2a", pad=14)
 
     plt.tight_layout()
-    plt.savefig("summary_decline.png", dpi=150, bbox_inches="tight", facecolor=BG)
-    print("Saved → summary_decline.png")
+    plt.savefig(_output_path("summary_decline.png"), dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"Saved → {_output_path('summary_decline.png')}")
     plt.close()
 
 
@@ -233,8 +244,8 @@ def plot_summary_whistle():
                   fontsize=16, fontweight="bold", color="#2c2c2a", pad=10)
 
     plt.tight_layout()
-    plt.savefig("summary_whistle.png", dpi=150, bbox_inches="tight", facecolor=BG)
-    print("Saved → summary_whistle.png")
+    plt.savefig(_output_path("summary_whistle.png"), dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"Saved → {_output_path('summary_whistle.png')}")
     plt.close()
 
 
@@ -312,8 +323,8 @@ def plot_summary_3point():
                   fontsize=16, fontweight="bold", color="#2c2c2a", pad=10)
 
     plt.tight_layout()
-    plt.savefig("summary_3point.png", dpi=150, bbox_inches="tight", facecolor=BG)
-    print("Saved → summary_3point.png")
+    plt.savefig(_output_path("summary_3point.png"), dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"Saved → {_output_path('summary_3point.png')}")
     plt.close()
 
 
@@ -365,8 +376,8 @@ def plot_summary_franchises():
     )
 
     plt.tight_layout()
-    plt.savefig("summary_franchises.png", dpi=150, bbox_inches="tight", facecolor=BG)
-    print("Saved → summary_franchises.png")
+    plt.savefig(_output_path("summary_franchises.png"), dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"Saved → {_output_path('summary_franchises.png')}")
     plt.close()
 
 

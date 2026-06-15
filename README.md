@@ -24,9 +24,11 @@ See `FINDINGS.md` for narrative interpretation and `RESULTS.md` for the full reg
 
 ## Output
 
-Running the analysis produces eighteen PNG charts and prints fourteen regression analyses to stdout.
-Running `generate_report.py` assembles everything into `nba_home_court_advantage_report.pdf` — sixteen
-sections plus an appendix with the full regression tables.
+Running the analysis produces eighteen PNG charts (written to `generated/`) and prints fourteen regression
+analyses to stdout (captured in `RESULTS.md` in the repo root). Running `generate_report.py` assembles
+everything into `generated/nba_home_court_advantage_report.pdf` — sixteen sections plus an appendix with
+the full regression tables. All generated PNGs and PDFs live under `generated/` (gitignored); `RESULTS.md`
+is the one generated file kept in the repo root.
 
 ## Updating FINDINGS.md
 
@@ -41,7 +43,7 @@ Before updating FINDINGS.md, verify that the analysis outputs are current:
 
 1. Check that RESULTS.md and all PNG files exist and were modified more recently
    than nba_home_court_advantage.py and nba_home_court_regression.py.
-   Use: stat -f "%m %N" RESULTS.md *.png nba_home_court_advantage.py nba_home_court_regression.py
+   Use: stat -f "%m %N" RESULTS.md generated/*.png nba_home_court_advantage.py nba_home_court_regression.py
    If any output is older than the source files, stop and say so — the analysis
    must be re-run first: MPLBACKEND=Agg python3 nba_home_court_advantage.py
 

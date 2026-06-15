@@ -461,7 +461,9 @@ def build(md_path: str, output_path: str | None = None,
         md = md[:title_m.start()] + md[title_m.end():]
 
     if output_path is None:
-        output_path = os.path.splitext(md_path)[0] + ".pdf"
+        stem = os.path.splitext(os.path.basename(md_path))[0]
+        output_path = os.path.join("generated", stem + ".pdf")
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
     story = [*_cover(title), *md_to_flowables(md)]
     if appendix_path:

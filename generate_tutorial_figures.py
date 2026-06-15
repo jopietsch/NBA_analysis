@@ -7,10 +7,19 @@ real numbers lifted from RESULTS.md, others are schematic. Run directly:
     MPLBACKEND=Agg python3 generate_tutorial_figures.py
 """
 
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 DPI = 120
+OUTPUT_DIR = "generated"
+
+
+def _output_path(name: str) -> str:
+    """Return the path under OUTPUT_DIR for a figure file, creating the dir."""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    return os.path.join(OUTPUT_DIR, name)
 
 
 def logistic_curve():
@@ -55,7 +64,7 @@ def logistic_curve():
     ax.text(-4.3, 0.55, "favors\nroad", fontsize=8.5, color="grey")
     ax.text(3.6, 0.30, "favors\nhome", fontsize=8.5, color="grey")
     fig.tight_layout()
-    fig.savefig("tutorial_logistic_curve.png", dpi=DPI)
+    fig.savefig(_output_path("tutorial_logistic_curve.png"), dpi=DPI)
     plt.close(fig)
 
 
@@ -110,7 +119,7 @@ def shrinkage():
     ax.plot([], [], "o", color="#d62728", label="shrunken estimate")
     ax.legend(loc="lower right", fontsize=9, framealpha=0.9)
     fig.tight_layout()
-    fig.savefig("tutorial_shrinkage.png", dpi=DPI)
+    fig.savefig(_output_path("tutorial_shrinkage.png"), dpi=DPI)
     plt.close(fig)
 
 
@@ -151,7 +160,7 @@ def quantile_diagnostic():
                  arrowprops=dict(arrowstyle="<->", color="black", lw=1.2))
     axR.text(yrs[-1] - 6, 4, "Q90−Q10 spread\ngrows +0.20 pts/yr", fontsize=8.5)
     fig.tight_layout()
-    fig.savefig("tutorial_quantile_diagnostic.png", dpi=DPI)
+    fig.savefig(_output_path("tutorial_quantile_diagnostic.png"), dpi=DPI)
     plt.close(fig)
 
 
@@ -206,7 +215,7 @@ def spurious_detrend():
     fig.suptitle("Two series that both drift over 40 years will correlate — "
                  "until you remove the shared trend", fontsize=11)
     fig.tight_layout(rect=(0, 0, 1, 0.95))
-    fig.savefig("tutorial_spurious_detrend.png", dpi=DPI)
+    fig.savefig(_output_path("tutorial_spurious_detrend.png"), dpi=DPI)
     plt.close(fig)
 
 
@@ -215,7 +224,7 @@ def main():
     shrinkage()
     quantile_diagnostic()
     spurious_detrend()
-    print("Wrote: tutorial_logistic_curve.png, tutorial_shrinkage.png, "
+    print(f"Wrote to {OUTPUT_DIR}/: tutorial_logistic_curve.png, tutorial_shrinkage.png, "
           "tutorial_quantile_diagnostic.png, tutorial_spurious_detrend.png")
 
 

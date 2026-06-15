@@ -3,23 +3,23 @@
 
 Home teams used to win nearly two-thirds of their games. Now they barely win more than half. Here is where that 10-point edge went.
 
-![Regular season (blue) and playoffs (green), 1983–84 through 2024–25. Dashed lines are long-run trend fits.](summary_decline.png){height=0.50}
+![Regular season (blue) and playoffs (green), 1983–84 through 2024–25. Dashed lines are long-run trend fits.](generated/summary_decline.png){height=0.50}
 
 ---
 
 ## THE WHISTLE MOVED — AND THEN IT STOPPED
 
-![Left: home team's foul-call edge per season (regular season and playoffs). Right: each dot is one career playoff official — green means that referee called fewer fouls on home teams across their entire career.](summary_whistle.png){height=0.34}
+![Left: home team's foul-call edge per season (regular season and playoffs). Right: each dot is one career playoff official — green means that referee called fewer fouls on home teams across their entire career.](generated/summary_whistle.png){height=0.34}
 
 ## THE 3-POINT REVOLUTION CHANGED EVERYTHING
 
-![Left: 3-point attempt rate (orange) and home win % (blue) over 40 years — near-perfect mirror images. Right: one dot per season; as 3PA rate rose, home court fell.](summary_3point.png){height=0.34}
+![Left: 3-point attempt rate (orange) and home win % (blue) over 40 years — near-perfect mirror images. Right: one dot per season; as 3PA rate rose, home court fell.](generated/summary_3point.png){height=0.34}
 
 ---
 
 ## SOME ARENAS ARE STILL FORTRESSES
 
-![All-time regular-season home win% minus road win% per franchise. Every franchise has a positive gap — home court always helps. Denver and Utah lead, boosted by altitude.](summary_franchises.png){height=0.39}
+![All-time regular-season home win% minus road win% per franchise. Every franchise has a positive gap — home court always helps. Denver and Utah lead, boosted by altitude.](generated/summary_franchises.png){height=0.39}
 
 ## THE SHORT VERSION
 

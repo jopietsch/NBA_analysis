@@ -152,9 +152,9 @@ assemble it into a PDF without modification:
 
 - Every section begins with `## N. Title` where N is the section number.
 - Sub-headings within a section use `### Sub-heading`.
-- Images are referenced as:
-  `![Figure N. Caption text.](filename.png)`
-  or with a size hint: `![Figure N. Caption text.](filename.png){width=0.5}`
+- Images are referenced as (charts live in the `generated/` directory):
+  `![Figure N. Caption text.](generated/filename.png)`
+  or with a size hint: `![Figure N. Caption text.](generated/filename.png){width=0.5}`
 - Paragraphs are separated by blank lines.
 - Sections are separated by a `---` line.
 

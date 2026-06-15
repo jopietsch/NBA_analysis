@@ -43,6 +43,7 @@ ACCENT = BLUE
 
 FINDINGS_PATH = "FINDINGS.md"
 RESULTS_PATH  = "RESULTS.md"
+OUTPUT_DIR    = "generated"
 
 
 # ── Monospace font ──────────────────────────────────────────────────────────────
@@ -426,7 +427,8 @@ def _check_prerequisites() -> None:
         sys.exit(1)
 
 
-def build_report(output_path="nba_home_court_advantage_report.pdf"):
+def build_report(output_path=os.path.join(OUTPUT_DIR, "nba_home_court_advantage_report.pdf")):
+    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
     _check_prerequisites()
     sections = _parse_findings()
 

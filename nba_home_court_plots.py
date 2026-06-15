@@ -5,6 +5,8 @@ All plot_* functions that generate and save PNG charts. Data is provided
 by nba_home_court_data; this module adds only matplotlib rendering.
 """
 
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -15,6 +17,15 @@ from nba_home_court_data import (
     ERA_DEFS, COVID_SEASONS,
     label_to_year, bucket_stats_by_era, _align_to_seasons,
 )
+
+# All generated PNG charts are written here.
+OUTPUT_DIR = "generated"
+
+
+def _output_path(name: str) -> str:
+    """Return the path under OUTPUT_DIR for a chart file, creating the dir."""
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    return os.path.join(OUTPUT_DIR, name)
 
 
 # ── Colors ────────────────────────────────────────────────────────────────────
@@ -195,14 +206,14 @@ def plot_results(
         print(f"Saved → {path}")
         plt.close()
 
-    _save("nba_home_court_advantage_season.png",
+    _save(_output_path("nba_home_court_advantage_season.png"),
           lambda ax: _draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts),
           (14, 7))
-    _save("nba_home_court_advantage_era_bars.png",
+    _save(_output_path("nba_home_court_advantage_era_bars.png"),
           lambda ax: _draw_paired_bars(ax, era_reg_avg, era_po_avg, era_labels_short,
                                        "Regular season vs playoffs\nhome win % by era"),
           (5, 3))
-    _save("nba_home_court_advantage_format_bars.png",
+    _save(_output_path("nba_home_court_advantage_format_bars.png"),
           lambda ax: _draw_paired_bars(ax, format_reg_avg, format_po_avg, format_labels_short,
                                        "Regular season vs playoffs\nhome win % by playoff format period"),
           (5, 3))
@@ -275,7 +286,7 @@ def plot_mediation(decomp: dict) -> None:
                framealpha=0.85, edgecolor="#ddd", bbox_to_anchor=(0.5, -0.04))
 
     plt.tight_layout(rect=(0, 0.05, 1, 0.95))
-    output_path = "nba_home_court_mediation.png"
+    output_path = _output_path("nba_home_court_mediation.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -334,7 +345,7 @@ def plot_differential_analysis(
             ax.set_xlabel(note, fontsize=8, color=GRAY)
 
     plt.tight_layout()
-    output_path = "nba_home_court_advantage_differentials.png"
+    output_path = _output_path("nba_home_court_advantage_differentials.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -424,7 +435,7 @@ def plot_rebound_decomposition(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
 
     plt.tight_layout()
-    output_path = "nba_home_court_rebounding.png"
+    output_path = _output_path("nba_home_court_rebounding.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -472,7 +483,7 @@ def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
         ax.set_xlabel(note, fontsize=8, color=GRAY)
 
     plt.tight_layout()
-    output_path = "nba_home_court_rebounding_tracking.png"
+    output_path = _output_path("nba_home_court_rebounding_tracking.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -579,7 +590,7 @@ def plot_margin_analysis(
     ax3.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
-    output_path = "nba_home_court_margin.png"
+    output_path = _output_path("nba_home_court_margin.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -658,7 +669,7 @@ def plot_parity_analysis(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
 
     plt.tight_layout()
-    output_path = "nba_home_court_parity.png"
+    output_path = _output_path("nba_home_court_parity.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -732,7 +743,7 @@ def plot_series_breakdown(
                title="Era", title_fontsize=8)
 
     plt.tight_layout()
-    output_path = "nba_home_court_series_breakdown.png"
+    output_path = _output_path("nba_home_court_series_breakdown.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -781,7 +792,7 @@ def plot_shot_zone_analysis(
         ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
-    output_path = "nba_home_court_shot_zones.png"
+    output_path = _output_path("nba_home_court_shot_zones.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -893,7 +904,7 @@ def plot_3pa_hca_analysis(
                    "League 3PA rate (% of FGA)", fmt_x=True)
 
     plt.tight_layout()
-    output_path = "nba_home_court_3pa.png"
+    output_path = _output_path("nba_home_court_3pa.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -959,7 +970,7 @@ def plot_pace_hca_analysis(
                    "Pace (possessions per 48 min)")
 
     plt.tight_layout()
-    output_path = "nba_home_court_pace.png"
+    output_path = _output_path("nba_home_court_pace.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -1067,7 +1078,7 @@ def plot_team_hca_analysis(
                  fontsize=12, color=GRAY)
 
     plt.tight_layout()
-    output_path = "nba_home_court_team_hca.png"
+    output_path = _output_path("nba_home_court_team_hca.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -1168,7 +1179,7 @@ def plot_referee_analysis(bias_stats: list[dict]) -> None:
     plt.suptitle("Referee Home Foul Bias — Playoffs", fontsize=13,
                  fontweight="bold", color="#2c2c2a", y=1.01)
     plt.tight_layout()
-    output_path = "nba_home_court_referee.png"
+    output_path = _output_path("nba_home_court_referee.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
@@ -1259,7 +1270,7 @@ def plot_attendance(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
 
     plt.tight_layout()
-    output_path = "nba_home_court_attendance.png"
+    output_path = _output_path("nba_home_court_attendance.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()
