@@ -1,14 +1,14 @@
 """
-Tests for the pure parsing/markup helpers in generate_report.py.
+Tests for the pure parsing/markup helpers used in the PDF report.
 
-These functions decide what prose, sections, and tables land in the PDF report.
-A regression here silently drops or reorders report content, so they're worth
-pinning even though the PDF rendering itself isn't unit-tested.
+These functions decide what prose, sections, and tables land in the PDF.
+A regression here silently drops or reorders report content.
 """
 
 import pytest
 
-import generate_report as gr
+from nbakit.mdpdf import MONO, _md_inline
+from nbakit.report import ReportConfig, _check_prerequisites, _parse_findings, _parse_regression_sections
 
 
 class TestParseFindings:
@@ -21,24 +21,26 @@ class TestParseFindings:
         path = tmp_path / "FINDINGS.md"
         path.write_text(md)
 
-        sections = gr._parse_findings(str(path))
+        sections = _parse_findings(str(path))
         assert list(sections) == ["1. The Decline", "2. The Causes"]
-        assert sections["1. The Decline"] == "Home court has fallen."  # trailing --- removed
+        assert sections["1. The Decline"] == "Home court has fallen."
         assert sections["2. The Causes"] == "Refs and threes."
 
     def test_missing_file_returns_empty(self, tmp_path):
-        assert gr._parse_findings(str(tmp_path / "nope.md")) == {}
+        assert _parse_findings(str(tmp_path / "nope.md")) == {}
 
 
 class TestMdInline:
-    def test_bold_italic_code(self):
-        assert gr._md_inline("**bold**") == "<b>bold</b>"
-        assert gr._md_inline("*em*") == "<i>em</i>"
-        assert gr._md_inline("`code`") == '<font name="Courier">code</font>'
+    def test_bold_italic(self):
+        assert _md_inline("**bold**") == "<b>bold</b>"
+        assert _md_inline("*em*") == "<i>em</i>"
+
+    def test_code_span_uses_mono_font(self):
+        assert _md_inline("`code`") == f'<font name="{MONO}">code</font>'
 
     def test_mixed_inline(self):
-        out = gr._md_inline("a **b** and `c`")
-        assert out == 'a <b>b</b> and <font name="Courier">c</font>'
+        out = _md_inline("a **b** and `c`")
+        assert out == f'a <b>b</b> and <font name="{MONO}">c</font>'
 
 
 class TestParseRegressionSections:
@@ -48,12 +50,12 @@ class TestParseRegressionSections:
             "preamble line\n"
             "─── FIRST SECTION ───────\n"
             "body one\n"
-            "────────────\n"            # pure separator, dropped
+            "────────────\n"
             "more body one\n"
             "─── SECOND SECTION ──\n"
             "body two\n"
         )
-        out = gr._parse_regression_sections(text)
+        out = _parse_regression_sections(text)
         assert out == [
             (None, "preamble line"),
             ("FIRST SECTION", "body one\nmore body one"),
@@ -62,21 +64,24 @@ class TestParseRegressionSections:
 
 
 class TestCheckPrerequisites:
-    def test_exits_when_png_missing(self, tmp_path, monkeypatch):
+    def _cfg(self, findings_path, results_path):
+        return ReportConfig(
+            title="Test",
+            findings_path=str(findings_path),
+            results_path=str(results_path),
+        )
+
+    def test_exits_when_png_missing(self, tmp_path):
         findings = tmp_path / "FINDINGS.md"
         findings.write_text("![fig](does_not_exist.png)\n")
-        monkeypatch.setattr(gr, "FINDINGS_PATH", str(findings))
-        monkeypatch.setattr(gr, "RESULTS_PATH", str(tmp_path / "RESULTS.md"))
         with pytest.raises(SystemExit):
-            gr._check_prerequisites()
+            _check_prerequisites(self._cfg(findings, tmp_path / "RESULTS.md"))
 
-    def test_passes_when_all_present(self, tmp_path, monkeypatch):
+    def test_passes_when_all_present(self, tmp_path):
         png = tmp_path / "fig.png"
         png.write_bytes(b"\x89PNG")
         results = tmp_path / "RESULTS.md"
         results.write_text("results")
         findings = tmp_path / "FINDINGS.md"
         findings.write_text(f"![fig]({png})\n")
-        monkeypatch.setattr(gr, "FINDINGS_PATH", str(findings))
-        monkeypatch.setattr(gr, "RESULTS_PATH", str(results))
-        gr._check_prerequisites()  # must not raise
+        _check_prerequisites(self._cfg(findings, results))  # must not raise
