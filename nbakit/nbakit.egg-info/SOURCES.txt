@@ -1,0 +1,10 @@
+pyproject.toml
+nbakit/__init__.py
+nbakit/mdpdf.py
+nbakit/report.py
+nbakit.egg-info/PKG-INFO
+nbakit.egg-info/SOURCES.txt
+nbakit.egg-info/dependency_links.txt
+nbakit.egg-info/requires.txt
+nbakit.egg-info/top_level.txt
+tests/test_mdpdf.py
