@@ -537,6 +537,74 @@ class TestComputeDifferentialStats:
         assert calls == [2019, 2021]
 
 
+class TestFetchReboundData:
+    def _write_game_log(self, tmp_path, df):
+        df.to_csv(nba.cache_path(2024, "Regular Season"), index=False)
+
+    def test_computes_correct_rebound_components(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Home: OREB=12, DREB=30, REB=42 ; Away: OREB=8, DREB=28, REB=36
+        df = pd.DataFrame({
+            "GAME_ID": ["G1",          "G1"],
+            "MATCHUP": ["BOS vs. MIA", "MIA @ BOS"],
+            "OREB":    [12,            8],
+            "DREB":    [30,            28],
+            "REB":     [42,            36],
+            "WL":      ["W",           "L"],
+        })
+        self._write_game_log(tmp_path, df)
+
+        result = nba.fetch_rebound_data(2024, "Regular Season")
+        assert result is not None
+        assert len(result) == 1
+        row = result.iloc[0]
+        assert row["oreb_diff"] == pytest.approx(4.0)
+        assert row["dreb_diff"] == pytest.approx(2.0)
+        assert row["reb_diff"]  == pytest.approx(6.0)
+        # home share = 12/(12+28); away share = 8/(8+30); edge in pp
+        assert row["reb_share_edge"] == pytest.approx(100 * (12/40 - 8/38))
+        assert row["league_oreb_rate"] == pytest.approx(100 * 20 / 78)
+
+    def test_zero_rebounds_becomes_nan_not_zero(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        df = pd.DataFrame({
+            "GAME_ID": ["G1",          "G1"],
+            "MATCHUP": ["BOS vs. MIA", "MIA @ BOS"],
+            "OREB":    [0,             0],
+            "DREB":    [0,             0],
+            "REB":     [0,             0],
+            "WL":      ["W",           "L"],
+        })
+        self._write_game_log(tmp_path, df)
+
+        result = nba.fetch_rebound_data(2024, "Regular Season")
+        assert result is not None
+        assert pd.isna(result.iloc[0]["reb_share_edge"])
+        assert pd.isna(result.iloc[0]["league_oreb_rate"])
+
+
+class TestComputeReboundStats:
+    def test_aggregates_means_per_season(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            if year != 2024:
+                return None
+            return pd.DataFrame({
+                "oreb_diff":        [0.4, 0.6],
+                "dreb_diff":        [1.0, 2.0],
+                "reb_diff":         [1.4, 2.6],
+                "reb_share_edge":   [1.0, 3.0],
+                "league_oreb_rate": [30.0, 26.0],
+            })
+
+        monkeypatch.setattr(nba, "fetch_rebound_data", fake_fetch)
+        seasons, stats = nba.compute_rebound_stats(2023, 2025, "Regular Season")
+
+        assert seasons == ["23–24"]
+        assert stats["oreb_diff"]      == [pytest.approx(0.5)]
+        assert stats["reb_share_edge"] == [pytest.approx(2.0)]
+        assert stats["league_oreb_rate"] == [pytest.approx(28.0)]
+
+
 class TestZonePcts:
     def _df(self):
         return pd.DataFrame({

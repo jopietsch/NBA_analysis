@@ -22,6 +22,7 @@ playoffs, assembled from the cached game logs. Each row carries:
 - `tz_diff` — absolute time-zone difference between the two franchises
 - box-score differentials (home minus away): fouls, FG%, eFG%, 3PA rate, 3P%, FT%
 - `tov_diff`, `reb_diff` — home-minus-away turnovers and total rebounds (the extra channels used by the mediation decomposition)
+- `oreb_diff`, `dreb_diff`, `reb_share_edge`, `league_oreb_rate` — offensive/defensive rebound splits, the pace-free rebound-share edge, and the league offensive-rebound rate (the rebounding decomposition, Section 5b)
 - `margin` — home point differential
 - `game_in_series` — for playoff games, the game number (parsed from the game ID)
 - `distance_miles` — haversine distance from the away team's home arena to the game arena
@@ -229,6 +230,60 @@ So the earlier worry that the turnover/rebound shares were "just downstream" was
 half right (turnovers, partly) and half wrong (rebounding is its own thing). One
 remaining caution: the playoff numbers fold in the seed-quality gap — the home
 team is usually the better team — which Section 19 isolates and controls.
+
+---
+
+## 5b. Rebounding Decomposition (`run_rebounding_decomposition`)
+
+**Why this section exists.** Section 5 establishes that rebounding carries the
+single largest share of the decline but cannot say *why* the home rebounding edge
+faded. This section answers that, using only the cached box scores.
+
+**The data.** The same game-level dataset, now carrying four rebounding columns
+computed in `_compute_rebound_components`: `oreb_diff` and `dreb_diff`
+(home-minus-away offensive/defensive rebounds), `reb_diff` (total), and
+`reb_share_edge`.
+
+**The rebound-share metric.** Raw rebound *counts* are a poor measure of skill:
+they rise and fall with pace and with how many shots miss (more misses → more
+boards to grab). The clean measure is the **share of available rebounds** a team
+captures. A team's offensive-rebound share is
+
+> OREB ÷ (own OREB + opponent DREB)
+
+i.e. offensive boards grabbed divided by the team's own missed shots that were
+reboundable. `reb_share_edge` is the home team's offensive-rebound share minus the
+away team's, in percentage points. Because it is a *ratio* of boards won to boards
+available, it is immune to the pace/shot-volume confound — a like-for-like measure
+of who controls the glass.
+
+**The approach.** An era table and an OLS year-trend (`stat ~ year`) for each of
+the four columns, separately for regular season and playoffs — identical in form
+to the differential analysis (Section 4). Then a season-level **Pearson
+correlation** between the mean `reb_share_edge` and the league-wide
+offensive-rebound rate (`league_oreb_rate` = both teams' OREB ÷ all rebounds),
+testing whether the home edge tracks the league's strategic retreat from the
+offensive glass.
+
+**Reading the output.**
+- The edge **died on the offensive glass**: regular-season `oreb_diff` falls from
+  +0.61 to −0.05 (home teams no longer out-offensive-rebound visitors at all),
+  while `dreb_diff` only softens (+1.64 → +0.59). All trends negative and highly
+  significant (OREB −0.018, DREB −0.027, REB −0.044 per year, all p < 0.001).
+- It is **not a pace artifact**: `reb_share_edge` still collapses ~10×, +2.14 pp →
+  +0.21 pp (trend −0.052 pp/yr, p < 0.001).
+- It is **league-driven**: the season-level correlation between the home share
+  edge and the league offensive-rebound rate is **r = +0.82 (p < 0.001, N = 43)**;
+  the league rate fell 33% → 26% over the same span. As teams abandoned offensive
+  rebounding for transition defense, the effort-driven boards where a home edge
+  could form disappeared.
+- The playoffs show the same shape (share edge +2.74 → +0.70 pp, trend −0.046
+  pp/yr, p < 0.01), on a smaller sample.
+
+**A note on the share identity.** Because available offensive rebounds for one
+team are the same boards the other team can defensively rebound, the home team's
+offensive-share edge equals its defensive-share edge exactly — there is one
+"control of the glass" number, reported here as the offensive-rebound share edge.
 
 ---
 

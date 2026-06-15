@@ -92,6 +92,13 @@ def build_game_dataset() -> pd.DataFrame:
                 merged["tov_diff"] = np.nan
                 merged["reb_diff"] = np.nan
 
+            if {"OREB_home", "OREB_away", "DREB_home", "DREB_away"}.issubset(merged.columns):
+                reb = nba._compute_rebound_components(merged)
+                merged[reb.columns] = reb
+            else:
+                for col in ("oreb_diff", "dreb_diff", "reb_share_edge", "league_oreb_rate"):
+                    merged[col] = np.nan
+
             total_fga  = merged["FGA_home"]  + merged["FGA_away"]
             total_fg3a = merged["FG3A_home"] + merged["FG3A_away"]
             merged["tpa_rate_avg"] = 100.0 * total_fg3a / total_fga.replace(0, np.nan)
@@ -151,6 +158,7 @@ def build_game_dataset() -> pd.DataFrame:
                 "rest_diff", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff", "tov_diff", "reb_diff",
+                "oreb_diff", "dreb_diff", "reb_share_edge", "league_oreb_rate",
                 "margin", "game_in_series", "distance_miles", "tpa_rate_avg",
                 "pace_avg", "expected_pace",
                 "TEAM_NAME_home", "TEAM_NAME_away",
@@ -1296,6 +1304,82 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis 5b: Rebounding decomposition ────────────────────────────────────
+
+def run_rebounding_decomposition(df: pd.DataFrame) -> None:
+    """Split the home rebounding edge into offensive vs defensive boards and a
+    pace-free rebound share, then test whether it tracks the league-wide retreat
+    from offensive rebounding.
+
+    The mediation accounting credits rebounding with the largest single share of
+    the HCA decline but cannot say why. Raw rebound counts conflate skill with
+    shot volume and pace, so this re-expresses the edge as the home team's share
+    of available offensive boards (OREB / (OREB + opponent DREB)) and correlates
+    it, season by season, with the league's overall offensive-rebound rate.
+    """
+    col_keys   = ["oreb_diff", "dreb_diff", "reb_diff", "reb_share_edge"]
+    col_labels = ["OREB diff", "DREB diff", "REB diff", "Share edge (pp)"]
+    COL_W = 16
+
+    _section("REBOUNDING DECOMPOSITION — WHY THE HOME EDGE FADED  (home minus away)")
+    print("   OREB/DREB diff = home minus away offensive/defensive rebounds per game.")
+    print("   Share edge = home share of available offensive boards minus away share")
+    print("   (percentage points) — a pace- and volume-free measure of the edge.")
+    print("   Trend = slope of trend line (change per season year).\n")
+
+    for season_label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        print(f"   {season_label}  (N = {len(sub):,} games)\n")
+
+        header = f"   {'Era':<12}" + "".join(f"{lbl:>{COL_W}}" for lbl in col_labels)
+        divider = f"   {'─'*12}" + "─" * (COL_W * len(col_keys))
+        print(header)
+        print(divider)
+
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_rows = sub[(sub["year"] >= y1) & (sub["year"] <= y2)]
+            row = f"   {era_label:<12}"
+            for key in col_keys:
+                vals = era_rows[key].dropna()
+                row += f"{vals.mean():>+{COL_W}.2f}" if len(vals) else f"{'—':>{COL_W}}"
+            print(row)
+
+        print(divider)
+        trend_row = f"   {'Trend/yr':<12}"
+        for key in col_keys:
+            data = sub[["year", key]].dropna()
+            if len(data) < 10:
+                trend_row += f"{'—':>{COL_W}}"
+                continue
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m = smf.ols(f"{key} ~ year", data=data).fit()
+            cell = f"{m.params['year']:>+{COL_W - 3}.3f}{_stars(m.pvalues['year'])}"
+            trend_row += cell
+        print(trend_row)
+        print()
+
+    # ── Does the home edge track the league's retreat from offensive rebounding? ─
+    from scipy.stats import pearsonr
+    rs = df[df["is_playoff"] == 0]
+    season = (rs.groupby("year")[["reb_share_edge", "league_oreb_rate"]]
+                .mean().dropna())
+    if len(season) >= 3:
+        r, p = pearsonr(season["league_oreb_rate"], season["reb_share_edge"])
+        first, last = season.iloc[0], season.iloc[-1]
+        print("   Does the home edge track the league's retreat from the offensive glass?")
+        print(f"   Season-level Pearson r (share edge vs league OREB rate) = "
+              f"{r:+.3f}  (p = {_fmt_p(p)}  {_stars(p).strip()},  N = {len(season)} seasons)")
+        print(f"   League OREB rate: {first['league_oreb_rate']:.1f}% → {last['league_oreb_rate']:.1f}%   "
+              f"|   Home share edge: {first['reb_share_edge']:+.2f}pp → {last['reb_share_edge']:+.2f}pp")
+        print("   ► The home rebounding edge fades in lockstep with the league-wide")
+        print("     decline in offensive rebounding — the effort-driven offensive boards")
+        print("     where a home edge could form have largely disappeared.")
+        print()
+
+
 # ── Analysis 6: Shot zone differentials ──────────────────────────────────────
 
 def run_shot_zone_analysis(
@@ -2416,6 +2500,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         # §2 What Creates Home Court Advantage
         run_differential_analysis(df)
         run_mediation_analysis(df)
+        run_rebounding_decomposition(df)
         run_rest_bucket_analysis(df)
         run_factor_summary(df)
 

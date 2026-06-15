@@ -244,6 +244,46 @@ All data from cache/ — same source as the plots above.
      explained by the shooting revolution.
 
 
+─── REBOUNDING DECOMPOSITION — WHY THE HOME EDGE FADED  (home minus away) 
+   OREB/DREB diff = home minus away offensive/defensive rebounds per game.
+   Share edge = home share of available offensive boards minus away share
+   (percentage points) — a pace- and volume-free measure of the edge.
+   Trend = slope of trend line (change per season year).
+
+   Regular season  (N = 49,107 games)
+
+   Era                OREB diff       DREB diff        REB diff Share edge (pp)
+   ────────────────────────────────────────────────────────────────────────────
+   1984–94                +0.61           +1.64           +2.24           +2.14
+   1995–01                +0.62           +1.18           +1.79           +1.83
+   2002–04                +0.43           +1.31           +1.74           +1.59
+   2005–17                +0.33           +0.97           +1.29           +1.15
+   2018–22                +0.20           +0.85           +1.05           +0.79
+   2023–26                -0.05           +0.59           +0.54           +0.21
+   ────────────────────────────────────────────────────────────────────────────
+   Trend/yr           -0.018***       -0.027***       -0.044***       -0.052***
+
+   Playoffs  (N = 3,292 games)
+
+   Era                OREB diff       DREB diff        REB diff Share edge (pp)
+   ────────────────────────────────────────────────────────────────────────────
+   1984–94                +0.89           +1.72           +2.61           +2.74
+   1995–01                +0.66           +1.18           +1.84           +1.79
+   2002–04                -0.15           +0.87           +0.72           +0.32
+   2005–17                +0.55           +1.22           +1.77           +1.71
+   2018–22                +0.50           +0.85           +1.34           +1.24
+   2023–26                +0.05           +1.09           +1.14           +0.70
+   ────────────────────────────────────────────────────────────────────────────
+   Trend/yr           -0.015          -0.023  *       -0.037 **       -0.046 **
+
+   Does the home edge track the league's retreat from the offensive glass?
+   Season-level Pearson r (share edge vs league OREB rate) = +0.824  (p = <0.001  ***,  N = 43 seasons)
+   League OREB rate: 32.9% → 25.9%   |   Home share edge: +2.74pp → -0.34pp
+   ► The home rebounding edge fades in lockstep with the league-wide
+     decline in offensive rebounding — the effort-driven offensive boards
+     where a home edge could form have largely disappeared.
+
+
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home
    team more rested (rest_diff > 0). Games without a prior game to

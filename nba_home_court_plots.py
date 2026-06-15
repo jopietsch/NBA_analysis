@@ -348,6 +348,96 @@ def plot_differential_analysis(
     plt.close()
 
 
+def plot_rebound_decomposition(
+    reg_seasons: list[str], reg_stats: dict,
+    po_seasons: list[str], po_stats: dict,
+) -> None:
+    """
+    3-panel figure on why the home rebounding edge faded.
+
+    Panel 1: home OREB vs DREB edge by era (regular season + playoffs) — the
+             offensive edge collapses toward (and through) zero.
+    Panel 2: home rebound-share edge over time (regular season + playoffs) —
+             the edge shrinks even measured as a share of available boards,
+             so it is not a pace/shot-volume artifact.
+    Panel 3: home rebound-share edge vs league offensive-rebound rate (regular
+             season) — the edge fades in lockstep with the league abandoning
+             offensive rebounding.
+    """
+    x = np.arange(len(reg_seasons))
+    tick_step = max(1, len(reg_seasons) // 14)
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22, 7))
+    fig.suptitle("Why the Home Rebounding Edge Faded",
+                 fontsize=15, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.955,
+             "Data: NBA.com  |  Positive = home team higher  |  1983-84 through 2025-26",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: OREB vs DREB home edge by era ────────────────────────────────
+    reg_era, era_labels = bucket_stats_by_era(
+        reg_seasons, {"oreb": reg_stats["oreb_diff"], "dreb": reg_stats["dreb_diff"]})
+    po_era, _ = bucket_stats_by_era(
+        po_seasons, {"oreb": po_stats["oreb_diff"], "dreb": po_stats["dreb_diff"]})
+    xi = np.arange(len(era_labels))
+    w = 0.2
+    series = [
+        (reg_era["oreb"], -1.5*w, BLUE,  "Offensive (reg. season)"),
+        (reg_era["dreb"], -0.5*w, GREEN, "Defensive (reg. season)"),
+        (po_era["oreb"],  +0.5*w, "#9ec9ef", "Offensive (playoffs)"),
+        (po_era["dreb"],  +1.5*w, "#9bd8c0", "Defensive (playoffs)"),
+    ]
+    for vals, off, color, label in series:
+        ax1.bar(xi + off, vals, width=w, color=color, label=label, zorder=2)
+    ax1.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax1.set_xticks(xi)
+    ax1.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=9)
+    ax1.set_ylabel("Home minus away rebounds per game", fontsize=10)
+    ax1.set_title("Home rebounding edge by era — offensive vs defensive",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+    ax1.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 2: rebound-share edge over time ─────────────────────────────────
+    y_reg = np.array(reg_stats["reb_share_edge"], dtype=float)
+    y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "reb_share_edge")
+    for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
+        ax2.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
+        _add_trend_line(ax2, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
+    _shade_eras(ax2, reg_seasons, label_y=None)
+    ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax2.set_xticks(x[::tick_step])
+    ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax2.set_ylabel("Percentage points", fontsize=10)
+    ax2.set_xlabel("home share of available rebounds, minus away share", fontsize=8, color=GRAY)
+    ax2.set_title("Home rebound-share edge over time",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 3: share edge vs league offensive-rebound rate ──────────────────
+    rate = np.array(reg_stats["league_oreb_rate"], dtype=float)
+    mask = ~np.isnan(rate) & ~np.isnan(y_reg)
+    ax3.scatter(rate[mask], y_reg[mask], color=BLUE, s=30, alpha=0.75, zorder=2)
+    if mask.sum() >= 2:
+        z = np.polyfit(rate[mask], y_reg[mask], 1)
+        xs = np.linspace(rate[mask].min(), rate[mask].max(), 50)
+        ax3.plot(xs, np.poly1d(z)(xs), "--", color=RED, linewidth=1.8, alpha=0.9, zorder=3)
+        r, p = pearsonr(rate[mask], y_reg[mask])
+        ax3.text(0.05, 0.95, f"r = {r:+.2f}\np {'< 0.001' if p < 0.001 else f'= {p:.3f}'}",
+                 transform=ax3.transAxes, va="top", fontsize=10, color="#2c2c2a",
+                 bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, edgecolor="#ddd"))
+    ax3.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax3.set_xlabel("League offensive-rebound rate (%)", fontsize=10)
+    ax3.set_ylabel("Home rebound-share edge (pp)", fontsize=10)
+    ax3.set_title("As the league stopped crashing the glass,\nthe home edge faded (regular season)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_rebounding.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_margin_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,

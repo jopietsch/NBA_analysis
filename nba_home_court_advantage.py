@@ -18,7 +18,7 @@ from nba_home_court_data import (
     START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, BBR_START_YEAR,
     fetch_all_seasons,
     compute_era_averages, compute_playoff_format_averages,
-    compute_differential_stats, compute_margin_stats,
+    compute_differential_stats, compute_rebound_stats, compute_margin_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats,
@@ -27,7 +27,8 @@ from nba_home_court_data import (
 )
 from nba_home_court_plots import (
     plot_results, plot_mediation,
-    plot_differential_analysis, plot_margin_analysis, plot_parity_analysis,
+    plot_differential_analysis, plot_rebound_decomposition,
+    plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
     plot_attendance,
@@ -57,6 +58,12 @@ def main() -> None:
     import nba_home_court_regression as _reg
     game_df = _reg.build_game_dataset()
     plot_mediation(_reg.compute_mediation_decomposition(game_df))
+
+    reg_reb_seasons, reg_reb_stats = compute_rebound_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    po_reb_seasons, po_reb_stats = compute_rebound_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_rebound_decomposition(reg_reb_seasons, reg_reb_stats, po_reb_seasons, po_reb_stats)
 
     reg_margin_seasons, reg_margin_stats = compute_margin_stats(START_YEAR, END_YEAR, SeasonType.regular)
     po_margin_seasons, po_margin_stats = compute_margin_stats(

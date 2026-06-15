@@ -69,6 +69,14 @@ def test_plot_differential_analysis():
     plots.plot_differential_analysis(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_rebound_decomposition():
+    keys = ["oreb_diff", "dreb_diff", "reb_diff",
+            "reb_share_edge", "league_oreb_rate"]
+    stats = {k: _series() for k in keys}
+    stats["league_oreb_rate"] = _series(base=30.0)
+    plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
+
+
 def test_plot_margin_analysis():
     reg = {"all_games_mean": _series(base=3.0),
            "home_wins_mean": _series(base=11.0),

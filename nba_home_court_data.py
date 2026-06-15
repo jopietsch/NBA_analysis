@@ -576,6 +576,60 @@ def compute_differential_stats(
     return seasons, stats
 
 
+# ── Rebounding decomposition ──────────────────────────────────────────────────
+
+def _compute_rebound_components(merged: pd.DataFrame) -> pd.DataFrame:
+    """Home-minus-away rebounding components, plus rebound-share and league context.
+
+    reb_share_edge is the home team's share of available offensive rebounds minus
+    the away team's share (percentage points). Measuring rebounding as a share of
+    available boards removes the pace/shot-volume confound that inflates raw counts.
+    league_oreb_rate is the game's league-wide offensive-rebound rate (both teams) —
+    the context that the home edge's decline tracks.
+    """
+    oreb_h, oreb_a = merged["OREB_home"], merged["OREB_away"]
+    dreb_h, dreb_a = merged["DREB_home"], merged["DREB_away"]
+    home_oreb_chance = (oreb_h + dreb_a).replace(0, np.nan)
+    away_oreb_chance = (oreb_a + dreb_h).replace(0, np.nan)
+    total_reb = (oreb_h + oreb_a + dreb_h + dreb_a).replace(0, np.nan)
+    return pd.DataFrame({
+        "oreb_diff":        oreb_h - oreb_a,
+        "dreb_diff":        dreb_h - dreb_a,
+        "reb_diff":         merged["REB_home"] - merged["REB_away"],
+        "reb_share_edge":   100 * (oreb_h / home_oreb_chance - oreb_a / away_oreb_chance),
+        "league_oreb_rate": 100 * (oreb_h + oreb_a) / total_reb,
+    })
+
+
+def fetch_rebound_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """Per-game home-minus-away rebounding components (see _compute_rebound_components)."""
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+    return _compute_rebound_components(merged)
+
+
+def compute_rebound_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season mean home-minus-away rebounding components."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {
+        "oreb_diff": [], "dreb_diff": [], "reb_diff": [],
+        "reb_share_edge": [], "league_oreb_rate": [],
+    }
+
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_rebound_data):
+        seasons.append(short_label(year))
+        for key in stats:
+            stats[key].append(g[key].mean(skipna=True))
+
+    return seasons, stats
+
+
 def compute_league_3pa_stats(
     start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
 ) -> tuple[list[str], list[float], list[float]]:
