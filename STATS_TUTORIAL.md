@@ -13,7 +13,10 @@ of `RESULTS.md` exactly so you can check the arithmetic yourself.
 
 Two companion docs:
 - `STATS_EXPLAINER.md` — goes section-by-section through `RESULTS.md` using full
-  statistical vocabulary. Read that *after* this once the vocabulary is familiar.
+  statistical vocabulary, and explains *why each section's figure takes the form it
+  does* (its `Why this chart` notes). Read that *after* this once the vocabulary is
+  familiar. This tutorial teaches how to *read* each chart family; the explainer
+  says why each chart was *chosen*.
 - `FINDINGS.md` — the plain-English narrative with no jargon at all.
 
 ---
