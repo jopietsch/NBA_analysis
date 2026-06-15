@@ -352,51 +352,6 @@ TEAM_TIMEZONES = {
     "Vancouver Grizzlies": 3,
 }
 
-TZ_CATEGORIES = ["0", "1", "2", "3"]
-
-
-def fetch_timezone_data(end_year: int, season_type: str) -> pd.DataFrame | None:
-    """
-    Per-game result from the cached game log, tagged with how many time
-    zones the visiting team crossed. AWAY_WIN = 1 if the visiting team won.
-    Games involving a team not in TEAM_TIMEZONES are dropped.
-    """
-    df = _load_game_log(end_year, season_type)
-    if df is None:
-        return None
-
-    merged = _merge_home_away_rows(df)
-    if merged is None:
-        return None
-
-    home_tz = merged["TEAM_NAME_home"].map(TEAM_TIMEZONES)
-    away_tz = merged["TEAM_NAME_away"].map(TEAM_TIMEZONES)
-    mask = home_tz.notna() & away_tz.notna()
-    merged = merged[mask].copy()
-    if merged.empty:
-        return None
-
-    merged["TZ_DIFF"] = (home_tz[mask] - away_tz[mask]).abs().astype(int)
-    merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
-    return merged[["TZ_DIFF", "HOME_WIN"]]
-
-
-def compute_timezone_stats(
-    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
-) -> tuple[list[str], dict]:
-    """Per-season home win % grouped by time zones the visiting team crossed."""
-    seasons: list[str] = []
-    stats: dict[str, list[float]] = {cat: [] for cat in TZ_CATEGORIES}
-
-    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_timezone_data):
-        seasons.append(short_label(year))
-        for cat in TZ_CATEGORIES:
-            sub = g[g["TZ_DIFF"] == int(cat)]
-            stats[cat].append(100 * sub["HOME_WIN"].mean() if len(sub) else np.nan)
-
-    return seasons, stats
-
-
 # ── Travel distance analysis ──────────────────────────────────────────────────
 # Haversine distance from the away team's home arena to the game arena,
 # used to test whether longer road trips reduce the visiting team's odds.
@@ -450,9 +405,6 @@ ARENA_COORDS: dict[str, tuple[float, float]] = {
     "Vancouver Grizzlies":     (49.278, -123.109),
 }
 
-TRAVEL_BUCKETS = ["0–500", "500–1000", "1000–1500", "1500+"]
-
-
 def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     """Great-circle distance in miles between two lat/lon points."""
     R = 3958.8  # Earth radius in miles
@@ -461,63 +413,6 @@ def _haversine(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     dlambda = np.radians(lon2 - lon1)
     a = np.sin(dphi / 2) ** 2 + np.cos(phi1) * np.cos(phi2) * np.sin(dlambda / 2) ** 2
     return float(2 * R * np.arcsin(np.sqrt(a)))
-
-
-def _bucket_distance(miles: float) -> str:
-    """Return the TRAVEL_BUCKETS key for a given distance in miles."""
-    if miles < 500:
-        return "0–500"
-    if miles < 1000:
-        return "500–1000"
-    if miles < 1500:
-        return "1000–1500"
-    return "1500+"
-
-
-def fetch_travel_data(end_year: int, season_type: str) -> pd.DataFrame | None:
-    """
-    Per-game home win result tagged with haversine distance (miles) from the
-    away team's home arena to the home arena. Rows with unknown franchise
-    names are dropped. Returns columns ['distance_miles', 'HOME_WIN'].
-    """
-    df = _load_game_log(end_year, season_type)
-    if df is None:
-        return None
-    merged = _merge_home_away_rows(df)
-    if merged is None:
-        return None
-
-    home_coords = merged["TEAM_NAME_home"].map(ARENA_COORDS)
-    away_coords = merged["TEAM_NAME_away"].map(ARENA_COORDS)
-    mask = home_coords.notna() & away_coords.notna()
-    merged = merged[mask].copy()
-    if merged.empty:
-        return None
-
-    merged["distance_miles"] = [
-        _haversine(a[0], a[1], h[0], h[1])
-        for a, h in zip(away_coords[mask], home_coords[mask])
-    ]
-    merged["HOME_WIN"] = (merged["WL_home"] == "W").astype(int)
-    return merged[["distance_miles", "HOME_WIN"]]
-
-
-def compute_travel_stats(
-    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
-) -> tuple[list[str], dict]:
-    """Per-season home win % grouped by away team travel distance (bucketed)."""
-    seasons: list[str] = []
-    stats: dict[str, list[float]] = {b: [] for b in TRAVEL_BUCKETS}
-
-    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_travel_data):
-        seasons.append(short_label(year))
-        g = g.copy()
-        g["bucket"] = g["distance_miles"].apply(_bucket_distance)
-        for bucket in TRAVEL_BUCKETS:
-            sub = g[g["bucket"] == bucket]
-            stats[bucket].append(100 * sub["HOME_WIN"].mean() if len(sub) else np.nan)
-
-    return seasons, stats
 
 
 # ── Box-score differential analysis ──────────────────────────────────────────

@@ -28,15 +28,7 @@ PANEL = "#ffffff"
 # One background shade per era (matches order of ERA_DEFS)
 ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
 
-# Display metadata for timezone, travel, and shot zone analyses
-TZ_COLORS = {"0": GRAY, "1": "#378add", "2": "#e8a33d", "3": "#e24b4a"}
-TZ_LABELS = {
-    "0": "Same time zone",
-    "1": "1 time zone crossed",
-    "2": "2 time zones crossed",
-    "3": "3 time zones crossed (coast-to-coast)",
-}
-
+# Display metadata for shot zone analysis
 SHOT_ZONE_LABELS: dict[str, str] = {
     "paint":    "Paint (RA + Non-RA)",
     "midrange": "Mid-Range",
