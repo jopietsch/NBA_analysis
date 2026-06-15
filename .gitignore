@@ -1,0 +1,19 @@
+# Unrelated Julia projects — kept as their own separate repos, not tracked here
+/julia_nba_api/
+/julia_nba_home_court/
+
+# Python
+__pycache__/
+*.pyc
+
+# Test / coverage artifacts
+.coverage
+.pytest_cache/
+
+# Data + generated outputs
+cache/
+generated/
+*.pdf
+
+# OS
+.DS_Store
