@@ -61,13 +61,13 @@ Almost every model in this project predicts one thing: **did the home team win?*
 That's a yes/no (1/0) outcome. Three different ways of expressing "how likely"
 show up in the results, and you need all three.
 
-- **Probability** is the everyday one: the home team wins **60.3%** of regular-season
-  games, so *p* = 0.603.
-- **Odds** = *p* / (1 − *p*). At *p* = 0.603 the odds are 0.603 / 0.397 = **1.52**
+- **Probability** is the everyday one: the home team wins **60.1%** of regular-season
+  games, so *p* = 0.601.
+- **Odds** = *p* / (1 − *p*). At *p* = 0.601 the odds are 0.601 / 0.399 = **1.51**
   — "about 1.5 to 1 in favor." Odds run from 0 to infinity, with 1.0 meaning a
   coin flip.
 - **Log-odds** (also called the **logit**) = the natural log of the odds:
-  ln(1.52) = **+0.418**. Log-odds run from −∞ to +∞, with **0 meaning a coin
+  ln(1.51) = **+0.410**. Log-odds run from −∞ to +∞, with **0 meaning a coin
   flip**, positive favoring the home team, negative favoring the road team.
 
 Why bother with the awkward log-odds scale? Because it's symmetric and unbounded,
@@ -82,8 +82,8 @@ translate them back to percentage points (see §2.2).
  log-odds       −∞ ......... 0 ........... +∞   ← the modeling scale
 ```
 
-When `RESULTS.md` says a coefficient is "+0.064 log-odds per day" of rest and
-then "≈ +1.5 pp," it computed the log-odds first and translated to percentage
+When `RESULTS.md` says a coefficient is "+0.065 log-odds per day" of rest and
+then "≈ +1.6 pp," it computed the log-odds first and translated to percentage
 points for you. §2.2 shows exactly how.
 
 ## 0.2 Percentage points (pp) vs. percent
@@ -91,8 +91,8 @@ points for you. §2.2 shows exactly how.
 A small but constant source of confusion. If the home win rate falls from 65% to
 55%, that is a drop of **10 percentage points (pp)**, *not* 10%. (As a *percent*
 of 65 it's about a 15% relative drop.) This project always speaks in **percentage
-points** to avoid the ambiguity. "−0.245 pp/yr" means the home win rate loses
-about a quarter of a percentage point each year. Over 42 years that's
+points** to avoid the ambiguity. "−0.244 pp/yr" means the home win rate loses
+about a quarter of a percentage point each year. Over 43 seasons that's
 ≈ −10 pp — from ~65% down to ~55%.
 
 ## 0.3 p-values, confidence intervals, and those `*` `**` `***` stars
@@ -114,7 +114,7 @@ Every result carries a measure of "could this just be luck?"
 - A **confidence interval (CI)** is usually more informative than the p-value. A
   "95% CI" is a range that would contain the true value 95% of the time if we
   repeated the study. When `RESULTS.md` reports the regular-season decline as
-  **−0.245 pp/yr, 95% CI [−0.282, −0.208]**, it's saying: the true slope is
+  **−0.244 pp/yr, 95% CI [−0.280, −0.209]**, it's saying: the true slope is
   almost certainly somewhere in that narrow band, and the *whole band is
   negative*, so the decline is real. **A 95% CI that excludes 0 is equivalent to
   p < 0.05** — but the CI also tells you the *size* and *precision* of the effect,
@@ -126,10 +126,10 @@ one. Same star count, very different findings.
 
 ## 0.4 Statistical significance ≠ practical importance
 
-With 47,882 games, this project can detect effects far too small to matter. The
+With 49,107 games, this project can detect effects far too small to matter. The
 travel-distance result (§ Travel in `RESULTS.md`) is the textbook case:
-**p = 0.010** (a `*`), but the effect is **−0.08 pp per 100 miles** — a brutal
-2,500-mile cross-country trip costs the visitor about 2 pp, and the win-rate
+**p = 0.010** (a `*`), but the effect is **−0.07 pp per 100 miles** — a brutal
+2,500-mile cross-country trip costs the visitor under 2 pp, and the win-rate
 buckets don't even fall in order. The lesson appears repeatedly here: **with huge
 samples, significance is cheap; always check the effect size.** Conversely, a big
 effect with a fat CI (most single-era playoff numbers) may be real but
@@ -150,19 +150,19 @@ clean.) The line's **slope** is the headline: how much the *y* value changes for
 each one-unit step in *x*.
 
 **A worked example.** Take one dot per season — the home win % — and fit a line
-against the year. That's the regular-season decline: a slope of **−0.251 pp per
+against the year. That's the regular-season decline: a slope of **−0.250 pp per
 year** (the OLS line in `RESULTS.md`'s decline section). The
 `nba_home_court_advantage_season.png` figure is literally this line drawn through
 the season dots.
 
 ![Season-level home win % with fitted decline](nba_home_court_advantage_season.png)
 
-**R² — how tight is the fit?** Alongside the slope you'll see **R² = 0.733**.
+**R² — how tight is the fit?** Alongside the slope you'll see **R² = 0.745**.
 R² ("R-squared") is the share of the up-and-down variation in the points that the
 line explains, from 0 (line tells you nothing) to 1 (points sit exactly on the
-line). 0.73 means *year alone* accounts for nearly three-quarters of why some
+line). 0.74 means *year alone* accounts for nearly three-quarters of why some
 seasons have higher HCA than others — a strong, clean trend. Contrast the
-playoffs: same kind of line, but **R² = 0.16**, because each playoff season is
+playoffs: same kind of line, but **R² = 0.20**, because each playoff season is
 only ~80 games, so the dots scatter much more around the trend.
 
 **How to read it in `RESULTS.md`:** look for "Trend/yr" rows and "slope" /
@@ -232,13 +232,13 @@ with "degrees of freedom" = (number of categories − 1) for a simple rate
 comparison.
 
 **A worked example.** The rest-bucket analysis splits regular-season games into
-three buckets — away more rested (57.7% home wins), equal rest (59.3%), home more
-rested (62.9%) — and asks "are these three really different?" Result:
-**χ²(2) = 78.0, p < 0.001.** The "(2)" is the degrees of freedom (3 buckets − 1).
+three buckets — away more rested (57.6% home wins), equal rest (59.3%), home more
+rested (62.8%) — and asks "are these three really different?" Result:
+**χ²(2) = 79.2, p < 0.001.** The "(2)" is the degrees of freedom (3 buckets − 1).
 A χ² of 78 on 2 df is far out in the tail: rest clearly shifts the home win rate.
 
 The playoff series-structure section uses the same test across the seven game
-numbers G1–G7: **χ²(6) = 80.4, p < 0.001** — home win % is emphatically *not*
+numbers G1–G7: **χ²(6) = 84.5, p < 0.001** — home win % is emphatically *not*
 uniform across game numbers (it swings from 55% to 75% depending on which arena
 hosts).
 
@@ -271,11 +271,11 @@ summary of "as one goes up, does the other?"
   doing the work.
 
 **A worked example.** Season 3-point rate vs. season home win %:
-**Pearson r = −0.898, Spearman ρ = −0.884** (both p < 0.001). Nearly identical
+**Pearson r = −0.902, Spearman ρ = −0.890** (both p < 0.001). Nearly identical
 and both near −0.9 — a very strong, very robust "more threes, less home
 advantage" pattern at the season level. Compare the franchise-consistency
-section, where raw **Pearson = +0.356 (p = 0.045)** but **Spearman = +0.262
-(p = 0.148)** — they *disagree*, so the relationship is fragile and shouldn't be
+section, where raw **Pearson = +0.362 (p = 0.042)** but **Spearman = +0.275
+(p = 0.128)** — they *disagree*, so the relationship is fragile and shouldn't be
 leaned on.
 
 **The trap it avoids — but also sets.** Reporting both guards against being fooled
@@ -329,16 +329,16 @@ the log-odds scale, so the code also gives you the percentage-point translation
 alone ("does rest matter at all?"). Adding more predictors lets you ask "does this
 factor matter *holding the others constant?*" The single most important move in
 the whole project is **"controlling for era":** running `home_win ~ 3PA_rate`
-alone gives −2.67 pp per 10 pp of threes, but adding `+ C(era)` — comparing only
-games *within the same era* — barely changes it (−2.31 pp). That tells you the
+alone gives −2.64 pp per 10 pp of threes, but adding `+ C(era)` — comparing only
+games *within the same era* — barely changes it (−2.27 pp). That tells you the
 3PA effect isn't just the shared time trend; it holds game-to-game even inside a
 fixed era. (More on this logic in §7.2.)
 
 **`C(era)` and "dummy variables."** A category like era can't go into a
 regression as a number. Instead each era becomes its own 0/1 ("dummy") column,
 measured against a left-out **reference** era (here 1984–94). So
-"era: 2023–25 = −0.372 log-odds (≈ −8.9 pp)" means: relative to 1984–94, the
-2023–25 era sits 8.9 pp lower, after the other factors are accounted for.
+"era: 2023–26 = −0.375 log-odds (≈ −9.0 pp)" means: relative to 1984–94, the
+2023–26 era sits 9.0 pp lower, after the other factors are accounted for.
 
 **How to read it in `RESULTS.md`:** any block with "log-odds" and "≈pp" columns.
 Read sign → significance (stars/CI) → the pp translation for size.
@@ -356,14 +356,14 @@ pp  ≈  coef × p̄ × (1 − p̄) × 100
 The *p̄*(1−*p̄*) factor is the curve's steepness — effects translate to the most
 percentage points near a 50/50 race and get squeezed near 0% or 100%.
 
-**Worked example (reproduces a row exactly).** Regular-season *p̄* = 0.603, so
-*p̄*(1−*p̄*) = 0.239. The rest coefficient is **+0.064 log-odds per day**:
+**Worked example (reproduces a row exactly).** Regular-season *p̄* = 0.601, so
+*p̄*(1−*p̄*) = 0.240. The rest coefficient is **+0.065 log-odds per day**:
 
 ```
-0.064 × 0.239 × 100  ≈  +1.5 pp per day
+0.065 × 0.240 × 100  ≈  +1.6 pp per day
 ```
 
-— exactly the "≈ +1.5 pp" you see next to it. Now you can sanity-check any
+— exactly the "≈ +1.6 pp" you see next to it. Now you can sanity-check any
 log-odds-to-pp conversion in the file yourself.
 
 ## 2.3 The binomial GLM
@@ -381,7 +381,7 @@ the proportion itself (a rate near 50% is noisier than one near 95%). "GLM" =
 season-aggregated cousin.
 
 **Why it's run alongside OLS.** The decline section reports *both* the binomial
-GLM (**−0.245 pp/yr**) and the OLS/HAC line (**−0.251 pp/yr**). They land in
+GLM (**−0.244 pp/yr**) and the OLS/HAC line (**−0.250 pp/yr**). They land in
 essentially the same place. That agreement is the point: **when the rigorous model
 and the familiar straight line agree, the finding doesn't hinge on a modeling
 choice.** This "two methods, same answer" pattern is a credibility move you'll see
@@ -440,7 +440,7 @@ patch the two ways independence breaks here.
 
 ## 3.2 Cluster-robust standard errors (clustering on season)
 
-**The problem.** In a game-level model pooling 47,000 games across 42 seasons,
+**The problem.** In a game-level model pooling 47,000 games across 43 seasons,
 games *within the same season* share that season's league-wide conditions (the
 rules, the ball, the officiating climate). They're not 47,000 independent facts;
 they're more like 42 seasons' worth of correlated games. Treat them as fully
@@ -477,7 +477,7 @@ correlated data.
 ## 3.4 Multiple comparisons and Benjamini–Hochberg
 
 **The problem.** Run *one* test at p < 0.05 and there's a 5% false-alarm rate. Run
-*42* tests — one per playoff referee — and you'd expect about **two** to clear
+*47* tests — one per playoff referee — and you'd expect about **two** to clear
 p < 0.05 **by pure luck**, even if no referee were biased at all. Naively counting
 "significant" referees over-counts.
 
@@ -488,9 +488,9 @@ old Bonferroni "divide by the number of tests" rule, which keeps useful power
 when you have real effects.
 
 **Why it's the punchline of the referee section, not a footnote.** A raw
-leaderboard of 42 noisy referee means *will* manufacture a "most biased ref"
+leaderboard of 47 noisy referee means *will* manufacture a "most biased ref"
 headline. BH is what lets `RESULTS.md` say something trustworthy:
-**29 of 42 officials are individually significant, and all 29 survive BH
+**29 of 47 officials are individually significant, and all 29 survive BH
 correction.** That "survives correction" is the signature of a *real, widespread*
 effect rather than a few lucky draws — exactly the universal (not a-few-bad-apples)
 home-foul bias the analysis concludes.
@@ -518,15 +518,15 @@ small p-value = "the block earns its place."
 §1.2 caution. The era section asks: beyond the smooth year-by-year drift, did
 specific rule-change eras cause *extra* jumps?
 
-- **Regular season:** LR test **χ²(5) = 20.70, p < 0.001** → the era dummies
+- **Regular season:** LR test **χ²(5) = 20.68, p < 0.001** → the era dummies
   *do* add real explanatory power. There's a genuine discrete drop (at 1994–95)
   on top of the smooth slide.
-- **Playoffs:** LR test **χ²(5) = 1.78, p = 0.879** → the era dummies add nothing.
+- **Playoffs:** LR test **χ²(5) = 2.24, p = 0.815** → the era dummies add nothing.
   The playoff decline is a *pure smooth drift* with no rule-change fingerprints.
 
 Same logic exonerates the 2014 playoff format change: the raw z-test showed a
-scary **−6.4 pp** drop at 2014, but once the year trend is in the model the LR
-test for the format dummies is **p = 0.235** — the "drop" is just the steady
+scary **−6.8 pp** drop at 2014, but once the year trend is in the model the LR
+test for the format dummies is **p = 0.197** — the "drop" is just the steady
 decline passing through that year, not the schedule change doing anything.
 
 **The trap it avoids.** It separates "this period is lower" (a raw difference,
@@ -544,12 +544,12 @@ how much each *new* one bumps the (pseudo-)R². The problem: **whoever goes firs
 hogs the shared credit.** Era and altitude both partly track the same teams; if
 era is entered first, it absorbs the overlap and looks bigger than it should.
 
-In `RESULTS.md`, era entered first gets a **55.8%** sequential share.
+In `RESULTS.md`, era entered first gets a **57.9%** sequential share.
 
 **The fair way (Shapley).** Borrowed from game theory, the **Shapley value** asks:
 average each factor's contribution **over every possible order** of entry (all
 2⁵ = 32 subset models). No factor gets the artificial first-mover bonus; shared
-credit is split evenly. Era's honest **Shapley share drops to 50.3%** — still half
+credit is split evenly. Era's honest **Shapley share drops to 52.6%** — still half
 the story, but the inflation from going first is removed.
 
 **How to read it in `RESULTS.md`:** the decomposition section lists both columns
@@ -557,8 +557,8 @@ side by side precisely so you can see how much the ordering mattered (here, era 
 modestly inflated; altitude and rest barely moved). When they're close, ordering
 didn't matter and you can trust either; when they diverge, trust Shapley.
 
-**The takeaway it supports.** Era (the structural decline) ≈ 50%, situational
-factors (rest, altitude, time zone, COVID) ≈ 50%. And since none of those
+**The takeaway it supports.** Era (the structural decline) ≈ 53%, situational
+factors (rest, altitude, time zone, COVID) ≈ 47%. And since none of those
 situational factors *changed* over time (§7 and the stability tests), they explain
 *which games* are won, not *why HCA fell* — half the explanatory power belongs to
 the era structure itself.
@@ -573,7 +573,7 @@ and of its *decline* — flows through each of those four channels?
 the channel contributions must sum to the totals. Only a *linear* model
 (additivity) makes that possible. Two identities do the work:
 
-**Level identity** — split the home edge (the 10.3 pp *above* a coin flip) into
+**Level identity** — split the home edge (the 10.1 pp *above* a coin flip) into
 channels:
 
 ```
@@ -583,11 +583,11 @@ mean win %  =  intercept  +  Σ (coef × mean channel difference)
 Each channel's contribution = how much the home team is ahead on that channel
 (`mean diff`) × how much a unit of it is worth (`coef`). For the regular season:
 
-| channel | contribution | share of the +10.3 pp edge |
+| channel | contribution | share of the +10.1 pp edge |
 |---|---|---|
 | shooting (eFG%) | +4.4 pp | 43% |
-| rebounds | +2.6 pp | 25% |
-| fouls (carries free throws) | +1.5 pp | 14% |
+| rebounds | +2.5 pp | 25% |
+| fouls (carries free throws) | +1.4 pp | 14% |
 | turnovers | +1.3 pp | 13% |
 | unexplained | +0.5 pp | 5% |
 
@@ -600,15 +600,15 @@ year-trend:
 total pp/yr  =  unmediated pp/yr  +  Σ (coef × channel's trend per year)
 ```
 
-**Worked check (reproduces a row).** Shooting is worth **+3.43 pp** per pp of eFG%
-edge, and that eFG% edge is shrinking at **−0.0148 pp/yr**. Multiply:
-3.43 × (−0.0148) ≈ **−0.0507 pp/yr** — exactly the shooting channel's reported
-contribution to the decline. Sum all four channels and you recover **95%** of the
-regular-season −0.245 pp/yr slide; only 5% is "unmediated."
+**Worked check (reproduces a row).** Shooting is worth **+3.42 pp** per pp of eFG%
+edge, and that eFG% edge is shrinking at **−0.0151 pp/yr**. Multiply:
+3.42 × (−0.0151) ≈ **−0.0516 pp/yr** — exactly the shooting channel's reported
+contribution to the decline. Sum all four channels and you recover **96%** of the
+regular-season −0.244 pp/yr slide; only 4% is "unmediated."
 
 **The honesty label you must respect.** `RESULTS.md` calls these channels
 **proximate** and the level/trend split an **accounting decomposition, not
-causation**. A 28% "share" tells you *where* the change shows up in the box score,
+causation**. A 27% "share" tells you *where* the change shows up in the box score,
 not *why* it happened — and on its own it can't tell you whether two channels are
 independent stories or both downstream of one deeper cause. A decomposition just
 hands each channel its slice; you need a further test to probe what's behind it.
@@ -633,9 +633,9 @@ The four channels split three ways:
 
 | channel | 3PA absorbs | verdict |
 |---|---|---|
-| shooting (eFG%) | ≈ 219% (flips sign) | **fully downstream** — the fading home shooting edge *is* the three-point story |
-| rebounding | ≈ 11%, still p < 0.001 | **independent** — a genuine fourth strand of the decline |
-| fouls / turnovers | ≈ 47% / ≈ 52% | **mixed** — partly the perimeter shift, partly their own |
+| shooting (eFG%) | ≈ 210% (flips sign) | **fully downstream** — the fading home shooting edge *is* the three-point story |
+| rebounding | ≈ 8%, still p < 0.001 | **independent** — a genuine fourth strand of the decline |
+| fouls / turnovers | ≈ 51% / ≈ 54% | **mixed** — partly the perimeter shift, partly their own |
 
 So the earlier "it's probably all downstream" hunch was half right (turnovers,
 partly) and half wrong: **rebounding stands on its own**, and `FINDINGS.md` now
@@ -643,8 +643,8 @@ treats it as a separate driver (its §3 and §7). This is the template for going
 *past* a decomposition — when a share is ambiguous, add the suspected common cause
 as a control and see what survives.
 
-**Regular season vs. playoffs.** Channels carry 95% of the regular-season decline
-but only **65%** of the playoff decline — 35% of the playoff story runs outside the
+**Regular season vs. playoffs.** Channels carry 96% of the regular-season decline
+but only **67%** of the playoff decline — 33% of the playoff story runs outside the
 box score (and folds in seed quality, which §7.1 isolates). The rebounding fade, if
 anything, is sharper in the playoffs once 3PA is controlled.
 
@@ -694,12 +694,12 @@ changed.
 
 | quantile | slope (pts/yr) | meaning |
 |---|---|---|
-| Q10 | **−0.154*** | the worst home losses are getting worse |
-| Q50 | −0.056*** | median drifting down |
-| Q90 | **+0.045** ** | the biggest home wins are getting bigger |
+| Q10 | **−0.167*** | the worst home losses are getting worse |
+| Q50 | −0.053*** | median drifting down |
+| Q90 | **+0.050** ** | the biggest home wins are getting bigger |
 
 The top rises *as* the bottom falls. The spread between them (Q90 − Q10) widens by
-**+0.20 pts/yr** — confirmed **polarization**: home blowout wins *and* home blowout
+**+0.22 pts/yr** — confirmed **polarization**: home blowout wins *and* home blowout
 losses are both becoming more common. The `nba_home_court_margin.png` figure shows
 this fanning-apart visually.
 
@@ -718,7 +718,7 @@ confirms the polarization is real, not bookkeeping.
 # Part 6 — Ranking noisy things fairly
 
 Two methods that always travel together, used anywhere `RESULTS.md` ranks a list
-of noisy averages — the 39 franchises and the 42 referees.
+of noisy averages — the 39 franchises and the 47 referees.
 
 ## 6.1 Variance decomposition (method of moments)
 
@@ -743,7 +743,7 @@ left is an estimate of the **true** spread.
   only **30%**; estimated true SD ≈ **4.1 pp**. (Check: 4.9² = 24.0,
   4.1² = 16.8, so noise = 7.2 = 30% of 24.0.) Real differences exist — Denver and
   Utah genuinely have stronger home court (the altitude finding).
-- **Playoff franchises:** observed SD = 8.1 pp, but sampling noise accounts for
+- **Playoff franchises:** observed SD = 8.0 pp, but sampling noise accounts for
   **100%** of it; true SD ≈ **0**. The entire playoff leaderboard spread is luck.
   No franchise has a *demonstrably* special playoff home court — the samples
   (20–220 games) are just too small.
@@ -769,15 +769,15 @@ weight = true variance / (true variance + that group's sampling variance)
 mostly collapse to the average.
 
 **A worked example that reproduces the table exactly.** Using the regular-season
-true variance ≈ 4.1² = 16.8 and the league mean +20.2 pp:
+true variance ≈ 4.1² = 16.8 and the league mean +20.0 pp:
 
 - **Kansas City Kings:** raw **+35.4** on just 82 games (sampling SE ≈ 7.2 pp →
   sampling var ≈ 51.7). Weight = 16.8 / (16.8 + 51.7) = **0.245**, so shrunken
-  = 20.2 + 0.245 × (35.4 − 20.2) = **+23.9 pp** — pulled down 11.5 points, because
+  = 20.0 + 0.245 × (35.4 − 20.0) = **+23.8 pp** — pulled down 11.6 points, because
   that gaudy raw number rests on almost no data. Matches `RESULTS.md`.
-- **Denver Nuggets:** raw **+28.5** on 1,689 games (sampling SE ≈ 1.6 → var ≈ 2.7).
-  Weight = 16.8 / (16.8 + 2.7) = **0.86**, so shrunken = 20.2 + 0.86 × (28.5 −
-  20.2) = **+27.3 pp** — barely moves, and stays #1. Matches `RESULTS.md`.
+- **Denver Nuggets:** raw **+27.9** on 1,730 games (sampling SE ≈ 1.6 → var ≈ 2.7).
+  Weight = 16.8 / (16.8 + 2.7) = **0.86**, so shrunken = 20.0 + 0.86 × (27.9 −
+  20.0) = **+26.8 pp** — barely moves, and stays #1. Matches `RESULTS.md`.
 
 That's the whole idea: shrinkage demotes lucky small samples (Kansas City) while
 leaving well-measured ones (Denver) essentially untouched.
@@ -785,15 +785,15 @@ leaving well-measured ones (Denver) essentially untouched.
 ![Shrinkage pulls noisy estimates toward the league mean](tutorial_shrinkage.png)
 
 Read the figure as "length of the red arrow = how much we distrust the raw
-number." Kansas City's huge error bar (only 82 games) earns an 11.5 pp pull;
-Denver's tight bar (1,689 games) barely moves. The project's own
+number." Kansas City's huge error bar (only 82 games) earns an 11.6 pp pull;
+Denver's tight bar (1,730 games) barely moves. The project's own
 `nba_home_court_team_hca.png` shows the same raw-vs-shrunken comparison for all 39
 franchises.
 
 **And when there's no true spread (playoffs)?** Shrinkage collapses *every*
-franchise to the league mean (+27.1 pp) — which is the honest answer when the
+franchise to the league mean (+26.9 pp) — which is the honest answer when the
 variance decomposition already told you the true spread is zero. Utah's raw +39.7
-and the Clippers' raw −3.6 are both just +27.1 once you account for their tiny
+and the Clippers' raw −3.6 are both just +26.9 once you account for their tiny
 samples.
 
 ---
@@ -815,17 +815,17 @@ really be "better team wins" wearing a rest costume.
 included, and see if the suspect effect survives. Here the control is
 **`quality_diff`** = the home team's regular-season win % minus the away team's.
 
-**The result.** Bivariate, playoff rest looks worth **+2.3 pp/day**
-(significant). Add `quality_diff` and rest collapses to **+1.5 pp/day,
-p = 0.146** — no longer significant — while `quality_diff` is overwhelming
+**The result.** Bivariate, playoff rest looks worth **+2.4 pp/day**
+(significant). Add `quality_diff` and rest collapses to **+1.6 pp/day,
+p = 0.113** — no longer significant — while `quality_diff` is overwhelming
 (+112 pp per unit, p < 0.001). Verdict: most playoff "rest advantage" was just
 *being the better team*.
 
 **The same move clears the playoff decline of a different suspicion.** Maybe the
 playoff HCA fell only because top seeds stopped dominating? Add `quality_diff` and
-the year trend barely flinches (−0.209 → −0.210 pp/yr; **101% retained**). The
+the year trend barely flinches (−0.225 → −0.229 pp/yr; **102% retained**). The
 clincher is a control by *design*: when the objectively weaker team hosts G3/G4,
-it *still* wins **51.8%** — a pure venue effect with quality stripped out. The
+it *still* wins **51.5%** — a pure venue effect with quality stripped out. The
 playoff decline is genuine home-court weakening, not seed compression.
 
 ## 7.2 Spurious correlation from shared trends (and how to detrend)
@@ -839,7 +839,7 @@ home win % is *guaranteed* by the fact that threes rose and HCA fell over the sa
 different weaknesses):
 
 1. **Control for era inside the model (§2.1).** Compare only games *within the
-   same era*. The 3PA effect barely changes (−2.67 → −2.31 pp), so it's *not* just
+   same era*. The 3PA effect barely changes (−2.64 → −2.27 pp), so it's *not* just
    the trend — higher-3PA games really do have lower home win rates even among
    contemporaries. This survives the trap.
 
@@ -851,12 +851,12 @@ different weaknesses):
      *residuals* (what's left after the trend).
 
 **Worked example — parity.** Raw correlation between league parity and HCA:
-**r = −0.066, p = 0.68** — basically nothing, *and* the era table actively
+**r = −0.092, p = 0.56** — basically nothing, *and* the era table actively
 contradicts the parity story. So parity didn't drive the structural decline. But
-the detrended checks (**first-diff r = −0.337, p = 0.031**; **residual
-r = −0.355, p = 0.021**) find a modest *same-year* wobble: in years the league
+the detrended checks (**first-diff r = −0.330, p = 0.033**; **residual
+r = −0.345, p = 0.023**) find a modest *same-year* wobble: in years the league
 gets more equal, HCA dips a little. `RESULTS.md` flags this itself as
-"interpret with caution" — it's a small effect on ~42 points, and first
+"interpret with caution" — it's a small effect on ~43 points, and first
 differencing amplifies measurement noise. The discipline to report it *and*
 caveat it is the model to imitate.
 
@@ -890,9 +890,9 @@ team's pace in **all its *other* games that season**, and use that. Built only f
 *other* games, expected pace can't be inflated by *this* game's blowout — the
 backwards arrow is severed.
 
-**The result.** Realized pace shows a clean, significant **+2.4 pp per 10
-possessions (p < 0.001)**. Swap in expected pace and it falls to **+1.8 pp and
-goes non-significant (p = 0.148)**. That collapse is the tell: the original effect
+**The result.** Realized pace shows a clean, significant **+2.3 pp per 10
+possessions (p < 0.001)**. Swap in expected pace and it falls to **+1.5 pp and
+goes non-significant (p = 0.227)**. That collapse is the tell: the original effect
 was substantially *outcome-driven*, not pace driving outcomes. Pace is ruled out
 as a cause of the decline (and, as `STATS_EXPLAINER.md` notes, pace is U-shaped
 over time while HCA fell steadily — they can't even share a trend).
@@ -915,15 +915,17 @@ term; if it's significant, that factor's effect *shifted* at 2014. A `post2014`
 
 | term | estimate | significant? | reading |
 |---|---|---|---|
-| rest × post2014 | +0.027 | no (p = 0.15) | rest effect unchanged |
-| altitude × post2014 | −0.144 | no (p = 0.083) | altitude effect ~unchanged |
-| tz × post2014 | −0.003 | no (p = 0.87) | time-zone effect unchanged |
-| **post2014** (level) | **−0.193** | **yes (p < 0.001)** | **overall −4.6 pp drop** |
+| rest × post2014 | +0.028 | no (p = 0.14) | rest effect unchanged |
+| altitude × post2014 | −0.180 | yes (p = 0.026) | altitude effect weakened |
+| tz × post2014 | −0.002 | no (p = 0.92) | time-zone effect unchanged |
+| **post2014** (level) | **−0.196** | **yes (p < 0.001)** | **overall −4.7 pp drop** |
 
-The picture is unmistakable: **none of the situational factors changed**, yet
-there's a large, real, across-the-board **−4.6 pp** level drop after 2014. Home
-teams kept their rest and altitude edges at full strength; they simply started
-winning less for reasons those factors don't capture — pointing the search toward
+The picture is clear: the rest and time-zone effects didn't change, and there's a
+large, real, across-the-board **−4.7 pp** level drop after 2014. (Altitude's
+home-court edge did weaken — the lone situational shift — but it touches only two
+teams and is dwarfed by the level drop.) Home teams kept their rest edge at full
+strength; they simply started winning less for reasons those factors don't
+capture — pointing the search toward
 the foul-bias and shot-selection channels (the eroding mechanisms in the
 differentials and shot-zone sections). An interaction test is how you ask "did
 *this* change?" instead of "does this matter?"

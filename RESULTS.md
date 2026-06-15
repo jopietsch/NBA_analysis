@@ -17,9 +17,9 @@ All data from cache/ — same source as the plots above.
    Cross-check: OLS with Newey–West HAC SEs (maxlags=1).
    Per-era slopes use same methods on era subsets.
 
-   Regular season  (42 seasons, 1984–2025)
-   Binomial GLM: -0.245 pp/yr  95% CI [-0.282, -0.208]  (p = <0.001  ***,  total ≈ -10.0 pp)
-   OLS / HAC:    -0.251 pp/yr  95% CI [-0.299, -0.202]  (p = <0.001  ***,  R² = 0.733,  total: -10.3 pp)
+   Regular season  (43 seasons, 1984–2026)
+   Binomial GLM: -0.244 pp/yr  95% CI [-0.280, -0.209]  (p = <0.001  ***,  total ≈ -10.3 pp)
+   OLS / HAC:    -0.250 pp/yr  95% CI [-0.296, -0.204]  (p = <0.001  ***,  R² = 0.745,  total: -10.5 pp)
 
    Era              N   GLM pp/yr     GLM p   OLS pp/yr     HAC p     
    ────────────  ────  ──────────  ────────  ──────────  ────────  ───
@@ -28,11 +28,11 @@ All data from cache/ — same source as the plots above.
    2002–04          3      +1.136     0.256      +1.135     0.312     
    2005–17         13      -0.179     0.085      -0.180     0.002     
    2018–22          5      -1.183     0.009      -1.191     0.009   **
-   2023–25          3      -1.802     0.073      -1.800     0.158     
+   2023–26          4      -0.773     0.223      -0.772     0.216     
 
-   Playoffs  (41 seasons, 1984–2025)
-   Binomial GLM: -0.209 pp/yr  95% CI [-0.348, -0.070]  (p = 0.003  **,  total ≈ -8.6 pp)
-   OLS / HAC:    -0.200 pp/yr  95% CI [-0.347, -0.054]  (p = <0.001  ***,  R² = 0.164,  total: -8.2 pp)
+   Playoffs  (42 seasons, 1984–2026)
+   Binomial GLM: -0.225 pp/yr  95% CI [-0.359, -0.091]  (p = <0.001  ***,  total ≈ -9.5 pp)
+   OLS / HAC:    -0.216 pp/yr  95% CI [-0.356, -0.076]  (p = <0.001  ***,  R² = 0.195,  total: -9.1 pp)
 
    Era              N   GLM pp/yr     GLM p   OLS pp/yr     HAC p     
    ────────────  ────  ──────────  ────────  ──────────  ────────  ───
@@ -41,14 +41,14 @@ All data from cache/ — same source as the plots above.
    2002–04          3      +6.551     0.095      +6.398     0.097     
    2005–17         13      -0.442     0.255      -0.445     0.323     
    2018–22          4      -2.129     0.207      -2.155     0.184     
-   2023–25          3      -1.191     0.754      -1.190     0.026     
+   2023–26          4      -1.409     0.558      -1.408     0.003     
 
 
 ─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
    Positive = home team winning by more.
    Trend = slope of trend line (change per season year).
 
-   Regular season  (N = 34,311 games)
+   Regular season  (N = 35,536 games)
 
    Era             All games    Home wins  Home losses
    ───────────────────────────────────────────────────
@@ -57,11 +57,11 @@ All data from cache/ — same source as the plots above.
    2002–04             +3.62       +11.66        -9.00
    2005–17             +3.00       +11.70        -9.78
    2018–22             +1.95       +12.16       -11.20
-   2023–25             +2.11       +12.83       -11.31
+   2023–26             +2.02       +13.01       -11.73
    ───────────────────────────────────────────────────
-   Trend/yr        -0.055***    +0.041***    -0.083***
+   Trend/yr        -0.057***    +0.048***    -0.095***
 
-   Playoffs  (N = 2,272 games)
+   Playoffs  (N = 2,357 games)
 
    Era             All games    Home wins  Home losses
    ───────────────────────────────────────────────────
@@ -70,12 +70,12 @@ All data from cache/ — same source as the plots above.
    2002–04             +4.43       +11.38        -8.10
    2005–17             +4.48       +12.43        -9.85
    2018–22             +4.30       +13.90       -10.55
-   2023–25             +4.58       +14.97       -10.00
+   2023–26             +3.87       +14.86       -11.06
    ───────────────────────────────────────────────────
-   Trend/yr        +0.002       +0.152***    -0.076  *
+   Trend/yr        -0.017       +0.149***    -0.101 **
 
-   ► Overall reg-season mean margin: +2.80 pts.
-   ► Overall playoff mean margin:    +4.36 pts.
+   ► Overall reg-season mean margin: +2.76 pts.
+   ► Overall playoff mean margin:    +4.27 pts.
 
 ─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§1 check) 
    home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.
@@ -83,32 +83,32 @@ All data from cache/ — same source as the plots above.
    All quantiles parallel → pure level effect (conditional divergence is artifact).
    Q10↓ with Q90↑ → genuine polarization.
 
-   Regular season  (N = 34,311 games, 1997–2025)
+   Regular season  (N = 35,536 games, 1997–2026)
 
    Quantile   Slope pts/yr                95% CI         p     
    ────────  ─────────────  ────────────────────  ────────  ───
-        Q10         -0.154  [-0.185, -0.122]    <0.001  ***
-        Q25         -0.091  [-0.111, -0.071]    <0.001  ***
-        Q50         -0.056  [-0.076, -0.035]    <0.001  ***
-        Q75         -0.000  [-0.020, +0.020]     1.000     
-        Q90         +0.045  [+0.014, +0.077]     0.005   **
+        Q10         -0.167  [-0.197, -0.137]    <0.001  ***
+        Q25         -0.099  [-0.118, -0.080]    <0.001  ***
+        Q50         -0.053  [-0.072, -0.033]    <0.001  ***
+        Q75         +0.000  [-0.019, +0.019]     1.000     
+        Q90         +0.050  [+0.020, +0.080]     0.001   **
 
-   IQR change rate (Q90 − Q10 slope diff): +0.199 pts/yr
+   IQR change rate (Q90 − Q10 slope diff): +0.217 pts/yr
    ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
      The conditional-on-outcome divergence in §1 reflects a real change in
      distribution shape, not just a composition effect.
 
-   Playoffs  (N = 2,272 games, 1997–2025)
+   Playoffs  (N = 2,357 games, 1997–2026)
 
    Quantile   Slope pts/yr                95% CI         p     
    ────────  ─────────────  ────────────────────  ────────  ───
-        Q10         -0.055  [-0.167, +0.057]     0.337     
-        Q25         -0.083  [-0.168, +0.002]     0.054     
-        Q50         -0.000  [-0.083, +0.083]     1.000     
-        Q75         +0.125  [+0.043, +0.207]     0.003   **
-        Q90         +0.145  [+0.035, +0.256]     0.010    *
+        Q10         -0.104  [-0.213, +0.005]     0.062     
+        Q25         -0.110  [-0.193, -0.028]     0.009   **
+        Q50         -0.000  [-0.080, +0.080]     1.000     
+        Q75         +0.091  [+0.014, +0.168]     0.020    *
+        Q90         +0.222  [+0.113, +0.331]    <0.001  ***
 
-   IQR change rate (Q90 − Q10 slope diff): +0.200 pts/yr
+   IQR change rate (Q90 − Q10 slope diff): +0.326 pts/yr
    ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
      The conditional-on-outcome divergence in §1 reflects a real change in
      distribution shape, not just a composition effect.
@@ -118,7 +118,7 @@ All data from cache/ — same source as the plots above.
    Negative foul diff = refs call fewer fouls on the home team.
    Trend = slope of trend line (change per season year); pp = percentage points.
 
-   Regular season  (N = 47,882 games)
+   Regular season  (N = 49,107 games)
 
    Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
    ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -127,11 +127,11 @@ All data from cache/ — same source as the plots above.
    2002–04              -0.52         +1.48         +1.62         +0.08         +1.66         +0.07
    2005–17              -0.79         +1.17         +1.25         -0.10         +0.70         +0.26
    2018–22              -0.33         +0.81         +0.93         +0.24         +0.46         -0.01
-   2023–25              -0.20         +0.72         +0.97         +0.37         +0.94         +0.66
+   2023–26              -0.25         +0.70         +0.95         +0.44         +0.88         +0.76
    ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.023***     -0.020***     -0.015***     +0.017***     -0.007        -0.000   
+   Trend/yr         +0.022***     -0.021***     -0.015***     +0.018***     -0.007        +0.003   
 
-   Playoffs  (N = 3,207 games)
+   Playoffs  (N = 3,292 games)
 
    Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
    ────────────────────────────────────────────────────────────────────────────────────────────────
@@ -140,9 +140,9 @@ All data from cache/ — same source as the plots above.
    2002–04              -1.04         +1.92         +1.88         -0.32         +0.60         +0.00
    2005–17              -1.43         +1.56         +1.57         -0.36         +0.39         +0.22
    2018–22              -0.67         +1.00         +1.30         +0.88         +0.86         +0.26
-   2023–25              -0.70         +1.03         +1.19         -0.11         +1.00         +2.68
+   2023–26              -0.68         +0.96         +1.02         -0.21         +0.75         +2.12
    ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.020 **     -0.013        -0.006        +0.031  *     +0.018        +0.010   
+   Trend/yr         +0.020 **     -0.015        -0.009        +0.028  *     +0.015        +0.009   
 
 
 ─── MEDIATION — BOX-SCORE CHANNELS AS SHARES OF HCA LEVEL AND TREND ────
@@ -157,61 +157,61 @@ All data from cache/ — same source as the plots above.
    how HCA expresses itself in the box score — so this is an
    accounting decomposition, not deep causation.
 
-   Regular season  (N = 47,879 games, home win % = 60.3, level above coin flip = +10.3 pp)
+   Regular season  (N = 49,104 games, home win % = 60.1, level above coin flip = +10.1 pp)
    Channel-model R² = 0.615 — share of game-outcome variance the four channels carry.
 
    Level decomposition  (coef × mean diff):
    Channel            Mean diff   pp per unit   Contribution  % of level
    ────────────────  ──────────  ────────────  ─────────────  ──────────
-   eFG% diff (pp)         +1.28      +3.43 ***      +4.4 pp         43%
-   Foul diff              -0.74      -2.00 ***      +1.5 pp         14%
-   TOV diff               -0.38      -3.40 ***      +1.3 pp         13%
-   REB diff               +1.56      +1.67 ***      +2.6 pp         25%
+   eFG% diff (pp)         +1.27      +3.42 ***      +4.4 pp         43%
+   Foul diff              -0.73      -1.98 ***      +1.4 pp         14%
+   TOV diff               -0.38      -3.38 ***      +1.3 pp         13%
+   REB diff               +1.52      +1.67 ***      +2.5 pp         25%
    ────────────────  ──────────  ────────────  ─────────────  ──────────
    Unexplained                                       +0.5 pp          5%
 
    Trend decomposition  (pp of home win % per year):
-   Total trend (home_win ~ year): -0.245 pp/yr  (p = <0.001  ***)
+   Total trend (home_win ~ year): -0.244 pp/yr  (p = <0.001  ***)
 
    Channel           Trend in diff/yr     Contribution  % of trend
    ────────────────  ────────────────  ───────────────  ──────────
-   eFG% diff (pp)         -0.0148 ***    -0.0507 pp/yr         21%
-   Foul diff              +0.0225 ***    -0.0450 pp/yr         18%
-   TOV diff               +0.0199 ***    -0.0674 pp/yr         28%
-   REB diff               -0.0421 ***    -0.0703 pp/yr         29%
+   eFG% diff (pp)         -0.0151 ***    -0.0516 pp/yr         21%
+   Foul diff              +0.0222 ***    -0.0438 pp/yr         18%
+   TOV diff               +0.0193 ***    -0.0651 pp/yr         27%
+   REB diff               -0.0443 ***    -0.0738 pp/yr         30%
    ────────────────  ────────────────  ───────────────  ──────────
-   Sum, channels                         -0.2333 pp/yr         95%
-   Unmediated                            -0.0116 pp/yr          5%
+   Sum, channels                         -0.2344 pp/yr         96%
+   Unmediated                            -0.0097 pp/yr          4%
 
-   ► Regular season: channels carry 95% of the HCA level and 95% of its decline.
+   ► Regular season: channels carry 95% of the HCA level and 96% of its decline.
 
-   Playoffs  (N = 3,207 games, home win % = 64.3, level above coin flip = +14.3 pp)
-   Channel-model R² = 0.597 — share of game-outcome variance the four channels carry.
+   Playoffs  (N = 3,292 games, home win % = 64.1, level above coin flip = +14.1 pp)
+   Channel-model R² = 0.598 — share of game-outcome variance the four channels carry.
 
    Level decomposition  (coef × mean diff):
    Channel            Mean diff   pp per unit   Contribution  % of level
    ────────────────  ──────────  ────────────  ─────────────  ──────────
-   eFG% diff (pp)         +1.48      +3.20 ***      +4.7 pp         33%
-   Foul diff              -1.27      -1.94 ***      +2.5 pp         17%
-   TOV diff               -0.92      -3.35 ***      +3.1 pp         22%
-   REB diff               +1.85      +1.69 ***      +3.1 pp         22%
+   eFG% diff (pp)         +1.46      +3.18 ***      +4.6 pp         33%
+   Foul diff              -1.25      -1.95 ***      +2.4 pp         17%
+   TOV diff               -0.92      -3.33 ***      +3.1 pp         22%
+   REB diff               +1.80      +1.67 ***      +3.0 pp         21%
    ────────────────  ──────────  ────────────  ─────────────  ──────────
-   Unexplained                                       +0.9 pp          6%
+   Unexplained                                       +0.9 pp          7%
 
    Trend decomposition  (pp of home win % per year):
-   Total trend (home_win ~ year): -0.208 pp/yr  (p = <0.001  ***)
+   Total trend (home_win ~ year): -0.225 pp/yr  (p = <0.001  ***)
 
    Channel           Trend in diff/yr     Contribution  % of trend
    ────────────────  ────────────────  ───────────────  ──────────
-   eFG% diff (pp)         -0.0058        -0.0184 pp/yr          9%
-   Foul diff              +0.0196 **     -0.0380 pp/yr         18%
-   TOV diff               +0.0073        -0.0244 pp/yr         12%
-   REB diff               -0.0330 *      -0.0557 pp/yr         27%
+   eFG% diff (pp)         -0.0087        -0.0278 pp/yr         12%
+   Foul diff              +0.0204 **     -0.0396 pp/yr         18%
+   TOV diff               +0.0066        -0.0218 pp/yr         10%
+   REB diff               -0.0374 **     -0.0622 pp/yr         28%
    ────────────────  ────────────────  ───────────────  ──────────
-   Sum, channels                         -0.1365 pp/yr         65%
-   Unmediated                            -0.0720 pp/yr         35%
+   Sum, channels                         -0.1514 pp/yr         67%
+   Unmediated                            -0.0734 pp/yr         33%
 
-   ► Playoffs: channels carry 94% of the HCA level and 65% of its decline.
+   ► Playoffs: channels carry 93% of the HCA level and 67% of its decline.
    ► Note: playoff differentials fold in the seed-quality gap (the
      home team is usually the better team) — see the seeding
      decomposition for that control.
@@ -221,24 +221,24 @@ All data from cache/ — same source as the plots above.
    game's 3PA rate. A trend that survives the control is an independent
    driver; one that collapses faded with the move to the perimeter.
 
-   Regular season  (N = 47,879 games)
+   Regular season  (N = 49,104 games)
    Channel              Trend/yr    Trend/yr | 3PA   Absorbed
    ────────────────  ───────────  ────────────────  ─────────
-   eFG% diff (pp)      -0.0148***         +0.0176*        219%
-   Foul diff           +0.0225***         +0.0119**        47%
-   TOV diff            +0.0199***         +0.0095*         52%
-   REB diff            -0.0421***         -0.0376***        11%
+   eFG% diff (pp)      -0.0151***         +0.0166*        210%
+   Foul diff           +0.0222***         +0.0108**        51%
+   TOV diff            +0.0193***         +0.0088*         54%
+   REB diff            -0.0443***         -0.0408***         8%
 
    ► Survives the 3PA control: TOV diff, REB diff — not fully
      explained by the shooting revolution.
 
-   Playoffs  (N = 3,207 games)
+   Playoffs  (N = 3,292 games)
    Channel              Trend/yr    Trend/yr | 3PA   Absorbed
    ────────────────  ───────────  ────────────────  ─────────
-   eFG% diff (pp)      -0.0058           +0.0058         200%
-   Foul diff           +0.0196**         +0.0015          92%
-   TOV diff            +0.0073           -0.0038         153%
-   REB diff            -0.0330*          -0.0548*        -66%
+   eFG% diff (pp)      -0.0087           +0.0105         220%
+   Foul diff           +0.0204**         +0.0025          88%
+   TOV diff            +0.0066           -0.0061         194%
+   REB diff            -0.0374**         -0.0531*        -42%
 
    ► Survives the 3PA control: REB diff — not fully
      explained by the shooting revolution.
@@ -249,15 +249,15 @@ All data from cache/ — same source as the plots above.
    team more rested (rest_diff > 0). Games without a prior game to
    compute rest from are excluded.
 
-   Regular season  (N = 47,215, baseline home win % = 60.3%)
+   Regular season  (N = 48,424, baseline home win % = 60.1%)
 
    Bucket             N games   Home win %   vs. baseline
    ────────────────  ────────  ───────────  ─────────────
-   Away more rest       8,473        57.7%          -2.5 pp
-   Equal rest          22,804        59.3%          -0.9 pp
-   Home more rest      15,938        62.9%          +2.7 pp
+   Away more rest       8,736        57.6%          -2.6 pp
+   Equal rest          23,453        59.3%          -0.9 pp
+   Home more rest      16,235        62.8%          +2.7 pp
 
-   Chi-square (H0: home win % equal across buckets): χ²(2) = 78.00,  p = <0.001  ***
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 79.22,  p = <0.001  ***
 
    Rest effect by era (bivariate logistic within each era):
    Era                 N   log-odds/day   ≈pp/day         p     
@@ -267,20 +267,20 @@ All data from cache/ — same source as the plots above.
    2002–04         3,516         +0.044      +1.1     0.135     
    2005–17        15,520         +0.054      +1.3    <0.001  ***
    2018–22         5,749         +0.065      +1.6     0.012    *
-   2023–25         3,638         +0.124      +3.0    <0.001  ***
+   2023–26         4,847         +0.113      +2.8    <0.001  ***
 
-   Rest × era interaction (LR test): χ²(5) = 4.85,  p = 0.434  
+   Rest × era interaction (LR test): χ²(5) = 4.54,  p = 0.474  
    ► no evidence the rest effect changed across eras.
 
-   Playoffs  (N = 2,879, baseline home win % = 63.0%)
+   Playoffs  (N = 2,956, baseline home win % = 62.8%)
 
    Bucket             N games   Home win %   vs. baseline
    ────────────────  ────────  ───────────  ─────────────
-   Away more rest          98        68.4%          +5.3 pp
-   Equal rest           2,642        62.2%          -0.9 pp
-   Home more rest         139        75.5%         +12.5 pp
+   Away more rest          99        67.7%          +4.9 pp
+   Equal rest           2,713        61.9%          -0.8 pp
+   Home more rest         144        75.0%         +12.2 pp
 
-   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.34,  p = 0.003  **
+   Chi-square (H0: home win % equal across buckets): χ²(2) = 11.06,  p = 0.004  **
 
    Rest effect by era (bivariate logistic within each era):
    Era                 N   log-odds/day   ≈pp/day         p     
@@ -290,43 +290,43 @@ All data from cache/ — same source as the plots above.
    2002–04           217         +0.136      +3.2     0.365     
    2005–17           986         +0.118      +2.7     0.080     
    2018–22           304         -0.038      -0.9     0.792     
-   2023–25           226         +0.115      +2.8     0.404     
+   2023–26           303         +0.147      +3.6     0.209     
 
-   Rest × era interaction (LR test): χ²(5) = 2.67,  p = 0.750  
+   Rest × era interaction (LR test): χ²(5) = 2.82,  p = 0.727  
    ► no evidence the rest effect changed across eras.
 
 
 ─── REST, ALTITUDE, AND TIME ZONE — DO THEY MATTER? ────────────────────
    Bivariate logistic regression — each factor tested independently.
-   N regular season: 47,215   N playoffs: 2,879
+   N regular season: 48,424   N playoffs: 2,956
 
    Factor                           ── Regular season ──         ──── Playoffs ────    
                                  log-odds    ≈pp         p       log-odds    ≈pp         p     
    ────────────────────────────  ────────  ─────  ────────  ───  ────────  ─────  ────────  ───
-   Rest diff (per day)             +0.064   +1.5    <0.001  ***    +0.098   +2.3     0.014    *
-                    95% CI (pp)            [+1.1,+1.9]                           [+0.5,+4.1]
-   Altitude home (DEN/UTA)         +0.343   +8.2    <0.001  ***    -0.077   -1.8     0.591     
-                    95% CI (pp)            [+6.4,+10.0]                           [-8.4,+4.8]
-   Time zone diff (per zone)       -0.016   -0.4     0.085         +0.050   +1.2     0.278     
-                    95% CI (pp)            [-0.8,+0.1]                           [-0.9,+3.3]
+   Rest diff (per day)             +0.065   +1.6    <0.001  ***    +0.101   +2.4     0.010   **
+                    95% CI (pp)            [+1.2,+2.0]                           [+0.6,+4.2]
+   Altitude home (DEN/UTA)         +0.329   +7.9    <0.001  ***    -0.069   -1.6     0.633     
+                    95% CI (pp)            [+6.1,+9.7]                           [-8.2,+5.0]
+   Time zone diff (per zone)       -0.016   -0.4     0.086         +0.045   +1.0     0.330     
+                    95% CI (pp)            [-0.8,+0.1]                           [-1.1,+3.1]
 
-   ► Rest matters in both contexts — +1.5 pp/day regular
-     season, +2.3 pp/day playoffs (larger in playoffs).
-   ► Altitude home advantage is real in the regular season (+8.2 pp)
+   ► Rest matters in both contexts — +1.6 pp/day regular
+     season, +2.4 pp/day playoffs (larger in playoffs).
+   ► Altitude home advantage is real in the regular season (+7.9 pp)
      but absent in playoffs — Denver/Utah team strength is a confound.
    ► Time zones show no significant effect in either context.
-     Only 107 coast-to-coast playoff games exist across 42 seasons
-     (5,676 regular-season) — too sparse for reliable playoff inference.
+     Only 107 coast-to-coast playoff games exist across 43 seasons
+     (5,806 regular-season) — too sparse for reliable playoff inference.
 
-   Playoff rest controlling for team quality (N = 2,879 games):
+   Playoff rest controlling for team quality (N = 2,956 games):
    quality_diff = home RS win% − away RS win% (same season).
    Predictor                     log-odds     ≈pp         p     
    ────────────────────────────  ────────  ──────  ────────  ───
-   rest_diff (per day)             +0.063    +1.5     0.146     
-   quality_diff (RS win% gap)      +4.823  +112.4    <0.001  ***
+   rest_diff (per day)             +0.068    +1.6     0.113     
+   quality_diff (RS win% gap)      +4.778  +111.7    <0.001  ***
 
-─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 47,215 games) ──────
-   Outcome: home_win. Baseline home win %: 60.3%.
+─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 48,424 games) ──────
+   Outcome: home_win. Baseline home win %: 60.1%.
    McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
    the ΔR² column shows how much each block adds over the previous model.
    '≈pp' = approximate marginal effect in percentage points (at mean p).
@@ -334,9 +334,9 @@ All data from cache/ — same source as the plots above.
 
    Model                                R²       ΔR²   % of fit
    ──────────────────────────────  ───────  ────────  ─────────
-   Era only                         0.0028   +0.0028      55.8%
-   + Rest differential              0.0036   +0.0008      16.3%
-   + Altitude (DEN/UTA)             0.0049   +0.0012      24.9%
+   Era only                         0.0029   +0.0029      57.9%
+   + Rest differential              0.0037   +0.0008      16.3%
+   + Altitude (DEN/UTA)             0.0049   +0.0011      22.9%
    + Time zone diff                 0.0050   +0.0001       2.0%
    + COVID flag                     0.0050   +0.0000       1.0%
 
@@ -344,32 +344,32 @@ All data from cache/ — same source as the plots above.
 
    Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
    ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
-   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.2]    <0.001  ***
-   era: 2002–04                                    -0.167    -4.0  [ -6.3, -1.6]    <0.001  ***
+   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.3]    <0.001  ***
+   era: 2002–04                                    -0.167    -4.0  [ -6.4, -1.6]    <0.001  ***
    era: 2005–17                                    -0.230    -5.5  [ -7.1, -3.9]    <0.001  ***
-   era: 2018–22                                    -0.318    -7.6  [-10.3, -4.9]    <0.001  ***
-   era: 2023–25                                    -0.372    -8.9  [-11.2, -6.6]    <0.001  ***
-   rest diff (per day)                             +0.061    +1.5  [ +1.1, +1.9]    <0.001  ***
-   altitude home (DEN/UTA)                         +0.340    +8.2  [ +4.8,+11.5]    <0.001  ***
-   time zone diff (per zone)                       -0.023    -0.6  [ -1.0, -0.2]     0.005   **
+   era: 2018–22                                    -0.318    -7.6  [-10.4, -4.9]    <0.001  ***
+   era: 2023–26                                    -0.375    -9.0  [-11.0, -7.0]    <0.001  ***
+   rest diff (per day)                             +0.062    +1.5  [ +1.1, +1.9]    <0.001  ***
+   altitude home (DEN/UTA)                         +0.326    +7.8  [ +4.5,+11.2]    <0.001  ***
+   time zone diff (per zone)                       -0.023    -0.6  [ -0.9, -0.2]     0.005   **
    COVID seasons                                   -0.097    -2.3  [ -4.6, -0.1]     0.045    *
 
-   ► Era dummies imply a net decline of -8.9 pp from 1984–94 → 2023–25.
+   ► Era dummies imply a net decline of -9.0 pp from 1984–94 → 2023–26.
 
-   Shapley R² decomposition  (2⁵ = 32 logits, same N = 47,215 games):
+   Shapley R² decomposition  (2⁵ = 32 logits, same N = 48,424 games):
    Each block's average marginal R² over all 5! orderings.
    Compare to sequential (order-dependent, era entered first).
 
    Block                          Shapley   Sequential
    ────────────────────────────  ────────  ───────────
-   Era (structural decline)         50.3%        55.8%
-   Rest differential                17.6%        16.3%
-   Altitude (DEN/UTA)               25.7%        24.9%
-   Time zone diff                    1.5%         2.0%
-   COVID flag                        4.8%         1.0%
+   Era (structural decline)         52.6%        57.9%
+   Rest differential                17.9%        16.3%
+   Altitude (DEN/UTA)               23.7%        22.9%
+   Time zone diff                    1.4%         2.0%
+   COVID flag                        4.5%         1.0%
 
-   ► Era Shapley share: 50%  (sequential: 56% — sequential inflated because era is entered first).
-   ► Rest + altitude + tz + COVID (Shapley): 50%.
+   ► Era Shapley share: 53%  (sequential: 58% — sequential inflated because era is entered first).
+   ► Rest + altitude + tz + COVID (Shapley): 47%.
 
 ─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
    Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
@@ -378,14 +378,14 @@ All data from cache/ — same source as the plots above.
    Predictor                              Pre-2014   Post-2014     Shift
                                           log-odds    log-odds          
    ───────────────────────────────────  ──────────  ──────────  ────────
-   rest diff (per day)                      +0.053      +0.081    +0.027
-   altitude home (DEN/UTA)                  +0.389      +0.245    -0.144
-   time zone diff (per zone)                -0.022      -0.026    -0.003
+   rest diff (per day)                      +0.053      +0.081    +0.028
+   altitude home (DEN/UTA)                  +0.389      +0.209    -0.180
+   time zone diff (per zone)                -0.022      -0.024    -0.002
    ───────────────────────────────────  ──────────  ──────────  ────────
-   Intercept (overall home adv. level)      +0.463      +0.270    -0.193
+   Intercept (overall home adv. level)      +0.463      +0.267    -0.196
 
    N pre-2014:  32,975 games  (home win %: 61.8%)
-   N post-2014: 14,240 games  (home win %: 56.7%)
+   N post-2014: 15,449 games  (home win %: 56.6%)
 
    ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
    ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
@@ -395,72 +395,72 @@ All data from cache/ — same source as the plots above.
 
    Interaction term                log-odds     ≈pp         p     
    ──────────────────────────────  ────────  ──────  ────────  ───
-   rest_diff × post2014              +0.027    +0.7     0.154     
-   altitude_home × post2014          -0.144    -3.5     0.083     
-   tz_diff × post2014                -0.003    -0.1     0.865     
+   rest_diff × post2014              +0.028    +0.7     0.142     
+   altitude_home × post2014          -0.180    -4.3     0.026    *
+   tz_diff × post2014                -0.002    -0.0     0.917     
    ──────────────────────────────  ────────  ──────  ────────  ───
-   post2014 (level shift)            -0.193    -4.6    <0.001  ***
+   post2014 (level shift)            -0.196    -4.7    <0.001  ***
 
 ─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
    foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
    Officials with <50 playoff games excluded.
    t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
 
-   42 officials with ≥50 playoff games
-   41/42 (98%) show negative mean foul diff (home-favoring)
-   Individually significant (p<0.05, real t-test):    29/42
-   Survive Benjamini-Hochberg correction (FDR 5%):    29/42
-   League mean foul_diff across officials: -1.195 fouls/game
+   47 officials with ≥50 playoff games
+   45/47 (96%) show negative mean foul diff (home-favoring)
+   Individually significant (p<0.05, real t-test):    29/47
+   Survive Benjamini-Hochberg correction (FDR 5%):    29/47
+   League mean foul_diff across officials: -1.098 fouls/game
 
    Variance decomposition (career level, method of moments):
-   Observed SD across officials: 0.621 fouls/game
-   Mean within-official SE:      0.495 fouls/game
-   Estimated true between-SD:    0.376 fouls/game
-   ► Sampling noise explains 63% of observed spread.
+   Observed SD across officials: 0.645 fouls/game
+   Mean within-official SE:      0.500 fouls/game
+   Estimated true between-SD:    0.407 fouls/game
+   ► Sampling noise explains 60% of observed spread.
 
    Top 10 most home-favoring (by shrunken mean foul_diff):
    Official                     N games  Raw diff  Shrunken         p      BH-p
    ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Ron Garretson                    143    -2.385    -1.736    <0.001    <0.001
-   Joe Crawford                     160    -2.288    -1.720    <0.001    <0.001
-   Eddie Rush                       100    -2.530    -1.673    <0.001    <0.001
-   Rodney Mott                       69    -2.232    -1.525    <0.001    <0.001
-   James Capers                     186    -1.823    -1.512    <0.001    <0.001
-   Bob Delaney                       80    -2.175    -1.450    <0.001     0.003
-   Sean Wright                       98    -1.796    -1.425    <0.001     0.002
-   Eric Lewis                        79    -1.759    -1.404    <0.001     0.003
-   Sean Corbin                       97    -1.619    -1.358    <0.001     0.003
-   Marc Davis                       203    -1.468    -1.340    <0.001    <0.001
+   Ron Garretson                    143    -2.385    -1.734    <0.001    <0.001
+   Joe Crawford                     160    -2.288    -1.717    <0.001    <0.001
+   Eddie Rush                       100    -2.530    -1.664    <0.001    <0.001
+   Rodney Mott                       69    -2.232    -1.499    <0.001     0.001
+   James Capers                     199    -1.764    -1.478    <0.001    <0.001
+   Bob Delaney                       80    -2.175    -1.412    <0.001     0.004
+   Eric Lewis                        79    -1.759    -1.368    <0.001     0.003
+   Sean Wright                      108    -1.639    -1.344    <0.001     0.002
+   David Jones                       51    -1.843    -1.274     0.015     0.026
+   Bill Spooner                     111    -1.495    -1.258     0.003     0.009
 
    Bottom 10 least home-favoring (by shrunken mean foul_diff):
    Official                     N games  Raw diff  Shrunken         p      BH-p
    ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Scott Foster                     241    -0.963    -1.053     0.002     0.004
-   Zach Zarba                       161    -0.932    -1.048     0.006     0.013
-   Monty McCutchen                  160    -0.863    -1.017     0.014     0.024
-   Kane Fitzgerald                   58    -0.500    -1.003     0.414     0.446
-   Jason Phillips                    96    -0.615    -0.938     0.148     0.183
-   Courtney Kirkland                 76    -0.316    -0.924     0.576     0.590
-   Tony Brothers                    198    -0.626    -0.886     0.070     0.099
-   David Guthrie                    113    -0.398    -0.859     0.367     0.405
-   Joe Forte                         51    +0.451    -0.833     0.527     0.553
-   Josh Tiven                        89    -0.112    -0.812     0.825     0.825
+   Tyler Ford                        61    -0.344    -0.889     0.602     0.629
+   Jason Phillips                    96    -0.615    -0.865     0.148     0.205
+   Kevin Scott                       57    -0.351    -0.836     0.529     0.579
+   Courtney Kirkland                 85    -0.353    -0.817     0.501     0.575
+   Mark Lindsay                      54    -0.111    -0.799     0.858     0.858
+   David Guthrie                    113    -0.398    -0.775     0.367     0.442
+   Tony Brothers                    213    -0.559    -0.773     0.092     0.143
+   Josh Tiven                       103    -0.252    -0.731     0.588     0.629
+   Ben Taylor                        53    +0.151    -0.715     0.806     0.824
+   Joe Forte                         51    +0.451    -0.713     0.527     0.579
 
    Era variance decomposition — does official spread compress over time?
    Era            N off     Mean    Raw SD   True SD   Noise %
    ──────────── ─────── ──────── ───────── ───────── ─────────
    1995–01           14   -2.239     2.076     0.000      100%
    2002–04           27   -0.781     1.813     0.722       84%
-   2005–17           42   -1.237     0.986     0.622       60%
-   2018–22           28   -0.912     0.930     0.000      100%
-   2023–25           20   -0.792     0.903     0.000      100%
+   2005–17           43   -1.232     0.975     0.477       76%
+   2018–22           33   -0.737     1.056     0.469       80%
+   2023–26           25   -0.753     0.702     0.000      100%
 
 
 ─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
    Positive = home team takes a higher share of FGA from that zone.
    Trend = slope of trend line (change per season year). Data from 1996–97 onward.
 
-   Regular season  (N = 29 seasons)
+   Regular season  (N = 30 seasons)
 
    Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
    ────────────────────────────────────────────────────────────────────────────────────
@@ -468,11 +468,11 @@ All data from cache/ — same source as the plots above.
    2002–04                  +1.18             -1.24             +0.29             -0.23
    2005–17                  +1.26             -1.19             +0.12             -0.19
    2018–22                  +0.55             -0.77             +0.18             +0.04
-   2023–25                  +0.37             -0.77             +0.20             +0.21
+   2023–26                  +0.24             -0.72             +0.21             +0.26
    ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.037***         +0.024***         -0.000            +0.013  *
+   Trend/yr             -0.041***         +0.025***         +0.000            +0.015 **
 
-   Playoffs  (N = 28 seasons)
+   Playoffs  (N = 29 seasons)
 
    Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
    ────────────────────────────────────────────────────────────────────────────────────
@@ -480,18 +480,18 @@ All data from cache/ — same source as the plots above.
    2002–04                  +2.08             -1.82             +0.10             -0.36
    2005–17                  +1.78             -1.50             +0.10             -0.39
    2018–22                  +0.72             -1.62             +0.48             +0.42
-   2023–25                  +1.58             -1.42             +0.26             -0.41
+   2023–26                  +1.35             -1.11             +0.10             -0.34
    ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.030            +0.007            -0.000            +0.024   
+   Trend/yr             -0.034            +0.016            -0.004            +0.022   
 
 
 ─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
    Does more 3-point shooting reduce home court advantage?
    Two angles: season-level correlation and game-level logistic regression.
 
-   Regular season  (n = 42 seasons)
-   Season-level Pearson r  = -0.898  (p = <0.001  ***)
-   Season-level Spearman ρ = -0.884  (p = <0.001  ***)
+   Regular season  (n = 43 seasons)
+   Season-level Pearson r  = -0.902  (p = <0.001  ***)
+   Season-level Spearman ρ = -0.890  (p = <0.001  ***)
 
    Era           Mean 3PA%    Home win%    n seasons
    ---------- ------------ ------------ ------------
@@ -500,22 +500,22 @@ All data from cache/ — same source as the plots above.
    2002–04            18.3%         61.1%            3
    2005–17            23.8%         59.5%           13
    2018–22            37.5%         56.2%            5
-   2023–25            40.1%         55.6%            3
+   2023–26            40.5%         55.6%            4
 
-   Game-level bivariate logistic  (N = 47,881 games)
-   coef = -0.0111 log-odds per pp of 3PA rate
-   ≈ -2.67 pp per 10 pp rise in 3PA rate  95% CI [-3.13, -2.20]
+   Game-level bivariate logistic  (N = 49,106 games)
+   coef = -0.0110 log-odds per pp of 3PA rate
+   ≈ -2.64 pp per 10 pp rise in 3PA rate  95% CI [-3.07, -2.20]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0096  (≈ -2.31 pp per 10 pp 3PA)  p = <0.001  ***
+   coef = -0.0095  (≈ -2.27 pp per 10 pp 3PA)  p = <0.001  ***
    (If this is small and insignificant, 3PA effect is fully explained
     by the secular trend — higher 3PA and lower HCA happen at the same
     time but 3PA does not predict outcomes within any given era.)
 
-   Playoffs  (n = 41 seasons)
-   Season-level Pearson r  = -0.468  (p = 0.002  **)
-   Season-level Spearman ρ = -0.390  (p = 0.012  *)
+   Playoffs  (n = 42 seasons)
+   Season-level Pearson r  = -0.499  (p = <0.001  ***)
+   Season-level Spearman ρ = -0.422  (p = 0.005  **)
 
    Era           Mean 3PA%    Home win%    n seasons
    ---------- ------------ ------------ ------------
@@ -524,15 +524,15 @@ All data from cache/ — same source as the plots above.
    2002–04            20.8%         64.2%            3
    2005–17            25.8%         64.3%           13
    2018–22            38.6%         60.8%            4
-   2023–25            40.0%         58.4%            3
+   2023–26            40.1%         57.6%            4
 
-   Game-level bivariate logistic  (N = 3,207 games)
-   coef = -0.0112 log-odds per pp of 3PA rate
-   ≈ -2.57 pp per 10 pp rise in 3PA rate  95% CI [-3.68, -1.45]
+   Game-level bivariate logistic  (N = 3,292 games)
+   coef = -0.0123 log-odds per pp of 3PA rate
+   ≈ -2.84 pp per 10 pp rise in 3PA rate  95% CI [-4.01, -1.66]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0111  (≈ -2.54 pp per 10 pp 3PA)  p = 0.054  
+   coef = -0.0136  (≈ -3.12 pp per 10 pp 3PA)  p = 0.027  *
    (If this is small and insignificant, 3PA effect is fully explained
     by the secular trend — higher 3PA and lower HCA happen at the same
     time but 3PA does not predict outcomes within any given era.)
@@ -544,7 +544,7 @@ All data from cache/ — same source as the plots above.
    LR test: do era dummies jointly add explanatory power beyond the year trend?
    (If not, the decline is a smooth drift; if yes, specific rules caused jumps.)
 
-   Regular season  (N = 47,882 games)
+   Regular season  (N = 49,107 games)
 
    Era            N games   Home win %
    ────────────  ────────  ───────────
@@ -553,34 +553,34 @@ All data from cache/ — same source as the plots above.
    2002–04          3,567        61.1%
    2005–17         15,749        59.5%
    2018–22          5,829        56.3%
-   2023–25          3,685        55.6%
+   2023–26          4,910        55.6%
 
    Consecutive eras — two-proportion z-tests:
     1984–94 → 1995–01    -4.9 pp   (z = +6.95, p = <0.001  ***)
     1995–01 → 2002–04    +1.2 pp   (z = -1.21, p = 0.227  )
     2002–04 → 2005–17    -1.6 pp   (z = +1.79, p = 0.074  )
     2005–17 → 2018–22    -3.2 pp   (z = +4.24, p = <0.001  ***)
-    2018–22 → 2023–25    -0.7 pp   (z = +0.65, p = 0.513  )
+    2018–22 → 2023–26    -0.7 pp   (z = +0.76, p = 0.449  )
 
    Trend-controlled logistic: home_win ~ year + C(era)
    (reference era = 1984–94)
 
    Predictor                     log-odds     ≈pp         p     
    ────────────────────────────  ────────  ──────  ────────  ───
-   era: 1995–01                    -0.108    -2.6     0.010    *
-   era: 2002–04                    +0.002    +0.0     0.973     
-   era: 2005–17                    +0.029    +0.7     0.705     
-   era: 2018–22                    +0.004    +0.1     0.971     
-   era: 2023–25                    +0.024    +0.6     0.844     
+   era: 1995–01                    -0.108    -2.6     0.010   **
+   era: 2002–04                    +0.001    +0.0     0.988     
+   era: 2005–17                    +0.027    +0.6     0.722     
+   era: 2018–22                    +0.001    +0.0     0.990     
+   era: 2023–26                    +0.025    +0.6     0.836     
    year trend (per yr)             -0.012    -0.3    <0.001  ***
 
-   LR test — era dummies jointly vs. year-only model: χ²(5) = 20.70,  p = <0.001  ***
+   LR test — era dummies jointly vs. year-only model: χ²(5) = 20.68,  p = <0.001  ***
 
    ► Era dummies are jointly significant beyond the year trend —
      specific rule-change periods show a level shift above or below
      what the underlying trend alone would predict.
 
-   Playoffs  (N = 3,207 games)
+   Playoffs  (N = 3,292 games)
 
    Era            N games   Home win %
    ────────────  ────────  ───────────
@@ -589,31 +589,31 @@ All data from cache/ — same source as the plots above.
    2002–04            241        64.3%
    2005–17          1,090        64.3%
    2018–22            336        60.7%
-   2023–25            250        58.4%
+   2023–26            335        57.6%
 
    Consecutive eras — two-proportion z-tests:
     1984–94 → 1995–01    -3.8 pp   (z = +1.40, p = 0.163  )
     1995–01 → 2002–04    +0.2 pp   (z = -0.05, p = 0.957  )
     2002–04 → 2005–17    -0.0 pp   (z = +0.00, p = 0.999  )
     2005–17 → 2018–22    -3.6 pp   (z = +1.20, p = 0.231  )
-    2018–22 → 2023–25    -2.3 pp   (z = +0.56, p = 0.572  )
+    2018–22 → 2023–26    -3.1 pp   (z = +0.82, p = 0.414  )
 
    Trend-controlled logistic: home_win ~ year + C(era)
    (reference era = 1984–94)
 
    Predictor                     log-odds     ≈pp         p     
    ────────────────────────────  ────────  ──────  ────────  ───
-   era: 1995–01                    -0.095    -2.2     0.570     
-   era: 2002–04                    -0.045    -1.0     0.850     
-   era: 2005–17                    +0.020    +0.5     0.947     
-   era: 2018–22                    -0.060    -1.4     0.887     
-   era: 2023–25                    -0.124    -2.8     0.794     
-   year trend (per yr)             -0.008    -0.2     0.526     
+   era: 1995–01                    -0.090    -2.1     0.589     
+   era: 2002–04                    -0.037    -0.9     0.876     
+   era: 2005–17                    +0.032    +0.7     0.914     
+   era: 2018–22                    -0.042    -1.0     0.920     
+   era: 2023–26                    -0.132    -3.0     0.781     
+   year trend (per yr)             -0.009    -0.2     0.496     
 
-   LR test — era dummies jointly vs. year-only model: χ²(5) = 1.78,  p = 0.879  
+   LR test — era dummies jointly vs. year-only model: χ²(5) = 2.24,  p = 0.815  
 
    ► Era dummies do not add significant explanatory power beyond
-     the year trend (p = 0.879) — the decline is well-described
+     the year trend (p = 0.815) — the decline is well-described
      as a continuous drift without discrete era-level jumps.
 
 
@@ -621,36 +621,36 @@ All data from cache/ — same source as the plots above.
    Distance = haversine miles from away team's home arena to game arena.
    Does longer travel reduce the visiting team's winning odds?
 
-   Regular season  (N = 47,882, baseline home win % = 60.3%)
+   Regular season  (N = 49,107, baseline home win % = 60.1%)
 
          Bucket         N   Home win %   vs. baseline
    ────────────  ────────  ───────────  ─────────────
-          0–500    10,957        60.5%          +0.3 pp
-       500–1000    15,300        61.0%          +0.8 pp
-      1000–1500     9,615        59.4%          -0.9 pp
-          1500+    12,010        59.7%          -0.6 pp
+          0–500    11,238        60.4%          +0.2 pp
+       500–1000    15,696        60.9%          +0.8 pp
+      1000–1500     9,873        59.2%          -0.9 pp
+          1500+    12,300        59.6%          -0.5 pp
 
-   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.08 pp per 100 mi,  95% CI [-0.14, -0.02]),  p = 0.010  *
+   Bivariate logistic: coef = -0.00003 log-odds/mi  (≈-0.07 pp per 100 mi,  95% CI [-0.13, -0.02]),  p = 0.010  *
 
-   Playoffs  (N = 3,207, baseline home win % = 64.3%)
+   Playoffs  (N = 3,292, baseline home win % = 64.1%)
 
          Bucket         N   Home win %   vs. baseline
    ────────────  ────────  ───────────  ─────────────
-          0–500       887        62.5%          -1.9 pp
-       500–1000     1,227        65.9%          +1.5 pp
-      1000–1500       717        63.7%          -0.6 pp
-          1500+       376        64.9%          +0.6 pp
+          0–500       923        62.3%          -1.8 pp
+       500–1000     1,250        65.8%          +1.7 pp
+      1000–1500       733        63.4%          -0.7 pp
+          1500+       386        64.0%          -0.1 pp
 
-   Bivariate logistic: coef = +0.00002 log-odds/mi  (≈+0.05 pp per 100 mi,  95% CI [-0.20, +0.30]),  p = 0.708  
+   Bivariate logistic: coef = +0.00001 log-odds/mi  (≈+0.02 pp per 100 mi,  95% CI [-0.23, +0.27]),  p = 0.888  
 
 
 ─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
    Does faster-paced play (more possessions per game) reduce home court advantage?
    Season-level correlation plus game-level logistic regression.
 
-   Regular season  (n = 42 seasons)
-   Season-level Pearson r  = +0.280  (p = 0.072  )
-   Season-level Spearman ρ = +0.154  (p = 0.331  )
+   Regular season  (n = 43 seasons)
+   Season-level Pearson r  = +0.241  (p = 0.120  )
+   Season-level Spearman ρ = +0.116  (p = 0.458  )
 
    Era           Mean pace    Home win%    n seasons
    ---------- ------------ ------------ ------------
@@ -659,23 +659,23 @@ All data from cache/ — same source as the plots above.
    2002–04            93.2          61.1%            3
    2005–17            95.3          59.5%           13
    2018–22           101.4          56.2%            5
-   2023–25           101.2          55.6%            3
+   2023–26           101.4          55.6%            4
 
-   Game-level bivariate logistic  (N = 47,879 games)
-   coef = +0.0099 log-odds per possession
-   ≈ +2.37 pp per 10 extra possessions  95% CI [+1.17, +3.57]
+   Game-level bivariate logistic  (N = 49,104 games)
+   coef = +0.0095 log-odds per possession
+   ≈ +2.28 pp per 10 extra possessions  95% CI [+1.10, +3.47]
    p = <0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = +0.0106  (≈ +2.54 pp per 10 possessions)  p = <0.001  ***
+   coef = +0.0107  (≈ +2.57 pp per 10 possessions)  p = <0.001  ***
 
-   Expected pace (LOO)  (N = 47,641 games)
-   Bivariate: coef = +0.0077  (≈ +1.84 pp per 10 poss)  p = 0.148  
-   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.065  
+   Expected pace (LOO)  (N = 48,866 games)
+   Bivariate: coef = +0.0064  (≈ +1.54 pp per 10 poss)  p = 0.227  
+   Within-era: coef = +0.0086  (≈ +2.06 pp per 10 poss)  p = 0.063  
 
-   Playoffs  (n = 41 seasons)
-   Season-level Pearson r  = -0.115  (p = 0.474  )
-   Season-level Spearman ρ = -0.235  (p = 0.140  )
+   Playoffs  (n = 42 seasons)
+   Season-level Pearson r  = -0.142  (p = 0.370  )
+   Season-level Spearman ρ = -0.257  (p = 0.100  )
 
    Era           Mean pace    Home win%    n seasons
    ---------- ------------ ------------ ------------
@@ -684,32 +684,32 @@ All data from cache/ — same source as the plots above.
    2002–04            92.5          64.2%            3
    2005–17            92.8          64.3%           13
    2018–22            98.4          60.8%            4
-   2023–25            97.1          58.4%            3
+   2023–26            97.4          57.6%            4
 
-   Game-level bivariate logistic  (N = 3,207 games)
-   coef = -0.0038 log-odds per possession
-   ≈ -0.87 pp per 10 extra possessions  95% CI [-2.91, +1.17]
-   p = 0.402  
+   Game-level bivariate logistic  (N = 3,292 games)
+   coef = -0.0041 log-odds per possession
+   ≈ -0.94 pp per 10 extra possessions  95% CI [-2.97, +1.09]
+   p = 0.363  
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0058  (≈ -1.33 pp per 10 possessions)  p = 0.251  
+   coef = -0.0053  (≈ -1.23 pp per 10 possessions)  p = 0.285  
 
-   Expected pace (LOO)  (N = 3,207 games)
-   Bivariate: coef = -0.0050  (≈ -1.14 pp per 10 poss)  p = 0.426  
-   Within-era: coef = -0.0111  (≈ -2.55 pp per 10 poss)  p = 0.112  
+   Expected pace (LOO)  (N = 3,292 games)
+   Bivariate: coef = -0.0056  (≈ -1.29 pp per 10 poss)  p = 0.367  
+   Within-era: coef = -0.0100  (≈ -2.31 pp per 10 poss)  p = 0.154  
 
 
 ─── COMPETITIVE BALANCE AND HOME COURT ADVANTAGE ───────────────────────
    Hypothesis: more parity (lower team win% std dev) → lower home court advantage.
    Parity = std dev of all-team win percentages for the season.
 
-   N = 42 seasons
-   Pearson r  = -0.066  (p = 0.676  )
-   Spearman ρ = -0.020  (p = 0.899  )
+   N = 43 seasons
+   Pearson r  = -0.092  (p = 0.556  )
+   Spearman ρ = -0.051  (p = 0.743  )
 
    Trend line: home_win_pct ~ parity_std_dev
-   Slope: -15.093 pp per unit std dev  (p = 0.676  )
-   R² = 0.0044
+   Slope: -21.250 pp per unit std dev  (p = 0.556  )
+   R² = 0.0085
 
    Era-bucketed averages (disparity ↓ = more parity, home win % ↓ = less advantage):
 
@@ -720,7 +720,7 @@ All data from cache/ — same source as the plots above.
    2002–04               0.1393         61.1%
    2005–17               0.1559         59.5%
    2018–22               0.1461         56.2%
-   2023–25               0.1496         55.6%
+   2023–26               0.1544         55.6%
 
    ► Near-zero, non-significant correlation — parity (team win% disparity)
      does not independently predict home court advantage across seasons.
@@ -730,9 +730,9 @@ All data from cache/ — same source as the plots above.
 
    Detrended checks (both series share a downward trend — remove it first):
    First-differenced (Δparity vs. Δhome-win%):
-   Pearson r = -0.337  (p = 0.031  *)  N = 41 year-pairs
+   Pearson r = -0.330  (p = 0.033  *)  N = 42 year-pairs
    Residual-on-year (detrended parity vs. detrended home-win%):
-   Pearson r = -0.355  (p = 0.021  *)  N = 42 seasons
+   Pearson r = -0.345  (p = 0.023  *)  N = 43 seasons
 
    ► At least one detrended test is significant — some association
      remains after removing the common trend. Interpret with caution
@@ -743,13 +743,13 @@ All data from cache/ — same source as the plots above.
    Part A: does league attendance track home win % across seasons?
    Part B: 2020-21 dose-response — crowd size varied by local rule.
 
-   N = 26 seasons (avg crowd 4,600–18,384/game)
-   Pearson r  = +0.279  (p = 0.167  )
-   Spearman ρ = -0.465  (p = 0.017  *)
+   N = 27 seasons (avg crowd 4,600–18,384/game)
+   Pearson r  = +0.248  (p = 0.212  )
+   Spearman ρ = -0.492  (p = 0.009  **)
 
    Detrended (remove shared drift):
-   First-differenced  r = +0.074  (p = 0.726  )  N = 25 year-pairs
-   Residual-on-year   r = +0.331  (p = 0.099  )  N = 26 seasons
+   First-differenced  r = +0.073  (p = 0.724  )  N = 26 year-pairs
+   Residual-on-year   r = +0.331  (p = 0.091  )  N = 27 seasons
 
    ► Crowd *size* does not track home court advantage. Attendance has
      held near arena capacity for 25 years while HCA fell — the level is
@@ -767,44 +767,44 @@ All data from cache/ — same source as the plots above.
 
      Game   N games   Home win %    vs. G1
    ──────  ────────  ───────────  ────────
-       G1       494        69.2%         —
-       G2       497        72.0%   +2.8 pp
-       G3       494        55.7%  -13.6 pp
-       G4       486        55.3%  -13.9 pp
-       G5       412        74.8%   +5.5 pp
-       G6       312        55.8%  -13.5 pp
-       G7       183        64.5%   -4.7 pp
+       G1       509        69.4%         —
+       G2       512        71.9%   +2.5 pp
+       G3       509        55.0%  -14.3 pp
+       G4       501        55.3%  -14.1 pp
+       G5       423        74.5%   +5.1 pp
+       G6       321        55.5%  -13.9 pp
+       G7       188        63.8%   -5.5 pp
 
    Chi-square test (H0: home win % uniform across all game numbers):
-   χ²(6) = 80.40,  p = <0.001  ***
+   χ²(6) = 84.54,  p = <0.001  ***
 
-   Weighted trend line across game numbers: -0.99 pp/game  (p = 0.580  )
+   Weighted trend line across game numbers: -1.07 pp/game  (p = 0.553  )
    (Positive = home win % rises as the series goes deeper)
 
-   ► G7 home win % = 64.5%  (vs. G1 = 69.2%, diff = -4.7 pp)
-     G7 n = 183 games (series that went to 7)
+   ► G7 home win % = 63.8%  (vs. G1 = 69.4%, diff = -5.5 pp)
+     G7 n = 188 games (series that went to 7)
 
 ─── PLAYOFF HCA — SEEDING QUALITY DECOMPOSITION ────────────────────────
    Does the playoff HCA decline reflect true home-court weakening, or do
    better seeds simply fail to dominate lower seeds as they once did?
    quality_diff = home RS win% − away RS win% (same season).
-   N = 3,207 playoff games with complete quality data.
+   N = 3,292 playoff games with complete quality data.
 
    Model comparison — year trend before and after quality control:
 
    Model                            year (pp/yr)         p   McF. R²
    ──────────────────────────────  ─────────────  ────────  ────────
-   Year only                              -0.209     0.003    0.0021
-   Quality only                                —         —    0.0656
-   Year + quality_diff                    -0.210     0.005    0.0675
+   Year only                              -0.225    <0.001    0.0025
+   Quality only                                —         —    0.0649
+   Year + quality_diff                    -0.229     0.001    0.0673
 
-   quality_diff (bivariate):  +112.19 pp per unit  (p = <0.001  ***)
-   quality_diff (full model): +112.38 pp per unit  (p = <0.001  ***)
-   Year trend retained after quality control: 101%
-   Absorbed by quality_diff: -1%
+   quality_diff (bivariate):  +111.92 pp per unit  (p = <0.001  ***)
+   quality_diff (full model): +112.16 pp per unit  (p = <0.001  ***)
+   Year trend retained after quality control: 102%
+   Absorbed by quality_diff: -2%
 
    Has the seed-quality gap itself trended over time?
-   Trend in mean quality_diff per season: -0.00028 per yr  (p = <0.001  ***,  R² = 0.3678)
+   Trend in mean quality_diff per season: -0.00026 per yr  (p = <0.001  ***,  R² = 0.3569)
 
    Era breakdown — mean quality_diff and playoff home win %:
    Era                N   Mean quality_diff   Home win %
@@ -814,13 +814,13 @@ All data from cache/ — same source as the plots above.
    2002–04          241             +0.0076        64.3%
    2005–17        1,090             +0.0084        64.3%
    2018–22          336             +0.0090        60.7%
-   2023–25          250             +0.0110        58.4%
+   2023–26          335             +0.0108        57.6%
 
    Lower-seed-at-home check (G3+G4 where quality_diff < 0):
-   N = 797 games  Home win % = 51.8%
+   N = 827 games  Home win % = 51.5%
    ► Even when the objectively weaker team is at home, they win 52% — pure venue effect.
 
-   ► Quality control barely moves the year coefficient (101% retained) —
+   ► Quality control barely moves the year coefficient (102% retained) —
      the playoff decline is primarily genuine home-court weakening, not seed compression.
 
 ─── PLAYOFF FORMAT PERIODS — DID THE SCHEDULING CHANGES MATTER? ────────
@@ -833,27 +833,27 @@ All data from cache/ — same source as the plots above.
    1984              79        64.6%
    1985–02        1,282        66.1%
    2003–13          925        66.3%
-   2014–25          921        59.8%
+   2014–26        1,006        59.4%
 
    Consecutive periods — two-proportion z-tests:
        1984 → 1985–02    +1.6 pp   (z = -0.29, p = 0.772  )
     1985–02 → 2003–13    +0.1 pp   (z = -0.06, p = 0.952  )
-    2003–13 → 2014–25    -6.4 pp   (z = +2.87, p = 0.004  **)
+    2003–13 → 2014–26    -6.8 pp   (z = +3.10, p = 0.002  **)
 
    Trend-controlled logistic: home_win ~ year + format_period
    (reference period = 2003–13)
 
    Predictor                     log-odds     ≈pp         p     
    ────────────────────────────  ────────  ──────  ────────  ───
-   format: 1984                    -0.344    -7.9     0.291     
-   format: 1985–02                 -0.167    -3.8     0.290     
-   format: 2014–25                 -0.149    -3.4     0.290     
-   year trend (per yr)             -0.011    -0.3     0.210     
+   format: 1984                    -0.369    -8.5     0.251     
+   format: 1985–02                 -0.182    -4.2     0.239     
+   format: 2014–26                 -0.146    -3.4     0.298     
+   year trend (per yr)             -0.012    -0.3     0.157     
 
-   LR test — format dummies jointly vs. year-only model: χ²(3) = 4.25,  p = 0.235  
+   LR test — format dummies jointly vs. year-only model: χ²(3) = 4.68,  p = 0.197  
 
-   ► After controlling for the year trend, the 2014–25 dummy is not significant
-     (p = 0.290) — the post-2014 drop is consistent with the secular
+   ► After controlling for the year trend, the 2014–26 dummy is not significant
+     (p = 0.298) — the post-2014 drop is consistent with the secular
      decline passing through, not a distinct format-change effect.
 
 ─── FRANCHISE HOME COURT ADVANTAGE — HOME VS. ROAD WIN % ───────────────
@@ -866,50 +866,50 @@ All data from cache/ — same source as the plots above.
 
    Franchise                      n_h   home%     n_r   road%     HCA    CI ±  Shrunken
    ────────────────────────── ─────── ─────── ─────── ─────── ─────── ─────── ─────────
-   Denver Nuggets               1,689    64.6%   1,688    36.1%   +28.5 ±    3.2     +27.3 pp
-   Utah Jazz                    1,687    70.5%   1,689    43.6%   +26.8 ±    3.2     +25.9 pp
+   Denver Nuggets               1,730    64.7%   1,729    36.8%   +27.9 ±    3.2     +26.8 pp
+   Utah Jazz                    1,728    69.6%   1,730    43.1%   +26.6 ±    3.2     +25.7 pp
    Washington Bullets             574    54.2%     574    27.7%   +26.5 ±    5.5     +24.5 pp
    Seattle SuperSonics          1,009    67.0%   1,009    41.4%   +25.6 ±    4.2     +24.4 pp
-   Kansas City Kings               82    59.8%      82    24.4%   +35.4 ±   14.1     +23.9 pp
-   Indiana Pacers               1,687    63.7%   1,689    39.4%   +24.3 ±    3.3     +23.7 pp
+   Kansas City Kings               82    59.8%      82    24.4%   +35.4 ±   14.1     +23.8 pp
    New Jersey Nets              1,165    53.9%   1,165    29.7%   +24.2 ±    3.9     +23.4 pp
-   Atlanta Hawks                1,685    61.6%   1,686    37.8%   +23.8 ±    3.3     +23.3 pp
-   Cleveland Cavaliers          1,688    61.9%   1,681    38.3%   +23.6 ±    3.3     +23.1 pp
-   Portland Trail Blazers       1,688    65.9%   1,690    42.7%   +23.2 ±    3.3     +22.8 pp
+   Indiana Pacers               1,728    62.8%   1,730    38.9%   +23.9 ±    3.2     +23.4 pp
+   Atlanta Hawks                1,726    61.5%   1,727    38.2%   +23.3 ±    3.2     +22.8 pp
+   Cleveland Cavaliers          1,729    62.0%   1,722    38.9%   +23.2 ±    3.2     +22.8 pp
+   Portland Trail Blazers       1,729    65.8%   1,731    42.7%   +23.0 ±    3.2     +22.6 pp
    Los Angeles Clippers         1,247    50.2%   1,247    27.7%   +22.5 ±    3.7     +22.1 pp
-   Milwaukee Bucks              1,688    61.4%   1,689    39.5%   +21.9 ±    3.3     +21.7 pp
-   San Antonio Spurs            1,685    70.2%   1,690    48.4%   +21.8 ±    3.2     +21.6 pp
-   Sacramento Kings             1,605    53.8%   1,607    32.2%   +21.6 ±    3.3     +21.4 pp
+   Milwaukee Bucks              1,729    61.0%   1,730    39.3%   +21.7 ±    3.3     +21.5 pp
+   San Antonio Spurs            1,725    70.4%   1,732    49.0%   +21.5 ±    3.2     +21.3 pp
+   Sacramento Kings             1,646    53.4%   1,648    31.9%   +21.5 ±    3.3     +21.3 pp
    Charlotte Bobcats              402    47.5%     402    25.4%   +22.1 ±    6.5     +21.3 pp
-   Golden State Warriors        1,686    58.6%   1,683    37.3%   +21.3 ±    3.3     +21.1 pp
-   New Orleans/Oklahoma City       82    58.5%      82    35.4%   +23.2 ±   14.9     +20.9 pp
-   Phoenix Suns                 1,691    64.5%   1,686    43.7%   +20.9 ±    3.3     +20.8 pp
-   Houston Rockets              1,688    65.2%   1,688    44.8%   +20.3 ±    3.3     +20.3 pp
-   Orlando Magic                1,441    57.1%   1,444    36.9%   +20.2 ±    3.6     +20.2 pp
-   Detroit Pistons              1,684    60.0%   1,686    40.2%   +19.8 ±    3.3     +19.9 pp
-   New York Knicks              1,685    57.3%   1,685    38.2%   +19.1 ±    3.3     +19.3 pp
-   Chicago Bulls                1,686    61.4%   1,683    42.5%   +18.9 ±    3.3     +19.1 pp
-   Boston Celtics               1,687    66.4%   1,688    48.0%   +18.4 ±    3.3     +18.7 pp
-   Memphis Grizzlies              967    57.9%     966    39.9%   +18.1 ±    4.4     +18.6 pp
-   New Orleans Hornets            361    56.0%     361    38.8%   +17.2 ±    7.2     +18.5 pp
-   Washington Wizards           1,113    49.8%   1,115    32.1%   +17.7 ±    4.0     +18.2 pp
-   Miami Heat                   1,483    61.4%   1,484    43.6%   +17.8 ±    3.5     +18.2 pp
-   Los Angeles Lakers           1,688    68.4%   1,687    50.6%   +17.8 ±    3.3     +18.1 pp
-   Philadelphia 76ers           1,687    56.2%   1,690    38.9%   +17.3 ±    3.3     +17.7 pp
-   Dallas Mavericks             1,689    60.5%   1,690    43.4%   +17.1 ±    3.3     +17.5 pp
-   Charlotte Hornets              994    53.1%     997    37.3%   +15.8 ±    4.3     +16.8 pp
-   Minnesota Timberwolves       1,438    49.7%   1,438    33.5%   +16.1 ±    3.6     +16.8 pp
-   Vancouver Grizzlies            230    28.7%     230    15.2%   +13.5 ±    7.5     +16.6 pp
-   Toronto Raptors              1,196    54.8%   1,196    39.4%   +15.4 ±    4.0     +16.3 pp
-   New Orleans Pelicans           481    51.8%     483    38.1%   +13.7 ±    6.2     +16.1 pp
-   Oklahoma City Thunder          680    65.6%     678    51.2%   +14.4 ±    5.2     +16.1 pp
-   LA Clippers                    400    65.5%     400    53.8%   +11.8 ±    6.8     +15.3 pp
-   Brooklyn Nets                  523    49.9%     523    40.3%    +9.6 ±    6.0     +13.4 pp
+   Golden State Warriors        1,727    58.5%   1,724    37.2%   +21.2 ±    3.3     +21.0 pp
+   New Orleans/Oklahoma City       82    58.5%      82    35.4%   +23.2 ±   14.9     +20.7 pp
+   Phoenix Suns                 1,732    64.4%   1,727    43.8%   +20.7 ±    3.2     +20.6 pp
+   Houston Rockets              1,729    65.4%   1,729    45.1%   +20.3 ±    3.2     +20.3 pp
+   Orlando Magic                1,481    57.3%   1,486    37.2%   +20.0 ±    3.5     +20.0 pp
+   Detroit Pistons              1,724    60.4%   1,728    40.9%   +19.5 ±    3.3     +19.6 pp
+   New York Knicks              1,725    57.7%   1,727    38.6%   +19.1 ±    3.3     +19.2 pp
+   Chicago Bulls                1,727    61.0%   1,724    42.3%   +18.7 ±    3.3     +18.9 pp
+   Boston Celtics               1,728    66.6%   1,729    48.4%   +18.2 ±    3.2     +18.5 pp
+   New Orleans Hornets            361    56.0%     361    38.8%   +17.2 ±    7.2     +18.4 pp
+   Miami Heat                   1,524    61.5%   1,525    43.5%   +17.9 ±    3.5     +18.2 pp
+   Memphis Grizzlies            1,007    56.9%   1,008    39.4%   +17.5 ±    4.3     +18.1 pp
+   Washington Wizards           1,154    49.0%   1,156    31.5%   +17.5 ±    3.9     +18.0 pp
+   Los Angeles Lakers           1,729    68.4%   1,728    50.8%   +17.6 ±    3.2     +17.9 pp
+   Dallas Mavericks             1,730    60.0%   1,731    42.9%   +17.1 ±    3.3     +17.5 pp
+   Philadelphia 76ers           1,728    56.2%   1,731    39.3%   +16.9 ±    3.3     +17.3 pp
+   Minnesota Timberwolves       1,479    50.0%   1,479    34.1%   +15.9 ±    3.5     +16.6 pp
+   Vancouver Grizzlies            230    28.7%     230    15.2%   +13.5 ±    7.5     +16.5 pp
+   New Orleans Pelicans           522    51.0%     524    36.8%   +14.1 ±    6.0     +16.2 pp
+   Charlotte Hornets            1,035    53.0%   1,038    38.1%   +15.0 ±    4.2     +16.1 pp
+   Toronto Raptors              1,237    54.9%   1,237    39.9%   +15.0 ±    3.9     +15.9 pp
+   Oklahoma City Thunder          721    66.6%     719    52.4%   +14.1 ±    5.0     +15.7 pp
+   LA Clippers                    441    64.6%     441    53.1%   +11.6 ±    6.5     +14.9 pp
+   Brooklyn Nets                  564    48.4%     564    38.8%    +9.6 ±    5.8     +13.1 pp
 
-   League mean HCA = +20.2 pp  (raw range: +9.6 to +35.4 pp)
+   League mean HCA = +20.0 pp  (raw range: +9.6 to +35.4 pp)
    Variance decomposition: observed SD = 4.9 pp, sampling noise = 30%, true between-franchise SD ≈ 4.1 pp
-   ► Denver Nuggets: raw +28.5 pp, shrunken +27.3 pp  (rank #1/39 by shrunken)
-   ► Utah Jazz: raw +26.8 pp, shrunken +25.9 pp  (rank #2/39 by shrunken)
+   ► Denver Nuggets: raw +27.9 pp, shrunken +26.8 pp  (rank #1/39 by shrunken)
+   ► Utah Jazz: raw +26.6 pp, shrunken +25.7 pp  (rank #2/39 by shrunken)
 
    Playoffs  (32 franchises with ≥20 home games)
    Sorted by raw HCA (EB shrinkage collapses all to league mean — see variance decomp below).
@@ -917,43 +917,43 @@ All data from cache/ — same source as the plots above.
 
    Franchise                      n_h   home%     n_r   road%     HCA    CI ±  Shrunken
    ────────────────────────── ─────── ─────── ─────── ─────── ─────── ─────── ─────────
-   Utah Jazz                      144    66.0%     141    26.2%   +39.7 ±   10.6     +27.1 pp
-   Portland Trail Blazers         113    61.9%     115    22.6%   +39.3 ±   11.8     +27.1 pp
-   Seattle SuperSonics             69    66.7%      69    29.0%   +37.7 ±   15.4     +27.1 pp
-   Atlanta Hawks                  105    58.1%     111    24.3%   +33.8 ±   12.4     +27.1 pp
-   Los Angeles Clippers            33    60.6%      36    27.8%   +32.8 ±   22.2     +27.1 pp
-   Brooklyn Nets                   25    52.0%      25    20.0%   +32.0 ±   25.1     +27.1 pp
-   Los Angeles Lakers             220    75.0%     201    43.3%   +31.7 ±    8.9     +27.1 pp
-   Oklahoma City Thunder           72    69.4%      68    38.2%   +31.2 ±   15.7     +27.1 pp
-   New York Knicks                119    64.7%     123    34.1%   +30.6 ±   12.0     +27.1 pp
-   Boston Celtics                 217    69.6%     193    39.4%   +30.2 ±    9.2     +27.1 pp
-   Milwaukee Bucks                102    59.8%     107    29.9%   +29.9 ±   12.9     +27.1 pp
-   Orlando Magic                   69    59.4%      71    29.6%   +29.8 ±   15.7     +27.1 pp
-   Charlotte Hornets               24    58.3%      31    29.0%   +29.3 ±   25.4     +27.1 pp
-   Denver Nuggets                 100    59.0%     104    29.8%   +29.2 ±   13.0     +27.1 pp
-   Houston Rockets                132    64.4%     126    35.7%   +28.7 ±   11.7     +27.1 pp
-   Detroit Pistons                141    68.8%     132    40.2%   +28.6 ±   11.3     +27.1 pp
-   Toronto Raptors                 56    58.9%      56    30.4%   +28.6 ±   17.6     +27.1 pp
-   Indiana Pacers                 133    64.7%     142    36.6%   +28.0 ±   11.3     +27.1 pp
-   Miami Heat                     143    67.1%     135    39.3%   +27.9 ±   11.3     +27.1 pp
-   San Antonio Spurs              175    70.3%     176    43.2%   +27.1 ±   10.0     +27.1 pp
-   Golden State Warriors          107    73.8%     109    47.7%   +26.1 ±   12.5     +27.1 pp
-   Chicago Bulls                  146    70.5%     139    44.6%   +25.9 ±   11.1     +27.1 pp
-   Sacramento Kings                41    58.5%      42    33.3%   +25.2 ±   20.8     +27.1 pp
-   Memphis Grizzlies               50    50.0%      52    25.0%   +25.0 ±   18.2     +27.1 pp
-   Dallas Mavericks               115    60.9%     128    35.9%   +24.9 ±   12.2     +27.1 pp
-   Philadelphia 76ers             104    59.6%     108    36.1%   +23.5 ±   13.1     +27.1 pp
-   Cleveland Cavaliers            118    66.1%     119    42.9%   +23.2 ±   12.3     +27.1 pp
-   Washington Wizards              34    52.9%      37    32.4%   +20.5 ±   22.6     +27.1 pp
-   Phoenix Suns                   130    60.0%     126    40.5%   +19.5 ±   12.0     +27.1 pp
-   Minnesota Timberwolves          45    51.1%      49    32.7%   +18.5 ±   19.6     +27.1 pp
-   New Jersey Nets                 53    52.8%      58    41.4%   +11.5 ±   18.5     +27.1 pp
-   LA Clippers                     28    39.3%      28    42.9%    -3.6 ±   25.8     +27.1 pp
+   Utah Jazz                      144    66.0%     141    26.2%   +39.7 ±   10.6     +26.9 pp
+   Portland Trail Blazers         115    60.9%     118    22.9%   +38.0 ±   11.7     +26.9 pp
+   Seattle SuperSonics             69    66.7%      69    29.0%   +37.7 ±   15.4     +26.9 pp
+   Atlanta Hawks                  108    57.4%     114    24.6%   +32.8 ±   12.2     +26.9 pp
+   Los Angeles Clippers            33    60.6%      36    27.8%   +32.8 ±   22.2     +26.9 pp
+   Toronto Raptors                 59    61.0%      60    28.3%   +32.7 ±   16.9     +26.9 pp
+   Brooklyn Nets                   25    52.0%      25    20.0%   +32.0 ±   25.1     +26.9 pp
+   Los Angeles Lakers             225    74.2%     206    43.2%   +31.0 ±    8.9     +26.9 pp
+   Orlando Magic                   72    59.7%      75    29.3%   +30.4 ±   15.3     +26.9 pp
+   Denver Nuggets                 103    59.2%     107    29.0%   +30.3 ±   12.8     +26.9 pp
+   Milwaukee Bucks                102    59.8%     107    29.9%   +29.9 ±   12.9     +26.9 pp
+   Charlotte Hornets               24    58.3%      31    29.0%   +29.3 ±   25.4     +26.9 pp
+   Boston Celtics                 221    68.8%     196    39.8%   +29.0 ±    9.2     +26.9 pp
+   Oklahoma City Thunder           80    70.0%      75    41.3%   +28.7 ±   15.0     +26.9 pp
+   Detroit Pistons                149    68.5%     138    39.9%   +28.6 ±   11.1     +26.9 pp
+   Houston Rockets                135    63.7%     129    35.7%   +28.0 ±   11.6     +26.9 pp
+   Indiana Pacers                 133    64.7%     142    36.6%   +28.0 ±   11.3     +26.9 pp
+   Miami Heat                     143    67.1%     135    39.3%   +27.9 ±   11.3     +26.9 pp
+   New York Knicks                128    65.6%     133    38.3%   +27.3 ±   11.7     +26.9 pp
+   Golden State Warriors          107    73.8%     109    47.7%   +26.1 ±   12.5     +26.9 pp
+   Chicago Bulls                  146    70.5%     139    44.6%   +25.9 ±   11.1     +26.9 pp
+   Sacramento Kings                41    58.5%      42    33.3%   +25.2 ±   20.8     +26.9 pp
+   Memphis Grizzlies               50    50.0%      52    25.0%   +25.0 ±   18.2     +26.9 pp
+   Dallas Mavericks               115    60.9%     128    35.9%   +24.9 ±   12.2     +26.9 pp
+   Cleveland Cavaliers            127    66.1%     128    41.4%   +24.7 ±   11.9     +26.9 pp
+   San Antonio Spurs              187    69.0%     187    44.4%   +24.6 ±    9.7     +26.9 pp
+   Philadelphia 76ers             109    57.8%     114    36.8%   +21.0 ±   12.8     +26.9 pp
+   Washington Wizards              34    52.9%      37    32.4%   +20.5 ±   22.6     +26.9 pp
+   Minnesota Timberwolves          51    52.9%      55    32.7%   +20.2 ±   18.5     +26.9 pp
+   Phoenix Suns                   132    59.1%     128    39.8%   +19.2 ±   11.9     +26.9 pp
+   New Jersey Nets                 53    52.8%      58    41.4%   +11.5 ±   18.5     +26.9 pp
+   LA Clippers                     28    39.3%      28    42.9%    -3.6 ±   25.8     +26.9 pp
 
-   League mean HCA = +27.1 pp  (raw range: -3.6 to +39.7 pp)
-   Variance decomposition: observed SD = 8.1 pp, sampling noise = 100%, true between-franchise SD ≈ 0.0 pp
-   ► Utah Jazz: raw +39.7 pp, shrunken +27.1 pp  (rank #1/32 by shrunken)
-   ► Denver Nuggets: raw +29.2 pp, shrunken +27.1 pp  (rank #14/32 by shrunken)
+   League mean HCA = +26.9 pp  (raw range: -3.6 to +39.7 pp)
+   Variance decomposition: observed SD = 8.0 pp, sampling noise = 101%, true between-franchise SD ≈ 0.0 pp
+   ► Utah Jazz: raw +39.7 pp, shrunken +26.9 pp  (rank #1/32 by shrunken)
+   ► Denver Nuggets: raw +30.3 pp, shrunken +26.9 pp  (rank #10/32 by shrunken)
 
 
 ─── FRANCHISE HCA — REGULAR SEASON VS. PLAYOFFS CONSISTENCY ────────────
@@ -962,8 +962,8 @@ All data from cache/ — same source as the plots above.
 
    N = 32 franchises with both regular-season and playoff HCA
    Raw HCA:
-   Pearson r  = +0.356  (p = 0.045  *)
-   Spearman ρ = +0.262  (p = 0.148  )
+   Pearson r  = +0.362  (p = 0.042  *)
+   Spearman ρ = +0.275  (p = 0.128  )
 
    Shrunken HCA: true between-franchise variance ≈ 0 in at least one context
    (observed spread across franchises is entirely sampling noise).
@@ -971,11 +971,11 @@ All data from cache/ — same source as the plots above.
    This confirms that franchise-level playoff HCA differences are not reliably
    distinguishable from random variation given typical playoff sample sizes.
 
-   Mean regular-season HCA (shared franchises): +19.9 pp
-   Mean playoff HCA (shared franchises):        +27.1 pp
-   Mean playoff − regular-season gap:           +7.2 pp (SD 7.5)
+   Mean regular-season HCA (shared franchises): +19.6 pp
+   Mean playoff HCA (shared franchises):        +26.9 pp
+   Mean playoff − regular-season gap:           +7.2 pp (SD 7.4)
 
-   ► Raw correlation positive and significant (r = +0.356) —
+   ► Raw correlation positive and significant (r = +0.362) —
      franchises that protect home court in the regular season tend to do so
      in the playoffs too, though playoff sample sizes are too small for
      franchise-level shrinkage to improve on raw estimates.

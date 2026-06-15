@@ -30,13 +30,13 @@ CACHE_DIR = os.path.join(os.path.dirname(__file__), "cache")
 # Substrings that must appear verbatim in RESULTS.md. Each pins one headline
 # result; a shift in any of these numbers fails the test at that line.
 HEADLINE_ANCHORS = [
-    "Binomial GLM: -0.245 pp/yr",                 # §1 regular-season decline
-    "Binomial GLM: -0.209 pp/yr",                 # §1 playoff decline
-    "Total trend (home_win ~ year): -0.245 pp/yr",  # §2 RS mediation total
-    "► Regular season: channels carry 95% of the HCA level and 95% of its decline.",
-    "► Playoffs: channels carry 94% of the HCA level and 65% of its decline.",
-    "41/42 (98%) show negative mean foul diff (home-favoring)",  # §3 referee bias
-    "League mean foul_diff across officials: -1.195 fouls/game",
+    "Binomial GLM: -0.244 pp/yr",                 # §1 regular-season decline
+    "Binomial GLM: -0.225 pp/yr",                 # §1 playoff decline
+    "Total trend (home_win ~ year): -0.244 pp/yr",  # §2 RS mediation total
+    "► Regular season: channels carry 95% of the HCA level and 96% of its decline.",
+    "► Playoffs: channels carry 93% of the HCA level and 67% of its decline.",
+    "45/47 (96%) show negative mean foul diff (home-favoring)",  # §3 referee bias
+    "League mean foul_diff across officials: -1.098 fouls/game",
 ]
 
 

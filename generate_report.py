@@ -287,7 +287,7 @@ def _cover(sections: dict) -> list:
         _hr(),
         Spacer(1, 0.15 * inch),
         Paragraph(
-            "Data: NBA.com  ·  1983–84 through 2024–25  ·  51,089 games",
+            "Data: NBA.com  ·  1983–84 through 2025–26  ·  52,399 games",
             _STYLES["cover_sub"],
         ),
         Paragraph(
@@ -417,7 +417,7 @@ def build_report(output_path="nba_home_court_advantage_report.pdf"):
         Spacer(1, 0.3 * inch),
         _hr(),
         Paragraph(
-            "Data: NBA.com. Analysis covers 1983–84 through 2024–25. "
+            "Data: NBA.com. Analysis covers 1983–84 through 2025–26. "
             "Shot zone data available from 1996–97. "
             "Logistic regression uses McFadden R²; marginal effects at the mean. "
             "See Appendix A for full tables and coefficient values.",

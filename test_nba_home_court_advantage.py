@@ -127,8 +127,8 @@ class TestComputePlayoffFormatAverages:
         assert format_reg_avg[i] == 62.0
         assert format_po_avg[i] == 64.0
 
-        # 13–14 -> 2014 falls in 2014–25
-        i = format_labels.index("2014–25")
+        # 13–14 -> 2014 falls in 2014–26
+        i = format_labels.index("2014–26")
         assert format_reg_avg[i] == 57.0
         assert format_po_avg[i] == 58.0
 
@@ -220,7 +220,7 @@ class TestBucketStatsByEra:
         assert era_avgs["other"][i] == 40.0
 
         # Eras with no matching seasons average to 0
-        j = era_labels.index("2023–25")
+        j = era_labels.index("2023–26")
         assert era_avgs["Denver Nuggets"][j] == 0
         assert era_avgs["Utah Jazz"][j] == 0
         assert era_avgs["other"][j] == 0
@@ -1254,7 +1254,7 @@ class TestShapleyShares:
               np.where(year <= 2001, "1995–01",
               np.where(year <= 2004, "2002–04",
               np.where(year <= 2017, "2005–17",
-              np.where(year <= 2022, "2018–22", "2023–25")))))
+              np.where(year <= 2022, "2018–22", "2023–26")))))
         rest_diff     = rng.integers(-2, 3, size=n).astype(float)
         altitude_home = rng.integers(0, 2, size=n).astype(float)
         tz_diff       = rng.integers(0, 4, size=n).astype(float)
@@ -1341,8 +1341,8 @@ class TestComputeRefereeBiasStatsSd:
         alice = next(o for o in result if o["name"] == "Alice Ref")
         assert "era_sd" in alice
         assert "era_n" in alice
-        # 2024 falls in the 2023–25 era; Alice has 2 games there → n=2 and sd is present
-        era = "2023–25"
+        # 2024 falls in the 2023–26 era; Alice has 2 games there → n=2 and sd is present
+        era = "2023–26"
         assert alice["era_n"].get(era, 0) == 2
         assert era in alice["era_sd"]
 

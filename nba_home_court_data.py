@@ -7,7 +7,7 @@ nba_home_court_regression.
 
 Data sources:
   - NBA.com via the nba_api package (LeagueGameFinder etc.): every game result,
-    1983-84 through 2024-25
+    1983-84 through 2025-26
   - Basketball-Reference (scraped): per-game attendance, ~1999-2000 onward
     (NBA.com does not expose attendance)
 """
@@ -27,7 +27,7 @@ from bs4 import BeautifulSoup
 
 # ── Config ────────────────────────────────────────────────────────────────────
 START_YEAR = 1984   # season ending in this year = 1983-84
-END_YEAR   = 2025   # season ending in this year = 2024-25
+END_YEAR   = 2026   # season ending in this year = 2025-26
 SLEEP_SEC  = 1.0    # polite pause between API calls
 
 # Basketball-Reference attendance scrape (NBA.com does not expose attendance).
@@ -132,7 +132,7 @@ ERA_DEFS = [
     ("2002–04", 2002, 2004, "Zone defense legalized, defensive 3-sec added"),
     ("2005–17", 2005, 2017, "Perimeter hand-checking banned (pace-and-space)"),
     ("2018–22", 2018, 2022, "Freedom-of-movement emphasis"),
-    ("2023–25", 2023, 2025, "Transition take-foul rule added"),
+    ("2023–26", 2023, 2026, "Transition take-foul rule added"),
 ]
 
 # Playoff series-format / scheduling changes (separate from the defensive-rule
@@ -158,7 +158,7 @@ PLAYOFF_FORMAT_PERIODS = [
     ("1984",     1984, 1984, "Best-of-5 R1, 2-2-1-1-1 Finals (alternating home court)"),
     ("1985–02",  1985, 2002, "Best-of-5 R1, 2-3-2 Finals (home court by record)"),
     ("2003–13",  2003, 2013, "Best-of-7 R1, 2-3-2 Finals"),
-    ("2014–25",  2014, 2025, "Best-of-7 R1, 2-2-1-1-1 Finals"),
+    ("2014–26",  2014, 2026, "Best-of-7 R1, 2-2-1-1-1 Finals"),
 ]
 
 
