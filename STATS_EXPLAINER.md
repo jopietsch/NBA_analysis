@@ -1,10 +1,13 @@
 # Statistical Explainer — `nba_home_court_regression.py`
 
 A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
-the statistical approach, why that approach was chosen, and what the results mean.
-Sections appear in the same order as `RESULTS.md`. Unlike `FINDINGS.md`, this
-document uses statistical terminology freely — it is the methods companion, not
-the narrative report.
+the statistical approach, why that approach was chosen, what the results mean, and —
+where a section has one — **why its figure takes the form it does** (a `Why this
+chart` note). Sections appear in the same order as `RESULTS.md`. The figures
+themselves are displayed and captioned in `FINDINGS.md`; here we only explain the
+reasoning behind each chart choice. Unlike `FINDINGS.md`, this document uses
+statistical terminology freely — it is the methods companion, not the narrative
+report.
 
 ---
 
@@ -73,6 +76,14 @@ is gentler and rests on only 4 seasons and isn't significant (p = 0.223)
 No individual playoff era reaches significance — single playoff eras are just
 3–13 small seasons — so the playoff conclusion rests on the full 42-season trend.
 
+**Why this chart.** The decline is a four-decade drift, so the headline figure is
+the simplest thing that can carry it: one dot per season for the home win rate,
+regular season and playoffs on the same axes, each with a fitted line. A line lets
+a reader eyeball the slope *and* the scatter at once — the tight regular-season
+cloud (R² = 0.74) against the noisy playoff one (R² = 0.20). The era shading and
+the companion era-bar panel do what a single line can't: they expose that the drift
+isn't perfectly smooth, which sets up the discrete-drop question Section 13 tests.
+
 ---
 
 ## 2. Win Margin Trends (`run_margin_analysis`)
@@ -98,6 +109,13 @@ means have a built-in artifact: as the home win rate falls, games near zero
 margin flip from narrow wins to narrow losses, which mechanically pushes both
 conditional means apart. Section 3 exists to test whether the divergence is
 real or just that artifact.
+
+**Why this chart.** Win percentage is a coarse 1/0 summary, so the margin figure
+plots the *size* of the home edge instead: mean margin per season (how big the
+average edge is), a win-only vs. loss-only panel, and era bars. Lines are the right
+form because the question is direction-over-time, and the two diverging win/loss
+lines make the polarization claim visible to the eye before Section 3 tests it
+formally.
 
 ---
 
@@ -126,6 +144,12 @@ regular season both tails move — home blowout wins and home blowout losses are
 both becoming more common; in the playoffs the widening is one-sided, driven by
 the growing blowout wins alone. Either way it is a genuine change in the shape of
 game outcomes, not a bookkeeping artifact.
+
+**Why this chart.** This section adds no figure of its own. The polarization it
+formalizes is already what the win-only/loss-only panel of the Section 2 margin
+chart shows to the eye — two lines pulling apart. A separate quantile-fan chart
+would just duplicate that picture; here the *unconditional* quantile slopes are
+what make the claim airtight, and those live in the table, not a new plot.
 
 ---
 
@@ -159,6 +183,13 @@ which mechanisms are eroding, which is the heart of research question 3.
 
 Section 5 takes these differentials and quantifies how much of the HCA level and
 its decline each one accounts for.
+
+**Why this chart.** Six small-multiple panels, one per box-score metric, each a
+home-minus-away line over time with a fitted trend and a zero reference line. Small
+multiples on a shared layout let a reader scan in one sweep which mechanisms are
+sliding toward zero (fouls, shooting) and which are flat (3P%, FT%); the era means
+in the table give the levels, the lines give the trends. The zero line matters —
+"toward zero" *is* the finding, so it has to be on the axis.
 
 ---
 
@@ -231,6 +262,14 @@ half right (turnovers, partly) and half wrong (rebounding is its own thing). One
 remaining caution: the playoff numbers fold in the seed-quality gap — the home
 team is usually the better team — which Section 19 isolates and controls.
 
+**Why this chart.** Stacked horizontal bars, normalized to 100% — one stack for the
+level, one for the decline, regular season vs. playoffs. The whole point of a
+decomposition is *composition*: how the edge splits into parts that sum to a whole.
+A stacked bar is the one chart form that shows shares adding to 100% at a glance; a
+line or grouped bars would hide the very accounting identity the LPM exists to
+deliver. The grey residual segment is deliberate too — it shows the unexplained
+remainder rather than quietly dropping it.
+
 ---
 
 ## 5b. Rebounding Decomposition (`run_rebounding_decomposition`)
@@ -294,6 +333,15 @@ still shrinking — but only covers the tracking era (~2014 on), too short to ca
 the 40-year story, so it is summarized in one sentence in `FINDINGS.md` §3 rather
 than reported as its own section here. The code is retained but unwired from the
 pipeline.
+
+**Why this chart.** Three panels matched to the three claims. Panel 1 — grouped era
+bars, offensive vs. defensive — shows *where* the edge died: the offensive bars
+collapse through zero while the defensive bars only soften. Panel 2 — share edge
+over time as a line — carries the "still falls even as a pace-free share" claim.
+Panel 3 is a scatter of the share edge against the league offensive-rebound rate,
+because that claim is a *correlation* (r = +0.82), and a scatter with a fitted line
+is the honest way to show a two-variable association rather than dress it up as a
+time trend.
 
 ---
 
@@ -463,6 +511,13 @@ home-favoring and more uniform. (The headline numbers in `FINDINGS.md` quoting
 −1.10 league mean is an *across-officials* average and differs slightly by
 construction.)
 
+**Why this chart.** Two panels for two jobs. A horizontal ranked bar chart of the
+top/bottom officials answers "who, and how big" — but on its own it is exactly the
+leaderboard bait the section warns against, so it is paired with a per-era box plot.
+The box plot shows the *distribution* of official biases narrowing and centering
+over time, which is the real finding; a bar ranking cannot show a distribution
+compressing, and a box plot is the standard tool for that.
+
 ---
 
 ## 11. Shot Zone Differentials by Era (`run_shot_zone_analysis`)
@@ -488,6 +543,12 @@ The playoff trends point the same direction (paint −0.034/yr) but are not
 significant on only 29 seasons of noisier data; the 2023–26 playoff paint edge
 (+1.35) remains near its historical level, so the convergence is only firmly
 established for the regular season.
+
+**Why this chart.** Four panels, one per shot zone, each a home-minus-road share
+line over time with a zero reference — the same small-multiple logic as Section 4.
+The eye tracks the paint edge sliding toward zero and the mid-range deficit closing
+in mirror image across the panels. Lines rather than bars because the claim is a
+multi-decade convergence trend, not a level comparison.
 
 ---
 
@@ -522,6 +583,13 @@ at p = 0.027 on 3,292 games — directionally identical and now clearly
 significant. This is the strongest mechanistic candidate the data offers for
 the decline.
 
+**Why this chart.** Three panels that walk the trap and its resolution. Panel 1 is a
+dual-axis time series — 3PA rate rising as home win% falls — which *looks* like
+proof but is exactly the shared-trend illusion. Panels 2 and 3 are season scatters
+(regular season, playoffs) with the raw correlation annotated. Showing the seductive
+dual-axis line right next to the scatter is deliberate: it puts the very correlation
+the within-era model then has to defuse in front of the reader, so the payoff lands.
+
 ---
 
 ## 13. Rule-Change Eras (`run_era_analysis`)
@@ -551,6 +619,12 @@ and the LR test is p = 0.815 — the playoff decline is pure drift, with no
 rule-change fingerprints. (Small samples mean limited power, but there is simply
 no signal there.) The same trend-vs-boundary logic recurs for the 2014 Finals
 format change in Section 20.
+
+**Why this chart.** This section has no separate figure: the era structure it tests
+is already drawn as the shaded eras and the era-bar panel of the Section 1 decline
+chart. The discrete-drop question is about reading those era levels *against* the
+smooth trend — an inference the z-tests and LR test carry, not something a new
+picture would add.
 
 ---
 
@@ -606,6 +680,13 @@ kills significance (p = 0.227; within-era p = 0.063) — confirming the realized
 effect was substantially outcome-driven endogeneity. Playoffs: null everywhere.
 Pace did not drive the decline.
 
+**Why this chart.** The same three-panel layout as Section 12 (dual-axis time series
+plus two season scatters), chosen for the same reason and to invite the side-by-side
+comparison. It also makes the rule-out visible two ways: the dual-axis panel shows
+pace is U-shaped while HCA fell monotonically — so the two can't even share a trend
+— and the flat scatters show the weak season-level association, before the
+leave-one-out test in the text delivers the verdict.
+
 ---
 
 ## 16. Competitive Balance / Parity (`run_parity_correlation`)
@@ -640,6 +721,12 @@ runs in the direction the parity hypothesis predicts, but it is a small
 year-to-year wobble on 42–43 data points, flagged in the output itself as
 "interpret with caution." It coexists with, and does not overturn, the main
 conclusion that parity didn't drive the structural decline.
+
+**Why this chart.** Two panels. A dual-axis time series (home win% vs. parity) shows
+the two series don't track; a season scatter with a near-flat fitted line shows the
+same null at the cross-section. The dual-axis form is chosen precisely because it
+*tempts* the shared-trend reading — the same setup as the 3PA and pace charts — so
+the detrended correlations in the text have something concrete to rule out.
 
 ---
 
@@ -686,6 +773,14 @@ significant (+0.51 pp, p = 0.18), which is the point — the effect rides on the
 refilled in 2021–22. A real ingredient of home court, but a switch, not the
 four-decade dial.
 
+**Why this chart.** The two panels mirror the two hypotheses the section
+deliberately separates. Panel 1 (dual-axis time series) answers crowd *size* —
+attendance flat near capacity while HCA falls. Panel 2 is a dose-response bar chart
+of 2020–21 home win% by attendance bucket: a bar per dose is the natural way to show
+the accidental experiment, with the empty-arena bar sitting at a coin flip and the
+filled bars climbing above it. Two different questions, so two different chart
+forms.
+
 ---
 
 ## 18. Playoff Series Structure (`run_series_breakdown`)
@@ -709,6 +804,12 @@ home win rates; G3/G4/G6 at the lower seed run 55–56%. G7, back at the higher
 seed, is 63.8%. The "road teams figure it out by game 6" story has no support —
 what looks like series dynamics is just which arena the game is in, plus the
 fact that the higher seed is usually the better team.
+
+**Why this chart.** Two panels. A bar chart of home win% by game number (G1–G7) with
+sample-size labels makes the venue-alternation sawtooth obvious — bars, because game
+number is a discrete category, not a continuous axis. The companion per-era line
+panel shows the sawtooth is stable across eras, ruling out the "teams adapt over a
+series" story visually before the trend test confirms no monotonic slope.
 
 ---
 
@@ -773,7 +874,13 @@ drop is just the trend passing through the boundary.
 **What the results mean.** Once the year trend is controlled, no format dummy is
 significant (all p ≈ 0.30) and the LR test for the dummies jointly is p = 0.197.
 The post-2014 playoff drop is fully consistent with the secular decline; the
-format change itself is exonerated. This is the canonical example in this project
+format change itself is exonerated.
+
+**Why this chart.** The format periods are shown as paired regular-season/playoff
+bars — discrete periods call for bars, not a line. The bars make the raw post-2014
+drop look alarming on purpose; the section's whole point is that the drop is just
+the secular trend passing through the boundary, which is why those bar levels are
+read against the year-trend model in the text rather than taken at face value. This is the canonical example in this project
 of why "raw difference between periods" and "effect of the boundary" are
 different questions — the same logic the era analysis (Section 13) applies to
 rule changes.
@@ -815,6 +922,13 @@ to the league mean (+26.9 pp). Utah's raw +39.7 playoff HCA and the Clippers'
 raw −3.6 are both indistinguishable from the same underlying value. No franchise
 has demonstrably special playoff home court.
 
+**Why this chart.** Two panels. A horizontal bar chart of franchise HCA, sorted and
+carrying 95% confidence whiskers, shows both the ranking *and* how much of it is
+noise — the whiskers are the visual antidote to leaderboard-reading. A reg-vs-playoff
+scatter with a y=x line shows whether the same franchises lead in both contexts
+(Section 22's question), and the points' error bars make the playoff cloud's
+collapse to noise visible.
+
 ---
 
 ## 22. Franchise HCA Consistency (`run_hca_consistency_analysis`)
@@ -840,6 +954,11 @@ franchise-level playoff signal to correlate. One solid descriptive fact: playoff
 HCA runs about +7.2 pp higher than regular-season HCA for the same franchises —
 home court is worth more in the postseason on average, though the gap varies
 widely by franchise (SD 7.4 pp, larger than the mean itself).
+
+**Why this chart.** Like Section 13, this section adds no figure of its own: its
+reg-vs-playoff question is exactly the scatter (with the y=x diagonal) in the
+Section 21 franchise chart. The correlation reported here is what the spread of those
+points around the diagonal amounts to numerically.
 
 ---
 

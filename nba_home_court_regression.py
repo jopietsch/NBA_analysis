@@ -74,6 +74,10 @@ def build_game_dataset() -> pd.DataFrame:
             merged["format_period"] = _format_period_for_year(year)
             merged["covid"]         = int(nba.short_label(year) in nba.COVID_SEASONS)
             merged["rest_diff"]     = merged["REST_home"] - merged["REST_away"]
+            merged["away_b2b"]      = (merged["REST_away"] == 0).astype("float64")
+            merged["home_b2b"]      = (merged["REST_home"] == 0).astype("float64")
+            merged.loc[merged["REST_away"].isna(), "away_b2b"] = np.nan
+            merged.loc[merged["REST_home"].isna(), "home_b2b"] = np.nan
             merged["altitude_home"] = merged["TEAM_NAME_home"].isin(nba.ALTITUDE_TEAMS).astype(int)
 
             home_tz = merged["TEAM_NAME_home"].map(nba.TEAM_TIMEZONES)
@@ -155,7 +159,7 @@ def build_game_dataset() -> pd.DataFrame:
             chunks.append(merged[[
                 "GAME_ID",
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
-                "rest_diff", "altitude_home", "tz_diff",
+                "rest_diff", "away_b2b", "home_b2b", "altitude_home", "tz_diff",
                 "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff", "tov_diff", "reb_diff",
                 "oreb_diff", "dreb_diff", "reb_share_edge", "league_oreb_rate",
@@ -1729,6 +1733,89 @@ def run_parity_correlation(
         print(f"     (N is small and first-differences amplify measurement noise).")
 
 
+def run_back_to_back_analysis(df: pd.DataFrame) -> None:
+    """Did the league-wide drop in back-to-backs drive the HCA decline?
+    Tests the 'load management' story: visitor B2Bs have fallen, but how much
+    of the decline does that schedule shift explain? Shift-share decomposition
+    splits the change into a frequency part (fewer tired teams) and a win-rate
+    part (the per-situation home edge eroding)."""
+    _section("BACK-TO-BACKS — DID FEWER TIRED VISITORS DRIVE THE DECLINE?")
+    print("   A back-to-back (B2B) is a game on zero days' rest. The 'load")
+    print("   management' story: visitor B2Bs have grown rarer, so home teams")
+    print("   face fewer tired opponents. Regular season only (B2Bs are rare")
+    print("   in the playoffs). Games without a known prior game are excluded.\n")
+
+    rs = df[df["is_playoff"] == 0].dropna(subset=["away_b2b", "home_b2b"]).copy()
+    if rs.empty:
+        print("   No usable rest data.\n")
+        return
+
+    def situ(row):
+        if row["away_b2b"] and row["home_b2b"]:
+            return "both_b2b"
+        if row["away_b2b"]:
+            return "vis_b2b_only"
+        if row["home_b2b"]:
+            return "home_b2b_only"
+        return "neither_b2b"
+
+    rs["situ"] = rs.apply(situ, axis=1)
+
+    # ── Frequency of each rest situation, by era ───────────────────────────────
+    print("   Visitor and home B2B frequency by era:")
+    print(f"   {'Era':<12}  {'N':>7}  {'Visitor B2B':>11}  {'Home B2B':>9}  {'Home win %':>11}")
+    print(f"   {'─'*12}  {'─'*7}  {'─'*11}  {'─'*9}  {'─'*11}")
+    for era_label, y1, y2, _ in nba.ERA_DEFS:
+        e = rs[(rs["year"] >= y1) & (rs["year"] <= y2)]
+        if e.empty:
+            continue
+        print(f"   {era_label:<12}  {len(e):>7,}  {100*e['away_b2b'].mean():>10.1f}%  "
+              f"{100*e['home_b2b'].mean():>8.1f}%  {100*e['home_win'].mean():>10.1f}%")
+
+    # ── Home win % by rest situation (pooled) ──────────────────────────────────
+    print(f"\n   Home win % by rest situation (all seasons pooled):")
+    print(f"   {'Situation':<16}  {'N games':>8}  {'Home win %':>11}")
+    print(f"   {'─'*16}  {'─'*8}  {'─'*11}")
+    labels = {"neither_b2b": "Neither on B2B", "vis_b2b_only": "Visitor B2B only",
+              "home_b2b_only": "Home B2B only", "both_b2b": "Both on B2B"}
+    order = ["neither_b2b", "vis_b2b_only", "home_b2b_only", "both_b2b"]
+    for s in order:
+        b = rs[rs["situ"] == s]
+        if not b.empty:
+            print(f"   {labels[s]:<16}  {len(b):>8,}  {100*b['home_win'].mean():>10.1f}%")
+
+    # ── Shift-share: first era vs last era ─────────────────────────────────────
+    first_lbl, fy1, fy2, _ = nba.ERA_DEFS[0]
+    last_lbl,  ly1, ly2, _ = nba.ERA_DEFS[-1]
+
+    def cells(sub):
+        c = sub.groupby("situ")["home_win"].agg(["count", "mean"]).reindex(order).fillna(0)
+        c["freq"] = c["count"] / c["count"].sum()
+        return c
+
+    cf = cells(rs[(rs["year"] >= fy1) & (rs["year"] <= fy2)])
+    cl = cells(rs[(rs["year"] >= ly1) & (rs["year"] <= ly2)])
+    hca_f = float((cf["freq"] * cf["mean"]).sum()) * 100
+    hca_l = float((cl["freq"] * cl["mean"]).sum()) * 100
+    total = hca_l - hca_f
+    freq_comp = float(((cl["freq"] - cf["freq"]) * cf["mean"]).sum()) * 100
+    rate_comp = float((cf["freq"] * (cl["mean"] - cf["mean"])).sum()) * 100
+    inter = total - freq_comp - rate_comp
+    share = 100 * freq_comp / total if total else float("nan")
+
+    print(f"\n   Shift-share decomposition of the home win % change, "
+          f"{first_lbl} → {last_lbl}:")
+    print(f"   Home win %: {hca_f:.1f}% → {hca_l:.1f}%   (total change {total:+.2f} pp)")
+    print(f"   {'Frequency component (schedule: fewer B2Bs)':<46}  {freq_comp:>+7.2f} pp  ({share:>4.0f}% of change)")
+    print(f"   {'Win-rate component (per-situation edge eroding)':<46}  {rate_comp:>+7.2f} pp")
+    print(f"   {'Interaction':<46}  {inter:>+7.2f} pp")
+    print(f"\n   ► Visitor B2Bs have grown much rarer, which does nudge home court")
+    print(f"     downward — but the win-rate gap between rested and tired matchups is")
+    print(f"     small, so the schedule shift explains only ~{abs(share):.0f}% of the decline.")
+    print(f"     The other ~{abs(100-share):.0f}% is the home edge within each rest situation")
+    print(f"     eroding — not a scheduling story.\n")
+
+
 def run_attendance_analysis(
     att_seasons: list[str], att_avg: list[float],
     reg_seasons: list[str], reg_pcts: list[float],
@@ -2574,6 +2661,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         # §4 What Didn't Drive the Change (rule changes lead, then travel/pace/parity)
         run_era_analysis(df)
         run_travel_analysis(df)
+        run_back_to_back_analysis(df)
         run_pace_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_attendance_analysis(att_seasons, att_avg, reg_seasons_sorted, reg_pcts_sorted, dose_df)

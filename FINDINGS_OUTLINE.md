@@ -20,7 +20,7 @@
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
   - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
-    - First drop: sharp mid-1990s fall ~65% → 60% (steepest move). Cause = **1994–95 hand-check rule shock** (§4) — a *discrete event, outside* the box-score categories. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+    - First drop: sharp mid-1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4) — most likely the hand-check crackdown, but confounded with the simultaneous shortened 3-pt line (1994–97); season-level data can't separate them. Discrete event, handled in §4. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - Flat for ~two decades.
     - Second drop: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the box-score categories (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
   - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Asymmetry (first-drop cause outside the categories in §4, second-drop cause inside them in §3) is why each is explained in a different section.
@@ -82,6 +82,7 @@
 - **Adding it up (trend decomposition):**
   - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
   - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Likely crowd-effect compression post-2018.
+- **Why the 3-point revolution is NOT the main driver:** near-perfect raw 3PA↔HCA correlation is partly shared 40-yr trend; within-season effect is real but modest and lands almost entirely on the shooting line. Shooting = only ~21% of decline; REB+TOV (the bigger half) barely move under the 3PA control. Threes drove one channel (shooting), not the whole decline. Playoffs: within-game 3-pt signal fainter, ⅓ of decline off the box score entirely.
 **Figures:**
 
 ![Fig 4 — referee bias](nba_home_court_referee.png)
@@ -99,10 +100,11 @@
 ## Section 4 — What Didn't Drive the Change
 **Q3 corollary: ruled-out factors**
 
-- **Rule changes:** only **1994–95 hand-checking** crackdown left a mark (~**−2.6 pp** one-time drop; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). All others passed through. Playoffs: not even hand-checking registers (LR p=0.815) — pure smooth drift.
+- **Rule changes:** only the **1994–95 season** left a mark (~**−2.6 pp** one-time drop; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). Two changes that season — hand-check crackdown (likelier culprit) + shortened 3-pt line (1994–97) — confounded, can't separate at season level. All other boundaries passed through. Playoffs: neither change registers (LR p=0.815) — pure smooth drift.
 - **Travel & time zones:**
   - Reg: ~**0.07 pp/100 mi** (RESULTS −0.07 pp/100mi, p=0.010), tiny & inconsistent direction; playoffs no effect (p=0.888).
   - Time zones flat both contexts (reg −0.4 pp p=0.086; playoffs +1.0 pp p=0.330).
+- **Back-to-backs / load management:** visitor B2B rate fell **35.0% → 18.8%** (1984–94 → 2023–26), confirming the blog's premise. But shift-share of the −9.29 pp RS decline: frequency component only **−0.71 pp (~8%)**; win-rate component −8.59 pp (~92%). Per-situation home win%: visitor-B2B-only 64.7% vs neither 59.1% (narrow gap). RS only (B2Bs rare in playoffs). Scheduling nudged HCA, didn't drive it.
 - **Pace of play:** moves independently of HCA. *RESULTS reg season-level r=+0.241 (p=0.120, wrong direction); playoffs r=−0.142 (ns).*
 
 ![Fig 9 — pace vs HCA](nba_home_court_pace.png)
@@ -157,7 +159,7 @@
 
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → 55.6%**, playoffs **~68% → 58%**.
-- Shape: slow four-decade erosion + two sharper drops — 1994–95 hand-check jolt (discrete, outside the categories) and post-2017 three-point surge (inside the categories, shooting line).
+- Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete, outside the categories) and post-2017 three-point surge (inside the categories, shooting line).
 - Three main drivers + quiet fourth: (1) fairer refs (largest single change), (2) converged shot selection, (3) three-point variance, (4) rebounding edge slipping independently — specifically the OFFENSIVE-glass edge dying (OREB diff → negative) in lockstep with the league-wide retreat from O-rebounding (r=0.82).
-- Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
+- Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
 - Playoffs follow reg season with ~decade lag; accelerated since 2018; genuine erosion (weaker host still winning less); no sign of bottoming out.

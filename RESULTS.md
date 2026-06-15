@@ -684,6 +684,43 @@ All data from cache/ — same source as the plots above.
    Bivariate logistic: coef = +0.00001 log-odds/mi  (≈+0.02 pp per 100 mi,  95% CI [-0.23, +0.27]),  p = 0.888  
 
 
+─── BACK-TO-BACKS — DID FEWER TIRED VISITORS DRIVE THE DECLINE? ────────
+   A back-to-back (B2B) is a game on zero days' rest. The 'load
+   management' story: visitor B2Bs have grown rarer, so home teams
+   face fewer tired opponents. Regular season only (B2Bs are rare
+   in the playoffs). Games without a known prior game are excluded.
+
+   Visitor and home B2B frequency by era:
+   Era                 N  Visitor B2B   Home B2B   Home win %
+   ────────────  ───────  ───────────  ─────────  ───────────
+   1984–94        11,123        35.0%      19.2%        64.9%
+   1995–01         7,669        34.6%      16.6%        60.0%
+   2002–04         3,516        34.0%      16.3%        61.0%
+   2005–17        15,520        32.7%      15.5%        59.5%
+   2018–22         5,749        21.0%      14.2%        56.2%
+   2023–26         4,847        18.8%      16.5%        55.6%
+
+   Home win % by rest situation (all seasons pooled):
+   Situation          N games   Home win %
+   ────────────────  ────────  ───────────
+   Neither on B2B      29,553        59.1%
+   Visitor B2B only    10,866        64.7%
+   Home B2B only        3,936        54.6%
+   Both on B2B          4,069        60.8%
+
+   Shift-share decomposition of the home win % change, 1984–94 → 2023–26:
+   Home win %: 64.9% → 55.6%   (total change -9.29 pp)
+   Frequency component (schedule: fewer B2Bs)        -0.71 pp  (   8% of change)
+   Win-rate component (per-situation edge eroding)    -8.59 pp
+   Interaction                                       +0.02 pp
+
+   ► Visitor B2Bs have grown much rarer, which does nudge home court
+     downward — but the win-rate gap between rested and tired matchups is
+     small, so the schedule shift explains only ~8% of the decline.
+     The other ~92% is the home edge within each rest situation
+     eroding — not a scheduling story.
+
+
 ─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
    Does faster-paced play (more possessions per game) reduce home court advantage?
    Season-level correlation plus game-level logistic regression.
