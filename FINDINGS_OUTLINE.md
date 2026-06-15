@@ -77,11 +77,11 @@
   - **Died on the OFFENSIVE glass.** *RESULTS rebounding decomp (reg):* OREB diff +0.61 → **−0.05** (goes negative); DREB diff +1.64 → +0.59 (only softens); REB diff +2.24 → +0.54. Trends/yr all negative, all p<0.001 (OREB −0.018, DREB −0.027, REB −0.044).
   - **Pace-free share edge** (home share of available boards − away) still collapses ~10×: **+2.14pp → +0.21pp** (trend −0.052/yr, p<0.001). → not a pace/volume artifact.
   - **Cause = league-wide retreat from O-rebounding:** league OREB rate 33% → 26%; share edge vs league OREB rate **r = +0.82, p<0.001 (N=43)**. Effort-driven O-boards coached out (transition defense).
-  - Playoffs: share edge **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01); REB survives 3PA control (−42%/strengthens).
+  - Playoffs: share edge **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01). 3PA-control absorption is unstable in playoffs (−42%, noisy small-N) → can't confirm independence the way RS does; read as consistent with RS, not proven.
   - **Player-tracking (last decade) fits:** no measurable home box-out edge today; OREB-conversion edge still shrinking. (One sentence in §3; not a RESULTS section — short tracking-era window corroborates the mechanism only. Code/fetchers retained but unwired.)
 - **Adding it up (trend decomposition):**
   - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
-  - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Likely crowd-effect compression post-2018.
+  - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Likely crowd-effect compression post-2018.
 - **Why the 3-point revolution is NOT the main driver:** near-perfect raw 3PA↔HCA correlation is partly shared 40-yr trend; within-season effect is real but modest and lands almost entirely on the shooting line. Shooting = only ~21% of decline; REB+TOV (the bigger half) barely move under the 3PA control. Threes drove one channel (shooting), not the whole decline. Playoffs: within-game 3-pt signal fainter, ⅓ of decline off the box score entirely.
 **Figures:**
 
