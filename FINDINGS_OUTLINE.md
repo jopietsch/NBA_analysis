@@ -16,7 +16,7 @@
 
 - **Core stat:** Home win rate ~65 → ~55 per 100; ~quarter-point/year.
   - *RESULTS:* Reg season GLM **−0.244 pp/yr** [−0.280, −0.209], p<0.001, total ≈ **−10.3 pp**; OLS −0.250 pp/yr, R²=0.745.
-  - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 pt drop, noisier).
+  - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 to 10 pt drop, noisier).
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
   - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
@@ -42,7 +42,7 @@
   - Playoff universality: **45 of 47** officials (≥50 playoff games) home-favoring; holds under all checks.
 - **Shooting edge:** home shoot **>1 pp better FG%** (RESULTS 1984–94: +1.57 FG%, +1.56 eFG%); consistent across eras, both contexts.
 - **Shot selection:** more attempts from close range, fewer mid-range → structural expected-scoring edge. *RESULTS shot zones 1995–01 reg: Paint +1.28, Mid-Range −1.24.*
-- **Rebounding & ball control:** ~**1.5 extra rebounds** (RESULTS REB diff +1.52) and ~**0.3 fewer turnovers** (TOV diff −0.38); together rival shooting.
+- **Rebounding & ball control:** ~**1.5 extra rebounds** (RESULTS REB diff +1.52) and ~**0.4 fewer turnovers** (TOV diff −0.38); together rival shooting.
 - **Box-score accounting (mediation):** four categories = **~95% of edge** (reg season); shooting biggest (**>40%**), then rebounding.
   - *RESULTS level decomp (reg):* eFG% **43%**, REB **25%**, Foul **14%**, TOV **13%**, unexplained 5%; category R²=0.615.
   - *RESULTS playoffs level:* eFG% 33%, Foul 17%, TOV 22%, REB 21%, unexplained 7% (~93% total).
