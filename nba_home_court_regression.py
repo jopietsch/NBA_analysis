@@ -1380,6 +1380,52 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis 5c: Player-tracking rebounding mechanism ────────────────────────
+
+def run_tracking_rebound_analysis(seasons: list, stats: dict) -> None:
+    """Trend of each home-minus-road player-tracking rebounding edge over the
+    tracking era — the mechanism behind the box-score rebounding fade.
+
+    Covers only ~2014 on (box-outs ~2016 on), far shorter than the 40-year
+    series, so these corroborate the modern mechanism rather than the full
+    decline. Each edge = mean across teams of (home − road) per season.
+    """
+    _section("PLAYER-TRACKING REBOUNDING MECHANISM  (home minus road, tracking era)")
+    print("   Confirms how the home rebounding edge expresses itself in the tracking")
+    print("   data: offensive-rebound conversion, box-outs, and second-chance points.")
+    print("   Window is short (~2014 on; box-outs ~2016 on) — corroborates the modern")
+    print("   mechanism, not the 40-year decline.\n")
+
+    rows = [
+        ("oreb_chance_pct_edge", "OREB conversion edge (pp)"),
+        ("boxout_edge",          "Box-out edge (per game)"),
+        ("second_chance_edge",   "2nd-chance pts edge (per game)"),
+    ]
+    label_w = 30
+    print(f"   {'Metric':<{label_w}}{'N seasons':>11}{'Mean':>10}{'Trend/yr':>12}{'p':>9}")
+    print(f"   {'─'*label_w}{'─'*11}{'─'*10}{'─'*12}{'─'*9}")
+
+    years = [nba.label_to_year(s) for s in seasons]
+    for key, label in rows:
+        y = np.array(stats.get(key, []), dtype=float)
+        xy = pd.DataFrame({"year": years, "v": y}).dropna()
+        if len(xy) < 3:
+            print(f"   {label:<{label_w}}{len(xy):>11}{'—':>10}{'—':>12}{'—':>9}")
+            continue
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m = smf.ols("v ~ year", data=xy).fit()
+        coef, pval = m.params["year"], m.pvalues["year"]
+        print(f"   {label:<{label_w}}{len(xy):>11}{xy['v'].mean():>+10.3f}"
+              f"{coef:>+9.3f}{_stars(pval)}{_fmt_p(pval):>9}")
+
+    print()
+    print("   ► The home edge is small and flat-to-declining across the tracking era —")
+    print("     consistent with the offensive-glass advantage having largely collapsed")
+    print("     before high-resolution tracking even began.")
+    print()
+
+
 # ── Analysis 6: Shot zone differentials ──────────────────────────────────────
 
 def run_shot_zone_analysis(

@@ -285,6 +285,16 @@ team are the same boards the other team can defensively rebound, the home team's
 offensive-share edge equals its defensive-share edge exactly — there is one
 "control of the glass" number, reported here as the offensive-rebound share edge.
 
+**Player-tracking footnote.** A separate set of helpers
+(`compute_tracking_rebound_stats` and `run_tracking_rebound_analysis`) pulls NBA
+player-tracking and hustle data (offensive-rebound conversion, box-outs,
+second-chance points) split Home/Road via `location_nullable`. It corroborates the
+mechanism — no measurable home box-out edge today, offensive-rebound conversion
+still shrinking — but only covers the tracking era (~2014 on), too short to carry
+the 40-year story, so it is summarized in one sentence in `FINDINGS.md` §3 rather
+than reported as its own section here. The code is retained but unwired from the
+pipeline.
+
 ---
 
 ## 6. Rest Differential — Buckets and Era Stability (`run_rest_bucket_analysis`)

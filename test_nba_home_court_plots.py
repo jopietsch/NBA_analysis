@@ -77,6 +77,17 @@ def test_plot_rebound_decomposition():
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_tracking_rebounding():
+    track_seasons = [nba.short_label(y) for y in range(2014, nba.END_YEAR + 1)]
+    n = len(track_seasons)
+    stats = {
+        "oreb_chance_pct_edge": [0.7 - 0.02 * i for i in range(n)],
+        "boxout_edge":          [0.0 for _ in range(n)],
+        "second_chance_edge":   [0.3 - 0.01 * i for i in range(n)],
+    }
+    plots.plot_tracking_rebounding(track_seasons, stats)
+
+
 def test_plot_margin_analysis():
     reg = {"all_games_mean": _series(base=3.0),
            "home_wins_mean": _series(base=11.0),

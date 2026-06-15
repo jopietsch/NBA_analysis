@@ -78,6 +78,7 @@
   - **Pace-free share edge** (home share of available boards − away) still collapses ~10×: **+2.14pp → +0.21pp** (trend −0.052/yr, p<0.001). → not a pace/volume artifact.
   - **Cause = league-wide retreat from O-rebounding:** league OREB rate 33% → 26%; share edge vs league OREB rate **r = +0.82, p<0.001 (N=43)**. Effort-driven O-boards coached out (transition defense).
   - Playoffs: share edge **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01); REB survives 3PA control (−42%/strengthens).
+  - **Player-tracking (last decade) fits:** no measurable home box-out edge today; OREB-conversion edge still shrinking. (One sentence in §3; not a RESULTS section — short tracking-era window corroborates the mechanism only. Code/fetchers retained but unwired.)
 - **Adding it up (trend decomposition):**
   - Reg season: four channels = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
   - Playoffs: channels = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Likely crowd-effect compression post-2018.

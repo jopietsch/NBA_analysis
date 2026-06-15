@@ -605,6 +605,43 @@ class TestComputeReboundStats:
         assert stats["league_oreb_rate"] == [pytest.approx(28.0)]
 
 
+class TestComputeTrackingReboundStats:
+    def test_home_minus_road_edge_per_team(self, monkeypatch):
+        # Two teams; home OREB_CHANCE_PCT exceeds road by 0.02 and 0.04 → mean +0.03,
+        # rescaled to pp = +3.0. Box-outs and 2nd-chance handled per source.
+        def make(col, home_vals, road_vals):
+            def fetch(end_year, location):
+                if end_year != 2024:
+                    return None
+                vals = home_vals if location == "Home" else road_vals
+                return pd.DataFrame({"TEAM_ID": [1, 2], col: vals})
+            return fetch
+
+        monkeypatch.setattr(nba, "fetch_tracking_rebounding",
+                            make("OREB_CHANCE_PCT", [0.50, 0.48], [0.48, 0.44]))
+        monkeypatch.setattr(nba, "fetch_hustle_rebounding",
+                            make("BOX_OUTS", [10.0, 12.0], [9.0, 10.0]))
+        monkeypatch.setattr(nba, "fetch_second_chance",
+                            make("PTS_2ND_CHANCE", [13.0, 14.0], [12.0, 12.0]))
+
+        seasons, stats = nba.compute_tracking_rebound_stats(2024, 2024)
+
+        assert seasons == ["23–24"]
+        assert stats["oreb_chance_pct_edge"] == [pytest.approx(3.0)]   # (0.02+0.04)/2 ×100
+        assert stats["boxout_edge"]          == [pytest.approx(1.5)]   # (1.0+2.0)/2
+        assert stats["second_chance_edge"]   == [pytest.approx(1.5)]   # (1.0+2.0)/2
+
+    def test_missing_source_yields_nan(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_tracking_rebounding", lambda y, loc: None)
+        monkeypatch.setattr(nba, "fetch_hustle_rebounding", lambda y, loc: None)
+        monkeypatch.setattr(nba, "fetch_second_chance", lambda y, loc: None)
+
+        seasons, stats = nba.compute_tracking_rebound_stats(2024, 2024)
+        assert seasons == ["23–24"]
+        for key in stats:
+            assert pd.isna(stats[key][0])
+
+
 class TestZonePcts:
     def _df(self):
         return pd.DataFrame({

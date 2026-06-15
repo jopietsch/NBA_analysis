@@ -438,6 +438,54 @@ def plot_rebound_decomposition(
     plt.close()
 
 
+def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
+    """
+    Player-tracking confirmation of the rebounding mechanism (tracking era only).
+
+    One panel each for the home-minus-road edge in: offensive-rebound chance
+    conversion, box-outs, and second-chance points. A short window (~2014 on;
+    box-outs ~2016 on) — these corroborate the modern mechanism, not the full
+    40-year decline.
+    """
+    x = np.arange(len(seasons))
+    panels = [
+        ("oreb_chance_pct_edge",
+         "Offensive-rebound conversion edge",
+         "Percentage points", "home minus road: share of O-reb chances converted"),
+        ("boxout_edge",
+         "Box-out edge",
+         "Box-outs per game", "home minus road (tracked from ~2016)"),
+        ("second_chance_edge",
+         "Second-chance points edge",
+         "Points per game", "home minus road"),
+    ]
+
+    fig, axes = plt.subplots(1, 3, figsize=(20, 6))
+    fig.suptitle("Player-Tracking View of the Home Rebounding Edge (tracking era)",
+                 fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.95,
+             "Data: NBA.com player tracking & hustle stats  |  "
+             "Positive = home team higher  |  short window — corroborates the modern mechanism",
+             ha="center", fontsize=9, color=GRAY)
+
+    for ax, (key, title, ylabel, note) in zip(axes, panels):
+        y = np.array(stats[key], dtype=float)
+        ax.plot(x, y, color=BLUE, linewidth=1.6, marker="o", markersize=4, alpha=0.8, zorder=2)
+        _add_trend_line(ax, x, y, RED, linewidth=1.8, alpha=0.9, zorder=3)
+        ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+        ax.set_xticks(x)
+        ax.set_xticklabels(seasons, rotation=45, ha="right", fontsize=8)
+        ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+        ax.set_ylabel(ylabel, fontsize=10)
+        ax.set_xlabel(note, fontsize=8, color=GRAY)
+
+    plt.tight_layout()
+    output_path = "nba_home_court_rebounding_tracking.png"
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_margin_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,

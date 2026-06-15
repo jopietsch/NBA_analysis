@@ -630,6 +630,127 @@ def compute_rebound_stats(
     return seasons, stats
 
 
+# ── Player-tracking rebounding (mechanism, tracking era only) ─────────────────
+# Tests *why* the home rebounding edge faded, using NBA player-tracking and
+# hustle endpoints split Home vs Road (location_nullable). These cover only the
+# tracking era (~2014 on; box-outs ~2016 on) — far shorter than the 40-year
+# box-score series — so they corroborate the modern mechanism, not the full
+# decline. Each metric's home edge = mean across teams of (home − road), so no
+# per-game merge is needed.
+
+TRACKING_START_YEAR = 2014  # 2013-14, first player-tracking season
+
+
+def _fetch_tracking_cached(path: str, build_df, keep_cols: list[str]) -> pd.DataFrame | None:
+    """Shared cache/error wrapper for one season/location tracking pull.
+
+    Caches the miss (empty CSV) so unavailable seasons aren't re-fetched.
+    """
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(CACHE_DIR, exist_ok=True)
+    try:
+        df = build_df()
+    except Exception as e:
+        print(f"    ERROR fetching {os.path.basename(path)}: {e}")
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    if df.empty or "TEAM_ID" not in df.columns:
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    present = ["TEAM_ID"] + [c for c in keep_cols if c in df.columns and c != "TEAM_ID"]
+    df = df[present].copy()
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def fetch_tracking_rebounding(end_year: int, location: str) -> pd.DataFrame | None:
+    """Team rebound-tracking (LeagueDashPtStats, Rebounding), Home/Road split."""
+    path = os.path.join(CACHE_DIR, f"tracking_reb_{season_str(end_year)}_{location}.csv")
+
+    def build():
+        from nba_api.stats.endpoints import leaguedashptstats
+        return leaguedashptstats.LeagueDashPtStats(
+            season=season_str(end_year), season_type_all_star="Regular Season",
+            pt_measure_type="Rebounding", player_or_team="Team",
+            per_mode_simple="PerGame", location_nullable=location, timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_tracking_cached(path, build, ["OREB_CHANCE_PCT", "REB_CONTEST", "AVG_REB_DIST"])
+
+
+def fetch_hustle_rebounding(end_year: int, location: str) -> pd.DataFrame | None:
+    """Team hustle stats (LeagueHustleStatsTeam): box-outs etc., Home/Road split."""
+    path = os.path.join(CACHE_DIR, f"tracking_hustle_{season_str(end_year)}_{location}.csv")
+
+    def build():
+        from nba_api.stats.endpoints import leaguehustlestatsteam
+        return leaguehustlestatsteam.LeagueHustleStatsTeam(
+            season=season_str(end_year), season_type_all_star="Regular Season",
+            per_mode_time="PerGame", location_nullable=location, timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_tracking_cached(path, build, ["BOX_OUTS", "OFF_BOXOUTS"])
+
+
+def fetch_second_chance(end_year: int, location: str) -> pd.DataFrame | None:
+    """Team Misc stats (LeagueDashTeamStats, Misc): second-chance points, Home/Road split."""
+    path = os.path.join(CACHE_DIR, f"tracking_misc_{season_str(end_year)}_{location}.csv")
+
+    def build():
+        from nba_api.stats.endpoints import leaguedashteamstats
+        return leaguedashteamstats.LeagueDashTeamStats(
+            season=season_str(end_year), season_type_all_star="Regular Season",
+            measure_type_detailed_defense="Misc", per_mode_detailed="PerGame",
+            location_nullable=location, timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_tracking_cached(path, build, ["PTS_2ND_CHANCE"])
+
+
+def compute_tracking_rebound_stats(
+    start_year: int = TRACKING_START_YEAR, end_year: int = END_YEAR,
+) -> tuple[list[str], dict]:
+    """Per-season home-minus-road tracking rebounding edges (regular season).
+
+    Each edge is the mean across teams of (home metric − road metric). Seasons
+    before a metric exists yield NaN. OREB_CHANCE_PCT is rescaled to percentage
+    points; box-outs and second-chance points stay per game.
+    """
+    # (key, fetch_fn, source_column, scale)
+    specs = [
+        ("oreb_chance_pct_edge", fetch_tracking_rebounding, "OREB_CHANCE_PCT", 100.0),
+        ("boxout_edge",          fetch_hustle_rebounding,   "BOX_OUTS",        1.0),
+        ("second_chance_edge",   fetch_second_chance,       "PTS_2ND_CHANCE",  1.0),
+    ]
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {key: [] for key, _, _, _ in specs}
+
+    for year in range(start_year, end_year + 1):
+        seasons.append(short_label(year))
+        for key, fetch, col, scale in specs:
+            home = fetch(year, "Home")
+            road = fetch(year, "Road")
+            if (home is None or road is None
+                    or col not in home.columns or col not in road.columns):
+                stats[key].append(np.nan)
+                continue
+            m = home[["TEAM_ID", col]].merge(
+                road[["TEAM_ID", col]], on="TEAM_ID", suffixes=("_h", "_r"))
+            stats[key].append(scale * (m[f"{col}_h"] - m[f"{col}_r"]).mean()
+                              if len(m) else np.nan)
+
+    return seasons, stats
+
+
 def compute_league_3pa_stats(
     start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
 ) -> tuple[list[str], list[float], list[float]]:
