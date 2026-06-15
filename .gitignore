@@ -3,6 +3,6 @@ __pycache__/
 .coverage
 .pytest_cache/
 cache/
-knicks_2026_*.png
+generated/
 *.pdf
 .DS_Store
