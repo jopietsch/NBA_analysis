@@ -17,13 +17,13 @@
 - **Core stat:** Home win rate ~65 → ~55 per 100; ~quarter-point/year.
   - *RESULTS:* Reg season GLM **−0.244 pp/yr** [−0.280, −0.209], p<0.001, total ≈ **−10.3 pp**; OLS −0.250 pp/yr, R²=0.745.
   - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 pt drop, noisier).
-- **Two speeds — gradual drift vs. abrupt waves** (key framing for the whole report):
+- **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 on-court channels grinding down.
-  - **Abrupt — two waves** layered on top, each a moment one force shoved the same trend harder:
-    - First wave: sharp mid-1990s drop ~65% → 60% (steepest move). Cause = **1994–95 hand-check rule shock** (§4) — a *discrete event, outside* the box-score channels. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+  - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
+    - First drop: sharp mid-1990s fall ~65% → 60% (steepest move). Cause = **1994–95 hand-check rule shock** (§4) — a *discrete event, outside* the box-score channels. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - Flat for ~two decades.
-    - Second wave: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the channels (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
-  - Waves are not extra causes — they're the same channels' story told at faster speed. Asymmetry (wave-1 cause outside channels in §4, wave-2 cause inside them in §3) is why each is explained in a different section.
+    - Second drop: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the channels (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
+  - The drops are not extra causes — they're the same channels' story told at faster speed. Asymmetry (first-drop cause outside channels in §4, second-drop cause inside them in §3) is why each is explained in a different section.
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
 **Figures:**
@@ -67,7 +67,7 @@
   - Playoffs: narrowed late 2010s then rebounded; downward drift NOT statistically established (playoff Paint trend −0.030, ns) → convergence is a reg-season phenomenon.
 - **Three-point revolution:**
   - Tracks decline almost perfectly. 7% threes (1980s, 65% wins) → 40% (today, 55% wins).
-  - **Explains the second wave (§1):** 3PA share leapt from ~¼ of shots to ~half right after 2017 — the years home court slid below 56%. *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
+  - **Explains the second drop (§1):** 3PA share leapt from ~¼ of shots to ~half right after 2017 — the years home court slid below 56%. *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
   - *RESULTS reg season-level Pearson r = −0.902, p<0.001.*
   - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.*
   - Playoffs: directional but weaker within-era signal (r=−0.499; within-era p=0.027) — team quality dominates.
