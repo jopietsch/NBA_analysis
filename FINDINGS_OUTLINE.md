@@ -18,12 +18,12 @@
   - *RESULTS:* Reg season GLM **−0.244 pp/yr** [−0.280, −0.209], p<0.001, total ≈ **−10.3 pp**; OLS −0.250 pp/yr, R²=0.745.
   - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 pt drop, noisier).
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
-  - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 on-court channels grinding down.
+  - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
   - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
-    - First drop: sharp mid-1990s fall ~65% → 60% (steepest move). Cause = **1994–95 hand-check rule shock** (§4) — a *discrete event, outside* the box-score channels. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+    - First drop: sharp mid-1990s fall ~65% → 60% (steepest move). Cause = **1994–95 hand-check rule shock** (§4) — a *discrete event, outside* the box-score categories. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - Flat for ~two decades.
-    - Second drop: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the channels (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
-  - The drops are not extra causes — they're the same channels' story told at faster speed. Asymmetry (first-drop cause outside channels in §4, second-drop cause inside them in §3) is why each is explained in a different section.
+    - Second drop: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the box-score categories (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
+  - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Asymmetry (first-drop cause outside the categories in §4, second-drop cause inside them in §3) is why each is explained in a different section.
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
 **Figures:**
@@ -43,8 +43,8 @@
 - **Shooting edge:** home shoot **>1 pp better FG%** (RESULTS 1984–94: +1.57 FG%, +1.56 eFG%); consistent across eras, both contexts.
 - **Shot selection:** more attempts from close range, fewer mid-range → structural expected-scoring edge. *RESULTS shot zones 1995–01 reg: Paint +1.28, Mid-Range −1.24.*
 - **Rebounding & ball control:** ~**1.5 extra rebounds** (RESULTS REB diff +1.52) and ~**0.3 fewer turnovers** (TOV diff −0.38); together rival shooting.
-- **Box-score accounting (mediation):** four channels = **~95% of edge** (reg season); shooting biggest (**>40%**), then rebounding.
-  - *RESULTS level decomp (reg):* eFG% **43%**, REB **25%**, Foul **14%**, TOV **13%**, unexplained 5%; channel R²=0.615.
+- **Box-score accounting (mediation):** four categories = **~95% of edge** (reg season); shooting biggest (**>40%**), then rebounding.
+  - *RESULTS level decomp (reg):* eFG% **43%**, REB **25%**, Foul **14%**, TOV **13%**, unexplained 5%; category R²=0.615.
   - *RESULTS playoffs level:* eFG% 33%, Foul 17%, TOV 22%, REB 21%, unexplained 7% (~93% total).
 - **Rest & altitude:**
   - Rest: home better-rested wins **62.8%** (+2.7 pp); away better-rested **57.6%** (−2.6). *RESULTS χ²(2)=79.22, p<0.001; +1.6 pp/day reg, +2.4 pp/day playoffs; no era change (LR p=0.474).*
@@ -80,8 +80,8 @@
   - Playoffs: share edge **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01); REB survives 3PA control (−42%/strengthens).
   - **Player-tracking (last decade) fits:** no measurable home box-out edge today; OREB-conversion edge still shrinking. (One sentence in §3; not a RESULTS section — short tracking-era window corroborates the mechanism only. Code/fetchers retained but unwired.)
 - **Adding it up (trend decomposition):**
-  - Reg season: four channels = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
-  - Playoffs: channels = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Likely crowd-effect compression post-2018.
+  - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
+  - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Likely crowd-effect compression post-2018.
 **Figures:**
 
 ![Fig 4 — referee bias](nba_home_court_referee.png)
@@ -157,7 +157,7 @@
 
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → 55.6%**, playoffs **~68% → 58%**.
-- Shape: slow four-decade erosion + two sharper drops — 1994–95 hand-check jolt (discrete, outside channels) and post-2017 three-point surge (inside channels, shooting line).
+- Shape: slow four-decade erosion + two sharper drops — 1994–95 hand-check jolt (discrete, outside the categories) and post-2017 three-point surge (inside the categories, shooting line).
 - Three main drivers + quiet fourth: (1) fairer refs (largest single change), (2) converged shot selection, (3) three-point variance, (4) rebounding edge slipping independently — specifically the OFFENSIVE-glass edge dying (OREB diff → negative) in lockstep with the league-wide retreat from O-rebounding (r=0.82).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
 - Playoffs follow reg season with ~decade lag; accelerated since 2018; genuine erosion (weaker host still winning less); no sign of bottoming out.
