@@ -27,7 +27,7 @@ from nba_home_court_data import (
     compute_attendance_season_stats, compute_attendance_covid_doseresponse,
 )
 from nba_home_court_plots import (
-    plot_results, plot_mediation,
+    plot_results, plot_mediation, plot_rest_altitude,
     plot_differential_analysis, plot_rebound_decomposition,
     plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
@@ -59,6 +59,7 @@ def main() -> None:
     import nba_home_court_regression as _reg
     game_df = _reg.build_game_dataset()
     plot_mediation(_reg.compute_mediation_decomposition(game_df))
+    plot_rest_altitude(_reg.compute_rest_altitude_plotdata(game_df))
 
     reg_reb_seasons, reg_reb_stats = compute_rebound_stats(START_YEAR, END_YEAR, SeasonType.regular)
     po_reb_seasons, po_reb_stats = compute_rebound_stats(

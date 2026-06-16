@@ -77,6 +77,28 @@ def test_plot_rebound_decomposition():
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_rest_altitude():
+    def _ctx(base):
+        return {
+            "rest": {
+                "baseline": base,
+                "buckets": {
+                    "Away more rested": (base - 2.0, 5000),
+                    "Equal rest":       (base, 12000),
+                    "Home more rested": (base + 3.0, 8000),
+                },
+            },
+            "altitude": {
+                "League":         (base, 25000),
+                "Denver Nuggets": (base + 5.0, 1700),
+                "Utah Jazz":      (base + 9.0, 1700),
+            },
+        }
+    data = {"rest": {"reg": _ctx(60.0)["rest"], "po": _ctx(64.0)["rest"]},
+            "altitude": {"reg": _ctx(60.0)["altitude"], "po": _ctx(64.0)["altitude"]}}
+    plots.plot_rest_altitude(data)
+
+
 def test_plot_tracking_rebounding():
     track_seasons = [nba.short_label(y) for y in range(2014, nba.END_YEAR + 1)]
     n = len(track_seasons)

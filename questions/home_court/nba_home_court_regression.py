@@ -959,6 +959,43 @@ def run_factor_summary(df: pd.DataFrame) -> None:
 
 # ── Analysis: Rest-differential buckets and era stability ─────────────────────
 
+def compute_rest_altitude_plotdata(df: pd.DataFrame) -> dict:
+    """Chart-ready home win % by rest situation and for the altitude teams.
+
+    Returns {"rest": {ctx: {...}}, "altitude": {ctx: {...}}} for ctx in
+    ("reg", "po"). Rest buckets mirror run_rest_bucket_analysis; altitude
+    compares each high-elevation team's home win % to the league baseline.
+    The chart rendered from this is the visual companion to those two
+    RESULTS sections — same numbers, no new data.
+    """
+    rest_buckets = [
+        ("Away more rested", lambda s: s < 0),
+        ("Equal rest",       lambda s: s == 0),
+        ("Home more rested", lambda s: s > 0),
+    ]
+    out: dict = {"rest": {}, "altitude": {}}
+    for ctx, is_po in [("reg", 0), ("po", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+
+        r = sub.dropna(subset=["rest_diff"])
+        out["rest"][ctx] = {
+            "baseline": 100.0 * r["home_win"].mean() if len(r) else float("nan"),
+            "buckets": {
+                label: (100.0 * b["home_win"].mean(), len(b))
+                for label, cond in rest_buckets
+                if len(b := r[cond(r["rest_diff"])])
+            },
+        }
+
+        alt = {"League": (100.0 * sub["home_win"].mean(), len(sub))}
+        for team in nba.ALTITUDE_TEAMS:
+            t = sub[sub["TEAM_NAME_home"] == team]
+            if len(t):
+                alt[team] = (100.0 * t["home_win"].mean(), len(t))
+        out["altitude"][ctx] = alt
+    return out
+
+
 def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
     """Home win % by rest-differential bucket, plus a rest × era interaction
     test — has the rest effect changed across eras?"""

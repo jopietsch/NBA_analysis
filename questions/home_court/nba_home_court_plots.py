@@ -219,6 +219,80 @@ def plot_results(
           (5, 3))
 
 
+def plot_rest_altitude(data: dict) -> None:
+    """
+    Two-panel view of the two situational edges from Section 2: rest and
+    altitude. Left: home win % by rest situation (away more rested / equal /
+    home more rested), regular season vs playoffs. Right: home win % for the
+    two high-altitude franchises (Denver, Utah) against the league baseline,
+    regular season vs playoffs — the altitude edge is real in the regular
+    season and largely gone in the playoffs.
+
+    `data` comes from regression.compute_rest_altitude_plotdata(); same
+    numbers RESULTS.md prints, no new data.
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    fig.suptitle("The Situational Edges: Rest and Altitude",
+                 fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.95,
+             f"Data: NBA.com  |  home win % by situation  |  {season_range_label()}",
+             ha="center", fontsize=9, color=GRAY)
+
+    ctx_styles = [("reg", "Regular season", GREEN), ("po", "Playoffs", BLUE)]
+
+    # ── Panel 1: rest buckets ────────────────────────────────────────────────
+    bucket_order = ["Away more rested", "Equal rest", "Home more rested"]
+    x = np.arange(len(bucket_order))
+    width = 0.38
+    for i, (ctx, label, color) in enumerate(ctx_styles):
+        rest = data["rest"][ctx]["buckets"]
+        vals = [rest.get(b, (np.nan, 0))[0] for b in bucket_order]
+        offset = (i - 0.5) * width
+        bars = ax1.bar(x + offset, vals, width, color=color, label=label,
+                       edgecolor="white", linewidth=0.6)
+        for bar, v in zip(bars, vals):
+            if np.isfinite(v):
+                ax1.text(bar.get_x() + bar.get_width() / 2, v + 0.4,
+                         f"{v:.0f}%", ha="center", va="bottom", fontsize=8, color="#333")
+    ax1.axhline(50, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(bucket_order, fontsize=9)
+    ax1.set_ylabel("Home win %", fontsize=10)
+    ax1.set_ylim(45, 80)
+    ax1.set_title("Home win % by rest situation", fontsize=11, fontweight="bold",
+                  color="#2c2c2a", pad=6)
+    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    # ── Panel 2: altitude teams vs league ────────────────────────────────────
+    team_order = ["League", "Denver Nuggets", "Utah Jazz"]
+    labels2 = ["League avg", "Denver", "Utah"]
+    x2 = np.arange(len(team_order))
+    for i, (ctx, label, color) in enumerate(ctx_styles):
+        alt = data["altitude"][ctx]
+        vals = [alt.get(t, (np.nan, 0))[0] for t in team_order]
+        offset = (i - 0.5) * width
+        bars = ax2.bar(x2 + offset, vals, width, color=color, label=label,
+                       edgecolor="white", linewidth=0.6)
+        for bar, v in zip(bars, vals):
+            if np.isfinite(v):
+                ax2.text(bar.get_x() + bar.get_width() / 2, v + 0.4,
+                         f"{v:.0f}%", ha="center", va="bottom", fontsize=8, color="#333")
+    ax2.axhline(50, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax2.set_xticks(x2)
+    ax2.set_xticklabels(labels2, fontsize=9)
+    ax2.set_ylabel("Home win %", fontsize=10)
+    ax2.set_ylim(45, 80)
+    ax2.set_title("Altitude teams vs. league (home win %)", fontsize=11,
+                  fontweight="bold", color="#2c2c2a", pad=6)
+    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    plt.tight_layout()
+    output_path = _output_path("nba_home_court_rest_altitude.png")
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_mediation(decomp: dict) -> None:
     """
     Two-panel decomposition: each box-score channel's share of the home-court
