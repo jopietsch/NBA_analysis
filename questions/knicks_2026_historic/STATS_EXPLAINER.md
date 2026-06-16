@@ -394,9 +394,44 @@ The verdict is: the run was elite, and the schedule was at the historical median
 so the dominance is real.
 
 **Why no new chart.** The verdict section's job is to synthesize the previous
-sections, not introduce new data. The five metrics already have their charts in
-Sections 1–5; a summary radar or scorecard would duplicate them. The paragraph
+sections, not introduce new data. The metrics already have their charts in
+Sections 1–7; a summary radar or scorecard would duplicate them. The paragraph
 verdict is the right form for a synthesis.
+
+---
+
+## 9. Betting-Market Significance (`run_betting_market`)
+
+**The data.** Game-level ATS data from the ESPN core API, merged with actual
+margins from the playoff game log.
+
+**The approach.** The 16-3 ATS record is tested against a null hypothesis of
+50% coverage (the efficient market expectation: if spreads are fair, any team
+covers ~50% of games). A one-tailed binomial test computes P(X ≥ 16 | n=19, p=0.5):
+
+```python
+from scipy.stats import binom
+p_value = binom.sf(15, 19, 0.5)   # P(X >= 16) = 1 - CDF(15)
+```
+
+The z-score is computed as `(k − np) / sqrt(np(1−p))` = `(16 − 9.5) / sqrt(4.75)`.
+
+**Why a one-tailed test.** We are testing whether the Knicks covered *more* than
+expected, not whether they differed from 50% in either direction. The question
+("was this ATS performance unusual?") is directional.
+
+**What the results mean.** Z = +2.98, p = 0.0022.  A team covering 16 of 19
+games under a fair-coin null has only a 0.22% probability. This is not random
+variation — the East-opponent performance (14-0 ATS in rounds 1-3) drove the
+signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
+
+**An important caveat.** This p-value applies to one team in one playoff run. We
+identified this run because it was interesting (the champion); if we instead asked
+"of all playoff champions, how often do we see ATS records this extreme?", the
+reference distribution would be different and we'd need historical ATS data for
+all 43 champions. The p-value is best interpreted as "the ATS outperformance
+against East opponents was systematic, not luck" — not as an unbiased statistical
+claim across all possible playoff runs.
 
 ---
 

@@ -522,6 +522,12 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
 
 # ── Section 10: Betting-market expectations ──────────────────────────────────
 
+def _binom_p_value(k: int, n: int, p: float = 0.5) -> float:
+    """P(X >= k) under Binomial(n, p) — one-tailed test."""
+    from scipy.stats import binom
+    return float(binom.sf(k - 1, n, p))
+
+
 def run_betting_market(ats_df: pd.DataFrame,
                        po_2026: pd.DataFrame,
                        standings_2026: pd.DataFrame,
@@ -541,6 +547,26 @@ def run_betting_market(ats_df: pd.DataFrame,
     print(f"ATS record:             {n_covered}-{n_total - n_covered}", file=out)
     print(f"Avg Knicks spread:      {avg_spread:+.1f} pts (negative = Knicks favored)", file=out)
     print(f"Avg ATS margin:         {avg_ats:+.1f} pts (how much they beat the spread)", file=out)
+
+    # Statistical significance of the ATS record
+    # Null hypothesis: each game is a fair coin flip at the spread (p=0.50)
+    # One-tailed p-value: P(X >= n_covered | Binom(n_total, 0.5))
+    p_val = _binom_p_value(n_covered, n_total, p=0.5)
+    z = (n_covered - n_total * 0.5) / (n_total * 0.5 * 0.5) ** 0.5
+    print(_subhdr("Statistical significance of ATS record"), file=out)
+    print(f"  Null hypothesis: each game covers at 50% (efficient market)", file=out)
+    print(f"  Observed: {n_covered}/{n_total} covers ({n_covered/n_total:.1%})", file=out)
+    print(f"  Z-score:  {z:+.2f}", file=out)
+    print(f"  One-tailed p-value (P(X≥{n_covered}) under null): {p_val:.4f}", file=out)
+    if p_val < 0.001:
+        sig = "Extremely significant (p < 0.001) — far outside normal random variation."
+    elif p_val < 0.01:
+        sig = "Highly significant (p < 0.01)."
+    elif p_val < 0.05:
+        sig = "Significant (p < 0.05)."
+    else:
+        sig = "Not statistically significant at p < 0.05."
+    print(f"  Interpretation: {sig}", file=out)
 
     # Get opponent names via standings
     game_teams = (

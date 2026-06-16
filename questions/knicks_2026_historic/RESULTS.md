@@ -173,7 +173,8 @@ KEY METRICS vs. all 43 champions (1983–84 through 2025–26):
   Avg margin +14.9 pts/game:    100th percentile
   Games-wtd opp SRS +3.67:     49th percentile (lower = easier schedule)
   Adj margin +11.2 pts/game:    100th percentile
-  Pace-adj margin +13.3 pts/game: 95th percentile
+  Pace-adj raw margin +13.3 pts/game: 95th percentile
+  Opp+pace-adj margin +10.1 pts/game: 100th percentile
   Overperformance +12.5 pts/game: 98th percentile
   East/West SRS gap +0.39:         37th percentile (West dominance)
 
@@ -206,6 +207,13 @@ Games with Vegas lines: 19 of 19
 ATS record:             16-3
 Avg Knicks spread:      -2.0 pts (negative = Knicks favored)
 Avg ATS margin:         +16.9 pts (how much they beat the spread)
+
+── Statistical significance of ATS record ──
+  Null hypothesis: each game covers at 50% (efficient market)
+  Observed: 16/19 covers (84.2%)
+  Z-score:  +2.98
+  One-tailed p-value (P(X≥16) under null): 0.0022
+  Interpretation: Highly significant (p < 0.01).
 
 ── Round-by-round ATS ──
   Round    Opponent                       Spread   Actual      ATS Cover
