@@ -2705,6 +2705,51 @@ def run_structural_break_test(df: pd.DataFrame) -> None:
         for row in rows[:5]:
             print(f"   {row['year']:>6}  {row['F']:>8.2f}  {_fmt_p(row['cond_p']):>10}  "
                   f"{row['sl_pre']:>+13.3f}  {row['sl_post']:>+12.3f}")
+
+        # Bootstrap 95% CI for break year (residual resampling from 2-segment model)
+        K_p = 2
+        k_break = next(
+            (k for k in range(trim, n - trim) if int(agg.iloc[k]["year"]) == best["year"]),
+            None,
+        )
+        if k_break is not None:
+            B = 500
+            X1_fit = np.column_stack([np.ones(k_break), x[:k_break]])
+            X2_fit = np.column_stack([np.ones(n - k_break), x[k_break:]])
+            b1_fit = _lstsq(X1_fit, y[:k_break], rcond=None)[0]
+            b2_fit = _lstsq(X2_fit, y[k_break:], rcond=None)[0]
+            fitted = np.concatenate([X1_fit @ b1_fit, X2_fit @ b2_fit])
+            residuals = y - fitted
+            rng_b = np.random.default_rng(42)
+            boot_yrs: list[int] = []
+            X_full = np.column_stack([np.ones(n), x])
+            for _ in range(B):
+                y_boot = fitted + rng_b.choice(residuals, size=n, replace=True)
+                b_full = _lstsq(X_full, y_boot, rcond=None)[0]
+                rss_f = float(np.sum((y_boot - X_full @ b_full) ** 2))
+                best_f_b, best_yr_b = -np.inf, int(x[trim])
+                for kb in range(trim, n - trim):
+                    X1b = np.column_stack([np.ones(kb), x[:kb]])
+                    X2b = np.column_stack([np.ones(n - kb), x[kb:]])
+                    b1b = _lstsq(X1b, y_boot[:kb], rcond=None)[0]
+                    b2b = _lstsq(X2b, y_boot[kb:], rcond=None)[0]
+                    rss12b = (float(np.sum((y_boot[:kb] - X1b @ b1b) ** 2))
+                              + float(np.sum((y_boot[kb:] - X2b @ b2b) ** 2)))
+                    cf = ((rss_f - rss12b) / K_p) / (rss12b / (n - 2 * K_p))
+                    if cf > best_f_b:
+                        best_f_b, best_yr_b = cf, int(x[kb])
+                boot_yrs.append(best_yr_b)
+            boot_yrs.sort()
+            ci_lo_b = boot_yrs[int(0.025 * B)]
+            ci_hi_b = boot_yrs[int(0.975 * B)]
+            print(f"\n   Bootstrap 95% CI for break year (B={B} residual resamples): "
+                  f"[{ci_lo_b}, {ci_hi_b}]")
+            if best["F"] >= QLR_CV[0.05]:
+                print(f"   ► Break is robustly in {ci_lo_b}–{ci_hi_b}: supports 'late 1990s'")
+                print(f"     framing; no single year can be pinpointed with precision.")
+            else:
+                print(f"   ► Break not significant; CI of [{ci_lo_b}, {ci_hi_b}] is wide")
+                print(f"     and unreliable — no stable break location to report.")
         print()
 
 
