@@ -3,6 +3,7 @@ Name: nbakit
 Version: 0.1.0
 Summary: Shared NBA analysis infrastructure
 Requires-Python: >=3.11
+Requires-Dist: nba_api>=1.11.4
 Requires-Dist: pandas>=2.0
 Requires-Dist: numpy>=1.24
 Requires-Dist: matplotlib>=3.7
