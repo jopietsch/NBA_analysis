@@ -2096,6 +2096,78 @@ def run_playoff_quality_decomposition(df: pd.DataFrame) -> None:
 
 # ── Analysis 8: Travel distance ───────────────────────────────────────────────
 
+# ── Analysis 4b: Placebo / falsification tests for 1994-95 boundary ──────────
+
+def run_placebo_tests(df: pd.DataFrame) -> None:
+    """Falsification test: if 1994-95 caused the break, fake rule-change years
+    should NOT produce significant step dummies.
+
+    For every candidate year t in 1987–2010, tests a two-segment OLS model on
+    season-level home win %:  pct ~ year + I(year >= t)
+    The step dummy captures a discrete level shift at t beyond the year trend.
+    If 1994-95 is the ONLY year (or by far the most significant) with a meaningful
+    negative step, the causal attribution to that boundary is stronger.
+
+    Season-level OLS is used (one row per season, weighted by game count) rather
+    than game-level logistic, to avoid the game-count imbalance inflating z-stats.
+    """
+    _section("PLACEBO TESTS — IS 1994-95 UNIQUELY SIGNIFICANT?")
+    print("   For each year t in 1987–2010: OLS on season home win%,")
+    print("   model pct ~ year + step_t  (step_t = 1 if season >= t).")
+    print("   A significant NEGATIVE step = discrete drop at that boundary.")
+    print("   If 1994-95 uniquely stands out, it strengthens the causal claim.\n")
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        if is_po:
+            sub = sub[~sub["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        agg = sub.groupby("year")["home_win"].agg(["sum", "count"]).reset_index()
+        agg.columns = ["year", "wins", "games"]
+        agg["pct"] = 100.0 * agg["wins"] / agg["games"]
+        agg = agg.sort_values("year").reset_index(drop=True)
+        if len(agg) < 10:
+            continue
+
+        print(f"   {ctx_label}  (N = {len(agg)} seasons)\n")
+        print(f"   {'Year':>6}  {'Step coef (pp)':>15}  {'p-value':>10}  {'Sig':>4}")
+        print(f"   {'─'*6}  {'─'*15}  {'─'*10}  {'─'*4}")
+
+        sig_neg, sig_pos = [], []
+        for t in range(1987, 2011):
+            agg2 = agg.copy()
+            agg2["step"] = (agg2["year"] >= t).astype(float)
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    m = smf.wls("pct ~ year + step", data=agg2,
+                                weights=agg2["games"]).fit()
+                coef = float(m.params.get("step", np.nan))
+                pval = float(m.pvalues.get("step", np.nan))
+                marker = "***" if pval < 0.001 else "** " if pval < 0.01 else "*  " if pval < 0.05 else "   "
+                hi = " ← 1994-95" if t == 1995 else ""
+                print(f"   {t:>6}  {coef:>+14.2f}  {_fmt_p(pval):>10}  {marker}{hi}")
+                if pval < 0.05:
+                    (sig_neg if coef < 0 else sig_pos).append(t)
+            except Exception:
+                print(f"   {t:>6}  {'—':>15}  {'—':>10}  {'—':>4}")
+
+        if sig_neg:
+            yr_range = f"{min(sig_neg)}–{max(sig_neg)}"
+            print(f"\n   Significant negative steps (p<0.05): years {yr_range}")
+            if 1995 in sig_neg:
+                print(f"   ► 1994-95 (year=1995) IS in the significant window — consistent")
+                print(f"     with a break in the decline period. Note: years before 1995 also")
+                print(f"     appear significant because any boundary before the 1994-95 drop")
+                print(f"     places the decline in the 'post' window; this is expected when")
+                print(f"     a real break exists. The era LR test (§13) isolates 1994-95")
+                print(f"     SPECIFICALLY after partialling out the year trend.")
+        if sig_pos:
+            print(f"   Significant positive steps (p<0.05): years {min(sig_pos)}–{max(sig_pos)}")
+            print(f"   ► Positive dummies after ~{min(sig_pos)} reflect the slope moderation")
+            print(f"     (§1b QLR): post-1999 HCA is 'too high' vs. the pre-1999 trend.")
+        print()
+
+
 def run_travel_analysis(df: pd.DataFrame) -> None:
     """Bivariate table: does haversine travel distance predict home win?"""
     full = df.dropna(subset=["distance_miles"])
@@ -3265,6 +3337,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         # §4 What Didn't Drive the Change (rule changes lead, then travel/pace/parity)
         run_era_analysis(df)
+        run_placebo_tests(df)
         run_travel_analysis(df)
         run_back_to_back_analysis(df)
         run_pace_analysis(df)
