@@ -9,9 +9,9 @@ and outscored opponents by an average of **+14.9 points per game** — the highe
 single-season playoff margin in the dataset. After adjusting for the strength of
 their opponents, the adjusted margin of **+11.4 pts/game** still ranks first
 all-time. The East was **not** historically weak: the West-East SRS gap in
-2025–26 was only +0.39 pts/game (37th percentile of West dominance), meaning the
-East was stronger than average relative to the West in 63% of seasons since 1984.
-The Knicks earned this — on a real schedule, against real competition.
+2025–26 was only +0.39 pts/game (37th percentile of West dominance) — in 63% of
+seasons since 1984, the West was even *more* dominant than this. The Knicks earned
+this — on a real schedule, against real competition.
 
 The main caveat: the dominant margins came before the Finals — including sweeps
 of Philadelphia and Cleveland — while the NBA Finals against a Spurs team with SRS
@@ -32,7 +32,7 @@ data (1983–84 through 2025–26):
   0.941
 - **Average margin: 100th percentile** — +14.9 pts/game, best in 43 years
 
-**Round-by-round:**
+**Round-by-round** (SRS = team quality relative to schedule; higher = stronger):
 
 | Round | Opponent | Record | Avg Margin |
 |-------|----------|--------|------------|
@@ -41,9 +41,9 @@ data (1983–84 through 2025–26):
 | Conference Finals | Cleveland Cavaliers (SRS +3.77) | 4-0 | +19.2 |
 | NBA Finals | San Antonio Spurs (SRS +8.28) | 4-1 | +2.4 |
 
-The two sweeps — which came against legitimate playoff teams, not pushovers —
-drove the record margin. The Finals were tight: four of the five games were
-decided by 4 points or fewer.
+The two sweeps — against Cleveland (SRS +3.77, a genuine title contender) and
+Philadelphia (SRS -0.27) — drove the record margin. The Finals were tight: four
+of the five games were decided by 4 points or fewer.
 
 ![Playoff win rate — all 43 champions ranked](generated/knicks_2026_win_rate_ranking.png){height=0.60}
 

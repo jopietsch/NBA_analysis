@@ -1,5 +1,7 @@
 # Plan — Did the 2025–26 Knicks Have a Historic Playoff Run?
 
+**Status: DONE** — All phases complete. PDF report and RESULTS.md generated, 24 tests pass.
+
 Derived from `project_definition.md`. This is the working plan to get the project
 off the ground: what we'll measure, with what data, in what order, and how we'll
 check that the conclusions hold up.
