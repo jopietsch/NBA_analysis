@@ -1024,14 +1024,57 @@ if (b), their correlation is spurious. The **Engle-Granger cointegration test**
 checks: H0 = no cointegration. p < 0.05 → cointegrated → the correlation is
 genuine.
 
-**Why this matters for 3PA and HCA.** Season-level correlation: 3PA and home
-win % share r = −0.90. Both series are I(1) (ADF p = 0.925 and 0.680 —
-comfortably non-rejecting). But the Engle-Granger test comes back not significant:
-**not cointegrated**. The r = −0.90 is therefore likely spurious — the two trends
-just happen to run in opposite directions over 43 seasons without sharing a genuine
-long-run equilibrium. This is why the within-era game-level test is the only
-reliable evidence for the 3PA link; the season-level r is just two clocks both
-trending in the same direction.
+**Worked example: the step-by-step verdict on 3PA and HCA.**
+
+*Step 1 — Notice the seductive number.* Season-level r = −0.902 (Pearson) and
+ρ = −0.890 (Spearman), both p < 0.001. At face value this looks decisive. But
+the very fact that both series drifted monotonically for 40 years is reason to
+stop and worry: two things that both trend — one up, one down — will always
+produce r close to ±1 whether they are causally connected or not. The r is not
+evidence; it is expected.
+
+*Step 2 — Confirm both series are I(1).* Run the ADF test on each. H0 = unit
+root (series wanders without a fixed center). Failing to reject (p >> 0.05)
+means the series is I(1).
+
+| Series | ADF stat | p-value | verdict |
+|---|---|---|---|
+| 3PA rate | −0.304 | 0.925 | **I(1)** — just keeps rising |
+| Home win % | −1.184 | 0.680 | **I(1)** — just keeps falling |
+
+Both series are confirmed wanderers. This makes the r = −0.90 suspect regardless
+of how large it looks. An r near ±1 between two I(1) series is *expected* and
+proves nothing on its own.
+
+*Step 3 — Test whether the wandering is shared (Engle-Granger cointegration).*
+If 3PA and HCA have a genuine long-run relationship, then whenever one strays
+"too far" the other pulls it back — an equilibrium tether. That tether would
+show up as the *residuals* from regressing HCA on 3PA being stationary (I(0)).
+If the residuals also wander indefinitely, no such tether exists.
+
+Engle-Granger procedure:
+1. Regress home win % on 3PA rate; collect the residuals.
+2. Run an ADF test on those residuals. H0: residuals are I(1) → no
+   cointegration.
+
+Result: ADF t = −1.486, p = 0.766. The residuals wander just as freely as the
+original series. **Not cointegrated.** There is no equilibrium force tying
+the two series together.
+
+*Step 4 — Conclude: the r = −0.90 is probably spurious.* "Probably" not
+"definitely" because we can never prove a null. But the cointegration test sets
+a well-defined bar for "genuine long-run link" and 3PA–HCA fails it by a wide
+margin.
+
+*Step 5 — Find the trustworthy evidence.* Strip out the shared time trend
+entirely by comparing only games within the same era (controlling for the
+year-by-year drift). Within that controlled comparison, high-3PA games still
+have lower home win rates than low-3PA games played in the same season:
+**−2.27 pp per 10 pp of 3PA rate, p < 0.001.** This within-era result does not
+depend on the long-run trend at all — it is purely cross-sectional variation
+among contemporaneous games. It is the reliable evidence that 3PA and HCA are
+mechanically linked; the r = −0.90 is just two clocks running in opposite
+directions for four decades.
 
 **Compare: parity and attendance.** The league's win-% standard deviation (parity)
 is I(0) stationary (ADF p = 0.023) — it bounces around a fairly stable mean. Same

@@ -71,7 +71,7 @@
   - **Explains the second drop (§1):** 3PA share leapt from ~¼ of shots to ~half right after 2017 — the years home court slid below 56%. *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
   - *RESULTS reg season-level Pearson r = −0.902, p<0.001.* **BUT: cointegration check shows both series are I(1) and NOT cointegrated — the r=−0.902 is likely spurious (parallel trends, not a genuine long-run relationship). Within-era game-level test is the reliable evidence.**
   - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.* This survives as the substantive finding.
-  - **Granger causality (NEW): no temporal lead either direction** (3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns). The two shift together within the same season — both downstream of the broader strategic revolution, rather than one pulling the other year-by-year.
+  - **No temporal lead (Granger):** the annual rise in threes doesn't lead the HCA decline by a year, nor vice versa; both shift within the same season. *RESULTS: 3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns.* Consistent with both being downstream of the same strategic shift. (Note: folded into the 3PA narrative in FINDINGS, not a separate paragraph.)
   - Playoffs: directional but weaker within-era signal (r=−0.499; within-era p=0.027) — team quality dominates.
 - **Quieter fourth strand — rebounding (the glass), now explained:**
   - Home rebounding edge shrunk 40 yrs, NOT a 3-point byproduct.
@@ -84,7 +84,7 @@
 - **Adding it up (trend decomposition):**
   - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
   - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Likely crowd-effect compression post-2018.
-- **Why the 3-point revolution is NOT the main driver:** near-perfect raw 3PA↔HCA correlation is partly shared 40-yr trend; within-season effect is real but modest and lands almost entirely on the shooting line. Shooting = only ~21% of decline; REB+TOV (the bigger half) barely move under the 3PA control. Threes drove one channel (shooting), not the whole decline. Playoffs: within-game 3-pt signal fainter, ⅓ of decline off the box score entirely.
+- **3PA is real but narrow:** within-season link is genuine (−2.27 pp/10pp, p<0.001) but hits mainly the shooting channel. Shooting ≈ 21% of decline; REB+TOV (~57%) barely move under the 3PA control. Threes drove one channel, not the whole decline. (Point now made within the 3PA narrative in FINDINGS, not as a separate closing paragraph.)
 **Figures:**
 
 ![Fig 4 — referee bias](generated/nba_home_court_referee.png)
@@ -111,6 +111,7 @@
 
 ![Fig 9 — pace vs HCA](generated/nba_home_court_pace.png)
 
+- **Home vs. away 3PA differential:** home and away teams attempt threes at nearly identical rates; the trend moves the wrong direction — home teams now take *more* threes than visitors (+0.44 pp in 2023–26 vs. −0.35 pp in 1984–94, trend +0.018***/yr). Not the mechanism behind the decline. *RESULTS 3PA rate diff trend +0.018***/yr.*
 - **Competitive balance:** raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, can't explain magnitude.
 
 ![Fig 10 — parity vs HCA](generated/nba_home_court_parity.png)
