@@ -233,6 +233,33 @@ def compute_adjusted_margin(raw_margin: float, avg_opp_srs: float) -> float:
     return raw_margin - avg_opp_srs
 
 
+# ── Era / pace normalization ──────────────────────────────────────────────────
+
+def compute_league_scoring_avg(reg_logs: pd.DataFrame) -> float:
+    """Average points per game per team across the regular season.
+
+    Used to normalize margins across eras: a +10 margin in a 230-pts/team/game
+    season is a different feat than +10 in a 200-pts/team/game season.
+    """
+    return float(reg_logs["PTS"].mean())
+
+
+def compute_pace_adjusted_margin(raw_margin: float,
+                                 season_scoring_avg: float,
+                                 reference_scoring_avg: float) -> float:
+    """Scale margin to a common scoring environment.
+
+    pace_adj_margin = raw_margin * (reference_avg / season_avg)
+
+    A team whose era had higher scoring gets a slight discount; a low-scoring
+    era gets a slight boost.  The reference is the historical mean across all
+    seasons in the dataset.
+    """
+    if season_scoring_avg == 0:
+        return float("nan")
+    return raw_margin * (reference_scoring_avg / season_scoring_avg)
+
+
 # ── Conference strength ───────────────────────────────────────────────────────
 
 def compute_conference_avg_srs(reg_srs: pd.Series,
@@ -563,6 +590,7 @@ def build_champions_table(start_year: int = START_YEAR,
         overperf = compute_expected_margin_overperformance(po, srs, champ)
         clutch = compute_clutch_rate(po, champ)
         h_wr, a_wr = compute_home_away_split(po, champ)
+        league_scoring = compute_league_scoring_avg(rs)
 
         rows.append({
             "year":             year,
@@ -578,8 +606,29 @@ def build_champions_table(start_year: int = START_YEAR,
             "clutch_rate":      clutch,
             "home_wr":          h_wr,
             "away_wr":          a_wr,
+            "league_scoring":   league_scoring,
         })
-    return pd.DataFrame(rows)
+
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        ref_scoring = float(df["league_scoring"].mean())
+        df["pace_adj_margin"] = df.apply(
+            lambda r: compute_pace_adjusted_margin(
+                r["avg_margin"], r["league_scoring"], ref_scoring
+            ),
+            axis=1,
+        )
+        # Pace-adjust the opponent-adjusted margin too: since both raw_margin and
+        # opp_SRS are expressed in the same era's point-differential units, their
+        # difference (adj_margin) inherits the same era inflation. Scaling by
+        # (ref / season_scoring) puts it in a common unit across all eras.
+        df["pace_adj_adj_margin"] = df.apply(
+            lambda r: compute_pace_adjusted_margin(
+                r["adj_margin"], r["league_scoring"], ref_scoring
+            ),
+            axis=1,
+        )
+    return df
 
 
 def build_conference_gap_table(start_year: int = START_YEAR,

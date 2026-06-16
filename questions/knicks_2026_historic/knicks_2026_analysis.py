@@ -42,6 +42,8 @@ from knicks_2026_data import (
     compute_games_weighted_opponent_srs,
     compute_expected_margin_overperformance,
     compute_adjusted_margin,
+    compute_league_scoring_avg,
+    compute_pace_adjusted_margin,
     compute_conference_avg_srs,
     compute_srs_gap,
     compute_inter_conference_h2h,
@@ -319,7 +321,80 @@ def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
         print(f"  vs. {opp_name:<28} {series_wins}-{series_losses}  avg margin {avg_mgn:+.1f}", file=out)
 
 
-# ── Section 7: Verdict ───────────────────────────────────────────────────────
+# ── Section 7: Era/pace normalization ────────────────────────────────────────
+
+def run_pace_era(reg_2026: pd.DataFrame,
+                 po_2026: pd.DataFrame,
+                 champions: pd.DataFrame,
+                 out: io.StringIO) -> None:
+    """Compare the 2025-26 Knicks' margin to the pace-adjusted ranking."""
+    srs_2026   = compute_srs(reg_2026)
+    avg_opp    = compute_games_weighted_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
+    raw_margin = compute_playoff_margin(po_2026, KNICKS_TEAM_ID)
+    adj        = compute_adjusted_margin(raw_margin, avg_opp)
+    scoring_2026 = compute_league_scoring_avg(reg_2026)
+    ref_scoring  = float(champions["league_scoring"].mean())
+    pace_adj     = compute_pace_adjusted_margin(raw_margin, scoring_2026, ref_scoring)
+    pace_adj_adj = compute_pace_adjusted_margin(adj, scoring_2026, ref_scoring)
+
+    print(_hdr("§7  ERA / PACE ADJUSTMENT"), file=out)
+    print(f"League scoring environment:", file=out)
+    print(f"  2025-26 avg pts/team/game: {scoring_2026:.1f}", file=out)
+    print(f"  Historical mean ({START_YEAR}–{END_YEAR}): {ref_scoring:.1f}", file=out)
+    print(f"  Scale factor: {ref_scoring / scoring_2026:.3f}", file=out)
+    print(f"\nKnicks 2025-26:", file=out)
+    print(f"  Raw avg margin:             {raw_margin:+.2f} pts/game", file=out)
+    print(f"  Pace-adjusted margin:       {pace_adj:+.2f} pts/game", file=out)
+    print(f"  Opp-adj margin (raw):       {adj:+.2f} pts/game", file=out)
+    print(f"  Opp+pace-adjusted margin:   {pace_adj_adj:+.2f} pts/game", file=out)
+
+    pa_series  = champions["pace_adj_margin"].dropna()
+    paa_series = champions["pace_adj_adj_margin"].dropna()
+    pa_pct     = _pct_rank(pa_series,  pace_adj,     ascending=True)
+    paa_pct    = _pct_rank(paa_series, pace_adj_adj, ascending=True)
+    print(f"\nAmong {len(pa_series)} champion seasons:", file=out)
+    print(f"  Pace-adj raw-margin percentile:      {pa_pct:.1f}th  "
+          f"(mean {pa_series.mean():+.2f}, best {pa_series.max():+.2f})", file=out)
+    print(f"  Opp+pace-adj margin percentile:      {paa_pct:.1f}th  "
+          f"(mean {paa_series.mean():+.2f}, best {paa_series.max():+.2f})", file=out)
+
+    top5 = champions.dropna(subset=["pace_adj_margin"]).nlargest(
+        5, "pace_adj_margin"
+    )[["year", "avg_margin", "league_scoring", "pace_adj_margin"]]
+    print(f"\nTop 5 pace-adjusted raw-margin champions:", file=out)
+    for _, row in top5.iterrows():
+        marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
+        print(
+            f"  {short_label(int(row.year))}: raw {row.avg_margin:+.2f}  "
+            f"era-scoring {row.league_scoring:.1f}  "
+            f"pace-adj {row.pace_adj_margin:+.2f}{marker}",
+            file=out,
+        )
+
+    top5adj = champions.dropna(subset=["pace_adj_adj_margin"]).nlargest(
+        5, "pace_adj_adj_margin"
+    )[["year", "adj_margin", "league_scoring", "pace_adj_adj_margin"]]
+    print(f"\nTop 5 opp+pace-adjusted margin champions:", file=out)
+    for _, row in top5adj.iterrows():
+        marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
+        print(
+            f"  {short_label(int(row.year))}: opp-adj {row.adj_margin:+.2f}  "
+            f"era-scoring {row.league_scoring:.1f}  "
+            f"opp+pace-adj {row.pace_adj_adj_margin:+.2f}{marker}",
+            file=out,
+        )
+
+    lo3 = champions.nsmallest(3, "league_scoring")[["year", "league_scoring"]]
+    hi3 = champions.nlargest(3, "league_scoring")[["year", "league_scoring"]]
+    print(f"\nLowest-scoring eras (margins get scaled UP):", file=out)
+    for _, r in lo3.iterrows():
+        print(f"  {short_label(int(r.year))}: {r.league_scoring:.1f} pts/team/game", file=out)
+    print(f"Highest-scoring eras (margins get scaled DOWN):", file=out)
+    for _, r in hi3.iterrows():
+        print(f"  {short_label(int(r.year))}: {r.league_scoring:.1f} pts/team/game", file=out)
+
+
+# ── Section 8 (formerly 7): Verdict ─────────────────────────────────────────
 
 def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
                 champions: pd.DataFrame, gap_table: pd.DataFrame,
@@ -337,17 +412,27 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     opp_pct = _pct_rank(champions["avg_opp_srs"].dropna(), avg_opp, ascending=True)
     op_pct  = _pct_rank(champions["overperformance"].dropna(), overperf, ascending=True)
 
+    scoring_2026 = compute_league_scoring_avg(reg_2026)
+    ref_scoring  = float(champions["league_scoring"].mean())
+    pace_adj     = compute_pace_adjusted_margin(margin, scoring_2026, ref_scoring)
+    pa_pct       = _pct_rank(champions["pace_adj_margin"].dropna(), pace_adj, ascending=True)
+
     subject = gap_table.loc[gap_table["year"] == SUBJECT_YEAR]
     gap_2026 = float(subject["srs_gap"].iloc[0]) if not subject.empty else float("nan")
     gap_pct  = _pct_rank(gap_table["srs_gap"], gap_2026, ascending=True) if not np.isnan(gap_2026) else float("nan")
 
-    print(_hdr("§7  VERDICT"), file=out)
+    print(_hdr("§8  VERDICT"), file=out)
     print(f"The 2025-26 Knicks went {wins}-{losses} in the playoffs.", file=out)
     print(f"\nKEY METRICS vs. all {len(champions)} champions ({season_range_label(START_YEAR, END_YEAR)}):", file=out)
     print(f"  Win rate {wr:.3f}:               {wr_pct:.0f}th percentile", file=out)
     print(f"  Avg margin {margin:+.1f} pts/game:    {mgn_pct:.0f}th percentile", file=out)
     print(f"  Games-wtd opp SRS {avg_opp:+.2f}:     {opp_pct:.0f}th percentile (lower = easier schedule)", file=out)
     print(f"  Adj margin {adj:+.1f} pts/game:    {adj_pct:.0f}th percentile", file=out)
+    if not np.isnan(pace_adj):
+        pace_adj_adj_v = compute_pace_adjusted_margin(adj, scoring_2026, ref_scoring)
+        paa_pct_v = _pct_rank(champions["pace_adj_adj_margin"].dropna(), pace_adj_adj_v, ascending=True)
+        print(f"  Pace-adj raw margin {pace_adj:+.1f} pts/game: {pa_pct:.0f}th percentile", file=out)
+        print(f"  Opp+pace-adj margin {pace_adj_adj_v:+.1f} pts/game: {paa_pct_v:.0f}th percentile", file=out)
     if not np.isnan(overperf):
         print(f"  Overperformance {overperf:+.1f} pts/game: {op_pct:.0f}th percentile", file=out)
     if not np.isnan(gap_2026):
@@ -377,7 +462,7 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
           f"{adj_verdict}.{east_context}", file=out)
 
 
-# ── Section 8: Opponent player availability ──────────────────────────────────
+# ── Section 9: Opponent player availability ──────────────────────────────────
 
 def run_opponent_health(player_po_logs: pd.DataFrame,
                         po_2026: pd.DataFrame,
@@ -387,7 +472,7 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
         player_po_logs, po_2026, KNICKS_TEAM_ID, standings_2026
     )
 
-    print(_hdr("§8  OPPONENT PLAYER AVAILABILITY"), file=out)
+    print(_hdr("§9  OPPONENT PLAYER AVAILABILITY"), file=out)
     if health.empty:
         print("  No player availability data found.", file=out)
         return
@@ -435,13 +520,13 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
         print(f"\nFinals note: {note}", file=out)
 
 
-# ── Section 9: Betting-market expectations ───────────────────────────────────
+# ── Section 10: Betting-market expectations ──────────────────────────────────
 
 def run_betting_market(ats_df: pd.DataFrame,
                        po_2026: pd.DataFrame,
                        standings_2026: pd.DataFrame,
                        out: io.StringIO) -> None:
-    print(_hdr("§9  BETTING-MARKET EXPECTATIONS (ATS)"), file=out)
+    print(_hdr("§10 BETTING-MARKET EXPECTATIONS (ATS)"), file=out)
 
     if ats_df.empty:
         print("  No odds data available (BBR scrape returned no lines).", file=out)
@@ -548,6 +633,7 @@ def main() -> None:
     run_opponent_quality(po_2026, reg_2026, champions, out)
     run_adjusted_dominance(po_2026, reg_2026, champions, out)
     run_deflators(po_2026, champions, out)
+    run_pace_era(reg_2026, po_2026, champions, out)
     run_verdict(po_2026, reg_2026, champions, gap_table, out)
     run_opponent_health(player_po_2026, po_2026, standings_2026, out)
 

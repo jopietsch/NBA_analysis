@@ -66,6 +66,22 @@ def _mini_player_logs() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def test_compute_league_scoring_avg():
+    po = _mini_po_2026()
+    # All rows have PTS=120 or PTS=110; mean is 115
+    avg = data.compute_league_scoring_avg(po)
+    assert avg == pytest.approx(115.0)
+
+
+def test_compute_pace_adjusted_margin():
+    # If season avg equals reference, factor = 1 (no change)
+    assert data.compute_pace_adjusted_margin(10.0, 110.0, 110.0) == pytest.approx(10.0)
+    # If season avg is higher (faster era), margin gets scaled down
+    assert data.compute_pace_adjusted_margin(10.0, 120.0, 110.0) == pytest.approx(10.0 * 110 / 120)
+    # If season avg is lower (slower era), margin gets scaled up
+    assert data.compute_pace_adjusted_margin(10.0, 100.0, 110.0) == pytest.approx(10.0 * 110 / 100)
+
+
 def test_compute_games_weighted_opponent_srs():
     po  = _mini_po_2026()
     srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})

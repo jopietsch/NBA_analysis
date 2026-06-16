@@ -277,6 +277,7 @@ that tells the whole story in one panel.
 
 ## 6. Other Deflators (`run_deflators`)
 
+
 **The data.** 2025–26 Knicks playoff game logs and the `champions` table.
 
 **The approach.** Three "deflator" checks that could reduce the historicity claim,
@@ -321,14 +322,56 @@ of the run.
 
 ---
 
-## 7. The Verdict (`run_verdict`)
+## 7. Era/Pace Adjustment (`run_pace_era`)
+
+**The data.** The `champions` table (which now includes `league_scoring` — the
+average pts per team per game in each season's regular season) and the 2025–26
+regular-season game logs.
+
+**The approach.** Two-step normalization applied to both raw margin and
+opponent-adjusted margin:
+
+```
+pace_adj_margin     = raw_margin  × (ref_scoring / season_scoring)
+pace_adj_adj_margin = adj_margin  × (ref_scoring / season_scoring)
+```
+
+where `ref_scoring` is the historical mean of `league_scoring` across all 43
+seasons and `season_scoring` is that season's average.  A season with higher
+scoring than the historical mean (like 2025–26) gets a discount; a low-scoring
+era gets a boost.  The scale factor is applied to both raw and adjusted margins.
+
+**Why this normalization.** Point margins are not dimensionless — a +10 margin in
+a 115-pt era is fewer standard deviations above zero than a +10 in a 92-pt era.
+Dividing by the scoring average (or equivalently multiplying by the ratio to the
+reference) converts margins to "units of average team output," making comparisons
+across 42 seasons more apples-to-apples.  Note that the opponent-adjusted margin
+(`adj_margin`) already partially controls for era because both the champion's raw
+margin and opponents' SRS are expressed in the same season's point-differential
+units. But the inflation is not fully cancelled: `adj_margin = raw − opp_SRS`, and
+if both raw and opp_SRS are inflated proportionally, adj_margin is inflated too.
+
+**What the results mean.**
+- 2025–26 is the highest-scoring era since 1984 (115.6 pts/team/game; historical
+  mean 103.5). Scale factor: 0.896 — a ~10% discount.
+- Pace-adjusted raw margin: +13.3 pts/game (95th pct, 3rd all-time) — the raw
+  "best ever" claim doesn't survive era adjustment. The 2000–01 Lakers (+13.9)
+  and 2016–17 Warriors (+13.4) both rank above on this metric.
+- Pace+opp-adjusted margin: +10.1 pts/game (100th pct) — still first, but by
+  a razor's edge over the 2016–17 Warriors (+10.0). These two runs are
+  statistically indistinguishable on the most complete metric.
+
+---
+
+## 8. The Verdict (`run_verdict`)
 
 **The data.** All of the above; this section re-computes the key metrics from
 scratch to produce a single summary table and a text verdict.
 
-**The approach.** All five metrics (win rate, margin, opp SRS, adjusted margin,
-SRS gap) are pulled, their percentile ranks computed, and a branching verdict
-string is assembled using thresholds:
+**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin,
+pace-adjusted margin, opp+pace-adjusted margin, overperformance, SRS gap) are
+pulled, their percentile ranks computed, and a branching verdict string is
+assembled using thresholds:
 
 ```python
 if wr_pct >= 85:   dom = "elite"

@@ -123,7 +123,48 @@ Top 5 adjusted-margin champions:
   vs. San Antonio Spurs            4-1  avg margin +2.4
 
 ════════════════════════════════════════════════════════════════════════
-§7  VERDICT
+§7  ERA / PACE ADJUSTMENT
+────────────────────────────────────────────────────────────────────────
+League scoring environment:
+  2025-26 avg pts/team/game: 115.6
+  Historical mean (1984–2026): 103.5
+  Scale factor: 0.896
+
+Knicks 2025-26:
+  Raw avg margin:             +14.89 pts/game
+  Pace-adjusted margin:       +13.34 pts/game
+  Opp-adj margin (raw):       +11.23 pts/game
+  Opp+pace-adjusted margin:   +10.05 pts/game
+
+Among 43 champion seasons:
+  Pace-adj raw-margin percentile:      95.3th  (mean +7.02, best +13.92)
+  Opp+pace-adj margin percentile:      100.0th  (mean +3.29, best +10.05)
+
+Top 5 pace-adjusted raw-margin champions:
+  00–01: raw +12.75  era-scoring 94.8  pace-adj +13.92
+  16–17: raw +13.65  era-scoring 105.6  pace-adj +13.38
+  25–26: raw +14.89  era-scoring 115.6  pace-adj +13.34  ← 2025-26 Knicks
+  90–91: raw +11.71  era-scoring 106.3  pace-adj +11.40
+  95–96: raw +10.56  era-scoring 99.5  pace-adj +10.98
+
+Top 5 opp+pace-adjusted margin champions:
+  25–26: opp-adj +11.23  era-scoring 115.6  opp+pace-adj +10.05  ← 2025-26 Knicks
+  16–17: opp-adj +10.23  era-scoring 105.6  opp+pace-adj +10.04
+  86–87: opp-adj +9.52  era-scoring 109.9  opp+pace-adj +8.96
+  90–91: opp-adj +9.20  era-scoring 106.3  opp+pace-adj +8.96
+  00–01: opp-adj +7.26  era-scoring 94.8  opp+pace-adj +7.93
+
+Lowest-scoring eras (margins get scaled UP):
+  98–99: 91.6 pts/team/game
+  03–04: 93.4 pts/team/game
+  00–01: 94.8 pts/team/game
+Highest-scoring eras (margins get scaled DOWN):
+  25–26: 115.6 pts/team/game
+  22–23: 114.7 pts/team/game
+  23–24: 114.2 pts/team/game
+
+════════════════════════════════════════════════════════════════════════
+§8  VERDICT
 ────────────────────────────────────────────────────────────────────────
 The 2025-26 Knicks went 16-3 in the playoffs.
 
@@ -132,6 +173,7 @@ KEY METRICS vs. all 43 champions (1983–84 through 2025–26):
   Avg margin +14.9 pts/game:    100th percentile
   Games-wtd opp SRS +3.67:     49th percentile (lower = easier schedule)
   Adj margin +11.2 pts/game:    100th percentile
+  Pace-adj margin +13.3 pts/game: 95th percentile
   Overperformance +12.5 pts/game: 98th percentile
   East/West SRS gap +0.39:         37th percentile (West dominance)
 
@@ -139,7 +181,7 @@ SUMMARY:
   The 2025-26 Knicks had a elite playoff run by win rate, which holds up well after adjusting for schedule.
 
 ════════════════════════════════════════════════════════════════════════
-§8  OPPONENT PLAYER AVAILABILITY
+§9  OPPONENT PLAYER AVAILABILITY
 ────────────────────────────────────────────────────────────────────────
 Round    Opponent                       Core   Avail/game   Health
 ─────────────────────────────────────────────────────────────────
@@ -158,7 +200,7 @@ Healthiest opponent:      Atlanta Hawks (100%)
 Finals note: The Spurs were fully healthy — the Finals result stands without asterisk.
 
 ════════════════════════════════════════════════════════════════════════
-§9  BETTING-MARKET EXPECTATIONS (ATS)
+§10 BETTING-MARKET EXPECTATIONS (ATS)
 ────────────────────────────────────────────────────────────────────────
 Games with Vegas lines: 19 of 19
 ATS record:             16-3

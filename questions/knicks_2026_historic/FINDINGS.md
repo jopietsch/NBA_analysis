@@ -6,9 +6,11 @@
 
 They went 16-3 (88th percentile win rate among all 43 champions since 1983–84)
 and outscored opponents by an average of **+14.9 points per game** — the highest
-single-season playoff margin in the dataset. After adjusting for the strength of
-their opponents, the adjusted margin of **+11.4 pts/game** still ranks first
-all-time. The East was **not** historically weak: the West-East SRS gap in
+raw playoff margin in the dataset. Note that 2025–26 is the highest-scoring era
+since 1984; pace-adjusted, the raw margin drops to 3rd all-time (+13.3). After
+adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first
+all-time; after both opponent and pace adjustment, it's +10.1 — still first, but
+essentially tied with the 2016–17 Warriors (+10.0). The East was **not** historically weak: the West-East SRS gap in
 2025–26 was only +0.39 pts/game (37th percentile of West dominance) — in 63% of
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
 this — on a real schedule, against real competition.
@@ -198,10 +200,15 @@ of unique opponents).
 **Small sample:** 19 games is a small sample; the playoff margin could swing
 meaningfully across different realizations of the same team-skill configuration.
 
-**Era/pace:** We do not pace-adjust margins. Scoring in 2025–26 may differ from
-1984. However, the SRS-based opponent adjustment partially addresses this because
-both the champion's margins and opponents' SRS are measured in the same season's
-context.
+**Era/pace:** The 2025–26 season is the highest-scoring era in the dataset
+(115.6 pts/team/game vs. historical mean 103.5). After pace adjustment, the
+Knicks' raw margin drops from 1st to 3rd (+13.3 pace-adj, behind 2000–01 Lakers
++13.9 and 2016–17 Warriors +13.4). After applying both the opponent adjustment
+AND the pace adjustment, the Knicks retain first place at +10.1, but are
+essentially tied with the 2016–17 Warriors (+10.0). The SRS-based opponent
+adjustment partially controls for era because both the champion's margins and
+opponents' SRS are measured in the same scoring environment — but the raw-margin
+claim is clearly era-inflated.
 
 **Pre-1997 data:** PLUS_MINUS is null in the older NBA.com data. We derive it
 from PTS (both team rows per game), which is algebraically exact for game
