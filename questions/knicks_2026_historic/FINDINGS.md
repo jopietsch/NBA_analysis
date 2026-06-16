@@ -17,6 +17,8 @@ The main caveat: the dominant margins came in the first three rounds (sweeps of
 Philadelphia and Cleveland), while the NBA Finals against a Spurs team with SRS
 +8.28 were much closer (4-1, avg margin +2.4 pts/game).
 
+![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](generated/knicks_2026_adjusted_margin_ranking.png){height=0.60}
+
 ---
 
 ## 2. The Raw Numbers
@@ -41,6 +43,12 @@ The two sweeps — which came against legitimate playoff teams, not pushovers �
 drove the record margin. The Finals were tight: four of the five games were
 decided by 5 points or fewer.
 
+![Playoff win rate — all 43 champions ranked](generated/knicks_2026_win_rate_ranking.png){height=0.60}
+
+![Average playoff margin — all 43 champions ranked](generated/knicks_2026_margin_ranking.png){height=0.60}
+
+![2025-26 Knicks: game-by-game margins across 19 playoff games](generated/knicks_2026_game_margins.png){height=0.25}
+
 ---
 
 ## 3. Was the East Weak?
@@ -58,6 +66,10 @@ competitive.
 **Opponent SRS context:** The average regular-season SRS of the Knicks' four
 playoff opponents was **+3.54** (53rd percentile among all 43 champions), slightly
 above the historical median. The schedule was not unusually easy or hard.
+
+![Conference strength gap (West − East SRS) — 2025-26 flagged](generated/knicks_2026_conference_gap.png){height=0.25}
+
+![2025-26 regular-season SRS by team, colored by conference](generated/knicks_2026_team_srs_2026.png){height=0.25}
 
 ---
 
@@ -83,6 +95,10 @@ Comparison — top 5 adjusted-margin champions:
 
 All 43 champion seasons are included. For pre-1997 seasons where nba_api returns
 null PLUS_MINUS, margins are derived from PTS (both team rows per game).
+
+![Strength of schedule — avg opponent SRS per champion](generated/knicks_2026_opponent_srs_ranking.png){height=0.60}
+
+![2025-26 Knicks: playoff opponent SRS by round](generated/knicks_2026_opponent_by_round.png){height=0.25}
 
 ---
 

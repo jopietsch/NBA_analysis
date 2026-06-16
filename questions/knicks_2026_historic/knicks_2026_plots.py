@@ -315,7 +315,7 @@ def plot_game_margin_distribution(po_2026: pd.DataFrame) -> str:
 
     for i, m in enumerate(margins):
         if abs(m) <= 5:
-            ax.text(i, m + (1 if m >= 0 else -2), f"{m:+d}",
+            ax.text(i, m + (1 if m >= 0 else -2), f"{m:+.0f}",
                     ha="center", va="bottom" if m >= 0 else "top",
                     fontsize=7.5, color=GRAY, fontweight="bold")
 
