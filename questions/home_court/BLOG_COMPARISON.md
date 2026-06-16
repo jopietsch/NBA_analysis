@@ -1,6 +1,6 @@
 # Our Findings vs. the Sparkle Technologies Blog
 
-A point-by-point check of our report (`FINDINGS.md`, backed by `RESULTS.md`) against the external analysis at
+A point-by-point check of our report (`home_court_FINDINGS.md`, backed by `RESULTS.md`) against the external analysis at
 <https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage>.
 
 Three questions drove this comparison:
@@ -104,7 +104,7 @@ This also vindicates the blog's own caveat: even among fully-rested games HCA fe
 
 No evidence of it. Every number we share with an independent analyst is consistent or favorable, and our boldest claims (rebounding, turnovers, playoff seeding control) are precisely the ones anchored in `RESULTS.md` rather than asserted. Two honesty fixes surfaced by this comparison — **both now addressed:**
 
-- **The mid-90s drop (§2b):** `FINDINGS.md` now acknowledges the shortened-three-point-line interpretation alongside hand-checking, noting the two are confounded, rather than asserting hand-checking as the sole cause.
-- **Back-to-backs (§3):** now tested directly — a new `BACK-TO-BACKS` section in `RESULTS.md` and a paragraph in `FINDINGS.md` §4 quantify the schedule-shift channel at ~8% of the regular-season decline, replacing the earlier "rest is ruled out" framing.
+- **The mid-90s drop (§2b):** `home_court_FINDINGS.md` now acknowledges the shortened-three-point-line interpretation alongside hand-checking, noting the two are confounded, rather than asserting hand-checking as the sole cause.
+- **Back-to-backs (§3):** now tested directly — a new `BACK-TO-BACKS` section in `RESULTS.md` and a paragraph in `home_court_FINDINGS.md` §4 quantify the schedule-shift channel at ~8% of the regular-season decline, replacing the earlier "rest is ruled out" framing.
 
 Everywhere else, the comparison strengthens confidence: where we and the blog use the same method we get the same answer, and where we differ we are the ones controlling for the trap (spurious trends, unconditional splits) that the blog falls into.

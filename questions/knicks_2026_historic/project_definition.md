@@ -6,13 +6,13 @@
 - what graphs and statistical analysis will allow us to answer these questions? start with the data from nba_api.
 - make sure that all analysis we do uses python do any calculation, and not Claude
 - run the analysis and get the data into @RESULTS.md and create graphs in generated/*
-- create @FINDINGS.md that references the data in RESULTS.md and all the graphs we just produced 
+- create @knicks_2026_historic_FINDINGS.md that references the data in RESULTS.md and all the graphs we just produced 
 - run set of prompts to make sure that conclusions are accurate and useful
-	- go through the @FINDINGS.md and make sure that each section is supported by data in RESULTS.md and all the graphs we just produced. does each section make sense and does it contribute to the overall story? 
+	- go through the @knicks_2026_historic_FINDINGS.md and make sure that each section is supported by data in RESULTS.md and all the graphs we just produced. does each section make sense and does it contribute to the overall story? 
 	- Are the sections in the right order
 	- we want some of the main concusions in the intro section so that our readers don't get bored before they get all the way to the end
 	- is the overall argument coherent, is it clear, does it have statistical terms that our readers won't understand or appreciate?
-	- Act as a reviewer of a publication that takes itself seriously. You will lose your job and reputation if you are wrong about facts, or if the conlusions are not justified. review @FINDINGS.md and make sure it's all correct based on data from @RESULTS.md and all the graphs in @generated/*.png
+	- Act as a reviewer of a publication that takes itself seriously. You will lose your job and reputation if you are wrong about facts, or if the conlusions are not justified. review @knicks_2026_historic_FINDINGS.md and make sure it's all correct based on data from @RESULTS.md and all the graphs in @generated/*.png
 - after we exhaust the data from nba_api, is there other data we could get that that would help us answer these questions?
 	- if so , create the python necessary to do that and do the analysis
-	- update @FINDINGS.md based on this analsis and run through the same prompts as described above
+	- update @knicks_2026_historic_FINDINGS.md based on this analsis and run through the same prompts as described above

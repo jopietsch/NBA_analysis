@@ -8,10 +8,10 @@ Our main questions for all this analysis and the output is 1: has HCA changed ov
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, the playoff picture, other findings, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes. **Whenever `FINDINGS.md` changes, update `FINDINGS_OUTLINE.md`** to match
-- `FINDINGS_OUTLINE.md` — condensed section-by-section outline of `FINDINGS.md` with every stat and conclusion, cross-referenced to `RESULTS.md`; has a generated PDF (`generated/FINDINGS_OUTLINE.pdf`). **Whenever `FINDINGS_OUTLINE.md` changes, regenerate its PDF** with `python3 generate_doc_pdf.py FINDINGS_OUTLINE.md` (the general Markdown renderer — no dedicated script)
-- `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh. **Whenever `RESULTS.md` changes, update `STATS_EXPLAINER.md`** so every number, p-value, and conclusion it quotes still matches (it cites `RESULTS.md` row by row); then regenerate its PDF. `STATS_TUTORIAL.md`'s worked examples also reproduce `RESULTS.md` rows — check those too
-- `STATS_EXPLAINER.md` / `STATS_TUTORIAL.md` — hand-edited methods companions to `RESULTS.md`; each has a generated PDF (`generated/STATS_EXPLAINER.pdf`, `generated/STATS_TUTORIAL.pdf`). **Whenever either markdown is edited, regenerate its PDF** with `python3 generate_doc_pdf.py <FILE>.md` (see Commands)
+- `home_court_FINDINGS.md` — narrative interpretation in  numbered `##` sections ordered by the three questions (the decline, what makes up HCA, what drove the change,  ruled-out factors of the change, the playoff picture, other findings, Summary); drives the PDF report prose and chart placement; edit by hand when understanding changes. **Whenever `home_court_FINDINGS.md` changes, update `FINDINGS_OUTLINE.md`** to match
+- `FINDINGS_OUTLINE.md` — condensed section-by-section outline of `home_court_FINDINGS.md` with every stat and conclusion, cross-referenced to `RESULTS.md`; has a generated PDF (`generated/FINDINGS_OUTLINE.pdf`). **Whenever `FINDINGS_OUTLINE.md` changes, regenerate its PDF** with `python3 generate_doc_pdf.py FINDINGS_OUTLINE.md` (the general Markdown renderer — no dedicated script)
+- `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh. **Whenever `RESULTS.md` changes, update `home_court_STATS_EXPLAINER.md`** so every number, p-value, and conclusion it quotes still matches (it cites `RESULTS.md` row by row); then regenerate its PDF. `STATS_TUTORIAL.md`'s worked examples also reproduce `RESULTS.md` rows — check those too
+- `home_court_STATS_EXPLAINER.md` / `STATS_TUTORIAL.md` — hand-edited methods companions to `RESULTS.md`; each has a generated PDF (`generated/STATS_EXPLAINER.pdf`, `generated/STATS_TUTORIAL.pdf`). **Whenever either markdown is edited, regenerate its PDF** with `python3 generate_doc_pdf.py <FILE>.md` (see Commands)
 
 ## Commands
 
@@ -22,8 +22,8 @@ MPLBACKEND=Agg python3 nba_home_court_advantage.py
 # Generate the PDF report (run after the above)
 python3 generate_report.py
 
-# Regenerate a stats doc PDF (run after editing STATS_EXPLAINER.md or STATS_TUTORIAL.md)
-python3 generate_doc_pdf.py STATS_EXPLAINER.md
+# Regenerate a stats doc PDF (run after editing home_court_STATS_EXPLAINER.md or STATS_TUTORIAL.md)
+python3 generate_doc_pdf.py home_court_STATS_EXPLAINER.md
 python3 generate_doc_pdf.py STATS_TUTORIAL.md
 
 # Regenerate the findings outline PDF (run after editing FINDINGS_OUTLINE.md)
@@ -51,7 +51,7 @@ Six files:
 - **`nba_home_court_plots.py`** — all visualization; imports data module, no data logic of its own
 - **`nba_home_court_advantage.py`** — pipeline orchestration only; calls data, plots, and regression in sequence; regression module is imported inside `main()` to avoid circular imports
 - **`nba_home_court_regression.py`** — statistical analysis; `run()` is called by `main()`; outputs go to stdout and are captured in `RESULTS.md`
-- **`generate_report.py`** — assembles PNGs and `FINDINGS.md` prose into a PDF; iterates `##` sections in order with no hardcoded section list; TOC auto-generated; Appendix A renders `RESULTS.md` verbatim
+- **`generate_report.py`** — assembles PNGs and `home_court_FINDINGS.md` prose into a PDF; iterates `##` sections in order with no hardcoded section list; TOC auto-generated; Appendix A renders `RESULTS.md` verbatim
 - **`test_nba_home_court_advantage.py`** — unit tests for the data/computation layer (correctness, using synthetic DataFrames). Plots get smoke tests only (`test_nba_home_court_plots.py`): feed each `plot_*` synthetic inputs and assert it runs without raising. No pixel/image-comparison tests — they're brittle across font and library versions.
 
 All fetched data is cached as CSVs under `cache/` to avoid re-fetching.
@@ -64,19 +64,19 @@ Every analysis follows the same steps, in this order:
 2. **Plot** (`nba_home_court_plots.py`) — add `plot_*` function; save the PNG via `_output_path("chart.png")` so it lands in `generated/`; wire the call into `main()` in `nba_home_court_advantage.py`
 3. **Regression** (`nba_home_court_regression.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
 4. **Tests** — correctness unit tests for the data/computation layer in `test_nba_home_court_advantage.py` (use synthetic DataFrames); a no-raise smoke test for the new `plot_*` in `test_nba_home_court_plots.py`
-5. **FINDINGS.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](generated/chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
+5. **home_court_FINDINGS.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](generated/chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
 \6. **`.gitignore`** — nothing to do: all PNGs land in `generated/`, which is already ignored as a whole
 7. **Run** — `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate all PNGs and `RESULTS.md`
-8. **Update FINDINGS.md** — replace placeholder prose with actual numbers and directions from `RESULTS.md`; then regenerate the PDF with `python3 generate_report.py`
+8. **Update home_court_FINDINGS.md** — replace placeholder prose with actual numbers and directions from `RESULTS.md`; then regenerate the PDF with `python3 generate_report.py`
 
-## updating FINDINGS.md
-- when editing or adding to FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear. We do not redundant information unless it's to strengthen a point. redudant information is usually confusing.
-- make sure that the FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
-- whenever the order of sections changes in FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_regression.py must be updated to the new order
+## updating home_court_FINDINGS.md
+- when editing or adding to home_court_FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear. We do not redundant information unless it's to strengthen a point. redudant information is usually confusing.
+- make sure that the home_court_FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
+- whenever the order of sections changes in home_court_FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_regression.py must be updated to the new order
 - do not overexplain statistical analysis. make sure everything you write is backed up by the data.
-- throughout FINDINGS.md, make sure that both regular season and playoffs are mentinoned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.
-- when FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`
-- when FINDINGS.md is edited, also update `FINDINGS_OUTLINE.md` to match (it's a condensed outline of every stat and conclusion); then regenerate the outline PDF with `python3 generate_doc_pdf.py FINDINGS_OUTLINE.md`
+- throughout home_court_FINDINGS.md, make sure that both regular season and playoffs are mentinoned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.
+- when home_court_FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`
+- when home_court_FINDINGS.md is edited, also update `FINDINGS_OUTLINE.md` to match (it's a condensed outline of every stat and conclusion); then regenerate the outline PDF with `python3 generate_doc_pdf.py FINDINGS_OUTLINE.md`
 
 ## nba_api quirks
 

@@ -1,20 +1,20 @@
-# Prompt: Generate FINDINGS.md from Scratch
+# Prompt: Generate home_court_FINDINGS.md from Scratch
 
-Use this prompt in a fresh Claude Code session when FINDINGS.md does not exist
+Use this prompt in a fresh Claude Code session when home_court_FINDINGS.md does not exist
 or needs to be rebuilt from the analysis outputs alone.
 
 ---
 
 ## The Prompt
 
-You are writing `FINDINGS.md` — the narrative report for a statistical analysis
+You are writing `home_court_FINDINGS.md` — the narrative report for a statistical analysis
 of NBA home court advantage covering every game from 1983–84 through 2024–25
 (roughly 51,000 games, regular season and playoffs).
 
 Your two data sources are:
 - **`RESULTS.md`** — auto-generated regression output. The authoritative source
   for all numbers, directions, and effect sizes.
-- **The PNG charts** — listed by `![...](.png)` references inside FINDINGS.md
+- **The PNG charts** — listed by `![...](.png)` references inside home_court_FINDINGS.md
   once it exists; discover the current set by looking at what PNGs exist in the
   working directory.
 
@@ -53,7 +53,7 @@ The report answers three questions, in order:
    most strongly implicates. End with what it rules out. A finding that clears
    a popular explanation is just as valuable as one that confirms it.
 
-Every section in FINDINGS.md should make clear — by the end of its first
+Every section in home_court_FINDINGS.md should make clear — by the end of its first
 paragraph — which of these three questions it is answering and what the answer
 is. A reader skimming section headings should understand the full story.
 
@@ -130,7 +130,7 @@ reader knows basketball but has no stats background.
 
 ## File Format
 
-FINDINGS.md must follow this exact structure so that `generate_report.py` can
+home_court_FINDINGS.md must follow this exact structure so that `generate_report.py` can
 assemble it into a PDF without modification:
 
 ```

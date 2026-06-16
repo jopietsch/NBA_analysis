@@ -2,7 +2,7 @@
 nba_home_court_regression.py — statistical analysis of home court advantage.
 
 Game-level statistical analyses on all cached data — one run_* function per
-FINDINGS.md section that needs numbers: decline trend, format periods,
+home_court_FINDINGS.md section that needs numbers: decline trend, format periods,
 sequential R² decomposition, coefficient stability, rest/altitude/time zone,
 rest buckets, margins, box-score and shot-zone differentials, referees,
 travel, parity, 3PA rate, pace, series structure, and franchise HCA.

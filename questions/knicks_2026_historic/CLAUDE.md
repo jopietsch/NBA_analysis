@@ -38,7 +38,7 @@ Four pipeline modules plus two report generators, mirroring `nba_home_court`:
 - **`knicks_2026_plots.py`** — all visualization (`plot_*` functions saving `knicks_2026_*.png`); imports the data module, holds no data logic of its own.
 - **`knicks_2026_analysis.py`** — statistical/comparative analysis; `run()` prints all sections to stdout. The method is percentile/ranking against the historical champion set.
 - **`knicks_2026_historic.py`** — pipeline orchestration only: sequences data → plots → analysis, and captures `analysis.run()`'s stdout into `RESULTS.md` inside a ``` fence. The analysis module is imported inside `main()`.
-- **`generate_report.py`** — assembles `FINDINGS.md` prose + PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated; appendix renders `RESULTS.md` verbatim.
+- **`generate_report.py`** — assembles `knicks_2026_historic_FINDINGS.md` prose + PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated; appendix renders `RESULTS.md` verbatim.
 - **`generate_doc_pdf.py`** — general Markdown→PDF renderer for standalone docs (copied unchanged from the sibling; understands code fences, headings, lists, tables, images, and `--appendix`).
 
 Tests: `test_knicks_2026.py` is correctness unit tests for the data/computation layer using synthetic DataFrames (never live API calls). `test_knicks_2026_plots.py` is no-raise smoke tests for plots — no pixel/image comparison (brittle across font and library versions).
@@ -47,7 +47,7 @@ All fetched data is cached as CSVs under `cache/` to avoid re-fetching.
 
 ## Key files
 
-- `FINDINGS.md` — narrative interpretation in numbered `## N. Title` sections; the single source of truth for report prose and chart placement. Edit by hand when understanding changes; the PDF picks up sections automatically.
+- `knicks_2026_historic_FINDINGS.md` — narrative interpretation in numbered `## N. Title` sections; the single source of truth for report prose and chart placement. Edit by hand when understanding changes; the PDF picks up sections automatically.
 - `RESULTS.md` — auto-generated analysis output; **never edit manually**, always re-run the pipeline to refresh.
 
 ## Adding a new analysis
@@ -58,12 +58,12 @@ Follow this order (same as the sibling project):
 2. **Plot** (`knicks_2026_plots.py`) — add a `plot_*`; wire its call into `main()` in `knicks_2026_historic.py`.
 3. **Analysis** (`knicks_2026_analysis.py`) — add a `run_*`; call it from `run()`. Output goes to stdout and is captured into `RESULTS.md`. Use the box-drawing header convention the appendix parser expects: `print("─── SECTION TITLE " + "─" * 50)`.
 4. **Tests** — correctness tests for new `compute_*` in `test_knicks_2026.py`; a no-raise smoke test for the new `plot_*` in `test_knicks_2026_plots.py`.
-5. **FINDINGS.md** — add a `## N. Title` section with prose and `![caption](knicks_2026_*.png)` references.
+5. **knicks_2026_historic_FINDINGS.md** — add a `## N. Title` section with prose and `![caption](knicks_2026_*.png)` references.
 6. **Run** — `MPLBACKEND=Agg python3 knicks_2026_historic.py` to regenerate PNGs and `RESULTS.md`, then `python3 generate_report.py`.
 
-When section order in `FINDINGS.md` changes, change the order of `run_*` calls in `knicks_2026_analysis.py` to match, so `RESULTS.md` (and the appendix) line up.
+When section order in `knicks_2026_historic_FINDINGS.md` changes, change the order of `run_*` calls in `knicks_2026_analysis.py` to match, so `RESULTS.md` (and the appendix) line up.
 
-## Editing FINDINGS.md
+## Editing knicks_2026_historic_FINDINGS.md
 
 - Write like a sports-magazine editor for regular readers: replace statistical jargon with plain language, keep the voice concise, avoid redundancy (it confuses more than it reinforces).
 - Every claim must be backed by `RESULTS.md` and the generated charts — verify the narrative matches the current data before regenerating.

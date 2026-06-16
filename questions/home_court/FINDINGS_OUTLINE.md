@@ -1,4 +1,4 @@
-# Detailed Outline — FINDINGS.md
+# Detailed Outline — home_court_FINDINGS.md
 
 ## Introduction (Intro / TL;DR)
 - **Three guiding questions:** (1) Has HCA really changed? (2) What makes home court an advantage? (3) What's driving the decline — and what isn't?
