@@ -998,6 +998,55 @@ line is the headline. Compare to Andrews critical values (printed above it). The
 nearby years all scoring high means the break was real but gradual; one dominant
 year means a sharper shift.
 
+**Connecting the break to a cause — using two tests together.**
+
+The QLR answers *when* the pace of decline shifted. It says nothing about *why*.
+To get from "when" to a plausible cause, you need a second test — the LR test for
+era dummies (§4.1) — and you need to be honest about the gap between "this is
+consistent with cause X" and "this proves cause X."
+
+Here is the full two-step argument for the 1994–95 rule change:
+
+*Step 1 — Did a specific boundary produce an extra jump beyond the drift?*
+The LR test compares `home_win ~ year + C(era)` against `home_win ~ year` alone.
+If the era dummies jointly improve the fit, specific rule-change boundaries moved
+the needle beyond what the year-by-year trend would predict on its own.
+
+Regular season result: **LR chi-sq(5) = 20.68, p < 0.001** — the boundaries
+do add something. But which one? Only the 1994–95 era dummy is individually
+significant (p = 0.010, worth about −2.6 pp beyond the drift). Every other
+boundary — 2002, 2005, 2018, 2023 — the model says "the trend passed straight
+through." This makes 1994–95 the only candidate season for a discrete shock, not
+just a part of the ongoing slide.
+
+*Step 2 — When did the pace of decline actually moderate?*
+That is the QLR finding: the slope shifted in the late 1990s — from a steep
+−0.65 pp/yr to the gentler −0.26 pp/yr that has continued ever since.
+
+*Step 3 — Combine the two.*
+These are not contradictory results; they are the same story at two levels:
+
+| Test | What it found | What it means |
+|---|---|---|
+| LR era test | 1994–95 boundary is the only significant discrete step | That rule change did something extra beyond the drift |
+| QLR | Slope shifted in the late 1990s | The rate of decline moderated several seasons after the rule change |
+
+The interpretation: the rule change in 1994–95 triggered an immediate discrete
+drop. But adjustment takes time — referees retrain, teams rebuild rosters, players
+learn the new boundaries. That multi-year settling-in process is what the QLR
+captures: by the end of the decade, the league had reached a new equilibrium and
+the pace of decline slowed.
+
+*Where the inference ends.* The QLR can say when the slope shifted; it cannot say
+what caused the shift. The LR test can say the 1994–95 boundary did something
+extra; it cannot say what that something was. The combination — "1994–95 is the
+only significant boundary, and the slope moderated inside that same era" — is what
+makes the hand-checking crackdown the leading explanation. But a multi-year lag
+means we cannot rule out that something else in the late 1990s also played a role.
+Honest statistical practice is to report what the data can establish (the timing
+evidence points at 1994–95) and what it cannot (the mechanism is a well-supported
+inference, not a direct measurement).
+
 ---
 
 ## 7.6 Unit roots and cointegration — when is a correlation between two trends real?
