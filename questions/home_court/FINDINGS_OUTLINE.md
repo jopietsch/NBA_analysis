@@ -5,7 +5,7 @@
 - **Headline answers:**
   - Change is real & one-directional: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**. Shape = a slow gradual erosion + **two sharper one-time drops** layered on top.
   - HCA is built from: referee foul calls, shooting/shot-selection edge, plus smaller rest & altitude boosts.
-  - Decline drivers: neutral whistle, converging shot selection, rise in three-point shooting adding variance that erodes home teams' steady structural edges.
+  - Decline drivers: neutral whistle, converging shot selection, rise in three-point shooting adding variance that erodes home teams' steady structural edges — and, quietest but largest, the collapse of the home edge on the boards (above all the offensive glass), which carries more of the decline than the headline causes combined.
 - **Ruled-out suspects:** rule changes, travel, time zones, pace, competitive balance, crowd size, 2014 playoff format.
 - **Scope:** regular season vs. playoffs tracked separately (same direction, different timeline); ~52,000 games; tables in RESULTS.md.
 
