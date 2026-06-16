@@ -1,0 +1,389 @@
+# Statistical Explainer — `knicks_2026_analysis.py`
+
+A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
+the statistical approach, why that approach was chosen, what the results mean, and —
+where a section has one — **why its figure takes the form it does**. Sections appear
+in the same order as `RESULTS.md`. The figures themselves are embedded in `FINDINGS.md`;
+here we only explain the reasoning behind each choice. Unlike `FINDINGS.md`, this
+document uses statistical terminology freely — it is the methods companion, not the
+narrative report.
+
+---
+
+## 0. The Comparison Dataset (`build_champions_table`, `build_conference_gap_table`)
+
+**The data.** Every comparison (Sections 1, 4, 5, 6) runs against one of two
+tables built by looping over all 43 NBA seasons from 1983–84 through 2025–26:
+
+`build_champions_table` produces one row per season with:
+
+- `year` — the season's end year (e.g. 2026 for 2025–26)
+- `champion_id` — the team with the most playoff wins (`identify_champion`, which
+  counts wins from the playoff game-log cache; ties broken by the team with the
+  highest win count in the regular season)
+- `wins`, `losses`, `win_rate` — the champion's playoff record
+- `avg_margin` — mean per-game point differential, with PLUS_MINUS filled from
+  PTS for pre-1997 seasons (see §Pre-1997 note below)
+- `avg_opp_srs` — mean regular-season SRS of every unique playoff opponent
+- `adj_margin` — `avg_margin − avg_opp_srs`
+- `clutch_rate` — fraction of games decided by ≤5 points
+- `home_wr`, `away_wr` — home and away win rates
+
+`build_conference_gap_table` produces one row per season with:
+
+- `east_srs`, `west_srs` — mean regular-season SRS across all teams in each
+  conference
+- `srs_gap` — `west_srs − east_srs` (positive = West stronger)
+- `east_h2h_wr` — East win rate in games played cross-conference
+
+**Why loop from cache, not from the API.** All CSVs were pre-fetched once by
+`fetch_data.py` and stored in `nba_analysis/cache/`. The loop reads from disk
+only. This makes the analysis fully reproducible offline and fast enough to
+re-run in under a minute.
+
+**Pre-1997 PLUS_MINUS.** The NBA.com API (`LeagueGameFinder`) returns null
+PLUS_MINUS for seasons before 1997. The helper `_fill_plus_minus` (in
+`nbakit/data.py`) fills these from `PTS`: for each `GAME_ID`, the two rows are
+swapped to give each team the opponent's score, and `PLUS_MINUS = PTS − OPP_PTS`
+is computed exactly. This is algebraically exact for game margins. Without this
+fix, 13 of 43 seasons would have NaN margins and could not appear in the
+percentile comparisons.
+
+---
+
+## 1. The Raw Claim (`run_raw_claim`)
+
+**The data.** The Knicks' 2025–26 playoff game log (from cache) and the
+`champions` table spanning 43 seasons.
+
+**The approach.** Two metrics — win rate and average margin — are computed for
+the Knicks and each is fed to `_pct_rank`:
+
+```
+_pct_rank(series, value, ascending=True)
+    → (series ≤ value).mean() × 100
+```
+
+This is the **empirical percentile rank**: the fraction of 43 champions whose
+value is at or below the Knicks' value, expressed as a percentage. The
+`ascending=True` convention means higher values are better (a value at the 95th
+percentile is better than 95% of champions).
+
+No distributional assumptions are made — only counting. With 43 data points, the
+finest percentile resolution is 1/43 ≈ 2.3 pp; exact ties are counted as "≤",
+so achieving the best historical value yields 100th percentile.
+
+**What the results mean.** Win rate 0.842 sits at the 88th percentile (better
+than 38 of 43 champions; best ever is the 2016–17 Warriors at 0.941). Average
+margin +14.9 pts/game is the 100th percentile — the highest ever recorded in the
+dataset. The margin claim is the strongest of the two raw numbers.
+
+**Why these two charts.** Both are horizontal bar charts of all 43 champions
+ranked from lowest to highest on the metric, with the Knicks bar highlighted in
+blue. A ranked bar chart answers two questions simultaneously: "where does this
+team rank?" (bar position) and "how unusual is the gap from the next-best?"
+(spacing). Horizontal orientation keeps the 43 season labels readable. Vertical
+wouldn't — 43 narrow columns of year labels would overlap. The Knicks bar is
+labeled with the value; the chart is the main visual for the report's §2 "The
+Raw Numbers."
+
+---
+
+## 2. Conference Context — 2025-26 (`run_east_weakness`)
+
+**The data.** 2025–26 regular-season game logs and standings (one row per team
+with `TeamID`, `Conference`, `TeamCity`, `TeamName`).
+
+**The approach.** Three computations using that season's data only:
+
+1. `compute_srs(reg_2026)` — returns a `pd.Series` indexed by TEAM_ID with each
+   team's regular-season SRS (see §SRS in the Recurring Methods section).
+2. `compute_conference_avg_srs(srs, standings)` — maps each TEAM_ID to its
+   conference and takes the unweighted mean of SRS within East and West.
+3. `compute_inter_conference_h2h(reg_logs, standings)` — iterates every game in
+   the regular-season log, identifies games between an East and a West team (using
+   the standings `Conference` column), and counts East wins divided by total
+   cross-conference games. Each game contributes one East-win or one West-win.
+
+Additionally, `compute_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)` is used
+here to show the Knicks' specific opponents and their SRS values. It finds every
+unique opponent TEAM_ID by inspecting the two-row-per-GAME_ID structure of the
+playoff logs: for each game, all team IDs except `KNICKS_TEAM_ID` are collected,
+then each opponent's SRS is looked up from the regular-season series.
+
+**What the results mean.** The East SRS average was −0.20 pts/game vs. West
++0.20 (gap +0.39). The inter-conference win rate was 0.487 — very close to parity.
+The Knicks' opponents had SRS values from −0.27 (76ers) to +8.28 (Spurs).
+
+**Why this chart (team SRS bar).** The team SRS bar chart — all 30 teams on one
+axis, East bars in green, West in blue — is the direct visualization of the
+conference-averages computation. The eye instantly compares the two conference
+clouds. An alternative (two box plots, one per conference) would show distributions
+better but would obscure where specific opponents (the Spurs, Cavaliers) sit.
+Because the Knicks' opponents are all identified by name in the text, the
+full-team bar chart gives context for where each one sits relative to all 30 teams.
+
+---
+
+## 3. Historical Conference Gap (`run_gap_history`)
+
+**The data.** The `gap_table` (43 seasons × 5 columns).
+
+**The approach.** The 2025–26 SRS gap (+0.39) is passed to `_pct_rank` against
+the 43-season `srs_gap` series with `ascending=True`. A "100th percentile" here
+means the most West-dominant season ever; a "0th percentile" means the most
+East-dominant. The same logic applies to `east_h2h_wr`, but with
+`ascending=False` (higher win rate = better for East = *lower* percentile for
+"worst for East").
+
+Three "most West-dominant" and three "most East-dominant" seasons are reported
+by `nlargest` / `nsmallest` for reference — concrete historical anchors for the
+reader to calibrate the percentile number.
+
+**What the results mean.** The 2025–26 gap sits at the 37th percentile of West
+dominance: in 63% of the 43 seasons studied, the West had a larger SRS edge over
+the East. The most West-dominant seasons (2013–14, +4.08; 2003–04, +3.73;
+2000–01, +3.11) dwarf 2025–26. The East was stronger than average relative to
+the West in 2025–26. This rules out the "easy conference" narrative.
+
+**Why this chart (conference gap line).** The conference gap is a time series —
+43 data points, one per season — so a line is the natural form. It shows the gap
+oscillating over time rather than trending, which is the important visual point.
+A bar chart could work (one bar per season, positive = West dominant) but would
+look cluttered with 43 bars. The shading above/below zero makes East vs. West
+dominance immediately readable. The 2025–26 dot and annotation show exactly
+where the subject season falls on that multi-decade chart.
+
+---
+
+## 4. Opponent Quality (`run_opponent_quality`)
+
+**The data.** 2025–26 playoff logs, 2025–26 regular-season SRS, and the
+`champions` table.
+
+**The approach.** `compute_avg_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)`
+finds all unique opponents (by GAME_ID inspection, as in §2) and averages their
+regular-season SRS values. That single number (+3.54) is then ranked via
+`_pct_rank` against `champions["avg_opp_srs"]` — the same metric for all 43
+champions.
+
+**Why regular-season SRS for opponents, not playoff SRS.** Playoff SRS could be
+computed, but it would be circular: a team's playoff SRS reflects partly who they
+faced, which again includes the Knicks. Regular-season SRS measures each
+opponent's strength on an independent baseline (all 82 games before the playoffs
+began), making it a cleaner gauge of how hard the Knicks' draw was.
+
+**Why unique opponents, not per-game.** Averaging SRS per game would weight
+multi-game series opponents more heavily. A team that sweeps a +5.0 SRS opponent
+in 4 games would look like they faced a harder schedule than a team that goes 4-3
+against a +5.0 opponent. Unique-opponent averaging treats all opponents equally
+regardless of series length — the question is who you had to beat, not how many
+times.
+
+**What the results mean.** Average opponent SRS +3.54 sits at the 53rd percentile
+among 43 champions — right at the historical median. The schedule was not
+unusually easy or hard by this measure. Champions who faced the weakest opponents
+(2022–23 Nuggets +0.54, 1986–87 Lakers +0.75) faced average SRS values about 3
+pts/game below the Knicks'.
+
+**Why two charts here.** The opponent-SRS ranking bar (all 43 champions) and the
+opponent-by-round bar (four Knicks opponents) answer different questions. The
+ranking says "relative to history, was the schedule hard?" The round-by-round bar
+says "which specific opponents were strong and which were weak?" — it shows that
+the Spurs (+8.28) in the Finals were elite while the 76ers (−0.27) in the second
+round were below average. A reader needs both to understand the Knicks' path.
+
+---
+
+## 5. Opponent-Adjusted Dominance (`run_adjusted_dominance`)
+
+**The data.** 2025–26 playoff logs, regular-season SRS, and the `champions` table.
+
+**The approach.** A one-line formula:
+
+```
+adj_margin = raw_margin − avg_opp_srs
+```
+
+This is not a regression — it is a direct additive correction that asks: "how
+dominant would this team look if they had faced average-SRS opponents?" The
+adjustment is linear, not calibrated from historical data. It makes the implicit
+claim that one additional SRS point of opponent quality is worth exactly one
+point of margin per game.
+
+`compute_adjusted_margin` in `knicks_2026_data.py` is literally:
+
+```python
+def compute_adjusted_margin(raw_margin, avg_opp_srs):
+    return raw_margin - avg_opp_srs
+```
+
+The adjusted value is then ranked with `_pct_rank` against `champions["adj_margin"]`,
+which was computed with the same formula for each champion in its own season.
+
+**Why this specific adjustment.** The SRS system (see Recurring Methods) is built
+around exactly this identity: a team with SRS +X is expected to outscore a 0-SRS
+opponent by X points per game. So subtracting the average opponent SRS from the
+raw margin "returns" the Knicks to a neutral baseline — it is the natural
+adjustment for a rating system that lives in point-differential space.
+
+**Limitations.** The adjustment assumes opponents' regular-season SRS accurately
+reflects playoff-mode strength; it doesn't account for injuries, resting veterans,
+or playoff-specific preparation. It also weights all four opponents equally
+regardless of how many games were played (see §4). A more elaborate model could
+regress playoff margin on opponent SRS across all champions, but with 43 data
+points and one adjustment variable, the direct subtraction and its ranking are
+the right level of complexity.
+
+**What the results mean.** Adjusted margin +11.35 is the 100th percentile of 43
+champions — the highest ever even after correcting for schedule difficulty. The
+comparison with 2016–17 Golden State (+10.20) and 1986–87 Los Angeles Lakers
+(+10.09) provides the natural peer group for "all-time dominant playoff runs."
+
+**Why this is the headline chart.** The adjusted margin ranking is the single
+number that answers the central question — "historically dominant?" — most fully.
+Win rate alone doesn't account for the quality of opponents; raw margin doesn't
+either. Adjusted margin does both. The bar chart annotates the Knicks' position
+explicitly with the value (+11.4) and the legend says "#1 of 43." It is the chart
+that tells the whole story in one panel.
+
+---
+
+## 6. Other Deflators (`run_deflators`)
+
+**The data.** 2025–26 Knicks playoff game logs and the `champions` table.
+
+**The approach.** Three "deflator" checks that could reduce the historicity claim,
+each ranked against champions:
+
+**Clutch rate.** `compute_clutch_rate(po_2026, KNICKS_TEAM_ID)` takes the mean of
+`(|PLUS_MINUS| ≤ 5)` across the Knicks' 19 games. This is the fraction of games
+decided by 5 points or fewer. A low clutch rate (lots of blowouts) inflates the
+raw margin number; a high rate means the dominance was built on close wins.
+`_pct_rank` with `ascending=True` is used here: a team that wins many close games
+("clutch" in the common sense) scores higher than one that blows teams out.
+
+**Home/away split.** `compute_home_away_split` uses the `MATCHUP` string to split
+home games (`"vs."` in matchup) from road games (`"@"` in matchup). Win rates
+are computed separately. These are ranked against `champions["home_wr"]` and
+`champions["away_wr"]` via `_pct_rank`. The away win rate is the more meaningful
+deflator check: a champion who only wins at home is more fragile than one who
+dominates on the road.
+
+**Round-by-round breakdown.** Rather than a statistical test, this is a
+descriptive accounting: for each unique opponent (grouped from the playoff log by
+`OPP_ID`, which is derived by finding the non-Knicks TEAM_ID in each GAME_ID),
+the series wins, losses, and mean `PLUS_MINUS` are printed in chronological order.
+This shows *where* the margins came from — the sweeps inflated the headline number
+while the Finals were contested.
+
+**What the results mean.** Clutch rate 31.6% is the 84th percentile — the Knicks
+played *more* close games than most champions, not fewer. The blowout narrative
+(the margins were "just garbage time") is unsupported: they also won tight games
+at an above-average rate. Away win rate 90.0% is the 98th percentile — only one
+other champion in 43 years won road games at a higher clip. Home win rate 77.8%
+is the 23rd percentile, so the Knicks were an unusual champion: dominant on the
+road, relatively ordinary at home.
+
+**Why this chart (game margins).** The 19-game bar chart — one bar per game in
+chronological order, blue for wins, red for losses, with the average overlaid —
+shows both the blowouts (tall blue bars in rounds 2 and 3) and the close games
+(annotated small-margin games near the zero line). A histogram of margins would
+show the distribution but would hide the chronological narrative (that the
+margins were tightest in the Finals). The bar-per-game form preserves the "film"
+of the run.
+
+---
+
+## 7. The Verdict (`run_verdict`)
+
+**The data.** All of the above; this section re-computes the key metrics from
+scratch to produce a single summary table and a text verdict.
+
+**The approach.** All five metrics (win rate, margin, opp SRS, adjusted margin,
+SRS gap) are pulled, their percentile ranks computed, and a branching verdict
+string is assembled using thresholds:
+
+```python
+if wr_pct >= 85:   dom = "elite"
+elif wr_pct >= 70: dom = "strong"
+else:              dom = "moderate"
+
+if adj_pct >= 70:  adj_verdict = "holds up well after adjusting for schedule"
+elif adj_pct >= 50: adj_verdict = "is somewhat deflated by opponent adjustment"
+else:              adj_verdict = "is significantly deflated by a weak schedule"
+```
+
+The east_context clause fires only if `gap_pct >= 80` — i.e. only if the East
+was genuinely historically weak (top-quintile West dominance) is the caveat
+included. Since 2025–26 is at the 37th percentile (West dominance was below
+average), no caveat fires.
+
+**What the results mean.** Win rate 88th percentile → "elite." Adjusted margin
+100th percentile → "holds up well." East weakness at 37th percentile → no caveat.
+The verdict is: the run was elite, and the schedule was at the historical median,
+so the dominance is real.
+
+**Why no new chart.** The verdict section's job is to synthesize the previous
+sections, not introduce new data. The five metrics already have their charts in
+Sections 1–5; a summary radar or scorecard would duplicate them. The paragraph
+verdict is the right form for a synthesis.
+
+---
+
+## Recurring Methods — Quick Reference
+
+**`_pct_rank(series, value, ascending=True)`**
+The single statistical primitive used throughout. Definition:
+`(series.dropna() ≤ value).mean() × 100` when `ascending=True`;
+`(series.dropna() ≥ value).mean() × 100` when `ascending=False`.
+This is the empirical CDF evaluated at `value`. With 43 seasons, resolution is
+~2.3 pp. A value equal to the best historical value yields 100th percentile
+(since it is ≤ itself and every other value). No smoothing, no interpolation.
+
+**SRS (Simple Rating System) — `compute_srs` in `nbakit.data`**
+SRS solves a system of linear equations that makes each team's rating equal its
+average point margin per game plus an adjustment for opponent strength. The system
+is:
+
+```
+(I − A) @ srs = mean_margin_vector
+```
+
+where `A[i, j]` = fraction of team `i`'s games against team `j` (the
+normalized schedule matrix), and `mean_margin_vector[i]` is team `i`'s average
+per-game margin across all regular-season games. The constraint `sum(srs) = 0` is
+imposed so the solution is unique and ratings are relative rather than absolute.
+This is solved via `numpy.linalg.lstsq` on the augmented system (adding a row
+for the constraint). An SRS of +5 means "this team outperforms a 0-SRS schedule
+by 5 points per game"; a +8.28 SRS for San Antonio (the Finals opponent) places
+them among the elite regular-season teams in 2025–26.
+
+**`identify_champion`**
+Counts wins per team in the playoff game log and returns the team with the most.
+This is unambiguous: the actual Finals winner has more wins than every other team
+by construction (they won the championship). For seasons where the data is
+complete and consistent, this is always the same as the documented champion.
+
+**`_fill_plus_minus`**
+For pre-1997 seasons where `PLUS_MINUS` is NaN, the helper uses the two-row
+structure of the game log (one row per team per game) to compute margins from
+`PTS`. For each `GAME_ID`, the `PTS` column is reversed within the group (using
+`transform(lambda s: s.iloc[::-1].values)`) to give each row the opponent's
+points, and `PLUS_MINUS = PTS − OPP_PTS` is filled where null. This is
+algebraically exact under the assumption that the box-score `PTS` totals match
+the official game score (they do).
+
+**Percentile vs. rank.** The report uses "Nth percentile" rather than "Kth of 43"
+because percentile is more intuitive at this sample size and because it is
+comparable across sections with slightly different sample sizes (some metrics
+have fewer than 43 valid values due to NaN, e.g. in pre-1997 margins before the
+fill).
+
+**Why no regression.** The analysis is fundamentally descriptive: it ranks a
+single team against a historical distribution. Regression would add complexity
+(what is the outcome variable? what are the controls?) without answering the
+simpler and more direct question of "where does this run rank?" The adjusted margin
+is the closest thing to a model — it makes a specific functional-form assumption
+(opponent adjustment = direct subtraction) — but it is explicitly stated and
+motivated by the SRS identity rather than fit from data.
