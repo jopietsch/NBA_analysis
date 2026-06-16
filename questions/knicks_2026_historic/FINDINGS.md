@@ -121,7 +121,41 @@ road team than all but one champion in the dataset.
 
 ---
 
-## 6. Opponent Health
+## 6. What the Betting Market Said
+
+Vegas pricing is the most efficient aggregation of expert opinion available.
+The market's verdict on the Knicks' playoff run is striking:
+
+**Overall:** 16-3 ATS (against the spread) — their cover record exactly matches
+their win-loss record. They beat the spread by an average of **+16.9 pts/game**
+across 19 games, which is extraordinary.
+
+**But the story splits sharply by opponent:**
+
+| Round | Opponent | Avg Spread | Avg Actual | ATS Margin | Cover |
+|-------|----------|-----------|------------|------------|-------|
+| R1 | Hawks | Knicks -4.0 | +17.5 | +21.5 | **6/6** |
+| R2 | 76ers | Knicks -4.0 | +22.2 | +26.2 | **4/4** |
+| CF | Cavaliers | Knicks -2.8 | +19.2 | +22.0 | **4/4** |
+| **Finals** | **Spurs** | **NYK +2.5** | **+2.4** | **−0.1** | **2/5** |
+
+Against the three East opponents, the Knicks exceeded market expectations by
+21–26 points per round. The market priced them as modest favorites (-3 to -4)
+and they won by 17-22. Against the Spurs in the Finals, the market had them as
+slight underdogs (+2.5) and they won by an average of exactly +2.4 — essentially
+a coin-flip that they won 4-1 in games.
+
+**What this means:** The market clearly distinguished between the two halves of
+this run. The first three rounds were a statement — the Knicks were far better
+than anyone expected against East competition. The Finals was exactly the
+competitive series the market predicted: a nearly even matchup against a healthy,
+elite Spurs team that the Knicks won by grinding out close games.
+
+![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](generated/knicks_2026_market_vs_actual.png){height=0.45}
+
+---
+
+## 7. Opponent Health (No Injury Asterisk)
 
 One recurring question about dominant playoff runs is whether key opposing players
 were injured. The answer here: **no, they weren't.**
@@ -146,7 +180,7 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 
 ---
 
-## 7. Limitations
+## 8. Limitations
 
 **Opponent SRS** is from regular-season performance, which may not fully reflect
 playoff-mode strength. SRS treats all opponents equally regardless of round
@@ -167,7 +201,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 8. Methodology
+## 9. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS

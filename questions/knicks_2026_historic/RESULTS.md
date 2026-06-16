@@ -139,4 +139,23 @@ Healthiest opponent:      Atlanta Hawks (100%)
 
 Finals note: The Spurs were fully healthy — the Finals result stands without asterisk.
 
+════════════════════════════════════════════════════════════════════════
+§9  BETTING-MARKET EXPECTATIONS (ATS)
+────────────────────────────────────────────────────────────────────────
+Games with Vegas lines: 19 of 19
+ATS record:             16-3
+Avg Knicks spread:      -2.0 pts (negative = Knicks favored)
+Avg ATS margin:         +16.9 pts (how much they beat the spread)
+
+── Round-by-round ATS ──
+  Round    Opponent                       Spread   Actual      ATS Cover
+  ─────────────────────────────────────────────────────────────────
+  R1       Hawks                            -4.0    +17.5    +21.5 6/6
+  R2       76ers                            -4.0    +22.2    +26.2 4/4
+  CF       Cavaliers                        -2.8    +19.2    +22.0 4/4
+  Finals   Spurs                            +2.5     +2.4     -0.1 2/5
+
+Finals market view: Knicks were near even odds.
+  Actual avg margin: +2.4 (vs. spread of +2.5)
+
 ```

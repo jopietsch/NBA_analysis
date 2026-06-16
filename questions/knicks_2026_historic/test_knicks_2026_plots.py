@@ -154,3 +154,26 @@ def test_plot_opponent_health_empty(tmp_path, monkeypatch):
     monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
     result = plots.plot_opponent_health(pd.DataFrame())
     assert result == ""
+
+
+def _mini_ats_df() -> pd.DataFrame:
+    return pd.DataFrame([
+        {"GAME_ID": "G001", "GAME_DATE": "2026-04-20", "WL": "W",
+         "actual_margin": 15.0, "knicks_spread": -8.0, "ats_margin": 23.0,
+         "covered": True, "OPP_ID": OPP1_ID},
+        {"GAME_ID": "G002", "GAME_DATE": "2026-05-01", "WL": "W",
+         "actual_margin": 10.0, "knicks_spread": 3.0, "ats_margin": 7.0,
+         "covered": True, "OPP_ID": OPP2_ID},
+    ])
+
+
+def test_plot_market_vs_actual(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_market_vs_actual(_mini_ats_df())
+    assert os.path.isfile(path)
+
+
+def test_plot_market_vs_actual_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    result = plots.plot_market_vs_actual(pd.DataFrame())
+    assert result == ""

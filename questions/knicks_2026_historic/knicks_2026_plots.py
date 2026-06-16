@@ -415,7 +415,68 @@ def plot_opponent_srs_by_round(po_2026: pd.DataFrame, reg_srs: pd.Series,
     return path
 
 
-# ── 9. Opponent key-player health ─────────────────────────────────────────────
+# ── 9. Market expectations vs. actual margin ──────────────────────────────────
+
+def plot_market_vs_actual(ats_df: pd.DataFrame) -> str:
+    if ats_df.empty:
+        return ""
+
+    ROUND_COLORS = [KNICKS_BLUE, GREEN, KNICKS_ORANGE, RED]
+    round_names  = ["R1", "R2", "CF", "Finals"]
+
+    # Determine round for each game from sorted GAME_DATE
+    df = ats_df.copy().sort_values("GAME_DATE").reset_index(drop=True)
+
+    # Assign rounds: all games vs same OPP_ID get the same round label
+    if "OPP_ID" in df.columns:
+        opp_order = df.drop_duplicates("OPP_ID").sort_values("GAME_DATE")["OPP_ID"].tolist()
+        opp_round = {oid: i for i, oid in enumerate(opp_order)}
+        df["round_idx"] = df["OPP_ID"].map(opp_round)
+    else:
+        df["round_idx"] = 0
+
+    fig, ax = _fig(figsize=(7, 5))
+
+    lim = max(df["knicks_spread"].abs().max(), df["actual_margin"].abs().max()) + 5
+    ax.axline((0, 0), slope=1, color=LGRAY, linewidth=1.0, linestyle="--", zorder=1,
+              label="Exactly hit spread")
+    ax.axhline(0, color=LGRAY, linewidth=0.6)
+    ax.axvline(0, color=LGRAY, linewidth=0.6)
+
+    for rnd_idx, rnd_name in enumerate(round_names):
+        sub = df[df["round_idx"] == rnd_idx]
+        if sub.empty:
+            continue
+        color = ROUND_COLORS[rnd_idx % len(ROUND_COLORS)]
+        ax.scatter(
+            sub["knicks_spread"], sub["actual_margin"],
+            color=color, s=60, zorder=3, label=rnd_name, edgecolors="white", linewidths=0.5,
+        )
+
+    ax.fill_between([-lim, lim], [-lim, -lim], [0, 0], alpha=0.04, color=RED)
+    ax.fill_between([-lim, lim], [0, 0], [lim, lim], alpha=0.04, color=GREEN)
+    ax.text(lim * 0.55, lim * 0.85, "Beat spread", color=GREEN, fontsize=8, alpha=0.7)
+    ax.text(lim * 0.55, -lim * 0.90, "Missed spread", color=RED, fontsize=8, alpha=0.7)
+
+    ax.set_xlim(-lim, lim)
+    ax.set_ylim(-lim, lim)
+    ax.set_xlabel("Vegas spread (Knicks perspective; – = favored)", fontsize=10)
+    ax.set_ylabel("Actual margin (pts)", fontsize=10)
+    ax.set_title(
+        "2025-26 Knicks Playoffs: Market Expectations vs. Reality",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+    )
+    _style(ax)
+    ax.grid(axis="both", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+    fig.tight_layout()
+    path = _out("knicks_2026_market_vs_actual.png")
+    fig.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return path
+
+
+# ── 10. Opponent key-player health ─────────────────────────────────────────────
 
 def plot_opponent_health(health_df: pd.DataFrame) -> str:
     if health_df.empty:
@@ -483,7 +544,8 @@ def plot_opponent_health(health_df: pd.DataFrame) -> str:
 def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              standings_2026: pd.DataFrame, champions: pd.DataFrame,
              gap_table: pd.DataFrame,
-             health_df: pd.DataFrame | None = None) -> list:
+             health_df: pd.DataFrame | None = None,
+             ats_df: pd.DataFrame | None = None) -> list:
     from knicks_2026_data import compute_srs
     reg_srs = compute_srs(reg_2026)
 
@@ -499,6 +561,10 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     ]
     if health_df is not None and not health_df.empty:
         p = plot_opponent_health(health_df)
+        if p:
+            paths.append(p)
+    if ats_df is not None and not ats_df.empty:
+        p = plot_market_vs_actual(ats_df)
         if p:
             paths.append(p)
     return paths

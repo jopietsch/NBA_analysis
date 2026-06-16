@@ -44,6 +44,8 @@ from knicks_2026_data import (
     compute_srs_gap,
     compute_inter_conference_h2h,
     compute_opponent_health,
+    fetch_game_odds,
+    compute_ats_stats,
     build_champions_table,
     build_conference_gap_table,
 )
@@ -394,6 +396,95 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
         print(f"\nFinals note: {note}", file=out)
 
 
+# ── Section 9: Betting-market expectations ───────────────────────────────────
+
+def run_betting_market(ats_df: pd.DataFrame,
+                       po_2026: pd.DataFrame,
+                       standings_2026: pd.DataFrame,
+                       out: io.StringIO) -> None:
+    print(_hdr("§9  BETTING-MARKET EXPECTATIONS (ATS)"), file=out)
+
+    if ats_df.empty:
+        print("  No odds data available (BBR scrape returned no lines).", file=out)
+        return
+
+    n_total = len(ats_df)
+    n_covered = int(ats_df["covered"].sum())
+    avg_spread = float(ats_df["knicks_spread"].mean())
+    avg_ats    = float(ats_df["ats_margin"].mean())
+
+    print(f"Games with Vegas lines: {n_total} of 19", file=out)
+    print(f"ATS record:             {n_covered}-{n_total - n_covered}", file=out)
+    print(f"Avg Knicks spread:      {avg_spread:+.1f} pts (negative = Knicks favored)", file=out)
+    print(f"Avg ATS margin:         {avg_ats:+.1f} pts (how much they beat the spread)", file=out)
+
+    # Get opponent names via standings
+    game_teams = (
+        po_2026.groupby("GAME_ID")["TEAM_ID"]
+        .apply(lambda s: [x for x in s.tolist() if x != KNICKS_TEAM_ID])
+        .reset_index()
+    )
+    knicks_w_opp = (
+        po_2026[po_2026["TEAM_ID"] == KNICKS_TEAM_ID]
+        .merge(game_teams.rename(columns={"TEAM_ID": "OPP_LIST"}), on="GAME_ID")
+        .copy()
+    )
+    knicks_w_opp["OPP_ID"] = knicks_w_opp["OPP_LIST"].apply(
+        lambda x: int(x[0]) if x else None
+    )
+    knicks_w_opp = knicks_w_opp.sort_values("GAME_DATE")
+
+    name_map = standings_2026.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
+    ).to_dict()
+
+    opp_series = (
+        knicks_w_opp.dropna(subset=["OPP_ID"])
+        .groupby("OPP_ID", sort=False)
+        .apply(lambda g: g.sort_values("GAME_DATE").iloc[0]["GAME_DATE"])
+    ).sort_values()
+    first_opp_order = list(opp_series.index.astype(int))
+
+    round_names = ["R1", "R2", "CF", "Finals"]
+    print(_subhdr("Round-by-round ATS"), file=out)
+    print(f"  {'Round':<8} {'Opponent':<28} {'Spread':>8} {'Actual':>8} "
+          f"{'ATS':>8} {'Cover'}", file=out)
+    print("  " + "─" * 65, file=out)
+
+    opp_game_map = knicks_w_opp.set_index("GAME_ID")["OPP_ID"].to_dict()
+    ats_df = ats_df.copy()
+    ats_df["OPP_ID"] = ats_df["GAME_ID"].map(opp_game_map)
+
+    for i, opp_id in enumerate(first_opp_order):
+        sub = ats_df[ats_df["OPP_ID"] == opp_id]
+        if sub.empty:
+            continue
+        rnd = round_names[i] if i < len(round_names) else f"R{i+1}"
+        opp_name = name_map.get(int(opp_id), f"Team {opp_id}").split()[-1]
+        avg_sp  = float(sub["knicks_spread"].mean())
+        avg_act = float(sub["actual_margin"].mean())
+        avg_at  = float(sub["ats_margin"].mean())
+        covers  = int(sub["covered"].sum())
+        total_g = len(sub)
+        print(f"  {rnd:<8} {opp_name:<28} {avg_sp:>+8.1f} {avg_act:>+8.1f} "
+              f"{avg_at:>+8.1f} {covers}/{total_g}", file=out)
+
+    # Highlight Finals specifically
+    finals_ats = ats_df[ats_df["OPP_ID"] == first_opp_order[-1]] if first_opp_order else pd.DataFrame()
+    if not finals_ats.empty:
+        finals_avg_spread = float(finals_ats["knicks_spread"].mean())
+        finals_avg_actual = float(finals_ats["actual_margin"].mean())
+        if finals_avg_spread < -3:
+            market_view = f"favored by {abs(finals_avg_spread):.1f} pts on average"
+        elif finals_avg_spread > 3:
+            market_view = f"underdogs by {finals_avg_spread:.1f} pts on average"
+        else:
+            market_view = "near even odds"
+        print(f"\nFinals market view: Knicks were {market_view}.", file=out)
+        print(f"  Actual avg margin: {finals_avg_actual:+.1f} (vs. spread of {finals_avg_spread:+.1f})",
+              file=out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -420,6 +511,11 @@ def main() -> None:
     run_deflators(po_2026, champions, out)
     run_verdict(po_2026, reg_2026, champions, gap_table, out)
     run_opponent_health(player_po_2026, po_2026, standings_2026, out)
+
+    print("Loading betting odds from cache / BBR...", file=sys.stderr)
+    odds_df  = fetch_game_odds(po_2026, KNICKS_TEAM_ID)
+    ats_df   = compute_ats_stats(odds_df, po_2026, KNICKS_TEAM_ID)
+    run_betting_market(ats_df, po_2026, standings_2026, out)
 
     body = out.getvalue()
 

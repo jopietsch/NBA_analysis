@@ -34,9 +34,13 @@ def main() -> None:
         player_po_2026, po_2026, data.KNICKS_TEAM_ID, standings_2026
     )
 
+    print("Loading betting odds from cache / BBR...")
+    odds_df = data.fetch_game_odds(po_2026, data.KNICKS_TEAM_ID)
+    ats_df  = data.compute_ats_stats(odds_df, po_2026, data.KNICKS_TEAM_ID)
+
     print("Generating charts...")
     paths = plots.plot_all(po_2026, reg_2026, standings_2026, champions, gap_table,
-                           health_df=health_df)
+                           health_df=health_df, ats_df=ats_df)
     for p in paths:
         print(f"  Saved → {os.path.basename(p)}")
 

@@ -11,10 +11,22 @@ tidy frames/values back.
 """
 
 import os
+import re
+import sys
+import time
 import pandas as pd
 import numpy as np
 
 import nbakit.data as _nba
+
+# ── ESPN API constants ────────────────────────────────────────────────────────
+_ESPN_SCOREBOARD = (
+    "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard"
+)
+_ESPN_ODDS_BASE = (
+    "https://sports.core.api.espn.com/v2/sports/basketball/leagues/nba/events"
+)
+_ESPN_SLEEP = 0.5  # polite pause between ESPN API calls
 
 # Re-export shared helpers so callers import from one place
 from nbakit.data import (
@@ -283,6 +295,157 @@ def compute_opponent_health(
         df["first_game_date"] = df["team_id"].map(first_dates)
         df = df.sort_values("first_game_date").reset_index(drop=True)
     return df
+
+
+# ── Betting-market odds (ESPN core API) ───────────────────────────────────────
+
+def _home_abbr(matchup: str) -> str:
+    """Extract home team abbreviation from nba_api MATCHUP string.
+
+    'NYK vs. ATL' → 'NYK' (NYK is home)
+    'NYK @ ATL'   → 'ATL' (ATL is home)
+    """
+    if " vs. " in matchup:
+        return matchup.split(" vs. ")[0].strip()
+    return matchup.split(" @ ")[1].strip()
+
+
+def _parse_vegas_line(text: str, home_abbr: str) -> tuple[str | None, float | None]:
+    """Parse a 'ABBR ±X.X' Vegas line string.
+
+    Returns (line_team, line_value) where line_value < 0 means that team is
+    favored. Returns ('PICK', 0.0) for even lines, (None, None) on failure.
+    """
+    text = text.strip()
+    if not text or text.lower() in ("pick", "pick 'em", "n/a", ""):
+        return ("PICK", 0.0)
+    m = re.match(r"([A-Z]+)\s*([+-]?\d+\.?\d*)", text)
+    if not m:
+        return (None, None)
+    return (m.group(1), float(m.group(2)))
+
+
+def _espn_game_spread(game_date: str, knicks_home: bool) -> float | None:
+    """Fetch the opening point spread for a Knicks game from ESPN's core API.
+
+    Returns the spread from NYK's perspective:
+      negative → Knicks are favorites (e.g. -5.5 = NYK -5.5)
+      positive → Knicks are underdogs (e.g. +3.0 = NYK +3)
+    Returns None if the spread is unavailable.
+    """
+    import requests
+    date_str = game_date.replace("-", "")
+
+    # Step 1: Find the ESPN event ID for the Knicks game on this date
+    try:
+        r = requests.get(
+            _ESPN_SCOREBOARD,
+            params={"dates": date_str, "groups": "5"},
+            timeout=15,
+        )
+        time.sleep(_ESPN_SLEEP)
+        if r.status_code != 200:
+            return None
+        data = r.json()
+    except Exception as exc:
+        print(f"  ESPN scoreboard error {game_date}: {exc}", file=sys.stderr)
+        return None
+
+    event_id = None
+    for event in data.get("events", []):
+        if "Knick" in event.get("name", ""):
+            event_id = event["id"]
+            break
+    if event_id is None:
+        return None
+
+    # Step 2: Fetch odds for the event
+    odds_url = f"{_ESPN_ODDS_BASE}/{event_id}/competitions/{event_id}/odds"
+    try:
+        r = requests.get(odds_url, timeout=15)
+        time.sleep(_ESPN_SLEEP)
+        if r.status_code != 200:
+            return None
+        items = r.json().get("items", [])
+    except Exception as exc:
+        print(f"  ESPN odds error {game_date}: {exc}", file=sys.stderr)
+        return None
+
+    if not items:
+        return None
+
+    # ESPN spread is the home team's spread (negative = home favored)
+    spread = items[0].get("spread")
+    if spread is None:
+        return None
+
+    return float(spread) if knicks_home else -float(spread)
+
+
+def fetch_game_odds(po_2026: pd.DataFrame,
+                    knicks_team_id: int,
+                    cache_dir: str | None = None) -> pd.DataFrame:
+    """Fetch Vegas point spreads for each Knicks 2026 playoff game via ESPN's API.
+
+    Returns a DataFrame with one row per game:
+      GAME_ID, GAME_DATE, knicks_home, knicks_spread
+    where knicks_spread < 0 means Knicks were favored by that amount.
+    Cached as 2025-26_Playoffs_odds.csv after the first fetch.
+    """
+    d = cache_dir or _nba.default_cache_dir()
+    cache_file = os.path.join(d, "2025-26_Playoffs_odds.csv")
+    if os.path.exists(cache_file):
+        return pd.read_csv(cache_file)
+
+    knicks_games = (
+        po_2026[po_2026["TEAM_ID"] == knicks_team_id]
+        .sort_values("GAME_DATE")
+        .copy()
+    )
+
+    rows = []
+    for _, game in knicks_games.iterrows():
+        matchup     = str(game["MATCHUP"])
+        knicks_home = _home_abbr(matchup) == "NYK"
+        date        = str(game["GAME_DATE"])
+
+        print(f"  Fetching odds: {date} {matchup}…", file=sys.stderr, flush=True)
+        spread = _espn_game_spread(date, knicks_home)
+
+        rows.append({
+            "GAME_ID":       game["GAME_ID"],
+            "GAME_DATE":     date,
+            "knicks_home":   knicks_home,
+            "knicks_spread": spread,
+        })
+
+    df = pd.DataFrame(rows)
+    os.makedirs(d, exist_ok=True)
+    df.to_csv(cache_file, index=False)
+    return df
+
+
+def compute_ats_stats(odds_df: pd.DataFrame,
+                      po_2026: pd.DataFrame,
+                      knicks_team_id: int) -> pd.DataFrame:
+    """Merge odds with actual margins and compute ATS (against-the-spread) stats.
+
+    Returns a DataFrame with one row per game:
+      GAME_ID, GAME_DATE, WL, actual_margin, knicks_spread,
+      ats_margin (actual − spread), covered (bool)
+    Only includes games where knicks_spread is not null.
+    """
+    knicks_margin = (
+        po_2026[po_2026["TEAM_ID"] == knicks_team_id][["GAME_ID", "PLUS_MINUS", "WL"]]
+        .copy()
+    )
+    knicks_margin.columns = ["GAME_ID", "actual_margin", "WL"]
+
+    merged = odds_df.merge(knicks_margin, on="GAME_ID")
+    merged = merged.dropna(subset=["knicks_spread", "actual_margin"])
+    merged["ats_margin"] = merged["actual_margin"] - merged["knicks_spread"]
+    merged["covered"] = merged["ats_margin"] > 0
+    return merged.reset_index(drop=True)
 
 
 # ── Season-range aggregation ──────────────────────────────────────────────────
