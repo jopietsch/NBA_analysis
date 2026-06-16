@@ -62,7 +62,8 @@ else, so start there.
   empirical-Bayes shrinkage.
 - **Part 7 — Avoiding the classic traps:** confounders and controls; spurious
   correlation from shared trends (and how detrending fixes it); reverse
-  causality and the leave-one-out trick; interaction terms.
+  causality and the leave-one-out trick; interaction terms; detecting structural
+  breaks; unit roots and cointegration; Granger causality.
 - **Part 8 — Ranking a single team historically:** empirical percentile rank;
   SRS (Simple Rating System); schedule-adjusted margin.
 
@@ -954,7 +955,157 @@ interaction test is how you ask "did *this* change?" instead of "does this matte
 
 ---
 
-## 7.5 Natural experiments (when you can't randomize)
+## 7.5 Detecting structural breaks (when did the change *actually* happen?)
+
+**The question.** We know HCA declined over 40 years. But "when did the pace of
+decline shift?" is a different question from "did it decline?" Splitting at
+rule-change years (1995, 2002, 2014) is one approach, but it imposes our prior
+beliefs about *which* year mattered. A **structural break test** lets the data
+answer instead.
+
+**The intuition.** Fit a single trend line through all 43 seasons of home win %.
+Now fit *two* lines — one through the first k seasons, one through the remaining
+n−k. For the right choice of k, the two-line fit will be dramatically better than
+one line; for a random k, the improvement is small. Try every candidate k (the
+outer 15% trimmed to keep the sub-samples large enough to be reliable), measure
+the improvement at each, take the biggest. That's the **Chow F-statistic**, and
+the year it peaks is the data-implied break.
+
+> **Chow F(k) =** [(one-line RSS − two-line RSS) / 2] / [two-line RSS / (n − 4)]
+>
+> A large F means two lines fit *much* better than one at year k.
+
+**The catch — you're doing many tests at once.** If you try 33 candidate years
+and pick the max, standard significance tables are wrong; the p-values are too
+small (you chose the best of 33 shots). The correct benchmarks are from **Andrews
+(1993)**, who worked out the distribution of the *maximum* F across all candidates:
+10% → 7.12, 5% → 8.85, 1% → 12.37 (for 15% trimming, 2-parameter models).
+
+**Worked example.** Regular season, 43 seasons. The single-line OLS: RSS_full =
+some number. Try every year from 1991 (15% trimmed) to 2019. The supremum Chow
+F hits **10.22 at 1999**, which clears the 5% Andrews threshold (8.85). Before
+1999, the RS slope was −0.65 pp/yr (steep); after 1999, −0.26 pp/yr (gradual).
+The data sees 1999 as the clearest break — not 1995 (the rule-change year) and
+not 2014.
+
+Playoffs: the supremum is only 3.23 (at 2006), well below even the 10% threshold.
+No data-implied break — the playoff decline is a smooth drift throughout, consistent
+with what the era analysis (§4 of `RESULTS.md`) found.
+
+**How to read it in `RESULTS.md`.** The "Supremum Chow F = X.XX at year YYYY"
+line is the headline. Compare to Andrews critical values (printed above it). The
+"top 5 candidate break years" table shows where the F was largest — a cluster of
+nearby years all scoring high means the break was real but gradual; one dominant
+year means a sharper shift.
+
+---
+
+## 7.6 Unit roots and cointegration — when is a correlation between two trends real?
+
+**The trap, deeper version.** Section §7.2 introduced spurious correlation: two
+trending series will always correlate, real link or not. The detrending approach
+(first-differencing, residualizing) is one fix. A deeper fix exists for the
+specific case of **I(1) processes** — series that wander without a fixed mean,
+like a random walk — called **cointegration**.
+
+**Two concepts to know.**
+
+*I(0) vs. I(1).* If a series has a stable mean it bounces around (like
+year-to-year *changes* in HCA, which have no long-run drift), it's **I(0)
+stationary**. If it drifts with no fixed center (like the *level* of HCA, which
+has fallen monotonically for 40 years), it's **I(1) nonstationary**. The **ADF
+(Augmented Dickey-Fuller)** unit-root test distinguishes them: H0 = unit root
+(I(1)). p < 0.05 → reject → series is stationary (I(0)).
+
+*Cointegration.* Two I(1) series can either (a) have a genuine long-run
+equilibrium relationship — their difference never wanders too far from zero — or
+(b) happen to trend together by coincidence. If (a), they're **cointegrated**;
+if (b), their correlation is spurious. The **Engle-Granger cointegration test**
+checks: H0 = no cointegration. p < 0.05 → cointegrated → the correlation is
+genuine.
+
+**Why this matters for 3PA and HCA.** Season-level correlation: 3PA and home
+win % share r = −0.90. Both series are I(1) (ADF p = 0.925 and 0.680 —
+comfortably non-rejecting). But the Engle-Granger test comes back not significant:
+**not cointegrated**. The r = −0.90 is therefore likely spurious — the two trends
+just happen to run in opposite directions over 43 seasons without sharing a genuine
+long-run equilibrium. This is why the within-era game-level test is the only
+reliable evidence for the 3PA link; the season-level r is just two clocks both
+trending in the same direction.
+
+**Compare: parity and attendance.** The league's win-% standard deviation (parity)
+is I(0) stationary (ADF p = 0.023) — it bounces around a fairly stable mean. Same
+for league attendance (ADF p = 0.005 — arenas have been near capacity for 25
+years). Since at least one series in each pair is I(0), the classical spurious-I(1)
+concern doesn't apply; their correlations with HCA are interpretable directly. The
+answer still turns out to be "no significant relationship," but for parity and
+attendance the danger of spurious correlation from parallel I(1) trends isn't what
+you have to worry about.
+
+**The practical takeaway.** Before reporting a season-level correlation between any
+two slowly-drifting series (HCA and pace, HCA and 3PA, referee bias and year…),
+check whether both are I(1). If yes, run the cointegration test before concluding
+the correlation means anything.
+
+---
+
+## 7.7 Granger causality — which trend came first?
+
+**The question.** Even if 3PA and HCA are genuinely linked within the same season
+(the within-era game-level result), we don't know the direction: does the
+three-point revolution *cause* HCA to fall, or do both respond to the same
+underlying force (analytics culture, officiating, roster construction) without one
+driving the other?
+
+**The intuition.** If X *causes* Y, X should contain information about future Y
+beyond what Y's own history predicts. This is **Granger causality**: X
+"Granger-causes" Y if knowing last year's X helps predict this year's Y, on top
+of knowing last year's Y. It's a time-series forecasting test, not a philosophical
+proof of cause and effect — but it at least establishes temporal ordering.
+
+**The mechanics.** Build two models:
+- *Restricted:* predict ΔY (change in home win %) from its own lag(s) only.
+- *Unrestricted:* predict ΔY from its own lags *plus* lags of ΔX (3PA rate).
+
+An F-test compares the residual fit. If the F is big (p < 0.05), the lagged X
+values improve the forecast, and we say X Granger-causes Y. We also run the
+reverse: does lagged ΔY predict ΔX? Both directions tested, since if both are
+significant, the "causality" runs both ways (or both are downstream of a third
+thing).
+
+**Note on differencing.** Both 3PA and HCA are I(1) (see §7.6), so the test runs
+on first differences (ΔHCA and Δ3PA). Granger tests assume stationarity; using
+the nonstationary levels would give invalid F-statistics.
+
+**Worked example.** With N = 43 seasons (42 first differences) and max 2 lags:
+
+| Direction | Lag | F | p |
+|---|---|---|---|
+| Δ3PA → ΔHCA | 1 | 1.49 | 0.23 |
+| Δ3PA → ΔHCA | 2 | 1.37 | 0.27 |
+| ΔHCA → Δ3PA | 1 | 0.66 | 0.42 |
+| ΔHCA → Δ3PA | 2 | 0.30 | 0.74 |
+
+**No significant Granger causality in either direction.** 3PA in year t doesn't
+predict HCA in year t+1, and HCA in year t doesn't predict 3PA in year t+1. The
+two series move contemporaneously — in the *same* season — rather than one leading
+the other by a year.
+
+**What this means for interpretation.** The within-era game-level result (§12 of
+`RESULTS.md`) is still the evidence that 3PA mechanically links to HCA in any given
+game. The Granger null adds a time-series footnote: the *annual adoption rate* of
+threes doesn't run ahead of the annual change in HCA. Both are plausibly downstream
+of the same broad strategic shift (analytics, spacing, officiating culture) that hit
+the whole league at once each season. A causal chain "more threes this year → lower
+HCA next year" doesn't show up in the data.
+
+**The practical limit.** With only 42 seasonal observations, a Granger test has low
+power — moderate effects can go undetected. The result here is "no detected temporal
+lead," not "definitely no causal link."
+
+---
+
+## 7.8 Natural experiments (when you can't randomize)
 
 **The question:** almost every rule-out in this report is correlational. We can
 see that crowd size moves with HCA (or doesn't), but we never get to *assign* a
@@ -1145,7 +1296,13 @@ with 43 data points, the direct subtraction is the right level of complexity.
 | first-differenced, residual-on-year | removing a shared time trend | §7.2 |
 | expected pace (LOO) | breaking reverse causality | §7.3 |
 | * post2014 interaction | did an effect *change* over time? | §7.4 |
-| empty-arena (2020-21) dose-response | a natural experiment isolating cause | §7.5 |
+| Supremum Chow F, Andrews (1993) CVs | where did the *rate* of decline shift? | §7.5 |
+| ADF test, I(0)/I(1) | is this series drifting without end, or stable? | §7.6 |
+| Engle-Granger cointegration | is a season-level r a genuine link or two parallel trends? | §7.6 |
+| Granger causality, F-test on VAR | does one series lead the other in time? | §7.7 |
+| BH FDR across all primary tests | are the main findings robust to multiplicity? | §3.4 |
+| team fixed effects (franchise dummies) | is the era decline an artifact of which teams host games? | §7.1 |
+| empty-arena (2020-21) dose-response | a natural experiment isolating cause | §7.8 |
 
 ## Knicks historical analysis methods
 
@@ -1159,7 +1316,7 @@ with 43 data points, the direct subtraction is the right level of complexity.
 | clutch rate (games decided <= 5 pts) | fraction of close games -- tests "they just blew teams out" | -- |
 | home/away split | separate win rates to test venue fragility | -- |
 
-**The three ideas worth carrying away from the home-court analysis:**
+**The ideas worth carrying away from the home-court analysis:**
 
 1. **A raw difference is not an effect of a boundary.** HCA fell the whole time,
    so any later period looks lower; only a trend-controlled model (LR test) shows
@@ -1168,6 +1325,18 @@ with 43 data points, the direct subtraction is the right level of complexity.
    removed** -- by controlling for era or detrending. (§1.4, §7.2)
 3. **With 47,000 games, significance is cheap -- read the effect size and the CI.**
    A significant p doesn't mean a meaningful effect. (§0.4)
+4. **A high r between two I(1) series is suspiciously high.** If both series
+   trend without end (I(1)), their Pearson r will be large regardless of whether
+   they share a real relationship. Always check cointegration before concluding
+   a 0.90 correlation is meaningful. (§7.6)
+5. **Correlation in time ≠ causation in time.** Even a genuine within-era
+   game-level link doesn't tell you whether X leads Y or they move together.
+   Granger causality tests the temporal ordering, and a null result (as with
+   3PA → HCA) is itself informative. (§7.7)
+6. **"When did it happen?" is a testable question.** Don't assume the break year
+   matches the obvious rule change. The QLR test finds the data-implied break
+   (1999 for regular-season HCA), which may differ from the regulatory boundary
+   (1995). Both questions have different answers. (§7.5)
 
 **And from the Knicks analysis:**
 
