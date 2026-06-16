@@ -23,8 +23,8 @@
     - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4) — most likely the hand-check crackdown, but confounded with the simultaneous shortened 3-pt line (1994–97). *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - **Structural break finding:** formal QLR supremum-Chow test locates the shift in the *slope* of decline in the **late 1990s** (sup F=10.22, p<5% by Andrews 1993 critical values) — a different finding from the 1994–95 discrete step (Section 4). The slope went from −0.65 pp/yr before to −0.26 pp/yr after; this is interpreted as the multi-year adjustment to the 1994–95 rule change settling in, though the 4-year lag means the link is an inference. Playoffs show no significant break (sup F=3.23, n.s.) — pure smooth drift.
     - Flat for ~two decades.
-    - Second drop: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the box-score categories (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
-  - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Asymmetry (first-drop cause outside the categories in §4, second-drop cause inside them in §3) is why each is explained in a different section.
+    - Second drop: after 2017, below 56%. Coincides with the **three-point surge** (§3) hitting full stride — but the surge is the most visible *marker*, not the whole cause: its measured bite lands on the shooting line (~1/5 of decline), while the same move to the perimeter did larger, quieter damage on the glass. Both register *inside* the box-score categories. *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
+  - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Asymmetry (first-drop cause outside the categories in §4, second-drop perimeter shift inside them in §3) is why each is explained in a different section.
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
 **Figures:**
@@ -68,7 +68,7 @@
   - Playoffs: narrowed late 2010s then rebounded; downward drift NOT statistically established (playoff Paint trend −0.030, ns) → convergence is a reg-season phenomenon.
 - **Three-point revolution:**
   - Tracks decline over four decades in lockstep. 7% threes (1980s, 65% wins) → 40% (today, 55% wins).
-  - **Explains the second drop (§1):** 3PA share leapt from ~¼ of shots to ~half right after 2017 — the years home court slid below 56%. *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
+  - **Marks (not fully causes) the second drop (§1):** 3PA share leapt from ~¼ of shots to ~half right after 2017 — the years home court slid below 56%. Timing coincidence is strong; the measured causal bite runs through the shooting channel (~1/5 of decline), with the broader perimeter shift carrying more elsewhere (rebounding). *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
   - *RESULTS reg season-level Pearson r = −0.902, p<0.001.* **BUT: cointegration check shows both series are I(1) and NOT cointegrated — the r=−0.902 is likely spurious (parallel trends, not a genuine long-run relationship). Within-era game-level test is the reliable evidence.**
   - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.* This survives as the substantive finding.
   - **No temporal lead (Granger):** the annual rise in threes doesn't lead the HCA decline by a year, nor vice versa; both shift within the same season. *RESULTS: 3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns.* Consistent with both being downstream of the same strategic shift. (Note: folded into the 3PA narrative in FINDINGS, not a separate paragraph.)
@@ -162,7 +162,7 @@
 
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → 55.6%**, playoffs **~68% → 58%**.
-- Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete step at 1994–95, multi-year adjustment through late 1990s, outside the categories) and post-2017 three-point surge (inside the categories, shooting line).
+- Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete step at 1994–95, multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line).
 - Three main drivers + quiet fourth: (1) fairer refs (largest single change), (2) converged shot selection, (3) three-point variance (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (4) rebounding edge slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
 - Playoffs follow reg season with ~decade lag; accelerated since 2018; genuine erosion (weaker host still winning less); no sign of bottoming out.
