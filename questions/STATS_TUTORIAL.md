@@ -1247,28 +1247,35 @@ tough opponents. How dominant would that look against league-average opposition?
 adj_margin  =  raw_margin  -  avg_opponent_SRS
 ```
 
-For the Knicks: 14.89 - 3.54 = **+11.35 pts/game adjusted**.
+For the Knicks: 14.89 - 3.67 = **+11.22 pts/game adjusted** (reported as +11.23
+after rounding in RESULTS.md).
+
+Note: the figure used here, +3.67, is the **games-weighted** average opponent
+SRS — each playoff game counts once, so a 5-game opponent contributes 5 data
+points and a 4-game opponent contributes 4. This is the primary metric because
+both `avg_margin` and `avg_opp_srs` are on the same per-game basis, making the
+subtraction internally consistent. The Knicks also had a unique-opponent average
+(+3.54, equal weight to all four opponents regardless of series length), but
+that is not the number subtracted.
 
 **Why this adjustment is natural.** SRS is defined in point-differential space:
-an SRS +3.54 opponent is expected to beat a 0-SRS opponent by 3.54 pts/game.
-So the Knicks' +14.89 margin against +3.54 opponents is equivalent to ~+11.35
-against average competition. The subtraction is the exact inverse of what SRS
-built in.
+a +3.67 games-weighted opponent is expected to beat a 0-SRS opponent by
+3.67 pts/game. So the Knicks' +14.89 margin against those opponents is
+equivalent to ~+11.2 against average competition. The subtraction is the exact
+inverse of what SRS built in.
 
-**How it compares historically.** Adjusted margin +11.35 ranks 1st of 43
+**How it compares historically.** Adjusted margin +11.2 ranks 1st of 43
 champions -- the highest ever, even after correcting for schedule. The next
-closest is the 2016-17 Warriors at +10.20. This is the headline number of the
+closest is the 2016-17 Warriors at +10.23. This is the headline number of the
 analysis because it is the most complete single measure of dominance: raw margin
 with schedule difficulty stripped out.
 
 **The limitation to keep in mind.** The adjustment assumes one SRS point of
 opponent quality costs exactly one point of margin -- a clean linear assumption
 that comes from the SRS framework itself. In practice, playoff intensity may
-compress or expand margins in ways regular-season SRS doesn't capture. And all
-four opponents are weighted equally regardless of series length: a team that
-swept a +8 SRS opponent in four games "gets credit" for the same +8 as one that
-beat them in seven. A more elaborate model could account for these nuances, but
-with 43 data points, the direct subtraction is the right level of complexity.
+compress or expand margins in ways regular-season SRS doesn't capture. A more
+elaborate model could account for these nuances, but with 43 data points, the
+direct subtraction is the right level of complexity.
 
 ---
 
