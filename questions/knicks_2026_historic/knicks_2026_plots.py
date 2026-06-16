@@ -512,15 +512,21 @@ def plot_round_split(series_df: pd.DataFrame,
     ax.axhline(0, color=GRAY, linewidth=0.8, linestyle="--")
 
     for bar, val in zip(bars_raw, raw_vals):
-        ax.text(bar.get_x() + bar.get_width() / 2,
-                val + (0.5 if val >= 0 else -1.5),
-                f"{val:+.1f}", ha="center", va="bottom" if val >= 0 else "top",
-                fontsize=7.5, color=KNICKS_ORANGE, fontweight="bold")
+        if not np.isnan(val):
+            ax.text(bar.get_x() + bar.get_width() / 2,
+                    val + (0.5 if val >= 0 else -1.5),
+                    f"{val:+.1f}", ha="center", va="bottom" if val >= 0 else "top",
+                    fontsize=7.5, color=KNICKS_ORANGE, fontweight="bold")
     for bar, val in zip(bars_po, po_vals):
-        ax.text(bar.get_x() + bar.get_width() / 2,
-                val + (0.5 if val >= 0 else -1.5),
-                f"{val:+.1f}", ha="center", va="bottom" if val >= 0 else "top",
-                fontsize=7.5, color=GREEN, fontweight="bold")
+        if not np.isnan(val):
+            ax.text(bar.get_x() + bar.get_width() / 2,
+                    val + (0.5 if val >= 0 else -1.5),
+                    f"{val:+.1f}", ha="center", va="bottom" if val >= 0 else "top",
+                    fontsize=7.5, color=GREEN, fontweight="bold")
+        else:
+            ax.text(bar.get_x() + bar.get_width() / 2, 1.0,
+                    "n/a", ha="center", va="bottom",
+                    fontsize=7, color=GRAY, style="italic")
 
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=10)

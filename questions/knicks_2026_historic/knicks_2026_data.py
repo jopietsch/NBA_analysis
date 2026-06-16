@@ -233,6 +233,54 @@ def compute_adjusted_margin(raw_margin: float, avg_opp_srs: float) -> float:
     return raw_margin - avg_opp_srs
 
 
+def compute_opponent_playoff_srs_excl(po_logs: pd.DataFrame,
+                                      team_id: int) -> pd.Series:
+    """Playoff SRS for each opponent of team_id, computed from games NOT involving team_id.
+
+    Removes the circularity in compute_playoff_srs: an opponent's SRS is no
+    longer influenced by their series against the focal team, so it's an
+    independent measure of their playoff form against other opponents.
+
+    Opponents who only played the focal team (e.g. a first-round loser with no
+    other playoff games) return NaN — they have no independent data.
+    """
+    focal_gids = set(po_logs[po_logs["TEAM_ID"] == team_id]["GAME_ID"].unique())
+    indep_logs  = po_logs[~po_logs["GAME_ID"].isin(focal_gids)].copy()
+
+    indep_srs = compute_srs(indep_logs) if not indep_logs.empty else pd.Series(dtype=float)
+
+    gid_to_teams = po_logs.groupby("GAME_ID")["TEAM_ID"].apply(list).to_dict()
+    opp_ids: set[int] = set()
+    for gid in focal_gids:
+        for tid in gid_to_teams.get(gid, []):
+            if tid != team_id:
+                opp_ids.add(int(tid))
+
+    return pd.Series(
+        {oid: float(indep_srs.get(oid, float("nan"))) for oid in opp_ids}
+    )
+
+
+def compute_margin_ci(po_logs: pd.DataFrame,
+                      team_id: int,
+                      confidence: float = 0.95) -> tuple[float, float]:
+    """t-interval on the mean playoff margin (per game).
+
+    Returns (lower, upper).  With 19 games the interval is wide — this is
+    the honest uncertainty in the point estimate.
+    """
+    from scipy import stats as _st
+    logs    = _nba._fill_plus_minus(po_logs)
+    margins = logs[logs["TEAM_ID"] == team_id]["PLUS_MINUS"].dropna()
+    n = len(margins)
+    if n < 2:
+        return float("nan"), float("nan")
+    mean   = float(margins.mean())
+    se     = float(margins.std(ddof=1) / np.sqrt(n))
+    t_crit = float(_st.t.ppf((1 + confidence) / 2, df=n - 1))
+    return mean - t_crit * se, mean + t_crit * se
+
+
 def compute_series_margins(po_logs: pd.DataFrame,
                            team_id: int,
                            reg_srs: pd.Series,
@@ -673,8 +721,9 @@ def build_champions_table(start_year: int = START_YEAR,
         po_srs_series = compute_playoff_srs(po)
         champ_po_srs = float(po_srs_series.get(champ, float("nan")))
         elevation = champ_po_srs - champ_srs if not (np.isnan(champ_po_srs) or np.isnan(champ_srs)) else float("nan")
-        avg_opp_playoff = compute_games_weighted_opponent_srs(po, po_srs_series, champ)
-        adj_playoff = compute_adjusted_margin(margin, avg_opp_playoff)
+        opp_po_excl     = compute_opponent_playoff_srs_excl(po, champ)
+        avg_opp_playoff = compute_games_weighted_opponent_srs(po, opp_po_excl, champ)
+        adj_playoff     = compute_adjusted_margin(margin, avg_opp_playoff)
         clutch = compute_clutch_rate(po, champ)
         h_wr, a_wr = compute_home_away_split(po, champ)
         league_scoring = compute_league_scoring_avg(rs)

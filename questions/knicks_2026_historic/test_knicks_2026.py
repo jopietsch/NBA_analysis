@@ -100,6 +100,43 @@ def test_compute_pace_adjusted_margin():
     assert data.compute_pace_adjusted_margin(10.0, 100.0, 110.0) == pytest.approx(10.0 * 110 / 100)
 
 
+def test_compute_opponent_playoff_srs_excl():
+    po  = _mini_po_2026()
+    # Knicks played G001+G002 vs OPP1 and G003 vs OPP2
+    # Excluding Knicks games leaves no rows → both opponents should be NaN
+    result = data.compute_opponent_playoff_srs_excl(po, KNICKS_ID)
+    # All games involve the Knicks, so no independent games → NaN for all
+    assert set(result.index) == {OPP1_ID, OPP2_ID}
+    assert np.isnan(result[OPP1_ID])
+    assert np.isnan(result[OPP2_ID])
+
+
+def test_compute_opponent_playoff_srs_excl_with_independent_games():
+    """OPP1 plays OPP2 in a separate game; that game is independent of the Knicks."""
+    po = _mini_po_2026().copy()
+    # Add a game between OPP1 and OPP2 (no Knicks involved)
+    extra = pd.DataFrame([
+        {"GAME_ID": "G999", "TEAM_ID": OPP1_ID, "GAME_DATE": "2026-03-01",
+         "WL": "W", "PTS": 115, "PLUS_MINUS": 8.0, "MATCHUP": "OPP1 vs. OPP2"},
+        {"GAME_ID": "G999", "TEAM_ID": OPP2_ID, "GAME_DATE": "2026-03-01",
+         "WL": "L", "PTS": 107, "PLUS_MINUS": -8.0, "MATCHUP": "OPP2 @ OPP1"},
+    ])
+    po_extended = pd.concat([po, extra], ignore_index=True)
+    result = data.compute_opponent_playoff_srs_excl(po_extended, KNICKS_ID)
+    # OPP1 and OPP2 now have one independent game vs each other → not NaN
+    assert not np.isnan(result[OPP1_ID])
+    assert not np.isnan(result[OPP2_ID])
+
+
+def test_compute_margin_ci():
+    po  = _mini_po_2026()
+    lo, hi = data.compute_margin_ci(po, KNICKS_ID)
+    # All 3 games are +10; std=0, so CI degenerates but should not error
+    # (In practice std=0 gives width=0; both bounds equal mean)
+    assert lo <= hi
+    assert not np.isnan(lo)
+
+
 def test_compute_series_margins_basic():
     po  = _mini_po_2026()
     srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})

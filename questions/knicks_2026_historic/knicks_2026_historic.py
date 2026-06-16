@@ -38,10 +38,10 @@ def main() -> None:
     odds_df = data.fetch_game_odds(po_2026, data.KNICKS_TEAM_ID)
     ats_df  = data.compute_ats_stats(odds_df, po_2026, data.KNICKS_TEAM_ID)
 
-    reg_srs_2026 = data.compute_srs(reg_2026)
-    po_srs_2026  = data.compute_playoff_srs(po_2026)
-    series_df    = data.compute_series_margins(
-        po_2026, data.KNICKS_TEAM_ID, reg_srs_2026, po_srs_2026
+    reg_srs_2026  = data.compute_srs(reg_2026)
+    opp_po_excl   = data.compute_opponent_playoff_srs_excl(po_2026, data.KNICKS_TEAM_ID)
+    series_df     = data.compute_series_margins(
+        po_2026, data.KNICKS_TEAM_ID, reg_srs_2026, opp_po_excl
     )
 
     print("Generating charts...")

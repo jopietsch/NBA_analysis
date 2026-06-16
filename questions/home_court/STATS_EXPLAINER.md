@@ -1062,9 +1062,9 @@ points around the diagonal amounts to numerically.
 
 **The 14 tests** cover: the two overall HCA trends (RS and PO binomial GLMs); rest differential (RS and PO); altitude (RS); time zone (RS); 3PA within-era (RS and PO); pace LOO within-era (RS); travel distance (RS); parity first-differenced (RS); OREB rate vs. rebound share edge (RS); era dummies LR test beyond year trend (RS and PO).
 
-**What the results mean.** 10 of 14 tests survive BH correction:
-- **Survive:** both HCA trends, rest effect RS and PO, altitude RS, 3PA RS and PO, travel RS, parity first-diff RS, OREB rate vs. rebound edge RS.
-- **Do not survive:** time zone effect (p ≈ 0.05, marginal), pace LOO within-era (p ≈ 0.06), RS era dummies LR test (p ≈ 0.11), PO era dummies LR test (p ≈ 0.56).
+**What the results mean.** 11 of 14 tests survive BH correction:
+- **Survive:** both HCA trends, rest effect RS and PO, altitude RS, 3PA RS and PO, RS era dummies LR test (p = 0.002), travel RS, parity first-diff RS, OREB rate vs. rebound edge RS.
+- **Do not survive:** time zone effect (p ≈ 0.05, marginal), pace LOO within-era (p ≈ 0.06), PO era dummies LR test (p ≈ 0.64).
 
 The "ruled-out" findings remain correct descriptions of the data — the time zone and pace effects exist — but they are too small and marginal to be called reliable when multiple comparisons are accounted for. The core findings (structural decline, rest, altitude, three-point shooting) survive comfortably. Travel (p = 0.010) also survives, though the effect size is trivially small (Section 14).
 

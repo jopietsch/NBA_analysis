@@ -3013,7 +3013,7 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 f_yr  = f"home_win ~ year + rest_diff + altitude_home + tz_diff + covid"
-                f_era = (f"home_win ~ C(era, Treatment('{era_ref}')) "
+                f_era = (f"home_win ~ year + C(era, Treatment('{era_ref}')) "
                          f"+ rest_diff + altitude_home + tz_diff + covid")
                 m_yr  = smf.logit(f_yr,  data=sub).fit(disp=0)
                 m_era = smf.logit(f_era, data=sub).fit(disp=0)

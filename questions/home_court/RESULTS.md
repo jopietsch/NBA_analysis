@@ -1135,17 +1135,17 @@ All data from cache/ — same source as the plots above.
       4  RS 3PA within-era effect                      <0.001      0.0143       YES
       5  RS altitude (DEN/UTA)                         <0.001      0.0179       YES
       6  PO HCA year trend                             <0.001      0.0214       YES
-      7  RS travel distance                             0.010      0.0250       YES
-      8  PO rest differential                           0.020      0.0286       YES
-      9  PO 3PA within-era effect                       0.027      0.0321       YES
-     10  RS parity vs HCA (first-diff)                  0.033      0.0357       YES
-     11  RS time zone effect                            0.051      0.0393        no
-     12  RS pace LOO within-era                         0.063      0.0429        no
-     13  RS era dummies beyond year trend               0.114      0.0464        no
-     14  PO era dummies beyond year trend               0.555      0.0500        no
+      7  RS era dummies beyond year trend               0.002      0.0250       YES
+      8  RS travel distance                             0.010      0.0286       YES
+      9  PO rest differential                           0.020      0.0321       YES
+     10  PO 3PA within-era effect                       0.027      0.0357       YES
+     11  RS parity vs HCA (first-diff)                  0.033      0.0393       YES
+     12  RS time zone effect                            0.051      0.0429        no
+     13  RS pace LOO within-era                         0.063      0.0464        no
+     14  PO era dummies beyond year trend               0.640      0.0500        no
 
-   BH result: 10 / 14 tests survive (q = 0.05).
-   Does NOT survive BH: RS time zone effect, RS pace LOO within-era, RS era dummies beyond year trend, PO era dummies beyond year trend
+   BH result: 11 / 14 tests survive (q = 0.05).
+   Does NOT survive BH: RS time zone effect, RS pace LOO within-era, PO era dummies beyond year trend
    ► Core findings (HCA trends, rest, altitude, era shift, 3PA) survive.
      Marginal factors (travel, parity, time zone) may not — treat as exploratory.
 

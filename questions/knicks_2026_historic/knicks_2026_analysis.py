@@ -45,6 +45,8 @@ from knicks_2026_data import (
     compute_playoff_srs,
     compute_playoff_elevation,
     compute_series_margins,
+    compute_opponent_playoff_srs_excl,
+    compute_margin_ci,
     compute_league_scoring_avg,
     compute_pace_adjusted_margin,
     compute_conference_avg_srs,
@@ -99,11 +101,16 @@ def run_raw_claim(po_2026: pd.DataFrame,
     mgn_pct    = _pct_rank(mgn_series, margin, ascending=True)
     n          = len(champions)
 
+    ci_lo, ci_hi = compute_margin_ci(po_2026, KNICKS_TEAM_ID)
+    lo_pct = _pct_rank(mgn_series, ci_lo, ascending=True)
+
     print(f"\nAmong {n} champion seasons ({season_range_label(START_YEAR, END_YEAR)}):", file=out)
     print(f"  Win-rate percentile:   {wr_pct:5.1f}th  "
           f"({wr:.3f} vs. mean {wr_series.mean():.3f}, best {wr_series.max():.3f})", file=out)
     print(f"  Margin percentile:     {mgn_pct:5.1f}th  "
           f"({margin:+.1f} vs. mean {mgn_series.mean():+.1f}, best {mgn_series.max():+.1f})", file=out)
+    print(f"\n  95% CI on margin (19 games, t-interval): [{ci_lo:+.1f}, {ci_hi:+.1f}]", file=out)
+    print(f"  Lower CI bound {ci_lo:+.1f} would rank at {lo_pct:.0f}th pct among champions", file=out)
 
     best  = champions.loc[champions["win_rate"].idxmax()]
     worst = champions.loc[champions["win_rate"].idxmin()]
@@ -303,10 +310,10 @@ def run_round_split(po_2026: pd.DataFrame,
     """
     print(_hdr("§6  ROUND-BY-ROUND: RAW vs. OPPONENT-ADJUSTED"), file=out)
 
-    srs_2026    = compute_srs(reg_2026)
-    po_srs_2026 = compute_playoff_srs(po_2026)
+    srs_2026       = compute_srs(reg_2026)
+    opp_po_excl    = compute_opponent_playoff_srs_excl(po_2026, KNICKS_TEAM_ID)
 
-    series_df = compute_series_margins(po_2026, KNICKS_TEAM_ID, srs_2026, po_srs_2026)
+    series_df = compute_series_margins(po_2026, KNICKS_TEAM_ID, srs_2026, opp_po_excl)
     if series_df.empty:
         print("  No series data found.", file=out)
         return
@@ -319,8 +326,9 @@ def run_round_split(po_2026: pd.DataFrame,
 
     print(
         "\nreg-adj  = raw margin − opponent regular-season SRS\n"
-        "po-adj   = raw margin − opponent playoff SRS\n"
-        "(po-adj is more positive when opponents played below their reg-season level)\n",
+        "po-adj   = raw margin − opponent playoff SRS (excl. Knicks series)\n"
+        "(po-adj is more positive when opponents played below their reg-season level\n"
+        " against other teams; NaN = opponent had no independent playoff games)\n",
         file=out,
     )
 
@@ -347,11 +355,9 @@ def run_round_split(po_2026: pd.DataFrame,
 
     print(_subhdr("Opponent reg-season SRS vs. playoff SRS"), file=out)
     print(
-        "A negative gap means the opponent played worse than their reg-season\n"
-        "SRS predicted; this inflates the Knicks' raw margin beyond what opponent\n"
-        "quality alone explains.\n"
-        "(Caution: for teams whose only playoff games were vs. the Knicks,\n"
-        " their playoff SRS is circular — determined by those same games.)\n",
+        "Opponent playoff SRS is computed from games EXCLUDING the Knicks series,\n"
+        "so it is an independent measure of each team's playoff form.\n"
+        "NaN = team had no playoff games outside the Knicks series (Hawks).\n",
         file=out,
     )
     print(f"{'Opponent':<28} {'Reg SRS':>8} {'PO SRS':>8} {'Gap (PO−Reg)':>13}  Note",
@@ -362,12 +368,12 @@ def run_round_split(po_2026: pd.DataFrame,
         opp_reg = row["opp_reg_srs"]
         opp_po  = row.get("opp_playoff_srs", float("nan"))
         gap     = opp_po - opp_reg if not np.isnan(opp_po) else float("nan")
-        if i == len(series_df) - 1:
-            note = "(Finals — multi-round playoffs SRS)"
-        elif i == 0:
-            note = "(only played Knicks — circular)"
+        if np.isnan(opp_po):
+            note = "(no independent playoff games — NaN)"
+        elif i == len(series_df) - 1:
+            note = "(full West bracket — most independent)"
         else:
-            note = "(partially circular)"
+            note = "(games before reaching Knicks)"
         gap_str = f"{gap:>+13.2f}" if not np.isnan(gap) else "         n/a"
         print(f"{name:<28} {opp_reg:>+8.2f} {opp_po:>+8.2f} {gap_str}  {note}",
               file=out)

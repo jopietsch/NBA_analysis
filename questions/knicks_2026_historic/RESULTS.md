@@ -14,6 +14,9 @@ Among 43 champion seasons (1983–84 through 2025–26):
   Win-rate percentile:    88.4th  (0.842 vs. mean 0.752, best 0.941)
   Margin percentile:     100.0th  (+14.9 vs. mean +7.0, best +14.9)
 
+  95% CI on margin (19 games, t-interval): [+7.4, +22.4]
+  Lower CI bound +7.4 would rank at 63th pct among champions
+
   Best win rate:  16–17  0.941
   Worst win rate: 07–08  0.615
 
@@ -111,47 +114,46 @@ Top 5 adjusted-margin champions:
 ────────────────────────────────────────────────────────────────────────
 
 reg-adj  = raw margin − opponent regular-season SRS
-po-adj   = raw margin − opponent playoff SRS
-(po-adj is more positive when opponents played below their reg-season level)
+po-adj   = raw margin − opponent playoff SRS (excl. Knicks series)
+(po-adj is more positive when opponents played below their reg-season level
+ against other teams; NaN = opponent had no independent playoff games)
 
 Round    Opponent                      N  Opp Reg SRS  Opp PO SRS     Raw  Reg-Adj   PO-Adj
 ───────────────────────────────────────────────────────────────────────────────────────────
-R1       Atlanta Hawks                 6        +2.38       +0.03   +17.5    +15.1    +17.5
-R2       Philadelphia 76ers            4        -0.27       -4.72   +22.2    +22.5    +27.0
-CF       Cleveland Cavaliers           4        +3.77       -1.72   +19.2    +15.5    +21.0
-Finals   San Antonio Spurs             5        +8.28      +15.13    +2.4     -5.9    -12.7
+R1       Atlanta Hawks                 6        +2.38        +nan   +17.5    +15.1     +nan
+R2       Philadelphia 76ers            4        -0.27       -1.43   +22.2    +22.5    +23.7
+CF       Cleveland Cavaliers           4        +3.77       +2.32   +19.2    +15.5    +16.9
+Finals   San Antonio Spurs             5        +8.28      +14.48    +2.4     -5.9    -12.1
 
 ── Opponent reg-season SRS vs. playoff SRS ──
-A negative gap means the opponent played worse than their reg-season
-SRS predicted; this inflates the Knicks' raw margin beyond what opponent
-quality alone explains.
-(Caution: for teams whose only playoff games were vs. the Knicks,
- their playoff SRS is circular — determined by those same games.)
+Opponent playoff SRS is computed from games EXCLUDING the Knicks series,
+so it is an independent measure of each team's playoff form.
+NaN = team had no playoff games outside the Knicks series (Hawks).
 
 Opponent                      Reg SRS   PO SRS  Gap (PO−Reg)  Note
 ───────────────────────────────────────────────────────────────────────────
-Atlanta Hawks                   +2.38    +0.03         -2.35  (only played Knicks — circular)
-Philadelphia 76ers              -0.27    -4.72         -4.45  (partially circular)
-Cleveland Cavaliers             +3.77    -1.72         -5.50  (partially circular)
-San Antonio Spurs               +8.28   +15.13         +6.85  (Finals — multi-round playoffs SRS)
+Atlanta Hawks                   +2.38     +nan          n/a  (no independent playoff games — NaN)
+Philadelphia 76ers              -0.27    -1.43         -1.16  (games before reaching Knicks)
+Cleveland Cavaliers             +3.77    +2.32         -1.45  (games before reaching Knicks)
+San Antonio Spurs               +8.28   +14.48         +6.20  (full West bracket — most independent)
 
 ── Pre-Finals vs. Finals summary ──
                                  Raw  Reg-Adj   PO-Adj
-Pre-Finals avg (R1–CF)         +19.7    +17.7    +21.8
-Finals                          +2.4     -5.9    -12.7
-Gap (pre − Finals)             +17.3    +23.6    +34.5
+Pre-Finals avg (R1–CF)         +19.7    +17.7    +20.3
+Finals                          +2.4     -5.9    -12.1
+Gap (pre − Finals)             +17.3    +23.6    +32.4
 
 ── Full-run opponent-playoff-SRS-adjusted margin ──
-  Knicks games-wtd avg opponent playoff SRS: +2.63
-  Adj margin (raw − opp playoff SRS):        +12.26
-  Percentile among 43 champions: 97.7th
+  Knicks games-wtd avg opponent playoff SRS: +5.84
+  Adj margin (raw − opp playoff SRS):        +9.05
+  Percentile among 43 champions: 100.0th
 
   Top 5 (opponent-playoff-SRS-adjusted):
-    86–87: raw +10.83  opp-po-SRS -1.62  adj +12.45
-    25–26: raw +14.89  opp-po-SRS +2.63  adj +12.26  ← 2025-26 Knicks
-    00–01: raw +12.75  opp-po-SRS +3.58  adj +9.17
-    90–91: raw +11.71  opp-po-SRS +3.25  adj +8.46
-    16–17: raw +13.65  opp-po-SRS +6.53  adj +7.12
+    25–26: raw +14.89  opp-po-SRS +5.84  adj +9.05  ← 2025-26 Knicks
+    86–87: raw +10.83  opp-po-SRS +1.85  adj +8.99
+    00–01: raw +12.75  opp-po-SRS +6.05  adj +6.70
+    90–91: raw +11.71  opp-po-SRS +5.10  adj +6.61
+    13–14: raw +9.30  opp-po-SRS +3.30  adj +6.00
 
 ════════════════════════════════════════════════════════════════════════
 §7  OTHER DEFLATORS
