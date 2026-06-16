@@ -15,11 +15,17 @@ essentially tied with the 2016–17 Warriors (+10.0). The East was **not** histo
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
 this — on a real schedule, against real competition.
 
-The main caveat: the dominant margins came before the Finals — including sweeps
-of Philadelphia and Cleveland — while the NBA Finals against a Spurs team with SRS
-+8.28 were much closer (4-1, avg margin +2.4 pts/game). But one common asterisk
-doesn't apply: all four opponents were essentially fully healthy when they played
-the Knicks (average availability 98%; the Spurs were at 100%).
+There is a real nuance in the East record: the Hawks, 76ers, and Cavaliers all
+played *below* their regular-season ratings in the postseason, so some of the
+rounds 1–3 dominance reflects opponents underperforming, not just Knicks
+excellence. The Finals tells the opposite story — the Spurs elevated from a
+regular-season SRS of +8.28 to a playoff SRS of +15.13, the most improved team
+in these playoffs. Winning that series 4-1, even narrowly (+2.4 avg margin),
+was the hardest test of the run.
+
+All four opponents were essentially fully healthy when they played the Knicks
+(average availability 98%; the Spurs were at 100%), so injuries are not an
+explanation for any of it.
 
 ![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](generated/knicks_2026_adjusted_margin_ranking.png){height=0.60}
 
@@ -116,7 +122,52 @@ just face the right opponents: they played far above their regular-season level.
 
 ---
 
-## 5. Other Context
+## 5. Was the East Weak in the Playoffs?
+
+The regular-season SRS numbers say no (§3). But a sharper question is whether
+the East teams the Knicks beat in rounds 1–3 actually played *weaker in the
+playoffs* than their regular-season ratings suggested — and whether the tight
+Finals was because the Spurs were truly the better team in May–June.
+
+The answer is yes on both counts.
+
+**Adjusting for opponent playoff performance:**
+
+| Round | Opponent | Raw | Reg-SRS Adj | Playoff-SRS Adj |
+|-------|----------|-----|-------------|-----------------|
+| R1 | Hawks | +17.5 | +15.1 | +17.5 |
+| R2 | 76ers | +22.2 | +22.5 | +27.0 |
+| CF | Cavaliers | +19.2 | +15.5 | +21.0 |
+| Finals | Spurs | +2.4 | −5.9 | −12.7 |
+
+The East opponents all performed *well below* their regular-season SRS in
+the playoffs (Hawks: −2.4 pts, 76ers: −4.5, Cavaliers: −5.5). This means
+the Knicks' raw dominance in rounds 1–3 is partly explained by facing East
+teams that played below their season-long form. **One important caveat:** the
+Hawks and 76ers only played the Knicks in the postseason, so their playoff
+SRS is mathematically circular — determined by those same games. The
+Cavaliers' gap is more credible since they played before reaching the Knicks.
+
+**The Spurs were actually elite in the playoffs.** Their regular-season SRS
+was +8.28; their playoff SRS was +15.13 — a +6.85 elevation that is entirely
+independent of the Knicks series (the Spurs played multiple rounds first).
+The tight Finals (+2.4) wasn't because the Knicks faced a weak opponent;
+they won a series against a team that was, by playoff SRS, the best in the
+dataset for that postseason. The Finals playoff-SRS-adjusted margin of −12.7
+means the Knicks outperformed the SRS prediction by 12.7 points *per game* —
+they won a series they were not expected to win by the numbers.
+
+**Net result:** Adjusting the full playoff run for opponents' actual playoff
+performance gives a margin of +12.3 pts/game — 97.7th percentile (2nd
+all-time, edged by the 1986–87 Lakers). The Knicks were historically
+dominant before the Finals, and then won the Finals against a West team that
+had elevated massively into the postseason.
+
+![Per-round raw vs. opponent-adjusted margins — adjustment using playoff SRS shifts the Finals story](generated/knicks_2026_round_split.png){height=0.35}
+
+---
+
+## 6. Other Context
 
 **Clutch/close games:** 31.6% of Knicks playoff games were decided by 5 points
 or fewer (84th percentile — more clutch than average champions). The Finals in
@@ -133,7 +184,7 @@ road team than all but one champion in the dataset.
 
 ---
 
-## 6. What the Betting Market Said
+## 7. What the Betting Market Said
 
 Vegas pricing is the most efficient aggregation of expert opinion available.
 The market's verdict on the Knicks' playoff run is striking:
@@ -170,7 +221,7 @@ elite Spurs team that the Knicks won by grinding out close games.
 
 ---
 
-## 7. Opponent Health (No Injury Asterisk)
+## 8. Opponent Health (No Injury Asterisk)
 
 One recurring question about dominant playoff runs is whether key opposing players
 were injured. The answer here: **no, they weren't.**
@@ -195,7 +246,7 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 
 ---
 
-## 8. Limitations
+## 9. Limitations
 
 **Opponent SRS** is from regular-season performance, which may not fully reflect
 playoff-mode strength. Opponent SRS is games-weighted (each game counts equally,
@@ -221,7 +272,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 9. Methodology
+## 10. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS

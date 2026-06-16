@@ -476,7 +476,72 @@ def plot_market_vs_actual(ats_df: pd.DataFrame) -> str:
     return path
 
 
-# ── 10. Opponent key-player health ─────────────────────────────────────────────
+# ── 10. Round-by-round margin breakdown ──────────────────────────────────────
+
+def plot_round_split(series_df: pd.DataFrame,
+                     name_map: dict | None = None) -> str:
+    """Grouped bar chart: per-round raw vs. playoff-SRS-adjusted margins.
+
+    series_df is the output of compute_series_margins(..., playoff_srs=...).
+    Requires columns: raw_margin, reg_adj_margin, playoff_adj_margin.
+    """
+    if series_df.empty or "playoff_adj_margin" not in series_df.columns:
+        return ""
+
+    round_names = ["R1", "R2", "CF", "Finals"]
+    n = len(series_df)
+    labels = [round_names[i] if i < len(round_names) else f"R{i+1}"
+              for i in range(n)]
+
+    raw_vals    = list(series_df["raw_margin"])
+    reg_vals    = list(series_df["reg_adj_margin"])
+    po_vals     = list(series_df["playoff_adj_margin"])
+
+    x = np.arange(n)
+    width = 0.26
+
+    fig, ax = _fig(figsize=(9, 5))
+
+    bars_raw = ax.bar(x - width, raw_vals,  width, label="Raw margin",
+                      color=KNICKS_ORANGE, edgecolor="none", zorder=2)
+    bars_reg = ax.bar(x,          reg_vals, width, label="Reg-season SRS adj",
+                      color=BLUE,         edgecolor="none", zorder=2)
+    bars_po  = ax.bar(x + width,  po_vals,  width, label="Playoff SRS adj",
+                      color=GREEN,         edgecolor="none", zorder=2)
+
+    ax.axhline(0, color=GRAY, linewidth=0.8, linestyle="--")
+
+    for bar, val in zip(bars_raw, raw_vals):
+        ax.text(bar.get_x() + bar.get_width() / 2,
+                val + (0.5 if val >= 0 else -1.5),
+                f"{val:+.1f}", ha="center", va="bottom" if val >= 0 else "top",
+                fontsize=7.5, color=KNICKS_ORANGE, fontweight="bold")
+    for bar, val in zip(bars_po, po_vals):
+        ax.text(bar.get_x() + bar.get_width() / 2,
+                val + (0.5 if val >= 0 else -1.5),
+                f"{val:+.1f}", ha="center", va="bottom" if val >= 0 else "top",
+                fontsize=7.5, color=GREEN, fontweight="bold")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=10)
+    ax.set_ylabel("Point differential (pts/game)", fontsize=10)
+    ax.set_title(
+        "2025-26 Knicks Playoffs: Raw vs. Opponent-Adjusted Margin by Round",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+    )
+    _style(ax)
+    ax.grid(axis="x", visible=False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+    fig.tight_layout()
+
+    path = _out("knicks_2026_round_split.png")
+    fig.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return path
+
+
+# ── 11. Opponent key-player health ─────────────────────────────────────────────
 
 def plot_opponent_health(health_df: pd.DataFrame) -> str:
     if health_df.empty:
@@ -545,7 +610,8 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              standings_2026: pd.DataFrame, champions: pd.DataFrame,
              gap_table: pd.DataFrame,
              health_df: pd.DataFrame | None = None,
-             ats_df: pd.DataFrame | None = None) -> list:
+             ats_df: pd.DataFrame | None = None,
+             series_df: pd.DataFrame | None = None) -> list:
     from knicks_2026_data import compute_srs
     reg_srs = compute_srs(reg_2026)
 
@@ -559,6 +625,10 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
         plot_game_margin_distribution(po_2026),
         plot_opponent_srs_by_round(po_2026, reg_srs, standings_2026),
     ]
+    if series_df is not None and not series_df.empty:
+        p = plot_round_split(series_df)
+        if p:
+            paths.append(p)
     if health_df is not None and not health_df.empty:
         p = plot_opponent_health(health_df)
         if p:

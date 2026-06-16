@@ -44,6 +44,7 @@ from knicks_2026_data import (
     compute_adjusted_margin,
     compute_playoff_srs,
     compute_playoff_elevation,
+    compute_series_margins,
     compute_league_scoring_avg,
     compute_pace_adjusted_margin,
     compute_conference_avg_srs,
@@ -286,14 +287,144 @@ def run_adjusted_dominance(po_2026: pd.DataFrame,
             )
 
 
-# ── Section 6: Other deflators ───────────────────────────────────────────────
+# ── Section 6: Round-by-round split — raw vs. opponent-adjusted ──────────────
+
+def run_round_split(po_2026: pd.DataFrame,
+                    reg_2026: pd.DataFrame,
+                    standings_2026: pd.DataFrame,
+                    champions: pd.DataFrame,
+                    out: io.StringIO) -> None:
+    """Per-round margin breakdown: raw, reg-season-SRS-adj, playoff-SRS-adj.
+
+    Tests whether the East was weak *in the playoffs*, not just in the regular
+    season.  If East opponents' playoff SRS < their reg-season SRS they were
+    weaker in the postseason than their season rating implied; if the gap
+    persists after adjusting to playoff SRS, the Knicks were genuinely dominant.
+    """
+    print(_hdr("§6  ROUND-BY-ROUND: RAW vs. OPPONENT-ADJUSTED"), file=out)
+
+    srs_2026    = compute_srs(reg_2026)
+    po_srs_2026 = compute_playoff_srs(po_2026)
+
+    series_df = compute_series_margins(po_2026, KNICKS_TEAM_ID, srs_2026, po_srs_2026)
+    if series_df.empty:
+        print("  No series data found.", file=out)
+        return
+
+    name_map = standings_2026.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
+    ).to_dict()
+
+    round_names = ["R1", "R2", "CF", "Finals"]
+
+    print(
+        "\nreg-adj  = raw margin − opponent regular-season SRS\n"
+        "po-adj   = raw margin − opponent playoff SRS\n"
+        "(po-adj is more positive when opponents played below their reg-season level)\n",
+        file=out,
+    )
+
+    hdr = (f"{'Round':<8} {'Opponent':<28} {'N':>2} "
+           f"{'Opp Reg SRS':>12} {'Opp PO SRS':>11} "
+           f"{'Raw':>7} {'Reg-Adj':>8} {'PO-Adj':>8}")
+    print(hdr, file=out)
+    print("─" * len(hdr), file=out)
+
+    for i, row in series_df.iterrows():
+        rnd      = round_names[i] if i < len(round_names) else f"R{i+1}"
+        name     = name_map.get(int(row["opp_id"]), f"Team {int(row['opp_id'])}")
+        opp_reg  = row["opp_reg_srs"]
+        opp_po   = row.get("opp_playoff_srs", float("nan"))
+        raw      = row["raw_margin"]
+        reg_adj  = row["reg_adj_margin"]
+        po_adj   = row.get("playoff_adj_margin", float("nan"))
+        print(
+            f"{rnd:<8} {name:<28} {int(row['n_games']):>2} "
+            f"{opp_reg:>+12.2f} {opp_po:>+11.2f} "
+            f"{raw:>+7.1f} {reg_adj:>+8.1f} {po_adj:>+8.1f}",
+            file=out,
+        )
+
+    print(_subhdr("Opponent reg-season SRS vs. playoff SRS"), file=out)
+    print(
+        "A negative gap means the opponent played worse than their reg-season\n"
+        "SRS predicted; this inflates the Knicks' raw margin beyond what opponent\n"
+        "quality alone explains.\n"
+        "(Caution: for teams whose only playoff games were vs. the Knicks,\n"
+        " their playoff SRS is circular — determined by those same games.)\n",
+        file=out,
+    )
+    print(f"{'Opponent':<28} {'Reg SRS':>8} {'PO SRS':>8} {'Gap (PO−Reg)':>13}  Note",
+          file=out)
+    print("─" * 75, file=out)
+    for i, row in series_df.iterrows():
+        name    = name_map.get(int(row["opp_id"]), f"Team {int(row['opp_id'])}")
+        opp_reg = row["opp_reg_srs"]
+        opp_po  = row.get("opp_playoff_srs", float("nan"))
+        gap     = opp_po - opp_reg if not np.isnan(opp_po) else float("nan")
+        if i == len(series_df) - 1:
+            note = "(Finals — multi-round playoffs SRS)"
+        elif i == 0:
+            note = "(only played Knicks — circular)"
+        else:
+            note = "(partially circular)"
+        gap_str = f"{gap:>+13.2f}" if not np.isnan(gap) else "         n/a"
+        print(f"{name:<28} {opp_reg:>+8.2f} {opp_po:>+8.2f} {gap_str}  {note}",
+              file=out)
+
+    if len(series_df) >= 2:
+        pre = series_df.iloc[:-1]
+        fin = series_df.iloc[-1]
+        pre_raw = float(pre["raw_margin"].mean())
+        pre_reg = float(pre["reg_adj_margin"].mean())
+        pre_po  = float(pre["playoff_adj_margin"].mean())
+        fin_raw = float(fin["raw_margin"])
+        fin_reg = float(fin["reg_adj_margin"])
+        fin_po  = float(fin["playoff_adj_margin"])
+
+        print(_subhdr("Pre-Finals vs. Finals summary"), file=out)
+        print(f"{'':28} {'Raw':>7} {'Reg-Adj':>8} {'PO-Adj':>8}", file=out)
+        print(f"{'Pre-Finals avg (R1–CF)':<28} {pre_raw:>+7.1f} {pre_reg:>+8.1f} {pre_po:>+8.1f}", file=out)
+        print(f"{'Finals':<28} {fin_raw:>+7.1f} {fin_reg:>+8.1f} {fin_po:>+8.1f}", file=out)
+        print(f"{'Gap (pre − Finals)':<28} {pre_raw-fin_raw:>+7.1f} {pre_reg-fin_reg:>+8.1f} {pre_po-fin_po:>+8.1f}", file=out)
+
+    # Historical rank: playoff-SRS-adjusted full-run margin
+    if "adj_playoff_margin" in champions.columns:
+        subj_rows = champions[champions["year"] == SUBJECT_YEAR]
+        if not subj_rows.empty:
+            knicks_pa = float(subj_rows["adj_playoff_margin"].iloc[0])
+            knicks_opp_po = float(subj_rows["avg_opp_playoff_srs"].iloc[0])
+            pa_series = champions["adj_playoff_margin"].dropna()
+            pa_pct    = _pct_rank(pa_series, knicks_pa, ascending=True)
+            print(_subhdr("Full-run opponent-playoff-SRS-adjusted margin"), file=out)
+            print(
+                f"  Knicks games-wtd avg opponent playoff SRS: {knicks_opp_po:+.2f}\n"
+                f"  Adj margin (raw − opp playoff SRS):        {knicks_pa:+.2f}\n"
+                f"  Percentile among {len(pa_series)} champions: {pa_pct:.1f}th",
+                file=out,
+            )
+            top5 = champions.dropna(subset=["adj_playoff_margin"]).nlargest(
+                5, "adj_playoff_margin"
+            )[["year", "avg_margin", "avg_opp_playoff_srs", "adj_playoff_margin"]]
+            print(f"\n  Top 5 (opponent-playoff-SRS-adjusted):", file=out)
+            for _, r in top5.iterrows():
+                marker = "  ← 2025-26 Knicks" if int(r.year) == SUBJECT_YEAR else ""
+                print(
+                    f"    {short_label(int(r.year))}: raw {r.avg_margin:+.2f}"
+                    f"  opp-po-SRS {r.avg_opp_playoff_srs:+.2f}"
+                    f"  adj {r.adj_playoff_margin:+.2f}{marker}",
+                    file=out,
+                )
+
+
+# ── Section 7: Other deflators ───────────────────────────────────────────────
 
 def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
                   out: io.StringIO) -> None:
     clutch   = compute_clutch_rate(po_2026, KNICKS_TEAM_ID)
     home_wr, away_wr = compute_home_away_split(po_2026, KNICKS_TEAM_ID)
 
-    print(_hdr("§6  OTHER DEFLATORS"), file=out)
+    print(_hdr("§7  OTHER DEFLATORS"), file=out)
 
     print(_subhdr("Clutch / close games"), file=out)
     print(f"  Fraction of Knicks 2026 playoff games decided by ≤5 pts: {clutch:.3f}", file=out)
@@ -347,14 +478,14 @@ def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
         print(f"  vs. {opp_name:<28} {series_wins}-{series_losses}  avg margin {avg_mgn:+.1f}", file=out)
 
 
-# ── Section 7: Playoff SRS and elevation ─────────────────────────────────────
+# ── Section 8: Playoff SRS and elevation ─────────────────────────────────────
 
 def run_playoff_srs(po_2026: pd.DataFrame,
                     reg_2026: pd.DataFrame,
                     champions: pd.DataFrame,
                     out: io.StringIO) -> None:
     """Compare the Knicks' playoff SRS to their regular-season SRS."""
-    print(_hdr("§7  PLAYOFF SRS AND ELEVATION"), file=out)
+    print(_hdr("§8  PLAYOFF SRS AND ELEVATION"), file=out)
 
     reg_srs_2026 = compute_srs(reg_2026)
     po_srs_2026  = compute_playoff_srs(po_2026)
@@ -400,7 +531,7 @@ def run_playoff_srs(po_2026: pd.DataFrame,
         )
 
 
-# ── Section 8 (was 7): Era/pace normalization ─────────────────────────────────
+# ── Section 9: Era/pace normalization ────────────────────────────────────────
 
 def run_pace_era(reg_2026: pd.DataFrame,
                  po_2026: pd.DataFrame,
@@ -416,7 +547,7 @@ def run_pace_era(reg_2026: pd.DataFrame,
     pace_adj     = compute_pace_adjusted_margin(raw_margin, scoring_2026, ref_scoring)
     pace_adj_adj = compute_pace_adjusted_margin(adj, scoring_2026, ref_scoring)
 
-    print(_hdr("§8  ERA / PACE ADJUSTMENT"), file=out)
+    print(_hdr("§9  ERA / PACE ADJUSTMENT"), file=out)
     print(f"League scoring environment:", file=out)
     print(f"  2025-26 avg pts/team/game: {scoring_2026:.1f}", file=out)
     print(f"  Historical mean ({START_YEAR}–{END_YEAR}): {ref_scoring:.1f}", file=out)
@@ -473,7 +604,7 @@ def run_pace_era(reg_2026: pd.DataFrame,
         print(f"  {short_label(int(r.year))}: {r.league_scoring:.1f} pts/team/game", file=out)
 
 
-# ── Section 8 (formerly 7): Verdict ─────────────────────────────────────────
+# ── Section 10: Verdict ──────────────────────────────────────────────────────
 
 def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
                 champions: pd.DataFrame, gap_table: pd.DataFrame,
@@ -500,7 +631,7 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     gap_2026 = float(subject["srs_gap"].iloc[0]) if not subject.empty else float("nan")
     gap_pct  = _pct_rank(gap_table["srs_gap"], gap_2026, ascending=True) if not np.isnan(gap_2026) else float("nan")
 
-    print(_hdr("§9  VERDICT"), file=out)
+    print(_hdr("§10 VERDICT"), file=out)
     print(f"The 2025-26 Knicks went {wins}-{losses} in the playoffs.", file=out)
     print(f"\nKEY METRICS vs. all {len(champions)} champions ({season_range_label(START_YEAR, END_YEAR)}):", file=out)
     print(f"  Win rate {wr:.3f}:               {wr_pct:.0f}th percentile", file=out)
@@ -541,7 +672,7 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
           f"{adj_verdict}.{east_context}", file=out)
 
 
-# ── Section 9: Opponent player availability ──────────────────────────────────
+# ── Section 11: Opponent player availability ─────────────────────────────────
 
 def run_opponent_health(player_po_logs: pd.DataFrame,
                         po_2026: pd.DataFrame,
@@ -551,7 +682,7 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
         player_po_logs, po_2026, KNICKS_TEAM_ID, standings_2026
     )
 
-    print(_hdr("§10 OPPONENT PLAYER AVAILABILITY"), file=out)
+    print(_hdr("§11 OPPONENT PLAYER AVAILABILITY"), file=out)
     if health.empty:
         print("  No player availability data found.", file=out)
         return
@@ -599,7 +730,7 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
         print(f"\nFinals note: {note}", file=out)
 
 
-# ── Section 10: Betting-market expectations ──────────────────────────────────
+# ── Section 12: Betting-market expectations ──────────────────────────────────
 
 def _binom_p_value(k: int, n: int, p: float = 0.5) -> float:
     """P(X >= k) under Binomial(n, p) — one-tailed test."""
@@ -611,7 +742,7 @@ def run_betting_market(ats_df: pd.DataFrame,
                        po_2026: pd.DataFrame,
                        standings_2026: pd.DataFrame,
                        out: io.StringIO) -> None:
-    print(_hdr("§11 BETTING-MARKET EXPECTATIONS (ATS)"), file=out)
+    print(_hdr("§12 BETTING-MARKET EXPECTATIONS (ATS)"), file=out)
 
     if ats_df.empty:
         print("  No odds data available (BBR scrape returned no lines).", file=out)
@@ -737,6 +868,7 @@ def main() -> None:
     run_gap_history(gap_table, out)
     run_opponent_quality(po_2026, reg_2026, champions, out)
     run_adjusted_dominance(po_2026, reg_2026, champions, out)
+    run_round_split(po_2026, reg_2026, standings_2026, champions, out)
     run_deflators(po_2026, champions, out)
     run_playoff_srs(po_2026, reg_2026, champions, out)
     run_pace_era(reg_2026, po_2026, champions, out)

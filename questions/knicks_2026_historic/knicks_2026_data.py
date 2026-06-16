@@ -233,6 +233,58 @@ def compute_adjusted_margin(raw_margin: float, avg_opp_srs: float) -> float:
     return raw_margin - avg_opp_srs
 
 
+def compute_series_margins(po_logs: pd.DataFrame,
+                           team_id: int,
+                           reg_srs: pd.Series,
+                           playoff_srs: pd.Series | None = None) -> pd.DataFrame:
+    """Per-series breakdown of margins for a team's playoff run.
+
+    Returns one row per opponent series in chronological order (R1 first,
+    Finals last) with columns:
+      opp_id, n_games, raw_margin, opp_reg_srs, reg_adj_margin
+    and, if playoff_srs is provided:
+      opp_playoff_srs, playoff_adj_margin
+
+    Playoff SRS for opponents who only played the focal team is circular (their
+    series against us determines their SRS).  Use playoff_adj_margin cautiously
+    for opponents who played few games outside the focal team's series.
+    """
+    logs = _nba._fill_plus_minus(po_logs)
+    team_logs = logs[logs["TEAM_ID"] == team_id].copy()
+    if team_logs.empty:
+        return pd.DataFrame()
+
+    gid_to_opp: dict[str, int] = {}
+    for gid, grp in po_logs.groupby("GAME_ID"):
+        for tid in grp["TEAM_ID"].tolist():
+            if tid != team_id:
+                gid_to_opp[str(gid)] = int(tid)
+
+    team_logs["OPP_ID"] = team_logs["GAME_ID"].astype(str).map(gid_to_opp)
+    team_logs = team_logs.sort_values("GAME_DATE")
+    opp_order = team_logs.drop_duplicates("OPP_ID")["OPP_ID"].tolist()
+
+    rows = []
+    for opp_id in opp_order:
+        grp = team_logs[team_logs["OPP_ID"] == opp_id]
+        raw = float(grp["PLUS_MINUS"].mean())
+        opp_reg = float(reg_srs.get(opp_id, float("nan")))
+        row: dict = {
+            "opp_id":        int(opp_id),
+            "n_games":       len(grp),
+            "raw_margin":    raw,
+            "opp_reg_srs":   opp_reg,
+            "reg_adj_margin": raw - opp_reg if not np.isnan(opp_reg) else float("nan"),
+        }
+        if playoff_srs is not None:
+            opp_po = float(playoff_srs.get(opp_id, float("nan")))
+            row["opp_playoff_srs"]    = opp_po
+            row["playoff_adj_margin"] = raw - opp_po if not np.isnan(opp_po) else float("nan")
+        rows.append(row)
+
+    return pd.DataFrame(rows).reset_index(drop=True)
+
+
 # ── Era / pace normalization ──────────────────────────────────────────────────
 
 def compute_league_scoring_avg(reg_logs: pd.DataFrame) -> float:
@@ -621,27 +673,31 @@ def build_champions_table(start_year: int = START_YEAR,
         po_srs_series = compute_playoff_srs(po)
         champ_po_srs = float(po_srs_series.get(champ, float("nan")))
         elevation = champ_po_srs - champ_srs if not (np.isnan(champ_po_srs) or np.isnan(champ_srs)) else float("nan")
+        avg_opp_playoff = compute_games_weighted_opponent_srs(po, po_srs_series, champ)
+        adj_playoff = compute_adjusted_margin(margin, avg_opp_playoff)
         clutch = compute_clutch_rate(po, champ)
         h_wr, a_wr = compute_home_away_split(po, champ)
         league_scoring = compute_league_scoring_avg(rs)
 
         rows.append({
-            "year":              year,
-            "champion_id":       champ,
-            "wins":              wins,
-            "losses":            losses,
-            "win_rate":          wr,
-            "avg_margin":        margin,
-            "avg_opp_srs":       avg_opp,
-            "adj_margin":        adj,
-            "champion_reg_srs":  champ_srs,
-            "champion_po_srs":   champ_po_srs,
-            "playoff_elevation": elevation,
-            "overperformance":   overperf,
-            "clutch_rate":       clutch,
-            "home_wr":           h_wr,
-            "away_wr":           a_wr,
-            "league_scoring":    league_scoring,
+            "year":                year,
+            "champion_id":         champ,
+            "wins":                wins,
+            "losses":              losses,
+            "win_rate":            wr,
+            "avg_margin":          margin,
+            "avg_opp_srs":         avg_opp,
+            "adj_margin":          adj,
+            "champion_reg_srs":    champ_srs,
+            "champion_po_srs":     champ_po_srs,
+            "playoff_elevation":   elevation,
+            "overperformance":     overperf,
+            "clutch_rate":         clutch,
+            "home_wr":             h_wr,
+            "away_wr":             a_wr,
+            "league_scoring":      league_scoring,
+            "avg_opp_playoff_srs": avg_opp_playoff,
+            "adj_playoff_margin":  adj_playoff,
         })
 
     df = pd.DataFrame(rows)

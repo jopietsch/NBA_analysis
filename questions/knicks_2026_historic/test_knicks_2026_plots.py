@@ -131,6 +131,29 @@ def test_plot_opponent_srs_by_round(tmp_path, monkeypatch):
     assert os.path.isfile(path)
 
 
+def _mini_series_df() -> pd.DataFrame:
+    return pd.DataFrame([
+        {"opp_id": OPP1_ID, "n_games": 4, "raw_margin": 20.0,
+         "opp_reg_srs": 2.0, "reg_adj_margin": 18.0,
+         "opp_playoff_srs": 1.0, "playoff_adj_margin": 19.0},
+        {"opp_id": OPP2_ID, "n_games": 5, "raw_margin": 3.0,
+         "opp_reg_srs": 8.0, "reg_adj_margin": -5.0,
+         "opp_playoff_srs": 9.0, "playoff_adj_margin": -6.0},
+    ])
+
+
+def test_plot_round_split(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_round_split(_mini_series_df())
+    assert os.path.isfile(path)
+
+
+def test_plot_round_split_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    result = plots.plot_round_split(pd.DataFrame())
+    assert result == ""
+
+
 def _mini_health_df() -> pd.DataFrame:
     return pd.DataFrame([
         {"team_id": OPP1_ID, "team_name": "Boston Celtics",

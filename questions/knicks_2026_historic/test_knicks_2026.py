@@ -100,6 +100,31 @@ def test_compute_pace_adjusted_margin():
     assert data.compute_pace_adjusted_margin(10.0, 100.0, 110.0) == pytest.approx(10.0 * 110 / 100)
 
 
+def test_compute_series_margins_basic():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    result = data.compute_series_margins(po, KNICKS_ID, srs)
+    # G001+G002 vs OPP1, G003 vs OPP2  →  2 rows in chronological order
+    assert list(result["opp_id"]) == [OPP1_ID, OPP2_ID]
+    assert result.iloc[0]["n_games"] == 2
+    assert result.iloc[1]["n_games"] == 1
+    assert result.iloc[0]["raw_margin"] == pytest.approx(10.0)
+    assert result.iloc[0]["opp_reg_srs"] == pytest.approx(2.0)
+    assert result.iloc[0]["reg_adj_margin"] == pytest.approx(8.0)
+
+
+def test_compute_series_margins_with_playoff_srs():
+    po      = _mini_po_2026()
+    reg_srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    po_srs  = pd.Series({OPP1_ID: 1.0, OPP2_ID: 5.0, KNICKS_ID: 7.0})
+    result  = data.compute_series_margins(po, KNICKS_ID, reg_srs, po_srs)
+    assert "opp_playoff_srs" in result.columns
+    assert result.iloc[0]["opp_playoff_srs"] == pytest.approx(1.0)
+    assert result.iloc[0]["playoff_adj_margin"] == pytest.approx(9.0)   # 10 - 1
+    assert result.iloc[1]["opp_playoff_srs"] == pytest.approx(5.0)
+    assert result.iloc[1]["playoff_adj_margin"] == pytest.approx(5.0)   # 10 - 5
+
+
 def test_compute_games_weighted_opponent_srs():
     po  = _mini_po_2026()
     srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})

@@ -38,9 +38,15 @@ def main() -> None:
     odds_df = data.fetch_game_odds(po_2026, data.KNICKS_TEAM_ID)
     ats_df  = data.compute_ats_stats(odds_df, po_2026, data.KNICKS_TEAM_ID)
 
+    reg_srs_2026 = data.compute_srs(reg_2026)
+    po_srs_2026  = data.compute_playoff_srs(po_2026)
+    series_df    = data.compute_series_margins(
+        po_2026, data.KNICKS_TEAM_ID, reg_srs_2026, po_srs_2026
+    )
+
     print("Generating charts...")
     paths = plots.plot_all(po_2026, reg_2026, standings_2026, champions, gap_table,
-                           health_df=health_df, ats_df=ats_df)
+                           health_df=health_df, ats_df=ats_df, series_df=series_df)
     for p in paths:
         print(f"  Saved → {os.path.basename(p)}")
 

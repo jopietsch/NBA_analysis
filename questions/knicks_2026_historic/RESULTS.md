@@ -107,7 +107,54 @@ Top 5 adjusted-margin champions:
     84–85: raw +10.16  reg-SRS +6.48  overperf +6.62
 
 ════════════════════════════════════════════════════════════════════════
-§6  OTHER DEFLATORS
+§6  ROUND-BY-ROUND: RAW vs. OPPONENT-ADJUSTED
+────────────────────────────────────────────────────────────────────────
+
+reg-adj  = raw margin − opponent regular-season SRS
+po-adj   = raw margin − opponent playoff SRS
+(po-adj is more positive when opponents played below their reg-season level)
+
+Round    Opponent                      N  Opp Reg SRS  Opp PO SRS     Raw  Reg-Adj   PO-Adj
+───────────────────────────────────────────────────────────────────────────────────────────
+R1       Atlanta Hawks                 6        +2.38       +0.03   +17.5    +15.1    +17.5
+R2       Philadelphia 76ers            4        -0.27       -4.72   +22.2    +22.5    +27.0
+CF       Cleveland Cavaliers           4        +3.77       -1.72   +19.2    +15.5    +21.0
+Finals   San Antonio Spurs             5        +8.28      +15.13    +2.4     -5.9    -12.7
+
+── Opponent reg-season SRS vs. playoff SRS ──
+A negative gap means the opponent played worse than their reg-season
+SRS predicted; this inflates the Knicks' raw margin beyond what opponent
+quality alone explains.
+(Caution: for teams whose only playoff games were vs. the Knicks,
+ their playoff SRS is circular — determined by those same games.)
+
+Opponent                      Reg SRS   PO SRS  Gap (PO−Reg)  Note
+───────────────────────────────────────────────────────────────────────────
+Atlanta Hawks                   +2.38    +0.03         -2.35  (only played Knicks — circular)
+Philadelphia 76ers              -0.27    -4.72         -4.45  (partially circular)
+Cleveland Cavaliers             +3.77    -1.72         -5.50  (partially circular)
+San Antonio Spurs               +8.28   +15.13         +6.85  (Finals — multi-round playoffs SRS)
+
+── Pre-Finals vs. Finals summary ──
+                                 Raw  Reg-Adj   PO-Adj
+Pre-Finals avg (R1–CF)         +19.7    +17.7    +21.8
+Finals                          +2.4     -5.9    -12.7
+Gap (pre − Finals)             +17.3    +23.6    +34.5
+
+── Full-run opponent-playoff-SRS-adjusted margin ──
+  Knicks games-wtd avg opponent playoff SRS: +2.63
+  Adj margin (raw − opp playoff SRS):        +12.26
+  Percentile among 43 champions: 97.7th
+
+  Top 5 (opponent-playoff-SRS-adjusted):
+    86–87: raw +10.83  opp-po-SRS -1.62  adj +12.45
+    25–26: raw +14.89  opp-po-SRS +2.63  adj +12.26  ← 2025-26 Knicks
+    00–01: raw +12.75  opp-po-SRS +3.58  adj +9.17
+    90–91: raw +11.71  opp-po-SRS +3.25  adj +8.46
+    16–17: raw +13.65  opp-po-SRS +6.53  adj +7.12
+
+════════════════════════════════════════════════════════════════════════
+§7  OTHER DEFLATORS
 ────────────────────────────────────────────────────────────────────────
 
 ── Clutch / close games ──
@@ -130,7 +177,7 @@ Top 5 adjusted-margin champions:
   vs. San Antonio Spurs            4-1  avg margin +2.4
 
 ════════════════════════════════════════════════════════════════════════
-§7  PLAYOFF SRS AND ELEVATION
+§8  PLAYOFF SRS AND ELEVATION
 ────────────────────────────────────────────────────────────────────────
 2025-26 Knicks:
   Regular-season SRS: +6.05
@@ -155,7 +202,7 @@ Bottom 5 (most declined reg→playoff):
   92–93: reg +6.19 → playoff +5.27  elev -0.92
 
 ════════════════════════════════════════════════════════════════════════
-§8  ERA / PACE ADJUSTMENT
+§9  ERA / PACE ADJUSTMENT
 ────────────────────────────────────────────────────────────────────────
 League scoring environment:
   2025-26 avg pts/team/game: 115.6
@@ -196,7 +243,7 @@ Highest-scoring eras (margins get scaled DOWN):
   23–24: 114.2 pts/team/game
 
 ════════════════════════════════════════════════════════════════════════
-§9  VERDICT
+§10 VERDICT
 ────────────────────────────────────────────────────────────────────────
 The 2025-26 Knicks went 16-3 in the playoffs.
 
@@ -214,7 +261,7 @@ SUMMARY:
   The 2025-26 Knicks had a elite playoff run by win rate, which holds up well after adjusting for schedule.
 
 ════════════════════════════════════════════════════════════════════════
-§10 OPPONENT PLAYER AVAILABILITY
+§11 OPPONENT PLAYER AVAILABILITY
 ────────────────────────────────────────────────────────────────────────
 Round    Opponent                       Core   Avail/game   Health
 ─────────────────────────────────────────────────────────────────
@@ -233,7 +280,7 @@ Healthiest opponent:      Atlanta Hawks (100%)
 Finals note: The Spurs were fully healthy — the Finals result stands without asterisk.
 
 ════════════════════════════════════════════════════════════════════════
-§11 BETTING-MARKET EXPECTATIONS (ATS)
+§12 BETTING-MARKET EXPECTATIONS (ATS)
 ────────────────────────────────────────────────────────────────────────
 Games with Vegas lines: 19 of 19
 ATS record:             16-3
