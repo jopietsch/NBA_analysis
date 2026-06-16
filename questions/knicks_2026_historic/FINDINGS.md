@@ -13,8 +13,8 @@ all-time. The East was **not** historically weak: the West-East SRS gap in
 East was stronger than average relative to the West in 63% of seasons since 1984.
 The Knicks earned this — on a real schedule, against real competition.
 
-The main caveat: the dominant margins came in the first three rounds (sweeps of
-Philadelphia and Cleveland), while the NBA Finals against a Spurs team with SRS
+The main caveat: the dominant margins came before the Finals — including sweeps
+of Philadelphia and Cleveland — while the NBA Finals against a Spurs team with SRS
 +8.28 were much closer (4-1, avg margin +2.4 pts/game).
 
 ![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](generated/knicks_2026_adjusted_margin_ranking.png){height=0.60}
@@ -41,7 +41,7 @@ data (1983–84 through 2025–26):
 
 The two sweeps — which came against legitimate playoff teams, not pushovers —
 drove the record margin. The Finals were tight: four of the five games were
-decided by 5 points or fewer.
+decided by 4 points or fewer.
 
 ![Playoff win rate — all 43 champions ranked](generated/knicks_2026_win_rate_ranking.png){height=0.60}
 
@@ -89,9 +89,9 @@ Comparison — top 5 adjusted-margin champions:
 |--------|-----|---------|-----|
 | **2025–26 Knicks** | **+14.9** | **+3.54** | **+11.4** |
 | 2016–17 Warriors | +13.7 | +3.45 | +10.2 |
-| 2022–23 Nuggets | +8.3 | +0.54 | +7.8 |
-| 2000–01 Lakers | +12.8 | +5.54 | +7.2 |
-| 2017–18 Warriors | +10.0 | +3.35 | +6.7 |
+| 1986–87 Lakers | +10.8 | +0.75 | +10.1 |
+| 1990–91 Bulls | +11.7 | +2.24 | +9.5 |
+| 1985–86 Celtics | +10.6 | +2.57 | +8.0 |
 
 All 43 champion seasons are included. For pre-1997 seasons where nba_api returns
 null PLUS_MINUS, margins are derived from PTS (both team rows per game).
@@ -114,8 +114,8 @@ particular were tight: four of five games were decided by 4 points or fewer.
 - Away: 10 games, 90.0% win rate (98th percentile — extraordinary road
   dominance)
 
-The road-game dominance is striking. The Knicks were actually a better road team
-in this playoff run than any other champion in the dataset.
+The road-game dominance is striking. In this playoff run the Knicks were a better
+road team than all but one champion in the dataset.
 
 ---
 
@@ -126,8 +126,8 @@ playoff-mode strength. SRS treats all opponents equally regardless of round
 (Finals opponent weighted the same as first-round opponent in our simple average
 of unique opponents).
 
-**Small sample:** 19 games is a small sample; the playoff margin could fluctuate
-by ±2–3 pts/game across realizations of the same team-skill configuration.
+**Small sample:** 19 games is a small sample; the playoff margin could swing
+meaningfully across different realizations of the same team-skill configuration.
 
 **Era/pace:** We do not pace-adjust margins. Scoring in 2025–26 may differ from
 1984. However, the SRS-based opponent adjustment partially addresses this because
