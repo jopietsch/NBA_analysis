@@ -3029,6 +3029,82 @@ def _run_granger_3pa(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis: Channel-specific ITS around 1994-95 ────────────────────────────
+
+def run_channel_event_study(df: pd.DataFrame) -> None:
+    """Interrupted time series (ITS) on each box-score channel around 1994-95.
+
+    If the hand-checking rule change is the mechanism behind the HCA decline,
+    the FOUL differential should show the strongest IMMEDIATE response at 1994-95,
+    with other channels (eFG%, rebounds, turnovers) following more gradually as
+    teams restructured their shot selection and rotations.
+
+    Model per channel:
+        channel_diff ~ year + post95 + (year - 1994) * post95
+    where post95 = 1 if year >= 1995.
+    β_level = immediate discrete shift at 1995 beyond the year trend.
+    β_slope = change in the per-year rate of change after 1995.
+    """
+    _section("CHANNEL EVENT STUDY — WHICH CHANGED FIRST AT 1994-95?")
+    print("   ITS model per channel: diff ~ year + post95 + (year-1994)×post95")
+    print("   β_level = immediate shift at 1995; β_slope = change in per-year rate.")
+    print("   If hand-checking is the mechanism, FOUL diff should show the")
+    print("   strongest IMMEDIATE response; others should be smaller or delayed.\n")
+
+    channels = [
+        ("foul_diff",    "Foul diff"),
+        ("efg_pct_diff", "eFG% diff (pp)"),
+        ("tov_diff",     "TOV diff"),
+        ("reb_diff",     "REB diff"),
+    ]
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        if sub.empty:
+            continue
+
+        by_year = sub.groupby("year")[
+            [k for k, _ in channels]
+        ].mean().reset_index().sort_values("year")
+        by_year["post95"]  = (by_year["year"] >= 1995).astype(float)
+        by_year["time_since"] = (by_year["year"] - 1994) * by_year["post95"]
+        by_year["year_c"]  = by_year["year"] - by_year["year"].mean()
+
+        print(f"   {ctx_label}  (N = {len(by_year)} seasons)\n")
+        print(f"   {'Channel':<18}  {'Pre slope/yr':>13}  {'Level shift':>12}  "
+              f"{'Slope chg/yr':>13}  {'Lev p':>8}  {'Slp p':>8}")
+        print(f"   {'─'*18}  {'─'*13}  {'─'*12}  {'─'*13}  {'─'*8}  {'─'*8}")
+
+        for key, label in channels:
+            by_yr2 = by_year[["year_c", key, "post95", "time_since"]].dropna()
+            if len(by_yr2) < 8:
+                continue
+            try:
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    m = smf.ols(f"{key} ~ year_c + post95 + time_since",
+                                data=by_yr2).fit()
+                pre_slope  = float(m.params.get("year_c",    np.nan))
+                level_shift = float(m.params.get("post95",    np.nan))
+                slope_chg  = float(m.params.get("time_since", np.nan))
+                p_level    = float(m.pvalues.get("post95",    np.nan))
+                p_slope    = float(m.pvalues.get("time_since", np.nan))
+                print(f"   {label:<18}  {pre_slope:>+13.3f}  {level_shift:>+12.3f}  "
+                      f"{slope_chg:>+13.3f}  {_fmt_p(p_level):>8}  {_fmt_p(p_slope):>8}  "
+                      f"{_stars(p_level).strip()}/{_stars(p_slope).strip()}")
+            except Exception as e:
+                print(f"   {label:<18}  (failed: {e})")
+        print()
+
+    print("   Note: foul_diff = PF_home − PF_away. Negative values mean away teams")
+    print("   get MORE fouls called (home court foul advantage). A positive level shift")
+    print("   means the home foul advantage SHRANK immediately (foul_diff moved toward 0).")
+    print("   The expected signature of the hand-checking rule change:")
+    print("   • Foul diff: significant POSITIVE level shift (home foul edge shrinks IMMEDIATELY)")
+    print("   • Other channels: no significant immediate shift (teams adapt over seasons)")
+    print()
+
+
 # ── Analysis: Team quality fixed effects robustness ───────────────────────────
 
 def run_team_quality_robustness(df: pd.DataFrame) -> None:
@@ -3315,6 +3391,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         # §3 What's Driving the Decline
         run_sequential_decomposition(df)
         run_stability_analysis(df)
+        run_channel_event_study(df)
         run_team_quality_robustness(df)
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",

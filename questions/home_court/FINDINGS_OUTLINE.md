@@ -20,11 +20,10 @@
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
   - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
-    - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4) — most likely the hand-check crackdown, but confounded with the simultaneous shortened 3-pt line (1994–97). *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
-    - **Structural break finding:** formal QLR supremum-Chow test locates the shift in the *slope* of decline in the **late 1990s** (sup F=10.22, p<5% by Andrews 1993 critical values) — a different finding from the 1994–95 discrete step (Section 4). The slope went from −0.65 pp/yr before to −0.26 pp/yr after; this is interpreted as the multi-year adjustment to the 1994–95 rule change settling in, though the 4-year lag means the link is an inference. Playoffs show no significant break (sup F=3.23, n.s.) — pure smooth drift.
+    - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4); deep-dive detail (break-point test, confounds) deferred to §4. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - Flat for ~two decades.
-    - Second drop: after 2017, below 56%. Coincides with the **three-point surge** (§3) hitting full stride — but the surge is the most visible *marker*, not the whole cause: its measured bite lands on the shooting line (~1/5 of decline), while the same move to the perimeter did larger, quieter damage on the glass. Both register *inside* the box-score categories. *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
-  - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Asymmetry (first-drop cause outside the categories in §4, second-drop perimeter shift inside them in §3) is why each is explained in a different section.
+    - Second drop: after 2017, below 56%. Coincides with the **three-point surge** hitting full stride — but the surge is the most visible *marker* of a broader move to the perimeter, not the whole cause (mechanics in §3). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
+  - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Handled in different sections because the events differ: discrete rule shock (§4) vs. gradual stylistic shift inside the categories (§3).
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
 **Figures:**
@@ -102,7 +101,7 @@
 ## Section 4 — What Didn't Drive the Change
 **Q3 corollary: ruled-out factors**
 
-- **Rule changes:** only the **1994–95 season** left a mark (~**−2.6 pp** discrete step; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). Two changes that season — hand-check crackdown (likelier culprit) + shortened 3-pt line (1994–97) — confounded, can't separate at season level. The step was immediate but the multi-year adjustment continued through the late 1990s (the slope shift in Section 1's break-point test). All other boundaries passed through. Playoffs: neither change registers (LR p=0.815) — pure smooth drift.
+- **Rule changes:** only the **1994–95 season** left a mark (~**−2.6 pp** discrete step; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). Two changes that season — hand-check crackdown (likelier culprit) + shortened 3-pt line (1994–97) — confounded, can't separate at season level. The step was immediate but the multi-year adjustment continued through the late 1990s. **Break-point test:** formal QLR supremum-Chow test locates the *slope* shift in the **late 1990s** (sup F=10.22, p<5% by Andrews 1993 critical values), slope going from −0.65 pp/yr before to −0.26 pp/yr after — read as the 1994–95 adjustment settling in, though the ~4-yr lag makes the link an inference. Playoffs show no significant break (sup F=3.23, n.s.) — pure smooth drift. All other boundaries passed through; playoffs neither change registers (LR p=0.815).
 - **Travel & time zones:**
   - Reg: ~**0.07 pp/100 mi** (RESULTS −0.07 pp/100mi, p=0.010), tiny & inconsistent direction; playoffs no effect (p=0.888).
   - Time zones flat both contexts (reg −0.4 pp p=0.086; playoffs +1.0 pp p=0.330).
