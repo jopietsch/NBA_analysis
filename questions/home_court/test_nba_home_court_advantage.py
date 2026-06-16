@@ -1116,6 +1116,62 @@ class TestFetchRefereeData:
         result = nba.fetch_referee_data(2024, "Playoffs")
         assert result is None
 
+    # The cache must tell genuine absence of officials data (cache an empty file,
+    # never retry) apart from transient API failures (do not cache, retry).
+    @staticmethod
+    def _patch_box(monkeypatch, box_cls):
+        import nba_api.stats.endpoints.boxscoresummaryv3 as bsv3
+        monkeypatch.setattr(bsv3, "BoxScoreSummaryV3", box_cls)
+
+    @staticmethod
+    def _box_returning(df):
+        class _DS:
+            def get_data_frame(self):
+                return df
+        class Box:
+            def __init__(self, **kwargs):
+                self.data_sets = [None, None, None, _DS()]
+        return Box
+
+    def _prep(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba, "_load_game_log",
+                            lambda y, s: pd.DataFrame({"GAME_ID": ["0048300001", "0048300002"]}))
+        monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
+        return tmp_path / "referee_2023-24_Playoffs.csv"
+
+    def test_caches_empty_when_calls_succeed_with_no_officials(self, tmp_path, monkeypatch):
+        # Pre-2000 seasons: API responds, but officials data is genuinely empty.
+        cache_file = self._prep(tmp_path, monkeypatch)
+        self._patch_box(monkeypatch, self._box_returning(pd.DataFrame(columns=["personId", "name"])))
+
+        assert nba.fetch_referee_data(2024, "Playoffs") is None
+        # Genuine absence -> empty file cached so future runs skip the season.
+        assert cache_file.exists()
+
+    def test_does_not_cache_when_all_calls_raise(self, tmp_path, monkeypatch):
+        # Rate limit / outage: every call raises. Must not poison the cache.
+        cache_file = self._prep(tmp_path, monkeypatch)
+
+        class FailingBox:
+            def __init__(self, **kwargs):
+                raise RuntimeError("rate limited")
+        self._patch_box(monkeypatch, FailingBox)
+
+        assert nba.fetch_referee_data(2024, "Playoffs") is None
+        # Transient failure -> no file, so the next run retries.
+        assert not cache_file.exists()
+
+    def test_caches_records_when_officials_present(self, tmp_path, monkeypatch):
+        cache_file = self._prep(tmp_path, monkeypatch)
+        officials = pd.DataFrame({"personId": [1, 2, 3], "name": ["A", "B", "C"]})
+        self._patch_box(monkeypatch, self._box_returning(officials))
+
+        result = nba.fetch_referee_data(2024, "Playoffs")
+        assert result is not None
+        assert len(result) == 6  # 3 officials x 2 games
+        assert cache_file.exists()
+
 
 class TestComputeRefereeBiasStats:
     def _setup(self, tmp_path, monkeypatch):

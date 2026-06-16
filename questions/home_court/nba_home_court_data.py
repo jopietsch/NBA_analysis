@@ -1094,6 +1094,17 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
 
     os.makedirs(CACHE_DIR, exist_ok=True)
     if not records:
+        if failed:
+            # No records *and* API errors occurred: this is a transient failure
+            # (rate limit, timeout, outage), not genuine absence of data. Do not
+            # cache an empty file, or every later run would read it back and
+            # never retry. Leave the cache absent so the next run tries again.
+            print("    No records and API errors occurred — not caching; "
+                  "will retry next run.")
+            return None
+        # Every call succeeded but returned no officials (e.g. pre-2000 seasons
+        # carry no officials data). This absence is real and permanent, so cache
+        # an empty file to mark the season done and skip it on future runs.
         pd.DataFrame().to_csv(cache_file, index=False)
         return None
 
