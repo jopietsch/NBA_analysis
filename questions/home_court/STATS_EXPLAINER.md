@@ -392,8 +392,9 @@ rest coefficient absorbs team quality.
 - **Rest:** significant in both contexts — +1.6 pp/day regular season,
   +2.4 pp/day playoffs (bivariate). But the playoff effect dies under the
   quality control: rest drops to +1.6 pp/day with p = 0.113, while quality_diff
-  is overwhelming (p < 0.001). Playoff "rest advantage" is mostly just being
-  the better team.
+  is overwhelming (+112 pp per unit, p < 0.001 — an extrapolated marginal effect
+  over a full 0-to-1 win-% gap, so it exceeds the 100 pp a probability could
+  literally move). Playoff "rest advantage" is mostly just being the better team.
 - **Altitude:** Denver/Utah home games run +7.9 pp above baseline in the regular
   season (p < 0.001) but −1.6 pp, n.s., in the playoffs. The playoff null is
   partly confound (good Denver/Utah teams face good opponents) and partly small
@@ -990,4 +991,4 @@ points around the diagonal amounts to numerically.
 - **HAC (Newey–West) SEs:** autocorrelation-robust standard errors for
   season-level time-series OLS.
 - **Benjamini–Hochberg:** false-discovery-rate control when running many
-  simultaneous hypothesis tests (the 42 referee t-tests).
+  simultaneous hypothesis tests (the 47 referee t-tests).

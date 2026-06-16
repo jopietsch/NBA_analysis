@@ -15,6 +15,13 @@ narrative report.
 **The data.** Every comparison (Sections 1, 4, 5, 6) runs against one of two
 tables built by looping over all 43 NBA seasons from 1983–84 through 2025–26:
 
+Note that the 2025-26 Knicks won the title (`identify_champion` returns the
+Knicks for 2026), so they are themselves one of the 43 rows. Every percentile in
+the report ranks the Knicks against a set that *includes their own season* — the
+count and the denominator both contain them. This is why a "100th percentile /
+1st of 43" reads as "no other champion did better," not "better than 43 other
+teams."
+
 `build_champions_table` produces one row per season with:
 
 - `year` — the season's end year (e.g. 2026 for 2025–26)

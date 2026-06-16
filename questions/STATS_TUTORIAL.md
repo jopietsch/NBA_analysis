@@ -132,8 +132,10 @@ Every result carries a measure of "could this just be luck?"
   **-0.244 pp/yr, 95% CI [-0.280, -0.209]**, it's saying: the true slope is
   almost certainly somewhere in that narrow band, and the *whole band is
   negative*, so the decline is real. **A 95% CI that excludes 0 is equivalent to
-  p < 0.05** -- but the CI also tells you the *size* and *precision* of the
-  effect, which a lone p-value hides.
+  p < 0.05** (for the same test -- a few results here report a CI and a p-value
+  computed by different machinery, e.g. a binomial GLM or an LR test, where the
+  two can disagree slightly) -- but the CI also tells you the *size* and
+  *precision* of the effect, which a lone p-value hides.
 
 Read CIs first. "Significant" with a CI of [+0.5, +20] is a barely-detected,
 wildly-uncertain effect; "significant" with [+8.0, +8.4] is a precisely-pinned
@@ -433,8 +435,7 @@ A McFadden R² of **0.05** can represent a strong, important model. In
 "the model explains 0.3% of anything" in the everyday sense.
 
 **The rule:** *never* read a McFadden value as an absolute percentage. Only read
-it in **relative** terms -- "block A adds twice the delta-R² of block B," or
-"quality control left 101% of the year trend intact." The sequential decomposition
+it in **relative** terms -- "block A adds twice the delta-R² of block B." The sequential decomposition
 (§4.2) uses exactly these relative comparisons and never quotes the raw level as
 if it were ordinary R².
 
@@ -459,7 +460,7 @@ patch the two ways independence breaks here.
 **The problem.** In a game-level model pooling 47,000 games across 43 seasons,
 games *within the same season* share that season's league-wide conditions (the
 rules, the ball, the officiating climate). They're not 47,000 independent facts;
-they're more like 42 seasons' worth of correlated games. Treat them as fully
+they're more like 43 seasons' worth of correlated games. Treat them as fully
 independent and your error bars shrink too far.
 
 **The fix.** **Cluster-robust standard errors** group the games into clusters --
@@ -837,8 +838,10 @@ included, and see if the suspect effect survives. Here the control is
 **The result.** Bivariate, playoff rest looks worth **+2.4 pp/day**
 (significant). Add `quality_diff` and rest collapses to **+1.6 pp/day,
 p = 0.113** -- no longer significant -- while `quality_diff` is overwhelming
-(+112 pp per unit, p < 0.001). Verdict: most playoff "rest advantage" was just
-*being the better team*.
+(+112 pp per unit, p < 0.001 -- an extrapolated marginal effect across a *full*
+0-to-1 swing in win-% gap, far outside any real matchup, which is why it sails
+past the 100 pp a probability could actually move). Verdict: most playoff "rest
+advantage" was just *being the better team*.
 
 **The same move clears the playoff decline of a different suspicion.** Maybe the
 playoff HCA fell only because top seeds stopped dominating? Add `quality_diff`
@@ -1004,6 +1007,13 @@ That's it -- no curve-fitting, no distributional assumptions, just counting. Wit
 43 data points the finest resolution is 1/43 ~2.3 percentage points, and a value
 exactly equal to the historical best yields 100th percentile (it's <= itself and
 every past champion).
+
+**One thing to keep straight: the Knicks are *inside* the comparison set.** The
+2025-26 Knicks won the title, so they are one of the 43 champions, not an outsider
+ranked against them. The count and the denominator both include their own season
+(a value ties with itself under the `<=`). That's why "1st of 43 / 100th
+percentile" is partly true by construction -- it means "no past champion did
+better," not "better than 43 other teams."
 
 **A worked example.** Win rate 0.842. Count how many of the 43 champions had a
 win rate <= 0.842: 38 teams. 38/43 * 100 = **88.4th percentile**. The Knicks
