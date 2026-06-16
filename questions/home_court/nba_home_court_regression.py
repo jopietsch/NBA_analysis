@@ -2907,6 +2907,84 @@ def run_cusum_test(df: pd.DataFrame) -> None:
             print(f"   {ctx_label}: CUSUM failed ({e})\n")
 
 
+def run_its_test(df: pd.DataFrame) -> None:
+    """Interrupted Time Series (ITS) model at the 1994-95 boundary.
+
+    Unified season-level WLS model:
+        home_pct ~ year + post95 + time_since_break
+
+    where post95 = 1 if year >= 1995 (level shift) and
+    time_since_break = (year - 1994) * post95 (slope change).
+
+    Tests both dimensions simultaneously: did HCA drop *immediately* at 1994-95
+    (level shift) and/or did the *rate* of decline change (slope change)?
+    """
+    _section("ITS (INTERRUPTED TIME SERIES) — 1994-95 BOUNDARY  (§1d)")
+    print("   Model: home_pct ~ year + post95 + time_since_break  (season-level WLS)")
+    print("   post95      = 1 for seasons from 1994-95 onward (immediate level shift)")
+    print("   time_since  = (year − 1994) × post95           (slope change post-break)")
+    print("   Weights: game counts per season.\n")
+
+    BREAK_YEAR = 1995  # first season in the 'post' window is the 1994-95 season
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        agg = sub.groupby("year")["home_win"].agg(["sum", "count"]).reset_index()
+        agg.columns = ["year", "wins", "games"]
+        agg["pct"] = agg["wins"] / agg["games"] * 100
+        if is_po:
+            agg = agg[~agg["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        agg = agg.sort_values("year").reset_index(drop=True)
+        if len(agg) < 10:
+            continue
+
+        agg["post95"] = (agg["year"] >= BREAK_YEAR).astype(float)
+        agg["time_since"] = (agg["year"] - (BREAK_YEAR - 1)) * agg["post95"]
+
+        m = smf.wls("pct ~ year + post95 + time_since", data=agg, weights=agg["games"]).fit()
+
+        b_yr     = m.params["year"]
+        b_lev    = m.params["post95"]
+        b_slp    = m.params["time_since"]
+        p_yr     = m.pvalues["year"]
+        p_lev    = m.pvalues["post95"]
+        p_slp    = m.pvalues["time_since"]
+        r2       = m.rsquared
+
+        pre_slope_total = b_yr
+        post_slope_total = b_yr + b_slp
+
+        n = len(agg)
+        print(f"   {ctx_label}  (N = {n} seasons)  R² = {r2:.3f}")
+        print(f"   {'Parameter':<22}  {'Coef':>8}  {'p':>7}  {'Sig':>4}")
+        print(f"   {'─'*22}  {'─'*8}  {'─'*7}  {'─'*4}")
+        print(f"   {'Pre-break trend/yr':<22}  {b_yr:>+8.3f}  {_fmt_p(p_yr):>7}  {_stars(p_yr):>4}")
+        print(f"   {'Level shift (1994-95)':<22}  {b_lev:>+8.3f}  {_fmt_p(p_lev):>7}  {_stars(p_lev):>4}")
+        print(f"   {'Slope change/yr':<22}  {b_slp:>+8.3f}  {_fmt_p(p_slp):>7}  {_stars(p_slp):>4}")
+        print()
+        print(f"   Implied slopes: pre-break = {pre_slope_total:+.3f} pp/yr, "
+              f"post-break = {post_slope_total:+.3f} pp/yr")
+
+        if p_lev < 0.05 and p_slp >= 0.10:
+            print(f"   ► Significant LEVEL shift only — HCA dropped sharply at 1994-95,")
+            print(f"     no additional change in trajectory afterward.")
+        elif p_slp < 0.05 and p_lev >= 0.10:
+            print(f"   ► Significant SLOPE change only — HCA rate of decline slowed")
+            print(f"     after 1994-95 without a discrete immediate jump.")
+        elif p_lev < 0.05 and p_slp < 0.05:
+            print(f"   ► Both level shift AND slope change significant — HCA dropped")
+            print(f"     immediately AND rate of decline changed after 1994-95.")
+        elif p_slp < 0.10 and p_lev >= 0.10:
+            print(f"   ► Borderline slope change (p={p_slp:.3f}): rate of HCA decline appears")
+            print(f"     to slow after 1994-95 ({pre_slope_total:+.2f} → {post_slope_total:+.2f} pp/yr),")
+            print(f"     but no discrete immediate jump (level p={p_lev:.3f}). Consistent with")
+            print(f"     the QLR break at 1999 — change accumulated gradually over seasons.")
+        else:
+            print(f"   ► Neither level nor slope significant at 1994-95.")
+            print(f"     Overall HCA trend drove this context — 1994-95 not a sharp break.")
+        print()
+
+
 # ── Helper: ADF unit-root + Engle-Granger cointegration ──────────────────────
 
 def _run_cointegration(x: np.ndarray, y: np.ndarray,
@@ -3378,6 +3456,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         run_decline_trend(df)
         run_structural_break_test(df)
         run_cusum_test(df)
+        run_its_test(df)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
 
