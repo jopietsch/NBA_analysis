@@ -20,7 +20,8 @@
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
   - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
-    - First drop: sharp mid-1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4) — most likely the hand-check crackdown, but confounded with the simultaneous shortened 3-pt line (1994–97); season-level data can't separate them. Discrete event, handled in §4. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+    - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4) — most likely the hand-check crackdown, but confounded with the simultaneous shortened 3-pt line (1994–97). *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+    - **Structural break finding (NEW):** formal QLR supremum-Chow test locates the data-implied RS break at **1999** (sup F=10.22, p<5% by Andrews 1993 critical values), not at 1995. The full adjustment (refs, strategy) settled out several years after the rule change. Playoffs show no significant break (sup F=3.23, n.s.) — pure smooth drift.
     - Flat for ~two decades.
     - Second drop: after 2017, below 56%. Cause = **three-point surge** (§3) hitting full stride — registers *inside* the box-score categories (on the shooting line). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
   - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Asymmetry (first-drop cause outside the categories in §4, second-drop cause inside them in §3) is why each is explained in a different section.
@@ -66,17 +67,18 @@
   - Paint gap **~1.3 → 0.2 pp**. *RESULTS Paint trend −0.041***/yr reg.*
   - Playoffs: narrowed late 2010s then rebounded; downward drift NOT statistically established (playoff Paint trend −0.030, ns) → convergence is a reg-season phenomenon.
 - **Three-point revolution:**
-  - Tracks decline almost perfectly. 7% threes (1980s, 65% wins) → 40% (today, 55% wins).
+  - Tracks decline over four decades in lockstep. 7% threes (1980s, 65% wins) → 40% (today, 55% wins).
   - **Explains the second drop (§1):** 3PA share leapt from ~¼ of shots to ~half right after 2017 — the years home court slid below 56%. *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
-  - *RESULTS reg season-level Pearson r = −0.902, p<0.001.*
-  - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.*
+  - *RESULTS reg season-level Pearson r = −0.902, p<0.001.* **BUT: cointegration check shows both series are I(1) and NOT cointegrated — the r=−0.902 is likely spurious (parallel trends, not a genuine long-run relationship). Within-era game-level test is the reliable evidence.**
+  - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.* This survives as the substantive finding.
+  - **Granger causality (NEW): no temporal lead either direction** (3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns). The two shift together within the same season — both downstream of the broader strategic revolution, rather than one pulling the other year-by-year.
   - Playoffs: directional but weaker within-era signal (r=−0.499; within-era p=0.027) — team quality dominates.
 - **Quieter fourth strand — rebounding (the glass), now explained:**
   - Home rebounding edge shrunk 40 yrs, NOT a 3-point byproduct.
   - *RESULTS 3PA control:* eFG% trend fully absorbed (**210%** absorbed → shooting fade IS the 3-pt story); REB only **8%** absorbed (survives); TOV **54%** absorbed (~half independent).
   - **Died on the OFFENSIVE glass.** *RESULTS rebounding decomp (reg):* OREB diff +0.61 → **−0.05** (goes negative); DREB diff +1.64 → +0.59 (only softens); REB diff +2.24 → +0.54. Trends/yr all negative, all p<0.001 (OREB −0.018, DREB −0.027, REB −0.044).
   - **Pace-free share edge** (home share of available boards − away) still collapses ~10×: **+2.14pp → +0.21pp** (trend −0.052/yr, p<0.001). → not a pace/volume artifact.
-  - **Cause = league-wide retreat from O-rebounding:** league OREB rate 33% → 26%; share edge vs league OREB rate **r = +0.82, p<0.001 (N=43)**. Effort-driven O-boards coached out (transition defense).
+  - **Cause = league-wide retreat from O-rebounding:** league OREB rate 33% → 26%; home share edge declined alongside. **Cointegration check: both series I(1) and NOT cointegrated — the r=+0.82 is likely spurious (parallel long-run trends).** The reliable evidence for the rebounding fade's independence is the 3PA control (only 8% absorbed), not the season-level correlation.
   - Playoffs: share edge **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01). 3PA-control absorption is unstable in playoffs (−42%, noisy small-N) → can't confirm independence the way RS does; read as consistent with RS, not proven.
   - **Player-tracking (last decade) fits:** no measurable home box-out edge today; OREB-conversion edge still shrinking. (One sentence in §3; not a RESULTS section — short tracking-era window corroborates the mechanism only. Code/fetchers retained but unwired.)
 - **Adding it up (trend decomposition):**
@@ -160,6 +162,6 @@
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → 55.6%**, playoffs **~68% → 58%**.
 - Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete, outside the categories) and post-2017 three-point surge (inside the categories, shooting line).
-- Three main drivers + quiet fourth: (1) fairer refs (largest single change), (2) converged shot selection, (3) three-point variance, (4) rebounding edge slipping independently — specifically the OFFENSIVE-glass edge dying (OREB diff → negative) in lockstep with the league-wide retreat from O-rebounding (r=0.82).
+- Three main drivers + quiet fourth: (1) fairer refs (largest single change), (2) converged shot selection, (3) three-point variance (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (4) rebounding edge slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
 - Playoffs follow reg season with ~decade lag; accelerated since 2018; genuine erosion (weaker host still winning less); no sign of bottoming out.
