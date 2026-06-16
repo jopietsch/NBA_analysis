@@ -112,6 +112,28 @@ def fetch_standings(end_year: int,
 
 # ── SRS ────────────────────────────────────────────────────────────────────────
 
+def _fill_plus_minus(game_logs: pd.DataFrame) -> pd.DataFrame:
+    """Return game_logs with PLUS_MINUS filled from PTS where null.
+
+    Pre-1997 NBA data from nba_api has PLUS_MINUS=NaN; we derive it from
+    PTS by pairing the two rows for each GAME_ID.
+    """
+    df = game_logs.copy()
+    if "PLUS_MINUS" not in df.columns or df["PLUS_MINUS"].notna().all():
+        return df
+    null_mask = df["PLUS_MINUS"].isna()
+    if not null_mask.any() or "PTS" not in df.columns:
+        return df
+    pts_by_game = df[["GAME_ID", "TEAM_ID", "PTS"]].copy()
+    pts_by_game["OPP_PTS"] = (
+        pts_by_game.groupby("GAME_ID")["PTS"]
+        .transform(lambda s: s.iloc[::-1].values)
+    )
+    computed = (pts_by_game["PTS"] - pts_by_game["OPP_PTS"]).reindex(df.index)
+    df.loc[null_mask, "PLUS_MINUS"] = computed[null_mask]
+    return df
+
+
 def compute_srs(game_logs: pd.DataFrame) -> pd.Series:
     """Compute Simple Rating System from regular-season game logs.
 
@@ -119,8 +141,12 @@ def compute_srs(game_logs: pd.DataFrame) -> pd.Series:
     Solved as a least-squares linear system (I − A) @ srs = mean_margin,
     constrained to sum(srs) = 0 (league average = 0).
 
+    For pre-1997 seasons where nba_api returns PLUS_MINUS=NaN, the margin
+    is derived from PTS (both team rows per GAME_ID are required).
+
     Returns pd.Series indexed by TEAM_ID, values in points per game.
     """
+    game_logs = _fill_plus_minus(game_logs)
     df = game_logs[["GAME_ID", "TEAM_ID", "PLUS_MINUS"]].dropna().copy()
     df["TEAM_ID"] = df["TEAM_ID"].astype(int)
 

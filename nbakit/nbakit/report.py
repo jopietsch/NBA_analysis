@@ -339,20 +339,21 @@ def _appendix(cfg: ReportConfig) -> list:
 # ── Prerequisites check ────────────────────────────────────────────────────────
 
 def _check_prerequisites(cfg: ReportConfig) -> None:
-    missing = []
     with open(cfg.findings_path) as f:
         content = f.read()
-    for m in re.finditer(r"!\[[^\]]*\]\(([^)]+\.png)\)", content):
-        path = m.group(1)
-        if not os.path.exists(path):
-            missing.append(path)
-    if not os.path.exists(cfg.results_path):
-        missing.append(cfg.results_path)
-    if missing:
-        print("ERROR: The following files are missing:\n")
-        for p in missing:
+    missing_pngs = [
+        m.group(1)
+        for m in re.finditer(r"!\[[^\]]*\]\(([^)]+\.png)\)", content)
+        if not os.path.exists(m.group(1))
+    ]
+    if missing_pngs:
+        print("WARNING: The following chart(s) are missing and will appear as placeholders:\n")
+        for p in missing_pngs:
             print(f"  {p}")
-        print(f"\nRun the analysis pipeline first:\n\n  {cfg.pipeline_cmd}\n")
+        print()
+    if not os.path.exists(cfg.results_path):
+        print(f"ERROR: {cfg.results_path} is missing.\n")
+        print(f"Run the analysis pipeline first:\n\n  {cfg.pipeline_cmd}\n")
         print("Then retry:\n\n  python3 generate_report.py")
         sys.exit(1)
 

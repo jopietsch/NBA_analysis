@@ -36,7 +36,7 @@ Average regular-season SRS by conference:
 §3  HOW WEAK IS THE EAST HISTORICALLY?
 ────────────────────────────────────────────────────────────────────────
 2025-26 SRS gap (West − East): +0.39 pts/game
-Percentile among all 43 seasons (100th = most West-dominant): 23.3th
+Percentile among all 43 seasons (100th = most West-dominant): 37.2th
 
 Top 3 most West-dominant seasons:
   13–14: +4.08
@@ -46,7 +46,7 @@ Top 3 most West-dominant seasons:
 Top 3 most East-dominant seasons:
   97–98: -2.98
   96–97: -2.44
-  98–99: -1.07
+  87–88: -2.42
 
 2025-26 East inter-conference win rate: 0.487
 Percentile (100th = worst for East): 37.2th
@@ -55,14 +55,14 @@ Percentile (100th = worst for East): 37.2th
 §4  WHO DID THE KNICKS BEAT?
 ────────────────────────────────────────────────────────────────────────
 Average opponent regular-season SRS: +3.54 pts/game
-Percentile among champions: 46.7th  (mean +3.63, easiest +0.54, hardest +5.54)
+Percentile among champions: 53.5th  (mean +3.46, easiest +0.54, hardest +5.98)
 
 Champions who faced weakest opponents (avg opp SRS):
   22–23: +0.54
+  86–87: +0.75
+  87–88: +1.75
   19–20: +2.03
   23–24: +2.03
-  12–13: +2.04
-  98–99: +2.39
 
 ════════════════════════════════════════════════════════════════════════
 §5  OPPONENT-ADJUSTED DOMINANCE
@@ -72,15 +72,15 @@ Adjusted margin = raw margin − avg opponent SRS
   Avg opp SRS:    +3.54
   Adj margin:     +11.35
 
-Among 30 champion seasons:
-  Adj-margin percentile: 100.0th  (mean +3.36, best +11.35)
+Among 43 champion seasons:
+  Adj-margin percentile: 100.0th  (mean +3.58, best +11.35)
 
 Top 5 adjusted-margin champions:
   25–26: raw +14.89  opp +3.54  adj +11.35  ← 2025-26 Knicks
   16–17: raw +13.65  opp +3.45  adj +10.20
-  22–23: raw +8.30  opp +0.54  adj +7.76
-  00–01: raw +12.75  opp +5.54  adj +7.21
-  17–18: raw +10.00  opp +3.35  adj +6.65
+  86–87: raw +10.83  opp +0.75  adj +10.09
+  90–91: raw +11.71  opp +2.24  adj +9.46
+  85–86: raw +10.56  opp +2.57  adj +7.99
 
 ════════════════════════════════════════════════════════════════════════
 §6  OTHER DEFLATORS
@@ -88,7 +88,7 @@ Top 5 adjusted-margin champions:
 
 ── Clutch / close games ──
   Fraction of Knicks 2026 playoff games decided by ≤5 pts: 0.316
-  Percentile (100th = most clutch): 86.0th  (mean 0.181)
+  Percentile (100th = most clutch): 83.7th  (mean 0.256)
 
 ── Home/away splits ──
   Home games: 9  win rate: 0.778
@@ -113,9 +113,9 @@ The 2025-26 Knicks went 16-3 in the playoffs.
 KEY METRICS vs. all 43 champions (1983–84 through 2025–26):
   Win rate 0.842:               88th percentile
   Avg margin +14.9 pts/game:    100th percentile
-  Avg opp SRS +3.54:           47th percentile (lower = easier schedule)
+  Avg opp SRS +3.54:           53th percentile (lower = easier schedule)
   Adj margin +11.4 pts/game:    100th percentile
-  East/West SRS gap +0.39:         23th percentile (West dominance)
+  East/West SRS gap +0.39:         37th percentile (West dominance)
 
 SUMMARY:
   The 2025-26 Knicks had a elite playoff run by win rate, which holds up well after adjusting for schedule.

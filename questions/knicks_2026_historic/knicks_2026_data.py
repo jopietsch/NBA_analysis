@@ -55,8 +55,12 @@ def compute_playoff_record(playoff_logs: pd.DataFrame,
 
 def compute_playoff_margin(playoff_logs: pd.DataFrame,
                            team_id: int) -> float:
-    """Return average point differential (PLUS_MINUS) for a team's playoff run."""
-    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id]
+    """Return average point differential for a team's playoff run.
+
+    Fills PLUS_MINUS from PTS for pre-1997 seasons where nba_api returns NaN.
+    """
+    logs = _nba._fill_plus_minus(playoff_logs)
+    df = logs[logs["TEAM_ID"] == team_id]
     return float(df["PLUS_MINUS"].mean())
 
 
@@ -64,7 +68,7 @@ def compute_clutch_rate(playoff_logs: pd.DataFrame,
                         team_id: int,
                         threshold: int = 5) -> float:
     """Fraction of games decided by <= threshold points (clutch games)."""
-    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id].copy()
+    df = _nba._fill_plus_minus(playoff_logs)[playoff_logs["TEAM_ID"] == team_id].copy()
     df["ABS_MARGIN"] = df["PLUS_MINUS"].abs()
     n = len(df)
     return float((df["ABS_MARGIN"] <= threshold).sum() / n) if n > 0 else 0.0
@@ -207,7 +211,7 @@ def build_champions_table(start_year: int = START_YEAR,
         rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
         if not os.path.exists(po_path) or not os.path.exists(rs_path):
             continue
-        po = pd.read_csv(po_path)
+        po = _nba._fill_plus_minus(pd.read_csv(po_path))
         rs = pd.read_csv(rs_path)
 
         champ = identify_champion(po)
