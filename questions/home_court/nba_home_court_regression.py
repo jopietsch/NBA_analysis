@@ -1578,7 +1578,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
     Lower quantiles declining while upper quantiles rise or hold → genuine
     variance widening (polarization confirmed).
     """
-    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (§6 check)")
+    _section("WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (checks blowout claim in other findings)")
     print("   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.")
     print("   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.")
     print("   All quantiles parallel → pure level effect (conditional divergence is artifact).")
@@ -2159,7 +2159,7 @@ def run_placebo_tests(df: pd.DataFrame) -> None:
                 print(f"     with a break in the decline period. Note: years before 1995 also")
                 print(f"     appear significant because any boundary before the 1994-95 drop")
                 print(f"     places the decline in the 'post' window; this is expected when")
-                print(f"     a real break exists. The era LR test (§13) isolates 1994-95")
+                print(f"     a real break exists. The RULE-CHANGE ERAS test isolates 1994-95")
                 print(f"     SPECIFICALLY after partialling out the year trend.")
         if sig_pos:
             print(f"   Significant positive steps (p<0.05): years {min(sig_pos)}–{max(sig_pos)}")
@@ -2761,7 +2761,7 @@ def run_referee_analysis(bias_stats: list) -> None:
 
 # ── Analysis: Structural break test ──────────────────────────────────────────
 
-def run_structural_break_test(df: pd.DataFrame) -> None:
+def run_structural_break_test(df: pd.DataFrame, results: dict | None = None) -> None:
     """QLR (supremum Chow) test for structural breaks in the HCA time series.
 
     Finds the year with the strongest statistical evidence for a shift in level
@@ -2828,6 +2828,15 @@ def run_structural_break_test(df: pd.DataFrame) -> None:
             continue
         rows.sort(key=lambda r: -r["F"])
         best = rows[0]
+
+        if results is not None:
+            key = "break_rs" if is_po == 0 else "break_po"
+            results[key] = {
+                "year": best["year"],
+                "sl_pre": best["sl_pre"],
+                "sl_post": best["sl_post"],
+                "F": best["F"],
+            }
 
         qlr_sig = (
             "p < 1%  ***" if best["F"] >= QLR_CV[0.01] else
@@ -2898,7 +2907,7 @@ def run_structural_break_test(df: pd.DataFrame) -> None:
 
 # ── Structural break: CUSUM test (complements QLR) ───────────────────────────
 
-def run_cusum_test(df: pd.DataFrame) -> None:
+def run_cusum_test(df: pd.DataFrame, results: dict | None = None) -> None:
     """CUSUM (Brown-Durbin-Evans) parameter-stability test — complements the QLR.
 
     Builds cumulative recursive residuals from the linear trend and tests whether
@@ -2908,7 +2917,7 @@ def run_cusum_test(df: pd.DataFrame) -> None:
     """
     from statsmodels.regression.recursive_ls import RecursiveLS
 
-    _section("CUSUM TEST — PARAMETER STABILITY  (complement to §1b QLR)")
+    _section("CUSUM TEST — PARAMETER STABILITY  (complement to structural break test above)")
     print("   CUSUM (Brown-Durbin-Evans): cumulative recursive residuals from the linear")
     print("   trend. Exit from the 5% critical band = structural instability detected.")
     print("   QLR (§1b) finds the single strongest break; CUSUM tests global stability.")
@@ -2970,8 +2979,15 @@ def run_cusum_test(df: pd.DataFrame) -> None:
                 pct = 100 * abs(max_val) / bound_at_peak if bound_at_peak > 0 else 0
                 print(f"   Peak is {pct:.0f}% of the 5% boundary.")
                 if is_po == 0:
-                    print(f"   ► CUSUM stays inside bounds even though QLR found a break:")
-                    print(f"     the slope change around 1999 is gradual (−0.65 → −0.26 pp/yr),")
+                    br = (results or {}).get("break_rs", {})
+                    break_yr = br.get("year", "late 1990s")
+                    sl_pre = br.get("sl_pre")
+                    sl_post = br.get("sl_post")
+                    print(f"   ► CUSUM stays inside bounds even though the structural break test found a break:")
+                    if sl_pre is not None and sl_post is not None:
+                        print(f"     the slope change around {break_yr} is gradual ({sl_pre:+.2f} → {sl_post:+.2f} pp/yr),")
+                    else:
+                        print(f"     the slope change is gradual,")
                     print(f"     not a sharp level jump — CUSUM has lower power for slope-only breaks.")
             print()
         except Exception as e:
@@ -2990,7 +3006,7 @@ def run_its_test(df: pd.DataFrame) -> None:
     Tests both dimensions simultaneously: did HCA drop *immediately* at 1994-95
     (level shift) and/or did the *rate* of decline change (slope change)?
     """
-    _section("ITS (INTERRUPTED TIME SERIES) — 1994-95 BOUNDARY  (§1d)")
+    _section("ITS (INTERRUPTED TIME SERIES) — 1994-95 BOUNDARY")
     print("   Model: home_pct ~ year + post95 + time_since_break  (season-level WLS)")
     print("   post95      = 1 for seasons from 1994-95 onward (immediate level shift)")
     print("   time_since  = (year − 1994) × post95           (slope change post-break)")
@@ -3523,10 +3539,12 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
             nba.START_YEAR, nba.END_YEAR, "Playoffs", skip_years=nba.SKIP_PLAYOFF_YEARS
         )
 
+        results: dict = {}
+
         # §1 The 40-Year Decline (magnitude, shape/timing, blowout polarization)
         run_decline_trend(df)
-        run_structural_break_test(df)
-        run_cusum_test(df)
+        run_structural_break_test(df, results)
+        run_cusum_test(df, results)
         run_its_test(df)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
