@@ -15,7 +15,9 @@ The Knicks earned this — on a real schedule, against real competition.
 
 The main caveat: the dominant margins came before the Finals — including sweeps
 of Philadelphia and Cleveland — while the NBA Finals against a Spurs team with SRS
-+8.28 were much closer (4-1, avg margin +2.4 pts/game).
++8.28 were much closer (4-1, avg margin +2.4 pts/game). But one common asterisk
+doesn't apply: all four opponents were essentially fully healthy when they played
+the Knicks (average availability 98%; the Spurs were at 100%).
 
 ![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](generated/knicks_2026_adjusted_margin_ranking.png){height=0.60}
 
@@ -119,7 +121,32 @@ road team than all but one champion in the dataset.
 
 ---
 
-## 6. Limitations
+## 6. Opponent Health
+
+One recurring question about dominant playoff runs is whether key opposing players
+were injured. The answer here: **no, they weren't.**
+
+Using player-level game logs to measure how many of each opponent's rotation
+players (averaging ≥15 min/game across the playoffs) appeared in each game of
+the Knicks' series:
+
+| Round | Opponent | Health |
+|-------|----------|--------|
+| R1 | Atlanta Hawks | 100% |
+| R2 | Philadelphia 76ers | 96% |
+| CF | Cleveland Cavaliers | 97% |
+| Finals | San Antonio Spurs | **100%** |
+
+Average across all four opponents: **98%**. The Spurs — the most dangerous team
+and the one that gave the Knicks the tightest series — were fully intact. The
+close Finals margin (+2.4 avg) reflects genuine competition, not a depleted
+opponent. This removes the injury asterisk often attached to dominant runs.
+
+![Opponent key-player availability across the 2025-26 Knicks playoff run](generated/knicks_2026_opponent_health.png){height=0.25}
+
+---
+
+## 7. Limitations
 
 **Opponent SRS** is from regular-season performance, which may not fully reflect
 playoff-mode strength. SRS treats all opponents equally regardless of round
@@ -140,7 +167,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 7. Methodology
+## 8. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS

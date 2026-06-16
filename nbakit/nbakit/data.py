@@ -87,6 +87,48 @@ def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,
     return df
 
 
+def fetch_player_game_logs(end_year: int, season_type: str = PLAYOFFS,
+                           cache_dir: str | None = None) -> pd.DataFrame:
+    """Fetch player-level game logs for one season/type; cache as CSV.
+
+    Returns one row per player per game (LeagueGameFinder player mode).
+    MIN column is a string 'MM:SS'; use parse_min() to convert to float.
+    """
+    d = cache_dir or default_cache_dir()
+    slug = season_type.replace(" ", "_")
+    path = os.path.join(d, f"{season_str(end_year)}_{slug}_players.csv")
+    if os.path.exists(path):
+        return pd.read_csv(path)
+    os.makedirs(d, exist_ok=True)
+    from nba_api.stats.endpoints import leaguegamefinder
+    df = leaguegamefinder.LeagueGameFinder(
+        player_or_team_abbreviation="P",
+        season_nullable=season_str(end_year),
+        season_type_nullable=season_type,
+        league_id_nullable="00",
+    ).get_data_frames()[0]
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def parse_min(val) -> float:
+    """Parse nba_api MIN column: 'MM:SS' string or numeric → float minutes."""
+    if pd.isna(val):
+        return 0.0
+    s = str(val)
+    if ":" in s:
+        parts = s.split(":", 1)
+        try:
+            return float(parts[0]) + float(parts[1]) / 60
+        except ValueError:
+            return 0.0
+    try:
+        return float(val)
+    except (ValueError, TypeError):
+        return 0.0
+
+
 def fetch_standings(end_year: int,
                     cache_dir: str | None = None) -> pd.DataFrame:
     """Fetch team standings for one season; cache as CSV.

@@ -415,15 +415,79 @@ def plot_opponent_srs_by_round(po_2026: pd.DataFrame, reg_srs: pd.Series,
     return path
 
 
+# ── 9. Opponent key-player health ─────────────────────────────────────────────
+
+def plot_opponent_health(health_df: pd.DataFrame) -> str:
+    if health_df.empty:
+        return ""
+
+    round_names = ["R1", "R2", "CF", "Finals"]
+    n = len(health_df)
+    names = [row["team_name"].split()[-1] for _, row in health_df.iterrows()]
+    x_labels = [
+        f"{round_names[i] if i < len(round_names) else f'R{i+1}'}\n{names[i]}"
+        for i in range(n)
+    ]
+    scores = list(health_df["health_score"])
+
+    def _color(s):
+        if s >= 0.90:
+            return GREEN
+        if s >= 0.75:
+            return KNICKS_ORANGE
+        return RED
+
+    colors = [_color(s) for s in scores]
+    x = np.arange(n)
+
+    fig, ax = _fig(figsize=(7, 4))
+    bars = ax.bar(x, [s * 100 for s in scores], color=colors, edgecolor="none",
+                  zorder=2, width=0.5)
+    ax.axhline(100, color=LGRAY, linewidth=0.8, linestyle="--")
+
+    for bar, val in zip(bars, scores):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            val * 100 + 1,
+            f"{val:.0%}",
+            ha="center", va="bottom", fontsize=10, fontweight="bold",
+        )
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(x_labels, fontsize=9)
+    ax.set_ylim(0, 120)
+    ax.set_ylabel("Core-player availability (%)", fontsize=10)
+    ax.set_title(
+        "2025-26 Knicks Playoff: Opponent Key-Player Availability",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+    )
+    _style(ax)
+    ax.grid(axis="x", visible=False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+    patches = [
+        mpatches.Patch(color=GREEN, label="≥90% available"),
+        mpatches.Patch(color=KNICKS_ORANGE, label="75–89%"),
+        mpatches.Patch(color=RED, label="<75% (depleted)"),
+    ]
+    ax.legend(handles=patches, fontsize=8, framealpha=0.85, edgecolor="#ddd")
+    fig.tight_layout()
+    path = _out("knicks_2026_opponent_health.png")
+    fig.savefig(path, dpi=150, bbox_inches="tight")
+    plt.close(fig)
+    return path
+
+
 # ── Orchestrator ─────────────────────────────────────────────────────────────
 
 def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              standings_2026: pd.DataFrame, champions: pd.DataFrame,
-             gap_table: pd.DataFrame) -> list:
+             gap_table: pd.DataFrame,
+             health_df: pd.DataFrame | None = None) -> list:
     from knicks_2026_data import compute_srs
     reg_srs = compute_srs(reg_2026)
 
-    return [
+    paths = [
         plot_win_rate_ranking(champions),
         plot_margin_ranking(champions),
         plot_conference_gap(gap_table),
@@ -433,3 +497,8 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
         plot_game_margin_distribution(po_2026),
         plot_opponent_srs_by_round(po_2026, reg_srs, standings_2026),
     ]
+    if health_df is not None and not health_df.empty:
+        p = plot_opponent_health(health_df)
+        if p:
+            paths.append(p)
+    return paths

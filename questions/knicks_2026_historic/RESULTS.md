@@ -120,4 +120,23 @@ KEY METRICS vs. all 43 champions (1983–84 through 2025–26):
 SUMMARY:
   The 2025-26 Knicks had a elite playoff run by win rate, which holds up well after adjusting for schedule.
 
+════════════════════════════════════════════════════════════════════════
+§8  OPPONENT PLAYER AVAILABILITY
+────────────────────────────────────────────────────────────────────────
+Round    Opponent                       Core   Avail/game   Health
+─────────────────────────────────────────────────────────────────
+R1       Atlanta Hawks                  7      7.0/7        100%
+R2       Philadelphia 76ers             6      5.8/6        96%
+CF       Cleveland Cavaliers            8      7.8/8        97%
+Finals   San Antonio Spurs              7      7.0/7        100%
+
+Definition: 'core' = player averaging ≥15 min/game across all their 2025-26 playoff appearances.
+Health = fraction of core players who appeared per game in the Knicks series.
+
+Average opponent health:  98%
+Most depleted opponent:   Philadelphia 76ers (96%)
+Healthiest opponent:      Atlanta Hawks (100%)
+
+Finals note: The Spurs were fully healthy — the Finals result stands without asterisk.
+
 ```

@@ -25,7 +25,9 @@ from nbakit.data import (
     season_range_label,
     cache_path,
     fetch_game_logs,
+    fetch_player_game_logs,
     fetch_standings,
+    parse_min,
     compute_srs,
     identify_champion,
 )
@@ -190,6 +192,97 @@ def compute_inter_conference_h2h(reg_logs: pd.DataFrame,
         if winner["CONF"] == "East":
             east_wins += 1
     return float(east_wins / total) if total > 0 else float("nan")
+
+
+# ── Opponent health / player availability ─────────────────────────────────────
+
+def compute_opponent_health(
+    player_po_logs: pd.DataFrame,
+    po_2026: pd.DataFrame,
+    knicks_team_id: int,
+    standings: pd.DataFrame,
+    min_avg_threshold: float = 15.0,
+) -> pd.DataFrame:
+    """Measure key-player availability for each Knicks playoff opponent.
+
+    For each opponent:
+      - 'Core' players = those averaging >= min_avg_threshold minutes across
+        ALL their 2026 playoff appearances (so injured players who missed the
+        whole series are excluded if they appear nowhere; those who got hurt
+        mid-series show as partially available).
+      - health_score = avg(core players appearing per Knicks-series game) /
+                       total_core  [0.0–1.0; 1.0 = fully healthy]
+
+    Returns DataFrame ordered by series start date with columns:
+      team_id, team_name, games_in_series, total_core,
+      avg_core_per_game, missing_core_avg, health_score
+    """
+    logs = player_po_logs.copy()
+    logs["MIN_FLOAT"] = logs["MIN"].apply(parse_min)
+
+    # Map each Knicks playoff game to the opposing team id
+    game_teams = (
+        po_2026.groupby("GAME_ID")["TEAM_ID"]
+        .apply(lambda s: [x for x in s.tolist() if x != knicks_team_id])
+        .reset_index()
+    )
+    knicks_games = (
+        po_2026[po_2026["TEAM_ID"] == knicks_team_id]
+        .merge(game_teams.rename(columns={"TEAM_ID": "OPP_LIST"}), on="GAME_ID")
+        .copy()
+    )
+    knicks_games["OPP_ID"] = knicks_games["OPP_LIST"].apply(
+        lambda x: int(x[0]) if x else None
+    )
+    knicks_games = knicks_games.dropna(subset=["OPP_ID"])
+    knicks_games["OPP_ID"] = knicks_games["OPP_ID"].astype(int)
+
+    name_map = standings.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
+    ).to_dict()
+
+    rows = []
+    for opp_id, series_games in knicks_games.groupby("OPP_ID"):
+        opp_game_ids = set(series_games["GAME_ID"])
+        opp_logs = logs[logs["TEAM_ID"] == opp_id].copy()
+        if opp_logs.empty:
+            continue
+
+        # Core = players averaging >= threshold across their full playoff run
+        avg_min = opp_logs.groupby("PLAYER_ID")["MIN_FLOAT"].mean()
+        core_ids = set(avg_min[avg_min >= min_avg_threshold].index)
+        total_core = len(core_ids)
+        if total_core == 0:
+            continue
+
+        # Per Knicks-series game: count how many core players appeared
+        series_logs = opp_logs[opp_logs["GAME_ID"].isin(opp_game_ids)]
+        core_per_game = (
+            series_logs[series_logs["PLAYER_ID"].isin(core_ids)]
+            .groupby("GAME_ID")["PLAYER_ID"].nunique()
+        )
+        all_counts = core_per_game.reindex(list(opp_game_ids), fill_value=0)
+        avg_core = float(all_counts.mean())
+
+        rows.append({
+            "team_id":           int(opp_id),
+            "team_name":         name_map.get(int(opp_id), f"Team {int(opp_id)}"),
+            "games_in_series":   len(opp_game_ids),
+            "total_core":        total_core,
+            "avg_core_per_game": avg_core,
+            "missing_core_avg":  total_core - avg_core,
+            "health_score":      avg_core / total_core,
+        })
+
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        first_dates = (
+            knicks_games.sort_values("GAME_DATE")
+            .groupby("OPP_ID")["GAME_DATE"].first()
+        )
+        df["first_game_date"] = df["team_id"].map(first_dates)
+        df = df.sort_values("first_game_date").reset_index(drop=True)
+    return df
 
 
 # ── Season-range aggregation ──────────────────────────────────────────────────

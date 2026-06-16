@@ -19,9 +19,10 @@ def main() -> None:
     import knicks_2026_analysis as analysis
 
     print("Loading 2025-26 data from cache...")
-    po_2026        = data.fetch_game_logs(data.SUBJECT_YEAR, data.PLAYOFFS)
-    reg_2026       = data.fetch_game_logs(data.SUBJECT_YEAR, data.REGULAR_SEASON)
-    standings_2026 = data.fetch_standings(data.SUBJECT_YEAR)
+    po_2026          = data.fetch_game_logs(data.SUBJECT_YEAR, data.PLAYOFFS)
+    reg_2026         = data.fetch_game_logs(data.SUBJECT_YEAR, data.REGULAR_SEASON)
+    standings_2026   = data.fetch_standings(data.SUBJECT_YEAR)
+    player_po_2026   = data.fetch_player_game_logs(data.SUBJECT_YEAR, data.PLAYOFFS)
 
     print("Building champion stats table (all seasons)...")
     champions = data.build_champions_table(data.START_YEAR, data.END_YEAR)
@@ -29,8 +30,13 @@ def main() -> None:
     print("Building conference gap table (all seasons)...")
     gap_table = data.build_conference_gap_table(data.START_YEAR, data.END_YEAR)
 
+    health_df = data.compute_opponent_health(
+        player_po_2026, po_2026, data.KNICKS_TEAM_ID, standings_2026
+    )
+
     print("Generating charts...")
-    paths = plots.plot_all(po_2026, reg_2026, standings_2026, champions, gap_table)
+    paths = plots.plot_all(po_2026, reg_2026, standings_2026, champions, gap_table,
+                           health_df=health_df)
     for p in paths:
         print(f"  Saved → {os.path.basename(p)}")
 

@@ -29,6 +29,7 @@ from knicks_2026_data import (
     short_label,
     season_range_label,
     fetch_game_logs,
+    fetch_player_game_logs,
     fetch_standings,
     compute_srs,
     identify_champion,
@@ -42,6 +43,7 @@ from knicks_2026_data import (
     compute_conference_avg_srs,
     compute_srs_gap,
     compute_inter_conference_h2h,
+    compute_opponent_health,
     build_champions_table,
     build_conference_gap_table,
 )
@@ -334,13 +336,72 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
           f"{adj_verdict}.{east_context}", file=out)
 
 
+# ── Section 8: Opponent player availability ──────────────────────────────────
+
+def run_opponent_health(player_po_logs: pd.DataFrame,
+                        po_2026: pd.DataFrame,
+                        standings_2026: pd.DataFrame,
+                        out: io.StringIO) -> None:
+    health = compute_opponent_health(
+        player_po_logs, po_2026, KNICKS_TEAM_ID, standings_2026
+    )
+
+    print(_hdr("§8  OPPONENT PLAYER AVAILABILITY"), file=out)
+    if health.empty:
+        print("  No player availability data found.", file=out)
+        return
+
+    round_names = ["R1", "R2", "CF", "Finals"]
+    print(f"{'Round':<8} {'Opponent':<30} {'Core':<6} {'Avail/game':<12} {'Health'}", file=out)
+    print("─" * 65, file=out)
+    for i, row in health.iterrows():
+        rnd = round_names[i] if i < len(round_names) else f"R{i+1}"
+        print(
+            f"{rnd:<8} {row['team_name']:<30} {int(row['total_core']):<6} "
+            f"{row['avg_core_per_game']:.1f}/{int(row['total_core']):<8} "
+            f"{row['health_score']:.0%}",
+            file=out,
+        )
+
+    print(
+        "\nDefinition: 'core' = player averaging ≥15 min/game across all "
+        "their 2025-26 playoff appearances.\n"
+        "Health = fraction of core players who appeared per game in the "
+        "Knicks series.",
+        file=out,
+    )
+
+    avg_health = health["health_score"].mean()
+    worst = health.loc[health["health_score"].idxmin()]
+    best  = health.loc[health["health_score"].idxmax()]
+    print(f"\nAverage opponent health:  {avg_health:.0%}", file=out)
+    print(f"Most depleted opponent:   {worst['team_name']} ({worst['health_score']:.0%})", file=out)
+    print(f"Healthiest opponent:      {best['team_name']} ({best['health_score']:.0%})", file=out)
+
+    # Flag Finals context specifically
+    finals_row = health[health["team_name"].str.contains("Spur", na=False)]
+    if not finals_row.empty:
+        s = float(finals_row["health_score"].iloc[0])
+        if s >= 0.90:
+            note = "The Spurs were fully healthy — the Finals result stands without asterisk."
+        elif s >= 0.75:
+            note = f"The Spurs were mostly healthy ({s:.0%}) — one key player typically absent."
+        else:
+            note = (
+                f"The Spurs were significantly depleted ({s:.0%}) in the Finals — "
+                "the close series (avg +2.4 margin) may partly reflect their injuries."
+            )
+        print(f"\nFinals note: {note}", file=out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     print("Loading 2025-26 data from cache...")
-    po_2026        = fetch_game_logs(SUBJECT_YEAR, PLAYOFFS)
-    reg_2026       = fetch_game_logs(SUBJECT_YEAR, REGULAR_SEASON)
-    standings_2026 = fetch_standings(SUBJECT_YEAR)
+    po_2026          = fetch_game_logs(SUBJECT_YEAR, PLAYOFFS)
+    reg_2026         = fetch_game_logs(SUBJECT_YEAR, REGULAR_SEASON)
+    standings_2026   = fetch_standings(SUBJECT_YEAR)
+    player_po_2026   = fetch_player_game_logs(SUBJECT_YEAR, PLAYOFFS)
 
     print("Building champion stats table (all seasons)...")
     champions = build_champions_table(START_YEAR, END_YEAR)
@@ -358,6 +419,7 @@ def main() -> None:
     run_adjusted_dominance(po_2026, reg_2026, champions, out)
     run_deflators(po_2026, champions, out)
     run_verdict(po_2026, reg_2026, champions, gap_table, out)
+    run_opponent_health(player_po_2026, po_2026, standings_2026, out)
 
     body = out.getvalue()
 

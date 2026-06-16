@@ -129,3 +129,28 @@ def test_plot_opponent_srs_by_round(tmp_path, monkeypatch):
         _mini_po_2026(), _mini_reg_srs(), _mini_standings()
     )
     assert os.path.isfile(path)
+
+
+def _mini_health_df() -> pd.DataFrame:
+    return pd.DataFrame([
+        {"team_id": OPP1_ID, "team_name": "Boston Celtics",
+         "games_in_series": 4, "total_core": 8,
+         "avg_core_per_game": 8.0, "missing_core_avg": 0.0,
+         "health_score": 1.0, "first_game_date": "2026-04-20"},
+        {"team_id": OPP2_ID, "team_name": "Golden State Warriors",
+         "games_in_series": 5, "total_core": 8,
+         "avg_core_per_game": 6.5, "missing_core_avg": 1.5,
+         "health_score": 0.81, "first_game_date": "2026-05-01"},
+    ])
+
+
+def test_plot_opponent_health(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_opponent_health(_mini_health_df())
+    assert os.path.isfile(path)
+
+
+def test_plot_opponent_health_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    result = plots.plot_opponent_health(pd.DataFrame())
+    assert result == ""
