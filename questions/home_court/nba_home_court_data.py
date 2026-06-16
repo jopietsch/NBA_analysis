@@ -21,6 +21,8 @@ import numpy as np
 from nba_api.stats.endpoints import leaguegamefinder
 from nba_api.stats.library.parameters import SeasonType
 
+import nbakit.data as _nbakit
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -51,30 +53,22 @@ SKIP_PLAYOFF_YEARS = {2020}
 # Seasons with limited/no fans (COVID) — highlighted in the chart
 COVID_SEASONS = {"19–20", "20–21"}
 
-# Raw game logs are cached here as CSVs to avoid re-fetching from NBA.com
-CACHE_DIR = "cache"
+# Shared monorepo cache — override with NBA_CACHE_DIR env var
+CACHE_DIR = _nbakit.default_cache_dir()
 
-
-def season_str(end_year: int) -> str:
-    """2024 -> '2023-24'  (NBA API format)"""
-    return f"{end_year - 1}-{str(end_year)[-2:]}"
-
-
-def short_label(end_year: int) -> str:
-    """2024 -> '23–24'  (chart axis label)"""
-    return f"{str(end_year - 1)[-2:]}–{str(end_year)[-2:]}"
+# Season helpers — delegated to nbakit so improvements propagate to all questions
+season_str = _nbakit.season_str
+short_label = _nbakit.short_label
 
 
 def season_range_label() -> str:
-    """e.g. '1983–84 through 2025–26' — derived from START_YEAR/END_YEAR"""
-    start = f"{START_YEAR - 1}–{str(START_YEAR)[-2:]}"
-    end   = f"{END_YEAR - 1}–{str(END_YEAR)[-2:]}"
-    return f"{start} through {end}"
+    """'1983–84 through 2025–26' — derived from START_YEAR/END_YEAR."""
+    return _nbakit.season_range_label(START_YEAR, END_YEAR)
 
 
 def cache_path(end_year: int, season_type: str) -> str:
-    season = season_str(end_year)
-    return os.path.join(CACHE_DIR, f"{season}_{season_type.replace(' ', '_')}.csv")
+    """Path to cached CSV; uses CACHE_DIR (patchable in tests via monkeypatch)."""
+    return _nbakit.cache_path(end_year, season_type, cache_dir=CACHE_DIR)
 
 
 def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:

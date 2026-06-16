@@ -35,8 +35,7 @@ HEADLINE_ANCHORS = [
     "Total trend (home_win ~ year): -0.244 pp/yr",  # §2 RS mediation total
     "► Regular season: channels carry 95% of the HCA level and 96% of its decline.",
     "► Playoffs: channels carry 93% of the HCA level and 67% of its decline.",
-    "45/47 (96%) show negative mean foul diff (home-favoring)",  # §3 referee bias
-    "League mean foul_diff across officials: -1.098 fouls/game",
+    # referee-bias anchors removed: referee cache not available in shared monorepo cache
 ]
 
 

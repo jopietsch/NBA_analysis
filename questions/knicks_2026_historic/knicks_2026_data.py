@@ -2,90 +2,267 @@
 knicks_2026_data.py — data pipeline for the "Did the 2026 Knicks have a
 historic playoff run?" analysis.
 
-Fetches game logs from NBA.com via nba_api, caches them as CSVs, and provides
-fetch_* and compute_* functions consumed by knicks_2026_plots and
-knicks_2026_analysis. No matplotlib dependency.
+All data fetching delegates to nbakit.data (shared monorepo cache at
+nba_analysis/cache/).  This module adds the Knicks-specific config and all
+compute_* functions consumed by knicks_2026_analysis and knicks_2026_plots.
 
-Data sources:
-  - NBA.com via the nba_api package (LeagueGameFinder etc.): every game result.
-    The 2025-26 Knicks playoff run is the subject; historical playoff runs are
-    the comparison set, so we pull league-wide playoff game logs back through
-    the start year.
-
-The specific comparison metrics (what makes a run "historic" — seed vs. result,
-margin, opponent strength, win streaks, etc.) are intentionally not implemented
-yet; see the TBD markers below and CLAUDE.md ("Adding a new analysis"). The
-season/cache plumbing here is the stable foundation those metrics build on.
+No I/O inside compute_* — callers fetch the DataFrames, pass them in, and get
+tidy frames/values back.
 """
 
 import os
-import time
 import pandas as pd
 import numpy as np
 
-from nba_api.stats.endpoints import leaguegamefinder
+import nbakit.data as _nba
+
+# Re-export shared helpers so callers import from one place
+from nbakit.data import (
+    PLAYOFFS,
+    REGULAR_SEASON,
+    season_str,
+    short_label,
+    season_range_label,
+    cache_path,
+    fetch_game_logs,
+    fetch_standings,
+    compute_srs,
+    identify_champion,
+)
+
+# ── Knicks-specific config ────────────────────────────────────────────────────
+KNICKS_TEAM_ID = 1610612752   # New York Knicks franchise id
+SUBJECT_YEAR   = 2026         # season under study (2025-26)
+START_YEAR     = 1984         # first comparison season (1983-84)
+END_YEAR       = 2026         # last season (same as SUBJECT_YEAR but explicit)
+
+# NBA rounds — round numbers encoded in nba_api GAME_ID digits 7-8 are not
+# reliable across eras.  We infer rounds from elimination games instead.
+ROUND_NAMES = ["First Round", "Second Round", "Conference Finals", "Finals"]
 
 
-# ── Config ────────────────────────────────────────────────────────────────────
-KNICKS_TEAM_ID = 1610612752   # New York Knicks (nba_api franchise id)
-SUBJECT_YEAR   = 2026         # the season under study (2025-26)
-START_YEAR     = 1984         # first comparison season (ending year); 1983-84
-SLEEP_SEC      = 1.0          # polite pause between API calls
+# ── Per-season playoff summary ───────────────────────────────────────────────
 
-# nba_api season_type_nullable= values (literals — the SeasonType parameter
-# class confusingly omits 'Playoffs', so we keep the strings explicit).
-PLAYOFFS       = "Playoffs"
-REGULAR_SEASON = "Regular Season"
-
-# Raw game logs are cached here as CSVs to avoid re-fetching from NBA.com.
-CACHE_DIR = "cache"
+def compute_playoff_record(playoff_logs: pd.DataFrame,
+                           team_id: int) -> tuple[int, int, float]:
+    """Return (wins, losses, win_rate) for a team's playoff run."""
+    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id]
+    wins   = (df["WL"] == "W").sum()
+    losses = (df["WL"] == "L").sum()
+    rate   = wins / (wins + losses) if (wins + losses) > 0 else 0.0
+    return int(wins), int(losses), float(rate)
 
 
-def season_str(end_year: int) -> str:
-    """2026 -> '2025-26'  (nba_api season format)."""
-    return f"{end_year - 1}-{str(end_year)[-2:]}"
+def compute_playoff_margin(playoff_logs: pd.DataFrame,
+                           team_id: int) -> float:
+    """Return average point differential (PLUS_MINUS) for a team's playoff run."""
+    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id]
+    return float(df["PLUS_MINUS"].mean())
 
 
-def short_label(end_year: int) -> str:
-    """2026 -> '25–26'  (chart axis label)."""
-    return f"{str(end_year - 1)[-2:]}–{str(end_year)[-2:]}"
+def compute_clutch_rate(playoff_logs: pd.DataFrame,
+                        team_id: int,
+                        threshold: int = 5) -> float:
+    """Fraction of games decided by <= threshold points (clutch games)."""
+    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id].copy()
+    df["ABS_MARGIN"] = df["PLUS_MINUS"].abs()
+    n = len(df)
+    return float((df["ABS_MARGIN"] <= threshold).sum() / n) if n > 0 else 0.0
 
 
-def cache_path(end_year: int, season_type: str) -> str:
-    season = season_str(end_year)
-    return os.path.join(CACHE_DIR, f"{season}_{season_type.replace(' ', '_')}.csv")
+def compute_home_away_split(playoff_logs: pd.DataFrame,
+                            team_id: int) -> tuple[float, float]:
+    """Return (home_win_rate, away_win_rate) for a team's playoff games."""
+    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id].copy()
+    home = df[df["MATCHUP"].str.contains(r" vs\.", na=False)]
+    away = df[df["MATCHUP"].str.contains(r" @ ", na=False)]
+
+    def _rate(sub: pd.DataFrame) -> float:
+        if len(sub) == 0:
+            return float("nan")
+        return float((sub["WL"] == "W").sum() / len(sub))
+
+    return _rate(home), _rate(away)
 
 
-def fetch_games(end_year: int, season_type: str = PLAYOFFS) -> pd.DataFrame:
-    """Pull every game log for one season/type (one row per team per game).
+# ── Opponent-quality metrics ─────────────────────────────────────────────────
 
-    nba_api's LeagueGameFinder returns both teams' rows for each game. The
-    MATCHUP field is 'NYK vs. BOS' for a home game and 'NYK @ BOS' for an away
-    game; WL is 'W' or 'L'. Results are cached as CSVs under CACHE_DIR so repeat
-    runs don't re-fetch from NBA.com.
+def compute_opponent_srs(playoff_logs: pd.DataFrame,
+                         reg_srs: pd.Series,
+                         team_id: int) -> pd.Series:
+    """Return SRS of each opponent faced by team_id in the playoffs.
 
-    LeagueGameFinder quirk: it uses ``season_nullable=`` and
-    ``season_type_nullable=`` (not the bare ``season=`` other endpoints use).
+    reg_srs is indexed by TEAM_ID (from compute_srs on the regular-season logs).
+    Returns a Series indexed by opponent TEAM_ID, values = their regular-season SRS.
+    Each opponent appears once (their SRS, not per-game).
     """
-    path = cache_path(end_year, season_type)
-    if os.path.exists(path):
-        return pd.read_csv(path)
-
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    result = leaguegamefinder.LeagueGameFinder(
-        season_nullable=season_str(end_year),
-        season_type_nullable=season_type,
-        league_id_nullable="00",   # NBA only (exclude G-League / WNBA)
+    df = playoff_logs[playoff_logs["TEAM_ID"] == team_id].copy()
+    # Opponent ids: find the other team in each game
+    game_teams = (
+        playoff_logs.groupby("GAME_ID")["TEAM_ID"]
+        .apply(list)
+        .reset_index()
     )
-    df = result.get_data_frames()[0]
-    df.to_csv(path, index=False)
-    time.sleep(SLEEP_SEC)
-    return df
+    opp_ids: set[int] = set()
+    for gid, grp in playoff_logs[playoff_logs["TEAM_ID"] == team_id].groupby("GAME_ID"):
+        game_row = game_teams[game_teams["GAME_ID"] == gid]["TEAM_ID"].values[0]
+        for tid in game_row:
+            if tid != team_id:
+                opp_ids.add(int(tid))
+
+    result = {}
+    for oid in opp_ids:
+        result[oid] = float(reg_srs.get(oid, float("nan")))
+    return pd.Series(result, name="OPP_SRS")
 
 
-# ── Computation ─────────────────────────────────────────────────────────────
-# TBD — question-specific metrics. Add compute_* functions here once we settle
-# on how to measure "historic" (see CLAUDE.md "Adding a new analysis"). Each
-# should take fetched DataFrames and return tidy frames/values; no I/O, no
-# plotting. The 2026 Knicks run is the subject; every metric needs the matching
-# value computed across the historical comparison set so it can be ranked.
+def compute_avg_opponent_srs(playoff_logs: pd.DataFrame,
+                             reg_srs: pd.Series,
+                             team_id: int) -> float:
+    """Average regular-season SRS of all unique opponents faced in the playoffs."""
+    opp = compute_opponent_srs(playoff_logs, reg_srs, team_id)
+    return float(opp.mean()) if len(opp) > 0 else float("nan")
+
+
+def compute_adjusted_margin(raw_margin: float, avg_opp_srs: float) -> float:
+    """Opponent-adjusted margin: raw_margin - avg_opp_SRS.
+
+    Positive = performed better than a 0-SRS schedule would predict.
+    """
+    return raw_margin - avg_opp_srs
+
+
+# ── Conference strength ───────────────────────────────────────────────────────
+
+def compute_conference_avg_srs(reg_srs: pd.Series,
+                               standings: pd.DataFrame) -> dict[str, float]:
+    """Average SRS by conference for one season.
+
+    standings must have TeamID and Conference columns (from fetch_standings).
+    Returns {'East': float, 'West': float}.
+    """
+    conf_map = standings.set_index("TeamID")["Conference"].to_dict()
+    east, west = [], []
+    for tid, srs_val in reg_srs.items():
+        conf = conf_map.get(int(tid))
+        if conf == "East":
+            east.append(srs_val)
+        elif conf == "West":
+            west.append(srs_val)
+    return {
+        "East": float(np.mean(east)) if east else float("nan"),
+        "West": float(np.mean(west)) if west else float("nan"),
+    }
+
+
+def compute_srs_gap(conf_avgs: dict[str, float]) -> float:
+    """West avg SRS - East avg SRS (positive = West stronger)."""
+    return conf_avgs["West"] - conf_avgs["East"]
+
+
+def compute_inter_conference_h2h(reg_logs: pd.DataFrame,
+                                 standings: pd.DataFrame) -> float:
+    """East inter-conference win rate (East wins / all E-vs-W games).
+
+    Identifies cross-conference games from standings data.
+    """
+    conf_map = standings.set_index("TeamID")["Conference"].to_dict()
+    reg_logs = reg_logs.copy()
+    reg_logs["TEAM_ID"] = reg_logs["TEAM_ID"].astype(int)
+    reg_logs["CONF"] = reg_logs["TEAM_ID"].map(conf_map)
+
+    # Each game is 2 rows; keep only one row per team and look at cross-conf games
+    by_game = reg_logs.groupby("GAME_ID")
+    east_wins = 0
+    total = 0
+    for _, grp in by_game:
+        if len(grp) != 2:
+            continue
+        row_a, row_b = grp.iloc[0], grp.iloc[1]
+        if {row_a["CONF"], row_b["CONF"]} != {"East", "West"}:
+            continue
+        total += 1
+        winner = row_a if row_a["WL"] == "W" else row_b
+        if winner["CONF"] == "East":
+            east_wins += 1
+    return float(east_wins / total) if total > 0 else float("nan")
+
+
+# ── Season-range aggregation ──────────────────────────────────────────────────
+
+def build_champions_table(start_year: int = START_YEAR,
+                          end_year: int = END_YEAR,
+                          cache_dir: str | None = None) -> pd.DataFrame:
+    """Build a table of champion stats for every season in [start_year, end_year].
+
+    Columns: year, champion_id, wins, losses, win_rate, avg_margin,
+             avg_opp_srs, adj_margin, clutch_rate, home_wr, away_wr.
+
+    Loads from shared cache; does NOT fetch from API — call fetch_game_logs
+    first for all seasons you care about.
+    """
+    rows = []
+    for year in range(start_year, end_year + 1):
+        po_path = cache_path(year, PLAYOFFS, cache_dir)
+        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
+        if not os.path.exists(po_path) or not os.path.exists(rs_path):
+            continue
+        po = pd.read_csv(po_path)
+        rs = pd.read_csv(rs_path)
+
+        champ = identify_champion(po)
+        srs = compute_srs(rs)
+        wins, losses, wr = compute_playoff_record(po, champ)
+        margin = compute_playoff_margin(po, champ)
+        avg_opp = compute_avg_opponent_srs(po, srs, champ)
+        adj = compute_adjusted_margin(margin, avg_opp)
+        clutch = compute_clutch_rate(po, champ)
+        h_wr, a_wr = compute_home_away_split(po, champ)
+
+        rows.append({
+            "year":        year,
+            "champion_id": champ,
+            "wins":        wins,
+            "losses":      losses,
+            "win_rate":    wr,
+            "avg_margin":  margin,
+            "avg_opp_srs": avg_opp,
+            "adj_margin":  adj,
+            "clutch_rate": clutch,
+            "home_wr":     h_wr,
+            "away_wr":     a_wr,
+        })
+    return pd.DataFrame(rows)
+
+
+def build_conference_gap_table(start_year: int = START_YEAR,
+                               end_year: int = END_YEAR,
+                               cache_dir: str | None = None) -> pd.DataFrame:
+    """SRS gap (West - East) for every season in [start_year, end_year].
+
+    Columns: year, east_srs, west_srs, srs_gap, east_h2h_wr.
+    """
+    rows = []
+    for year in range(start_year, end_year + 1):
+        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
+        st_path = os.path.join(
+            cache_dir or _nba.default_cache_dir(),
+            f"{season_str(year)}_standings.csv",
+        )
+        if not os.path.exists(rs_path) or not os.path.exists(st_path):
+            continue
+        rs = pd.read_csv(rs_path)
+        standings = pd.read_csv(st_path)
+        srs = compute_srs(rs)
+        conf_avgs = compute_conference_avg_srs(srs, standings)
+        gap = compute_srs_gap(conf_avgs)
+        h2h = compute_inter_conference_h2h(rs, standings)
+
+        rows.append({
+            "year":      year,
+            "east_srs":  conf_avgs["East"],
+            "west_srs":  conf_avgs["West"],
+            "srs_gap":   gap,
+            "east_h2h_wr": h2h,
+        })
+    return pd.DataFrame(rows)

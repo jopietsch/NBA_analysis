@@ -440,60 +440,7 @@ All data from cache/ — same source as the plots above.
    tz_diff × post2014                -0.002    -0.0     0.917     
    ──────────────────────────────  ────────  ──────  ────────  ───
    post2014 (level shift)            -0.196    -4.7    <0.001  ***
-
-─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
-   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
-   Officials with <50 playoff games excluded.
-   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
-
-   47 officials with ≥50 playoff games
-   45/47 (96%) show negative mean foul diff (home-favoring)
-   Individually significant (p<0.05, real t-test):    29/47
-   Survive Benjamini-Hochberg correction (FDR 5%):    29/47
-   League mean foul_diff across officials: -1.098 fouls/game
-
-   Variance decomposition (career level, method of moments):
-   Observed SD across officials: 0.645 fouls/game
-   Mean within-official SE:      0.500 fouls/game
-   Estimated true between-SD:    0.407 fouls/game
-   ► Sampling noise explains 60% of observed spread.
-
-   Top 10 most home-favoring (by shrunken mean foul_diff):
-   Official                     N games  Raw diff  Shrunken         p      BH-p
-   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Ron Garretson                    143    -2.385    -1.734    <0.001    <0.001
-   Joe Crawford                     160    -2.288    -1.717    <0.001    <0.001
-   Eddie Rush                       100    -2.530    -1.664    <0.001    <0.001
-   Rodney Mott                       69    -2.232    -1.499    <0.001     0.001
-   James Capers                     199    -1.764    -1.478    <0.001    <0.001
-   Bob Delaney                       80    -2.175    -1.412    <0.001     0.004
-   Eric Lewis                        79    -1.759    -1.368    <0.001     0.003
-   Sean Wright                      108    -1.639    -1.344    <0.001     0.002
-   David Jones                       51    -1.843    -1.274     0.015     0.026
-   Bill Spooner                     111    -1.495    -1.258     0.003     0.009
-
-   Bottom 10 least home-favoring (by shrunken mean foul_diff):
-   Official                     N games  Raw diff  Shrunken         p      BH-p
-   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Tyler Ford                        61    -0.344    -0.889     0.602     0.629
-   Jason Phillips                    96    -0.615    -0.865     0.148     0.205
-   Kevin Scott                       57    -0.351    -0.836     0.529     0.579
-   Courtney Kirkland                 85    -0.353    -0.817     0.501     0.575
-   Mark Lindsay                      54    -0.111    -0.799     0.858     0.858
-   David Guthrie                    113    -0.398    -0.775     0.367     0.442
-   Tony Brothers                    213    -0.559    -0.773     0.092     0.143
-   Josh Tiven                       103    -0.252    -0.731     0.588     0.629
-   Ben Taylor                        53    +0.151    -0.715     0.806     0.824
-   Joe Forte                         51    +0.451    -0.713     0.527     0.579
-
-   Era variance decomposition — does official spread compress over time?
-   Era            N off     Mean    Raw SD   True SD   Noise %
-   ──────────── ─────── ──────── ───────── ───────── ─────────
-   1995–01           14   -2.239     2.076     0.000      100%
-   2002–04           27   -0.781     1.813     0.722       84%
-   2005–17           43   -1.232     0.975     0.477       76%
-   2018–22           33   -0.737     1.056     0.469       80%
-   2023–26           25   -0.753     0.702     0.000      100%
+   No cached referee data — run the analysis first to fetch it.
 
 
 ─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
@@ -512,17 +459,17 @@ All data from cache/ — same source as the plots above.
    ────────────────────────────────────────────────────────────────────────────────────
    Trend/yr             -0.041***         +0.025***         +0.000            +0.015 **
 
-   Playoffs  (N = 29 seasons)
+   Playoffs  (N = 23 seasons)
 
    Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
    ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.72             -1.70             +0.44             -0.46
-   2002–04                  +2.08             -1.82             +0.10             -0.36
-   2005–17                  +1.78             -1.50             +0.10             -0.39
+   1995–01                  +1.71             -1.67             +0.46             -0.50
+   2002–04                  +1.98             -2.32             +0.35             -0.01
+   2005–17                  +1.79             -1.47             +0.06             -0.38
    2018–22                  +0.72             -1.62             +0.48             +0.42
    2023–26                  +1.35             -1.11             +0.10             -0.34
    ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.034            +0.016            -0.004            +0.022   
+   Trend/yr             -0.032            +0.019            -0.008            +0.021   
 
 
 ─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
