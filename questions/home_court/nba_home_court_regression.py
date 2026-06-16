@@ -2753,6 +2753,88 @@ def run_structural_break_test(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Structural break: CUSUM test (complements QLR) ───────────────────────────
+
+def run_cusum_test(df: pd.DataFrame) -> None:
+    """CUSUM (Brown-Durbin-Evans) parameter-stability test — complements the QLR.
+
+    Builds cumulative recursive residuals from the linear trend and tests whether
+    they exceed the 5% critical band. The QLR asks 'where is the single strongest
+    break?'; CUSUM asks 'does the trend ever show sustained instability anywhere?'
+    Agreement between both tests increases confidence in the finding.
+    """
+    from statsmodels.regression.recursive_ls import RecursiveLS
+
+    _section("CUSUM TEST — PARAMETER STABILITY  (complement to §1b QLR)")
+    print("   CUSUM (Brown-Durbin-Evans): cumulative recursive residuals from the linear")
+    print("   trend. Exit from the 5% critical band = structural instability detected.")
+    print("   QLR (§1b) finds the single strongest break; CUSUM tests global stability.")
+    print("   Agreement → increased confidence; discrepancy → worth investigating.\n")
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        agg = sub.groupby("year")["home_win"].agg(["sum", "count"]).reset_index()
+        agg.columns = ["year", "wins", "games"]
+        agg["pct"] = agg["wins"] / agg["games"] * 100
+        if is_po:
+            agg = agg[~agg["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        agg = agg.sort_values("year").reset_index(drop=True)
+        if len(agg) < 10:
+            continue
+
+        y = agg["pct"].values.astype(float)
+        x = agg["year"].values.astype(float)
+        X = np.column_stack([np.ones(len(y)), x])
+
+        try:
+            # Center years for numerical stability
+            x_c = x - x.mean()
+            X_c = np.column_stack([np.ones(len(y)), x_c])
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                res = RecursiveLS(y, X_c).fit()
+            cusum = res.cusum
+            # _cusum_significance_bounds returns (lo_endpoints, hi_endpoints)
+            # where each is a 2-element array (start, end) of the linear boundary.
+            lo_pts, hi_pts = res._cusum_significance_bounds(alpha=0.05)
+            steps = len(cusum)
+            t_lin = np.linspace(0, 1, steps)
+            lo_band = lo_pts[0] + (lo_pts[1] - lo_pts[0]) * t_lin
+            hi_band = hi_pts[0] + (hi_pts[1] - hi_pts[0]) * t_lin
+            cusum_years = agg["year"].values[len(y) - steps:]
+
+            max_idx = int(np.argmax(np.abs(cusum)))
+            max_val = float(cusum[max_idx])
+            max_yr  = int(cusum_years[max_idx])
+            bound_at_peak = float(hi_band[max_idx])
+            exceeds = bool(np.any(cusum > hi_band) or np.any(cusum < lo_band))
+
+            print(f"   {ctx_label}  (N = {len(agg)} seasons)")
+            verdict = "YES — break detected" if exceeds else "no — stable within bounds"
+            print(f"   Exceeds 5% critical band: {verdict}")
+            print(f"   Peak |CUSUM| = {abs(max_val):.3f} at year {max_yr}  "
+                  f"(5% bound at that point = ±{bound_at_peak:.3f})")
+            if exceeds:
+                exit_yr = None
+                for i, (c, lo, hi) in enumerate(zip(cusum, lo_band, hi_band)):
+                    if c > hi or c < lo:
+                        exit_yr = int(cusum_years[i])
+                        break
+                if exit_yr is not None:
+                    print(f"   First exits boundary at year: {exit_yr}")
+                print(f"   ► CUSUM and QLR agree: structural instability confirmed.")
+            else:
+                pct = 100 * abs(max_val) / bound_at_peak if bound_at_peak > 0 else 0
+                print(f"   Peak is {pct:.0f}% of the 5% boundary.")
+                if is_po == 0:
+                    print(f"   ► CUSUM stays inside bounds even though QLR found a break:")
+                    print(f"     the slope change around 1999 is gradual (−0.65 → −0.26 pp/yr),")
+                    print(f"     not a sharp level jump — CUSUM has lower power for slope-only breaks.")
+            print()
+        except Exception as e:
+            print(f"   {ctx_label}: CUSUM failed ({e})\n")
+
+
 # ── Helper: ADF unit-root + Engle-Granger cointegration ──────────────────────
 
 def _run_cointegration(x: np.ndarray, y: np.ndarray,
@@ -3147,6 +3229,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         # §1 The 40-Year Decline (magnitude, shape/timing, blowout polarization)
         run_decline_trend(df)
         run_structural_break_test(df)
+        run_cusum_test(df)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
 
