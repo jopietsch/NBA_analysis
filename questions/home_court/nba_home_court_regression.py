@@ -3553,6 +3553,13 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         run_differential_analysis(df)
         run_mediation_analysis(df)
         run_rebounding_decomposition(df)
+        track_seasons, track_stats = nba.compute_tracking_rebound_stats(
+            nba.TRACKING_START_YEAR, nba.END_YEAR,
+        )
+        if any(np.isfinite(v) for lst in track_stats.values() for v in lst):
+            run_tracking_rebound_analysis(track_seasons, track_stats)
+        else:
+            print("   No cached player-tracking data — run the analysis first to fetch it.\n")
         run_rest_bucket_analysis(df)
         run_factor_summary(df)
 

@@ -22,6 +22,7 @@ from nba_home_court_data import (
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats,
+    compute_tracking_rebound_stats, TRACKING_START_YEAR,
     fetch_all_referee_data, compute_referee_bias_stats,
     compute_attendance_season_stats, compute_attendance_covid_doseresponse,
 )
@@ -31,7 +32,7 @@ from nba_home_court_plots import (
     plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
-    plot_attendance,
+    plot_attendance, plot_tracking_rebounding,
 )
 
 
@@ -64,6 +65,13 @@ def main() -> None:
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
     plot_rebound_decomposition(reg_reb_seasons, reg_reb_stats, po_reb_seasons, po_reb_stats)
+
+    print("\nFetching player-tracking rebounding data (cached under cache/)...")
+    track_seasons, track_stats = compute_tracking_rebound_stats(TRACKING_START_YEAR, END_YEAR)
+    if any(np.isfinite(v) for lst in track_stats.values() for v in lst):
+        plot_tracking_rebounding(track_seasons, track_stats)
+    else:
+        print("  No tracking data cached yet — will fetch during next run.")
 
     reg_margin_seasons, reg_margin_stats = compute_margin_stats(START_YEAR, END_YEAR, SeasonType.regular)
     po_margin_seasons, po_margin_stats = compute_margin_stats(

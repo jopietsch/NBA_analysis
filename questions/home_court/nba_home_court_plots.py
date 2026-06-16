@@ -995,8 +995,31 @@ def plot_team_hca_analysis(
         var = 1e4 * (ph * (1.0 - ph) / s["n_home"] + pr * (1.0 - pr) / s["n_road"])
         return 1.96 * float(np.sqrt(var))
 
-    sorted_teams = sorted(reg_stats, key=lambda t: reg_stats[t]["hca"], reverse=True)
-    hcas   = [reg_stats[t]["hca"] for t in sorted_teams]
+    def _shrunken_hca(stats: dict) -> dict:
+        """Empirical-Bayes shrinkage of each franchise's HCA toward the league
+        mean — mirrors the regression module's _shrink_hca so the chart ranks
+        franchises the way RESULTS.md does (Denver/Utah on top), instead of
+        letting small-sample defunct franchises top the raw list."""
+        teams = list(stats)
+        hcas = np.array([stats[t]["hca"] for t in teams], dtype=float)
+        league_mean = float(hcas.mean())
+        samp_vars = np.array([
+            1e4 * (
+                (stats[t]["home_pct"] / 100.0) * (1.0 - stats[t]["home_pct"] / 100.0) / stats[t]["n_home"]
+                + (stats[t]["road_pct"] / 100.0) * (1.0 - stats[t]["road_pct"] / 100.0) / stats[t]["n_road"]
+            )
+            for t in teams
+        ])
+        true_var = max(0.0, float(np.var(hcas, ddof=1)) - float(samp_vars.mean()))
+        return {
+            t: (true_var / (true_var + samp_vars[i]) if true_var > 0 else 0.0) * stats[t]["hca"]
+               + (1.0 - (true_var / (true_var + samp_vars[i]) if true_var > 0 else 0.0)) * league_mean
+            for i, t in enumerate(teams)
+        }
+
+    reg_shrunk   = _shrunken_hca(reg_stats)
+    sorted_teams = sorted(reg_stats, key=lambda t: reg_shrunk[t], reverse=True)
+    hcas   = [reg_shrunk[t] for t in sorted_teams]
     errs   = [_ci_hw(reg_stats[t]) for t in sorted_teams]
     colors = [GREEN if h >= 0 else RED for h in hcas]
 
@@ -1024,7 +1047,7 @@ def plot_team_hca_analysis(
     ax1.invert_yaxis()
     ax1.xaxis.set_major_formatter(mticker.FormatStrFormatter("%+.0f pp"))
     ax1.set_xlabel("Home court advantage (home win% − road win%)", fontsize=10)
-    ax1.set_title("Regular-season HCA by franchise (all-time)",
+    ax1.set_title("Regular-season HCA by franchise (sample-size adjusted)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
     for bar, h in zip(bars, hcas):
         xoff = 0.25 if h >= 0 else -0.25
@@ -1053,7 +1076,7 @@ def plot_team_hca_analysis(
                     edgecolors="white", linewidths=0.8)
 
         # label top/bottom 3 by regular-season HCA + any obvious outliers
-        sorted_by_reg = sorted(common, key=lambda t: reg_stats[t]["hca"], reverse=True)
+        sorted_by_reg = sorted(common, key=lambda t: reg_shrunk[t], reverse=True)
         to_label = set(sorted_by_reg[:3]) | set(sorted_by_reg[-2:])
         for t in common:
             if t not in to_label:
