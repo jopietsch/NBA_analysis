@@ -2351,6 +2351,77 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
         "Home win %",
     )
 
+    # ── Test 6: Partial correlation — detrend both series, check residual r ──────
+    from numpy.linalg import lstsq as _lstsq
+    print("   ─ Partial correlation: detrend both series, then correlate residuals ─")
+    print("   Remove the year trend from both 3PA rate and home win %;")
+    print("   if the residual r collapses, the raw r = -0.90 is a trend artifact.\n")
+    yrs = by_year["year"].values.astype(float)
+    x_c = yrs - yrs.mean()
+    for _raw_col in ["tpa_rate", "home_pct"]:
+        y_raw = by_year[_raw_col].values.astype(float)
+        b = _lstsq(np.column_stack([np.ones(len(yrs)), x_c]), y_raw, rcond=None)[0]
+        by_year[f"{_raw_col}_resid"] = y_raw - (b[0] + b[1] * x_c)
+
+    r_raw   = float(np.corrcoef(by_year["tpa_rate"], by_year["home_pct"])[0, 1])
+    r_resid = float(np.corrcoef(by_year["tpa_rate_resid"], by_year["home_pct_resid"])[0, 1])
+    n_r     = len(by_year)
+    t_stat  = r_resid * np.sqrt((n_r - 2) / (1 - r_resid**2)) if abs(r_resid) < 1 else np.inf
+    from scipy import stats as _stats
+    p_resid = float(2 * _stats.t.sf(abs(t_stat), df=n_r - 2))
+
+    print(f"   Raw Pearson r (season level):        r = {r_raw:+.3f}")
+    print(f"   Partial r (year-detrended residuals): r = {r_resid:+.3f}  p = {_fmt_p(p_resid)}  {_stars(p_resid)}")
+    shrinkage = (abs(r_raw) - abs(r_resid)) / abs(r_raw) * 100 if r_raw != 0 else 0
+    if abs(r_resid) < 0.20:
+        print(f"   ► Residual r collapsed to ~0 (raw: {r_raw:+.3f} → partial: {r_resid:+.3f}) —")
+        print(f"     the raw correlation is entirely driven by the shared secular trend.\n")
+    elif p_resid >= 0.05:
+        print(f"   ► Residual r non-significant (raw: {r_raw:+.3f} → partial: {r_resid:+.3f},")
+        print(f"     {shrinkage:.0f}% of raw r explained by shared trend). 3PA does not")
+        print(f"     predict HCA within eras after removing the year trend.\n")
+    elif shrinkage >= 30:
+        print(f"   ► Residual r shrinks but remains significant (raw: {r_raw:+.3f} → partial:")
+        print(f"     {r_resid:+.3f}; {shrinkage:.0f}% of raw r explained by shared trend).")
+        print(f"     The 3PA-HCA relationship has a genuine component, but the shared")
+        print(f"     40-year secular trend accounts for a large fraction of the raw r.\n")
+    else:
+        print(f"   ► Residual r remains similar (raw: {r_raw:+.3f} → partial: {r_resid:+.3f}) —")
+        print(f"     the 3PA-HCA link is robust and not mainly trend-driven.\n")
+
+    # ── Test 7: Rolling correlation — stability check ─────────────────────────────
+    print("   ─ Rolling 10-season Pearson r: stability of the 3PA-HCA relationship ─")
+    print("   Stable r → genuine relationship; large swings or sign flips → spurious.\n")
+    window = 10
+    rolling_r: list[tuple[int, float]] = []
+    byyear = by_year.sort_values("year").reset_index(drop=True)
+    for i in range(window - 1, len(byyear)):
+        sub = byyear.iloc[i - window + 1 : i + 1]
+        if len(sub) == window:
+            r_w = float(np.corrcoef(sub["tpa_rate"], sub["home_pct"])[0, 1])
+            rolling_r.append((int(sub["year"].iloc[-1]), r_w))
+
+    if rolling_r:
+        rs = [r for _, r in rolling_r]
+        r_min = min(rs); r_max = max(rs)
+        sign_flips = sum(
+            1 for i in range(1, len(rs)) if rs[i] * rs[i - 1] < 0
+        )
+        peak_yr = rolling_r[rs.index(r_min)][0]  # year of most negative r
+        print(f"   {window}-season rolling r range: [{r_min:+.3f}, {r_max:+.3f}]  "
+              f"sign flips: {sign_flips}")
+        print(f"   Most negative r = {r_min:+.3f} centered on season ending {peak_yr}")
+        if sign_flips > 0:
+            print(f"   ► Rolling r changes sign {sign_flips}x — correlation is UNSTABLE.")
+            print(f"     This is the hallmark of a spurious trend-driven relationship.")
+        elif r_max < -0.40 and r_min < -0.40:
+            print(f"   ► Rolling r consistently negative — correlation appears stable;")
+            print(f"     the 3PA-HCA link holds across sub-periods.")
+        else:
+            print(f"   ► Rolling r varies widely ({r_min:+.2f} to {r_max:+.2f}) — moderate")
+            print(f"     instability suggests the relationship is partly trend-driven.")
+    print()
+
 
 def run_pace_analysis(df: pd.DataFrame) -> None:
     """Season-level and game-level relationship between pace and home win %."""
