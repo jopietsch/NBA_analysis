@@ -84,6 +84,34 @@ cloud (R² = 0.74) against the noisy playoff one (R² = 0.20). The era shading a
 the companion era-bar panel do what a single line can't: they expose that the drift
 isn't perfectly smooth, which sets up the discrete-drop question Section 13 tests.
 
+**A note on the per-era sub-regressions.** Two eras have only 3–4 seasons
+(2002–04 has N=3 regular-season seasons; the 2002–04 and 2023–26 playoff groups
+have N=3 and N=4 respectively). With so few data points, the slope estimates are
+nearly unconstrained — a single unusual season can flip the sign. The output flags
+these with a warning; treat the flagged slopes as illustrative rather than reliable.
+
+---
+
+## 1b. Structural Break Test (`run_structural_break_test`)
+
+**The question.** Section 1 shows the overall 40-year decline and Section 13 tests whether rule-change boundaries produced discrete steps. This section asks a different question: *where does the data itself see the strongest break*, with no prior assumption about which year matters?
+
+**The data.** The same season-level home win % series: 43 regular-season seasons and 42 playoff seasons.
+
+**The approach.** The **QLR (Quandt Likelihood-Ratio, or supremum Chow) test** — the standard econometric test for an unknown break point. For each candidate year *t* (the outer 15% trimmed to ensure both sub-samples have at least a handful of seasons), a **Chow F-test** asks: does fitting two separate regression lines (before *t* and after *t*) reduce the residual sum of squares enough to be noteworthy? The F-statistic at each candidate is
+
+> F(t) = [(RSS_full − RSS_before(t) − RSS_after(t)) / k] / [(RSS_before(t) + RSS_after(t)) / (n − 2k)]
+
+where k = 2 (intercept + slope). The **supremum** of F(t) over all candidate years is the QLR test statistic.
+
+Because we take the max over ~33 candidates, the standard F-distribution p-value would overstate significance (we're doing multiple implicit tests). The correct reference is the asymptotic critical values from **Andrews (1993)**, which account for the maximization: 10% → 7.12, 5% → 8.85, 1% → 12.37 (k=2, outer 15% trimmed). The output also reports the *conditional* p-value (treating the break year as if it were known in advance) as a lower-bound reference.
+
+**Why not just use the rule-change years.** Section 13 tests those. This test is the data-driven complement — it finds where the decline most abruptly changed pace, which may or may not align with a rule change. When the two methods converge, confidence increases; when they diverge, there's something to investigate.
+
+**What the results mean.**
+- **Regular season:** The strongest data-implied break falls at **1999 (supremum Chow F = 10.22)**, clearing the 5% Andrews threshold. Before 1999, the regular-season HCA was declining steeply (−0.65 pp/yr); after 1999 the decline slowed markedly (−0.26 pp/yr). The top-5 candidates all cluster in 1992–2003, bracketing the anti-hand-checking era (1995–01). The data-implied break is near but not identical to the rule-change boundary — 1999 falls at the *end* of the aggressive-enforcement window, not its start.
+- **Playoffs:** The supremum is only 3.23 (at 2006), well below even the 10% threshold. The playoff decline shows no single data-implied break — consistent with Section 13's finding that playoff HCA is a smooth drift.
+
 ---
 
 ## 2. Win Margin Trends (`run_margin_analysis`)
@@ -315,7 +343,12 @@ offensive glass.
   edge and the league offensive-rebound rate is **r = +0.82 (p < 0.001, N = 43)**;
   the league rate fell 33% → 26% over the same span. As teams abandoned offensive
   rebounding for transition defense, the effort-driven boards where a home edge
-  could form disappeared.
+  could form disappeared. However, the **cointegration check** shows both series
+  are I(1) (nonstationary) but **not cointegrated** — the r = +0.82 is likely
+  spurious correlation from parallel trends rather than a genuine long-run
+  relationship. The section-level 3PA-control from Section 5's mediation
+  (rebounding survives with only ~8% absorbed) is the stronger evidence that the
+  rebounding fade is a real, independent trend.
 - The playoffs show the same shape (share edge +2.74 → +0.70 pp, trend −0.046
   pp/yr, p < 0.01), on a smaller sample.
 
@@ -470,6 +503,23 @@ with the added seasons, though it touches only two teams.)
 
 ---
 
+## 9b. Team Quality Fixed Effects Robustness (`run_team_quality_robustness`)
+
+**The question.** The sequential decomposition (Section 8) identifies how much the era structure explains, but it does not control for *which specific franchises* happen to be home or away. Could the era coefficients be confounded by systematic changes in home-team composition — for example, if the 1984–94 era had the league's dominant teams disproportionately hosting games, inflating the measured HCA?
+
+**The approach.** Two logistic models, both with cluster-robust SEs on season:
+
+1. **Baseline:** `home_win ~ era + rest_diff + altitude_home + tz_diff + covid` — the Section 8 full model.
+2. **With team fixed effects:** the baseline plus `C(TEAM_NAME_home) + C(TEAM_NAME_away)` — one binary indicator per franchise in each role. With 30 current and historical franchises, this adds ~58 dummies to the logistic.
+
+The comparison focuses on the era dummy coefficients. If they shift substantially, the era structure was absorbing roster/venue composition effects rather than a genuine change in home-court dynamics.
+
+**Why team FE instead of quality scores.** Pre-game quality scores require per-team season win% computed separately per game (to avoid look-ahead), which adds complexity without adding much for a league-wide trend question. Team fixed effects remove any *time-averaged* franchise-level advantage — a cleaner and simpler check of the composition confound.
+
+**What the results mean.** Era coefficients shift by at most **0.5 pp** across all five eras (max |Δ| = 0.5 pp). The team fixed effects explain additional variation (McFadden R² rises from 0.005 to 0.027) — individual franchises do have persistent home-win tendencies — but they are absorbed into the franchise intercepts, not into the era structure. The era decline is **not** an artifact of which teams happen to host games in which decades.
+
+---
+
 ## 10. Referee Crew Home Foul Bias — Playoffs (`run_referee_analysis`)
 
 **The data.** Per-official playoff records built from box-score officials data:
@@ -584,12 +634,36 @@ at p = 0.027 on 3,292 games — directionally identical and now clearly
 significant. This is the strongest mechanistic candidate the data offers for
 the decline.
 
+**Cointegration check.** A **Engle-Granger cointegration test** confirms what
+the within-era approach already suspected: both 3PA rate and home win % are I(1)
+(nonstationary trending series, per ADF unit-root tests), but they are **not
+cointegrated**. The r = −0.90 season-level correlation is therefore spurious —
+two series that trend in opposite directions over 43 years will always correlate,
+whether or not they share a genuine long-run relationship. This makes the
+within-era game-level evidence the only reliable form: the cointegration failure
+reinforces why Section 12's critical test is "does it survive the era control,"
+not "how strong is the raw r."
+
 **Why this chart.** Three panels that walk the trap and its resolution. Panel 1 is a
 dual-axis time series — 3PA rate rising as home win% falls — which *looks* like
 proof but is exactly the shared-trend illusion. Panels 2 and 3 are season scatters
 (regular season, playoffs) with the raw correlation annotated. Showing the seductive
 dual-axis line right next to the scatter is deliberate: it puts the very correlation
 the within-era model then has to defuse in front of the reader, so the payoff lands.
+
+---
+
+## 12b. Granger Causality — Does 3PA Lead HCA? (`_run_granger_3pa`)
+
+**The question.** The within-era test (Section 12) establishes that higher-3PA games tend to have lower home win rates within the same era. But correlation within eras still doesn't settle the direction: does the three-point revolution *cause* the decline, or do both respond to the same underlying forces (analytics culture, officiating philosophy, roster construction) without one driving the other?
+
+**Granger causality** offers a limited time-series test: if 3PA rate in year *t* predicts home win % in year *t+1* better than past HCA values alone do, then 3PA "Granger-causes" HCA — it leads in the time series, at minimum. That is necessary (though not sufficient) for a causal story. If the reverse also holds (HCA predicting future 3PA), causality runs both ways or both are downstream of something else.
+
+**The approach.** A **VAR-based Granger test** (`grangercausalitytests` from statsmodels) on the two-variable system [ΔHCA, Δ3PA], where Δ denotes first differences (used because both series are I(1); Granger tests assume stationarity). The test at lag *L* fits two VARs — one with HCA's own lags only, one adding L lags of 3PA — and compares the residual sums of squares with an F-test. Both directions are tested; with N = 42 first-differenced observations, max 2 lags is used to preserve degrees of freedom.
+
+**What the results mean.** No Granger causality in either direction, at either lag (all F p-values > 0.2). Neither does 3PA rate in year *t* predict ΔHCA in year *t+1*, nor does HCA in year *t* predict Δ3PA in year *t+1*. The two series trend together but neither temporally leads the other.
+
+This is informative even though it's a null result: it means the 3PA–HCA association is *contemporaneous* rather than leading/lagging. The within-era game-level link (Section 12) is the evidence that it's a real mechanical effect, not just a shared trend; the Granger null suggests that the annual adoption of threes and the annual change in HCA move together in the same season rather than one predicting the other a year ahead. Both may be downstream of the same broader strategic shift in how the game is played. The Granger test's practical limit here is power: with only 42 seasonal observations, lags of 1–2 years leave few degrees of freedom, so moderate causal effects could go undetected.
 
 ---
 
@@ -711,6 +785,14 @@ the year-to-year relationship — first-differencing and residualizing are the
 two standard ways to remove a common trend, and they have different noise
 properties (differencing amplifies measurement noise), so both are run.
 
+**Cointegration note.** In this case the formal test is reassuring for a
+different reason: **parity (win% SD) is I(0) stationary** (ADF p = 0.023),
+while home win % is I(1) — so the classical spurious-regression concern does
+not directly apply. A stationary predictor correlated with a nonstationary
+outcome is not a cointegration problem; the raw and detrended correlations
+are interpretable without that specific worry. The near-zero raw correlation
+(r = −0.09) is simply a genuine null.
+
 **What the results mean.** The raw, trend-level answer is a rule-out: r = −0.092
 (p = 0.56), R² = 0.009, and the era table actively contradicts the parity
 hypothesis (the league's most *unequal* era, 1995–01, had falling HCA; the most
@@ -753,7 +835,14 @@ with its home_win, the one season when crowd size swung game to game.
 **Why split size from presence.** They are different hypotheses and the data
 answers them differently. Season-level attendance is nearly constant (every
 arena runs near capacity), so it can rule a *size* effect in or out but can say
-nothing about what a crowd is worth — there is no variation to exploit. The
+nothing about what a crowd is worth — there is no variation to exploit.
+
+**Cointegration note.** League-average attendance is **I(0) stationary** (ADF
+p = 0.005) — arenas have operated near-capacity for two decades with little
+secular drift. Since one series is stationary, the classical spurious-regression
+concern (two I(1) series falsely correlating) does not apply here. The detrended
+checks are still run as a standard robustness step, but the raw correlation is
+interpretable directly. The
 2020–21 season supplied that missing variation by accident: COVID rules left
 some buildings empty and others partly filled, a quasi-natural experiment that
 isolates presence from everything else. Part B is closer to causal evidence
@@ -963,6 +1052,24 @@ points around the diagonal amounts to numerically.
 
 ---
 
+---
+
+## 23. Multiple Comparisons — BH FDR Correction (`run_multiple_comparisons_summary`)
+
+**The problem.** The report runs roughly 14 primary hypothesis tests across sections. At α = 0.05, we expect 0.7 false discoveries by chance even if every null is true. Reporting each test against its own α = 0.05 threshold is defensible when tests are pre-specified and have independent scientific rationale, but it is worth checking whether any findings are fragile.
+
+**The approach.** **Benjamini–Hochberg (BH) FDR correction** at q = 0.05. The procedure: (1) rank the 14 p-values from smallest to largest; (2) the BH threshold for rank i is (i/14) × 0.05; (3) find the largest rank where p ≤ threshold; (4) all tests at or below that rank "survive." BH controls the *false discovery rate* — the expected fraction of surviving tests that are false positives — at q = 5%. It is less conservative than Bonferroni (which controls FWER, the probability of any false positive) and is the standard choice when a small number of false positives is acceptable.
+
+**The 14 tests** cover: the two overall HCA trends (RS and PO binomial GLMs); rest differential (RS and PO); altitude (RS); time zone (RS); 3PA within-era (RS and PO); pace LOO within-era (RS); travel distance (RS); parity first-differenced (RS); OREB rate vs. rebound share edge (RS); era dummies LR test beyond year trend (RS and PO).
+
+**What the results mean.** 10 of 14 tests survive BH correction:
+- **Survive:** both HCA trends, rest effect RS and PO, altitude RS, 3PA RS and PO, travel RS, parity first-diff RS, OREB rate vs. rebound edge RS.
+- **Do not survive:** time zone effect (p ≈ 0.05, marginal), pace LOO within-era (p ≈ 0.06), RS era dummies LR test (p ≈ 0.11), PO era dummies LR test (p ≈ 0.56).
+
+The "ruled-out" findings remain correct descriptions of the data — the time zone and pace effects exist — but they are too small and marginal to be called reliable when multiple comparisons are accounted for. The core findings (structural decline, rest, altitude, three-point shooting) survive comfortably. Travel (p = 0.010) also survives, though the effect size is trivially small (Section 14).
+
+---
+
 ## Recurring Methods — Quick Reference
 
 - **Logistic regression / logit:** the workhorse for the binary `home_win`
@@ -990,5 +1097,28 @@ points around the diagonal amounts to numerically.
   reliability before ranking.
 - **HAC (Newey–West) SEs:** autocorrelation-robust standard errors for
   season-level time-series OLS.
-- **Benjamini–Hochberg:** false-discovery-rate control when running many
-  simultaneous hypothesis tests (the 47 referee t-tests).
+- **Benjamini–Hochberg (BH FDR):** false-discovery-rate control when running
+  many simultaneous hypothesis tests. Used for the 47 referee t-tests (Section 10)
+  and the 14 primary tests in the multiple-comparisons summary (Section 23).
+  The threshold for test at rank i (sorted by ascending p-value) is (i/m)×q,
+  where m is the total number of tests and q is the desired FDR level (0.05 here).
+- **ADF unit-root test (Augmented Dickey-Fuller):** tests whether a time series
+  has a unit root (I(1), nonstationary). H0: unit root; p < 0.05 means the
+  series is stationary (I(0)). Used before any season-level correlation between
+  two trending series to check for the spurious-regression risk.
+- **Engle-Granger cointegration:** when two series are both I(1), this test asks
+  whether they share a genuine long-run equilibrium relationship (cointegration)
+  or merely happen to trend in the same direction. H0: no cointegration. If both
+  series are I(1) but *not* cointegrated (as found for 3PA-HCA and OREB-HCA),
+  their Pearson r is likely spurious and within-era controls are the reliable
+  evidence.
+- **Granger causality:** a time-series test of temporal ordering. "X Granger-causes
+  Y" means lagged X improves forecasts of Y beyond what Y's own lags predict. Run
+  on first differences when series are I(1). A null result means the two series
+  move contemporaneously; they may still be mechanically linked within the same
+  season (as 3PA and HCA appear to be, per Section 12's within-era game-level test).
+- **QLR supremum Chow test:** the structural-break test for an unknown break year.
+  A Chow F-test is run at each candidate year; the maximum (supremum) F is the
+  QLR statistic. Because we maximize over many years, Andrews (1993) asymptotic
+  critical values are used rather than a standard F-table (k=2 parameters, 15%
+  trimming: 10% → 7.12, 5% → 8.85, 1% → 12.37).
