@@ -47,6 +47,12 @@ BBR_HEADERS    = {  # BBR blocks the default python-requests UA
     )
 }
 
+# BoxScoreSummaryV3 carries no officials before the 2001-02 playoffs (verified:
+# every game pre-2002 returns an empty officials set). A 0-record result for a
+# season at or after this year is therefore suspect — the signature of a silent
+# rate-limit (an empty 200 body), not genuine absence — and must not be cached.
+OFFICIALS_DATA_START_YEAR = 2002
+
 # 2020 bubble playoffs: all games at neutral site — exclude from playoff stats
 SKIP_PLAYOFF_YEARS = {2020}
 
@@ -1042,6 +1048,16 @@ def compute_shot_zone_stats(
 
 # ── Referee crew analysis ─────────────────────────────────────────────────────
 
+def _is_rate_limit_error(exc: Exception) -> bool:
+    """True if an exception looks like NBA API throttling (timeout, 429, or a
+    dropped connection) rather than a genuine, permanent data error."""
+    if isinstance(exc, (requests.exceptions.Timeout,
+                        requests.exceptions.ConnectionError)):
+        return True
+    msg = str(exc).lower()
+    return "429" in msg or "rate limit" in msg or "timed out" in msg
+
+
 def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Fetch officials for every game in the cached game log via BoxScoreSummaryV3
@@ -1069,6 +1085,7 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
 
     records: list[dict] = []
     failed = 0
+    rate_limited = 0
     print(f"  Fetching referee data: {season_str(end_year)} {season_type} "
           f"({len(game_ids)} games)...", flush=True)
     for i, gid in enumerate(game_ids, 1):
@@ -1083,6 +1100,8 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
                 })
         except Exception as e:
             failed += 1
+            if _is_rate_limit_error(e):
+                rate_limited += 1
             if failed <= 3:
                 print(f"    WARN {gid_str}: {e!r}")
         time.sleep(SLEEP_SEC)
@@ -1090,7 +1109,11 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
             print(f"    ...{i}/{len(game_ids)}", flush=True)
 
     if failed:
-        print(f"    {failed} games failed (API errors)")
+        tag = f" — {rate_limited} look rate-limited" if rate_limited else ""
+        print(f"    {failed} games failed (API errors){tag}")
+    if rate_limited:
+        print(f"    RATE LIMITED: {rate_limited} call(s) throttled this season — "
+              f"slow SLEEP_SEC down or retry later.")
 
     os.makedirs(CACHE_DIR, exist_ok=True)
     if not records:
@@ -1102,9 +1125,18 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
             print("    No records and API errors occurred — not caching; "
                   "will retry next run.")
             return None
-        # Every call succeeded but returned no officials (e.g. pre-2000 seasons
-        # carry no officials data). This absence is real and permanent, so cache
-        # an empty file to mark the season done and skip it on future runs.
+        if end_year >= OFFICIALS_DATA_START_YEAR:
+            # SUSPECT: this season should carry officials data, yet every call
+            # returned an empty result with no error — the hallmark of a silent
+            # rate-limit (an empty 200 body) rather than genuine absence. Do not
+            # cache, or we would mark a real season permanently empty. Retry next.
+            print(f"    SUSPECT empty: {season_str(end_year)} should have officials "
+                  f"data (>= {OFFICIALS_DATA_START_YEAR}) but returned none — likely "
+                  f"a silent rate-limit. Not caching; will retry next run.")
+            return None
+        # Every call succeeded but returned no officials. Before OFFICIALS_DATA_
+        # START_YEAR this absence is real and permanent, so cache an empty file to
+        # mark the season done and skip it on future runs.
         pd.DataFrame().to_csv(cache_file, index=False)
         return None
 

@@ -1133,21 +1133,31 @@ class TestFetchRefereeData:
                 self.data_sets = [None, None, None, _DS()]
         return Box
 
-    def _prep(self, tmp_path, monkeypatch):
+    def _prep(self, tmp_path, monkeypatch, year=2024):
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
         monkeypatch.setattr(nba, "_load_game_log",
                             lambda y, s: pd.DataFrame({"GAME_ID": ["0048300001", "0048300002"]}))
         monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
-        return tmp_path / "referee_2023-24_Playoffs.csv"
+        return tmp_path / f"referee_{nba.season_str(year)}_Playoffs.csv"
 
-    def test_caches_empty_when_calls_succeed_with_no_officials(self, tmp_path, monkeypatch):
-        # Pre-2000 seasons: API responds, but officials data is genuinely empty.
-        cache_file = self._prep(tmp_path, monkeypatch)
+    def test_caches_empty_for_pre_data_season_with_no_officials(self, tmp_path, monkeypatch):
+        # Pre-OFFICIALS_DATA_START_YEAR: API responds but officials are genuinely
+        # absent. Safe to cache an empty marker and never retry.
+        cache_file = self._prep(tmp_path, monkeypatch, year=1999)
+        self._patch_box(monkeypatch, self._box_returning(pd.DataFrame(columns=["personId", "name"])))
+
+        assert nba.fetch_referee_data(1999, "Playoffs") is None
+        assert cache_file.exists()
+
+    def test_suspect_empty_not_cached_for_modern_season(self, tmp_path, monkeypatch):
+        # A season that *should* have officials (>= OFFICIALS_DATA_START_YEAR) but
+        # returns all-empty with no error is the silent-rate-limit signature: must
+        # NOT be cached, or a real season gets marked permanently empty.
+        cache_file = self._prep(tmp_path, monkeypatch, year=2024)
         self._patch_box(monkeypatch, self._box_returning(pd.DataFrame(columns=["personId", "name"])))
 
         assert nba.fetch_referee_data(2024, "Playoffs") is None
-        # Genuine absence -> empty file cached so future runs skip the season.
-        assert cache_file.exists()
+        assert not cache_file.exists()  # left absent so the next run retries
 
     def test_does_not_cache_when_all_calls_raise(self, tmp_path, monkeypatch):
         # Rate limit / outage: every call raises. Must not poison the cache.
@@ -1171,6 +1181,12 @@ class TestFetchRefereeData:
         assert result is not None
         assert len(result) == 6  # 3 officials x 2 games
         assert cache_file.exists()
+
+    def test_is_rate_limit_error_classification(self):
+        assert nba._is_rate_limit_error(nba.requests.exceptions.ReadTimeout("slow"))
+        assert nba._is_rate_limit_error(nba.requests.exceptions.ConnectionError("dropped"))
+        assert nba._is_rate_limit_error(RuntimeError("HTTP 429 Too Many Requests"))
+        assert not nba._is_rate_limit_error(ValueError("missing key 'personId'"))
 
 
 class TestComputeRefereeBiasStats:
