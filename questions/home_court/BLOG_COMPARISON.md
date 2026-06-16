@@ -9,7 +9,7 @@ Three questions drove this comparison:
 2. Are we claiming anything that our own data doesn't support?
 3. Did we find changes the blog missed (and vice versa)?
 
-**Bottom line.** We agree on the big picture and on every number where we share a method. The disagreements are almost all the same shape: the blog leans on raw season-to-season correlations and unconditional splits; we control for the 40-year downward drift and for confounders. The single best external validation is that an independent analyst lands within a tenth of a point of our altitude numbers. We are not inventing results — our most aggressive claims are the ones tied directly to `RESULTS.md`. But the blog credits one driver we never quantified (schedule / back-to-backs), and we surface three eroding channels the blog never mentions.
+**Bottom line.** We agree on the big picture and on every number where we share a method. The disagreements are almost all the same shape: the blog leans on raw season-to-season correlations and unconditional splits; we control for the 40-year downward drift and for confounders. The single best external validation is that an independent analyst lands within a tenth of a point of our altitude numbers. We are not inventing results — our most aggressive claims are the ones tied directly to `RESULTS.md`. The blog credited one driver (schedule / back-to-backs) that we have since tested directly — it explains only ~8% of the decline. And we surface three eroding channels the blog never mentions, plus modern player-tracking data that corroborates the rebounding story from the possession level.
 
 ---
 
@@ -22,7 +22,7 @@ These are genuine independent corroborations — different analyst, different co
 | Decline is real, ~10 pp | 68% → 55% (≈13 pp, league-wide) | RS 65% → 55.6%; playoffs 68% → 58% | **Agree** (we split RS/playoffs; blog reports a blended figure) |
 | Refs/free throws are a major eroding channel | r = 0.85; home FTA edge +1.91 → +0.59/gm | foul-call edge 1.2 → 0.25/gm (RS), 1.6 → 0.7 (playoffs) | **Agree on direction & shrinkage** |
 | Three-point rise tracks the decline | r = −0.88 (raw) | within-era effect −2.6 pp per 10 pp of 3PA, survives detrending (p<0.001) | **Agree it matters; disagree on how to size it** (see §2) |
-| Travel distance is not a cause | r = −0.01 | ≈0.07 pp/100 mi, insignificant; zero in playoffs | **Agree** |
+| Travel distance is not a cause | r = −0.01 | ≈0.07 pp/100 mi, p=0.010 but negligibly small; zero in playoffs | **Agree** |
 | Pace is not a season-level driver | r = +0.23 (weak, wrong sign) | no meaningful season correlation; flat across the slowdown-then-speedup | **Agree** |
 | Crowd *size* is innocent | arenas near capacity throughout | record attendance as the edge hit its lows; detrended correlation ~0 | **Agree** |
 | Denver/Utah own the best home court, via altitude | Denver +27.9 pp, Utah +26.5 pp | ≈+27 and +26 pp; altitude is the top franchise factor | **Agree — near-identical numbers** |
@@ -97,6 +97,8 @@ This also vindicates the blog's own caveat: even among fully-rested games HCA fe
 5. **Formal ruling-out with the right tests** — the playoff-format change is non-significant once detrended (p=0.197); competitive balance is near-zero raw with only a weak detrended residual; and a combined situational model leaves ~half its predictive power to "which era" (the decline itself). The blog rules factors out by eyeballing uniform declines; we test each against the secular trend.
 
 6. **The widening-blowout finding** — margins spreading ~0.2 pp/yr in both RS and playoffs even as home teams win less.
+
+7. **Player-tracking confirmation of the rebounding story (2013–14 on).** The possession-level tracking cameras, switched on in 2013–14, provide a modern close-up that fits the 40-year rebounding picture exactly. The home team's edge in converting offensive-rebound chances has kept shrinking toward and then through zero (reaching negative by 2025–26); its second-chance-points edge has faded alongside; and its box-out edge sits at essentially zero throughout the tracking era. The window is too short to establish the 40-year trend on its own, but it confirms the mechanism is still operating today and offers a possession-level view the blog has no equivalent for.
 
 ---
 
