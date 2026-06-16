@@ -30,7 +30,8 @@ Average regular-season SRS by conference:
   Cleveland Cavaliers            SRS +3.77
   Atlanta Hawks                  SRS +2.38
   Philadelphia 76ers             SRS -0.27
-  Average opponent SRS: +3.54
+  Unique-opponent avg SRS:        +3.54
+  Games-weighted avg SRS:         +3.67  (primary metric)
 
 ════════════════════════════════════════════════════════════════════════
 §3  HOW WEAK IS THE EAST HISTORICALLY?
@@ -54,33 +55,49 @@ Percentile (100th = worst for East): 37.2th
 ════════════════════════════════════════════════════════════════════════
 §4  WHO DID THE KNICKS BEAT?
 ────────────────────────────────────────────────────────────────────────
-Average opponent regular-season SRS: +3.54 pts/game
-Percentile among champions: 53.5th  (mean +3.46, easiest +0.54, hardest +5.98)
+Games-weighted avg opponent SRS: +3.67 pts/game
+Percentile among champions: 48.8th  (mean +3.68, easiest +0.62, hardest +5.77)
 
 Champions who faced weakest opponents (avg opp SRS):
-  22–23: +0.54
-  86–87: +0.75
-  87–88: +1.75
-  19–20: +2.03
-  23–24: +2.03
+  22–23: +0.62
+  86–87: +1.32
+  23–24: +1.99
+  19–20: +2.06
+  98–99: +2.33
 
 ════════════════════════════════════════════════════════════════════════
 §5  OPPONENT-ADJUSTED DOMINANCE
 ────────────────────────────────────────────────────────────────────────
-Adjusted margin = raw margin − avg opponent SRS
-  Raw margin:     +14.89
-  Avg opp SRS:    +3.54
-  Adj margin:     +11.35
+Adjusted margin = raw margin − games-weighted opponent SRS
+  Raw margin:             +14.89
+  Games-wtd opp SRS:      +3.67
+  Adj margin:             +11.23
 
 Among 43 champion seasons:
-  Adj-margin percentile: 100.0th  (mean +3.58, best +11.35)
+  Adj-margin percentile: 100.0th  (mean +3.37, best +11.23)
 
 Top 5 adjusted-margin champions:
-  25–26: raw +14.89  opp +3.54  adj +11.35  ← 2025-26 Knicks
-  16–17: raw +13.65  opp +3.45  adj +10.20
-  86–87: raw +10.83  opp +0.75  adj +10.09
-  90–91: raw +11.71  opp +2.24  adj +9.46
-  85–86: raw +10.56  opp +2.57  adj +7.99
+  25–26: raw +14.89  opp +3.67  adj +11.23  ← 2025-26 Knicks
+  16–17: raw +13.65  opp +3.41  adj +10.23
+  86–87: raw +10.83  opp +1.32  adj +9.52
+  90–91: raw +11.71  opp +2.51  adj +9.20
+  85–86: raw +10.56  opp +2.83  adj +7.72
+
+── Playoff overperformance (vs. regular-season SRS prediction) ──
+  Knicks regular-season SRS:  +6.05
+  Expected margin/game:        +2.38  (= SRS +6.05 − opp +3.67)
+  Actual margin/game:          +14.89
+  Overperformance:             +12.52 pts/game
+
+  Among 43 champion seasons:
+  Overperf percentile: 97.7th  (mean +3.77, best +14.49)
+
+  Top 5 overperformance champions:
+    00–01: raw +12.75  reg-SRS +3.74  overperf +14.49
+    25–26: raw +14.89  reg-SRS +6.05  overperf +12.52  ← 2025-26 Knicks
+    15–16: raw +8.62  reg-SRS +5.45  overperf +8.58
+    17–18: raw +10.00  reg-SRS +5.75  overperf +8.20
+    84–85: raw +10.16  reg-SRS +6.48  overperf +6.62
 
 ════════════════════════════════════════════════════════════════════════
 §6  OTHER DEFLATORS
@@ -113,8 +130,9 @@ The 2025-26 Knicks went 16-3 in the playoffs.
 KEY METRICS vs. all 43 champions (1983–84 through 2025–26):
   Win rate 0.842:               88th percentile
   Avg margin +14.9 pts/game:    100th percentile
-  Avg opp SRS +3.54:           53th percentile (lower = easier schedule)
-  Adj margin +11.4 pts/game:    100th percentile
+  Games-wtd opp SRS +3.67:     49th percentile (lower = easier schedule)
+  Adj margin +11.2 pts/game:    100th percentile
+  Overperformance +12.5 pts/game: 98th percentile
   East/West SRS gap +0.39:         37th percentile (West dominance)
 
 SUMMARY:

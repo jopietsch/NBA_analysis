@@ -39,6 +39,8 @@ from knicks_2026_data import (
     compute_home_away_split,
     compute_opponent_srs,
     compute_avg_opponent_srs,
+    compute_games_weighted_opponent_srs,
+    compute_expected_margin_overperformance,
     compute_adjusted_margin,
     compute_conference_avg_srs,
     compute_srs_gap,
@@ -122,7 +124,8 @@ def run_east_weakness(reg_2026: pd.DataFrame,
     print(f"  East inter-conference win rate: {h2h:.3f}", file=out)
 
     opp_srs  = compute_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
-    avg_opp  = float(opp_srs.mean()) if len(opp_srs) > 0 else float("nan")
+    unique_avg = float(opp_srs.mean()) if len(opp_srs) > 0 else float("nan")
+    weighted_avg = compute_games_weighted_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
     name_map = standings_2026.set_index("TeamID").apply(
         lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
     ).to_dict()
@@ -130,7 +133,8 @@ def run_east_weakness(reg_2026: pd.DataFrame,
     for opp_id, srs_val in opp_srs.sort_values(ascending=False).items():
         name = name_map.get(int(opp_id), f"Team {int(opp_id)}")
         print(f"  {name:<30} SRS {srs_val:+.2f}", file=out)
-    print(f"  Average opponent SRS: {avg_opp:+.2f}", file=out)
+    print(f"  Unique-opponent avg SRS:        {unique_avg:+.2f}", file=out)
+    print(f"  Games-weighted avg SRS:         {weighted_avg:+.2f}  (primary metric)", file=out)
 
 
 # ── Section 3: Historical East/West gap ─────────────────────────────────────
@@ -174,10 +178,10 @@ def run_opponent_quality(po_2026: pd.DataFrame,
                          champions: pd.DataFrame,
                          out: io.StringIO) -> None:
     srs_2026 = compute_srs(reg_2026)
-    avg_opp  = compute_avg_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
+    avg_opp  = compute_games_weighted_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
 
     print(_hdr("§4  WHO DID THE KNICKS BEAT?"), file=out)
-    print(f"Average opponent regular-season SRS: {avg_opp:+.2f} pts/game", file=out)
+    print(f"Games-weighted avg opponent SRS: {avg_opp:+.2f} pts/game", file=out)
 
     opp_series = champions["avg_opp_srs"].dropna()
     opp_pct    = _pct_rank(opp_series, avg_opp, ascending=True)
@@ -199,15 +203,17 @@ def run_adjusted_dominance(po_2026: pd.DataFrame,
                            champions: pd.DataFrame,
                            out: io.StringIO) -> None:
     srs_2026   = compute_srs(reg_2026)
-    avg_opp    = compute_avg_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
+    avg_opp    = compute_games_weighted_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
     raw_margin = compute_playoff_margin(po_2026, KNICKS_TEAM_ID)
     adj        = compute_adjusted_margin(raw_margin, avg_opp)
+    knicks_srs = float(srs_2026.get(KNICKS_TEAM_ID, float("nan")))
+    overperf   = compute_expected_margin_overperformance(po_2026, srs_2026, KNICKS_TEAM_ID)
 
     print(_hdr("§5  OPPONENT-ADJUSTED DOMINANCE"), file=out)
-    print(f"Adjusted margin = raw margin − avg opponent SRS", file=out)
-    print(f"  Raw margin:     {raw_margin:+.2f}", file=out)
-    print(f"  Avg opp SRS:    {avg_opp:+.2f}", file=out)
-    print(f"  Adj margin:     {adj:+.2f}", file=out)
+    print(f"Adjusted margin = raw margin − games-weighted opponent SRS", file=out)
+    print(f"  Raw margin:             {raw_margin:+.2f}", file=out)
+    print(f"  Games-wtd opp SRS:      {avg_opp:+.2f}", file=out)
+    print(f"  Adj margin:             {adj:+.2f}", file=out)
 
     adj_series = champions["adj_margin"].dropna()
     adj_pct    = _pct_rank(adj_series, adj, ascending=True)
@@ -221,6 +227,35 @@ def run_adjusted_dominance(po_2026: pd.DataFrame,
         marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
         print(f"  {short_label(int(row.year))}: raw {row.avg_margin:+.2f}  opp {row.avg_opp_srs:+.2f}"
               f"  adj {row.adj_margin:+.2f}{marker}", file=out)
+
+    # Overperformance: per-game actual vs. SRS-predicted margin
+    print(_subhdr("Playoff overperformance (vs. regular-season SRS prediction)"), file=out)
+    if not np.isnan(knicks_srs) and not np.isnan(overperf):
+        expected_margin = knicks_srs - avg_opp
+        print(f"  Knicks regular-season SRS:  {knicks_srs:+.2f}", file=out)
+        print(f"  Expected margin/game:        {expected_margin:+.2f}  "
+              f"(= SRS {knicks_srs:+.2f} − opp {avg_opp:+.2f})", file=out)
+        print(f"  Actual margin/game:          {raw_margin:+.2f}", file=out)
+        print(f"  Overperformance:             {overperf:+.2f} pts/game", file=out)
+
+        op_series = champions["overperformance"].dropna()
+        op_pct    = _pct_rank(op_series, overperf, ascending=True)
+        print(f"\n  Among {len(op_series)} champion seasons:", file=out)
+        print(f"  Overperf percentile: {op_pct:.1f}th  "
+              f"(mean {op_series.mean():+.2f}, best {op_series.max():+.2f})", file=out)
+
+        top5op = champions.dropna(subset=["overperformance"]).nlargest(
+            5, "overperformance"
+        )[["year", "avg_margin", "champion_reg_srs", "overperformance"]]
+        print(f"\n  Top 5 overperformance champions:", file=out)
+        for _, row in top5op.iterrows():
+            marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
+            print(
+                f"    {short_label(int(row.year))}: raw {row.avg_margin:+.2f}  "
+                f"reg-SRS {row.champion_reg_srs:+.2f}  "
+                f"overperf {row.overperformance:+.2f}{marker}",
+                file=out,
+            )
 
 
 # ── Section 6: Other deflators ───────────────────────────────────────────────
@@ -292,13 +327,15 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     wins, losses, wr = compute_playoff_record(po_2026, KNICKS_TEAM_ID)
     margin  = compute_playoff_margin(po_2026, KNICKS_TEAM_ID)
     srs     = compute_srs(reg_2026)
-    avg_opp = compute_avg_opponent_srs(po_2026, srs, KNICKS_TEAM_ID)
+    avg_opp = compute_games_weighted_opponent_srs(po_2026, srs, KNICKS_TEAM_ID)
     adj     = compute_adjusted_margin(margin, avg_opp)
+    overperf = compute_expected_margin_overperformance(po_2026, srs, KNICKS_TEAM_ID)
 
     wr_pct  = _pct_rank(champions["win_rate"],          wr,     ascending=True)
     mgn_pct = _pct_rank(champions["avg_margin"],        margin, ascending=True)
     adj_pct = _pct_rank(champions["adj_margin"].dropna(), adj,  ascending=True)
     opp_pct = _pct_rank(champions["avg_opp_srs"].dropna(), avg_opp, ascending=True)
+    op_pct  = _pct_rank(champions["overperformance"].dropna(), overperf, ascending=True)
 
     subject = gap_table.loc[gap_table["year"] == SUBJECT_YEAR]
     gap_2026 = float(subject["srs_gap"].iloc[0]) if not subject.empty else float("nan")
@@ -309,8 +346,10 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     print(f"\nKEY METRICS vs. all {len(champions)} champions ({season_range_label(START_YEAR, END_YEAR)}):", file=out)
     print(f"  Win rate {wr:.3f}:               {wr_pct:.0f}th percentile", file=out)
     print(f"  Avg margin {margin:+.1f} pts/game:    {mgn_pct:.0f}th percentile", file=out)
-    print(f"  Avg opp SRS {avg_opp:+.2f}:           {opp_pct:.0f}th percentile (lower = easier schedule)", file=out)
+    print(f"  Games-wtd opp SRS {avg_opp:+.2f}:     {opp_pct:.0f}th percentile (lower = easier schedule)", file=out)
     print(f"  Adj margin {adj:+.1f} pts/game:    {adj_pct:.0f}th percentile", file=out)
+    if not np.isnan(overperf):
+        print(f"  Overperformance {overperf:+.1f} pts/game: {op_pct:.0f}th percentile", file=out)
     if not np.isnan(gap_2026):
         print(f"  East/West SRS gap {gap_2026:+.2f}:         {gap_pct:.0f}th percentile (West dominance)", file=out)
 

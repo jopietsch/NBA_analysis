@@ -66,6 +66,25 @@ def _mini_player_logs() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def test_compute_games_weighted_opponent_srs():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    result = data.compute_games_weighted_opponent_srs(po, srs, KNICKS_ID)
+    # G001 + G002 vs OPP1 (SRS 2.0): 2 games; G003 vs OPP2 (SRS 4.0): 1 game
+    # weighted avg = (2.0 + 2.0 + 4.0) / 3
+    assert result == pytest.approx((2.0 + 2.0 + 4.0) / 3, abs=1e-6)
+
+
+def test_compute_expected_margin_overperformance():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    result = data.compute_expected_margin_overperformance(po, srs, KNICKS_ID)
+    # G001: actual +10, expected = 5-2 = 3, residual = 7
+    # G002: actual +10, expected = 5-2 = 3, residual = 7
+    # G003: actual +10, expected = 5-4 = 1, residual = 9
+    assert result == pytest.approx((7.0 + 7.0 + 9.0) / 3, abs=1e-6)
+
+
 def test_parse_min():
     assert data.parse_min("35:42") == pytest.approx(35.7, abs=0.1)
     assert data.parse_min(30.0) == pytest.approx(30.0)

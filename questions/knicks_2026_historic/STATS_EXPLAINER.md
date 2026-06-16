@@ -31,8 +31,13 @@ teams."
 - `wins`, `losses`, `win_rate` — the champion's playoff record
 - `avg_margin` — mean per-game point differential, with PLUS_MINUS filled from
   PTS for pre-1997 seasons (see §Pre-1997 note below)
-- `avg_opp_srs` — mean regular-season SRS of every unique playoff opponent
+- `avg_opp_srs` — games-weighted average regular-season SRS of playoff opponents
+  (each game counts once; a 5-game Finals opponent has 5× the weight of a
+  4-game sweep opponent, matching the per-game basis of `avg_margin`)
 - `adj_margin` — `avg_margin − avg_opp_srs`
+- `champion_reg_srs` — the champion's own regular-season SRS
+- `overperformance` — `avg_margin − champion_reg_srs + avg_opp_srs`; equivalently,
+  mean per-game residual (actual − expected) where expected = champion_SRS − opp_SRS
 - `clutch_rate` — fraction of games decided by ≤5 points
 - `home_wr`, `away_wr` — home and away win rates
 
@@ -180,18 +185,22 @@ faced, which again includes the Knicks. Regular-season SRS measures each
 opponent's strength on an independent baseline (all 82 games before the playoffs
 began), making it a cleaner gauge of how hard the Knicks' draw was.
 
-**Why unique opponents, not per-game.** Averaging SRS per game would weight
-multi-game series opponents more heavily. A team that sweeps a +5.0 SRS opponent
-in 4 games would look like they faced a harder schedule than a team that goes 4-3
-against a +5.0 opponent. Unique-opponent averaging treats all opponents equally
-regardless of series length — the question is who you had to beat, not how many
-times.
+**Why games-weighted, not unique-opponent average.** `avg_opp_srs` is computed
+as a per-game average across all playoff games (each game contributes one opponent
+SRS data point), not as a simple average of four unique opponents.  This matches
+the basis of `avg_margin`, which is also a per-game average.  When the same
+formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are
+expressed on the same per-game scale, making the subtraction internally consistent:
+"how dominant per game after accounting for per-game opponent quality?"  A unique-
+opponent average could give equal weight to a 4-game first-round opponent and a
+7-game Finals opponent, which would misstate the actual per-game opponent quality
+experienced.
 
-**What the results mean.** Average opponent SRS +3.54 sits at the 53rd percentile
-among 43 champions — right at the historical median. The schedule was not
-unusually easy or hard by this measure. Champions who faced the weakest opponents
-(2022–23 Nuggets +0.54, 1986–87 Lakers +0.75) faced average SRS values about 3
-pts/game below the Knicks'.
+**What the results mean.** Games-weighted average opponent SRS +3.67 sits at the
+49th percentile among 43 champions — right at the historical median. The schedule
+was not unusually easy or hard. Champions who faced the weakest opponents
+(2022–23 Nuggets +0.62, 1986–87 Lakers +1.32) faced average SRS values more than
+2 pts/game below the Knicks'.
 
 **Why two charts here.** The opponent-SRS ranking bar (all 43 champions) and the
 opponent-by-round bar (four Knicks opponents) answer different questions. The
@@ -206,46 +215,56 @@ round were below average. A reader needs both to understand the Knicks' path.
 
 **The data.** 2025–26 playoff logs, regular-season SRS, and the `champions` table.
 
-**The approach.** A one-line formula:
+**The approach.** A two-step analysis: adjusted margin (opponent quality) plus
+overperformance (playoff elevation relative to own regular-season baseline).
 
+*Adjusted margin:*
 ```
 adj_margin = raw_margin − avg_opp_srs
 ```
+where `avg_opp_srs` is games-weighted (see §4).  This is a direct additive
+correction asking: "how dominant would this team look if they had faced average-SRS
+opponents?"  The assumption — one SRS point of opponent quality = one margin point
+— is natural because the SRS system is defined in point-differential space.
 
-This is not a regression — it is a direct additive correction that asks: "how
-dominant would this team look if they had faced average-SRS opponents?" The
-adjustment is linear, not calibrated from historical data. It makes the implicit
-claim that one additional SRS point of opponent quality is worth exactly one
-point of margin per game.
-
-`compute_adjusted_margin` in `knicks_2026_data.py` is literally:
-
-```python
-def compute_adjusted_margin(raw_margin, avg_opp_srs):
-    return raw_margin - avg_opp_srs
+*Overperformance (playoff elevation):*
 ```
+overperformance = mean(actual_margin_per_game − expected_margin_per_game)
+                = raw_margin − champion_SRS + games_weighted_opp_srs
+                = adj_margin − champion_SRS
+```
+where expected_margin_per_game = champion_SRS − opp_SRS_for_that_game.  This
+measures how much better a champion performed than a team of their regular-season
+quality was expected to perform against those opponents.  Positive = elevated in
+playoffs; negative = underperformed.
 
-The adjusted value is then ranked with `_pct_rank` against `champions["adj_margin"]`,
-which was computed with the same formula for each champion in its own season.
+Both values are ranked via `_pct_rank` against the `champions` table.
 
-**Why this specific adjustment.** The SRS system (see Recurring Methods) is built
-around exactly this identity: a team with SRS +X is expected to outscore a 0-SRS
-opponent by X points per game. So subtracting the average opponent SRS from the
-raw margin "returns" the Knicks to a neutral baseline — it is the natural
-adjustment for a rating system that lives in point-differential space.
+**Why this specific adjustment.** The SRS system is built around the identity
+that a team with SRS +X is expected to outscore a 0-SRS opponent by X points per
+game. Subtracting the games-weighted average opponent SRS "returns" the champion
+to a neutral-schedule baseline. The overperformance metric additionally subtracts
+the champion's own regular-season SRS, capturing "playoff elevation" — the amount
+by which the champion exceeded what their regular-season quality predicted.
 
 **Limitations.** The adjustment assumes opponents' regular-season SRS accurately
 reflects playoff-mode strength; it doesn't account for injuries, resting veterans,
-or playoff-specific preparation. It also weights all four opponents equally
-regardless of how many games were played (see §4). A more elaborate model could
-regress playoff margin on opponent SRS across all champions, but with 43 data
-points and one adjustment variable, the direct subtraction and its ranking are
-the right level of complexity.
+or playoff-specific preparation. A more elaborate model could regress playoff
+margin on opponent SRS across all champions, but with 43 data points and one
+adjustment variable, the direct subtraction and its ranking are the right level
+of complexity.
 
-**What the results mean.** Adjusted margin +11.35 is the 100th percentile of 43
+**What the results mean.** Adjusted margin +11.2 is the 100th percentile of 43
 champions — the highest ever even after correcting for schedule difficulty. The
-comparison with 2016–17 Golden State (+10.20) and 1986–87 Los Angeles Lakers
-(+10.09) provides the natural peer group for "all-time dominant playoff runs."
+comparison with 2016–17 Golden State (+10.2) and 1986–87 Los Angeles Lakers
+(+9.5) provides the natural peer group for "all-time dominant playoff runs."
+The overperformance metric (+12.5 pts/game, 97.7th percentile) is notably
+different from adjusted margin: the 2016–17 Warriors, who had a much higher
+regular-season SRS (~+10), rank lower on overperformance because they
+*expected* to dominate. The Knicks elevated more relative to their regular-season
+baseline. The 2000–01 Lakers rank 1st (+14.5) on overperformance — they had a
+strong but not historically dominant regular season and then absolutely dominated
+the playoffs.
 
 **Why this is the headline chart.** The adjusted margin ranking is the single
 number that answers the central question — "historically dominant?" — most fully.

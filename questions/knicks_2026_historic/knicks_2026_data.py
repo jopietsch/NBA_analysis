@@ -142,6 +142,89 @@ def compute_avg_opponent_srs(playoff_logs: pd.DataFrame,
     return float(opp.mean()) if len(opp) > 0 else float("nan")
 
 
+def compute_games_weighted_opponent_srs(playoff_logs: pd.DataFrame,
+                                        reg_srs: pd.Series,
+                                        team_id: int) -> float:
+    """Games-weighted average opponent SRS.
+
+    Unlike compute_avg_opponent_srs (unique-opponent average), weights each
+    opponent's SRS by the number of games played against them.  A Finals
+    opponent appearing in 5 games contributes 5 data points; a sweep opponent
+    appearing in 4 games contributes 4.  This makes the metric consistent with
+    how the raw margin is computed (also a per-game average), so:
+        adj_margin = raw_margin − games_weighted_opp_srs
+    correctly answers "how dominant per game after accounting for per-game
+    opponent quality?"
+    """
+    team_logs = playoff_logs[playoff_logs["TEAM_ID"] == team_id]
+    if team_logs.empty:
+        return float("nan")
+
+    gid_to_teams = (
+        playoff_logs.groupby("GAME_ID")["TEAM_ID"]
+        .apply(list)
+        .to_dict()
+    )
+
+    srs_vals: list[float] = []
+    for gid in team_logs["GAME_ID"].unique():
+        for t in gid_to_teams.get(gid, []):
+            if t != team_id:
+                v = float(reg_srs.get(t, float("nan")))
+                if not np.isnan(v):
+                    srs_vals.append(v)
+    return float(np.mean(srs_vals)) if srs_vals else float("nan")
+
+
+def compute_expected_margin_overperformance(playoff_logs: pd.DataFrame,
+                                            reg_srs: pd.Series,
+                                            team_id: int) -> float:
+    """Per-game overperformance vs. regular-season SRS prediction.
+
+    For each game: expected_margin = team_SRS − opponent_SRS
+    Returns mean(actual_margin − expected_margin).
+
+    Positive = outperformed what the regular-season SRS would predict;
+    negative = underperformed.  Measures "playoff elevation" — how much better
+    or worse a champion ran compared to a team of their quality expected to
+    perform against those opponents.
+
+    Algebraically equivalent to:
+        raw_margin − champion_SRS + games_weighted_opp_SRS
+    """
+    logs = _nba._fill_plus_minus(playoff_logs)
+    team_srs = float(reg_srs.get(team_id, float("nan")))
+    if np.isnan(team_srs):
+        return float("nan")
+
+    team_logs = logs[logs["TEAM_ID"] == team_id]
+    if team_logs.empty:
+        return float("nan")
+
+    gid_to_teams = (
+        playoff_logs.groupby("GAME_ID")["TEAM_ID"]
+        .apply(list)
+        .to_dict()
+    )
+
+    residuals: list[float] = []
+    for _, row in team_logs.iterrows():
+        actual = float(row["PLUS_MINUS"])
+        if np.isnan(actual):
+            continue
+        gid = row["GAME_ID"]
+        opp_srs_list = [
+            float(reg_srs.get(t, float("nan")))
+            for t in gid_to_teams.get(gid, [])
+            if t != team_id
+        ]
+        opp_srs_list = [v for v in opp_srs_list if not np.isnan(v)]
+        if not opp_srs_list:
+            continue
+        residuals.append(actual - (team_srs - opp_srs_list[0]))
+    return float(np.mean(residuals)) if residuals else float("nan")
+
+
 def compute_adjusted_margin(raw_margin: float, avg_opp_srs: float) -> float:
     """Opponent-adjusted margin: raw_margin - avg_opp_SRS.
 
@@ -474,23 +557,27 @@ def build_champions_table(start_year: int = START_YEAR,
         srs = compute_srs(rs)
         wins, losses, wr = compute_playoff_record(po, champ)
         margin = compute_playoff_margin(po, champ)
-        avg_opp = compute_avg_opponent_srs(po, srs, champ)
+        avg_opp = compute_games_weighted_opponent_srs(po, srs, champ)
         adj = compute_adjusted_margin(margin, avg_opp)
+        champ_srs = float(srs.get(champ, float("nan")))
+        overperf = compute_expected_margin_overperformance(po, srs, champ)
         clutch = compute_clutch_rate(po, champ)
         h_wr, a_wr = compute_home_away_split(po, champ)
 
         rows.append({
-            "year":        year,
-            "champion_id": champ,
-            "wins":        wins,
-            "losses":      losses,
-            "win_rate":    wr,
-            "avg_margin":  margin,
-            "avg_opp_srs": avg_opp,
-            "adj_margin":  adj,
-            "clutch_rate": clutch,
-            "home_wr":     h_wr,
-            "away_wr":     a_wr,
+            "year":             year,
+            "champion_id":      champ,
+            "wins":             wins,
+            "losses":           losses,
+            "win_rate":         wr,
+            "avg_margin":       margin,
+            "avg_opp_srs":      avg_opp,
+            "adj_margin":       adj,
+            "champion_reg_srs": champ_srs,
+            "overperformance":  overperf,
+            "clutch_rate":      clutch,
+            "home_wr":          h_wr,
+            "away_wr":          a_wr,
         })
     return pd.DataFrame(rows)
 

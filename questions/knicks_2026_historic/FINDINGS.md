@@ -65,9 +65,9 @@ The three most West-dominant seasons on record were 2013–14 (+4.08), 2003–04
 (+3.73), and 2000–01 (+3.11) — all much larger gaps. The 2025–26 East was
 competitive.
 
-**Opponent SRS context:** The average regular-season SRS of the Knicks' four
-playoff opponents was **+3.54** (53rd percentile among all 43 champions), slightly
-above the historical median. The schedule was not unusually easy or hard.
+**Opponent SRS context:** The games-weighted average SRS of the Knicks' playoff
+opponents was **+3.67** (49th percentile among all 43 champions) — essentially at
+the historical median. The schedule was not unusually easy or hard.
 
 ![Conference strength gap (West − East SRS) — 2025-26 flagged](generated/knicks_2026_conference_gap.png){height=0.25}
 
@@ -77,26 +77,34 @@ above the historical median. The schedule was not unusually easy or hard.
 
 ## 4. Opponent-Adjusted Dominance
 
-**Adjusted margin = raw margin − average opponent SRS.**
+**Adjusted margin = raw margin − games-weighted opponent SRS.**
+(Opponent SRS is weighted by games played in each series, so a 5-game Finals
+opponent counts for 5 of 19 data points rather than 1 of 4.)
 
 | Metric | 2025–26 Knicks | Historical rank |
 |--------|----------------|-----------------|
 | Raw avg margin | +14.9 pts/game | 1st (100th pct) |
-| Avg opp SRS | +3.54 pts/game | 53rd pct |
-| **Adjusted margin** | **+11.4 pts/game** | **1st (100th pct)** |
+| Opp SRS (games-weighted) | +3.67 pts/game | 49th pct |
+| **Adjusted margin** | **+11.2 pts/game** | **1st (100th pct)** |
 
 Comparison — top 5 adjusted-margin champions:
 
 | Season | Raw | Opp SRS | Adj |
 |--------|-----|---------|-----|
-| **2025–26 Knicks** | **+14.9** | **+3.54** | **+11.4** |
-| 2016–17 Warriors | +13.7 | +3.45 | +10.2 |
-| 1986–87 Lakers | +10.8 | +0.75 | +10.1 |
-| 1990–91 Bulls | +11.7 | +2.24 | +9.5 |
-| 1985–86 Celtics | +10.6 | +2.57 | +8.0 |
+| **2025–26 Knicks** | **+14.9** | **+3.67** | **+11.2** |
+| 2016–17 Warriors | +13.7 | +3.41 | +10.2 |
+| 1986–87 Lakers | +10.8 | +1.32 | +9.5 |
+| 1990–91 Bulls | +11.7 | +2.51 | +9.2 |
+| 1985–86 Celtics | +10.6 | +2.83 | +7.7 |
 
 All 43 champion seasons are included. For pre-1997 seasons where nba_api returns
 null PLUS_MINUS, margins are derived from PTS (both team rows per game).
+
+**Playoff overperformance** — comparing actual margins to what the Knicks' own
+regular-season SRS (+6.05) would predict against those opponents (+2.38 expected
+per game) — gives +12.5 pts/game of outperformance, 2nd all-time (97.7th pct)
+behind only the 2000–01 Lakers. The Knicks didn't just face the right opponents:
+they played far above their regular-season level.
 
 ![Strength of schedule — avg opponent SRS per champion](generated/knicks_2026_opponent_srs_ranking.png){height=0.60}
 
