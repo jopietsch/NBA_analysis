@@ -198,9 +198,9 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 ## 8. Limitations
 
 **Opponent SRS** is from regular-season performance, which may not fully reflect
-playoff-mode strength. SRS treats all opponents equally regardless of round
-(Finals opponent weighted the same as first-round opponent in our simple average
-of unique opponents).
+playoff-mode strength. Opponent SRS is games-weighted (each game counts equally,
+so a 5-game Finals series carries more weight than a 4-game sweep), but the
+per-team SRS values themselves are still regular-season snapshots.
 
 **Small sample:** 19 games is a small sample; the playoff margin could swing
 meaningfully across different realizations of the same team-skill configuration.
