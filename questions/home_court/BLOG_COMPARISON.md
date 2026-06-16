@@ -68,7 +68,7 @@ We find a large presence effect that switches on and off with the doors; the blo
 
 ### 2d. Time zones — a cross-sectional effect we don't find
 
-The blog reports a **5.2 pp eastward-travel penalty** (visitor going east → 62.8% home win; going west → 57.6%) as a real effect. In our regression — controlling for rest, altitude, and COVID — the time-zone coefficient is **−0.02 to +0.05 pp per zone and statistically insignificant** (`RESULTS.md:350`). The blog's 5.2 pp is almost certainly an unconditional split confounded with team quality and schedule. Here we have the methodological high ground. (We both agree it doesn't explain the *decline* — it's flat over time either way.)
+The blog reports a **5.2 pp eastward-travel penalty** (visitor going east → 62.8% home win; going west → 57.6%) as a real effect. In our regression — controlling for rest, altitude, era, and COVID — the time-zone coefficient is **−0.6 pp per zone** (full model p=0.005, CI [−0.9, −0.2]), but it doesn't survive the BH multiple-comparisons correction and is negligibly small in magnitude. The blog's 5.2 pp is almost certainly an unconditional split confounded with conference geography, team quality, and schedule. Here we have the methodological high ground. (We both agree it doesn't explain the *decline* — the effect is flat over time either way.)
 
 ---
 
