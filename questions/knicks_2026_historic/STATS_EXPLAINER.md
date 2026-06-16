@@ -141,22 +141,28 @@ full-team bar chart gives context for where each one sits relative to all 30 tea
 
 **The data.** The `gap_table` (43 seasons × 5 columns).
 
-**The approach.** The 2025–26 SRS gap (+0.39) is passed to `_pct_rank` against
-the 43-season `srs_gap` series with `ascending=True`. A "100th percentile" here
-means the most West-dominant season ever; a "0th percentile" means the most
-East-dominant. The same logic applies to `east_h2h_wr`, but with
-`ascending=False` (higher win rate = better for East = *lower* percentile for
-"worst for East").
+**The approach.** Two layers of analysis:
 
-Three "most West-dominant" and three "most East-dominant" seasons are reported
-by `nlargest` / `nsmallest` for reference — concrete historical anchors for the
-reader to calibrate the percentile number.
+1. `_pct_rank` against the 43-season `srs_gap` series (100th = most West-dominant).
+2. Z-score and 95% confidence interval:
+   - Z = (gap_2026 − mean_gap) / std_gap; tells how many standard deviations from
+     the historical average this season's gap is.
+   - 95% CI on the mean gap (t-distribution with df = n-1): shows the range of
+     plausible "true average" West-East gaps given 43 observations.
 
-**What the results mean.** The 2025–26 gap sits at the 37th percentile of West
-dominance: in 63% of the 43 seasons studied, the West had a larger SRS edge over
-the East. The most West-dominant seasons (2013–14, +4.08; 2003–04, +3.73;
-2000–01, +3.11) dwarf 2025–26. The East was stronger than average relative to
-the West in 2025–26. This rules out the "easy conference" narrative.
+The `scipy.stats.t.ppf(0.975, df=42)` critical value is used for the CI half-width:
+`ci_half = t * std / sqrt(n)`.
+
+Three "most West-dominant" and three "most East-dominant" seasons are also
+reported as concrete anchors.
+
+**What the results mean.** Z = −0.21: the 2025–26 gap (+0.39) is only 0.21
+standard deviations below the historical mean gap (+0.78). This is well within
+normal variation (|z| < 1), formally confirming the percentile-based conclusion.
+The historical mean of the gap is +0.78 — the West has typically been stronger
+than the East — but 2025–26 was slightly below that average (more East-competitive
+than normal), though not significantly so. The "easy conference" narrative is
+ruled out not just by ranking (37th percentile) but by formal significance testing.
 
 **Why this chart (conference gap line).** The conference gap is a time series —
 43 data points, one per season — so a line is the natural form. It shows the gap

@@ -58,10 +58,11 @@ of the five games were decided by 4 points or fewer.
 ## 3. Was the East Weak?
 
 **No, not historically.** The West-East SRS gap in 2025–26 was only **+0.39
-pts/game**, placing the season at the **37th percentile of West dominance**. In
-63% of seasons since 1984, the West has been *more* dominant relative to the
-East than in 2025–26. The East inter-conference win rate was 0.487 (slightly
-below 0.500, near parity).
+pts/game** — 37th percentile of West dominance and **0.21 standard deviations
+below the historical mean gap of +0.78** (z = −0.21, well within normal
+variation). The East inter-conference win rate was 0.487 (near parity). By any
+formal measure, the East in 2025–26 was unremarkable — if anything, slightly
+more competitive than the 42-year average.
 
 The three most West-dominant seasons on record were 2013–14 (+4.08), 2003–04
 (+3.73), and 2000–01 (+3.11) — all much larger gaps. The 2025–26 East was

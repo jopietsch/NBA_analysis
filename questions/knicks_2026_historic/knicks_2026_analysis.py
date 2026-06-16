@@ -152,9 +152,33 @@ def run_gap_history(gap_table: pd.DataFrame, out: io.StringIO) -> None:
     gap_2026 = float(subject_gap.iloc[0])
     gap_pct  = _pct_rank(gap_table["srs_gap"], gap_2026, ascending=True)
 
+    # Statistical description of the gap distribution
+    gaps     = gap_table["srs_gap"].dropna()
+    gap_mean = float(gaps.mean())
+    gap_std  = float(gaps.std(ddof=1))
+    z_score  = (gap_2026 - gap_mean) / gap_std if gap_std > 0 else float("nan")
+    n        = len(gaps)
+    # 95% confidence interval on the mean (t-distribution, df=n-1)
+    from scipy.stats import t as t_dist
+    ci_half = t_dist.ppf(0.975, df=n - 1) * gap_std / n ** 0.5
+    ci_lo, ci_hi = gap_mean - ci_half, gap_mean + ci_half
+
     print(f"2025-26 SRS gap (West − East): {gap_2026:+.2f} pts/game", file=out)
-    print(f"Percentile among all {len(gap_table)} seasons "
+    print(f"Percentile among all {n} seasons "
           f"(100th = most West-dominant): {gap_pct:.1f}th", file=out)
+    print(f"\nGap distribution ({n} seasons):", file=out)
+    print(f"  Mean:   {gap_mean:+.2f} pts/game", file=out)
+    print(f"  Std:    {gap_std:.2f} pts/game", file=out)
+    print(f"  95% CI on mean: [{ci_lo:+.2f}, {ci_hi:+.2f}]", file=out)
+    print(f"  Z-score of 2025-26 gap: {z_score:+.2f}  "
+          f"({'above' if z_score > 0 else 'below'} historical mean)", file=out)
+    if abs(z_score) < 1.0:
+        sig_note = "well within normal variation (|z| < 1)."
+    elif abs(z_score) < 1.96:
+        sig_note = "within normal range (|z| < 1.96, not statistically unusual)."
+    else:
+        sig_note = "statistically unusual (|z| ≥ 1.96)."
+    print(f"  2025-26 gap is {sig_note}", file=out)
 
     top3 = gap_table.nlargest(3, "srs_gap")[["year", "srs_gap"]]
     print(f"\nTop 3 most West-dominant seasons:", file=out)

@@ -39,6 +39,13 @@ Average regular-season SRS by conference:
 2025-26 SRS gap (West − East): +0.39 pts/game
 Percentile among all 43 seasons (100th = most West-dominant): 37.2th
 
+Gap distribution (43 seasons):
+  Mean:   +0.78 pts/game
+  Std:    1.81 pts/game
+  95% CI on mean: [+0.22, +1.34]
+  Z-score of 2025-26 gap: -0.21  (below historical mean)
+  2025-26 gap is well within normal variation (|z| < 1).
+
 Top 3 most West-dominant seasons:
   13–14: +4.08
   03–04: +3.73
