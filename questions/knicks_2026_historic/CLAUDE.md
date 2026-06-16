@@ -6,8 +6,6 @@ A Python system to fetch NBA data and analyze it to answer one question: **did t
 
 This project is a sibling of `../nba_home_court` and deliberately mirrors its architecture, toolchain, and conventions. When something here is unspecified, that project is the reference.
 
-> **Status:** scaffolded, not yet implemented. The season/cache plumbing (`knicks_2026_data.py`) and the report pipeline are in place. The "historic" metrics, plots, analysis, and findings narrative are intentionally left as TBD markers — they'll be designed before being written. Search the modules for `TBD`.
-
 ## Commands
 
 ```bash
@@ -36,9 +34,9 @@ Always run the pipeline with `MPLBACKEND=Agg` to render PNGs without opening dis
 
 Four pipeline modules plus two report generators, mirroring `nba_home_court`:
 
-- **`knicks_2026_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. `fetch_games()` pulls game logs via nba_api's `LeagueGameFinder` and caches them as CSVs under `cache/`. `compute_*` metrics (TBD) turn raw frames into the numbers we rank.
+- **`knicks_2026_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. `fetch_games()` pulls game logs via nba_api's `LeagueGameFinder` and caches them as CSVs under `cache/`. `compute_*` metrics turn raw frames into the numbers we rank.
 - **`knicks_2026_plots.py`** — all visualization (`plot_*` functions saving `knicks_2026_*.png`); imports the data module, holds no data logic of its own.
-- **`knicks_2026_analysis.py`** — statistical/comparative analysis; `run()` prints all sections to stdout. Because the question is "how does the 2026 run rank," the method is likely percentile/ranking against the historical set rather than regression (final method TBD).
+- **`knicks_2026_analysis.py`** — statistical/comparative analysis; `run()` prints all sections to stdout. The method is percentile/ranking against the historical champion set.
 - **`knicks_2026_historic.py`** — pipeline orchestration only: sequences data → plots → analysis, and captures `analysis.run()`'s stdout into `RESULTS.md` inside a ``` fence. The analysis module is imported inside `main()`.
 - **`generate_report.py`** — assembles `FINDINGS.md` prose + PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated; appendix renders `RESULTS.md` verbatim.
 - **`generate_doc_pdf.py`** — general Markdown→PDF renderer for standalone docs (copied unchanged from the sibling; understands code fences, headings, lists, tables, images, and `--appendix`).
