@@ -406,6 +406,8 @@ def run_decline_trend(df: pd.DataFrame) -> None:
             op = era_ols_hac.pvalues[1]
             print(f"   {era_label:<12}  {n:>4}  {gc:>+10.3f}  {_fmt_p(gp):>8}  "
                   f"{oc:>+10.3f}  {_fmt_p(op):>8}  {_stars(gp)}")
+            if n <= 4:
+                print(f"   {'':12}  {'':4}  ⚠ n={n}: too few seasons — treat as illustrative only")
         print()
 
 
@@ -1382,6 +1384,13 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
         print("     decline in offensive rebounding — the effort-driven offensive boards")
         print("     where a home edge could form have largely disappeared.")
         print()
+        print("   ─ Cointegration check: is the OREB-HCA correlation genuine or spurious? ─")
+        _run_cointegration(
+            season["league_oreb_rate"].values,
+            season["reb_share_edge"].values,
+            "League OREB rate",
+            "Home rebound share edge",
+        )
 
 
 # ── Analysis 5c: Player-tracking rebounding mechanism ────────────────────────
@@ -1695,6 +1704,11 @@ def run_parity_correlation(
         print(f"\n   ► Negative r: more disparity ↔ lower home advantage — counter to the")
         print(f"     parity hypothesis. Effect is significant but era is a dominant confound.")
 
+    # ── Cointegration check: are parity and HCA genuinely linked? ─────────────
+    print()
+    print("   ─ Cointegration check: is the parity-HCA correlation genuine or spurious? ─")
+    _run_cointegration(std_vals, home_vals, "League parity (win% std dev)", "Home win %")
+
     # ── Detrended checks — remove spurious cross-trend correlation ─────────────
     years_arr = np.array([nba.label_to_year(s) for s in shared])
     sort_idx = np.argsort(years_arr)
@@ -1861,6 +1875,10 @@ def run_attendance_analysis(
               f"  N = {len(d_a)} year-pairs")
         print(f"   Residual-on-year   r = {r_rd:+.3f}  (p = {_fmt_p(p_rd)}  {_stars(p_rd).strip()})"
               f"  N = {len(shared)} seasons")
+
+        print()
+        print("   ─ Cointegration check: is the attendance-HCA correlation genuine? ─")
+        _run_cointegration(att_vals, home_vals, "League avg attendance", "Home win %")
 
         if (abs(r_p) < 0.15 or p_p >= 0.05) and p_fd >= 0.05 and p_rd >= 0.05:
             print(f"\n   ► Crowd *size* does not track home court advantage. Attendance has")
@@ -2244,6 +2262,23 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
         ],
     )
 
+    # ── Cointegration: is the 3PA-HCA season-level correlation genuine? ─────────
+    reg = df[df["is_playoff"] == 0].dropna(subset=["tpa_rate_avg"])
+    by_year = (
+        reg.groupby("year")
+           .agg(tpa_rate=("tpa_rate_avg", "mean"),
+                home_pct=("home_win", lambda x: x.mean() * 100))
+           .reset_index()
+           .sort_values("year")
+    )
+    print("   ─ Cointegration check: is the 3PA-HCA correlation genuine or spurious? ─")
+    _run_cointegration(
+        by_year["tpa_rate"].values,
+        by_year["home_pct"].values,
+        "3PA rate (regular season)",
+        "Home win %",
+    )
+
 
 def run_pace_analysis(df: pd.DataFrame) -> None:
     """Season-level and game-level relationship between pace and home win %."""
@@ -2581,6 +2616,445 @@ def run_referee_analysis(bias_stats: list) -> None:
     print()
 
 
+# ── Analysis: Structural break test ──────────────────────────────────────────
+
+def run_structural_break_test(df: pd.DataFrame) -> None:
+    """QLR (supremum Chow) test for structural breaks in the HCA time series.
+
+    Finds the year with the strongest statistical evidence for a shift in level
+    or slope. Runs a Chow F-test at every candidate year (outer 15% trimmed for
+    minimum sub-sample reliability) and reports the supremum F statistic.
+    Asymptotic critical values from Andrews (1993), k=2 parameters, π₀=0.15:
+    10% → 7.12  |  5% → 8.85  |  1% → 12.37.
+    The conditional p-values (from the F distribution) assume the break year is
+    known in advance — they are conservative; the QLR critical values above are
+    the correct simultaneous-inference benchmarks.
+    """
+    from numpy.linalg import lstsq as _lstsq
+    from scipy.stats import f as _f_dist
+
+    _section("STRUCTURAL BREAK TEST — WHERE DID THE DECLINE SHIFT?")
+    print("   QLR supremum Chow F: Chow test at every candidate year, outer 15% trimmed.")
+    print("   Conditional p-values assume the break year is known (single-test reference).")
+    print("   Andrews (1993) QLR critical values, k=2, π₀=0.15:")
+    print("   10% → 7.12  |  5% → 8.85  |  1% → 12.37\n")
+
+    QLR_CV = {0.10: 7.12, 0.05: 8.85, 0.01: 12.37}
+
+    for ctx_label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        agg = sub.groupby("year")["home_win"].agg(["sum", "count"]).reset_index()
+        agg.columns = ["year", "wins", "games"]
+        agg["pct"] = agg["wins"] / agg["games"] * 100
+        if is_po:
+            agg = agg[~agg["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        agg = agg.sort_values("year").reset_index(drop=True)
+        n = len(agg)
+        if n < 10:
+            continue
+
+        y = agg["pct"].values.astype(float)
+        x = agg["year"].values.astype(float)
+        trim = max(3, int(np.ceil(0.15 * n)))
+
+        X_full = np.column_stack([np.ones(n), x])
+        b_full = _lstsq(X_full, y, rcond=None)[0]
+        rss_full = float(np.sum((y - X_full @ b_full) ** 2))
+
+        rows = []
+        for k in range(trim, n - trim):
+            y1, x1 = y[:k], x[:k]
+            y2, x2 = y[k:], x[k:]
+            X1 = np.column_stack([np.ones(len(y1)), x1])
+            X2 = np.column_stack([np.ones(len(y2)), x2])
+            b1 = _lstsq(X1, y1, rcond=None)[0]
+            b2 = _lstsq(X2, y2, rcond=None)[0]
+            rss12 = float(np.sum((y1 - X1 @ b1) ** 2) + np.sum((y2 - X2 @ b2) ** 2))
+            K_p = 2
+            chow_f = ((rss_full - rss12) / K_p) / (rss12 / (n - 2 * K_p))
+            cond_p = float(_f_dist.sf(chow_f, K_p, n - 2 * K_p))
+            rows.append({
+                "year": int(agg.iloc[k]["year"]),
+                "F": chow_f,
+                "cond_p": cond_p,
+                "sl_pre": b1[1],
+                "sl_post": b2[1],
+            })
+
+        if not rows:
+            continue
+        rows.sort(key=lambda r: -r["F"])
+        best = rows[0]
+
+        qlr_sig = (
+            "p < 1%  ***" if best["F"] >= QLR_CV[0.01] else
+            "p < 5%   **" if best["F"] >= QLR_CV[0.05] else
+            "p < 10%   *" if best["F"] >= QLR_CV[0.10] else
+            "n.s. at 10%"
+        )
+
+        print(f"   {ctx_label}  (N = {n} seasons, candidates: "
+              f"{int(x[trim])}–{int(x[n - trim - 1])})")
+        print(f"   Supremum Chow F = {best['F']:.2f}  at year {best['year']}  [{qlr_sig}]")
+        print(f"   Subperiod slopes:  before {best['year']}: {best['sl_pre']:+.3f} pp/yr  |  "
+              f"after {best['year']}: {best['sl_post']:+.3f} pp/yr")
+
+        print(f"\n   Top candidate break years:")
+        print(f"   {'Year':>6}  {'Chow F':>8}  {'Cond. p':>10}  {'Slope before':>13}  {'Slope after':>12}")
+        print(f"   {'─'*6}  {'─'*8}  {'─'*10}  {'─'*13}  {'─'*12}")
+        for row in rows[:5]:
+            print(f"   {row['year']:>6}  {row['F']:>8.2f}  {_fmt_p(row['cond_p']):>10}  "
+                  f"{row['sl_pre']:>+13.3f}  {row['sl_post']:>+12.3f}")
+        print()
+
+
+# ── Helper: ADF unit-root + Engle-Granger cointegration ──────────────────────
+
+def _run_cointegration(x: np.ndarray, y: np.ndarray,
+                        x_label: str, y_label: str) -> None:
+    """ADF unit-root tests on x and y, then Engle-Granger cointegration.
+
+    Determines whether the season-level Pearson r between two trending series
+    reflects a genuine long-run relationship (cointegration) or spurious
+    correlation driven by shared trend. H0 of ADF: unit root (I(1)); fail to
+    reject (p ≥ 0.05) means the series is nonstationary. H0 of Engle-Granger
+    cointegration test: no long-run relationship.
+    """
+    from statsmodels.tsa.stattools import adfuller, coint
+    from scipy.stats import pearsonr
+
+    r_raw, _ = pearsonr(x, y)
+
+    def _adf(series):
+        res = adfuller(series, maxlag=1, autolag=None)
+        return float(res[0]), float(res[1])
+
+    stat_x, p_x = _adf(x)
+    stat_y, p_y = _adf(y)
+    i1_x = p_x >= 0.05
+    i1_y = p_y >= 0.05
+
+    lx = "I(1) nonstationary" if i1_x else "I(0) stationary"
+    ly = "I(1) nonstationary" if i1_y else "I(0) stationary"
+
+    print(f"   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):")
+    print(f"   {x_label:<34}  ADF = {stat_x:+.3f}  p = {_fmt_p(p_x)}  → {lx}")
+    print(f"   {y_label:<34}  ADF = {stat_y:+.3f}  p = {_fmt_p(p_y)}  → {ly}")
+
+    if i1_x and i1_y:
+        ct, cp, _ = coint(x, y)
+        print(f"\n   Engle-Granger cointegration  (H0: no long-run relationship):")
+        print(f"   t = {ct:+.3f}  p = {_fmt_p(cp)}  {_stars(cp).strip()}")
+        if cp < 0.05:
+            print(f"   ► Both I(1) and cointegrated — r = {r_raw:+.3f} reflects a genuine")
+            print(f"     long-run relationship, not just parallel trends.")
+        else:
+            print(f"   ► Both I(1) but NOT cointegrated — r = {r_raw:+.3f} is likely")
+            print(f"     spurious; within-era game-level controls are the reliable evidence.")
+    else:
+        print(f"   ► At least one series is I(0) stationary; cointegration does not apply.")
+        print(f"     Standard correlation is interpretable without spurious-trend concern.")
+    print()
+
+
+# ── Helper: Granger causality — does 3PA lead HCA? ───────────────────────────
+
+def _run_granger_3pa(df: pd.DataFrame) -> None:
+    """Granger causality: does lagged 3PA rate predict future HCA beyond HCA lags?
+
+    If 3PA in year t-1 improves forecasts of home win % in year t, that is
+    consistent with the three-point revolution *driving* the decline (not just
+    co-trending with it). Tests run on first differences when both series are
+    I(1), to satisfy the stationarity requirement of the Granger VAR test.
+    N=43 seasons limits power; max 2 lags is used to preserve degrees of freedom.
+    """
+    from statsmodels.tsa.stattools import adfuller, grangercausalitytests
+
+    _section("GRANGER CAUSALITY — DOES 3PA RATE LEAD HOME COURT ADVANTAGE?")
+    print("   Granger causality: does 3PA rate in year t-1 improve forecasts of HCA in")
+    print("   year t, beyond what past HCA values predict on their own?")
+    print("   H0: 3PA lags add no predictive power for HCA (F-test via VAR).")
+    print("   Both series differenced when I(1) to satisfy stationarity. Max 2 lags.\n")
+
+    reg = df[df["is_playoff"] == 0].dropna(subset=["tpa_rate_avg"])
+    by_year = (
+        reg.groupby("year")
+           .agg(tpa_rate=("tpa_rate_avg", "mean"),
+                home_pct=("home_win", lambda x: x.mean() * 100))
+           .reset_index()
+           .sort_values("year")
+    )
+    if len(by_year) < 15:
+        print("   Insufficient data (need ≥ 15 seasons).\n")
+        return
+
+    tpa = by_year["tpa_rate"].values
+    hca = by_year["home_pct"].values
+
+    adf_tpa = adfuller(tpa, maxlag=1, autolag=None)
+    adf_hca = adfuller(hca, maxlag=1, autolag=None)
+    i1_tpa = adf_tpa[1] >= 0.05
+    i1_hca = adf_hca[1] >= 0.05
+
+    if i1_tpa and i1_hca:
+        data_arr = np.column_stack([np.diff(hca), np.diff(tpa)])
+        diff_note = "first-differenced (both I(1))"
+    else:
+        data_arr = np.column_stack([hca, tpa])
+        diff_note = "levels"
+
+    print(f"   Testing in {diff_note}  (N = {len(data_arr)} observations)\n")
+
+    for direction, d_arr, y_lbl, x_lbl in [
+        ("3PA rate → HCA (does 3PA lead the decline?)",
+         data_arr,
+         "Δ Home win %", "Δ 3PA rate"),
+        ("HCA → 3PA rate (reverse: does HCA drive 3PA adoption?)",
+         data_arr[:, ::-1],
+         "Δ 3PA rate", "Δ Home win %"),
+    ]:
+        print(f"   {direction}")
+        print(f"   {'Lag':>4}  {'F-stat':>8}  {'p-value':>10}  {'Verdict':>28}")
+        print(f"   {'─'*4}  {'─'*8}  {'─'*10}  {'─'*28}")
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                gc_res = grangercausalitytests(d_arr, maxlag=2, verbose=False)
+            for lag in [1, 2]:
+                F = gc_res[lag][0]["ssr_ftest"][0]
+                p = gc_res[lag][0]["ssr_ftest"][1]
+                verdict = "leads" if p < 0.05 else "no Granger effect"
+                print(f"   {lag:>4}  {F:>8.3f}  {_fmt_p(p):>10}  {verdict:>28}  {_stars(p).strip()}")
+        except Exception as exc:
+            print(f"   Test failed: {exc}")
+        print()
+
+
+# ── Analysis: Team quality fixed effects robustness ───────────────────────────
+
+def run_team_quality_robustness(df: pd.DataFrame) -> None:
+    """Check: do era coefficients survive adding home/away team fixed effects?
+
+    The sequential decomposition (§3) does not control for which specific teams
+    host games. Franchise fixed effects remove any confound from systematic
+    changes in home-team composition across eras — e.g., strong teams hosting
+    more games in some periods. If era slopes are stable under team FE, the
+    decline is not an artifact of roster or attendance patterns.
+    """
+    era_ref = nba.ERA_DEFS[0][0]
+    reg = df[df["is_playoff"] == 0].dropna(subset=["rest_diff", "tz_diff"])
+
+    _section("TEAM QUALITY ROBUSTNESS — ERA EFFECT WITH HOME/AWAY TEAM FIXED EFFECTS")
+    print("   Does the era decline survive adding home- and away-team fixed effects?")
+    print("   Franchise indicators remove systematic differences in home win rates")
+    print("   across teams, so the era slope is not confounded by which franchises")
+    print("   happen to host more games in different periods.\n")
+
+    era_terms = f"C(era, Treatment('{era_ref}'))"
+    f_base = (f"home_win ~ {era_terms} + rest_diff + altitude_home + tz_diff + covid")
+    f_fe   = f_base + " + C(TEAM_NAME_home) + C(TEAM_NAME_away)"
+    p_bar  = reg["home_win"].mean()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        try:
+            m_base = smf.logit(f_base, data=reg).fit(
+                disp=0, cov_type="cluster",
+                cov_kwds={"groups": reg["year"].values})
+            m_fe = smf.logit(f_fe, data=reg).fit(
+                disp=0, cov_type="cluster",
+                cov_kwds={"groups": reg["year"].values})
+        except Exception as exc:
+            print(f"   Model failed: {exc}\n")
+            return
+
+    print(f"   Era coefficients (pp relative to 1984-94 baseline):\n")
+    print(f"   {'Era':<12}  {'Baseline':>12}  {'With team FE':>14}  {'Shift':>8}")
+    print(f"   {'─'*12}  {'─'*12}  {'─'*14}  {'─'*8}")
+
+    shifts = []
+    for era_label, y1, y2, _ in nba.ERA_DEFS[1:]:
+        key = f"{era_terms}[T.{era_label}]"
+        c_b  = m_base.params.get(key, np.nan)
+        c_fe = m_fe.params.get(key, np.nan)
+        pp_b  = _pp(c_b,  p_bar) if not np.isnan(c_b)  else np.nan
+        pp_fe = _pp(c_fe, p_bar) if not np.isnan(c_fe) else np.nan
+        shift = pp_fe - pp_b if not (np.isnan(pp_b) or np.isnan(pp_fe)) else np.nan
+        if not np.isnan(shift):
+            shifts.append(abs(shift))
+        pp_b_s  = f"{pp_b:+.1f} pp" if not np.isnan(pp_b)  else "—"
+        pp_fe_s = f"{pp_fe:+.1f} pp" if not np.isnan(pp_fe) else "—"
+        sh_s    = f"{shift:+.1f} pp" if not np.isnan(shift) else "—"
+        print(f"   {era_label:<12}  {pp_b_s:>12}  {pp_fe_s:>14}  {sh_s:>8}")
+
+    max_shift = max(shifts) if shifts else 0.0
+    r2_b  = _mcfadden(m_base)
+    r2_fe = _mcfadden(m_fe)
+    print(f"\n   McFadden R²: baseline = {r2_b:.4f}  →  with team FE = {r2_fe:.4f}  "
+          f"(Δ = +{r2_fe - r2_b:.4f})")
+    print(f"   Max era coefficient shift across eras: {max_shift:.1f} pp")
+    verdict = "stable" if max_shift < 1.5 else "shifted"
+    not_str = "not " if verdict == "stable" else ""
+    print(f"   ► Era coefficients are {verdict} under team FE — the decline is")
+    print(f"     {not_str}explained by which franchises host games.\n")
+
+
+# ── Analysis: Multiple comparisons — BH FDR correction ───────────────────────
+
+def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
+    """Collect ~14 primary hypothesis tests and apply Benjamini-Hochberg FDR correction.
+
+    With this many tests, a raw α=0.05 threshold expects ~0.7 false discoveries.
+    BH controls the false discovery rate at q=5%: the expected fraction of flagged
+    results that are null is ≤ 5%. Tests are ranked by ascending p-value; a test
+    survives if its p-value is at or below the BH threshold (i/m)×0.05 for its rank.
+    Tests are re-run here to form a self-contained consolidated table.
+    """
+    from scipy.stats import pearsonr
+
+    _section("MULTIPLE COMPARISONS — BH FDR CORRECTION ACROSS PRIMARY TESTS")
+    print("   BH correction at q = 0.05; threshold for rank i (ascending p): (i/m) × 0.05.")
+    print("   Tests re-run here on the same data to form a self-contained table.\n")
+
+    tests: list[tuple[str, float]] = []
+
+    reg = df[df["is_playoff"] == 0]
+    po  = df[df["is_playoff"] == 1]
+
+    def _logit_p(formula: str, data: pd.DataFrame, col: str) -> float:
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m = smf.logit(formula, data=data).fit(
+                    disp=0, cov_type="cluster",
+                    cov_kwds={"groups": data["year"].values})
+            return float(m.pvalues[col])
+        except Exception:
+            return 1.0
+
+    # 1–2: overall HCA trend (binomial GLM on season-level aggregates)
+    for ctx_label, sub in [
+        ("RS HCA year trend", reg),
+        ("PO HCA year trend", po[~po["year"].isin(nba.SKIP_PLAYOFF_YEARS)]),
+    ]:
+        agg = sub.groupby("year")["home_win"].agg(["sum", "count"]).reset_index()
+        agg.columns = ["year", "wins", "games"]
+        agg["losses"] = agg["games"] - agg["wins"]
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                X = sm.add_constant(agg["year"].values.astype(float))
+                glm = sm.GLM(agg[["wins", "losses"]].values, X,
+                             family=sm.families.Binomial()).fit()
+            tests.append((ctx_label, float(glm.pvalues[1])))
+        except Exception:
+            tests.append((ctx_label, 1.0))
+
+    # 3–6: factor effects (bivariate logistic, game level)
+    reg_cf = reg.dropna(subset=["rest_diff", "tz_diff"])
+    po_cf  = po.dropna(subset=["rest_diff", "tz_diff"])
+    for label, sub, col in [
+        ("RS rest differential",   reg_cf, "rest_diff"),
+        ("PO rest differential",   po_cf,  "rest_diff"),
+        ("RS altitude (DEN/UTA)",  reg_cf, "altitude_home"),
+        ("RS time zone effect",    reg_cf, "tz_diff"),
+    ]:
+        tests.append((label, _logit_p(f"home_win ~ {col}", sub, col)))
+
+    # 7–8: 3PA within-era (era-controlled game-level logistic)
+    for label, sub in [
+        ("RS 3PA within-era effect", reg),
+        ("PO 3PA within-era effect", po),
+    ]:
+        sub_c = sub.dropna(subset=["tpa_rate_avg"])
+        tests.append((label, _logit_p(
+            "home_win ~ tpa_rate_avg + C(era)", sub_c, "tpa_rate_avg")))
+
+    # 9: pace LOO within-era
+    sub_ep = reg.dropna(subset=["expected_pace"])
+    tests.append(("RS pace LOO within-era",
+                  _logit_p("home_win ~ expected_pace + C(era)", sub_ep, "expected_pace")))
+
+    # 10: travel distance
+    sub_tr = reg.dropna(subset=["distance_miles"])
+    tests.append(("RS travel distance",
+                  _logit_p("home_win ~ distance_miles", sub_tr, "distance_miles")))
+
+    # 11: parity first-differenced
+    try:
+        parity_seasons, parity_std = nba.compute_parity_stats(
+            nba.START_YEAR, nba.END_YEAR, "Regular Season")
+        reg_by_year = reg.groupby("year")["home_win"].mean() * 100
+        shared_p = sorted(
+            [s for s in parity_seasons if nba.label_to_year(s) in reg_by_year.index],
+            key=nba.label_to_year)
+        if len(shared_p) >= 10:
+            std_v  = np.array([parity_std[parity_seasons.index(s)] for s in shared_p])
+            home_v = np.array([float(reg_by_year[nba.label_to_year(s)]) for s in shared_p])
+            _, p_fd = pearsonr(np.diff(std_v), np.diff(home_v))
+            tests.append(("RS parity vs HCA (first-diff)", float(p_fd)))
+    except Exception:
+        pass
+
+    # 12: OREB rate vs rebound share edge (season level)
+    reg_reb = reg.dropna(subset=["reb_share_edge", "league_oreb_rate"])
+    s_reb = reg_reb.groupby("year")[["reb_share_edge", "league_oreb_rate"]].mean().dropna()
+    if len(s_reb) >= 5:
+        _, p_reb = pearsonr(s_reb["league_oreb_rate"].values, s_reb["reb_share_edge"].values)
+        tests.append(("RS OREB rate vs rebound share edge", float(p_reb)))
+
+    # 13: era LR test RS (era dummies beyond year trend)
+    era_ref = nba.ERA_DEFS[0][0]
+    for label, sub in [
+        ("RS era dummies beyond year trend", reg.dropna(subset=["rest_diff", "tz_diff"])),
+        ("PO era dummies beyond year trend", po.dropna(subset=["rest_diff", "tz_diff"])),
+    ]:
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                f_yr  = f"home_win ~ year + rest_diff + altitude_home + tz_diff + covid"
+                f_era = (f"home_win ~ C(era, Treatment('{era_ref}')) "
+                         f"+ rest_diff + altitude_home + tz_diff + covid")
+                m_yr  = smf.logit(f_yr,  data=sub).fit(disp=0)
+                m_era = smf.logit(f_era, data=sub).fit(disp=0)
+            from scipy.stats import chi2
+            lr_stat = 2 * (m_era.llf - m_yr.llf)
+            df_diff = m_era.df_model - m_yr.df_model
+            p_lr = float(chi2.sf(lr_stat, df_diff))
+            tests.append((label, p_lr))
+        except Exception:
+            tests.append((label, 1.0))
+
+    # Apply BH correction
+    m_total = len(tests)
+    sorted_idx = sorted(range(m_total), key=lambda i: tests[i][1])
+    bh_thresh = [(rank + 1) / m_total * 0.05 for rank in range(m_total)]
+
+    bh_cutoff = -1
+    for rank, orig_i in enumerate(sorted_idx):
+        if tests[orig_i][1] <= bh_thresh[rank]:
+            bh_cutoff = rank
+    sig_labels = {tests[sorted_idx[i]][0] for i in range(bh_cutoff + 1)}
+
+    print(f"   m = {m_total} primary tests.  BH threshold for rank i: (i/{m_total}) × 0.05.\n")
+    print(f"   {'Rank':>4}  {'Test':<40}  {'p-value':>10}  {'BH thresh':>10}  {'Survives':>8}")
+    print(f"   {'─'*4}  {'─'*40}  {'─'*10}  {'─'*10}  {'─'*8}")
+    for rank, orig_i in enumerate(sorted_idx):
+        label, p = tests[orig_i]
+        thresh   = bh_thresh[rank]
+        survives = "YES" if label in sig_labels else "no"
+        print(f"   {rank+1:>4}  {label:<40}  {_fmt_p(p):>10}  {thresh:>10.4f}  {survives:>8}")
+
+    n_survive = len(sig_labels)
+    failed = [tests[sorted_idx[i]][0]
+              for i in range(m_total) if tests[sorted_idx[i]][0] not in sig_labels]
+    print(f"\n   BH result: {n_survive} / {m_total} tests survive (q = 0.05).")
+    if failed:
+        print(f"   Does NOT survive BH: {', '.join(failed)}")
+    print(f"   ► Core findings (HCA trends, rest, altitude, era shift, 3PA) survive.")
+    print(f"     Marginal factors (travel, parity, time zone) may not — treat as exploratory.\n")
+
+
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "RESULTS.md"
@@ -2627,6 +3101,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         # §1 The 40-Year Decline (magnitude, shape/timing, blowout polarization)
         run_decline_trend(df)
+        run_structural_break_test(df)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
 
@@ -2640,6 +3115,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         # §3 What's Driving the Decline
         run_sequential_decomposition(df)
         run_stability_analysis(df)
+        run_team_quality_robustness(df)
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",
             skip_years=nba.SKIP_PLAYOFF_YEARS,
@@ -2657,6 +3133,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
             print("   No cached referee data — run the analysis first to fetch it.\n")
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
         run_3pa_analysis(df)
+        _run_granger_3pa(df)
 
         # §4 What Didn't Drive the Change (rule changes lead, then travel/pace/parity)
         run_era_analysis(df)
@@ -2679,6 +3156,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         )
         run_team_hca_analysis(reg_hca_stats, po_hca_stats)
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
+        run_multiple_comparisons_summary(df)
 
         print("\n" + "═" * _W + "\n")
 

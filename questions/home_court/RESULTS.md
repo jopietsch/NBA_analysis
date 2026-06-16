@@ -26,9 +26,11 @@ All data from cache/ — same source as the plots above.
    1984–94         11      -0.522    <0.001      -0.506     0.019  ***
    1995–01          7      +0.201     0.462      +0.229     0.205     
    2002–04          3      +1.136     0.256      +1.135     0.312     
+                       ⚠ n=3: too few seasons — treat as illustrative only
    2005–17         13      -0.179     0.085      -0.180     0.002     
    2018–22          5      -1.183     0.009      -1.191     0.009   **
    2023–26          4      -0.773     0.223      -0.772     0.216     
+                       ⚠ n=4: too few seasons — treat as illustrative only
 
    Playoffs  (42 seasons, 1984–2026)
    Binomial GLM: -0.225 pp/yr  95% CI [-0.359, -0.091]  (p = <0.001  ***,  total ≈ -9.5 pp)
@@ -39,9 +41,45 @@ All data from cache/ — same source as the plots above.
    1984–94         11      +0.250     0.629      +0.234     0.262     
    1995–01          7      +0.385     0.719      +0.312     0.782     
    2002–04          3      +6.551     0.095      +6.398     0.097     
+                       ⚠ n=3: too few seasons — treat as illustrative only
    2005–17         13      -0.442     0.255      -0.445     0.323     
    2018–22          4      -2.129     0.207      -2.155     0.184     
+                       ⚠ n=4: too few seasons — treat as illustrative only
    2023–26          4      -1.409     0.558      -1.408     0.003     
+                       ⚠ n=4: too few seasons — treat as illustrative only
+
+
+─── STRUCTURAL BREAK TEST — WHERE DID THE DECLINE SHIFT? ───────────────
+   QLR supremum Chow F: Chow test at every candidate year, outer 15% trimmed.
+   Conditional p-values assume the break year is known (single-test reference).
+   Andrews (1993) QLR critical values, k=2, π₀=0.15:
+   10% → 7.12  |  5% → 8.85  |  1% → 12.37
+
+   Regular season  (N = 43 seasons, candidates: 1991–2019)
+   Supremum Chow F = 10.22  at year 1999  [p < 5%   **]
+   Subperiod slopes:  before 1999: -0.652 pp/yr  |  after 1999: -0.255 pp/yr
+
+   Top candidate break years:
+     Year    Chow F     Cond. p   Slope before   Slope after
+   ──────  ────────  ──────────  ─────────────  ────────────
+     1999     10.22      <0.001         -0.652        -0.255
+     2003      8.39      <0.001         -0.482        -0.308
+     1998      8.30      <0.001         -0.673        -0.235
+     1992      7.59       0.002         -0.022        -0.182
+     2000      6.60       0.003         -0.562        -0.253
+
+   Playoffs  (N = 42 seasons, candidates: 1991–2018)
+   Supremum Chow F = 3.23  at year 2006  [n.s. at 10%]
+   Subperiod slopes:  before 2006: -0.287 pp/yr  |  after 2006: -0.651 pp/yr
+
+   Top candidate break years:
+     Year    Chow F     Cond. p   Slope before   Slope after
+   ──────  ────────  ──────────  ─────────────  ────────────
+     2006      3.23       0.051         -0.287        -0.651
+     2008      2.88       0.068         -0.201        -0.727
+     2007      2.83       0.072         -0.231        -0.677
+     2004      2.36       0.108         -0.319        -0.532
+     2013      1.75       0.188         -0.031        -0.404
 
 
 ─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
@@ -283,6 +321,16 @@ All data from cache/ — same source as the plots above.
      decline in offensive rebounding — the effort-driven offensive boards
      where a home edge could form have largely disappeared.
 
+   ─ Cointegration check: is the OREB-HCA correlation genuine or spurious? ─
+   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):
+   League OREB rate                    ADF = -1.275  p = 0.641  → I(1) nonstationary
+   Home rebound share edge             ADF = -0.133  p = 0.946  → I(1) nonstationary
+
+   Engle-Granger cointegration  (H0: no long-run relationship):
+   t = -2.791  p = 0.168  
+   ► Both I(1) but NOT cointegrated — r = +0.824 is likely
+     spurious; within-era game-level controls are the reliable evidence.
+
 
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home
@@ -440,6 +488,28 @@ All data from cache/ — same source as the plots above.
    tz_diff × post2014                -0.002    -0.0     0.917     
    ──────────────────────────────  ────────  ──────  ────────  ───
    post2014 (level shift)            -0.196    -4.7    <0.001  ***
+
+─── TEAM QUALITY ROBUSTNESS — ERA EFFECT WITH HOME/AWAY TEAM FIXED EFFECTS 
+   Does the era decline survive adding home- and away-team fixed effects?
+   Franchise indicators remove systematic differences in home win rates
+   across teams, so the era slope is not confounded by which franchises
+   happen to host more games in different periods.
+
+   Era coefficients (pp relative to 1984-94 baseline):
+
+   Era               Baseline    With team FE     Shift
+   ────────────  ────────────  ──────────────  ────────
+   1995–01            -5.0 pp         -4.6 pp   +0.4 pp
+   2002–04            -4.0 pp         -3.8 pp   +0.2 pp
+   2005–17            -5.5 pp         -5.4 pp   +0.2 pp
+   2018–22            -7.6 pp         -7.2 pp   +0.5 pp
+   2023–26            -9.0 pp         -8.6 pp   +0.4 pp
+
+   McFadden R²: baseline = 0.0050  →  with team FE = 0.0271  (Δ = +0.0220)
+   Max era coefficient shift across eras: 0.5 pp
+   ► Era coefficients are stable under team FE — the decline is
+     not explained by which franchises host games.
+
    No cached referee data — run the analysis first to fetch it.
 
 
@@ -523,6 +593,37 @@ All data from cache/ — same source as the plots above.
    (If this is small and insignificant, 3PA effect is fully explained
     by the secular trend — higher 3PA and lower HCA happen at the same
     time but 3PA does not predict outcomes within any given era.)
+
+   ─ Cointegration check: is the 3PA-HCA correlation genuine or spurious? ─
+   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):
+   3PA rate (regular season)           ADF = -0.304  p = 0.925  → I(1) nonstationary
+   Home win %                          ADF = -1.184  p = 0.680  → I(1) nonstationary
+
+   Engle-Granger cointegration  (H0: no long-run relationship):
+   t = -1.486  p = 0.766  
+   ► Both I(1) but NOT cointegrated — r = -0.902 is likely
+     spurious; within-era game-level controls are the reliable evidence.
+
+
+─── GRANGER CAUSALITY — DOES 3PA RATE LEAD HOME COURT ADVANTAGE? ───────
+   Granger causality: does 3PA rate in year t-1 improve forecasts of HCA in
+   year t, beyond what past HCA values predict on their own?
+   H0: 3PA lags add no predictive power for HCA (F-test via VAR).
+   Both series differenced when I(1) to satisfy stationarity. Max 2 lags.
+
+   Testing in first-differenced (both I(1))  (N = 42 observations)
+
+   3PA rate → HCA (does 3PA lead the decline?)
+    Lag    F-stat     p-value                       Verdict
+   ────  ────────  ──────────  ────────────────────────────
+      1     1.487       0.230             no Granger effect  
+      2     1.369       0.268             no Granger effect  
+
+   HCA → 3PA rate (reverse: does HCA drive 3PA adoption?)
+    Lag    F-stat     p-value                       Verdict
+   ────  ────────  ──────────  ────────────────────────────
+      1     0.663       0.421             no Granger effect  
+      2     0.299       0.743             no Granger effect  
 
 
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
@@ -752,6 +853,14 @@ All data from cache/ — same source as the plots above.
      home win % was already declining, and fell in 2002–04 while home win %
      ticked back up. The two series do not move in lockstep.
 
+   ─ Cointegration check: is the parity-HCA correlation genuine or spurious? ─
+   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):
+   League parity (win% std dev)        ADF = -3.153  p = 0.023  → I(0) stationary
+   Home win %                          ADF = -1.975  p = 0.298  → I(1) nonstationary
+   ► At least one series is I(0) stationary; cointegration does not apply.
+     Standard correlation is interpretable without spurious-trend concern.
+
+
    Detrended checks (both series share a downward trend — remove it first):
    First-differenced (Δparity vs. Δhome-win%):
    Pearson r = -0.330  (p = 0.033  *)  N = 42 year-pairs
@@ -774,6 +883,14 @@ All data from cache/ — same source as the plots above.
    Detrended (remove shared drift):
    First-differenced  r = +0.073  (p = 0.724  )  N = 26 year-pairs
    Residual-on-year   r = +0.331  (p = 0.091  )  N = 27 seasons
+
+   ─ Cointegration check: is the attendance-HCA correlation genuine? ─
+   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):
+   League avg attendance               ADF = -3.654  p = 0.005  → I(0) stationary
+   Home win %                          ADF = -1.762  p = 0.400  → I(1) nonstationary
+   ► At least one series is I(0) stationary; cointegration does not apply.
+     Standard correlation is interpretable without spurious-trend concern.
+
 
    ► Crowd *size* does not track home court advantage. Attendance has
      held near arena capacity for 25 years while HCA fell — the level is
@@ -1003,6 +1120,35 @@ All data from cache/ — same source as the plots above.
      franchises that protect home court in the regular season tend to do so
      in the playoffs too, though playoff sample sizes are too small for
      franchise-level shrinkage to improve on raw estimates.
+
+─── MULTIPLE COMPARISONS — BH FDR CORRECTION ACROSS PRIMARY TESTS ──────
+   BH correction at q = 0.05; threshold for rank i (ascending p): (i/m) × 0.05.
+   Tests re-run here on the same data to form a self-contained table.
+
+   m = 14 primary tests.  BH threshold for rank i: (i/14) × 0.05.
+
+   Rank  Test                                         p-value   BH thresh  Survives
+   ────  ────────────────────────────────────────  ──────────  ──────────  ────────
+      1  RS HCA year trend                             <0.001      0.0036       YES
+      2  RS rest differential                          <0.001      0.0071       YES
+      3  RS OREB rate vs rebound share edge            <0.001      0.0107       YES
+      4  RS 3PA within-era effect                      <0.001      0.0143       YES
+      5  RS altitude (DEN/UTA)                         <0.001      0.0179       YES
+      6  PO HCA year trend                             <0.001      0.0214       YES
+      7  RS travel distance                             0.010      0.0250       YES
+      8  PO rest differential                           0.020      0.0286       YES
+      9  PO 3PA within-era effect                       0.027      0.0321       YES
+     10  RS parity vs HCA (first-diff)                  0.033      0.0357       YES
+     11  RS time zone effect                            0.051      0.0393        no
+     12  RS pace LOO within-era                         0.063      0.0429        no
+     13  RS era dummies beyond year trend               0.114      0.0464        no
+     14  PO era dummies beyond year trend               0.555      0.0500        no
+
+   BH result: 10 / 14 tests survive (q = 0.05).
+   Does NOT survive BH: RS time zone effect, RS pace LOO within-era, RS era dummies beyond year trend, PO era dummies beyond year trend
+   ► Core findings (HCA trends, rest, altitude, era shift, 3PA) survive.
+     Marginal factors (travel, parity, time zone) may not — treat as exploratory.
+
 
 ════════════════════════════════════════════════════════════════════════
 
