@@ -728,6 +728,27 @@ HCA's existence or its decline.
 
 ---
 
+## 14b. Back-to-Backs (`run_b2b_analysis`)
+
+**The question.** One popular theory for the HCA decline is "load management": NBA schedules now include fewer back-to-back games (zero days of rest), so visiting teams are less often exhausted. Fewer tired visitors → a smaller scheduling edge for the home team → lower home win rates. This section tests whether that story holds up quantitatively.
+
+**The data.** Regular-season games with a computable prior-game date for both teams (48,424 games; back-to-backs are rare enough in the playoffs to be ignored).
+
+**The approach.** Two layers:
+
+1. **Era-frequency table** of visitor and home B2B rates, alongside the era home win %, to see whether the schedule shift and the HCA decline move together.
+2. **Shift-share decomposition** of the 1984–94 → 2023–26 home-win change (−9.29 pp) into two components: (a) the *frequency component* — how much of the change is explained by the shift in B2B scheduling, holding per-situation win rates fixed at their 1984–94 values; and (b) the *win-rate component* — how much is explained by the home edge within each rest situation eroding, holding scheduling fixed.
+
+The shift-share identity is exact: frequency + win-rate + interaction = total change.
+
+**Why.** A pure frequency story would show the frequency component absorbing most of the −9.29 pp, with win rates within each situation roughly stable. A frequency component near zero would rule the story out. The decomposition separates those two possibilities cleanly without a regression.
+
+**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **8%**. The remaining 92% is the win-rate component: the home edge within every rest-situation category has simply eroded, independent of scheduling. Load management did not drive the decline.
+
+**Why this chart.** This section adds no figure of its own. The era-level B2B frequency and home win % are captured in the era table, and the shift-share is an exact arithmetic decomposition — two numbers that sum to the total. A chart would add no information the table doesn't already carry.
+
+---
+
 ## 15. Pace (`run_pace_analysis`)
 
 **The data.** Per-game average possessions (`pace_avg`) and the leave-one-out
