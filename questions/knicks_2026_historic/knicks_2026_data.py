@@ -316,6 +316,36 @@ def compute_inter_conference_h2h(reg_logs: pd.DataFrame,
     return float(east_wins / total) if total > 0 else float("nan")
 
 
+# ── Playoff SRS (champion elevation) ─────────────────────────────────────────
+
+def compute_playoff_srs(playoff_logs: pd.DataFrame) -> pd.Series:
+    """Solve SRS from playoff game logs.
+
+    Same algorithm as compute_srs (from nbakit) but applied to playoff games
+    only.  Returns a Series indexed by TEAM_ID.  Because the playoff bracket is
+    unbalanced (not every team plays every other team), the solution is a
+    least-squares approximation rather than an exact system.
+    """
+    return compute_srs(playoff_logs)
+
+
+def compute_playoff_elevation(po_logs: pd.DataFrame,
+                               rs_logs: pd.DataFrame,
+                               team_id: int) -> float:
+    """Playoff SRS minus regular-season SRS for a single team.
+
+    Positive = team was better in the playoffs than their regular-season
+    rating predicted; negative = underperformed.
+    """
+    po_srs = compute_playoff_srs(po_logs)
+    rs_srs = compute_srs(rs_logs)
+    p = float(po_srs.get(team_id, float("nan")))
+    r = float(rs_srs.get(team_id, float("nan")))
+    if np.isnan(p) or np.isnan(r):
+        return float("nan")
+    return p - r
+
+
 # ── Opponent health / player availability ─────────────────────────────────────
 
 def compute_opponent_health(
@@ -588,25 +618,30 @@ def build_champions_table(start_year: int = START_YEAR,
         adj = compute_adjusted_margin(margin, avg_opp)
         champ_srs = float(srs.get(champ, float("nan")))
         overperf = compute_expected_margin_overperformance(po, srs, champ)
+        po_srs_series = compute_playoff_srs(po)
+        champ_po_srs = float(po_srs_series.get(champ, float("nan")))
+        elevation = champ_po_srs - champ_srs if not (np.isnan(champ_po_srs) or np.isnan(champ_srs)) else float("nan")
         clutch = compute_clutch_rate(po, champ)
         h_wr, a_wr = compute_home_away_split(po, champ)
         league_scoring = compute_league_scoring_avg(rs)
 
         rows.append({
-            "year":             year,
-            "champion_id":      champ,
-            "wins":             wins,
-            "losses":           losses,
-            "win_rate":         wr,
-            "avg_margin":       margin,
-            "avg_opp_srs":      avg_opp,
-            "adj_margin":       adj,
-            "champion_reg_srs": champ_srs,
-            "overperformance":  overperf,
-            "clutch_rate":      clutch,
-            "home_wr":          h_wr,
-            "away_wr":          a_wr,
-            "league_scoring":   league_scoring,
+            "year":              year,
+            "champion_id":       champ,
+            "wins":              wins,
+            "losses":            losses,
+            "win_rate":          wr,
+            "avg_margin":        margin,
+            "avg_opp_srs":       avg_opp,
+            "adj_margin":        adj,
+            "champion_reg_srs":  champ_srs,
+            "champion_po_srs":   champ_po_srs,
+            "playoff_elevation": elevation,
+            "overperformance":   overperf,
+            "clutch_rate":       clutch,
+            "home_wr":           h_wr,
+            "away_wr":           a_wr,
+            "league_scoring":    league_scoring,
         })
 
     df = pd.DataFrame(rows)

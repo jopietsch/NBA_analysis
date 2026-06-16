@@ -130,7 +130,32 @@ Top 5 adjusted-margin champions:
   vs. San Antonio Spurs            4-1  avg margin +2.4
 
 ════════════════════════════════════════════════════════════════════════
-§7  ERA / PACE ADJUSTMENT
+§7  PLAYOFF SRS AND ELEVATION
+────────────────────────────────────────────────────────────────────────
+2025-26 Knicks:
+  Regular-season SRS: +6.05
+  Playoff SRS:        +17.53
+  Elevation:          +11.48  (playoff − regular-season SRS)
+
+Among 43 champion seasons:
+  Elevation percentile: 97.7th  (mean +4.43, best +12.58, worst -3.72)
+
+Top 5 playoff elevators (most improved reg→playoff):
+  00–01: reg +3.74 → playoff +16.33  elev +12.58
+  25–26: reg +6.05 → playoff +17.53  elev +11.48  ← 2025-26 Knicks
+  17–18: reg +5.75 → playoff +16.55  elev +10.79
+  22–23: reg +3.01 → playoff +12.94  elev +9.94
+  16–17: reg +11.35 → playoff +20.18  elev +8.83
+
+Bottom 5 (most declined reg→playoff):
+  99–00: reg +8.41 → playoff +4.69  elev -3.72
+  24–25: reg +12.70 → playoff +10.78  elev -1.92
+  96–97: reg +10.74 → playoff +9.28  elev -1.46
+  23–24: reg +10.75 → playoff +9.74  elev -1.00
+  92–93: reg +6.19 → playoff +5.27  elev -0.92
+
+════════════════════════════════════════════════════════════════════════
+§8  ERA / PACE ADJUSTMENT
 ────────────────────────────────────────────────────────────────────────
 League scoring environment:
   2025-26 avg pts/team/game: 115.6
@@ -171,7 +196,7 @@ Highest-scoring eras (margins get scaled DOWN):
   23–24: 114.2 pts/team/game
 
 ════════════════════════════════════════════════════════════════════════
-§8  VERDICT
+§9  VERDICT
 ────────────────────────────────────────────────────────────────────────
 The 2025-26 Knicks went 16-3 in the playoffs.
 
@@ -189,7 +214,7 @@ SUMMARY:
   The 2025-26 Knicks had a elite playoff run by win rate, which holds up well after adjusting for schedule.
 
 ════════════════════════════════════════════════════════════════════════
-§9  OPPONENT PLAYER AVAILABILITY
+§10 OPPONENT PLAYER AVAILABILITY
 ────────────────────────────────────────────────────────────────────────
 Round    Opponent                       Core   Avail/game   Health
 ─────────────────────────────────────────────────────────────────
@@ -208,7 +233,7 @@ Healthiest opponent:      Atlanta Hawks (100%)
 Finals note: The Spurs were fully healthy — the Finals result stands without asterisk.
 
 ════════════════════════════════════════════════════════════════════════
-§10 BETTING-MARKET EXPECTATIONS (ATS)
+§11 BETTING-MARKET EXPECTATIONS (ATS)
 ────────────────────────────────────────────────────────────────────────
 Games with Vegas lines: 19 of 19
 ATS record:             16-3

@@ -6,6 +6,7 @@ compute_* metrics are added, test them here against hand-built frames with known
 answers — never against live API calls.
 """
 
+import numpy as np
 import pandas as pd
 import pytest
 import knicks_2026_data as data
@@ -64,6 +65,23 @@ def _mini_player_logs() -> pd.DataFrame:
                      "GAME_ID": "G003", "MIN": "25:00"})
 
     return pd.DataFrame(rows)
+
+
+def test_compute_playoff_elevation():
+    po  = _mini_po_2026()
+    # Build minimal reg-season logs: KNICKS won by +5 on average in reg season
+    rs_rows = []
+    for gid in ["R001", "R002"]:
+        rs_rows.append({"GAME_ID": gid, "TEAM_ID": KNICKS_ID,
+                        "WL": "W", "PTS": 105, "PLUS_MINUS": 5.0,
+                        "MATCHUP": "NYK vs. OPP"})
+        rs_rows.append({"GAME_ID": gid, "TEAM_ID": OPP1_ID,
+                        "WL": "L", "PTS": 100, "PLUS_MINUS": -5.0,
+                        "MATCHUP": "OPP @ NYK"})
+    rs = pd.DataFrame(rs_rows)
+    elev = data.compute_playoff_elevation(po, rs, KNICKS_ID)
+    # In playoffs Knicks averaged +10, in reg season +5 → elevation ~positive
+    assert not np.isnan(elev)  # should compute without error
 
 
 def test_compute_league_scoring_avg():

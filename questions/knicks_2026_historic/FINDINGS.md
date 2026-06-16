@@ -106,8 +106,9 @@ null PLUS_MINUS, margins are derived from PTS (both team rows per game).
 **Playoff overperformance** — comparing actual margins to what the Knicks' own
 regular-season SRS (+6.05) would predict against those opponents (+2.38 expected
 per game) — gives +12.5 pts/game of outperformance, 2nd all-time (97.7th pct)
-behind only the 2000–01 Lakers. The Knicks didn't just face the right opponents:
-they played far above their regular-season level.
+behind only the 2000–01 Lakers. Their playoff SRS was +17.53, an elevation of
++11.48 above their regular-season SRS — also 2nd all-time. The Knicks didn't
+just face the right opponents: they played far above their regular-season level.
 
 ![Strength of schedule — avg opponent SRS per champion](generated/knicks_2026_opponent_srs_ranking.png){height=0.60}
 

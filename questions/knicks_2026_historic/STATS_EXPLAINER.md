@@ -328,7 +328,46 @@ of the run.
 
 ---
 
-## 7. Era/Pace Adjustment (`run_pace_era`)
+## 7. Playoff SRS and Elevation (`run_playoff_srs`)
+
+**The data.** 2025–26 playoff and regular-season game logs; the `champions` table
+(which now includes `champion_po_srs` and `playoff_elevation`).
+
+**The approach.** `compute_playoff_srs` applies `compute_srs` to the playoff game
+log only.  The SRS algorithm (see Recurring Methods) solves the same
+`(I − A) @ srs = mean_margin_vector` system from the playoff bracket graph.
+Because the bracket is sparser than the regular season (not every team plays
+every other team), the solution is a least-squares approximation — the same
+`numpy.linalg.lstsq` call handles this naturally.
+
+*Elevation* = playoff_SRS − regular_season_SRS.  A positive value means the
+champion performed at a higher level in the playoffs than their 82-game baseline
+predicted.  Both playoff and regular-season SRS are expressed in points per game
+in the same season's scoring environment, so the difference is directly
+interpretable.
+
+`playoff_elevation` is added as a column in `build_champions_table` for each of
+the 43 champion seasons.
+
+**What the results mean.**
+- Knicks regular-season SRS: +6.05 — a strong team, but not historically dominant.
+- Knicks playoff SRS: +17.53 — among the highest playoff SRS values ever.
+- Elevation: +11.48, 97.7th percentile (2nd all-time, behind 2000–01 Lakers +12.58).
+- The 2016–17 Warriors — the most dominant regular-season team (+11.35 SRS) —
+  had a lower elevation (+8.83) because their regular-season baseline was so high.
+- The mean elevation across 43 champions is +4.43, confirming that playoff
+  performance typically outpaces regular-season baselines (home-court advantage,
+  higher effort, bracket-specific preparation).
+
+**Why this metric.** Playoff SRS elevation directly answers whether a team
+"showed up" in the playoffs or merely coasted on regular-season talent. It
+complements the overperformance metric (Gap 1) and is independently derived —
+if both metrics agree, the conclusion is robust. They do agree: the Knicks are
+2nd all-time on both, and the 2000–01 Lakers rank 1st on both.
+
+---
+
+## 8. Era/Pace Adjustment (`run_pace_era`)
 
 **The data.** The `champions` table (which now includes `league_scoring` — the
 average pts per team per game in each season's regular season) and the 2025–26
@@ -369,7 +408,7 @@ if both raw and opp_SRS are inflated proportionally, adj_margin is inflated too.
 
 ---
 
-## 8. The Verdict (`run_verdict`)
+## 9. The Verdict (`run_verdict`)
 
 **The data.** All of the above; this section re-computes the key metrics from
 scratch to produce a single summary table and a text verdict.
@@ -406,7 +445,7 @@ verdict is the right form for a synthesis.
 
 ---
 
-## 9. Betting-Market Significance (`run_betting_market`)
+## 10. Betting-Market Significance (`run_betting_market`)
 
 **The data.** Game-level ATS data from the ESPN core API, merged with actual
 margins from the playoff game log.
