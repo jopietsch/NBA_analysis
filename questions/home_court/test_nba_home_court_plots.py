@@ -187,15 +187,25 @@ def test_plot_team_hca_analysis():
     plots.plot_team_hca_analysis(_team_stats(teams, 4.0), _team_stats(teams, 6.0))
 
 
-def test_plot_referee_analysis():
-    # sorted descending by mean_foul_diff (most positive first, most negative last)
-    bias_stats = [
+def _referee_bias_stats(n=10):
+    return [
         {"name": f"Ref Number{i}", "mean_foul_diff": 1.0 - 0.2 * i,
          "era_means": {lbl: 0.5 - 0.1 * i for lbl in ERA_LABELS}}
-        for i in range(10)
+        for i in range(n)
     ]
-    plots.plot_referee_analysis(bias_stats)
 
 
-def test_plot_referee_analysis_empty():
-    plots.plot_referee_analysis([])  # must no-op, not raise
+def test_plot_referee_era_distribution():
+    plots.plot_referee_era_distribution(_referee_bias_stats())
+
+
+def test_plot_referee_era_distribution_empty():
+    plots.plot_referee_era_distribution([])  # must no-op, not raise
+
+
+def test_plot_referee_rankings():
+    plots.plot_referee_rankings(_referee_bias_stats())
+
+
+def test_plot_referee_rankings_empty():
+    plots.plot_referee_rankings([])  # must no-op, not raise

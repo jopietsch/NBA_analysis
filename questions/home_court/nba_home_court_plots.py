@@ -1307,16 +1307,14 @@ def plot_team_hca_analysis(
     plt.close()
 
 
-def plot_referee_analysis(bias_stats: list[dict]) -> None:
+def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
     """
-    Two-panel figure:
-      Left  — top/bottom 15 officials ranked by career mean home foul_diff
-      Right — box plots of per-official era-mean foul_diff by era (shows whether
-              the distribution of referee biases has narrowed over time)
-    Saves → nba_home_court_referee.png
+    Single-panel: box plots of per-official era-mean foul_diff by era.
+    Shows whether the distribution of referee biases has compressed over time.
+    Saves → nba_home_court_referee_era.png
     """
     if not bias_stats:
-        print("plot_referee_analysis: no bias stats, skipping.")
+        print("plot_referee_era_distribution: no bias stats, skipping.")
         return
 
     era_order = [e[0] for e in ERA_DEFS]
@@ -1328,50 +1326,11 @@ def plot_referee_analysis(bias_stats: list[dict]) -> None:
     era_labels_present = [e for e in era_order if era_data[e]]
     box_data = [era_data[e] for e in era_labels_present]
 
-    n_show = min(15, len(bias_stats) // 2)
-    top    = list(reversed(bias_stats[-n_show:]))   # most home-favoring (most negative)
-    bottom = bias_stats[:n_show]                     # least home-favoring (most positive)
-    show   = bottom + top
-    names  = [o["name"].split()[-1] for o in show]  # last name only for brevity
-    vals   = [o["mean_foul_diff"] for o in show]
-    bar_colors = [GREEN if v < 0 else RED for v in vals]
+    fig, ax = plt.subplots(figsize=(9, 6), facecolor=BG)
+    ax.set_facecolor(PANEL)
 
-    fig, (ax1, ax2) = plt.subplots(
-        1, 2,
-        figsize=(16, max(8, n_show * 0.55 + 3)),
-        facecolor=BG,
-    )
-    for ax in (ax1, ax2):
-        ax.set_facecolor(PANEL)
-
-    # ── Panel 1: ranking bar chart ────────────────────────────────────────────
-    y_pos = range(len(show))
-    bars = ax1.barh(list(y_pos), vals, color=bar_colors, edgecolor="white",
-                    linewidth=0.5, height=0.7)
-    ax1.set_yticks(list(y_pos))
-    ax1.set_yticklabels(names, fontsize=8)
-    ax1.axvline(0, color=GRAY, linewidth=0.8, linestyle="--", alpha=0.6)
-    ax1.axhline(n_show - 0.5, color=GRAY, linewidth=0.6, linestyle=":", alpha=0.5)
-
-    for bar, v in zip(bars, vals):
-        xoff = -0.05 if v < 0 else 0.05
-        ha   = "right" if v < 0 else "left"
-        ax1.text(v + xoff, bar.get_y() + bar.get_height() / 2,
-                 f"{v:+.2f}", ha=ha, va="center", fontsize=7, color="#333")
-
-    ax1.set_xlabel("Mean home − away fouls per game", fontsize=10)
-    ax1.set_title(
-        f"Top/bottom {n_show} referees by\nhome foul differential (≥50 playoff games)",
-        fontsize=11, fontweight="bold", color="#2c2c2a", pad=6,
-    )
-    neg = mpatches.Patch(color=GREEN, label="Home-favoring (fewer home fouls)")
-    pos = mpatches.Patch(color=RED,   label="Visitor-favoring (more home fouls)")
-    ax1.legend(handles=[neg, pos], fontsize=8, framealpha=0.85, edgecolor="#ddd")
-    ax1.invert_yaxis()
-
-    # ── Panel 2: box plot by era ──────────────────────────────────────────────
     if box_data:
-        bp = ax2.boxplot(
+        bp = ax.boxplot(
             box_data,
             labels=era_labels_present,
             patch_artist=True,
@@ -1386,23 +1345,77 @@ def plot_referee_analysis(bias_stats: list[dict]) -> None:
             patch.set_facecolor(ERA_COLORS[idx % len(ERA_COLORS)])
             patch.set_alpha(0.55)
 
-        ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle="--", alpha=0.6)
-        ax2.set_xlabel("Era", fontsize=10)
-        ax2.set_ylabel("Per-official era-mean foul diff (home − away)", fontsize=9)
-        ax2.set_title(
-            "Distribution of per-official home foul bias\nby era (each point = one referee)",
+        ax.axhline(0, color=GRAY, linewidth=0.8, linestyle="--", alpha=0.6)
+        ax.set_xlabel("Era", fontsize=10)
+        ax.set_ylabel("Per-official era-mean foul diff (home − away)", fontsize=9)
+        ax.set_title(
+            "Distribution of per-official home foul bias by era\n(each point = one referee, playoffs)",
             fontsize=11, fontweight="bold", color="#2c2c2a", pad=6,
         )
-        ax2.tick_params(axis="x", labelsize=8)
+        ax.tick_params(axis="x", labelsize=8)
     else:
-        ax2.text(0.5, 0.5, "Insufficient data for era breakdown",
-                 ha="center", va="center", transform=ax2.transAxes,
-                 fontsize=12, color=GRAY)
+        ax.text(0.5, 0.5, "Insufficient data for era breakdown",
+                ha="center", va="center", transform=ax.transAxes,
+                fontsize=12, color=GRAY)
+
+    plt.tight_layout()
+    output_path = _output_path("nba_home_court_referee_era.png")
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
+def plot_referee_rankings(bias_stats: list[dict]) -> None:
+    """
+    Single-panel: top/bottom officials ranked by career mean home foul_diff.
+    Saves → nba_home_court_referee_rankings.png
+    """
+    if not bias_stats:
+        print("plot_referee_rankings: no bias stats, skipping.")
+        return
+
+    n_show = min(15, len(bias_stats) // 2)
+    top    = list(reversed(bias_stats[-n_show:]))   # most home-favoring (most negative)
+    bottom = bias_stats[:n_show]                     # least home-favoring (most positive)
+    show   = bottom + top
+    names  = [o["name"].split()[-1] for o in show]  # last name only for brevity
+    vals   = [o["mean_foul_diff"] for o in show]
+    bar_colors = [GREEN if v < 0 else RED for v in vals]
+
+    fig, ax = plt.subplots(
+        figsize=(8, max(8, n_show * 0.55 + 3)),
+        facecolor=BG,
+    )
+    ax.set_facecolor(PANEL)
+
+    y_pos = range(len(show))
+    bars = ax.barh(list(y_pos), vals, color=bar_colors, edgecolor="white",
+                   linewidth=0.5, height=0.7)
+    ax.set_yticks(list(y_pos))
+    ax.set_yticklabels(names, fontsize=8)
+    ax.axvline(0, color=GRAY, linewidth=0.8, linestyle="--", alpha=0.6)
+    ax.axhline(n_show - 0.5, color=GRAY, linewidth=0.6, linestyle=":", alpha=0.5)
+
+    for bar, v in zip(bars, vals):
+        xoff = -0.05 if v < 0 else 0.05
+        ha   = "right" if v < 0 else "left"
+        ax.text(v + xoff, bar.get_y() + bar.get_height() / 2,
+                f"{v:+.2f}", ha=ha, va="center", fontsize=7, color="#333")
+
+    ax.set_xlabel("Mean home − away fouls per game", fontsize=10)
+    ax.set_title(
+        f"Top/bottom {n_show} referees by home foul differential\n(≥50 playoff games, shrunken estimates)",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=6,
+    )
+    neg = mpatches.Patch(color=GREEN, label="Home-favoring (fewer home fouls)")
+    pos = mpatches.Patch(color=RED,   label="Visitor-favoring (more home fouls)")
+    ax.legend(handles=[neg, pos], fontsize=8, framealpha=0.85, edgecolor="#ddd")
+    ax.invert_yaxis()
 
     plt.suptitle("Referee Home Foul Bias — Playoffs", fontsize=13,
                  fontweight="bold", color="#2c2c2a", y=1.01)
     plt.tight_layout()
-    output_path = _output_path("nba_home_court_referee.png")
+    output_path = _output_path("nba_home_court_referee_rankings.png")
     plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
     print(f"\nSaved → {output_path}")
     plt.close()

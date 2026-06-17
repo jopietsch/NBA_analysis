@@ -32,8 +32,9 @@ from nba_home_court_plots import (
     plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_playoff_quality,
     plot_shot_zone_analysis, plot_3pa_hca_analysis,
-    plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis, plot_referee_analysis,
+    plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis,
     plot_attendance, plot_tracking_rebounding,
+    plot_referee_era_distribution, plot_referee_rankings,
 )
 
 
@@ -148,7 +149,8 @@ def main() -> None:
             ref_df, START_YEAR, END_YEAR, "Playoffs",
             skip_years=SKIP_PLAYOFF_YEARS, min_games=50,
         )
-        plot_referee_analysis(bias_stats)
+        plot_referee_era_distribution(bias_stats)
+        plot_referee_rankings(bias_stats)
     else:
         print("  No referee data cached yet — will fetch during next run.")
 
