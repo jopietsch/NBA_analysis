@@ -5,7 +5,7 @@
 - **Headline answers:**
   - Change is real & one-directional: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**. Shape = a slow gradual erosion + **two sharper one-time drops** layered on top.
   - HCA is built from: referee foul calls, shooting/shot-selection edge, plus smaller rest & altitude boosts.
-  - Decline drivers: neutral whistle, converging shot selection, rise in three-point shooting adding variance that erodes home teams' steady structural edges — and, quietest but largest, the collapse of the home edge on the boards (above all the offensive glass), which carries more of the decline than the headline causes combined.
+  - Decline drivers: neutral whistle, converging shot selection, rise in three-point shooting adding variance that erodes home teams' steady structural edges — and the biggest driver of all (the one nobody was watching): the collapse of the home edge on the boards (above all the offensive glass), which carries more of the decline than the headline causes combined.
 - **Ruled-out suspects:** rule changes, travel, time zones, pace, competitive balance, crowd size, 2014 playoff format.
 - **Scope:** regular season vs. playoffs tracked separately (same direction, different timeline); ~52,000 games; tables in RESULTS.md.
 
@@ -74,7 +74,7 @@
   - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.* This survives as the substantive finding.
   - **No temporal lead (Granger):** the annual rise in threes doesn't lead the HCA decline by a year, nor vice versa; both shift within the same season. *RESULTS: 3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns.* Consistent with both being downstream of the same strategic shift. (Note: folded into the 3PA narrative in FINDINGS, not a separate paragraph.)
   - Playoffs: directional but weaker within-era signal (r=−0.499; within-era p=0.027) — team quality dominates.
-- **Quieter fourth strand — rebounding (the glass), now explained:**
+- **Fourth strand — rebounding (the glass), biggest driver, now explained:**
   - Home rebounding edge shrunk 40 yrs, NOT a 3-point byproduct.
   - *RESULTS 3PA control (Fig 11):* eFG% trend fully absorbed (**210%** absorbed → shooting fade IS the 3-pt story); REB only **8%** absorbed (survives, p<0.001); TOV **54%** absorbed (~half independent); Foul 51%. Playoffs noisy — only REB survives.
   - **Died on the OFFENSIVE glass.** *RESULTS rebounding decomp (reg):* OREB diff +0.61 → **−0.05** (goes negative); DREB diff +1.64 → +0.59 (only softens); REB diff +2.24 → +0.54. Trends/yr all negative, all p<0.001 (OREB −0.018, DREB −0.027, REB −0.044).
@@ -83,7 +83,7 @@
   - Playoffs: share edge **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01). 3PA-control absorption is unstable in playoffs (−42%, noisy small-N) → can't confirm independence the way RS does; read as consistent with RS, not proven.
   - **Player-tracking (last decade) fits:** no measurable home box-out edge today (mean −0.00/gm, p=0.78); OREB-conversion edge still shrinking (+0.71 pp mean, −0.086/yr, **p=0.024**); 2nd-chance-points edge no significant trend (+0.29 mean, ns, p=0.304). *RESULTS: PLAYER-TRACKING REBOUNDING MECHANISM.* Full treatment moved to §6; brief mention kept here to close the rebounding argument.
 - **Adding it up (trend decomposition):**
-  - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → quiet pair (REB+TOV) carries >half.
+  - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
   - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
 - **3PA is real but narrow:** within-season link is genuine (−2.27 pp/10pp, p<0.001) but hits mainly the shooting channel. Shooting ≈ 21% of decline; REB+TOV (~57%) barely move under the 3PA control. Threes drove one channel, not the whole decline. (Point now made within the 3PA narrative in FINDINGS, not as a separate closing paragraph.)
 **Figures:**
@@ -171,7 +171,7 @@
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**.
 - Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete step at 1994–95, multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line).
-- Three main drivers + quiet fourth (**together ~96% of RS decline**): (1) fairer refs — 1.2 → ~0.25 fouls/game RS, 1.6 → 0.7 playoffs; 45/47 officials home-favoring (largest single change), (2) converged shot selection, (3) three-point variance (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (4) rebounding edge slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
+- Three main drivers + the biggest driver of all (**together ~96% of RS decline**): (1) fairer refs — 1.2 → ~0.25 fouls/game RS, 1.6 → 0.7 playoffs; 45/47 officials home-favoring (largest single change), (2) converged shot selection, (3) three-point variance (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (4) rebounding edge slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd noise = on/off switch (2020–21 51% vs 58.5%), not a slow fade.
 - Playoffs follow reg season with **nearly a two-decade delay**; accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.
 - Franchise notes: Denver & Utah strongest reg-season home courts (~27 & ~26 pts above own road rate), altitude the reason — washes out in playoffs (franchise spread indistinguishable from zero). Home court worth **~7 pts more in playoffs** than reg season.
