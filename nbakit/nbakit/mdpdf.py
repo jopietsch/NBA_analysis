@@ -435,7 +435,8 @@ def build(md_path: str, output_path: str | None = None,
 
     if output_path is None:
         stem = os.path.splitext(os.path.basename(md_path))[0]
-        output_path = os.path.join("generated", stem + ".pdf")
+        src_dir = os.path.dirname(os.path.abspath(md_path))
+        output_path = os.path.join(src_dir, "generated", stem + ".pdf")
     os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
 
     story = [*_cover(title, author), *md_to_flowables(md)]
