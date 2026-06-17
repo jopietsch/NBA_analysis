@@ -293,6 +293,65 @@ def plot_rest_altitude(data: dict) -> None:
     plt.close()
 
 
+def plot_channel_3pa_control(data: dict) -> None:
+    """
+    Does each box-score channel's fade survive holding three-point volume
+    constant? Per channel, the bar is the share of that channel's yearly decline
+    trend that remains after controlling for the game's 3PA rate: 100% = the fade
+    is unrelated to the three-point shift, 0% = it is fully the three-point story,
+    below 0 = the trend reverses once threes are held constant. The regular-season
+    panel is the clean test; the playoff panel is mostly small-sample noise (only
+    rebounding stays significant), so non-significant bars are greyed.
+
+    `data` comes from regression.compute_channel_3pa_control().
+    """
+    order = ["Shooting", "Turnovers", "Fouls", "Rebounding"]
+    ctxs = [("Regular season", GREEN), ("Playoffs", BLUE)]
+    fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
+    fig.suptitle("Which Fades Are the Three-Point Story?",
+                 fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.95,
+             "Share of each channel's yearly decline left after holding 3-point volume constant  |  "
+             "100% = unrelated to threes, 0% = fully the three-point story",
+             ha="center", fontsize=9, color=GRAY)
+
+    for ax, (ctx, color) in zip(axes, ctxs):
+        blk = data.get(ctx)
+        if not blk:
+            ax.text(0.5, 0.5, "Insufficient data", ha="center", va="center",
+                    transform=ax.transAxes, color=GRAY)
+            continue
+        rows = {r["chart_label"]: r for r in blk["channels"]}
+        labels = [l for l in order if l in rows]
+        x = np.arange(len(labels))
+        vals = [rows[l]["surviving"] for l in labels]
+        colors = [color if rows[l]["p_ctrl"] < 0.05 else GRAY for l in labels]
+        bars = ax.bar(x, vals, color=colors, edgecolor="white", linewidth=0.6, width=0.62)
+        ax.axhline(100, color=GRAY, linewidth=1.0, linestyle="--", zorder=1)
+        ax.axhline(0, color="#444", linewidth=1.0, zorder=1)
+        for bar, l in zip(bars, labels):
+            v = rows[l]["surviving"]
+            note = "" if rows[l]["p_ctrl"] < 0.05 else " n.s."
+            ax.text(bar.get_x() + bar.get_width() / 2, v + (4 if v >= 0 else -4),
+                    f"{v:.0f}%{note}", ha="center",
+                    va="bottom" if v >= 0 else "top", fontsize=8, color="#333")
+        ax.set_xticks(x)
+        ax.set_xticklabels(labels, fontsize=9)
+        ax.set_title(f"{ctx}  (n = {blk['n']:,} games)", fontsize=11,
+                     fontweight="bold", color="#2c2c2a", pad=6)
+        ax.set_ylim(-150, 180)
+
+    axes[0].set_ylabel("Decline trend surviving the 3PA control (%)", fontsize=10)
+    axes[0].text(-0.45, 104, "unrelated to threes", fontsize=7.5, color=GRAY, va="bottom")
+    axes[0].text(-0.45, 4, "fully the three-point story", fontsize=7.5, color="#444", va="bottom")
+
+    plt.tight_layout()
+    output_path = _output_path("nba_home_court_3pa_control.png")
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_mediation(decomp: dict) -> None:
     """
     Two-panel decomposition: each box-score channel's share of the home-court

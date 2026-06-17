@@ -77,6 +77,17 @@ def test_plot_rebound_decomposition():
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_channel_3pa_control():
+    def _ctx(n):
+        chans = [("Shooting", -110.0, 0.03), ("Turnovers", 46.0, 0.04),
+                 ("Fouls", 49.0, 0.01), ("Rebounding", 92.0, 0.001)]
+        return {"n": n, "channels": [
+            {"chart_label": c, "g_raw": -0.02, "g_ctrl": -0.01,
+             "surviving": s, "absorbed": 100 - s, "p_raw": 0.001, "p_ctrl": p}
+            for c, s, p in chans]}
+    plots.plot_channel_3pa_control({"Regular season": _ctx(49000), "Playoffs": _ctx(3300)})
+
+
 def test_plot_rest_altitude():
     def _ctx(base):
         return {

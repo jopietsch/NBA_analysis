@@ -1211,6 +1211,53 @@ def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
     return out
 
 
+def compute_channel_3pa_control(df: pd.DataFrame) -> dict:
+    """Each box-score channel's home-differential year-trend, before and after
+    controlling for the game's 3PA rate — the test behind "the shooting fade is
+    the three-point story, the rebounding fade is not." Same regressions
+    run_mediation_analysis prints in its diagnostic block; returned here for the
+    plot layer so the chart and RESULTS never diverge.
+
+    Returns {ctx: {"channels": [{chart_label, g_raw, g_ctrl, surviving, absorbed,
+    p_raw, p_ctrl}, ...], "n": int}} for ctx in ("Regular season", "Playoffs").
+    `surviving` = g_ctrl/g_raw as a percent (100 = untouched by the control,
+    0 = fully absorbed, <0 = the trend reverses once threes are held constant).
+    """
+    channels = [
+        ("efg_pct_diff", "Shooting"),
+        ("foul_diff",    "Fouls"),
+        ("tov_diff",     "Turnovers"),
+        ("reb_diff",     "Rebounding"),
+    ]
+    keys = [k for k, _ in channels]
+    out: dict = {}
+    for label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        d = sub.dropna(subset=keys + ["year", "tpa_rate_avg"])
+        if len(d) < 100:
+            continue
+        rows = []
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            cl = {"groups": d["year"]}
+            for k, clbl in channels:
+                m_raw  = smf.ols(f"{k} ~ year", data=d).fit(cov_type="cluster", cov_kwds=cl)
+                m_ctrl = smf.ols(f"{k} ~ year + tpa_rate_avg", data=d).fit(
+                    cov_type="cluster", cov_kwds=cl)
+                g_raw, g_ctrl = float(m_raw.params["year"]), float(m_ctrl.params["year"])
+                surviving = 100.0 * g_ctrl / g_raw if g_raw != 0 else float("nan")
+                rows.append({
+                    "chart_label": clbl, "g_raw": g_raw, "g_ctrl": g_ctrl,
+                    "surviving": surviving, "absorbed": 100.0 - surviving,
+                    "p_raw": float(m_raw.pvalues["year"]),
+                    "p_ctrl": float(m_ctrl.pvalues["year"]),
+                })
+        out[label] = {"channels": rows, "n": len(d)}
+    return out
+
+
 def run_mediation_analysis(df: pd.DataFrame) -> None:
     """Convert box-score channels into win-% shares of the HCA level and trend.
 
