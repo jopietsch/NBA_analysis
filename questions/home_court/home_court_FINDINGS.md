@@ -215,6 +215,3 @@ What hasn't driven the decline: rule changes (with the single exception of 1994â
 
 The playoffs have followed the regular season's path but with nearly a two-decade lag. For most of the 2000s and 2010s, postseason home court held firm even as the regular season eroded around it. The internal structure of playoff home court remains stark: Games 1 and 2 go to the home team 69% and 72% of the time; Game 5 is the most lopsided at 74.5%; even Game 7 still goes to the home team 64% of the time. Since 2018 the decline has accelerated. It is genuine home-court erosion, not an illusion of more evenly matched seeds. Even the weaker team, when it hosts, has been winning less.
 
-Denver and Utah own the league's strongest regular-season home courts, about 27 and 26 points above their road win rates, with altitude the most likely reason. That advantage, like the league's overall edge, is a regular-season phenomenon; the apparent franchise gaps in the playoffs are statistically indistinguishable from zero. And home court is worth more when the games matter most: roughly 7 points more in the playoffs than the regular season.
-
-One last wrinkle: as home teams win less often, the margin when they do win has grown. Home victories are more lopsided today than they were in the 1980s. The advantage has narrowed, but when it lands, it lands harder.
