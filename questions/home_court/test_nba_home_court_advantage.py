@@ -1183,8 +1183,9 @@ class TestFetchRefereeData:
         assert cache_file.exists()
 
     def test_is_rate_limit_error_classification(self):
-        assert nba._is_rate_limit_error(nba.requests.exceptions.ReadTimeout("slow"))
-        assert nba._is_rate_limit_error(nba.requests.exceptions.ConnectionError("dropped"))
+        import requests
+        assert nba._is_rate_limit_error(requests.exceptions.ReadTimeout("slow"))
+        assert nba._is_rate_limit_error(requests.exceptions.ConnectionError("dropped"))
         assert nba._is_rate_limit_error(RuntimeError("HTTP 429 Too Many Requests"))
         assert not nba._is_rate_limit_error(ValueError("missing key 'personId'"))
 

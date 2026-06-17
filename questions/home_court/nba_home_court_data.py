@@ -23,9 +23,7 @@ from nba_api.stats.library.parameters import SeasonType
 
 import nbakit.data as _nbakit
 from nbakit.teams import ALTITUDE_TEAMS, TEAM_TIMEZONES, ARENA_COORDS, haversine
-
-import requests
-from bs4 import BeautifulSoup
+from nbakit import bbr as _bbr
 
 
 # ── Config ────────────────────────────────────────────────────────────────────
@@ -1101,64 +1099,16 @@ def compute_referee_bias_stats(
 # schedule pages. Per-game attendance is reliable from ~1999-2000 onward. Each
 # season is cached as cache/attendance_{season}.csv so the scrape runs only once.
 
-def _bbr_get(url: str) -> BeautifulSoup | None:
-    """
-    GET a Basketball-Reference page with a polite pause and browser UA.
-    On HTTP 429 (rate-limited) it backs off and retries a few times; if the
-    throttle persists it returns None so the caller skips caching and retries
-    on a later run.
-    """
-    # Operational logging goes to stderr, not stdout: run() captures stdout into
-    # RESULTS.md, so fetch progress/errors must stay out of that file while still
-    # being visible in the terminal.
-    for attempt in range(BBR_MAX_RETRIES + 1):
-        try:
-            r = requests.get(url, headers=BBR_HEADERS, timeout=30)
-        except Exception as e:
-            print(f"    ERROR fetching {url}: {e}", file=sys.stderr)
-            return None
-        time.sleep(BBR_SLEEP_SEC)  # polite pause, only on a real network hit
-        if r.status_code == 200:
-            return BeautifulSoup(r.text, "lxml")
-        if r.status_code == 429 and attempt < BBR_MAX_RETRIES:
-            backoff = BBR_BACKOFF_SEC * (attempt + 1)
-            print(f"    BBR 429 for {url} — backing off {backoff:.0f}s "
-                  f"(retry {attempt + 1}/{BBR_MAX_RETRIES})", file=sys.stderr, flush=True)
-            time.sleep(backoff)
-            continue
-        print(f"    BBR {r.status_code} for {url}", file=sys.stderr)
-        return None
-    return None
+# GET a BBR page (polite pause + 429 backoff) and parse a monthly schedule
+# table. The mechanics live in nbakit.bbr; we pass this project's rate-limit
+# tuning. fetch progress/errors go to stderr so run()'s stdout->RESULTS.md
+# capture stays clean.
+def _bbr_get(url: str):
+    return _bbr.get_soup(url, headers=BBR_HEADERS, sleep_sec=BBR_SLEEP_SEC,
+                         backoff_sec=BBR_BACKOFF_SEC, max_retries=BBR_MAX_RETRIES)
 
 
-def _parse_bbr_schedule(soup: BeautifulSoup) -> list[dict]:
-    """Pull game rows from one monthly schedule page's #schedule table."""
-    table = soup.find("table", id="schedule")
-    if table is None or table.tbody is None:
-        return []
-
-    rows: list[dict] = []
-    for tr in table.tbody.find_all("tr"):
-        if "thead" in (tr.get("class") or []):
-            continue  # repeated mid-table header
-        cells = {c.get("data-stat"): c.get_text(strip=True)
-                 for c in tr.find_all(["th", "td"])}
-        away_pts, home_pts = cells.get("visitor_pts", ""), cells.get("home_pts", "")
-        if not away_pts or not home_pts:
-            continue  # unplayed / postponed game
-
-        att_raw = cells.get("attendance", "").replace(",", "")
-        attendance = float(att_raw) if att_raw.isdigit() else np.nan
-        rows.append({
-            "game_date":  cells.get("date_game", ""),
-            "away_team":  cells.get("visitor_team_name", ""),
-            "home_team":  cells.get("home_team_name", ""),
-            "away_pts":   int(away_pts),
-            "home_pts":   int(home_pts),
-            "attendance": attendance,
-            "home_win":   int(int(home_pts) > int(away_pts)),
-        })
-    return rows
+_parse_bbr_schedule = _bbr.parse_schedule
 
 
 def fetch_attendance(end_year: int) -> pd.DataFrame | None:
