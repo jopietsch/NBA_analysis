@@ -52,6 +52,47 @@ SHOT_ZONE_COLORS: dict[str, str] = {
     "above3":   RED,
 }
 
+# Canonical order and colors for the four box-score categories, used across
+# mediation, 3PA-control, and any other category-breakdown charts.
+CATEGORY_ORDER: list[str] = ["Shooting", "Rebounding", "Fouls", "Turnovers"]
+CATEGORY_COLORS: dict[str, str] = {
+    "Shooting":   BLUE,
+    "Rebounding": GREEN,
+    "Fouls":      RED,
+    "Turnovers":  "#e8a33d",
+}
+
+# Panel descriptors for the box-score differential time-series chart.
+# Each entry: (data_key, panel_title, y_label, footnote)
+DIFF_PANELS: list[tuple[str, str, str, str]] = [
+    ("foul_diff",     "Foul differential (home PF − away PF)",
+     "Fouls per game",    "negative = refs call fewer fouls on home team"),
+    ("fg_pct_diff",   "FG% differential (home − away)",
+     "Percentage points", ""),
+    ("efg_pct_diff",  "eFG% differential (home − away)",
+     "Percentage points", "weights 3-pointers at 1.5×"),
+    ("tpa_rate_diff", "3PA rate differential (home − away)",
+     "Percentage points", "share of shots that are 3-point attempts"),
+    ("fg3_pct_diff",  "3P% differential (home − away)",
+     "Percentage points", ""),
+    ("ft_pct_diff",   "FT% differential (home − away)",
+     "Percentage points", ""),
+]
+
+# Panel descriptors for the player-tracking rebounding chart.
+# Each entry: (data_key, panel_title, y_label, footnote)
+TRACKING_PANELS: list[tuple[str, str, str, str]] = [
+    ("oreb_chance_pct_edge",
+     "Offensive-rebound conversion edge",
+     "Percentage points", "home minus road: share of O-reb chances converted"),
+    ("boxout_edge",
+     "Box-out edge",
+     "Box-outs per game", "home minus road (tracked from ~2016)"),
+    ("second_chance_edge",
+     "Second-chance points edge",
+     "Points per game", "home minus road"),
+]
+
 
 # ── Drawing helpers ───────────────────────────────────────────────────────────
 def _shade_eras(ax: plt.Axes, seasons: list[str], label_y: float | None = 46) -> None:
@@ -271,7 +312,7 @@ def plot_channel_3pa_control(data: dict) -> None:
 
     `data` comes from regression.compute_channel_3pa_control().
     """
-    order = ["Shooting", "Turnovers", "Fouls", "Rebounding"]
+    order = CATEGORY_ORDER
     ctxs = [("Regular season", GREEN), ("Playoffs", BLUE)]
     fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
     fig.suptitle("Does Each Category's Decline Survive Controlling for Threes?",
@@ -329,9 +370,8 @@ def plot_mediation(decomp: dict) -> None:
     headline at each bar's end is how much of the level/decline the four
     channels capture.
     """
-    seg_order  = ["Shooting", "Rebounding", "Fouls", "Turnovers"]
-    seg_colors = {"Shooting": BLUE, "Rebounding": GREEN, "Fouls": RED,
-                  "Turnovers": "#e8a33d"}
+    seg_order  = CATEGORY_ORDER
+    seg_colors = CATEGORY_COLORS
     RESID = GRAY
     contexts = ["Regular season", "Playoffs"]
     y_pos = {"Regular season": 1.0, "Playoffs": 0.0}
@@ -403,20 +443,7 @@ def plot_differential_analysis(
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    panels = [
-        ("foul_diff",     "Foul differential (home PF − away PF)",
-         "Fouls per game",    "negative = refs call fewer fouls on home team"),
-        ("fg_pct_diff",   "FG% differential (home − away)",
-         "Percentage points", ""),
-        ("efg_pct_diff",  "eFG% differential (home − away)",
-         "Percentage points", "weights 3-pointers at 1.5×"),
-        ("tpa_rate_diff", "3PA rate differential (home − away)",
-         "Percentage points", "share of shots that are 3-point attempts"),
-        ("fg3_pct_diff",  "3P% differential (home − away)",
-         "Percentage points", ""),
-        ("ft_pct_diff",   "FT% differential (home − away)",
-         "Percentage points", ""),
-    ]
+    panels = DIFF_PANELS
 
     fig, axes = plt.subplots(2, 3, figsize=(22, 10))
     fig.suptitle("Home vs Away Box-Score Differentials — Are the Gaps Closing?",
@@ -532,17 +559,7 @@ def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
     40-year decline.
     """
     x = np.arange(len(seasons))
-    panels = [
-        ("oreb_chance_pct_edge",
-         "Offensive-rebound conversion edge",
-         "Percentage points", "home minus road: share of O-reb chances converted"),
-        ("boxout_edge",
-         "Box-out edge",
-         "Box-outs per game", "home minus road (tracked from ~2016)"),
-        ("second_chance_edge",
-         "Second-chance points edge",
-         "Points per game", "home minus road"),
-    ]
+    panels = TRACKING_PANELS
 
     fig, axes = plt.subplots(1, 3, figsize=(20, 6))
     fig.suptitle("Player-Tracking View of the Home Rebounding Edge (tracking era)",
