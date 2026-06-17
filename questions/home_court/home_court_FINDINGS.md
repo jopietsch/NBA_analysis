@@ -2,7 +2,7 @@
 
 Home court advantage in the NBA has been shrinking for four decades, and this report sets out to answer what has changed and why. **Has it really changed?** **What makes home court an advantage in the first place?** And **what's driving the decline what isn't?**
 
-Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is slow, steady erosion, with two sharper drops layered on top. The structural advantages home teams once relied on have worn away: at the whistle, in shot selection, in the move to the three-point line, and on the glass. The biggest surprise is where the largest share of the decline came from: not the expected factors, the narrowing whistle and the three-point shift, but the collapse of the home team's grip on the offensive boards.
+Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is slow, steady erosion, with two sharper drops layered on top. The structural advantages home teams once relied on have worn away: at the whistle, in shot selection, in the move to the three-point line, and on the glass. The largest share of the decline came not from the expected factors — the narrowing whistle and the three-point shift — but from the erosion of the home team's offensive rebounding edge.
 
 What is *not* behind it is also interesting: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the playoff format changes, including the much-blamed 2014 change. Each one is tested here, and each one is ruled out.
 
@@ -40,7 +40,7 @@ Whether any of these rule changes caused the decline is a separate question, tak
 
 ## 2. What Creates Home Court Advantage
 
-A handful of concrete things have historically given home teams an edge on any given night: referees calling fewer fouls on them, a shooting advantage, favorable shot selection, and an underrated advantage on the glass and in turnover differential. Rest and altitude add to the picture for specific matchups.
+A handful of concrete things have historically given home teams an edge on any given night: referees calling fewer fouls on them, a shooting advantage, favorable shot selection, and an advantage on the glass and in turnover differential. Rest and altitude add to the picture for specific matchups.
 
 **Referee foul calls.** Across every era and in both regular season and playoffs, referees have called fewer fouls on home teams. In the 1984–94 regular season, home teams averaged about 1.2 fewer foul calls per game. In the playoffs the gap was even wider. Referees favored home teams by about 1.6 fouls per game. With fouls go free throws, and with free throws go points. This is the most consistent component of home court advantage.
 
@@ -66,7 +66,7 @@ This chart splits both home court and its 40-year decline across the four box-sc
 
 ![Box-score category shares of the home-court advantage and of its decline, regular season vs. playoffs. The left panel is what creates the advantage; the right is what's eroding it. Bars sum to 100% by accounting identity.](generated/nba_home_court_mediation.png)
 
-**Referee foul bias has narrowed sharply.** The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In the playoffs it has fallen from 1.6 to 0.7. The advantage referees once gave home teams has nearly vanished in the regular season and significantly diminished in the playoffs.
+**Referee foul bias has narrowed sharply.** The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In the playoffs it has fallen from 1.6 to 0.7. The advantage referees once gave home teams has fallen by about 80% in the regular season and significantly diminished in the playoffs.
 
 The playoff referee chart shows the generational shift clearly. The distribution across officials has compressed over time, not just shifted. Newer referees are not only less biased on average; they are also more uniform in their calling.
 
@@ -88,9 +88,9 @@ The three-point shift works through a specific channel: the shooting line of the
 
 **Rebounding, the biggest contributor.** The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise. Hold three-point volume constant and the home shooting advantage vanishes entirely, while the rebounding advantage barely moves. The answer is in the split between offensive and defensive boards.
 
-The home advantage on the **defensive** glass has only softened. The advantage on the **offensive** glass has collapsed. It fell from about six-tenths of a rebound per game in the 1980s to slightly below zero today. Home teams no longer attack the offensive boards harder than visitors.
+The home advantage on the **defensive** glass has only softened. The advantage on the **offensive** glass has eroded to zero. It fell from about six-tenths of a rebound per game in the 1980s to slightly below zero today. Home teams no longer attack the offensive boards harder than visitors.
 
-This isn't a trick of pace or shot volume. Measured as the home team's share of available rebounds, the advantage shrank roughly tenfold, from about two percentage points to a fifth of one. It lines up with a well-documented strategic shift: the league-wide offensive-rebound rate fell from 33% to 26% over the same span, and the season-by-season correlation between the two is 0.82. Teams stopped crashing the boards to get back on defense, and the home advantage declined with that retreat. The frantic scramble for offensive boards, exactly the kind of effort a roaring crowd might once have fueled, has largely been coached out of the game.
+This isn't a trick of pace or shot volume. Measured as the home team's share of available rebounds, the advantage shrank roughly tenfold, from about two percentage points to a fifth of one. It lines up with a well-documented strategic shift: the league-wide offensive-rebound rate fell from 33% to 26% over the same span, and the season-by-season correlation between the two is 0.82. Teams stopped crashing the boards to get back on defense, and the home advantage declined with that retreat.
 
 The home turnover advantage has eroded too, about half of it independent of the perimeter shift. The playoffs point the same way: the home rebound-share advantage has fallen by roughly three-quarters there too. With a fifteenth as many games, the playoff evidence is consistent with the regular-season story rather than established on its own. Player-tracking data from the last decade confirms the picture: home teams hold no measurable box-out advantage today, and their advantage in converting offensive-rebound chances has kept shrinking.
 
@@ -144,7 +144,7 @@ For every other change, including zone legalization, the perimeter hand-check ba
 
 ![Left: league average attendance per game vs. regular-season home win %, 2000–2026 — crowds hold near capacity (and lately set records) while home court keeps falling. Right: 2020–21 home win % by game attendance — an empty arena erases the advantage that even a small crowd restores.](generated/nba_home_court_attendance.png)
 
-**Put it all together, and the decline still stands alone.** Feed a single model every situational factor at once: rest, altitude, time zones, even the COVID empty-arena seasons. Ask what's left to explain. Roughly half the model's predictive power belongs to those factors combined. The other half belongs to *which era the game was played in*. That era effect is just the decline itself, measured. Home advantage is about 9 points lower in 2023–26 than in 1984–94 after every factor gets its due.
+**The decline persists after controlling for every situational factor.** Feed a single model every situational factor at once: rest, altitude, time zones, even the COVID empty-arena seasons. Ask what's left to explain. Roughly half the model's predictive power belongs to those factors combined. The other half belongs to *which era the game was played in*. That era effect is just the decline itself, measured. Home advantage is about 9 points lower in 2023–26 than in 1984–94 after every factor gets its due.
 
 The cleanest version of the test compares seasons on either side of 2014. The rest and time-zone effects are statistically unchanged; altitude's two-team boost weakened somewhat. Yet the baseline home advantage dropped about 4.7 points anyway. The situational factors held still while the floor fell. The decline traces to the on-court changes of Sections 2 and 3: the neutral whistle and the move to the perimeter.
 
@@ -181,7 +181,7 @@ The most recent shift, in 2014, coincided with the sharpest period of playoff HC
 
 A few results surfaced along the way that don't bear directly on the three questions but are too interesting to leave buried in the appendix.
 
-**Few referees favor the home team more than others.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit close to a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is small-sample noise. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
+**Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit close to a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is small-sample noise. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
 
 ![Top/bottom 15 referees ranked by home foul differential (≥50 playoff games). Values are shrunken estimates — raw differences shrink toward the league mean to account for sample size.](generated/nba_home_court_referee_rankings.png)
 
@@ -193,7 +193,7 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 **Home court is worth more in the playoffs than in the regular season.** Among franchises with both records, home court is worth about 20 points in the regular season but 27 in the playoffs, a 7-point premium. Teams that protect their building in the regular season tend to do so in the playoffs as well, but only loosely. The crowd, the stakes, and the familiar floor count for more when the games matter most.
 
-**Player-tracking data caught the final chapter of the rebounding decline.** The high-resolution cameras the NBA deployed in 2013–14 arrived too late to document most of the story. The home team's grip on the offensive boards had already been collapsing for two decades. But the final chapter is visible: the home team's advantage in converting offensive-rebound chances kept shrinking through the entire tracking era, falling from about 1.5 percentage points in the mid-2010s to below zero by 2025–26. The box-out advantage has been essentially zero throughout the whole tracking window. The cameras confirmed a decline that was already nearly complete before they could see it.
+**Player-tracking data caught the final chapter of the rebounding decline.** The high-resolution cameras the NBA deployed in 2013–14 arrived too late to document most of the story. The home team's grip on the offensive boards had already been collapsing for two decades. But the final chapter is visible: the home team's advantage in converting offensive-rebound chances kept shrinking through the entire tracking era, falling from about 1.5 percentage points in the mid-2010s to below zero by 2025–26. The box-out advantage has been essentially zero throughout the whole tracking window. By the time the cameras arrived, most of the decline had already happened.
 
 ![The modern player-tracking view of the home rebounding advantage (2013–14 on). Left: the home advantage in converting offensive-rebound chances keeps shrinking, slipping below zero by 2025–26. Center: home teams hold no measurable box-out advantage. Right: the second-chance-points advantage shows little change across this window. A short window that corroborates the modern mechanism, not the 40-year decline.](generated/nba_home_court_rebounding_tracking.png)
 
@@ -205,7 +205,7 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 ## 7. Summary
 
-Home court advantage in the NBA has been cut nearly in half over 40 years. The regular season went from 65% to about 55%; the playoffs from nearly 68% to 58%.
+Home court advantage in the NBA has dropped about 10 percentage points over 40 years. The regular season went from 65% to about 55%; the playoffs from nearly 68% to 58%.
 
 The decline is real and one-directional: a slow, four-decade erosion with two sharper drops layered on it. The first traces to the 1994–95 rule change, most likely the hand-checking crackdown, whose full adjustment played out through the late 1990s. The second is the post-2017 perimeter shift, which shows up in the shooting line of the box score. Neither is the whole story. The data points to four main explanations that together account for about 96% of the regular-season decline:
 
@@ -215,7 +215,7 @@ The decline is real and one-directional: a slow, four-decade erosion with two sh
 
 **Three-point shooting equalizes outcomes.** The shift to the perimeter erodes home court through a specific channel: the shooting line of the box score. Hold three-point volume constant and the home shooting advantage holds up; let it rise and the advantage shrinks. The 40-year lockstep between three-point volume and home win rate is the most striking visual in the dataset, though the reliable evidence is within a single season: games with more threes have lower home win rates even among contemporaries, independent of the long-run drift.
 
-**And the biggest driver of all: the rebounding advantage died on the offensive glass.** The home team's hold on the boards has slipped over 40 years, independently of the three-point boom. The slide is concentrated in offensive rebounding, where the advantage has fallen from about six-tenths of a board per game to slightly below zero. It shows up even as a pace-free share of available rebounds, so it's no statistical artifact. The league-wide offensive-rebound rate fell from 33% to 26% over the same span, and the home advantage tracked that retreat. The effort-driven offensive board, the kind a home crowd might once have spurred, has been coached out of the game. The home turnover advantage has partly followed, and the same pattern holds in the playoffs.
+**And the biggest driver of all: the rebounding advantage eroded on the offensive glass.** The home team's hold on the boards has slipped over 40 years, independently of the three-point boom. The slide is concentrated in offensive rebounding, where the advantage has fallen from about six-tenths of a board per game to slightly below zero. It shows up even as a pace-free share of available rebounds, so it's no statistical artifact. The league-wide offensive-rebound rate fell from 33% to 26% over the same span, and the home advantage tracked that retreat. The effort-driven offensive board, the kind a home crowd might once have spurred, has been coached out of the game. The home turnover advantage has partly followed, and the same pattern holds in the playoffs.
 
 What hasn't driven the decline: rule changes (with the single exception of 1994–95), travel, time zones, pace of play, competitive balance, crowd size, and playoff scheduling format. The data rules each out. The schedule-spread argument with fewer tired visitors, explains only about 8% of the decline. Arenas have stayed near capacity, lately setting records, even as the advantage shrank. The one genuine crowd effect is a blip: in the empty arenas of 2020–21 home teams won just 51%, then snapped back to 58.5% whenever fans returned. Crowd noise is real and measurable, but it's a switch that flips with the doors, not a dial slowly turning down for 40 years.
 
