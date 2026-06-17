@@ -1383,7 +1383,7 @@ def plot_referee_rankings(bias_stats: list[dict]) -> None:
     bar_colors = [GREEN if v < 0 else RED for v in vals]
 
     fig, ax = plt.subplots(
-        figsize=(8, max(8, n_show * 0.55 + 3)),
+        figsize=(8, min(7, max(5, n_show * 0.35 + 2))),
         facecolor=BG,
     )
     ax.set_facecolor(PANEL)

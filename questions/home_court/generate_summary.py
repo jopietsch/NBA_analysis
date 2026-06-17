@@ -35,7 +35,7 @@ DARK   = "#2c2c2a"
 MID    = "#666666"
 ORANGE = "#e8a33d"
 
-SUMMARY_PATH = "SUMMARY.md"
+SUMMARY_PATH = "home_court_SUMMARY.md"
 OUTPUT_DIR   = "generated"
 SUMMARY_PNGS = [
     os.path.join(OUTPUT_DIR, "summary_decline.png"),

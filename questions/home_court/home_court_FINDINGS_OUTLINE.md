@@ -30,8 +30,6 @@
 
 ![Fig 1 — season trends](generated/nba_home_court_advantage_season.png)
 
-![Fig 2 — era bars](generated/nba_home_court_advantage_era_bars.png)
-
 ---
 
 ## Section 2 — What Creates Home Court Advantage
@@ -90,7 +88,7 @@
 
 ![Fig 5 — mediation shares (leads the section as the roadmap)](generated/nba_home_court_mediation.png)
 
-![Fig 6 — referee bias](generated/nba_home_court_referee.png)
+![Fig 6 — referee era distribution](generated/nba_home_court_referee_era.png)
 
 ![Fig 7 — shot zones](generated/nba_home_court_shot_zones.png)
 
@@ -154,17 +152,23 @@
 - **Referee differences real but overstated:** 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing.
 - **Denver & Utah best home court — altitude the likely reason:** Nuggets **+26.8 pp**, Jazz **+25.7 pp** shrunken (league mean +20.0). ~70% of franchise variation is real (true SD ≈4.1 pp). Altitude piece ≈8 of those points. (n=2 high-altitude teams — elevation can't be fully separated from other franchise-specific factors.)
 
-![Fig 18 — franchise HCA](generated/nba_home_court_team_hca.png)
+- **Referee differences real but detailed (Fig 18):** top/bottom 15 officials ranked by career mean shrunken home foul differential — Garretson, Crawford, Rush most home-favoring; Brothers, Tiven, Forte most even-handed.
+
+![Fig 18 — referee rankings](generated/nba_home_court_referee_rankings.png)
+
+![Fig 19 — franchise HCA](generated/nba_home_court_team_hca.png)
 - **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Fortress reputation = being a good team that plays more home games.
 - **Home court worth more in playoffs:** reg **~20 pp** vs. playoffs **~27 pp** → **+7 pp postseason premium** (RESULTS +7.2 pp, SD 7.4). Reg/playoff consistency positive but weak (raw r=+0.362, p=0.042).
-- **Player-tracking caught the final chapter of the rebounding fade (Fig 19):** OREB-conversion advantage fell from ~1.5 pp (mid-2010s) to below zero (2025–26); box-out advantage essentially zero throughout. Cameras confirmed a fade already nearly complete before 2013–14. *RESULTS: OREB conversion p=0.024*, box-out p=0.775.*
+- **Player-tracking caught the final chapter of the rebounding fade (Fig 20):** OREB-conversion advantage fell from ~1.5 pp (mid-2010s) to below zero (2025–26); box-out advantage essentially zero throughout. Cameras confirmed a fade already nearly complete before 2013–14. *RESULTS: OREB conversion p=0.024*, box-out p=0.775.*
+
+![Fig 20 — player-tracking rebounding](generated/nba_home_court_rebounding_tracking.png)
 - **Margins polarizing — blowouts getting bigger:** home wins bigger, home losses worse, even as home teams win less.
   - Not just a composition effect — confirmed by unconditional quantile regression.
   - *RESULTS reg season:* Q10 **−0.167 pts/yr**, Q90 **+0.050 pts/yr**; IQR widening **+0.217 pts/yr**.
   - *RESULTS playoffs:* Q10 −0.104 (ns), Q90 +0.222 pt/yr; IQR widening **+0.326 pts/yr** — playoff spread driven mainly by big home wins growing (Home wins trend +0.149***/yr).
   - ~0.2–0.3 pts/yr widening in both contexts. Era of close games → era of blowouts.
 
-![Fig 20 — margin trends](generated/nba_home_court_margin.png)
+![Fig 21 — margin trends](generated/nba_home_court_margin.png)
 
 ---
 
