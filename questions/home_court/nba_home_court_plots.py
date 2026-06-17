@@ -274,10 +274,10 @@ def plot_channel_3pa_control(data: dict) -> None:
     order = ["Shooting", "Turnovers", "Fouls", "Rebounding"]
     ctxs = [("Regular season", GREEN), ("Playoffs", BLUE)]
     fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
-    fig.suptitle("Which Fades Are the Three-Point Story?",
+    fig.suptitle("Does Each Category's Decline Survive Controlling for Threes?",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
-             "Share of each channel's yearly decline left after holding 3-point volume constant  |  "
+             "Share of each category's yearly decline left after holding 3-point volume constant  |  "
              "100% = unrelated to threes, 0% = fully the three-point story",
              ha="center", fontsize=9, color=GRAY)
 
@@ -372,7 +372,7 @@ def plot_mediation(decomp: dict) -> None:
     fig.suptitle("Where Home Court Comes From — and Where It's Going",
                  fontsize=14, fontweight="bold", y=1.05, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Box-score channel shares of the home-court edge (left) and of its 40-year decline (right)  |  "
+             "Box-score category shares of the home-court edge (left) and of its 40-year decline (right)  |  "
              "shares sum to 100% by accounting identity",
              ha="center", fontsize=9, color=GRAY)
 
