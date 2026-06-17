@@ -17,41 +17,24 @@ import numpy as np                     # noqa: E402
 import pandas as pd                    # noqa: E402
 
 from knicks_2026_data import SUBJECT_YEAR, short_label, season_range_label, START_YEAR, END_YEAR
+from nbakit.viz import (  # noqa: E402
+    BLUE, GREEN, RED, GRAY, LGRAY, BG, PANEL,
+    output_path,
+    style_axes as _style,
+    new_fig as _fig,
+)
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "generated")
 
-# ── Palette ───────────────────────────────────────────────────────────────────
+# ── Team accent colors (Knicks-specific) ──────────────────────────────────────
 KNICKS_BLUE   = "#006BB6"
 KNICKS_ORANGE = "#F58426"
-BLUE    = "#378add"
-GREEN   = "#1d9e75"
-RED     = "#e24b4a"
-GRAY    = "#888780"
-LGRAY   = "#cccccc"
-BG      = "#f9f9f7"
-PANEL   = "#ffffff"
 
 SUBJECT_LABEL = short_label(SUBJECT_YEAR)   # "25-26"
 
 
 def _out(name: str) -> str:
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    return os.path.join(OUTPUT_DIR, name)
-
-
-def _style(ax: plt.Axes) -> None:
-    ax.set_facecolor(PANEL)
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
-    ax.spines["left"].set_color("#ddd")
-    ax.spines["bottom"].set_color("#ddd")
-    ax.tick_params(colors="#555")
-    ax.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
-
-
-def _fig(figsize=(9, 6)):
-    fig, ax = plt.subplots(figsize=figsize, facecolor=BG)
-    return fig, ax
+    return output_path(name, OUTPUT_DIR)
 
 
 # ── 1. Champions ranked by playoff win rate ───────────────────────────────────

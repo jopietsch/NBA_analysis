@@ -17,6 +17,12 @@ from nba_home_court_data import (
     ERA_DEFS, COVID_SEASONS,
     label_to_year, bucket_stats_by_era, _align_to_seasons, season_range_label,
 )
+from nbakit.viz import (
+    BLUE, GREEN, RED, GRAY, BG, PANEL,
+    output_path,
+    annotate_bars as _annotate_bars,
+    add_trend_line as _add_trend_line,
+)
 
 # All generated PNG charts are written here.
 OUTPUT_DIR = "generated"
@@ -24,18 +30,11 @@ OUTPUT_DIR = "generated"
 
 def _output_path(name: str) -> str:
     """Return the path under OUTPUT_DIR for a chart file, creating the dir."""
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    return os.path.join(OUTPUT_DIR, name)
+    return output_path(name, OUTPUT_DIR)
 
 
 # ── Colors ────────────────────────────────────────────────────────────────────
-BLUE  = "#378add"
-GREEN = "#1d9e75"
-RED   = "#e24b4a"
-GRAY  = "#888780"
-BG    = "#f9f9f7"
-PANEL = "#ffffff"
-
+# Base palette (BLUE/GREEN/RED/GRAY/BG/PANEL) comes from nbakit.viz.
 # One background shade per era (matches order of ERA_DEFS)
 ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
 
@@ -66,13 +65,6 @@ def _shade_eras(ax: plt.Axes, seasons: list[str], label_y: float | None = 46) ->
         if label_y is not None:
             mid = (min(era_idx) + max(era_idx)) / 2
             ax.text(mid, label_y, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
-
-
-def _annotate_bars(ax: plt.Axes, bars, color: str) -> None:
-    for bar in bars:
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                f"{bar.get_height():.1f}%",
-                ha="center", va="bottom", fontsize=7.5, color=color)
 
 
 def _draw_season_overview(
@@ -153,27 +145,6 @@ def _draw_paired_bars(
     ax.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
     ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-
-def _add_trend_line(
-    ax: plt.Axes,
-    x: np.ndarray,
-    y: np.ndarray,
-    color: str,
-    *,
-    linestyle: str = "--",
-    linewidth: float = 1.4,
-    alpha: float = 0.5,
-    zorder: int = 3,
-    x_plot: np.ndarray | None = None,
-) -> None:
-    mask = ~np.isnan(y)
-    if mask.sum() < 2:
-        return
-    z = np.polyfit(x[mask], y[mask], 1)
-    xp = x if x_plot is None else x_plot
-    ax.plot(xp, np.poly1d(z)(xp), linestyle, color=color,
-            linewidth=linewidth, alpha=alpha, zorder=zorder)
 
 
 # ── Plot functions ────────────────────────────────────────────────────────────
