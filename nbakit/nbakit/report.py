@@ -40,6 +40,7 @@ class ReportConfig:
     results_path: str = "RESULTS.md"
     output_path: str = "generated/report.pdf"
     pipeline_cmd: str = "python3 analysis.py"
+    include_appendix: bool = True
 
 
 # ── Prerequisites check ────────────────────────────────────────────────────────
@@ -59,7 +60,7 @@ def _check_prerequisites(cfg: ReportConfig) -> None:
         for p in missing_pngs:
             print(f"  {p}")
         print()
-    if not os.path.exists(cfg.results_path):
+    if cfg.include_appendix and not os.path.exists(cfg.results_path):
         print(f"ERROR: {cfg.results_path} is missing.\n")
         print(f"Run the analysis pipeline first:\n\n  {cfg.pipeline_cmd}\n")
         print("Then retry:\n\n  python3 generate_report.py")
@@ -89,18 +90,16 @@ def _parse_findings(path: str) -> tuple[str, dict[str, str]]:
 # ── Report builder ─────────────────────────────────────────────────────────────
 
 def _make_wrapper_qmd(cfg: ReportConfig, findings_body: str, src_dir: str) -> str:
-    """Write a temporary .qmd that combines the findings body + appendix."""
-    appendix_qmd = _make_appendix_qmd(
-        os.path.abspath(cfg.results_path), src_dir
-    )
-
+    """Write a temporary .qmd that combines the findings body + optional appendix."""
     footnote_md = f"\n---\n\n{cfg.footnote}\n" if cfg.footnote else ""
 
     wrapper = os.path.join(src_dir, "_report_generated.qmd")
     with open(wrapper, "w") as f:
         f.write(findings_body)
         f.write(footnote_md)
-        f.write("\n\n{{< include _appendix_generated.qmd >}}\n")
+        if cfg.include_appendix:
+            _make_appendix_qmd(os.path.abspath(cfg.results_path), src_dir)
+            f.write("\n\n{{< include _appendix_generated.qmd >}}\n")
     return wrapper
 
 

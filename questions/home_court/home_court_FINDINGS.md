@@ -6,7 +6,7 @@ Yes: the home team's win rate has fallen from about 65% to 55% in the regular se
 
 What is *not* behind it is also interesting: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the playoff format changes, including the much-blamed 2014 change. Each one is tested here, and each one is ruled out.
 
-Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers 52,000 regular-season and playoff games; the underlying statistical tables are in the appendix.
+Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers 52,000 regular-season and playoff games; the underlying statistical tables are in the separate RESULTS report.
 
 ---
 
@@ -179,7 +179,7 @@ The most recent shift, in 2014, coincided with the sharpest period of playoff HC
 
 ## 6. Other Findings
 
-A few results surfaced along the way that don't bear directly on the three questions but are too interesting to leave buried in the appendix.
+A few results surfaced along the way that don't bear directly on the three questions but are too interesting to omit.
 
 **Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit close to a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is small-sample noise. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
 
