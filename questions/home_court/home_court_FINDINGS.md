@@ -2,11 +2,11 @@
 
 Home court advantage in the NBA has been shrinking for four decades, and this report sets out to answer what has changed and why. **Has it really changed?** **What makes home court an advantage in the first place?** And **what's driving the decline — and, just as important, what isn't?**
 
-Yes, the change is real and it has continued— the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is a slow, steady erosion, with two sharper, one-time drops layered on top; both the drift and the drops push the same way. What makes home court an edge on any given night is a handful of concrete things: referees calling fewer fouls on the home team, a shooting and shot-selection advantage, and smaller boosts from rest and altitude. And what's driving the decline is that those edges have worn away — the whistle has gone neutral, shot selection has converged between home and road teams, and the rise in three-point shooting has added variance that erodes the steady, structural edges home teams rely on. The largest share of the fall, though, is also the quietest: the home team's old grip on the boards — above all the offensive glass — has all but disappeared, carrying more of the decline than the headline causes combined.
+Yes, the change is real — the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is a slow, steady erosion, with two sharper drops layered on top. The structural edges home teams once relied on have worn away — at the whistle, in shot selection, and on the glass. The biggest surprise is where the largest share of the decline actually came from: not the headline factors, but the quiet collapse of the home team's grip on the offensive boards.
 
 What is *not* behind the decline matters too, because the usual suspects get blamed constantly: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the 2014 playoff format change. Each one is tested here, and each one is ruled out.
 
-Throughout, the regular season and the playoffs are tracked separately — they share a direction but not a timeline. The analysis runs across 52,000 regular-season and playoff games; the underlying staistical tables are in shown in the appendix.
+Throughout, the regular season and the playoffs are tracked separately — they share a direction but not a timeline. The analysis runs across 52,000 regular-season and playoff games; the underlying statistical tables are shown in the appendix.
 
 ---
 
