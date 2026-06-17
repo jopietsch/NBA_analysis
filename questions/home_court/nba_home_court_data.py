@@ -176,9 +176,8 @@ PLAYOFF_FORMAT_PERIODS = [
 ]
 
 
-def label_to_year(lbl: str) -> int:
-    suffix = int(lbl.split("–")[1])
-    return (2000 + suffix) if suffix < 50 else (1900 + suffix)
+# Short season label ('83–84') → ending year. Lives in nbakit.data now.
+label_to_year = _nbakit.label_to_year
 
 
 def fetch_all_seasons() -> tuple[list[str], list[float], list[str], list[float]]:
@@ -219,12 +218,8 @@ def _compute_period_averages(
     reg_seasons: list[str], reg_pcts: list[float],
     po_seasons: list[str], po_pcts: list[float],
 ) -> tuple[list[float], list[float], list[str]]:
-    reg_avg, po_avg = [], []
-    for _, y1, y2, _ in period_defs:
-        rv = [p for s, p in zip(reg_seasons, reg_pcts) if y1 <= label_to_year(s) <= y2]
-        pv = [p for s, p in zip(po_seasons,  po_pcts)  if y1 <= label_to_year(s) <= y2]
-        reg_avg.append(round(np.mean(rv), 1) if rv else 0)
-        po_avg.append( round(np.mean(pv), 1) if pv else 0)
+    reg_avg = _nbakit.bucket_series_by_period(reg_seasons, reg_pcts, period_defs)
+    po_avg  = _nbakit.bucket_series_by_period(po_seasons,  po_pcts,  period_defs)
     return reg_avg, po_avg, [p[0] for p in period_defs]
 
 
@@ -273,15 +268,7 @@ def bucket_stats_by_era(seasons: list[str], stats: dict) -> tuple[dict, list[str
     (ERA_DEFS). Works for any stats dict of the form {category: [per-season
     values]} — used by the margin analysis.
     """
-    era_avgs: dict[str, list[float]] = {key: [] for key in stats}
-    for _, y1, y2, _ in ERA_DEFS:
-        idx = [i for i, s in enumerate(seasons) if y1 <= label_to_year(s) <= y2]
-        for key, values in stats.items():
-            vals = [values[i] for i in idx if not np.isnan(values[i])]
-            era_avgs[key].append(round(np.mean(vals), 1) if vals else 0)
-
-    era_labels_short = [e[0] for e in ERA_DEFS]
-    return era_avgs, era_labels_short
+    return _nbakit.bucket_stats_by_period(seasons, stats, ERA_DEFS)
 
 
 def _align_to_seasons(

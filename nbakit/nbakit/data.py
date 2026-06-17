@@ -53,6 +53,48 @@ def season_range_label(start_year: int, end_year: int) -> str:
     return f"{s} through {e}"
 
 
+def label_to_year(lbl: str) -> int:
+    """Short season label ('83–84') → ending year (1984)."""
+    suffix = int(lbl.split("–")[1])
+    return (2000 + suffix) if suffix < 50 else (1900 + suffix)
+
+
+# ── Period bucketing ────────────────────────────────────────────────────────────
+# Periods are lists of tuples whose first three positions are
+# (label, start_year, end_year); any further positions (e.g. a description) are
+# ignored. Used to average per-season series within rule-change eras, playoff-
+# format spans, etc.
+
+def bucket_series_by_period(seasons: list[str], values: list[float],
+                            periods: list, *, drop_nan: bool = False,
+                            round_to: int = 1) -> list[float]:
+    """Average `values` within each period; one number per period (0 if empty)."""
+    out: list[float] = []
+    for period in periods:
+        y1, y2 = period[1], period[2]
+        vals = [
+            v for s, v in zip(seasons, values)
+            if y1 <= label_to_year(s) <= y2 and not (drop_nan and np.isnan(v))
+        ]
+        out.append(round(float(np.mean(vals)), round_to) if vals else 0)
+    return out
+
+
+def bucket_stats_by_period(seasons: list[str], stats: dict, periods: list,
+                           *, drop_nan: bool = True,
+                           round_to: int = 1) -> tuple[dict, list[str]]:
+    """Average each series in `stats` ({key: per-season values}) within each period.
+
+    Returns (averages_by_key, period_labels).
+    """
+    avgs = {
+        key: bucket_series_by_period(seasons, values, periods,
+                                     drop_nan=drop_nan, round_to=round_to)
+        for key, values in stats.items()
+    }
+    return avgs, [p[0] for p in periods]
+
+
 def cache_path(end_year: int, season_type: str,
                cache_dir: str | None = None) -> str:
     d = cache_dir or default_cache_dir()

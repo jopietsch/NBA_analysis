@@ -7,12 +7,15 @@ import pytest
 from nbakit.data import (
     fill_plus_minus,
     add_rest_days,
+    bucket_series_by_period,
+    bucket_stats_by_period,
     cache_path,
     compute_srs,
     default_cache_dir,
     home_abbr,
     identify_champion,
     is_home,
+    label_to_year,
     merge_home_away_rows,
     season_range_label,
     season_str,
@@ -179,3 +182,32 @@ def test_add_rest_days():
     assert pd.isna(out.loc[0, "REST"])
     assert out.loc[1, "REST"] == 0
     assert out.loc[2, "REST"] == 2
+
+
+# ── Period bucketing ──────────────────────────────────────────────────────────
+
+def test_label_to_year():
+    assert label_to_year("83–84") == 1984
+    assert label_to_year("25–26") == 2026
+    assert label_to_year("99–00") == 2000
+
+
+_PERIODS = [("80s", 1984, 1989, "x"), ("90s", 1990, 1999, "y")]
+
+
+def test_bucket_series_by_period():
+    seasons = ["83–84", "84–85", "90–91"]
+    values = [10.0, 20.0, 50.0]
+    assert bucket_series_by_period(seasons, values, _PERIODS) == [15.0, 50.0]
+
+
+def test_bucket_series_by_period_empty_period_is_zero():
+    assert bucket_series_by_period(["90–91"], [50.0], _PERIODS) == [0, 50.0]
+
+
+def test_bucket_stats_by_period_drops_nan():
+    seasons = ["83–84", "84–85"]
+    stats = {"a": [10.0, float("nan")]}
+    avgs, labels = bucket_stats_by_period(seasons, stats, _PERIODS)
+    assert avgs["a"] == [10.0, 0]
+    assert labels == ["80s", "90s"]
