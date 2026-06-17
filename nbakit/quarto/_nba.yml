@@ -1,0 +1,16 @@
+author: "Justin Pietsch"
+date: today
+
+format:
+  typst:
+    margin:
+      x: 0.85in
+      y: 0.85in
+    fontsize: 10pt
+    monofont: "DejaVu Sans Mono"
+    toc: false
+  html:
+    embed-resources: true
+    toc: true
+    theme: cosmo
+    monofont: "DejaVu Sans Mono, monospace"
