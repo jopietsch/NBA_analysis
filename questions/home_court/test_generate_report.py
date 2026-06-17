@@ -1,14 +1,16 @@
 """
-Tests for the pure parsing/markup helpers used in the PDF report.
+Tests for the parsing helpers used by the report builder.
 
-These functions decide what prose, sections, and tables land in the PDF.
+These functions decide what prose and appendix sections land in the PDF/HTML.
 A regression here silently drops or reorders report content.
 """
 
+import shutil
+
 import pytest
 
-from nbakit.mdpdf import MONO, _md_inline
-from nbakit.report import ReportConfig, _check_prerequisites, _parse_findings, _parse_regression_sections
+from nbakit.mdpdf import _parse_regression_sections
+from nbakit.report import ReportConfig, _check_prerequisites, _parse_findings
 
 
 class TestParseFindings:
@@ -29,19 +31,6 @@ class TestParseFindings:
 
     def test_missing_file_returns_empty(self, tmp_path):
         assert _parse_findings(str(tmp_path / "nope.md")) == ("", {})
-
-
-class TestMdInline:
-    def test_bold_italic(self):
-        assert _md_inline("**bold**") == "<b>bold</b>"
-        assert _md_inline("*em*") == "<i>em</i>"
-
-    def test_code_span_uses_mono_font(self):
-        assert _md_inline("`code`") == f'<font name="{MONO}">code</font>'
-
-    def test_mixed_inline(self):
-        out = _md_inline("a **b** and `c`")
-        assert out == f'a <b>b</b> and <font name="{MONO}">c</font>'
 
 
 class TestParseRegressionSections:
@@ -72,9 +61,9 @@ class TestCheckPrerequisites:
             results_path=str(results_path),
         )
 
-    def test_exits_when_png_missing(self, tmp_path):
+    def test_exits_when_results_missing(self, tmp_path):
         findings = tmp_path / "FINDINGS.md"
-        findings.write_text("![fig](does_not_exist.png)\n")
+        findings.write_text("no images here\n")
         with pytest.raises(SystemExit):
             _check_prerequisites(self._cfg(findings, tmp_path / "RESULTS.md"))
 
@@ -86,3 +75,37 @@ class TestCheckPrerequisites:
         findings = tmp_path / "FINDINGS.md"
         findings.write_text(f"![fig]({png})\n")
         _check_prerequisites(self._cfg(findings, results))  # must not raise
+
+
+@pytest.mark.skipif(shutil.which("quarto") is None, reason="quarto not installed")
+def test_build_report_produces_pdf_and_html(tmp_path):
+    import os
+    from PIL import Image
+    from nbakit.report import build_report
+
+    png = tmp_path / "chart.png"
+    Image.new("RGB", (200, 100), (180, 200, 220)).save(png)
+
+    findings = tmp_path / "FINDINGS.md"
+    findings.write_text(
+        "# Test Report\n\n"
+        "Intro paragraph.\n\n"
+        "## 1. Section One\n\n"
+        "Some text.\n\n![A chart](chart.png)\n"  # relative — same dir as FINDINGS.md
+    )
+    results = tmp_path / "RESULTS.md"
+    results.write_text("```\n─── SECTION A ───\ndata line\n```\n")
+
+    pdf_path = str(tmp_path / "generated" / "test_report.pdf")
+    build_report(ReportConfig(
+        title="Test Report",
+        findings_path=str(findings),
+        results_path=str(results),
+        output_path=pdf_path,
+    ))
+
+    html_path = os.path.splitext(pdf_path)[0] + ".html"
+    assert os.path.exists(pdf_path), "PDF not created"
+    assert os.path.getsize(pdf_path) > 1000
+    assert os.path.exists(html_path), "HTML not created"
+    assert os.path.getsize(html_path) > 1000
