@@ -6,3 +6,6 @@ cache/
 generated/
 *.pdf
 .DS_Store
+
+/.quarto/
+**/*.quarto_ipynb

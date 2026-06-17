@@ -6,16 +6,21 @@ A Python system to fetch NBA data and analyze it to answer one question: **did t
 
 This project is a sibling of `../nba_home_court` and deliberately mirrors its architecture, toolchain, and conventions. When something here is unspecified, that project is the reference.
 
+## Prerequisites
+
+[Quarto](https://quarto.org) must be installed (`brew install --cask quarto`).
+PDF and HTML are generated via Quarto/Typst — no LaTeX required.
+
 ## Commands
 
 ```bash
 # Run the full analysis (fetches data, generates PNGs, writes RESULTS.md)
 MPLBACKEND=Agg python3 knicks_2026_historic.py
 
-# Generate the PDF report (run after the above — needs all PNGs + RESULTS.md)
+# Generate the PDF + HTML report (run after the above — needs all PNGs + RESULTS.md)
 python3 generate_report.py
 
-# Regenerate a standalone markdown doc's PDF (e.g. FINDINGS_OUTLINE.md if added)
+# Regenerate a standalone markdown doc's PDF + HTML
 python3 generate_doc_pdf.py <FILE>.md
 
 # Tests (coverage configured in pytest.ini)

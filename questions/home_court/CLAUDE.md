@@ -14,23 +14,28 @@ Our main questions for all this analysis and the output is 1: has HCA changed ov
 - `RESULTS.md` — auto-generated regression tables; never edit manually, always re-run to refresh. **Whenever `RESULTS.md` changes, update `home_court_STATS_EXPLAINER.md`** so every number, p-value, and conclusion it quotes still matches (it cites `RESULTS.md` row by row); then regenerate its PDF. `STATS_TUTORIAL.md`'s worked examples also reproduce `RESULTS.md` rows — check those too
 - `home_court_STATS_EXPLAINER.md` / `STATS_TUTORIAL.md` — hand-edited methods companions to `RESULTS.md`; each has a generated PDF (`generated/home_court_STATS_EXPLAINER.pdf` here; `../generated/STATS_TUTORIAL.pdf` in the parent directory). **Whenever either markdown is edited, regenerate its PDF** with `python3 generate_doc_pdf.py <FILE>.md` (see Commands)
 
+## Prerequisites
+
+[Quarto](https://quarto.org) must be installed (`brew install --cask quarto`).
+PDF and HTML are generated via Quarto/Typst — no LaTeX required.
+
 ## Commands
 
 ```bash
 # Run the full analysis (fetches data, generates PNGs, runs regression)
 MPLBACKEND=Agg python3 nba_home_court_advantage.py
 
-# Generate the PDF report (run after the above)
+# Generate the PDF + HTML report (run after the above)
 python3 generate_report.py
 
-# Regenerate a stats doc PDF (run after editing home_court_STATS_EXPLAINER.md or STATS_TUTORIAL.md)
+# Regenerate a stats doc PDF + HTML (run after editing home_court_STATS_EXPLAINER.md or STATS_TUTORIAL.md)
 python3 generate_doc_pdf.py home_court_STATS_EXPLAINER.md
 python3 generate_doc_pdf.py ../STATS_TUTORIAL.md
 
-# Regenerate the findings outline PDF (run after editing home_court_FINDINGS_OUTLINE.md)
+# Regenerate the findings outline PDF + HTML (run after editing home_court_FINDINGS_OUTLINE.md)
 python3 generate_doc_pdf.py home_court_FINDINGS_OUTLINE.md
 
-# Regenerate the one-page summary PDF (run after editing home_court_SUMMARY.md)
+# Regenerate the one-page summary PDF + HTML (run after editing home_court_SUMMARY.md)
 python3 generate_doc_pdf.py home_court_SUMMARY.md
 
 # Run tests
