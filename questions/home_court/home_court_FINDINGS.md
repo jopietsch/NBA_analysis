@@ -72,7 +72,7 @@ The playoff referee chart shows the generational shift clearly. The distribution
 
 ![Figure 5. Referee home foul bias by official and era, playoffs.](generated/nba_home_court_referee.png)
 
-**The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their attempts from the paint than road teams. By 2023–26, that gap has shrunk to 0.2 points. Away teams now attack the basket nearly as aggressively as home teams. The usual explanation is the league-wide adoption of analytics-driven offense, which treats the same shots as optimal regardless of venue. Our data can confirm the gap closed, not pin the cause on analytics. In the playoffs the gap narrowed in the late 2010s but has since rebounded close to its old level. Shot-selection convergence is, for now, a regular-season story.
+**The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their attempts from the paint than road teams. By 2023–26, that gap has shrunk to 0.2 points. Away teams now attack the basket nearly as aggressively as home teams. Our data can confirm the gap closed, not why. In the playoffs the gap narrowed in the late 2010s but has since rebounded close to its old level. Shot-selection convergence is, for now, a regular-season story.
 
 ![Figure 6. Shot zone differentials (home minus road), regular season vs. playoffs.](generated/nba_home_court_shot_zones.png)
 
@@ -205,7 +205,7 @@ The decline is real and one-directional: a slow, four-decade erosion with two sh
 
 **Referees are calling fairer games.** The systematic home-team foul benefit was 1.2 fouls per game in the regular season and 1.6 in the playoffs in the 1980s. It has shrunk to roughly a quarter of a foul per game in the regular season and 0.7 in the playoffs. This is the largest single measurable change, and it shows up universally: 45 of 47 playoff officials with at least 50 games on record call fewer fouls on the home team.
 
-**Shot selection has converged.** Away teams now attack the paint nearly as aggressively as home teams. The built-in shot-quality advantage that home teams once carried into every possession has nearly disappeared. The usual explanation is the league-wide adoption of analytics-driven offense, which prizes the same shots regardless of venue. Our data confirms only that the gap closed, not the cause.
+**Shot selection has converged.** Away teams now attack the paint nearly as aggressively as home teams. The built-in shot-quality advantage that home teams once carried into every possession has nearly disappeared. Our data confirms only that the gap closed, not why.
 
 **Three-point shooting equalizes outcomes.** The shift to the perimeter erodes home court through a specific channel: the shooting line of the box score. Hold three-point volume constant and the home shooting advantage holds up; let it rise and the advantage shrinks. The 40-year lockstep between three-point volume and home win rate is the most striking visual in the dataset, though the reliable evidence is within a single season: games with more threes have lower home win rates even among contemporaries, independent of the long-run drift.
 
