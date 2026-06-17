@@ -11,7 +11,6 @@ NBA HOME COURT ADVANTAGE — REGRESSION ANALYSIS
 Game-level logistic regression. Outcome: home_win (1/0) per game.
 All data from cache/ — same source as the plots above.
 
-  Building game-level dataset from cache... 52,399 game rows (51,380 with complete features).
 
 ─── THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ────────────────────
    Primary: binomial GLM (events/trials per season, weights by game count).
