@@ -65,6 +65,19 @@ def _parse_regression_sections(text: str) -> list[tuple[str | None, str]]:
     return sections
 
 
+def _rebase_image_paths(body: str, src_dir: str, target_dir: str) -> str:
+    """Rewrite relative image paths from src_dir perspective to target_dir perspective."""
+    if src_dir == target_dir:
+        return body
+    def _fix(m: re.Match) -> str:
+        alt, path = m.group(1), m.group(2)
+        if os.path.isabs(path) or "://" in path:
+            return m.group(0)
+        abs_path = os.path.abspath(os.path.join(src_dir, path))
+        return f"![{alt}]({os.path.relpath(abs_path, target_dir)})"
+    return re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", _fix, body)
+
+
 # ── Quarto helpers ────────────────────────────────────────────────────────────
 
 def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
@@ -158,8 +171,14 @@ def build(md_path: str, output_path: str | None = None,
     # Strip the leading H1 from the body so it doesn't duplicate the title block.
     body = md[title_m.end():].lstrip("\n") if title_m else md
 
-    temp_md = os.path.join(src_dir, "_body_generated.qmd")
-    appendix_qmd = os.path.join(src_dir, "_appendix_generated.qmd")
+    # Place generated .qmd in the parent of src_dir so Typst's sandbox root covers
+    # sibling directories (e.g. generated/). Rebase all relative image paths so
+    # they resolve correctly from the new location.
+    project_dir = os.path.dirname(src_dir)
+    body = _rebase_image_paths(body, src_dir, project_dir)
+
+    temp_md = os.path.join(project_dir, "_body_generated.qmd")
+    appendix_qmd = os.path.join(project_dir, "_appendix_generated.qmd")
     wrapper = None
     try:
         with open(temp_md, "w") as f:

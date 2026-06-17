@@ -22,6 +22,7 @@ from nbakit.mdpdf import (
     _make_appendix_qmd,
     _parse_regression_sections,
     _quarto_render,
+    _rebase_image_paths,
     _results_text,
 )
 
@@ -91,15 +92,23 @@ def _parse_findings(path: str) -> tuple[str, dict[str, str]]:
 # ── Report builder ─────────────────────────────────────────────────────────────
 
 def _make_wrapper_qmd(cfg: ReportConfig, findings_body: str, src_dir: str) -> str:
-    """Write a temporary .qmd that combines the findings body + optional appendix."""
-    footnote_md = f"\n---\n\n{cfg.footnote}\n" if cfg.footnote else ""
+    """Write a temporary .qmd that combines the findings body + optional appendix.
 
-    wrapper = os.path.join(src_dir, "_report_generated.qmd")
+    Writes to the parent of src_dir (the project root) so Typst's sandbox root
+    covers generated/ without needing --root flags. Image paths in findings_body
+    that are relative to src_dir (../generated/) are rewritten to be relative to
+    the project root (generated/).
+    """
+    footnote_md = f"\n---\n\n{cfg.footnote}\n" if cfg.footnote else ""
+    project_dir = os.path.dirname(src_dir)
+    body = _rebase_image_paths(findings_body, src_dir, project_dir)
+
+    wrapper = os.path.join(project_dir, "_report_generated.qmd")
     with open(wrapper, "w") as f:
-        f.write(findings_body)
+        f.write(body)
         f.write(footnote_md)
         if cfg.include_appendix:
-            _make_appendix_qmd(os.path.abspath(cfg.results_path), src_dir)
+            _make_appendix_qmd(os.path.abspath(cfg.results_path), project_dir)
             f.write("\n\n{{< include _appendix_generated.qmd >}}\n")
     return wrapper
 
@@ -109,6 +118,7 @@ def build_report(cfg: ReportConfig) -> None:
     _check_prerequisites(cfg)
 
     src_dir = os.path.dirname(os.path.abspath(cfg.findings_path))
+    project_dir = os.path.dirname(src_dir)
     with open(cfg.findings_path) as f:
         md = f.read()
 
@@ -126,7 +136,7 @@ def build_report(cfg: ReportConfig) -> None:
         extra_meta["abstract"] = cfg.data_line
 
     wrapper = None
-    appendix_qmd = os.path.join(src_dir, "_appendix_generated.qmd")
+    appendix_qmd = os.path.join(project_dir, "_appendix_generated.qmd")
     try:
         wrapper = _make_wrapper_qmd(cfg, body, src_dir)
         _quarto_render(wrapper, "typst", pdf_path,  cfg.title, cfg.author,

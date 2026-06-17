@@ -60,7 +60,7 @@ from knicks_2026_data import (
 )
 
 OUTPUT_DIR   = os.path.join(os.path.dirname(__file__), "generated")
-RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
+RESULTS_PATH = os.path.join(os.path.dirname(__file__), "docs", "RESULTS.md")
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
