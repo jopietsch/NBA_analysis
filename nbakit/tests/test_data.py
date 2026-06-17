@@ -9,7 +9,10 @@ from nbakit.data import (
     cache_path,
     compute_srs,
     default_cache_dir,
+    home_abbr,
     identify_champion,
+    is_home,
+    merge_home_away_rows,
     season_range_label,
     season_str,
     short_label,
@@ -133,3 +136,31 @@ def test_identify_champion_returns_most_wins():
 
 def test_identify_champion_type():
     assert isinstance(identify_champion(_make_playoff_logs()), int)
+
+
+# ── MATCHUP parsing ───────────────────────────────────────────────────────────
+
+def test_is_home():
+    assert is_home("NYK vs. BOS") is True
+    assert is_home("NYK @ BOS") is False
+
+
+def test_home_abbr():
+    assert home_abbr("NYK vs. BOS") == "NYK"
+    assert home_abbr("NYK @ BOS") == "BOS"
+
+
+def test_merge_home_away_rows():
+    df = pd.DataFrame([
+        {"GAME_ID": "1", "MATCHUP": "NYK vs. BOS", "PTS": 100},
+        {"GAME_ID": "1", "MATCHUP": "BOS @ NYK", "PTS": 95},
+    ])
+    merged = merge_home_away_rows(df)
+    assert len(merged) == 1
+    assert merged.iloc[0]["PTS_home"] == 100
+    assert merged.iloc[0]["PTS_away"] == 95
+
+
+def test_merge_home_away_rows_none_when_one_sided():
+    df = pd.DataFrame([{"GAME_ID": "1", "MATCHUP": "NYK vs. BOS", "PTS": 100}])
+    assert merge_home_away_rows(df) is None

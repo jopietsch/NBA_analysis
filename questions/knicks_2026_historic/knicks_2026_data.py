@@ -42,6 +42,9 @@ from nbakit.data import (
     parse_min,
     compute_srs,
     identify_champion,
+    is_home,
+    home_abbr,
+    merge_home_away_rows,
 )
 
 # ── Knicks-specific config ────────────────────────────────────────────────────
@@ -92,8 +95,9 @@ def compute_home_away_split(playoff_logs: pd.DataFrame,
                             team_id: int) -> tuple[float, float]:
     """Return (home_win_rate, away_win_rate) for a team's playoff games."""
     df = playoff_logs[playoff_logs["TEAM_ID"] == team_id].copy()
-    home = df[df["MATCHUP"].str.contains(r" vs\.", na=False)]
-    away = df[df["MATCHUP"].str.contains(r" @ ", na=False)]
+    is_home_mask = df["MATCHUP"].apply(is_home)
+    home = df[is_home_mask]
+    away = df[~is_home_mask]
 
     def _rate(sub: pd.DataFrame) -> float:
         if len(sub) == 0:
@@ -539,16 +543,6 @@ def compute_opponent_health(
 
 # ── Betting-market odds (ESPN core API) ───────────────────────────────────────
 
-def _home_abbr(matchup: str) -> str:
-    """Extract home team abbreviation from nba_api MATCHUP string.
-
-    'NYK vs. ATL' → 'NYK' (NYK is home)
-    'NYK @ ATL'   → 'ATL' (ATL is home)
-    """
-    if " vs. " in matchup:
-        return matchup.split(" vs. ")[0].strip()
-    return matchup.split(" @ ")[1].strip()
-
 
 def _parse_vegas_line(text: str, home_abbr: str) -> tuple[str | None, float | None]:
     """Parse a 'ABBR ±X.X' Vegas line string.
@@ -646,7 +640,7 @@ def fetch_game_odds(po_2026: pd.DataFrame,
     rows = []
     for _, game in knicks_games.iterrows():
         matchup     = str(game["MATCHUP"])
-        knicks_home = _home_abbr(matchup) == "NYK"
+        knicks_home = home_abbr(matchup) == "NYK"
         date        = str(game["GAME_DATE"])
 
         print(f"  Fetching odds: {date} {matchup}…", file=sys.stderr, flush=True)

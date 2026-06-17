@@ -60,6 +60,43 @@ def cache_path(end_year: int, season_type: str,
     return os.path.join(d, fname)
 
 
+# ── MATCHUP parsing ─────────────────────────────────────────────────────────────
+
+def is_home(matchup: str) -> bool:
+    """True if this nba_api MATCHUP row is the home team.
+
+    'NYK vs. BOS' → True (NYK home);  'NYK @ BOS' → False (NYK away).
+    """
+    return " vs. " in str(matchup)
+
+
+def home_abbr(matchup: str) -> str:
+    """Home-team abbreviation from an nba_api MATCHUP string.
+
+    'NYK vs. BOS' → 'NYK';  'NYK @ BOS' → 'BOS'.
+    """
+    s = str(matchup)
+    if " vs. " in s:
+        return s.split(" vs. ")[0].strip()
+    return s.split(" @ ")[1].strip()
+
+
+def merge_home_away_rows(df: pd.DataFrame) -> pd.DataFrame | None:
+    """Collapse a per-team-per-game log into one row per game.
+
+    Joins each game's home and away rows on GAME_ID; columns get '_home' /
+    '_away' suffixes. Returns None if either side is empty.
+    """
+    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)]
+    away = df[df["MATCHUP"].str.contains(" @ ", regex=False, na=False)]
+    if home.empty or away.empty:
+        return None
+    merged = home.merge(away, on="GAME_ID", suffixes=("_home", "_away"))
+    if merged.empty:
+        return None
+    return merged
+
+
 # ── Fetchers ───────────────────────────────────────────────────────────────────
 
 def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,

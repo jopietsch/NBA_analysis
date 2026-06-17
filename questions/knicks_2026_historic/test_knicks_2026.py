@@ -263,9 +263,9 @@ def test_parse_vegas_line():
 
 
 def test_home_abbr():
-    assert data._home_abbr("NYK vs. ATL") == "NYK"
-    assert data._home_abbr("NYK @ ATL") == "ATL"
-    assert data._home_abbr("NYK @ SAS") == "SAS"
+    assert data.home_abbr("NYK vs. ATL") == "NYK"
+    assert data.home_abbr("NYK @ ATL") == "ATL"
+    assert data.home_abbr("NYK @ SAS") == "SAS"
 
 
 def test_season_str():

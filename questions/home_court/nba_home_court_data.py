@@ -256,21 +256,9 @@ def _load_game_log(end_year: int, season_type: str) -> pd.DataFrame | None:
     return df
 
 
-def _merge_home_away_rows(df: pd.DataFrame) -> pd.DataFrame | None:
-    """
-    Collapse a per-team-per-game log into one row per game by joining each
-    game's home and away rows on GAME_ID (columns get '_home'/'_away'
-    suffixes). Returns None if either side has no rows.
-    """
-    home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)]
-    away = df[df["MATCHUP"].str.contains(" @ ", regex=False, na=False)]
-    if home.empty or away.empty:
-        return None
-
-    merged = home.merge(away, on="GAME_ID", suffixes=("_home", "_away"))
-    if merged.empty:
-        return None
-    return merged
+# Collapse a per-team-per-game log into one row per game (home/away joined on
+# GAME_ID with '_home'/'_away' suffixes). Lives in nbakit.data now.
+_merge_home_away_rows = _nbakit.merge_home_away_rows
 
 
 def _add_rest_days(df: pd.DataFrame) -> pd.DataFrame:
