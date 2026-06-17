@@ -45,6 +45,8 @@ from nbakit.data import (
     is_home,
     home_abbr,
     merge_home_away_rows,
+    team_conference_map,
+    iter_game_pairs,
 )
 
 # ── Knicks-specific config ────────────────────────────────────────────────────
@@ -373,7 +375,7 @@ def compute_conference_avg_srs(reg_srs: pd.Series,
     standings must have TeamID and Conference columns (from fetch_standings).
     Returns {'East': float, 'West': float}.
     """
-    conf_map = standings.set_index("TeamID")["Conference"].to_dict()
+    conf_map = team_conference_map(standings)
     east, west = [], []
     for tid, srs_val in reg_srs.items():
         conf = conf_map.get(int(tid))
@@ -398,19 +400,14 @@ def compute_inter_conference_h2h(reg_logs: pd.DataFrame,
 
     Identifies cross-conference games from standings data.
     """
-    conf_map = standings.set_index("TeamID")["Conference"].to_dict()
+    conf_map = team_conference_map(standings)
     reg_logs = reg_logs.copy()
     reg_logs["TEAM_ID"] = reg_logs["TEAM_ID"].astype(int)
     reg_logs["CONF"] = reg_logs["TEAM_ID"].map(conf_map)
 
-    # Each game is 2 rows; keep only one row per team and look at cross-conf games
-    by_game = reg_logs.groupby("GAME_ID")
     east_wins = 0
     total = 0
-    for _, grp in by_game:
-        if len(grp) != 2:
-            continue
-        row_a, row_b = grp.iloc[0], grp.iloc[1]
+    for row_a, row_b in iter_game_pairs(reg_logs):
         if {row_a["CONF"], row_b["CONF"]} != {"East", "West"}:
             continue
         total += 1

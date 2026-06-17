@@ -328,3 +328,21 @@ def identify_champion(playoff_logs: pd.DataFrame) -> int:
     """
     wins = playoff_logs[playoff_logs["WL"] == "W"]["TEAM_ID"].value_counts()
     return int(wins.idxmax())
+
+
+# ── Conference / game pairing ────────────────────────────────────────────────────
+
+def team_conference_map(standings: pd.DataFrame) -> dict:
+    """{TeamID: Conference} from a LeagueStandingsV3 standings frame."""
+    return standings.set_index("TeamID")["Conference"].to_dict()
+
+
+def iter_game_pairs(df: pd.DataFrame):
+    """Yield (row_a, row_b) for each GAME_ID with exactly two team rows.
+
+    Game logs carry one row per team per game; this pairs the two rows so
+    callers can compare the two sides (winner/loser, conference matchup, etc.).
+    """
+    for _, grp in df.groupby("GAME_ID"):
+        if len(grp) == 2:
+            yield grp.iloc[0], grp.iloc[1]

@@ -15,11 +15,13 @@ from nbakit.data import (
     home_abbr,
     identify_champion,
     is_home,
+    iter_game_pairs,
     label_to_year,
     merge_home_away_rows,
     season_range_label,
     season_str,
     short_label,
+    team_conference_map,
 )
 
 
@@ -140,6 +142,28 @@ def test_identify_champion_returns_most_wins():
 
 def test_identify_champion_type():
     assert isinstance(identify_champion(_make_playoff_logs()), int)
+
+
+# ── conference / game pairing ─────────────────────────────────────────────────
+
+def test_team_conference_map():
+    standings = pd.DataFrame([
+        {"TeamID": 1, "Conference": "East"},
+        {"TeamID": 2, "Conference": "West"},
+    ])
+    assert team_conference_map(standings) == {1: "East", 2: "West"}
+
+
+def test_iter_game_pairs():
+    df = pd.DataFrame([
+        {"GAME_ID": "1", "TEAM_ID": 1},
+        {"GAME_ID": "1", "TEAM_ID": 2},
+        {"GAME_ID": "2", "TEAM_ID": 3},  # lone row -> skipped
+    ])
+    pairs = list(iter_game_pairs(df))
+    assert len(pairs) == 1
+    a, b = pairs[0]
+    assert {a["TEAM_ID"], b["TEAM_ID"]} == {1, 2}
 
 
 # ── MATCHUP parsing ───────────────────────────────────────────────────────────
