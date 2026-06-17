@@ -16,7 +16,7 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 ![Box-score category shares. Left: what creates the home advantage. Right: what's eroding it. Regular season and playoffs, bars summing to 100%.](generated/nba_home_court_mediation.png){width=100%}
 
-Home court isn't magic; it's a box score. Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
+Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
 
 But the categories that *created* the edge are not the ones that *erased* it (right). The two everyone blames, the narrowing whistle and the three-point shift, explain only about a fifth each of the regular-season decline. **Rebounding and turnovers together carry more than half.** The biggest driver of the decline is the one that never made the headlines.
 
