@@ -256,10 +256,10 @@ def test_compute_ats_stats_missed():
 
 
 def test_parse_vegas_line():
-    assert data._parse_vegas_line("NYK -7.5", "NYK") == ("NYK", -7.5)
-    assert data._parse_vegas_line("ATL -3", "NYK") == ("ATL", -3.0)
-    assert data._parse_vegas_line("Pick", "NYK") == ("PICK", 0.0)
-    assert data._parse_vegas_line("", "NYK") == ("PICK", 0.0)
+    assert data._parse_vegas_line("NYK -7.5") == ("NYK", -7.5)
+    assert data._parse_vegas_line("ATL -3") == ("ATL", -3.0)
+    assert data._parse_vegas_line("Pick") == ("PICK", 0.0)
+    assert data._parse_vegas_line("") == ("PICK", 0.0)
 
 
 def test_home_abbr():
