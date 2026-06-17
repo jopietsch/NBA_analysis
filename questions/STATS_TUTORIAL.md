@@ -56,14 +56,16 @@ else, so start there.
   cluster-robust SEs; HAC/Newey-West SEs; multiple comparisons and
   Benjamini-Hochberg.
 - **Part 4 — Comparing models and splitting up credit:** the likelihood-ratio
-  test; sequential delta-R² vs. Shapley; the mediation accounting identities.
+  test; sequential delta-R² vs. Shapley; the mediation accounting identities; the
+  shift-share decomposition.
 - **Part 5 — Looking beyond the average:** quantile regression and polarization.
 - **Part 6 — Ranking noisy things fairly:** variance decomposition and
   empirical-Bayes shrinkage.
 - **Part 7 — Avoiding the classic traps:** confounders and controls; spurious
   correlation from shared trends (and how detrending fixes it); reverse
   causality and the leave-one-out trick; interaction terms; detecting structural
-  breaks; unit roots and cointegration; Granger causality.
+  breaks; CUSUM stability; interrupted time series and placebo tests; unit roots
+  and cointegration; Granger causality; natural experiments.
 - **Part 8 — Ranking a single team historically:** empirical percentile rank;
   SRS (Simple Rating System); schedule-adjusted margin.
 
@@ -432,7 +434,7 @@ made that exact bookkeeping possible.
 regression, so we use **McFadden's pseudo-R² = 1 - (model log-likelihood / empty
 model log-likelihood)**. Critically, **its numbers are nowhere near linear R²**.
 A McFadden R² of **0.05** can represent a strong, important model. In
-`RESULTS.md` you'll see values like **0.0028** or **0.0675** -- those are not
+`RESULTS.md` you'll see values like **0.0029** or **0.0673** -- those are not
 "the model explains 0.3% of anything" in the everyday sense.
 
 **The rule:** *never* read a McFadden value as an absolute percentage. Only read
@@ -668,6 +670,54 @@ but only **67%** of the playoff decline -- 33% of the playoff story runs outside
 the box score (and folds in seed quality, which §7.1 isolates). The rebounding
 fade, if anything, is sharper in the playoffs once 3PA is controlled.
 
+## 4.4 Shift-share decomposition (schedule vs. per-matchup erosion)
+
+**The question:** the home win rate fell 9.3 pp from the 1980s to today. Two very
+different stories could produce that: the *schedule* changed (fewer tired visitors
+to beat up on), or the home edge *within each kind of matchup* simply eroded. How
+much of the drop is which?
+
+**The intuition.** A shift-share decomposition splits a total change into a
+**frequency component** (the *mix* of situations shifted, holding each situation's
+win rate fixed) and a **win-rate component** (the win rate *within* each situation
+changed, holding the mix fixed), plus a small interaction. It's the same
+arithmetic demographers use to ask "did the death rate rise, or did the population
+just get older?" No regression -- just a bookkeeping identity:
+
+```
+total change  =  frequency component  +  win-rate component  +  interaction
+```
+
+**A worked example -- back-to-backs.** The "load management" theory says the
+decline is a schedule artifact: visiting teams play fewer back-to-backs (B2Bs,
+games on zero days' rest) than they used to, so home teams face fewer exhausted
+opponents. The data:
+
+- Visitor B2B share fell from **35.0%** of games (1984-94) to **18.8%**
+  (2023-26) -- the schedule genuinely changed.
+- But the lift from catching a tired visitor is modest: home teams win **64.7%**
+  when only the visitor is on a B2B vs. **59.1%** when neither team is -- a
+  +5.6 pp edge.
+
+Feed those into the decomposition of the **-9.29 pp** total drop (64.9% ->
+55.6%):
+
+| component | value | share of the -9.29 pp |
+|---|---|---|
+| frequency (fewer B2Bs) | **-0.71 pp** | ~8% |
+| win-rate (per-situation erosion) | **-8.59 pp** | ~92% |
+| interaction | +0.02 pp | -- |
+
+**How to read it in `RESULTS.md`:** the back-to-backs section's "Shift-share
+decomposition" block. The frequency and win-rate lines sum (with the tiny
+interaction) to the total change printed just above them.
+
+**The trap it avoids.** A real schedule shift *looks* like a smoking gun until you
+weight it by how much it's worth. Here the schedule did change, but it carries
+only ~8% of the decline; the other ~92% is the home edge eroding inside *every*
+rest situation -- not a scheduling story. The decomposition separates "the mix
+changed" from "the thing itself changed" without fitting a model.
+
 ---
 
 # Part 5 — Looking beyond the average
@@ -821,9 +871,9 @@ samples.
 
 # Part 7 — Avoiding the classic traps
 
-The previous parts were tools. This part is judgment -- the four ways an analysis
-of observational sports data fools you, and the move that defuses each. These are
-where the project earns its conclusions.
+The previous parts were tools. This part is judgment -- the recurring ways an
+analysis of observational sports data fools you, and the move that defuses each.
+These are where the project earns its conclusions.
 
 ## 7.1 Confounders and controls
 
@@ -1049,7 +1099,143 @@ inference, not a direct measurement).
 
 ---
 
-## 7.6 Unit roots and cointegration — when is a correlation between two trends real?
+## 7.6 CUSUM — is the trend stable everywhere, not just at one break?
+
+**The question.** The structural break test (§7.5) finds the *single* year where
+the decline most sharply changes pace. But what if the trend wobbles in several
+places, or drifts unstably without one dramatic break? CUSUM asks whether the
+straight-line trend is stable *across the whole span*, no year named in advance.
+
+**The intuition.** Fit the linear year-trend, then walk through the seasons
+accumulating the **recursive residuals** — how far each new season sits from what
+the trend-so-far predicted. If the relationship is stable, those wobbles cancel
+and the running sum stays near zero. If it shifts, the residuals start pulling the
+same way and the cumulative sum drifts off. CUSUM plots that running sum against a
+**5% critical band** that widens through the sample; stepping outside the band
+flags instability.
+
+**Where it differs from QLR (§7.5).** QLR pinpoints the *one* strongest break;
+CUSUM tests *global* stability without naming a year. When the two agree,
+confidence rises; when they disagree, that gap is itself the finding.
+
+**Worked example.** Regular season: the CUSUM **never leaves the band** — it
+peaks at **|CUSUM| = 14.0 in 2019, against a 5% bound of ±16.1 (87% of the way to
+the edge)**. The playoffs are calmer still (peak 32% of the boundary).
+
+This *seems* to contradict §7.5, which found a real regular-season break near
+1999 — and the contradiction is the lesson. That break is a **gradual slope
+change** (−0.65 → −0.25 pp/yr), not a sudden level jump, and CUSUM has low power
+against slope-only breaks. Read together: the decline bent once, gently, in the
+late 1990s, and is otherwise a stable straight-line drift with no hidden
+instability elsewhere.
+
+**How to read it in `RESULTS.md`.** The CUSUM section's "Exceeds 5% critical band:
+no/yes" line, plus the "Peak |CUSUM| … % of the 5% boundary" figure.
+Close-but-inside (like 87%) means "almost, but the trend holds."
+
+**The trap it avoids.** Relying on a single break test can miss instability that's
+spread out rather than concentrated at one year. CUSUM is the global complement —
+and its *disagreements* with QLR tell you whether a break is a sharp step or a
+gentle bend.
+
+---
+
+## 7.7 Interrupted time series — did a known boundary cause a jump or a bend?
+
+**The question.** We have a *specific* suspect date — the 1994–95 hand-checking
+rule change. Did HCA drop the *instant* the rule took effect (a discrete cliff),
+did the *rate* of decline change (a bend), or neither?
+
+**The intuition.** Where the structural break test (§7.5) hunts for an *unknown*
+break, **interrupted time series (ITS)** tests a *known, pre-specified* boundary
+by fitting one regression with three pieces:
+
+```
+home_pct  ~  year  +  post95  +  (year − 1994) × post95
+```
+
+- `year` — the underlying trend before the break.
+- `post95` (1 from 1994–95 on) — an **immediate level shift**: did the line jump
+  the moment the rule hit?
+- the interaction — a **slope change**: did the *rate* of decline bend afterward?
+
+A cliff shows up as a significant level term; a bend as a significant slope term.
+
+**Worked example.** Regular season (R² = 0.78):
+
+| term | estimate | p | reading |
+|---|---|---|---|
+| pre-break trend | −0.52 pp/yr | 0.004 ** | steep decline before 1995 |
+| level shift (1994–95) | −0.62 pp | 0.597 | **no** instant cliff |
+| slope change | +0.34 pp/yr | 0.060 | borderline **bend** |
+
+The decline doesn't drop in a single step; instead the *slope* flattens from
+−0.52 to −0.18 pp/yr afterward. So 1994–95 reads as a **bend, not a cliff** —
+exactly consistent with the QLR break landing at 1999 (§7.5) rather than 1995, the
+league settling into a new equilibrium over several seasons. In the playoffs
+nothing is significant (level p = 0.55, slope p = 0.39): no detectable 1994–95
+signature.
+
+**The same model, run per channel.** Point ITS at each box-score channel
+(`foul_diff ~ year + post95 + …`) and you can ask *which mechanism* moved at 1995.
+Only the **foul** channel shows a significant immediate response (level shift
++0.44, p = 0.007) while shooting, turnovers, and rebounds don't — the fingerprint
+you'd expect if the hand-checking crackdown was the operative change, since it
+acts directly on fouls.
+
+**How to read it in `RESULTS.md`.** The ITS section reports "Level shift" and
+"Slope change/yr" with their p-values; the channel event study reuses the same two
+columns, one row per channel.
+
+**The trap it avoids.** "HCA is lower after the rule, so the rule worked" confuses
+a level with a trend. ITS separates the instant jump from the gradual bend — and
+here it shows the rule's mark was a multi-year bend, not the clean cliff a simple
+before/after comparison would imply.
+
+---
+
+## 7.8 Placebo tests — is *this* boundary special, or would any year look significant?
+
+**The question.** §7.7 (and the era LR test, §4.1) single out 1994–95. But if you
+test enough candidate boundaries, some will look significant by chance. Does
+1994–95 genuinely stand out, or is it one of many "significant" years?
+
+**The intuition.** A **placebo test** re-runs the same boundary test at many
+*fake* break years and checks whether the real one is unusual. For each year *t*
+from 1987 to 2010, fit `pct ~ year + step_t`, where `step_t` flips on from year
+*t*; a significant **negative** step coefficient means a discrete drop at that
+boundary. 1994–95 is just one of 24 candidates.
+
+**Worked example — and its subtlety.** 1994–95 *is* significant (step −2.00 pp,
+p = 0.043) — but so is **every year from 1990 to 1995** around it. That cluster is
+not six independent findings. When a *real* drop exists, **any** boundary placed a
+few years *before* it also tests significant, because it sweeps the decline into
+its "post" window. So a run of significant negatives in the early 1990s is exactly
+the fingerprint of one genuine break in that period — not proof that six different
+years each mattered. (The significant *positive* steps after ~2002 are the mirror
+image: post-1999 HCA sits "too high" relative to the steep pre-1999 trend — the
+slope moderation QLR found.)
+
+The placebo test therefore **corroborates** that something real happened in the
+early-to-mid 1990s but **cannot isolate 1994–95 by itself**; the trend-controlled
+era model (§4.1) is what pins the effect to that specific boundary. In the
+playoffs, no early-1990s boundary is significant at all — reaffirming the
+postseason carries no 1994–95 signature.
+
+**How to read it in `RESULTS.md`.** The placebo section's year-by-year table of
+step coefficients and p-values. Look for *clusters* of significance, not lone
+years — and remember a cluster just before a real break is expected, not a tally
+of separate effects.
+
+**The trap it avoids.** Cherry-picking: calling 1994–95 "significant" in isolation
+would overstate the case. The placebo battery shows it's part of a coherent
+early-1990s pattern (good) but not uniquely identifiable on its own (honest) —
+which is why the project leans on the trend-controlled era test, not the raw
+boundary p-value, for the final claim.
+
+---
+
+## 7.9 Unit roots and cointegration — when is a correlation between two trends real?
 
 **The trap, deeper version.** Section §7.2 introduced spurious correlation: two
 trending series will always correlate, real link or not. The detrending approach
@@ -1141,7 +1327,7 @@ the correlation means anything.
 
 ---
 
-## 7.7 Granger causality — which trend came first?
+## 7.10 Granger causality — which trend came first?
 
 **The question.** Even if 3PA and HCA are genuinely linked within the same season
 (the within-era game-level result), we don't know the direction: does the
@@ -1165,7 +1351,7 @@ reverse: does lagged ΔY predict ΔX? Both directions tested, since if both are
 significant, the "causality" runs both ways (or both are downstream of a third
 thing).
 
-**Note on differencing.** Both 3PA and HCA are I(1) (see §7.6), so the test runs
+**Note on differencing.** Both 3PA and HCA are I(1) (see §7.9), so the test runs
 on first differences (ΔHCA and Δ3PA). Granger tests assume stationarity; using
 the nonstationary levels would give invalid F-statistics.
 
@@ -1197,7 +1383,7 @@ lead," not "definitely no causal link."
 
 ---
 
-## 7.8 Natural experiments (when you can't randomize)
+## 7.11 Natural experiments (when you can't randomize)
 
 **The question:** almost every rule-out in this report is correlational. We can
 see that crowd size moves with HCA (or doesn't), but we never get to *assign* a
@@ -1388,6 +1574,7 @@ direct subtraction is the right level of complexity.
 | McFadden R², delta-R%, Shapley | splitting explained variation across factors | §2.5, §4.2 |
 | level / trend decomposition, LPM | accounting the home edge into channels | §2.4, §4.3 |
 | channel trend, "3PA absorbs %" | is a channel its own driver or downstream of threes? | §4.3 |
+| frequency vs. win-rate (shift-share) | splitting a change into schedule vs. per-matchup erosion | §4.4 |
 | quantile, Q10...Q90, polarization | how the *distribution shape* changed | §5.1 |
 | variance decomposition, shrunken | ranking noisy franchise/referee means | §6.1, §6.2 |
 | Benjamini-Hochberg, BH-p | keeping many tests honest | §3.4 |
@@ -1396,12 +1583,15 @@ direct subtraction is the right level of complexity.
 | expected pace (LOO) | breaking reverse causality | §7.3 |
 | * post2014 interaction | did an effect *change* over time? | §7.4 |
 | Supremum Chow F, Andrews (1993) CVs | where did the *rate* of decline shift? | §7.5 |
-| ADF test, I(0)/I(1) | is this series drifting without end, or stable? | §7.6 |
-| Engle-Granger cointegration | is a season-level r a genuine link or two parallel trends? | §7.6 |
-| Granger causality, F-test on VAR | does one series lead the other in time? | §7.7 |
+| CUSUM, recursive residuals | is the trend stable everywhere, not just at one break? | §7.6 |
+| level shift + slope change (ITS) | did a known boundary cause a jump or a bend? | §7.7 |
+| step test across candidate years (placebo) | is one boundary uniquely significant? | §7.8 |
+| ADF test, I(0)/I(1) | is this series drifting without end, or stable? | §7.9 |
+| Engle-Granger cointegration | is a season-level r a genuine link or two parallel trends? | §7.9 |
+| Granger causality, F-test on VAR | does one series lead the other in time? | §7.10 |
 | BH FDR across all primary tests | are the main findings robust to multiplicity? | §3.4 |
 | team fixed effects (franchise dummies) | is the era decline an artifact of which teams host games? | §7.1 |
-| empty-arena (2020-21) dose-response | a natural experiment isolating cause | §7.8 |
+| empty-arena (2020-21) dose-response | a natural experiment isolating cause | §7.11 |
 
 ## Knicks historical analysis methods
 
@@ -1427,11 +1617,11 @@ direct subtraction is the right level of complexity.
 4. **A high r between two I(1) series is suspiciously high.** If both series
    trend without end (I(1)), their Pearson r will be large regardless of whether
    they share a real relationship. Always check cointegration before concluding
-   a 0.90 correlation is meaningful. (§7.6)
+   a 0.90 correlation is meaningful. (§7.9)
 5. **Correlation in time ≠ causation in time.** Even a genuine within-era
    game-level link doesn't tell you whether X leads Y or they move together.
    Granger causality tests the temporal ordering, and a null result (as with
-   3PA → HCA) is itself informative. (§7.7)
+   3PA → HCA) is itself informative. (§7.10)
 6. **"When did it happen?" is a testable question.** Don't assume the break year
    matches the obvious rule change. The QLR test finds the data-implied break
    (1999 for regular-season HCA), which may differ from the regulatory boundary
