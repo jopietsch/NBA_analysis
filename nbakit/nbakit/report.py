@@ -103,13 +103,14 @@ def _make_wrapper_qmd(cfg: ReportConfig, findings_body: str, src_dir: str) -> st
     project_dir = os.path.dirname(src_dir)
     body = _rebase_image_paths(findings_body, src_dir, project_dir)
 
-    wrapper = os.path.join(project_dir, "_report_generated.qmd")
+    suffix = f"_{os.getpid()}"
+    wrapper = os.path.join(project_dir, f"_report_generated{suffix}.qmd")
     with open(wrapper, "w") as f:
         f.write(body)
         f.write(footnote_md)
         if cfg.include_appendix:
-            _make_appendix_qmd(os.path.abspath(cfg.results_path), project_dir)
-            f.write("\n\n{{< include _appendix_generated.qmd >}}\n")
+            _make_appendix_qmd(os.path.abspath(cfg.results_path), project_dir, suffix=suffix)
+            f.write(f"\n\n{{{{< include _appendix_generated{suffix}.qmd >}}}}\n")
     return wrapper
 
 
@@ -135,8 +136,9 @@ def build_report(cfg: ReportConfig) -> None:
     if cfg.data_line:
         extra_meta["abstract"] = cfg.data_line
 
+    suffix = f"_{os.getpid()}"
     wrapper = None
-    appendix_qmd = os.path.join(project_dir, "_appendix_generated.qmd")
+    appendix_qmd = os.path.join(project_dir, f"_appendix_generated{suffix}.qmd")
     try:
         wrapper = _make_wrapper_qmd(cfg, body, src_dir)
         _quarto_render(wrapper, "typst", pdf_path,  cfg.title, cfg.author,

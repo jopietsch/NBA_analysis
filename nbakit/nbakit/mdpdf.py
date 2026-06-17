@@ -113,7 +113,7 @@ def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
         os.replace(os.path.join(tmp, stem + ext), dest)
 
 
-def _make_appendix_qmd(appendix_path: str, work_dir: str) -> str:
+def _make_appendix_qmd(appendix_path: str, work_dir: str, suffix: str = "") -> str:
     """Write a _appendix.qmd with RESULTS.md content and return its path."""
     sections = _parse_regression_sections(_results_text(appendix_path))
     lines = [f"## Appendix: {os.path.basename(appendix_path)}", ""]
@@ -121,7 +121,7 @@ def _make_appendix_qmd(appendix_path: str, work_dir: str) -> str:
         if title:
             lines += ["", f"**{title}**", ""]
         lines += ["```", body, "```", ""]
-    qmd_path = os.path.join(work_dir, "_appendix_generated.qmd")
+    qmd_path = os.path.join(work_dir, f"_appendix_generated{suffix}.qmd")
     with open(qmd_path, "w") as f:
         f.write("\n".join(lines))
     return qmd_path
@@ -131,14 +131,15 @@ def _make_wrapper_qmd(md_path: str, appendix_path: str) -> str:
     """Write a _wrapper.qmd that includes the source md + appendix."""
     src_dir = os.path.dirname(os.path.abspath(md_path))
     appendix_abs = os.path.abspath(appendix_path)
+    suffix = f"_{os.getpid()}"
 
-    _make_appendix_qmd(appendix_abs, src_dir)
+    _make_appendix_qmd(appendix_abs, src_dir, suffix=suffix)
 
     md_name = os.path.basename(md_path)
-    wrapper = os.path.join(src_dir, "_wrapper_generated.qmd")
+    wrapper = os.path.join(src_dir, f"_wrapper_generated{suffix}.qmd")
     with open(wrapper, "w") as f:
         f.write(f"{{{{< include {md_name} >}}}}\n\n")
-        f.write("{{< include _appendix_generated.qmd >}}\n")
+        f.write(f"{{{{< include _appendix_generated{suffix}.qmd >}}}}\n")
     return wrapper
 
 
@@ -177,8 +178,9 @@ def build(md_path: str, output_path: str | None = None,
     project_dir = os.path.dirname(src_dir)
     body = _rebase_image_paths(body, src_dir, project_dir)
 
-    temp_md = os.path.join(project_dir, "_body_generated.qmd")
-    appendix_qmd = os.path.join(project_dir, "_appendix_generated.qmd")
+    suffix = f"_{os.getpid()}"
+    temp_md = os.path.join(project_dir, f"_body_generated{suffix}.qmd")
+    appendix_qmd = os.path.join(project_dir, f"_appendix_generated{suffix}.qmd")
     wrapper = None
     try:
         with open(temp_md, "w") as f:
