@@ -70,9 +70,12 @@ def test_plot_differential_analysis():
 
 def test_plot_rebound_decomposition():
     keys = ["oreb_diff", "dreb_diff", "reb_diff",
-            "reb_share_edge", "league_oreb_rate"]
+            "reb_share_edge", "league_oreb_rate",
+            "oreb_rate_home", "oreb_rate_away"]
     stats = {k: _series() for k in keys}
     stats["league_oreb_rate"] = _series(base=30.0)
+    stats["oreb_rate_home"] = _series(base=28.0)
+    stats["oreb_rate_away"] = _series(base=26.0)
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
 
 

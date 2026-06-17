@@ -376,6 +376,8 @@ def _compute_rebound_components(merged: pd.DataFrame) -> pd.DataFrame:
         "reb_diff":         merged["REB_home"] - merged["REB_away"],
         "reb_share_edge":   100 * (oreb_h / home_oreb_chance - oreb_a / away_oreb_chance),
         "league_oreb_rate": 100 * (oreb_h + oreb_a) / total_reb,
+        "oreb_rate_home":   100 * oreb_h / home_oreb_chance,
+        "oreb_rate_away":   100 * oreb_a / away_oreb_chance,
     })
 
 
@@ -398,6 +400,7 @@ def compute_rebound_stats(
     stats: dict[str, list[float]] = {
         "oreb_diff": [], "dreb_diff": [], "reb_diff": [],
         "reb_share_edge": [], "league_oreb_rate": [],
+        "oreb_rate_home": [], "oreb_rate_away": [],
     }
 
     for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_rebound_data):

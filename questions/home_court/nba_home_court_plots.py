@@ -484,8 +484,9 @@ def plot_rebound_decomposition(
     """
     2-panel figure on why the home rebounding edge faded.
 
-    Panel 1: home OREB vs DREB edge over time (regular season + playoffs) —
-             the offensive edge collapses toward (and through) zero.
+    Panel 1: home OREB rate vs away OREB rate over time (regular season) —
+             shows whether the convergence came from home teams crashing less,
+             away teams crashing more, or both.
     Panel 2: home rebound-share edge vs league offensive-rebound rate (regular
              season) — the edge fades in lockstep with the league abandoning
              offensive rebounding.
@@ -497,31 +498,25 @@ def plot_rebound_decomposition(
     fig.suptitle("Why the Home Rebounding Edge Faded",
                  fontsize=15, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.955,
-             f"Data: NBA.com  |  Positive = home team higher  |  {season_range_label()}",
+             f"Data: NBA.com  |  Regular season  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
-    # ── Panel 1: OREB vs DREB home edge over time ─────────────────────────────
-    y_oreb_reg = np.array(reg_stats["oreb_diff"], dtype=float)
-    y_dreb_reg = np.array(reg_stats["dreb_diff"], dtype=float)
-    y_oreb_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "oreb_diff")
-    y_dreb_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "dreb_diff")
-    p1_series = [
-        (y_oreb_reg, BLUE,      "Offensive (reg. season)"),
-        (y_dreb_reg, GREEN,     "Defensive (reg. season)"),
-        (y_oreb_po,  "#9ec9ef", "Offensive (playoffs)"),
-        (y_dreb_po,  "#9bd8c0", "Defensive (playoffs)"),
-    ]
-    for y, color, label in p1_series:
+    # ── Panel 1: home vs away OREB rate over time ─────────────────────────────
+    y_home = np.array(reg_stats["oreb_rate_home"], dtype=float)
+    y_away = np.array(reg_stats["oreb_rate_away"], dtype=float)
+    for y, color, label in [
+        (y_home, BLUE,  "Home OREB rate"),
+        (y_away, RED,   "Away OREB rate"),
+    ]:
         ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
         _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
     _shade_eras(ax1, reg_seasons, label_y=None)
-    ax1.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax1.set_ylabel("Home minus away rebounds per game", fontsize=10)
-    ax1.set_title("Home rebounding edge over time — offensive vs defensive",
+    ax1.set_ylabel("Offensive rebound rate (% of available)", fontsize=10)
+    ax1.set_title("Home and away OREB rates converging\n(who is driving the collapse?)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
-    ax1.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd")
+    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     # ── Panel 2: share edge vs league offensive-rebound rate ─────────────────
     y_reg = np.array(reg_stats["reb_share_edge"], dtype=float)
