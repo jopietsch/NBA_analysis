@@ -53,6 +53,12 @@ BBR_HEADERS    = {  # BBR blocks the default python-requests UA
 # rate-limit (an empty 200 body), not genuine absence — and must not be cached.
 OFFICIALS_DATA_START_YEAR = 2002
 
+# Exception to the rule above: a handful of in-range seasons genuinely have no
+# officials in the endpoint (verified empty across many retries, not flaky). These
+# are treated as real absence — cached as an empty marker — so they don't retry
+# forever and leak fetch output into captured reports. {2003} = the 2002-03 gap.
+OFFICIALS_KNOWN_EMPTY_YEARS = {2003}
+
 # 2020 bubble playoffs: all games at neutral site — exclude from playoff stats
 SKIP_PLAYOFF_YEARS = {2020}
 
@@ -1125,7 +1131,8 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
             print("    No records and API errors occurred — not caching; "
                   "will retry next run.")
             return None
-        if end_year >= OFFICIALS_DATA_START_YEAR:
+        if (end_year >= OFFICIALS_DATA_START_YEAR
+                and end_year not in OFFICIALS_KNOWN_EMPTY_YEARS):
             # SUSPECT: this season should carry officials data, yet every call
             # returned an empty result with no error — the hallmark of a silent
             # rate-limit (an empty 200 body) rather than genuine absence. Do not
@@ -1135,8 +1142,8 @@ def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
                   f"a silent rate-limit. Not caching; will retry next run.")
             return None
         # Every call succeeded but returned no officials. Before OFFICIALS_DATA_
-        # START_YEAR this absence is real and permanent, so cache an empty file to
-        # mark the season done and skip it on future runs.
+        # START_YEAR (or for a known-empty in-range season) this absence is real
+        # and permanent, so cache an empty file to skip it on future runs.
         pd.DataFrame().to_csv(cache_file, index=False)
         return None
 

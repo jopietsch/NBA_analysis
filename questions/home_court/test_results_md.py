@@ -25,7 +25,9 @@ import pytest
 import nba_home_court_regression as reg
 
 RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "cache")
+# Canonical shared monorepo cache (nba_analysis/cache), the same dir the
+# regression pipeline reads from — not a stale per-question cache/ directory.
+from nba_home_court_data import CACHE_DIR
 
 # Substrings that must appear verbatim in RESULTS.md. Each pins one headline
 # result; a shift in any of these numbers fails the test at that line.
