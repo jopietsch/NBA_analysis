@@ -1326,7 +1326,7 @@ def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
     era_labels_present = [e for e in era_order if era_data[e]]
     box_data = [era_data[e] for e in era_labels_present]
 
-    fig, ax = plt.subplots(figsize=(9, 6), facecolor=BG)
+    fig, ax = plt.subplots(figsize=(9, 3.5), facecolor=BG)
     ax.set_facecolor(PANEL)
 
     if box_data:
