@@ -18,17 +18,17 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
 
-But the categories that *created* the edge are not the ones that *erased* it (right). The two everyone blames, the narrowing whistle and the three-point shift, explain only about a fifth each of the regular-season decline. **Rebounding and turnovers together carry more than half.** The biggest driver of the decline is the one that never made the headlines.
+But the categories that *created* the edge are not the ones that *erased* it (right). The two everyone blames, the narrowing whistle and the three-point shift, explain only about a fifth each of the regular-season decline. **Rebounding and turnovers together carry more than half.** Rebounding is the largest single contributor, and it is largely independent of the three-point shift.
 
 ---
 
-## 3. The surprise: home teams stopped owning the glass
+## 3. The rebounding edge eroded
 
 ![Left: the home team's offensive- and defensive-rebound edges season by season; the offensive edge collapses through zero while the defensive edge only softens. Right: the home rebound-share edge fades alongside the league-wide retreat from offensive rebounding.](generated/nba_home_court_rebounding.png){width=100%}
 
 The home rebounding edge has shrunk for 40 years, and it isn't the three-point story in disguise. Hold three-point volume constant and the shooting edge vanishes while the rebounding edge barely moves.
 
-The collapse is entirely on the **offensive** glass (left): the home team's offensive-rebound edge fell from more than half a board per game to slightly *below* zero, while its defensive-rebounding edge only softened. Measured as a pace-free share of available rebounds, the advantage shrank roughly **tenfold**. It tracks a league-wide retreat from the offensive boards (right): the offensive-rebound rate fell from **33% to 26%** as teams traded second chances for getting back on defense. The effort-driven offensive board, the kind a roaring crowd might once have fueled, has largely been coached out of the game. The playoffs show the same fade.
+The erosion is entirely on the **offensive** glass (left): the home team's offensive-rebound edge fell from more than half a board per game to slightly *below* zero, while its defensive-rebounding edge only softened. Measured as a pace-free share of available rebounds, the advantage shrank roughly **tenfold**. It tracks a league-wide retreat from the offensive boards (right): the offensive-rebound rate fell from **33% to 26%** as teams traded second chances for transition defense. The playoffs show the same fade.
 
 ---
 
@@ -38,4 +38,4 @@ Plenty of usual suspects get ruled out: rule changes (with one exception, 1994�
 
 ## The bottom line
 
-Home court is fading because the on-court advantages that built it, a friendlier whistle and a grip on the glass, have been worn flat by fairer officiating and a strategic move away from the offensive boards. The crowd still shows up. The game just stopped rewarding it the way it once did.
+Home court is fading because the on-court advantages that built it — a friendlier whistle and a rebounding edge — have been worn down by fairer officiating and a league-wide move away from the offensive boards. The crowd still shows up. The game just stopped rewarding it the way it once did.
