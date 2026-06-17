@@ -6,3 +6,6 @@ cache/
 # All generated PNG charts and PDFs are written here.
 generated/
 .DS_Store
+
+/.quarto/
+**/*.quarto_ipynb
