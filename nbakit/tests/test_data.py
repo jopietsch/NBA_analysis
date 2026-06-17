@@ -13,8 +13,10 @@ from nbakit.data import (
     compute_srs,
     default_cache_dir,
     home_abbr,
+    fetch_cached_csv,
     identify_champion,
     is_home,
+    is_rate_limit_error,
     iter_game_pairs,
     label_to_year,
     merge_home_away_rows,
@@ -235,3 +237,35 @@ def test_bucket_stats_by_period_drops_nan():
     avgs, labels = bucket_stats_by_period(seasons, stats, _PERIODS)
     assert avgs["a"] == [10.0, 0]
     assert labels == ["80s", "90s"]
+
+
+# ── Generic endpoint caching ──────────────────────────────────────────────────
+
+def test_is_rate_limit_error():
+    assert is_rate_limit_error(Exception("HTTP 429 Too Many Requests")) is True
+    assert is_rate_limit_error(Exception("connection timed out")) is True
+    assert is_rate_limit_error(ValueError("bad column")) is False
+
+
+def test_fetch_cached_csv_writes_and_reads(tmp_path):
+    path = str(tmp_path / "x.csv")
+    calls = []
+
+    def build():
+        calls.append(1)
+        return pd.DataFrame([{"TEAM_ID": 1, "A": 10, "B": 20}])
+
+    out = fetch_cached_csv(path, build, ["A"], sleep_sec=0)
+    assert list(out.columns) == ["TEAM_ID", "A"]
+    # Second call hits the cache, build not re-invoked.
+    out2 = fetch_cached_csv(path, build, ["A"], sleep_sec=0)
+    assert len(calls) == 1
+    assert out2.iloc[0]["A"] == 10
+
+
+def test_fetch_cached_csv_caches_miss(tmp_path):
+    path = str(tmp_path / "y.csv")
+    out = fetch_cached_csv(path, lambda: pd.DataFrame(), ["A"], sleep_sec=0)
+    assert out is None
+    assert os.path.exists(path)  # empty miss cached
+    assert fetch_cached_csv(path, lambda: 1 / 0, ["A"], sleep_sec=0) is None

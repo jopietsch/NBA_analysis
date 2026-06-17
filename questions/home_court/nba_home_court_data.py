@@ -426,30 +426,7 @@ def _fetch_tracking_cached(path: str, build_df, keep_cols: list[str]) -> pd.Data
 
     Caches the miss (empty CSV) so unavailable seasons aren't re-fetched.
     """
-    if os.path.exists(path):
-        try:
-            df = pd.read_csv(path)
-        except pd.errors.EmptyDataError:
-            return None
-        return df if not df.empty else None
-
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    try:
-        df = build_df()
-    except Exception as e:
-        print(f"    ERROR fetching {os.path.basename(path)}: {e}")
-        pd.DataFrame().to_csv(path, index=False)
-        return None
-
-    if df.empty or "TEAM_ID" not in df.columns:
-        pd.DataFrame().to_csv(path, index=False)
-        return None
-
-    present = ["TEAM_ID"] + [c for c in keep_cols if c in df.columns and c != "TEAM_ID"]
-    df = df[present].copy()
-    df.to_csv(path, index=False)
-    time.sleep(SLEEP_SEC)
-    return df
+    return _nbakit.fetch_cached_csv(path, build_df, keep_cols, sleep_sec=SLEEP_SEC)
 
 
 def fetch_tracking_rebounding(end_year: int, location: str) -> pd.DataFrame | None:
@@ -926,14 +903,9 @@ def compute_shot_zone_stats(
 
 # ── Referee crew analysis ─────────────────────────────────────────────────────
 
-def _is_rate_limit_error(exc: Exception) -> bool:
-    """True if an exception looks like NBA API throttling (timeout, 429, or a
-    dropped connection) rather than a genuine, permanent data error."""
-    if isinstance(exc, (requests.exceptions.Timeout,
-                        requests.exceptions.ConnectionError)):
-        return True
-    msg = str(exc).lower()
-    return "429" in msg or "rate limit" in msg or "timed out" in msg
+# True if an exception looks like API throttling rather than a permanent data
+# error. Lives in nbakit.data now.
+_is_rate_limit_error = _nbakit.is_rate_limit_error
 
 
 def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:

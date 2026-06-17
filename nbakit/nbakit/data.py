@@ -346,3 +346,51 @@ def iter_game_pairs(df: pd.DataFrame):
     for _, grp in df.groupby("GAME_ID"):
         if len(grp) == 2:
             yield grp.iloc[0], grp.iloc[1]
+
+
+# ── Generic endpoint caching ─────────────────────────────────────────────────────
+
+def is_rate_limit_error(exc: Exception) -> bool:
+    """True if an exception looks like API throttling (timeout, 429, or a
+    dropped connection) rather than a genuine, permanent data error."""
+    import requests
+    if isinstance(exc, (requests.exceptions.Timeout,
+                        requests.exceptions.ConnectionError)):
+        return True
+    msg = str(exc).lower()
+    return "429" in msg or "rate limit" in msg or "timed out" in msg
+
+
+def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
+                     id_col: str = "TEAM_ID",
+                     sleep_sec: float = 1.0) -> pd.DataFrame | None:
+    """Cache one DataFrame build to CSV, keeping id_col + keep_cols.
+
+    On a cache hit, returns the cached frame (None if it was an empty miss).
+    On a miss, calls build_df(); any exception or an empty/id-less result is
+    cached as an empty CSV so unavailable pulls aren't retried.
+    """
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    try:
+        df = build_df()
+    except Exception as e:
+        print(f"    ERROR fetching {os.path.basename(path)}: {e}")
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    if df.empty or id_col not in df.columns:
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    present = [id_col] + [c for c in keep_cols if c in df.columns and c != id_col]
+    df = df[present].copy()
+    df.to_csv(path, index=False)
+    time.sleep(sleep_sec)
+    return df
