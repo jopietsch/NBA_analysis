@@ -41,7 +41,7 @@ The blog crowns the three-point revolution as *the* primary driver on the streng
 We deliberately distrust those raw correlations: two series that both drift downward for 40 years will correlate near-perfectly whether or not one causes the other — the classic spurious-trend trap. (We make this exact argument when ruling out competitive balance.) So we do two things the blog does not:
 
 - **Detrend / go within-era.** Holding the year-by-year drift constant, more threes in a given game still predict fewer home wins: **−2.64 pp per 10 pp of 3PA rate (RS), and it survives the detrend (−2.27 pp, p<0.001)**; playoffs −2.84 to −3.12 pp (p=0.027). So the three-point effect is real *and* robust — but it is one channel, not the whole story.
-- **Decompose the box score.** Of the regular-season decline, the channels split: **shooting 21%, the whistle 18%, turnovers 27%, rebounding 30%** (`RESULTS.md:178-181`). The two channels the blog never mentions — rebounding and turnovers — carry **57% of the decline between them**, more than shooting and fouls combined.
+- **Decompose the box score.** Of the regular-season decline, the channels split: **shooting 21%, the whistle 18%, turnovers 27%, rebounding 30%** (`RESULTS.md:257-261`). The two channels the blog never mentions — rebounding and turnovers — carry **57% of the decline between them**, more than shooting and fouls combined.
 
 So we disagree on emphasis: the blog over-attributes to threes via a correlation that can't separate cause from shared trend, and in doing so misses where the accounting actually lands.
 
@@ -49,7 +49,7 @@ A related disagreement on the **free-throw share**: the blog says the FT/referee
 
 ### 2b. The mid-1990s drop — hand-checking vs. the short three-point line
 
-Both reports see a **~2.6 pp one-time drop** in the mid-1990s on top of the drift. We attribute it to the **1994–95 hand-check crackdown** (`RESULTS.md:610`: era 1995–01, −2.6 pp, p=0.010). The blog attributes the *same era's* drop to the **shortened three-point line (1994–97)**, which it uses as a natural experiment for three-point causation (before 61.8% → during 59.2% → after 60.8%).
+Both reports see a **~2.6 pp one-time drop** in the mid-1990s on top of the drift. We attribute it to the **1994–95 hand-check crackdown** (`RESULTS.md:607`: era 1995–01, −2.6 pp, p=0.010). The blog attributes the *same era's* drop to the **shortened three-point line (1994–97)**, which it uses as a natural experiment for three-point causation (before 61.8% → during 59.2% → after 60.8%).
 
 Here's the catch: the shortened line (1994–95 through 1996–97) overlaps the hand-check crackdown almost exactly. The two are **confounded**, and we and the blog have simply picked different culprits for one shared number. Neither of us can cleanly separate them with league-season data. **We should soften our prose here** — we currently assert hand-checking as settled without acknowledging the short-line interpretation is equally defensible.
 
@@ -92,7 +92,7 @@ This also vindicates the blog's own caveat: even among fully-rested games HCA fe
 
 3. **Shot-selection convergence** — the home paint-attempt-rate edge shrinking (1.3 → 0.2 pp), a mechanism distinct from three-point *accuracy*.
 
-4. **A disciplined playoff structure.** We separate regular season from playoffs throughout and add game-by-game playoff home win rates (G1 69%, G5 75%, G7 64%) plus the decisive control: when the *weaker* team hosts Games 3–4 it still wins **51.5%** (N=827) — proving the playoff decline is real home-court erosion, not bunched seeds. The blog has essentially no playoff-specific analysis beyond the bubble.
+4. **A disciplined playoff structure.** We separate regular season from playoffs throughout and add game-by-game playoff home win rates (G1 69%, G5 74.5%, G7 64%) plus the decisive control: when the *weaker* team hosts Games 3–4 it still wins **51.5%** (N=827) — proving the playoff decline is real home-court erosion, not bunched seeds. The blog has essentially no playoff-specific analysis beyond the bubble.
 
 5. **Formal ruling-out with the right tests** — the playoff-format change is non-significant once detrended (p=0.197); competitive balance is near-zero raw with only a weak detrended residual; and a combined situational model leaves ~half its predictive power to "which era" (the decline itself). The blog rules factors out by eyeballing uniform declines; we test each against the secular trend.
 
