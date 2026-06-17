@@ -180,3 +180,13 @@
 - Playoffs follow reg season with **nearly a two-decade delay**; accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.
 - Franchise notes: Denver & Utah strongest reg-season home courts (~27 & ~26 pts above own road rate), altitude the likely reason (n=2, confounded with franchise) — washes out in playoffs (franchise spread indistinguishable from zero). Home court worth **~7 pts more in playoffs** than reg season.
 - Blowouts getting bigger as HCA falls (IQR widening ~0.2–0.3 pts/yr in both contexts).
+
+---
+
+## Appendix B — Independent Corroboration (Sparkle Technologies Blog)
+- Blog: Sparkle Technologies, same question, independent pipeline. Main agreements: overall decline, foul story, travel/pace irrelevance, altitude (Denver +27 pp, Utah +26 pp — within 0.1 pp of ours).
+- **Key disagreement — cause:** blog crowns three-point revolution the primary driver (raw r=−0.88 season-level). We find ~40% of that correlation is parallel-trend artifact (detrended partial r=−0.53; Granger test: no temporal lead). 3PA effect is real within seasons (−2.27 pp/10pp) but accounts for ~21% of the decline; the two channels the blog never measures (REB 30%, TOV 27%) carry the majority.
+- **Mid-1990s drop:** blog attributes to shortened 3-pt line (1994–97); we attribute to hand-checking crackdown. Events overlap — season-level data cannot separate them. Both interpretations defensible.
+- **Empty-arena numbers:** blog's "empty arena" figure (54.4%) = 2020–21 season average blending zero-fan and partial-crowd games. Our split: empty 51.0% vs. any fans 58.5%. No disagreement on conclusion (presence = switch); blog averaged over the distinction.
+- **Back-to-backs:** blog claimed 15–20% of decline; we tested directly — frequency premise confirmed (35.0% → 18.8%); magnitude is ~8%, not 15–20% (shift-share: frequency component −0.71 pp; within-situation component −8.59 pp).
+- **What the blog missed:** rebounding channel (absent entirely from blog's box-score account), turnover-edge erosion, shot-zone convergence, formal playoff seeding control (G3–G4 weaker-host still 51.5%), ruling-out tests for format/balance/crowd.

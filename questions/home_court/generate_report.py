@@ -38,7 +38,7 @@ if __name__ == "__main__":
             f"Data: NBA.com. Analysis covers {nba.season_range_label()}. "
             "Shot zone data available from 1996–97. "
             "Logistic regression uses McFadden R²; marginal effects at the mean. "
-            "Full regression tables are in the separate RESULTS report."
+            "See Appendix A for companion documents."
         ),
         include_appendix=False,
         output_path=os.path.join(OUTPUT_DIR, "nba_home_court_advantage_report.pdf"),

@@ -6,7 +6,7 @@ Yes: the home team's win rate has fallen from about 65% to 55% in the regular se
 
 What is *not* behind it is also interesting: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the playoff format changes, including the much-blamed 2014 change. Each one is tested here, and each one is ruled out.
 
-Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers 52,000 regular-season and playoff games; the underlying statistical tables are in the separate RESULTS report.
+Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables.
 
 ---
 
@@ -19,7 +19,7 @@ Two things are happening at once. The first is a **slow, continuous erosion** of
 
 The first sharp drop came in the mid-to-late 1990s, when regular-season home win % fell from about 65% to 60%, the steepest move in the dataset. The line then held roughly flat for nearly two decades before a second drop, beginning after 2017, pushed it below 56%.
 
-Neither drop is a separate cause stacked on top of the trend. Each is a moment when one specific force shoved the same trend harder. The first traces to the 1994–95 rule change (Section 4). The second coincides with the three-point revolution: the share of shots from deep leapt from about a quarter to nearly half in the three seasons after 2017. That shift accelerated the decline, but it's a marker of a broader move to the perimeter, not the whole explanation.
+Neither drop is a separate cause stacked on top of the trend. Each is a moment when one specific force accelerated the same trend. The first traces to the 1994–95 rule change (Section 4). The second coincides with the three-point revolution: the share of shots from deep rose from about a quarter to nearly half in the three seasons after 2017. That shift accelerated the decline, but it's a marker of a broader move to the perimeter, not the whole explanation.
 
 The playoffs also dropped, but later. Postseason home court held near 64% from the mid-1990s through 2017, even as the regular season eroded below it. It then joined the slide after 2018, falling to 61%, then 58%.
 
@@ -44,13 +44,13 @@ A handful of concrete things have historically given home teams an edge on any g
 
 **Referee foul calls.** Across every era and in both regular season and playoffs, referees have called fewer fouls on home teams. In the 1984–94 regular season, home teams averaged about 1.2 fewer foul calls per game. In the playoffs the gap was even wider. Referees favored home teams by about 1.6 fouls per game. With fouls go free throws, and with free throws go points. This is the most consistent component of home court advantage.
 
-The playoff referee data shows how universal this is: 45 of 47 officials with at least 50 playoff games on record show a home-favoring foul differential. Nearly every referee who has worked the postseason has, consciously or not, called the game differently depending on which team was at home.
+The playoff referee data shows how universal this is: 45 of 47 officials with at least 50 playoff games on record show a home-favoring foul differential. Nearly every referee who has worked the postseason has called the game differently depending on which team was at home.
 
 **Shooting advantage.** Home teams have consistently shot better than road teams: typically around a percentage point better in effective field goal percentage across most eras in both regular season and playoffs. The usual explanations are crowd comfort and familiar rims. Our data can only confirm the gap is real, not pin down the cause.
 
 **Shot selection.** Historically, home teams have gotten more of their attempts from close range and fewer from mid-range. A paint shot is more efficient than a mid-range jumper, so home teams have started each possession with a small built-in advantage in expected scoring, independent of how well they shoot from any given spot.
 
-**Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just over a third of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this unglamorous pair turns out to be the single largest driver of the decline.
+**Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just over a third of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
 ![Home vs. away box-score differentials — foul rate, FG%, eFG%, 3PA rate, 3P%, FT%.](generated/nba_home_court_advantage_differentials.png)
 
@@ -72,7 +72,7 @@ The playoff referee chart shows the generational shift clearly. The distribution
 
 ![Distribution of per-official home foul bias by era, playoffs. The spread has compressed: newer officials are not only less biased on average but more uniform in their calling.](generated/nba_home_court_referee_era.png)
 
-**The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their attempts from the paint than road teams. By 2023–26, that gap has shrunk to 0.2 points. Away teams now attack the basket nearly as aggressively as home teams. Our data can confirm the gap closed, not why. In the playoffs the gap narrowed in the late 2010s but has since rebounded close to its old level. Shot-selection convergence is, for now, a regular-season story.
+**The shot zone advantage has nearly disappeared.** In the 1990s, home teams generated about 1.3 percentage points more of their attempts from the paint than road teams. By 2023–26, that gap has shrunk to 0.2 points. Away teams now attack the basket nearly as aggressively as home teams. Our data can confirm the gap closed, not why. In the playoffs the gap narrowed in the late 2010s but has since rebounded close to its old level. Shot-selection convergence is, for now, a regular-season story.
 
 ![Shot zone differentials (home minus road), regular season vs. playoffs.](generated/nba_home_court_shot_zones.png)
 
@@ -220,4 +220,44 @@ The decline is real and one-directional: a slow, four-decade erosion with two sh
 What hasn't driven the decline: rule changes (with the single exception of 1994–95), travel, time zones, pace of play, competitive balance, crowd size, and playoff scheduling format. The data rules each out. The schedule-spread argument with fewer tired visitors, explains only about 8% of the decline. Arenas have stayed near capacity, lately setting records, even as the advantage shrank. The one genuine crowd effect is a blip: in the empty arenas of 2020–21 home teams won just 51%, then snapped back to 58.5% whenever fans returned. Crowd noise is real and measurable, but it's a switch that flips with the doors, not a dial slowly turning down for 40 years.
 
 The playoffs have followed the regular season's path but with nearly a two-decade lag. For most of the 2000s and 2010s, postseason home court held firm even as the regular season eroded around it. The internal structure of playoff home court remains stark: Games 1 and 2 go to the home team 69% and 72% of the time; Game 5 is the most lopsided at 74.5%; even Game 7 still goes to the home team 64% of the time. Since 2018 the decline has accelerated. It is genuine home-court erosion, not an illusion of more evenly matched seeds. Even the weaker team, when it hosts, has been winning less.
+
+---
+
+## Appendix A: Companion Documents
+
+::: {.content-visible when-format="html"}
+| Document | Description |
+|---|---|
+| [Regression Results](nba_home_court_results.html) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
+| [One-Page Summary](home_court_SUMMARY.html) | Standalone summary built around the three core charts and the three questions. |
+| [Stats Explainer](home_court_STATS_EXPLAINER.html) | Guide to the statistical methods used, written for a general audience. |
+| [Stats Tutorial](../../generated/STATS_TUTORIAL.html) | Worked examples reproducing key results from the regression output. |
+:::
+
+::: {.content-visible when-format="typst"}
+| Document | Description |
+|---|---|
+| [Regression Results](nba_home_court_results.pdf) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
+| [One-Page Summary](home_court_SUMMARY.pdf) | Standalone summary built around the three core charts and the three questions. |
+| [Stats Explainer](home_court_STATS_EXPLAINER.pdf) | Guide to the statistical methods used, written for a general audience. |
+| [Stats Tutorial](../../generated/STATS_TUTORIAL.pdf) | Worked examples reproducing key results from the regression output. |
+:::
+
+---
+
+## Appendix B: Independent Corroboration
+
+Sparkle Technologies published an independent analysis of the same question at [sparkletechnologies.com/blog/nba-disappearing-home-court-advantage](https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage). We checked every number we share in common. Most of them match. The disagreements are instructive.
+
+**Where we agree.** The overall decline, the foul-call story, the irrelevance of travel and pace — all consistent across two independent pipelines. The clearest confirmation that neither analysis is fabricating results: the Sparkle altitude figures for Denver and Utah land within a tenth of a point of ours.
+
+**Where we differ — and why.** The blog names the three-point revolution as the primary cause, drawing on a 40-year correlation of −0.88 between three-point attempt rate and home win percentage. We ran a tighter test and found roughly 40% of that correlation is two trends moving in the same direction over time, not one causing the other. The three-point effect is real — it shows up within individual seasons too — but it accounts for about 21% of the regular-season decline, not the majority. The two channels the blog never measures, rebounding and turnovers, carry more than half the decline between them.
+
+On the mid-1990s drop, the blog attributes it to the shortened three-point line (1994–97); we attribute it to the hand-checking crackdown. Both changes happened in the same seasons, and season-level data can't fully separate them. Both interpretations are defensible.
+
+The empty-arena numbers look different for a methodological reason. The blog's "empty arena" figure (54.4%) is the 2020–21 season average, blending games with zero fans and games with partial crowds. We split those apart: 51.0% with empty buildings, 58.5% with any crowd at all. No real disagreement on the conclusion — crowd presence is a switch, not a dial — but the blog's single number averaged over the whole phenomenon.
+
+**What the blog found that we then tested.** The blog credited the schedule shift — fewer visitors arriving on a back-to-back — with 15–20% of the decline. The premise checks out: back-to-back frequency fell from about 35% to under 20%. The magnitude doesn't hold. A direct shift-share test puts the schedule effect at roughly 8% of the decline. The other 92% is the home advantage eroding within every rest situation alike, regardless of how tired the visitor is.
+
+**What we found the blog missed.** The rebounding collapse is the biggest gap. The blog's box-score account has no rebounding term; we find it is the single largest channel, carrying 30% of the regular-season decline — and it holds up after controlling for three-point volume. Turnover-edge erosion (another 27%) is also unaccounted for. The blog's decomposition points at something real. It just misses where most of the work is happening.
 
