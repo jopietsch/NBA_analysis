@@ -152,6 +152,8 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 **The playoff decline is real home-court weakening, not weaker seeds.** A natural objection: maybe playoff home teams win less now simply because top seeds no longer outclass their opponents the way they once did. The data says no. Account for the gap in regular-season quality between the two teams and the year-by-year playoff decline doesn't budge at all — none of it is explained away by seeds bunching together. The cleanest proof is the lower seed's home games: when the objectively weaker team hosts Games 3 and 4, it still wins 51.5% of the time. Strip team quality out entirely and home court alone is still worth a coin-flip-beating edge — and that edge is what has been eroding.
 
+![Figure 16. The playoff decline is genuine home-court weakening, not weaker seeds. Left: the yearly playoff decline is the same size before and after removing the regular-season quality gap between the two teams — quality explains essentially none of it. Right: home win % by who hosts — even the objectively weaker team still wins about 51.5% of its home games (Games 3–4), a pure venue effect above the coin-flip line.](generated/nba_home_court_playoff_quality.png)
+
 **The 2014 format change didn't cause the playoff drop.** The playoffs have also been reseeded and rescheduled over the years, in four distinct format periods:
 
 | Period | Seasons | Format |
@@ -163,7 +165,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 The most recent shift, in 2014, coincided with the sharpest period of playoff HCA decline — a nearly 7-point raw drop from the 2003–13 period to the 2014–26 period. But when the year-by-year secular trend is accounted for, the format change has no independent effect. The playoff drop would have arrived on roughly the same schedule regardless. Format was not the cause.
 
-![Figure 16. Home win % by playoff format period, regular season vs. playoffs.](generated/nba_home_court_advantage_format_bars.png){width=0.5}
+![Figure 17. Home win % by playoff format period, regular season vs. playoffs.](generated/nba_home_court_advantage_format_bars.png){width=0.5}
 
 ---
 
@@ -175,7 +177,7 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 **Denver and Utah own the best home court in the league — and altitude is the reason.** Across 40 seasons, the Nuggets and Jazz hold the largest regular-season home edges of any franchise: about 27 and 26 percentage points above their own road win rates after accounting for sample size, against a league average near 20. They are also the two highest-elevation arenas in the NBA. The franchise spread is real — roughly 70% of the variation across teams reflects genuine differences rather than noise — and altitude sits right at the top of it. (This 27-point figure is their full home-minus-road gap; the altitude piece on its own, isolated in Section 2, accounts for about 8 of those points.)
 
-![Figure 17. Franchise home court advantage, regular season and playoffs. Bars and points carry 95% confidence bands: in the regular season most franchises sit clearly apart, but in the playoffs the bands are wide and overlapping — the franchise differences there are mostly noise.](generated/nba_home_court_team_hca.png)
+![Figure 18. Franchise home court advantage, regular season and playoffs. Bars and points carry 95% confidence bands: in the regular season most franchises sit clearly apart, but in the playoffs the bands are wide and overlapping — the franchise differences there are mostly noise.](generated/nba_home_court_team_hca.png)
 
 **In the playoffs, every franchise's home court looks the same — the differences are an illusion.** That real regular-season spread vanishes in the postseason. With fewer than 150 playoff home games on record for most franchises, the apparent gaps — from Utah near the top to a couple of teams below average — are entirely explained by small samples; the true spread between franchises is statistically indistinguishable from zero. A team's reputation for being a postseason fortress is mostly a reflection of being a good team, and good teams simply play more home games.
 
@@ -183,7 +185,7 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 **The blowouts are getting bigger — even as home teams win less.** As home court advantage has faded, the margin when the home team *does* win has grown. Home wins are getting bigger, and home losses are getting worse. The obvious objection — that losses only look worse because more games are losses now — doesn't survive a closer look. Tracking the full spread of margins regardless of who won, the gap between the biggest wins and the biggest losses widens by about 0.2 points a year in the regular season and about 0.3 in the playoffs. In the regular season the blowouts grow in both directions at once; in the playoffs the spread widens mainly because the big home wins keep getting bigger. Either way, the era of close games is becoming an era of blowouts — fewer home wins overall, but the ones that happen are more decisive.
 
-![Figure 18. Home team win margin trends — mean margin per season and by era (regular season and playoffs), with the win-only vs. loss-only split for the regular season.](generated/nba_home_court_margin.png)
+![Figure 19. Home team win margin trends — mean margin per season and by era (regular season and playoffs), with the win-only vs. loss-only split for the regular season.](generated/nba_home_court_margin.png)
 
 ---
 

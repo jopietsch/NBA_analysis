@@ -77,6 +77,14 @@ def test_plot_rebound_decomposition():
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_playoff_quality():
+    data = {"pp_raw": -0.225, "pp_adj": -0.229, "retained": 102.0,
+            "seed_bars": [("Higher seed\nhosts (G1–2)", 70.6, 1021),
+                          ("Lower seed\nhosts (G3–4)", 55.1, 1010),
+                          ("Weaker team\nhosts (G3–4)", 51.5, 827)]}
+    plots.plot_playoff_quality(data)
+
+
 def test_plot_channel_3pa_control():
     def _ctx(n):
         chans = [("Shooting", -110.0, 0.03), ("Turnovers", 46.0, 0.04),

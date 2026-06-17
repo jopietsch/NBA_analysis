@@ -2076,6 +2076,42 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
 
 # ── Analysis: Playoff HCA — seeding quality decomposition ────────────────────
 
+def compute_playoff_quality_plotdata(df: pd.DataFrame) -> dict:
+    """Chart-ready playoff seeding decomposition: the HCA year-trend before and
+    after controlling for the seed-quality gap, plus home win % by who hosts.
+    Same numbers run_playoff_quality_decomposition prints. Backs the claim that
+    the playoff decline is genuine home-court erosion (quality control barely
+    moves the trend) and that even the weaker team wins when it hosts.
+    """
+    if "quality_diff" not in df.columns:
+        df = _add_quality_diff(df)
+    po = df[df["is_playoff"] == 1].dropna(subset=["quality_diff", "game_in_series"]).copy()
+    p_bar = po["home_win"].mean()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        m_year = smf.logit("home_win ~ year", data=po).fit(disp=0)
+        m_full = smf.logit("home_win ~ year + quality_diff", data=po).fit(disp=0)
+    c_raw = m_year.params["year"]
+    retained = 100.0 * m_full.params["year"] / c_raw if c_raw else float("nan")
+
+    def _hw(games, neg=False):
+        s = po[po["game_in_series"].isin(games)]
+        if neg:
+            s = s[s["quality_diff"] < 0]
+        return (100.0 * s["home_win"].mean(), len(s))
+
+    return {
+        "pp_raw": _pp(c_raw, p_bar),
+        "pp_adj": _pp(m_full.params["year"], p_bar),
+        "retained": retained,
+        "seed_bars": [
+            ("Higher seed\nhosts (G1–2)", *_hw([1.0, 2.0])),
+            ("Lower seed\nhosts (G3–4)",  *_hw([3.0, 4.0])),
+            ("Weaker team\nhosts (G3–4)", *_hw([3.0, 4.0], neg=True)),
+        ],
+    }
+
+
 def run_playoff_quality_decomposition(df: pd.DataFrame) -> None:
     """Decompose the playoff HCA year trend into team-quality vs. true home-court.
 

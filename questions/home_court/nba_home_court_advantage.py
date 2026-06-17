@@ -30,7 +30,8 @@ from nba_home_court_plots import (
     plot_results, plot_mediation, plot_rest_altitude, plot_channel_3pa_control,
     plot_differential_analysis, plot_rebound_decomposition,
     plot_margin_analysis, plot_parity_analysis,
-    plot_series_breakdown, plot_shot_zone_analysis, plot_3pa_hca_analysis,
+    plot_series_breakdown, plot_playoff_quality,
+    plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
     plot_attendance, plot_tracking_rebounding,
 )
@@ -100,6 +101,7 @@ def main() -> None:
     )
     overall_po_pct = float(np.mean(po_pcts)) if po_pcts else 60.0
     plot_series_breakdown(game_nums, series_pcts, game_counts, era_series_data, overall_po_pct)
+    plot_playoff_quality(_reg.compute_playoff_quality_plotdata(game_df))
 
     print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")
     reg_zone_seasons, reg_zone_stats = compute_shot_zone_stats(START_YEAR, END_YEAR, SeasonType.regular)

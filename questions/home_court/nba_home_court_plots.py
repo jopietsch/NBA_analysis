@@ -882,6 +882,66 @@ def plot_series_breakdown(
     plt.close()
 
 
+def plot_playoff_quality(data: dict) -> None:
+    """
+    Two-panel proof that the playoff decline is genuine home-court weakening, not
+    weaker seeds. Left: the playoff home win % decline rate (pp/year) before and
+    after removing the seed-quality gap — the two are nearly identical, so team
+    quality explains essentially none of the decline. Right: home win % by who
+    hosts — even the objectively weaker team wins when it hosts Games 3–4, a pure
+    venue effect.
+
+    `data` comes from regression.compute_playoff_quality_plotdata().
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    fig.suptitle("The Playoff Decline Is Real Home-Court Weakening, Not Weaker Seeds",
+                 fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.95,
+             f"Data: NBA.com  |  quality gap = home minus away regular-season win %  |  {season_range_label()}",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: decline rate, raw vs quality-adjusted ───────────────────────
+    labels1 = ["Raw\n(year only)", "After removing\nteam-quality gap"]
+    vals1 = [data["pp_raw"], data["pp_adj"]]
+    x1 = np.arange(2)
+    bars = ax1.bar(x1, vals1, color=[BLUE, GREEN], width=0.5, edgecolor="white", linewidth=0.6)
+    ax1.axhline(0, color="#444", linewidth=1.0)
+    for b, v in zip(bars, vals1):
+        ax1.text(b.get_x() + b.get_width() / 2, v - 0.004,
+                 f"{v:+.3f}", ha="center", va="top", fontsize=10, color="#333")
+    ax1.set_xticks(x1)
+    ax1.set_xticklabels(labels1, fontsize=9)
+    ax1.set_ylabel("Playoff home win % decline (pp per year)", fontsize=10)
+    ax1.set_ylim(min(vals1) - 0.07, 0.03)
+    ax1.set_title(f"Decline rate barely moves — {data['retained']:.0f}% survives quality control",
+                  fontsize=10.5, fontweight="bold", color="#2c2c2a", pad=6)
+
+    # ── Panel 2: home win % by who hosts ─────────────────────────────────────
+    labels2 = [b[0] for b in data["seed_bars"]]
+    vals2   = [b[1] for b in data["seed_bars"]]
+    ns      = [b[2] for b in data["seed_bars"]]
+    x2 = np.arange(len(labels2))
+    colors2 = [BLUE, BLUE, GREEN]
+    bars2 = ax2.bar(x2, vals2, color=colors2, width=0.62, edgecolor="white", linewidth=0.6)
+    ax2.axhline(50, color=GRAY, linewidth=1.0, linestyle=":")
+    ax2.text(len(labels2) - 0.5, 50.3, "50% — coin flip", fontsize=7.5, color=GRAY, va="bottom", ha="right")
+    for b, v, n in zip(bars2, vals2, ns):
+        ax2.text(b.get_x() + b.get_width() / 2, v + 0.4,
+                 f"{v:.1f}%\n(n={n:,})", ha="center", va="bottom", fontsize=8, color="#333")
+    ax2.set_xticks(x2)
+    ax2.set_xticklabels(labels2, fontsize=9)
+    ax2.set_ylabel("Home win %", fontsize=10)
+    ax2.set_ylim(45, 78)
+    ax2.set_title("Even the weaker team wins when it hosts",
+                  fontsize=10.5, fontweight="bold", color="#2c2c2a", pad=6)
+
+    plt.tight_layout()
+    output_path = _output_path("nba_home_court_playoff_quality.png")
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_shot_zone_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,

@@ -137,13 +137,15 @@
   - No evidence road teams adapt as series deepens; home-away split explains it entirely.
 
 ![Fig 15 — playoff win % by game number](generated/nba_home_court_series_breakdown.png)
-- **Decline is real weakening, not weaker seeds:**
+
+![Fig 16 — playoff seeding decomposition (decline survives quality control; weaker host still wins)](generated/nba_home_court_playoff_quality.png)
+- **Decline is real weakening, not weaker seeds (Fig 16):**
   - *RESULTS:* year trend retained **102%** after quality control; quality absorbs −2%.
   - Lower-seed-at-home (G3+G4): still wins **51.5%** (n=827) — pure venue effect.
   - Seed-quality gap did trend slightly (−0.00026/yr, p<0.001) but doesn't explain HCA decline.
 - **2014 format change didn't cause drop:** raw −6.8 pp from 2003–13 → 2014–26 (z=3.10, p=0.002), but trend-controlled dummy ns (p=0.298); LR χ²(3)=4.68, p=0.197. Format table (4 periods).
 
-![Fig 16 — win % by format period](generated/nba_home_court_advantage_format_bars.png)
+![Fig 17 — win % by format period](generated/nba_home_court_advantage_format_bars.png)
 
 ---
 
@@ -152,7 +154,7 @@
 - **Referee differences real but overstated:** 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing.
 - **Denver & Utah best home court — altitude is why:** Nuggets **+26.8 pp**, Jazz **+25.7 pp** shrunken (league mean +20.0). ~70% of franchise variation is real (true SD ≈4.1 pp). Altitude piece ≈8 of those points.
 
-![Fig 17 — franchise HCA](generated/nba_home_court_team_hca.png)
+![Fig 18 — franchise HCA](generated/nba_home_court_team_hca.png)
 - **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Fortress reputation = being a good team that plays more home games.
 - **Home court worth more in playoffs:** reg **~20 pp** vs. playoffs **~27 pp** → **+7 pp postseason premium** (RESULTS +7.2 pp, SD 7.4). Reg/playoff consistency positive but weak (raw r=+0.362, p=0.042).
 - **Margins polarizing — blowouts getting bigger:** home wins bigger, home losses worse, even as home teams win less.
@@ -161,7 +163,7 @@
   - *RESULTS playoffs:* Q10 −0.104 (ns), Q90 +0.222 pt/yr; IQR widening **+0.326 pts/yr** — playoff spread driven mainly by big home wins growing (Home wins trend +0.149***/yr).
   - ~0.2–0.3 pts/yr widening in both contexts. Era of close games → era of blowouts.
 
-![Fig 18 — margin trends](generated/nba_home_court_margin.png)
+![Fig 19 — margin trends](generated/nba_home_court_margin.png)
 
 ---
 
