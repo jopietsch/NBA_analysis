@@ -160,19 +160,23 @@ _STYLES = _build_styles()
 
 # ── FINDINGS.md parser ─────────────────────────────────────────────────────────
 
-def _parse_findings(path: str) -> dict[str, str]:
+def _parse_findings(path: str) -> tuple[str, dict[str, str]]:
     if not os.path.exists(path):
-        return {}
+        return "", {}
     with open(path) as f:
         content = f.read()
+    parts = re.split(r"^## ", content, flags=re.MULTILINE)
+    # Extract intro: text before the first ##, strip the H1 title line and trailing rule
+    intro = re.sub(r"^#[^#][^\n]*\n", "", parts[0]).strip()
+    intro = re.sub(r"\n?---\s*$", "", intro).strip()
     sections = {}
-    for part in re.split(r"^## ", content, flags=re.MULTILINE)[1:]:
+    for part in parts[1:]:
         newline = part.find("\n")
         heading = part[:newline].strip()
         body = part[newline:].strip()
         body = re.sub(r"\n?---\s*$", "", body).strip()
         sections[heading] = body
-    return sections
+    return intro, sections
 
 
 # ── Flowable helpers ───────────────────────────────────────────────────────────
@@ -363,9 +367,11 @@ def _check_prerequisites(cfg: ReportConfig) -> None:
 def build_report(cfg: ReportConfig) -> None:
     os.makedirs(os.path.dirname(cfg.output_path) or ".", exist_ok=True)
     _check_prerequisites(cfg)
-    sections = _parse_findings(cfg.findings_path)
+    intro, sections = _parse_findings(cfg.findings_path)
 
     story = [*_cover(cfg, sections)]
+    if intro:
+        story += _md_to_flowables(intro)
     for heading, body in sections.items():
         num_str = heading.split(".")[0]
         if num_str.isdigit() and int(num_str) >= 4:

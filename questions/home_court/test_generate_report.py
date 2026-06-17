@@ -21,13 +21,14 @@ class TestParseFindings:
         path = tmp_path / "FINDINGS.md"
         path.write_text(md)
 
-        sections = _parse_findings(str(path))
+        intro, sections = _parse_findings(str(path))
+        assert intro == "intro paragraph"
         assert list(sections) == ["1. The Decline", "2. The Causes"]
         assert sections["1. The Decline"] == "Home court has fallen."
         assert sections["2. The Causes"] == "Refs and threes."
 
     def test_missing_file_returns_empty(self, tmp_path):
-        assert _parse_findings(str(tmp_path / "nope.md")) == {}
+        assert _parse_findings(str(tmp_path / "nope.md")) == ("", {})
 
 
 class TestMdInline:
