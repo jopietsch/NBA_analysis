@@ -11,6 +11,7 @@ NBA HOME COURT ADVANTAGE — REGRESSION ANALYSIS
 Game-level logistic regression. Outcome: home_win (1/0) per game.
 All data from cache/ — same source as the plots above.
 
+  Building game-level dataset from cache... 52,399 game rows (51,380 with complete features).
 
 ─── THE OVERALL DECLINE — IS IT STATISTICALLY REAL? ────────────────────
    Primary: binomial GLM (events/trials per season, weights by game count).
@@ -110,107 +111,6 @@ All data from cache/ — same source as the plots above.
    Peak is 32% of the 5% boundary.
 
 
-─── ITS (INTERRUPTED TIME SERIES) — 1994-95 BOUNDARY ───────────────────
-   Model: home_pct ~ year + post95 + time_since_break  (season-level WLS)
-   post95      = 1 for seasons from 1994-95 onward (immediate level shift)
-   time_since  = (year − 1994) × post95           (slope change post-break)
-   Weights: game counts per season.
-
-   Regular season  (N = 43 seasons)  R² = 0.779
-   Parameter                   Coef        p   Sig
-   ──────────────────────  ────────  ───────  ────
-   Pre-break trend/yr        -0.522    0.004    **
-   Level shift (1994-95)     -0.622    0.597      
-   Slope change/yr           +0.341    0.060      
-
-   Implied slopes: pre-break = -0.522 pp/yr, post-break = -0.181 pp/yr
-   ► Borderline slope change (p=0.060): rate of HCA decline appears
-     to slow after 1994-95 (-0.52 → -0.18 pp/yr),
-     but no discrete immediate jump (level p=0.597). Consistent with
-     the QLR break at 1999 — change accumulated gradually over seasons.
-
-   Playoffs  (N = 42 seasons)  R² = 0.225
-   Parameter                   Coef        p   Sig
-   ──────────────────────  ────────  ───────  ────
-   Pre-break trend/yr        +0.249    0.651      
-   Level shift (1994-95)     -2.308    0.551      
-   Slope change/yr           -0.485    0.390      
-
-   Implied slopes: pre-break = +0.249 pp/yr, post-break = -0.235 pp/yr
-   ► Neither level nor slope significant at 1994-95.
-     Overall HCA trend drove this context — 1994-95 not a sharp break.
-
-
-─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
-   Positive = home team winning by more.
-   Trend = slope of trend line (change per season year).
-
-   Regular season  (N = 35,536 games)
-
-   Era             All games    Home wins  Home losses
-   ───────────────────────────────────────────────────
-   1984–94                 —            —            —
-   1995–01             +3.05       +11.60        -9.71
-   2002–04             +3.62       +11.66        -9.00
-   2005–17             +3.00       +11.70        -9.78
-   2018–22             +1.95       +12.16       -11.20
-   2023–26             +2.02       +13.01       -11.73
-   ───────────────────────────────────────────────────
-   Trend/yr        -0.057***    +0.048***    -0.095***
-
-   Playoffs  (N = 2,357 games)
-
-   Era             All games    Home wins  Home losses
-   ───────────────────────────────────────────────────
-   1984–94                 —            —            —
-   1995–01             +3.87       +10.92        -9.42
-   2002–04             +4.43       +11.38        -8.10
-   2005–17             +4.48       +12.43        -9.85
-   2018–22             +4.30       +13.90       -10.55
-   2023–26             +3.87       +14.86       -11.06
-   ───────────────────────────────────────────────────
-   Trend/yr        -0.017       +0.149***    -0.101 **
-
-   ► Overall reg-season mean margin: +2.76 pts.
-   ► Overall playoff mean margin:    +4.27 pts.
-
-─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (checks blowout claim in other findings) 
-   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.
-   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.
-   All quantiles parallel → pure level effect (conditional divergence is artifact).
-   Q10↓ with Q90↑ → genuine polarization.
-
-   Regular season  (N = 35,536 games, 1997–2026)
-
-   Quantile   Slope pts/yr                95% CI         p     
-   ────────  ─────────────  ────────────────────  ────────  ───
-        Q10         -0.167  [-0.197, -0.137]    <0.001  ***
-        Q25         -0.099  [-0.118, -0.080]    <0.001  ***
-        Q50         -0.053  [-0.072, -0.033]    <0.001  ***
-        Q75         +0.000  [-0.019, +0.019]     1.000     
-        Q90         +0.050  [+0.020, +0.080]     0.001   **
-
-   IQR change rate (Q90 − Q10 slope diff): +0.217 pts/yr
-   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
-     The conditional-on-outcome divergence in §6 reflects a real change in
-     distribution shape, not just a composition effect.
-
-   Playoffs  (N = 2,357 games, 1997–2026)
-
-   Quantile   Slope pts/yr                95% CI         p     
-   ────────  ─────────────  ────────────────────  ────────  ───
-        Q10         -0.104  [-0.213, +0.005]     0.062     
-        Q25         -0.110  [-0.193, -0.028]     0.009   **
-        Q50         -0.000  [-0.080, +0.080]     1.000     
-        Q75         +0.091  [+0.014, +0.168]     0.020    *
-        Q90         +0.222  [+0.113, +0.331]    <0.001  ***
-
-   IQR change rate (Q90 − Q10 slope diff): +0.326 pts/yr
-   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
-     The conditional-on-outcome divergence in §6 reflects a real change in
-     distribution shape, not just a composition effect.
-
-
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
    Trend = slope of trend line (change per season year); pp = percentage points.
@@ -240,6 +140,90 @@ All data from cache/ — same source as the plots above.
    2023–26              -0.68         +0.96         +1.02         -0.21         +0.75         +2.12
    ────────────────────────────────────────────────────────────────────────────────────────────────
    Trend/yr         +0.020 **     -0.015        -0.009        +0.028  *     +0.015        +0.009   
+
+
+─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
+   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
+   Officials with <50 playoff games excluded.
+   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
+
+   47 officials with ≥50 playoff games
+   45/47 (96%) show negative mean foul diff (home-favoring)
+   Individually significant (p<0.05, real t-test):    29/47
+   Survive Benjamini-Hochberg correction (FDR 5%):    29/47
+   League mean foul_diff across officials: -1.098 fouls/game
+
+   Variance decomposition (career level, method of moments):
+   Observed SD across officials: 0.645 fouls/game
+   Mean within-official SE:      0.500 fouls/game
+   Estimated true between-SD:    0.407 fouls/game
+   ► Sampling noise explains 60% of observed spread.
+
+   Top 10 most home-favoring (by shrunken mean foul_diff):
+   Official                     N games  Raw diff  Shrunken         p      BH-p
+   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Ron Garretson                    143    -2.385    -1.734    <0.001    <0.001
+   Joe Crawford                     160    -2.288    -1.717    <0.001    <0.001
+   Eddie Rush                       100    -2.530    -1.664    <0.001    <0.001
+   Rodney Mott                       69    -2.232    -1.499    <0.001     0.001
+   James Capers                     199    -1.764    -1.478    <0.001    <0.001
+   Bob Delaney                       80    -2.175    -1.412    <0.001     0.004
+   Eric Lewis                        79    -1.759    -1.368    <0.001     0.003
+   Sean Wright                      108    -1.639    -1.344    <0.001     0.002
+   David Jones                       51    -1.843    -1.274     0.015     0.026
+   Bill Spooner                     111    -1.495    -1.258     0.003     0.009
+
+   Bottom 10 least home-favoring (by shrunken mean foul_diff):
+   Official                     N games  Raw diff  Shrunken         p      BH-p
+   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
+   Tyler Ford                        61    -0.344    -0.889     0.602     0.629
+   Jason Phillips                    96    -0.615    -0.865     0.148     0.205
+   Kevin Scott                       57    -0.351    -0.836     0.529     0.579
+   Courtney Kirkland                 85    -0.353    -0.817     0.501     0.575
+   Mark Lindsay                      54    -0.111    -0.799     0.858     0.858
+   David Guthrie                    113    -0.398    -0.775     0.367     0.442
+   Tony Brothers                    213    -0.559    -0.773     0.092     0.143
+   Josh Tiven                       103    -0.252    -0.731     0.588     0.629
+   Ben Taylor                        53    +0.151    -0.715     0.806     0.824
+   Joe Forte                         51    +0.451    -0.713     0.527     0.579
+
+   Era variance decomposition — does official spread compress over time?
+   Era            N off     Mean    Raw SD   True SD   Noise %
+   ──────────── ─────── ──────── ───────── ───────── ─────────
+   1995–01           14   -2.239     2.076     0.000      100%
+   2002–04           27   -0.781     1.813     0.722       84%
+   2005–17           43   -1.232     0.975     0.477       76%
+   2018–22           33   -0.737     1.056     0.469       80%
+   2023–26           25   -0.753     0.702     0.000      100%
+
+
+─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
+   Positive = home team takes a higher share of FGA from that zone.
+   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
+
+   Regular season  (N = 30 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.28             -1.24             +0.16             -0.20
+   2002–04                  +1.18             -1.24             +0.29             -0.23
+   2005–17                  +1.26             -1.19             +0.12             -0.19
+   2018–22                  +0.55             -0.77             +0.18             +0.04
+   2023–26                  +0.24             -0.72             +0.21             +0.26
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.041***         +0.025***         +0.000            +0.015 **
+
+   Playoffs  (N = 23 seasons)
+
+   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
+   ────────────────────────────────────────────────────────────────────────────────────
+   1995–01                  +1.71             -1.67             +0.46             -0.50
+   2002–04                  +1.98             -2.32             +0.35             -0.01
+   2005–17                  +1.79             -1.47             +0.06             -0.38
+   2018–22                  +0.72             -1.62             +0.48             +0.42
+   2023–26                  +1.35             -1.11             +0.10             -0.34
+   ────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr             -0.032            +0.019            -0.008            +0.021   
 
 
 ─── MEDIATION — BOX-SCORE CHANNELS AS SHARES OF HCA LEVEL AND TREND ────
@@ -341,73 +325,6 @@ All data from cache/ — same source as the plots above.
      explained by the shooting revolution.
 
 
-─── REBOUNDING DECOMPOSITION — WHY THE HOME EDGE FADED  (home minus away) 
-   OREB/DREB diff = home minus away offensive/defensive rebounds per game.
-   Share edge = home share of available offensive boards minus away share
-   (percentage points) — a pace- and volume-free measure of the edge.
-   Trend = slope of trend line (change per season year).
-
-   Regular season  (N = 49,107 games)
-
-   Era                OREB diff       DREB diff        REB diff Share edge (pp)
-   ────────────────────────────────────────────────────────────────────────────
-   1984–94                +0.61           +1.64           +2.24           +2.14
-   1995–01                +0.62           +1.18           +1.79           +1.83
-   2002–04                +0.43           +1.31           +1.74           +1.59
-   2005–17                +0.33           +0.97           +1.29           +1.15
-   2018–22                +0.20           +0.85           +1.05           +0.79
-   2023–26                -0.05           +0.59           +0.54           +0.21
-   ────────────────────────────────────────────────────────────────────────────
-   Trend/yr           -0.018***       -0.027***       -0.044***       -0.052***
-
-   Playoffs  (N = 3,292 games)
-
-   Era                OREB diff       DREB diff        REB diff Share edge (pp)
-   ────────────────────────────────────────────────────────────────────────────
-   1984–94                +0.89           +1.72           +2.61           +2.74
-   1995–01                +0.66           +1.18           +1.84           +1.79
-   2002–04                -0.15           +0.87           +0.72           +0.32
-   2005–17                +0.55           +1.22           +1.77           +1.71
-   2018–22                +0.50           +0.85           +1.34           +1.24
-   2023–26                +0.05           +1.09           +1.14           +0.70
-   ────────────────────────────────────────────────────────────────────────────
-   Trend/yr           -0.015          -0.023  *       -0.037 **       -0.046 **
-
-   Does the home edge track the league's retreat from the offensive glass?
-   Season-level Pearson r (share edge vs league OREB rate) = +0.824  (p = <0.001  ***,  N = 43 seasons)
-   League OREB rate: 32.9% → 25.9%   |   Home share edge: +2.74pp → -0.34pp
-   ► The home rebounding edge fades in lockstep with the league-wide
-     decline in offensive rebounding — the effort-driven offensive boards
-     where a home edge could form have largely disappeared.
-
-   ─ Cointegration check: is the OREB-HCA correlation genuine or spurious? ─
-   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):
-   League OREB rate                    ADF = -1.275  p = 0.641  → I(1) nonstationary
-   Home rebound share edge             ADF = -0.133  p = 0.946  → I(1) nonstationary
-
-   Engle-Granger cointegration  (H0: no long-run relationship):
-   t = -2.791  p = 0.168  
-   ► Both I(1) but NOT cointegrated — r = +0.824 is likely
-     spurious; within-era game-level controls are the reliable evidence.
-
-
-─── PLAYER-TRACKING REBOUNDING MECHANISM  (home minus road, tracking era) 
-   Confirms how the home rebounding edge expresses itself in the tracking
-   data: offensive-rebound conversion, box-outs, and second-chance points.
-   Window is short (~2014 on; box-outs ~2016 on) — corroborates the modern
-   mechanism, not the 40-year decline.
-
-   Metric                          N seasons      Mean    Trend/yr        p
-   ────────────────────────────────────────────────────────────────────────
-   OREB conversion edge (pp)              13    +0.709   -0.086  *    0.024
-   Box-out edge (per game)                11    -0.000   -0.005       0.775
-   2nd-chance pts edge (per game)         13    +0.289   -0.016       0.304
-
-   ► The home edge is small and flat-to-declining across the tracking era —
-     consistent with the offensive-glass advantage having largely collapsed
-     before high-resolution tracking even began.
-
-
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home
    team more rested (rest_diff > 0). Games without a prior game to
@@ -488,220 +405,6 @@ All data from cache/ — same source as the plots above.
    ────────────────────────────  ────────  ──────  ────────  ───
    rest_diff (per day)             +0.068    +1.6     0.113     
    quality_diff (RS win% gap)      +4.778  +111.7    <0.001  ***
-
-─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 48,424 games) ──────
-   Outcome: home_win. Baseline home win %: 60.1%.
-   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
-   the ΔR² column shows how much each block adds over the previous model.
-   '≈pp' = approximate marginal effect in percentage points (at mean p).
-   p-values and CIs use cluster-robust SEs (clusters = season-year).
-
-   Model                                R²       ΔR²   % of fit
-   ──────────────────────────────  ───────  ────────  ─────────
-   Era only                         0.0029   +0.0029      57.9%
-   + Rest differential              0.0037   +0.0008      16.3%
-   + Altitude (DEN/UTA)             0.0049   +0.0011      22.9%
-   + Time zone diff                 0.0050   +0.0001       2.0%
-   + COVID flag                     0.0050   +0.0000       1.0%
-
-   Full model coefficients  (reference era = 1984–94):
-
-   Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
-   ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
-   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.3]    <0.001  ***
-   era: 2002–04                                    -0.167    -4.0  [ -6.4, -1.6]    <0.001  ***
-   era: 2005–17                                    -0.230    -5.5  [ -7.1, -3.9]    <0.001  ***
-   era: 2018–22                                    -0.318    -7.6  [-10.4, -4.9]    <0.001  ***
-   era: 2023–26                                    -0.375    -9.0  [-11.0, -7.0]    <0.001  ***
-   rest diff (per day)                             +0.062    +1.5  [ +1.1, +1.9]    <0.001  ***
-   altitude home (DEN/UTA)                         +0.326    +7.8  [ +4.5,+11.2]    <0.001  ***
-   time zone diff (per zone)                       -0.023    -0.6  [ -0.9, -0.2]     0.005   **
-   COVID seasons                                   -0.097    -2.3  [ -4.6, -0.1]     0.045    *
-
-   ► Era dummies imply a net decline of -9.0 pp from 1984–94 → 2023–26.
-
-   Shapley R² decomposition  (2⁵ = 32 logits, same N = 48,424 games):
-   Each block's average marginal R² over all 5! orderings.
-   Compare to sequential (order-dependent, era entered first).
-
-   Block                          Shapley   Sequential
-   ────────────────────────────  ────────  ───────────
-   Era (structural decline)         52.6%        57.9%
-   Rest differential                17.9%        16.3%
-   Altitude (DEN/UTA)               23.7%        22.9%
-   Time zone diff                    1.4%         2.0%
-   COVID flag                        4.5%         1.0%
-
-   ► Era Shapley share: 53%  (sequential: 58% — sequential inflated because era is entered first).
-   ► Rest + altitude + tz + COVID (Shapley): 47%.
-
-─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
-   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
-   Stable coefficients → those factors didn't drive the post-2014 change.
-
-   Predictor                              Pre-2014   Post-2014     Shift
-                                          log-odds    log-odds          
-   ───────────────────────────────────  ──────────  ──────────  ────────
-   rest diff (per day)                      +0.053      +0.081    +0.028
-   altitude home (DEN/UTA)                  +0.389      +0.209    -0.180
-   time zone diff (per zone)                -0.022      -0.024    -0.002
-   ───────────────────────────────────  ──────────  ──────────  ────────
-   Intercept (overall home adv. level)      +0.463      +0.267    -0.196
-
-   N pre-2014:  32,975 games  (home win %: 61.8%)
-   N post-2014: 15,449 games  (home win %: 56.6%)
-
-   ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
-   ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
-
-   Formal interaction test — pooled logit with post2014 × factor interactions:
-   H0: coefficients unchanged before and after 2014.
-
-   Interaction term                log-odds     ≈pp         p     
-   ──────────────────────────────  ────────  ──────  ────────  ───
-   rest_diff × post2014              +0.028    +0.7     0.142     
-   altitude_home × post2014          -0.180    -4.3     0.026    *
-   tz_diff × post2014                -0.002    -0.0     0.917     
-   ──────────────────────────────  ────────  ──────  ────────  ───
-   post2014 (level shift)            -0.196    -4.7    <0.001  ***
-
-─── CHANNEL EVENT STUDY — WHICH CHANGED FIRST AT 1994-95? ──────────────
-   ITS model per channel: diff ~ year + post95 + (year-1994)×post95
-   β_level = immediate shift at 1995; β_slope = change in per-year rate.
-   If hand-checking is the mechanism, FOUL diff should show the
-   strongest IMMEDIATE response; others should be smaller or delayed.
-
-   Regular season  (N = 43 seasons)
-
-   Channel              Pre slope/yr   Level shift   Slope chg/yr     Lev p     Slp p
-   ──────────────────  ─────────────  ────────────  ─────────────  ────────  ────────
-   Foul diff                  +0.002        +0.436         +0.011     0.007     0.636  **/
-   eFG% diff (pp)             +0.012        -0.200         -0.025     0.327     0.392  /
-   TOV diff                   +0.039        +0.170         -0.028     0.181     0.130  /
-   REB diff                   -0.051        +0.036         +0.007     0.845     0.795  /
-
-   Playoffs  (N = 42 seasons)
-
-   Channel              Pre slope/yr   Level shift   Slope chg/yr     Lev p     Slp p
-   ──────────────────  ─────────────  ────────────  ─────────────  ────────  ────────
-   Foul diff                  -0.073        +0.395         +0.097     0.315     0.092  /
-   eFG% diff (pp)             -0.031        +0.435         +0.013     0.524     0.898  /
-   TOV diff                   +0.020        +0.379         -0.026     0.376     0.674  /
-   REB diff                   +0.051        -0.937         -0.073     0.220     0.507  /
-
-   Note: foul_diff = PF_home − PF_away. Negative values mean away teams
-   get MORE fouls called (home court foul advantage). A positive level shift
-   means the home foul advantage SHRANK immediately (foul_diff moved toward 0).
-   The expected signature of the hand-checking rule change:
-   • Foul diff: significant POSITIVE level shift (home foul edge shrinks IMMEDIATELY)
-   • Other channels: no significant immediate shift (teams adapt over seasons)
-
-
-─── TEAM QUALITY ROBUSTNESS — ERA EFFECT WITH HOME/AWAY TEAM FIXED EFFECTS 
-   Does the era decline survive adding home- and away-team fixed effects?
-   Franchise indicators remove systematic differences in home win rates
-   across teams, so the era slope is not confounded by which franchises
-   happen to host more games in different periods.
-
-   Era coefficients (pp relative to 1984-94 baseline):
-
-   Era               Baseline    With team FE     Shift
-   ────────────  ────────────  ──────────────  ────────
-   1995–01            -5.0 pp         -4.6 pp   +0.4 pp
-   2002–04            -4.0 pp         -3.8 pp   +0.2 pp
-   2005–17            -5.5 pp         -5.4 pp   +0.2 pp
-   2018–22            -7.6 pp         -7.2 pp   +0.5 pp
-   2023–26            -9.0 pp         -8.6 pp   +0.4 pp
-
-   McFadden R²: baseline = 0.0050  →  with team FE = 0.0271  (Δ = +0.0220)
-   Max era coefficient shift across eras: 0.5 pp
-   ► Era coefficients are stable under team FE — the decline is
-     not explained by which franchises host games.
-
-
-─── REFEREE CREW HOME FOUL BIAS (PLAYOFFS) ─────────────────────────────
-   foul_diff = PF_home − PF_away  (negative = home team fouled less = home-favoring)
-   Officials with <50 playoff games excluded.
-   t-tests use per-game SDs (real test). BH = Benjamini-Hochberg FDR 5% correction.
-
-   47 officials with ≥50 playoff games
-   45/47 (96%) show negative mean foul diff (home-favoring)
-   Individually significant (p<0.05, real t-test):    29/47
-   Survive Benjamini-Hochberg correction (FDR 5%):    29/47
-   League mean foul_diff across officials: -1.098 fouls/game
-
-   Variance decomposition (career level, method of moments):
-   Observed SD across officials: 0.645 fouls/game
-   Mean within-official SE:      0.500 fouls/game
-   Estimated true between-SD:    0.407 fouls/game
-   ► Sampling noise explains 60% of observed spread.
-
-   Top 10 most home-favoring (by shrunken mean foul_diff):
-   Official                     N games  Raw diff  Shrunken         p      BH-p
-   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Ron Garretson                    143    -2.385    -1.734    <0.001    <0.001
-   Joe Crawford                     160    -2.288    -1.717    <0.001    <0.001
-   Eddie Rush                       100    -2.530    -1.664    <0.001    <0.001
-   Rodney Mott                       69    -2.232    -1.499    <0.001     0.001
-   James Capers                     199    -1.764    -1.478    <0.001    <0.001
-   Bob Delaney                       80    -2.175    -1.412    <0.001     0.004
-   Eric Lewis                        79    -1.759    -1.368    <0.001     0.003
-   Sean Wright                      108    -1.639    -1.344    <0.001     0.002
-   David Jones                       51    -1.843    -1.274     0.015     0.026
-   Bill Spooner                     111    -1.495    -1.258     0.003     0.009
-
-   Bottom 10 least home-favoring (by shrunken mean foul_diff):
-   Official                     N games  Raw diff  Shrunken         p      BH-p
-   ────────────────────────── ───────── ───────── ───────── ───────── ─────────
-   Tyler Ford                        61    -0.344    -0.889     0.602     0.629
-   Jason Phillips                    96    -0.615    -0.865     0.148     0.205
-   Kevin Scott                       57    -0.351    -0.836     0.529     0.579
-   Courtney Kirkland                 85    -0.353    -0.817     0.501     0.575
-   Mark Lindsay                      54    -0.111    -0.799     0.858     0.858
-   David Guthrie                    113    -0.398    -0.775     0.367     0.442
-   Tony Brothers                    213    -0.559    -0.773     0.092     0.143
-   Josh Tiven                       103    -0.252    -0.731     0.588     0.629
-   Ben Taylor                        53    +0.151    -0.715     0.806     0.824
-   Joe Forte                         51    +0.451    -0.713     0.527     0.579
-
-   Era variance decomposition — does official spread compress over time?
-   Era            N off     Mean    Raw SD   True SD   Noise %
-   ──────────── ─────── ──────── ───────── ───────── ─────────
-   1995–01           14   -2.239     2.076     0.000      100%
-   2002–04           27   -0.781     1.813     0.722       84%
-   2005–17           43   -1.232     0.975     0.477       76%
-   2018–22           33   -0.737     1.056     0.469       80%
-   2023–26           25   -0.753     0.702     0.000      100%
-
-
-─── SHOT ZONE DIFFERENTIALS BY ERA  (home minus road % of FGA) ─────────
-   Positive = home team takes a higher share of FGA from that zone.
-   Trend = slope of trend line (change per season year). Data from 1996–97 onward.
-
-   Regular season  (N = 30 seasons)
-
-   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
-   ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.28             -1.24             +0.16             -0.20
-   2002–04                  +1.18             -1.24             +0.29             -0.23
-   2005–17                  +1.26             -1.19             +0.12             -0.19
-   2018–22                  +0.55             -0.77             +0.18             +0.04
-   2023–26                  +0.24             -0.72             +0.21             +0.26
-   ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.041***         +0.025***         +0.000            +0.015 **
-
-   Playoffs  (N = 23 seasons)
-
-   Era          Paint (RA+Non-RA)         Mid-Range          Corner 3     Above Break 3
-   ────────────────────────────────────────────────────────────────────────────────────
-   1995–01                  +1.71             -1.67             +0.46             -0.50
-   2002–04                  +1.98             -2.32             +0.35             -0.01
-   2005–17                  +1.79             -1.47             +0.06             -0.38
-   2018–22                  +0.72             -1.62             +0.48             +0.42
-   2023–26                  +1.35             -1.11             +0.10             -0.34
-   ────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr             -0.032            +0.019            -0.008            +0.021   
-
 
 ─── LEAGUE-WIDE 3-POINT SHOOTING AND HOME COURT ADVANTAGE ──────────────
    Does more 3-point shooting reduce home court advantage?
@@ -806,6 +509,73 @@ All data from cache/ — same source as the plots above.
       2     0.299       0.743             no Granger effect  
 
 
+─── REBOUNDING DECOMPOSITION — WHY THE HOME EDGE FADED  (home minus away) 
+   OREB/DREB diff = home minus away offensive/defensive rebounds per game.
+   Share edge = home share of available offensive boards minus away share
+   (percentage points) — a pace- and volume-free measure of the edge.
+   Trend = slope of trend line (change per season year).
+
+   Regular season  (N = 49,107 games)
+
+   Era                OREB diff       DREB diff        REB diff Share edge (pp)
+   ────────────────────────────────────────────────────────────────────────────
+   1984–94                +0.61           +1.64           +2.24           +2.14
+   1995–01                +0.62           +1.18           +1.79           +1.83
+   2002–04                +0.43           +1.31           +1.74           +1.59
+   2005–17                +0.33           +0.97           +1.29           +1.15
+   2018–22                +0.20           +0.85           +1.05           +0.79
+   2023–26                -0.05           +0.59           +0.54           +0.21
+   ────────────────────────────────────────────────────────────────────────────
+   Trend/yr           -0.018***       -0.027***       -0.044***       -0.052***
+
+   Playoffs  (N = 3,292 games)
+
+   Era                OREB diff       DREB diff        REB diff Share edge (pp)
+   ────────────────────────────────────────────────────────────────────────────
+   1984–94                +0.89           +1.72           +2.61           +2.74
+   1995–01                +0.66           +1.18           +1.84           +1.79
+   2002–04                -0.15           +0.87           +0.72           +0.32
+   2005–17                +0.55           +1.22           +1.77           +1.71
+   2018–22                +0.50           +0.85           +1.34           +1.24
+   2023–26                +0.05           +1.09           +1.14           +0.70
+   ────────────────────────────────────────────────────────────────────────────
+   Trend/yr           -0.015          -0.023  *       -0.037 **       -0.046 **
+
+   Does the home edge track the league's retreat from the offensive glass?
+   Season-level Pearson r (share edge vs league OREB rate) = +0.824  (p = <0.001  ***,  N = 43 seasons)
+   League OREB rate: 32.9% → 25.9%   |   Home share edge: +2.74pp → -0.34pp
+   ► The home rebounding edge fades in lockstep with the league-wide
+     decline in offensive rebounding — the effort-driven offensive boards
+     where a home edge could form have largely disappeared.
+
+   ─ Cointegration check: is the OREB-HCA correlation genuine or spurious? ─
+   ADF unit-root tests  (H0: unit root; p ≥ 0.05 → I(1) / nonstationary):
+   League OREB rate                    ADF = -1.275  p = 0.641  → I(1) nonstationary
+   Home rebound share edge             ADF = -0.133  p = 0.946  → I(1) nonstationary
+
+   Engle-Granger cointegration  (H0: no long-run relationship):
+   t = -2.791  p = 0.168  
+   ► Both I(1) but NOT cointegrated — r = +0.824 is likely
+     spurious; within-era game-level controls are the reliable evidence.
+
+
+─── PLAYER-TRACKING REBOUNDING MECHANISM  (home minus road, tracking era) 
+   Confirms how the home rebounding edge expresses itself in the tracking
+   data: offensive-rebound conversion, box-outs, and second-chance points.
+   Window is short (~2014 on; box-outs ~2016 on) — corroborates the modern
+   mechanism, not the 40-year decline.
+
+   Metric                          N seasons      Mean    Trend/yr        p
+   ────────────────────────────────────────────────────────────────────────
+   OREB conversion edge (pp)              13    +0.709   -0.086  *    0.024
+   Box-out edge (per game)                11    -0.000   -0.005       0.775
+   2nd-chance pts edge (per game)         13    +0.289   -0.016       0.304
+
+   ► The home edge is small and flat-to-declining across the tracking era —
+     consistent with the offensive-glass advantage having largely collapsed
+     before high-resolution tracking even began.
+
+
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
    Home win % by rule-change era; pairwise tests between consecutive eras.
    Trend-controlled model: home_win ~ year + C(era).
@@ -885,6 +655,37 @@ All data from cache/ — same source as the plots above.
      as a continuous drift without discrete era-level jumps.
 
 
+─── ITS (INTERRUPTED TIME SERIES) — 1994-95 BOUNDARY ───────────────────
+   Model: home_pct ~ year + post95 + time_since_break  (season-level WLS)
+   post95      = 1 for seasons from 1994-95 onward (immediate level shift)
+   time_since  = (year − 1994) × post95           (slope change post-break)
+   Weights: game counts per season.
+
+   Regular season  (N = 43 seasons)  R² = 0.779
+   Parameter                   Coef        p   Sig
+   ──────────────────────  ────────  ───────  ────
+   Pre-break trend/yr        -0.522    0.004    **
+   Level shift (1994-95)     -0.622    0.597      
+   Slope change/yr           +0.341    0.060      
+
+   Implied slopes: pre-break = -0.522 pp/yr, post-break = -0.181 pp/yr
+   ► Borderline slope change (p=0.060): rate of HCA decline appears
+     to slow after 1994-95 (-0.52 → -0.18 pp/yr),
+     but no discrete immediate jump (level p=0.597). Consistent with
+     the QLR break at 1999 — change accumulated gradually over seasons.
+
+   Playoffs  (N = 42 seasons)  R² = 0.225
+   Parameter                   Coef        p   Sig
+   ──────────────────────  ────────  ───────  ────
+   Pre-break trend/yr        +0.249    0.651      
+   Level shift (1994-95)     -2.308    0.551      
+   Slope change/yr           -0.485    0.390      
+
+   Implied slopes: pre-break = +0.249 pp/yr, post-break = -0.235 pp/yr
+   ► Neither level nor slope significant at 1994-95.
+     Overall HCA trend drove this context — 1994-95 not a sharp break.
+
+
 ─── PLACEBO TESTS — IS 1994-95 UNIQUELY SIGNIFICANT? ───────────────────
    For each year t in 1987–2010: OLS on season home win%,
    model pct ~ year + step_t  (step_t = 1 if season >= t).
@@ -962,6 +763,38 @@ All data from cache/ — same source as the plots above.
    Significant positive steps (p<0.05): years 2004–2006
    ► Positive dummies after ~2004 reflect the slope moderation
      (§1b QLR): post-1999 HCA is 'too high' vs. the pre-1999 trend.
+
+
+─── CHANNEL EVENT STUDY — WHICH CHANGED FIRST AT 1994-95? ──────────────
+   ITS model per channel: diff ~ year + post95 + (year-1994)×post95
+   β_level = immediate shift at 1995; β_slope = change in per-year rate.
+   If hand-checking is the mechanism, FOUL diff should show the
+   strongest IMMEDIATE response; others should be smaller or delayed.
+
+   Regular season  (N = 43 seasons)
+
+   Channel              Pre slope/yr   Level shift   Slope chg/yr     Lev p     Slp p
+   ──────────────────  ─────────────  ────────────  ─────────────  ────────  ────────
+   Foul diff                  +0.002        +0.436         +0.011     0.007     0.636  **/
+   eFG% diff (pp)             +0.012        -0.200         -0.025     0.327     0.392  /
+   TOV diff                   +0.039        +0.170         -0.028     0.181     0.130  /
+   REB diff                   -0.051        +0.036         +0.007     0.845     0.795  /
+
+   Playoffs  (N = 42 seasons)
+
+   Channel              Pre slope/yr   Level shift   Slope chg/yr     Lev p     Slp p
+   ──────────────────  ─────────────  ────────────  ─────────────  ────────  ────────
+   Foul diff                  -0.073        +0.395         +0.097     0.315     0.092  /
+   eFG% diff (pp)             -0.031        +0.435         +0.013     0.524     0.898  /
+   TOV diff                   +0.020        +0.379         -0.026     0.376     0.674  /
+   REB diff                   +0.051        -0.937         -0.073     0.220     0.507  /
+
+   Note: foul_diff = PF_home − PF_away. Negative values mean away teams
+   get MORE fouls called (home court foul advantage). A positive level shift
+   means the home foul advantage SHRANK immediately (foul_diff moved toward 0).
+   The expected signature of the hand-checking rule change:
+   • Foul diff: significant POSITIVE level shift (home foul edge shrinks IMMEDIATELY)
+   • Other channels: no significant immediate shift (teams adapt over seasons)
 
 
 ─── TRAVEL DISTANCE — HOME WIN % BY AWAY TEAM FLIGHT MILES ─────────────
@@ -1161,6 +994,82 @@ All data from cache/ — same source as the plots above.
 
    ► No significant within-season attendance effect detected.
 
+─── WHAT EXPLAINS THE REGULAR-SEASON DECLINE?  (N = 48,424 games) ──────
+   Outcome: home_win. Baseline home win %: 60.1%.
+   McFadden R² is analogous to a linear-regression R² but typical values are much smaller;
+   the ΔR² column shows how much each block adds over the previous model.
+   '≈pp' = approximate marginal effect in percentage points (at mean p).
+   p-values and CIs use cluster-robust SEs (clusters = season-year).
+
+   Model                                R²       ΔR²   % of fit
+   ──────────────────────────────  ───────  ────────  ─────────
+   Era only                         0.0029   +0.0029      57.9%
+   + Rest differential              0.0037   +0.0008      16.3%
+   + Altitude (DEN/UTA)             0.0049   +0.0011      22.9%
+   + Time zone diff                 0.0050   +0.0001       2.0%
+   + COVID flag                     0.0050   +0.0000       1.0%
+
+   Full model coefficients  (reference era = 1984–94):
+
+   Predictor                                     log-odds     ≈pp     95% CI (pp)         p     
+   ────────────────────────────────────────────  ────────  ──────  ──────────────  ────────  ───
+   era: 1995–01                                    -0.209    -5.0  [ -6.8, -3.3]    <0.001  ***
+   era: 2002–04                                    -0.167    -4.0  [ -6.4, -1.6]    <0.001  ***
+   era: 2005–17                                    -0.230    -5.5  [ -7.1, -3.9]    <0.001  ***
+   era: 2018–22                                    -0.318    -7.6  [-10.4, -4.9]    <0.001  ***
+   era: 2023–26                                    -0.375    -9.0  [-11.0, -7.0]    <0.001  ***
+   rest diff (per day)                             +0.062    +1.5  [ +1.1, +1.9]    <0.001  ***
+   altitude home (DEN/UTA)                         +0.326    +7.8  [ +4.5,+11.2]    <0.001  ***
+   time zone diff (per zone)                       -0.023    -0.6  [ -0.9, -0.2]     0.005   **
+   COVID seasons                                   -0.097    -2.3  [ -4.6, -0.1]     0.045    *
+
+   ► Era dummies imply a net decline of -9.0 pp from 1984–94 → 2023–26.
+
+   Shapley R² decomposition  (2⁵ = 32 logits, same N = 48,424 games):
+   Each block's average marginal R² over all 5! orderings.
+   Compare to sequential (order-dependent, era entered first).
+
+   Block                          Shapley   Sequential
+   ────────────────────────────  ────────  ───────────
+   Era (structural decline)         52.6%        57.9%
+   Rest differential                17.9%        16.3%
+   Altitude (DEN/UTA)               23.7%        22.9%
+   Time zone diff                    1.4%         2.0%
+   COVID flag                        4.5%         1.0%
+
+   ► Era Shapley share: 53%  (sequential: 58% — sequential inflated because era is entered first).
+   ► Rest + altitude + tz + COVID (Shapley): 47%.
+
+─── PRE/POST-2014 COEFFICIENT STABILITY  (regular season only) ─────────
+   Do rest, altitude, and time zone effects change after the 2014 Finals format shift?
+   Stable coefficients → those factors didn't drive the post-2014 change.
+
+   Predictor                              Pre-2014   Post-2014     Shift
+                                          log-odds    log-odds          
+   ───────────────────────────────────  ──────────  ──────────  ────────
+   rest diff (per day)                      +0.053      +0.081    +0.028
+   altitude home (DEN/UTA)                  +0.389      +0.209    -0.180
+   time zone diff (per zone)                -0.022      -0.024    -0.002
+   ───────────────────────────────────  ──────────  ──────────  ────────
+   Intercept (overall home adv. level)      +0.463      +0.267    -0.196
+
+   N pre-2014:  32,975 games  (home win %: 61.8%)
+   N post-2014: 15,449 games  (home win %: 56.6%)
+
+   ► The intercept dropped by 4.7 pp after 2014, confirming the overall decline.
+   ► Rest, altitude, and tz coefficients show some change — those factors' effects on winning are largely stable.
+
+   Formal interaction test — pooled logit with post2014 × factor interactions:
+   H0: coefficients unchanged before and after 2014.
+
+   Interaction term                log-odds     ≈pp         p     
+   ──────────────────────────────  ────────  ──────  ────────  ───
+   rest_diff × post2014              +0.028    +0.7     0.142     
+   altitude_home × post2014          -0.180    -4.3     0.026    *
+   tz_diff × post2014                -0.002    -0.0     0.917     
+   ──────────────────────────────  ────────  ──────  ────────  ───
+   post2014 (level shift)            -0.196    -4.7    <0.001  ***
+
 ─── PLAYOFF SERIES STRUCTURE — HOME WIN % BY GAME NUMBER ───────────────
    Does home court advantage vary by game number within a series (G1–G7)?
    G1/G2 at higher seed, G3/G4 at lower seed, then alternates (2-2-1-1-1 format).
@@ -1222,6 +1131,28 @@ All data from cache/ — same source as the plots above.
 
    ► Quality control barely moves the year coefficient (102% retained) —
      the playoff decline is primarily genuine home-court weakening, not seed compression.
+
+─── TEAM QUALITY ROBUSTNESS — ERA EFFECT WITH HOME/AWAY TEAM FIXED EFFECTS 
+   Does the era decline survive adding home- and away-team fixed effects?
+   Franchise indicators remove systematic differences in home win rates
+   across teams, so the era slope is not confounded by which franchises
+   happen to host more games in different periods.
+
+   Era coefficients (pp relative to 1984-94 baseline):
+
+   Era               Baseline    With team FE     Shift
+   ────────────  ────────────  ──────────────  ────────
+   1995–01            -5.0 pp         -4.6 pp   +0.4 pp
+   2002–04            -4.0 pp         -3.8 pp   +0.2 pp
+   2005–17            -5.5 pp         -5.4 pp   +0.2 pp
+   2018–22            -7.6 pp         -7.2 pp   +0.5 pp
+   2023–26            -9.0 pp         -8.6 pp   +0.4 pp
+
+   McFadden R²: baseline = 0.0050  →  with team FE = 0.0271  (Δ = +0.0220)
+   Max era coefficient shift across eras: 0.5 pp
+   ► Era coefficients are stable under team FE — the decline is
+     not explained by which franchises host games.
+
 
 ─── PLAYOFF FORMAT PERIODS — DID THE SCHEDULING CHANGES MATTER? ────────
    Playoff home win % by format period (1985, 2003, 2014 changes).
@@ -1379,6 +1310,76 @@ All data from cache/ — same source as the plots above.
      franchises that protect home court in the regular season tend to do so
      in the playoffs too, though playoff sample sizes are too small for
      franchise-level shrinkage to improve on raw estimates.
+
+─── WIN MARGIN TRENDS  (home team point differential per game) ─────────
+   Positive = home team winning by more.
+   Trend = slope of trend line (change per season year).
+
+   Regular season  (N = 35,536 games)
+
+   Era             All games    Home wins  Home losses
+   ───────────────────────────────────────────────────
+   1984–94                 —            —            —
+   1995–01             +3.05       +11.60        -9.71
+   2002–04             +3.62       +11.66        -9.00
+   2005–17             +3.00       +11.70        -9.78
+   2018–22             +1.95       +12.16       -11.20
+   2023–26             +2.02       +13.01       -11.73
+   ───────────────────────────────────────────────────
+   Trend/yr        -0.057***    +0.048***    -0.095***
+
+   Playoffs  (N = 2,357 games)
+
+   Era             All games    Home wins  Home losses
+   ───────────────────────────────────────────────────
+   1984–94                 —            —            —
+   1995–01             +3.87       +10.92        -9.42
+   2002–04             +4.43       +11.38        -8.10
+   2005–17             +4.48       +12.43        -9.85
+   2018–22             +4.30       +13.90       -10.55
+   2023–26             +3.87       +14.86       -11.06
+   ───────────────────────────────────────────────────
+   Trend/yr        -0.017       +0.149***    -0.101 **
+
+   ► Overall reg-season mean margin: +2.76 pts.
+   ► Overall playoff mean margin:    +4.27 pts.
+
+─── WIN MARGIN POLARIZATION — UNCONDITIONAL QUANTILE REGRESSION  (checks blowout claim in other findings) 
+   home margin ~ year at q = 0.10, 0.25, 0.50, 0.75, 0.90.
+   Margin > 0 = home winning. Q10 = big home losses; Q90 = big home wins.
+   All quantiles parallel → pure level effect (conditional divergence is artifact).
+   Q10↓ with Q90↑ → genuine polarization.
+
+   Regular season  (N = 35,536 games, 1997–2026)
+
+   Quantile   Slope pts/yr                95% CI         p     
+   ────────  ─────────────  ────────────────────  ────────  ───
+        Q10         -0.167  [-0.197, -0.137]    <0.001  ***
+        Q25         -0.099  [-0.118, -0.080]    <0.001  ***
+        Q50         -0.053  [-0.072, -0.033]    <0.001  ***
+        Q75         +0.000  [-0.019, +0.019]     1.000     
+        Q90         +0.050  [+0.020, +0.080]     0.001   **
+
+   IQR change rate (Q90 − Q10 slope diff): +0.217 pts/yr
+   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
+     The conditional-on-outcome divergence in §6 reflects a real change in
+     distribution shape, not just a composition effect.
+
+   Playoffs  (N = 2,357 games, 1997–2026)
+
+   Quantile   Slope pts/yr                95% CI         p     
+   ────────  ─────────────  ────────────────────  ────────  ───
+        Q10         -0.104  [-0.213, +0.005]     0.062     
+        Q25         -0.110  [-0.193, -0.028]     0.009   **
+        Q50         -0.000  [-0.080, +0.080]     1.000     
+        Q75         +0.091  [+0.014, +0.168]     0.020    *
+        Q90         +0.222  [+0.113, +0.331]    <0.001  ***
+
+   IQR change rate (Q90 − Q10 slope diff): +0.326 pts/yr
+   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).
+     The conditional-on-outcome divergence in §6 reflects a real change in
+     distribution shape, not just a composition effect.
+
 
 ─── MULTIPLE COMPARISONS — BH FDR CORRECTION ACROSS PRIMARY TESTS ──────
    BH correction at q = 0.05; threshold for rank i (ascending p): (i/m) × 0.05.

@@ -3709,33 +3709,16 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         results: dict = {}
 
-        # §1 The 40-Year Decline (magnitude, shape/timing, blowout polarization)
+        # Section order mirrors how home_court_FINDINGS.md uses the data
+        # (first appearance, top-to-bottom).
+
+        # §1 The 40-Year Decline (magnitude, then shape/timing of the drop)
         run_decline_trend(df)
         run_structural_break_test(df, results)
         run_cusum_test(df, results)
-        run_its_test(df)
-        run_margin_analysis(df)
-        run_quantile_margin_analysis(df)
 
         # §2 What Creates Home Court Advantage
         run_differential_analysis(df)
-        run_mediation_analysis(df)
-        run_rebounding_decomposition(df)
-        track_seasons, track_stats = nba.compute_tracking_rebound_stats(
-            nba.TRACKING_START_YEAR, nba.END_YEAR,
-        )
-        if any(np.isfinite(v) for lst in track_stats.values() for v in lst):
-            run_tracking_rebound_analysis(track_seasons, track_stats)
-        else:
-            print("   No cached player-tracking data — run the analysis first to fetch it.\n")
-        run_rest_bucket_analysis(df)
-        run_factor_summary(df)
-
-        # §3 What's Driving the Decline
-        run_sequential_decomposition(df)
-        run_stability_analysis(df)
-        run_channel_event_study(df)
-        run_team_quality_robustness(df)
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",
             skip_years=nba.SKIP_PLAYOFF_YEARS,
@@ -3752,22 +3735,43 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         else:
             print("   No cached referee data — run the analysis first to fetch it.\n")
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
+        run_mediation_analysis(df)
+        run_rest_bucket_analysis(df)
+        run_factor_summary(df)
+
+        # §3 What's Driving the Decline
         run_3pa_analysis(df)
         _run_granger_3pa(df)
+        run_rebounding_decomposition(df)
+        track_seasons, track_stats = nba.compute_tracking_rebound_stats(
+            nba.TRACKING_START_YEAR, nba.END_YEAR,
+        )
+        if any(np.isfinite(v) for lst in track_stats.values() for v in lst):
+            run_tracking_rebound_analysis(track_seasons, track_stats)
+        else:
+            print("   No cached player-tracking data — run the analysis first to fetch it.\n")
 
-        # §4 What Didn't Drive the Change (rule changes lead, then travel/pace/parity)
+        # §4 What Didn't Drive the Change (rule changes lead, then the situational
+        # suspects, then the combined "put it all together" models)
         run_era_analysis(df)
+        run_its_test(df)
         run_placebo_tests(df)
+        run_channel_event_study(df)
         run_travel_analysis(df)
         run_back_to_back_analysis(df)
         run_pace_analysis(df)
         run_parity_correlation(parity_seasons, parity_std, reg_seasons_sorted, reg_pcts_sorted)
         run_attendance_analysis(att_seasons, att_avg, reg_seasons_sorted, reg_pcts_sorted, dose_df)
+        run_sequential_decomposition(df)
+        run_stability_analysis(df)
 
         # §5 The Playoff Picture
         run_series_breakdown(df)
         run_playoff_quality_decomposition(df)
+        run_team_quality_robustness(df)
         run_format_period_analysis(df)
+
+        # §6 Other Findings
         reg_hca_stats = nba.compute_team_hca_stats(
             nba.START_YEAR, nba.END_YEAR, "Regular Season", min_games=50,
         )
@@ -3777,6 +3781,10 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         )
         run_team_hca_analysis(reg_hca_stats, po_hca_stats)
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
+        run_margin_analysis(df)
+        run_quantile_margin_analysis(df)
+
+        # Cross-test multiple-comparisons summary (spans every test above)
         run_multiple_comparisons_summary(df)
 
         print("\n" + "═" * _W + "\n")
