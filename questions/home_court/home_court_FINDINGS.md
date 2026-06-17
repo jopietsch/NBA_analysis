@@ -235,12 +235,14 @@ The playoffs have followed the regular season's path but with nearly a two-decad
 :::
 
 ::: {.content-visible when-format="typst"}
-| Document | Description |
-|---|---|
-| [Regression Results](nba_home_court_results.pdf) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
-| [One-Page Summary](home_court_SUMMARY.pdf) | Standalone summary built around the three core charts and the three questions. |
-| [Stats Explainer](home_court_STATS_EXPLAINER.pdf) | Guide to the statistical methods used, written for a general audience. |
-| [Stats Tutorial](../../generated/STATS_TUTORIAL.pdf) | Worked examples reproducing key results from the regression output. |
+All files are in the same folder as this PDF (`generated/`), except the Stats Tutorial which is one level up in `../generated/`.
+
+| Document | File | Description |
+|---|---|---|
+| Regression Results | `nba_home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values for every analysis in this report. |
+| One-Page Summary | `home_court_SUMMARY.pdf` | Standalone summary built around the three core charts and the three questions. |
+| Stats Explainer | `home_court_STATS_EXPLAINER.pdf` | Guide to the statistical methods used, written for a general audience. |
+| Stats Tutorial | `../generated/STATS_TUTORIAL.pdf` | Worked examples reproducing key results from the regression output. |
 :::
 
 ---
