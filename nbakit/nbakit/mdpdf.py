@@ -1,336 +1,32 @@
 """
-nbakit.mdpdf — render a standalone Markdown document to a styled PDF.
-
-Understands fenced code blocks, #/##/### headings, ordered and bulleted lists,
-blockquotes, tables, and embedded images. Output defaults to generated/<stem>.pdf.
+nbakit.mdpdf — render a Markdown document to PDF and HTML via Quarto/Typst.
 
     from nbakit.mdpdf import build
     build("STATS_TUTORIAL.md")
     build("STATS_EXPLAINER.md", appendix_path="RESULTS.md")
 
-Pass appendix_path to reproduce a RESULTS-style file (``` fenced regression
-output) verbatim at the back of the PDF. The appendix source is read at build
-time so the tables stay in sync with the auto-generated original.
+Pass appendix_path to append a verbatim RESULTS.md appendix (fenced code
+blocks stripped, ─── section titles become headings).
 
 Can also be run as a script:
     python3 -m nbakit.mdpdf STATS_TUTORIAL.md
     python3 -m nbakit.mdpdf STATS_EXPLAINER.md [output.pdf] [--appendix RESULTS.md]
+
+Outputs both <stem>.pdf and <stem>.html to generated/ next to the source file
+(or to the directory of the explicit output_path).
 """
 
 import os
 import re
+import subprocess
 import sys
-from datetime import datetime
+import tempfile
 
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import inch
-from reportlab.platypus import (
-    HRFlowable,
-    Image,
-    KeepTogether,
-    PageBreak,
-    Paragraph,
-    Preformatted,
-    SimpleDocTemplate,
-    Spacer,
-    Table,
-    TableStyle,
-)
-
-PAGE_W, PAGE_H = letter
-MARGIN    = 0.85 * inch
-CONTENT_W = PAGE_W - 2 * MARGIN
-
-DARK   = "#2c2c2a"
-MID    = "#666666"
-BLUE   = "#1f77b4"
-ACCENT = BLUE
+_NBA_YML = os.path.join(os.path.dirname(__file__), "..", "quarto", "_nba.yml")
+_NBA_YML = os.path.abspath(_NBA_YML)
 
 
-# ── Monospace font ─────────────────────────────────────────────────────────────
-# Courier (a built-in PDF font) lacks math/box-drawing glyphs (√, ─│┤, Σ, ≈)
-# used in teaching-doc code fences. DejaVu Sans Mono ships with matplotlib and
-# covers them all; fall back to Courier if matplotlib isn't installed.
-
-def _register_mono() -> str:
-    try:
-        import matplotlib
-        from reportlab.pdfbase import pdfmetrics
-        from reportlab.pdfbase.ttfonts import TTFont
-        ttf = os.path.join(os.path.dirname(matplotlib.__file__),
-                           "mpl-data", "fonts", "ttf", "DejaVuSansMono.ttf")
-        if os.path.exists(ttf):
-            pdfmetrics.registerFont(TTFont("DejaVuSansMono", ttf))
-            return "DejaVuSansMono"
-    except Exception:
-        pass
-    return "Courier"
-
-
-MONO = _register_mono()
-
-
-# ── Styles ─────────────────────────────────────────────────────────────────────
-
-def _build_styles() -> dict:
-    base = getSampleStyleSheet()
-    return {
-        "cover_title": ParagraphStyle(
-            "cover_title", parent=base["Title"],
-            fontSize=26, textColor=colors.HexColor(DARK),
-            spaceAfter=10, alignment=TA_CENTER, leading=32,
-        ),
-        "cover_sub": ParagraphStyle(
-            "cover_sub", parent=base["Normal"],
-            fontSize=12, textColor=colors.HexColor(MID),
-            spaceAfter=5, alignment=TA_CENTER, leading=16,
-        ),
-        "h1": ParagraphStyle(
-            "h1", parent=base["Heading1"],
-            fontSize=18, textColor=colors.HexColor(DARK),
-            spaceBefore=18, spaceAfter=8,
-        ),
-        "h2": ParagraphStyle(
-            "h2", parent=base["Heading2"],
-            fontSize=13, textColor=colors.HexColor(ACCENT),
-            spaceBefore=12, spaceAfter=5,
-        ),
-        "h3": ParagraphStyle(
-            "h3", parent=base["Heading3"],
-            fontSize=11, textColor=colors.HexColor(DARK),
-            fontName="Helvetica-Bold", spaceBefore=8, spaceAfter=3,
-        ),
-        "body": ParagraphStyle(
-            "body", parent=base["Normal"],
-            fontSize=10, leading=15, textColor=colors.HexColor(DARK),
-            alignment=TA_JUSTIFY, spaceAfter=7,
-        ),
-        "list": ParagraphStyle(
-            "list", parent=base["Normal"],
-            fontSize=10, leading=15, textColor=colors.HexColor(DARK),
-            leftIndent=16, spaceAfter=3,
-        ),
-        "quote": ParagraphStyle(
-            "quote", parent=base["Normal"],
-            fontSize=10, leading=15, textColor=colors.HexColor(MID),
-            leftIndent=14, fontName="Helvetica-Oblique", spaceAfter=7,
-        ),
-        "caption": ParagraphStyle(
-            "caption", parent=base["Normal"],
-            fontSize=8.5, leading=12, textColor=colors.HexColor(MID),
-            alignment=TA_CENTER, spaceAfter=14,
-        ),
-        "code": ParagraphStyle(
-            "code", parent=base["Code"],
-            fontSize=8, leading=10.5, textColor=colors.HexColor(DARK),
-            fontName=MONO, spaceAfter=0,
-        ),
-        "table_header": ParagraphStyle(
-            "table_header", parent=base["Normal"],
-            fontSize=9, leading=12, textColor=colors.white,
-            fontName="Helvetica-Bold",
-        ),
-        "table_body": ParagraphStyle(
-            "table_body", parent=base["Normal"],
-            fontSize=9, leading=12, textColor=colors.HexColor(DARK),
-        ),
-    }
-
-
-_STYLES = _build_styles()
-
-
-# ── Inline helpers ─────────────────────────────────────────────────────────────
-
-def _esc(text: str) -> str:
-    return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-
-
-def _md_inline(text: str) -> str:
-    """Escape then convert inline markdown (bold/italic/code/links) to reportlab markup.
-
-    Code spans are stashed before bold/italic processing so literal ``*`` inside
-    backticks can't be mistaken for bold/italic markers."""
-    text = _esc(text)
-    spans: list[str] = []
-
-    def _stash(m):
-        spans.append(m.group(1))
-        return f"\x00{len(spans) - 1}\x00"
-
-    text = re.sub(r"`([^`]+)`", _stash, text)
-    text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
-    text = re.sub(r"(?<!\*)\*([^*\n]+?)\*(?!\*)", r"<i>\1</i>", text)
-    text = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", text)   # [text](url) → text
-    text = re.sub(r"\x00(\d+)\x00",
-                  lambda m: f'<font name="{MONO}">{spans[int(m.group(1))]}</font>',
-                  text)
-    return text
-
-
-def _img(path, width=None, max_height=None):
-    if not os.path.exists(path):
-        return Paragraph(f"[Missing image: {_esc(path)}]", _STYLES["caption"])
-    if width is None:
-        width = CONTENT_W
-    ri = Image(path)
-    aspect = ri.imageHeight / ri.imageWidth
-    ri.drawWidth, ri.drawHeight = width, width * aspect
-    if max_height and ri.drawHeight > max_height:
-        ri.drawHeight, ri.drawWidth = max_height, max_height / aspect
-    ri.hAlign = "CENTER"
-    return ri
-
-
-def _table(rows):
-    n_cols = max(len(r) for r in rows)
-    col_w = CONTENT_W / n_cols
-    style = [
-        ("BACKGROUND",     (0, 0), (-1, 0), colors.HexColor(ACCENT)),
-        ("FONTSIZE",       (0, 0), (-1, -1), 9),
-        ("ROWBACKGROUNDS", (0, 1), (-1, -1),
-         [colors.HexColor("#f7f7f5"), colors.white]),
-        ("GRID",           (0, 0), (-1, -1), 0.5, colors.HexColor("#dddddd")),
-        ("VALIGN",         (0, 0), (-1, -1), "MIDDLE"),
-        ("TOPPADDING",     (0, 0), (-1, -1), 5),
-        ("BOTTOMPADDING",  (0, 0), (-1, -1), 5),
-        ("LEFTPADDING",    (0, 0), (-1, -1), 6),
-        ("RIGHTPADDING",   (0, 0), (-1, -1), 6),
-    ]
-    return Table(rows, colWidths=[col_w] * n_cols, style=TableStyle(style))
-
-
-# ── Markdown → flowables ───────────────────────────────────────────────────────
-
-def _flush_para(buf, out):
-    if buf:
-        joined = " ".join(line.strip() for line in buf)
-        out.append(Paragraph(_md_inline(joined), _STYLES["body"]))
-        buf.clear()
-
-
-def _emit_table(lines, out):
-    rows = []
-    for i, line in enumerate(lines):
-        line = line.strip()
-        if re.match(r"^\|[\s\-:|]+\|$", line):
-            continue
-        style = _STYLES["table_header"] if i == 0 else _STYLES["table_body"]
-        cells = [Paragraph(_md_inline(c.strip()), style)
-                 for c in line.split("|")[1:-1]]
-        rows.append(cells)
-    if rows:
-        out.append(Spacer(1, 0.08 * inch))
-        out.append(_table(rows))
-        out.append(Spacer(1, 0.04 * inch))
-
-
-def md_to_flowables(md: str) -> list:
-    """Convert a full Markdown document body to a list of reportlab flowables."""
-    out: list = []
-    para: list[str] = []
-    lines = md.split("\n")
-    i, n = 0, len(lines)
-
-    while i < n:
-        line = lines[i]
-        stripped = line.strip()
-
-        if stripped.startswith("```"):
-            _flush_para(para, out)
-            code: list[str] = []
-            i += 1
-            while i < n and not lines[i].strip().startswith("```"):
-                code.append(lines[i])
-                i += 1
-            i += 1
-            block = "\n".join(code) if code else " "
-            out.append(Spacer(1, 0.04 * inch))
-            out.append(Preformatted(_esc(block), _STYLES["code"]))
-            out.append(Spacer(1, 0.06 * inch))
-            continue
-
-        if not stripped:
-            _flush_para(para, out)
-            i += 1
-            continue
-
-        m = re.match(r"^(#{1,4})\s+(.*)$", stripped)
-        if m:
-            _flush_para(para, out)
-            level = len(m.group(1))
-            style = {1: "h1", 2: "h2", 3: "h3", 4: "h3"}[level]
-            if level == 1 and out:
-                out.append(PageBreak())
-            out.append(Paragraph(_md_inline(m.group(2)), _STYLES[style]))
-            i += 1
-            continue
-
-        if re.match(r"^-{3,}$", stripped):
-            _flush_para(para, out)
-            out.append(Spacer(1, 0.04 * inch))
-            out.append(HRFlowable(width="100%", thickness=0.5,
-                                  color=colors.HexColor("#dddddd"), spaceAfter=8))
-            i += 1
-            continue
-
-        im = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)", stripped)
-        if im:
-            _flush_para(para, out)
-            out.append(Spacer(1, 0.08 * inch))
-            out.append(KeepTogether([
-                _img(im.group(2)),
-                Spacer(1, 4),
-                Paragraph(_md_inline(im.group(1)), _STYLES["caption"]),
-            ]))
-            i += 1
-            continue
-
-        if stripped.startswith("|"):
-            _flush_para(para, out)
-            tbl = []
-            while i < n and lines[i].strip().startswith("|"):
-                tbl.append(lines[i])
-                i += 1
-            _emit_table(tbl, out)
-            continue
-
-        if stripped.startswith(">"):
-            _flush_para(para, out)
-            quote = []
-            while i < n and lines[i].strip().startswith(">"):
-                quote.append(lines[i].strip().lstrip(">").strip())
-                i += 1
-            out.append(Paragraph(_md_inline(" ".join(quote)), _STYLES["quote"]))
-            continue
-
-        bm = re.match(r"^[-*]\s+(.*)$", stripped)
-        if bm:
-            _flush_para(para, out)
-            out.append(Paragraph("•&nbsp;&nbsp;" + _md_inline(bm.group(1)),
-                                 _STYLES["list"]))
-            i += 1
-            continue
-
-        om = re.match(r"^(\d+)\.\s+(.*)$", stripped)
-        if om:
-            _flush_para(para, out)
-            out.append(Paragraph(f"{om.group(1)}.&nbsp;&nbsp;"
-                                 + _md_inline(om.group(2)), _STYLES["list"]))
-            i += 1
-            continue
-
-        para.append(line)
-        i += 1
-
-    _flush_para(para, out)
-    return out
-
-
-# ── Appendix ──────────────────────────────────────────────────────────────────
+# ── RESULTS.md helpers (also imported by report.py) ───────────────────────────
 
 def _results_text(path: str) -> str:
     with open(path) as f:
@@ -369,52 +65,68 @@ def _parse_regression_sections(text: str) -> list[tuple[str | None, str]]:
     return sections
 
 
-def _appendix(path: str) -> list:
-    if not os.path.exists(path):
-        return [Paragraph(f"[Appendix source not found: {_esc(path)}]",
-                          _STYLES["caption"])]
-    out: list = [
-        PageBreak(),
-        Paragraph(f"Appendix: {os.path.basename(path)}", _STYLES["h1"]),
-        HRFlowable(width="100%", thickness=0.5,
-                   color=colors.HexColor("#dddddd"), spaceAfter=8),
-        Paragraph(
-            f"Full regression output, reproduced verbatim from "
-            f'<font name="{MONO}">{_esc(os.path.basename(path))}</font>. '
-            "Sections appear in the same order as this document.",
-            _STYLES["body"]),
-        Spacer(1, 0.1 * inch),
-    ]
-    for title, body in _parse_regression_sections(_results_text(path)):
+# ── Quarto helpers ────────────────────────────────────────────────────────────
+
+def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
+                   toc: bool = False, extra_meta: dict | None = None) -> None:
+    """Render src to fmt, placing the output file at dest.
+
+    Renders to a temp dir first to avoid the conflict that arises when
+    --output-dir overlaps with the directory holding the referenced images
+    (Quarto copies/deletes those resources as part of output management).
+    """
+    src_dir = os.path.dirname(os.path.abspath(src))
+    stem = os.path.splitext(os.path.basename(src))[0]
+    ext = ".pdf" if fmt == "typst" else f".{fmt}"
+
+    with tempfile.TemporaryDirectory() as tmp:
+        cmd = [
+            "quarto", "render", src,
+            "--to", fmt,
+            "--output-dir", tmp,
+            "--metadata-file", _NBA_YML,
+            "--metadata", f"title:{title}",
+            "--metadata", f"author:{author}",
+        ]
+        if toc:
+            cmd += ["--metadata", "toc:true"]
+        if extra_meta:
+            for k, v in extra_meta.items():
+                cmd += ["--metadata", f"{k}:{v}"]
+        result = subprocess.run(cmd, cwd=src_dir, capture_output=True, text=True)
+        if result.returncode != 0:
+            sys.exit(f"quarto render failed:\n{result.stderr}")
+        os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+        os.replace(os.path.join(tmp, stem + ext), dest)
+
+
+def _make_appendix_qmd(appendix_path: str, work_dir: str) -> str:
+    """Write a _appendix.qmd with RESULTS.md content and return its path."""
+    sections = _parse_regression_sections(_results_text(appendix_path))
+    lines = [f"## Appendix: {os.path.basename(appendix_path)}", ""]
+    for title, body in sections:
         if title:
-            out.append(Spacer(1, 0.08 * inch))
-            out.append(Paragraph(_esc(title), _STYLES["h3"]))
-        out.append(Preformatted(body, _STYLES["code"]))
-    return out
+            lines += ["", f"### {title}", ""]
+        lines += ["```", body, "```", ""]
+    qmd_path = os.path.join(work_dir, "_appendix_generated.qmd")
+    with open(qmd_path, "w") as f:
+        f.write("\n".join(lines))
+    return qmd_path
 
 
-# ── Cover + footer ─────────────────────────────────────────────────────────────
+def _make_wrapper_qmd(md_path: str, appendix_path: str) -> str:
+    """Write a _wrapper.qmd that includes the source md + appendix."""
+    src_dir = os.path.dirname(os.path.abspath(md_path))
+    appendix_abs = os.path.abspath(appendix_path)
 
-def _cover(title: str, author: str) -> list:
-    return [
-        Spacer(1, 1.4 * inch),
-        Paragraph(_md_inline(title), _STYLES["cover_title"]),
-        Spacer(1, 0.2 * inch),
-        HRFlowable(width="60%", thickness=0.6, color=colors.HexColor("#dddddd")),
-        Spacer(1, 0.2 * inch),
-        Paragraph(author, _STYLES["cover_sub"]),
-        Paragraph(f"Generated {datetime.now().strftime('%B %d, %Y')}",
-                  _STYLES["cover_sub"]),
-        PageBreak(),
-    ]
+    _make_appendix_qmd(appendix_abs, src_dir)
 
-
-def _draw_footer(canvas, doc):
-    canvas.saveState()
-    canvas.setFont("Helvetica", 8)
-    canvas.setFillColor(colors.HexColor(MID))
-    canvas.drawCentredString(PAGE_W / 2.0, 0.5 * inch, str(canvas.getPageNumber()))
-    canvas.restoreState()
+    md_name = os.path.basename(md_path)
+    wrapper = os.path.join(src_dir, "_wrapper_generated.qmd")
+    with open(wrapper, "w") as f:
+        f.write(f"{{{{< include {md_name} >}}}}\n\n")
+        f.write("{{< include _appendix_generated.qmd >}}\n")
+    return wrapper
 
 
 # ── Public API ─────────────────────────────────────────────────────────────────
@@ -422,34 +134,54 @@ def _draw_footer(canvas, doc):
 def build(md_path: str, output_path: str | None = None,
           appendix_path: str | None = None,
           author: str = "Justin Pietsch") -> str:
-    """Render a Markdown file to PDF. Returns the output path."""
+    """Render a Markdown file to PDF and HTML. Returns the PDF output path."""
     if not os.path.exists(md_path):
         sys.exit(f"ERROR: {md_path} not found")
+
     with open(md_path) as f:
         md = f.read()
-
     title_m = re.search(r"^#\s+(.*)$", md, flags=re.MULTILINE)
     title = title_m.group(1).strip() if title_m else os.path.basename(md_path)
-    if title_m:
-        md = md[:title_m.start()] + md[title_m.end():]
 
+    stem = os.path.splitext(os.path.basename(md_path))[0]
+    src_dir = os.path.dirname(os.path.abspath(md_path))
     if output_path is None:
-        stem = os.path.splitext(os.path.basename(md_path))[0]
-        src_dir = os.path.dirname(os.path.abspath(md_path))
-        output_path = os.path.join(src_dir, "generated", stem + ".pdf")
-    os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+        out_dir = os.path.join(src_dir, "generated")
+        pdf_path = os.path.join(out_dir, stem + ".pdf")
+        html_path = os.path.join(out_dir, stem + ".html")
+    else:
+        out_dir = os.path.dirname(os.path.abspath(output_path))
+        pdf_path = output_path
+        html_path = os.path.splitext(output_path)[0] + ".html"
+    os.makedirs(out_dir, exist_ok=True)
 
-    story = [*_cover(title, author), *md_to_flowables(md)]
-    if appendix_path:
-        story += _appendix(appendix_path)
-    SimpleDocTemplate(
-        output_path, pagesize=letter,
-        leftMargin=MARGIN, rightMargin=MARGIN,
-        topMargin=MARGIN, bottomMargin=MARGIN,
-        title=title, author=author,
-    ).build(story, onFirstPage=_draw_footer, onLaterPages=_draw_footer)
-    print(f"Saved → {output_path}")
-    return output_path
+    # Strip the leading H1 from the body so it doesn't duplicate the title block.
+    body = md[title_m.end():].lstrip("\n") if title_m else md
+
+    temp_md = os.path.join(src_dir, "_body_generated.md")
+    appendix_qmd = os.path.join(src_dir, "_appendix_generated.qmd")
+    wrapper = None
+    try:
+        with open(temp_md, "w") as f:
+            f.write(body)
+
+        if appendix_path:
+            render_src = _make_wrapper_qmd(temp_md, appendix_path)
+            wrapper = render_src
+        else:
+            render_src = temp_md
+
+        _quarto_render(render_src, "typst", pdf_path,  title, author, toc=False)
+        _quarto_render(render_src, "html",  html_path, title, author, toc=True)
+
+    finally:
+        for p in [temp_md, wrapper, appendix_qmd]:
+            if p and os.path.exists(p):
+                os.unlink(p)
+
+    print(f"Saved → {pdf_path}")
+    print(f"Saved → {html_path}")
+    return pdf_path
 
 
 if __name__ == "__main__":

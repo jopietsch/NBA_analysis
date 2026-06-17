@@ -60,9 +60,9 @@ The 2014 Finals format change — switching from 2-3-2 to 2-2-1-1-1 — deserves
 
 The decline isn't perfectly smooth — there are stretches of relative stability and stretches where the floor drops faster — but every era ends lower than the one before it. The playoffs have consistently given home teams a bigger edge than the regular season; that gap widened through the mid-2000s and has since narrowed back toward where it was in the 1980s.
 
-![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png){width=0.5}
+![Figure 2. Average home win % by rule-change era. Blue = regular season, green = playoffs.](nba_home_court_advantage_era_bars.png){width=50%}
 
-![Figure 3. Average home win % by playoff format period (1985, 2003, 2014 format changes). Blue = regular season, green = playoffs.](nba_home_court_advantage_format_bars.png){width=0.5}
+![Figure 3. Average home win % by playoff format period (1985, 2003, 2014 format changes). Blue = regular season, green = playoffs.](nba_home_court_advantage_format_bars.png){width=50%}
 
 ---
 

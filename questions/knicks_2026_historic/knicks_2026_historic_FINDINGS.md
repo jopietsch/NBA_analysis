@@ -29,7 +29,7 @@ All four opponents were essentially fully healthy when they played the Knicks
 (average availability 98%; the Spurs were at 100%), so injuries are not an
 explanation for any of it.
 
-![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](generated/knicks_2026_adjusted_margin_ranking.png){height=0.60}
+![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](generated/knicks_2026_adjusted_margin_ranking.png){width=100%}
 
 ---
 
@@ -55,11 +55,11 @@ The two sweeps — against Cleveland (SRS +3.77, a genuine title contender) and
 Philadelphia (SRS -0.27) — drove the record margin. The Finals were tight: four
 of the five games were decided by 4 points or fewer.
 
-![Playoff win rate — all 43 champions ranked](generated/knicks_2026_win_rate_ranking.png){height=0.60}
+![Playoff win rate — all 43 champions ranked](generated/knicks_2026_win_rate_ranking.png){width=100%}
 
-![Average playoff margin — all 43 champions ranked](generated/knicks_2026_margin_ranking.png){height=0.60}
+![Average playoff margin — all 43 champions ranked](generated/knicks_2026_margin_ranking.png){width=100%}
 
-![2025-26 Knicks: game-by-game margins across 19 playoff games](generated/knicks_2026_game_margins.png){height=0.25}
+![2025-26 Knicks: game-by-game margins across 19 playoff games](generated/knicks_2026_game_margins.png){width=100%}
 
 ---
 
@@ -80,9 +80,9 @@ competitive.
 opponents was **+3.67** (49th percentile among all 43 champions) — essentially at
 the historical median. The schedule was not unusually easy or hard.
 
-![Conference strength gap (West − East SRS) — 2025-26 flagged](generated/knicks_2026_conference_gap.png){height=0.25}
+![Conference strength gap (West − East SRS) — 2025-26 flagged](generated/knicks_2026_conference_gap.png){width=100%}
 
-![2025-26 regular-season SRS by team, colored by conference](generated/knicks_2026_team_srs_2026.png){height=0.25}
+![2025-26 regular-season SRS by team, colored by conference](generated/knicks_2026_team_srs_2026.png){width=100%}
 
 ---
 
@@ -118,9 +118,9 @@ behind only the 2000–01 Lakers. Their playoff SRS was +17.53, an elevation of
 +11.48 above their regular-season SRS — also 2nd all-time. The Knicks didn't
 just face the right opponents: they played far above their regular-season level.
 
-![Strength of schedule — avg opponent SRS per champion](generated/knicks_2026_opponent_srs_ranking.png){height=0.60}
+![Strength of schedule — avg opponent SRS per champion](generated/knicks_2026_opponent_srs_ranking.png){width=100%}
 
-![2025-26 Knicks: playoff opponent SRS by round](generated/knicks_2026_opponent_by_round.png){height=0.25}
+![2025-26 Knicks: playoff opponent SRS by round](generated/knicks_2026_opponent_by_round.png){width=100%}
 
 ---
 
@@ -158,7 +158,7 @@ performance (excluding the Knicks series) gives a margin of +9.1 pts/game —
 East opponents who were below their season-long form, and then beat the best
 playoff-performing team in the field.
 
-![Per-round raw vs. opponent-adjusted margins — adjustment using playoff SRS shifts the Finals story](generated/knicks_2026_round_split.png){height=0.35}
+![Per-round raw vs. opponent-adjusted margins — adjustment using playoff SRS shifts the Finals story](generated/knicks_2026_round_split.png){width=100%}
 
 ---
 
@@ -212,7 +212,7 @@ than anyone expected against East competition. The Finals was exactly the
 competitive series the market predicted: a nearly even matchup against a healthy,
 elite Spurs team that the Knicks won by grinding out close games.
 
-![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](generated/knicks_2026_market_vs_actual.png){height=0.45}
+![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](generated/knicks_2026_market_vs_actual.png){width=100%}
 
 ---
 
@@ -237,7 +237,7 @@ and the one that gave the Knicks the tightest series — were fully intact. The
 close Finals margin (+2.4 avg) reflects genuine competition, not a depleted
 opponent. This removes the injury asterisk often attached to dominant runs.
 
-![Opponent key-player availability across the 2025-26 Knicks playoff run](generated/knicks_2026_opponent_health.png){height=0.25}
+![Opponent key-player availability across the 2025-26 Knicks playoff run](generated/knicks_2026_opponent_health.png){width=100%}
 
 ---
 

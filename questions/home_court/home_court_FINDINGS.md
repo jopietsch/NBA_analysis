@@ -173,7 +173,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 The most recent shift, in 2014, coincided with the sharpest period of playoff HCA decline: a nearly 7-point raw drop from the 2003–13 period to the 2014–26 period. But when the year-by-year secular trend is accounted for, the format change has no independent effect. The playoff drop would have arrived on roughly the same schedule regardless. Format was not the cause.
 
-![Figure 17. Home win % by playoff format period, regular season vs. playoffs.](generated/nba_home_court_advantage_format_bars.png){width=0.5}
+![Figure 17. Home win % by playoff format period, regular season vs. playoffs.](generated/nba_home_court_advantage_format_bars.png){width=50%}
 
 ---
 
