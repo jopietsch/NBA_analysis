@@ -97,6 +97,19 @@ def merge_home_away_rows(df: pd.DataFrame) -> pd.DataFrame | None:
     return merged
 
 
+def add_rest_days(df: pd.DataFrame) -> pd.DataFrame:
+    """Add a REST column: days since each team's previous game minus 1.
+
+    0 = back-to-back. Requires GAME_DATE and TEAM_ID columns.
+    """
+    df = df.copy()
+    df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
+    df = df.sort_values(["TEAM_ID", "GAME_DATE"])
+    df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
+    df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
+    return df
+
+
 # ── Fetchers ───────────────────────────────────────────────────────────────────
 
 def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,

@@ -6,6 +6,7 @@ import pytest
 
 from nbakit.data import (
     _fill_plus_minus,
+    add_rest_days,
     cache_path,
     compute_srs,
     default_cache_dir,
@@ -164,3 +165,17 @@ def test_merge_home_away_rows():
 def test_merge_home_away_rows_none_when_one_sided():
     df = pd.DataFrame([{"GAME_ID": "1", "MATCHUP": "NYK vs. BOS", "PTS": 100}])
     assert merge_home_away_rows(df) is None
+
+
+# ── add_rest_days ─────────────────────────────────────────────────────────────
+
+def test_add_rest_days():
+    df = pd.DataFrame([
+        {"TEAM_ID": 1, "GAME_DATE": "2024-01-01"},
+        {"TEAM_ID": 1, "GAME_DATE": "2024-01-02"},  # back-to-back -> 0
+        {"TEAM_ID": 1, "GAME_DATE": "2024-01-05"},  # 2 days rest
+    ])
+    out = add_rest_days(df).sort_values("GAME_DATE").reset_index(drop=True)
+    assert pd.isna(out.loc[0, "REST"])
+    assert out.loc[1, "REST"] == 0
+    assert out.loc[2, "REST"] == 2

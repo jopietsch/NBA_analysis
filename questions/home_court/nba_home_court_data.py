@@ -261,14 +261,9 @@ def _load_game_log(end_year: int, season_type: str) -> pd.DataFrame | None:
 _merge_home_away_rows = _nbakit.merge_home_away_rows
 
 
-def _add_rest_days(df: pd.DataFrame) -> pd.DataFrame:
-    """Add a REST column: days since each team's previous game minus 1 (0 = back-to-back)."""
-    df = df.copy()
-    df["GAME_DATE"] = pd.to_datetime(df["GAME_DATE"])
-    df = df.sort_values(["TEAM_ID", "GAME_DATE"])
-    df["PREV_DATE"] = df.groupby("TEAM_ID")["GAME_DATE"].shift(1)
-    df["REST"] = (df["GAME_DATE"] - df["PREV_DATE"]).dt.days - 1
-    return df
+# Add a REST column (days since each team's previous game minus 1; 0 = back-to-
+# back). Lives in nbakit.data now.
+_add_rest_days = _nbakit.add_rest_days
 
 
 def bucket_stats_by_era(seasons: list[str], stats: dict) -> tuple[dict, list[str]]:
