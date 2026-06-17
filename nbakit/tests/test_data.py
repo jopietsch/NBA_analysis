@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 from nbakit.data import (
-    _fill_plus_minus,
+    fill_plus_minus,
     add_rest_days,
     cache_path,
     compute_srs,
@@ -58,14 +58,14 @@ def test_default_cache_dir_env_var(tmp_path, monkeypatch):
     assert default_cache_dir() == str(tmp_path)
 
 
-# ── _fill_plus_minus ───────────────────────────────────────────────────────────
+# ── fill_plus_minus ───────────────────────────────────────────────────────────
 
 def test_fill_plus_minus_from_pts():
     df = pd.DataFrame([
         {"GAME_ID": "G1", "TEAM_ID": 1, "PTS": 110, "PLUS_MINUS": float("nan")},
         {"GAME_ID": "G1", "TEAM_ID": 2, "PTS": 100, "PLUS_MINUS": float("nan")},
     ])
-    filled = _fill_plus_minus(df)
+    filled = fill_plus_minus(df)
     assert filled.loc[filled["TEAM_ID"] == 1, "PLUS_MINUS"].iloc[0] == 10.0
     assert filled.loc[filled["TEAM_ID"] == 2, "PLUS_MINUS"].iloc[0] == -10.0
 
@@ -75,7 +75,7 @@ def test_fill_plus_minus_leaves_existing_values():
         {"GAME_ID": "G1", "TEAM_ID": 1, "PTS": 110, "PLUS_MINUS": 99.0},
         {"GAME_ID": "G1", "TEAM_ID": 2, "PTS": 100, "PLUS_MINUS": -99.0},
     ])
-    filled = _fill_plus_minus(df)
+    filled = fill_plus_minus(df)
     assert filled.loc[filled["TEAM_ID"] == 1, "PLUS_MINUS"].iloc[0] == 99.0
 
 

@@ -76,7 +76,7 @@ def compute_playoff_margin(playoff_logs: pd.DataFrame,
 
     Fills PLUS_MINUS from PTS for pre-1997 seasons where nba_api returns NaN.
     """
-    logs = _nba._fill_plus_minus(playoff_logs)
+    logs = _nba.fill_plus_minus(playoff_logs)
     df = logs[logs["TEAM_ID"] == team_id]
     return float(df["PLUS_MINUS"].mean())
 
@@ -85,7 +85,7 @@ def compute_clutch_rate(playoff_logs: pd.DataFrame,
                         team_id: int,
                         threshold: int = 5) -> float:
     """Fraction of games decided by <= threshold points (clutch games)."""
-    df = _nba._fill_plus_minus(playoff_logs)[playoff_logs["TEAM_ID"] == team_id].copy()
+    df = _nba.fill_plus_minus(playoff_logs)[playoff_logs["TEAM_ID"] == team_id].copy()
     df["ABS_MARGIN"] = df["PLUS_MINUS"].abs()
     n = len(df)
     return float((df["ABS_MARGIN"] <= threshold).sum() / n) if n > 0 else 0.0
@@ -196,7 +196,7 @@ def compute_expected_margin_overperformance(playoff_logs: pd.DataFrame,
     Algebraically equivalent to:
         raw_margin − champion_SRS + games_weighted_opp_SRS
     """
-    logs = _nba._fill_plus_minus(playoff_logs)
+    logs = _nba.fill_plus_minus(playoff_logs)
     team_srs = float(reg_srs.get(team_id, float("nan")))
     if np.isnan(team_srs):
         return float("nan")
@@ -274,7 +274,7 @@ def compute_margin_ci(po_logs: pd.DataFrame,
     the honest uncertainty in the point estimate.
     """
     from scipy import stats as _st
-    logs    = _nba._fill_plus_minus(po_logs)
+    logs    = _nba.fill_plus_minus(po_logs)
     margins = logs[logs["TEAM_ID"] == team_id]["PLUS_MINUS"].dropna()
     n = len(margins)
     if n < 2:
@@ -301,7 +301,7 @@ def compute_series_margins(po_logs: pd.DataFrame,
     series against us determines their SRS).  Use playoff_adj_margin cautiously
     for opponents who played few games outside the focal team's series.
     """
-    logs = _nba._fill_plus_minus(po_logs)
+    logs = _nba.fill_plus_minus(po_logs)
     team_logs = logs[logs["TEAM_ID"] == team_id].copy()
     if team_logs.empty:
         return pd.DataFrame()
@@ -701,7 +701,7 @@ def build_champions_table(start_year: int = START_YEAR,
         rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
         if not os.path.exists(po_path) or not os.path.exists(rs_path):
             continue
-        po = _nba._fill_plus_minus(pd.read_csv(po_path))
+        po = _nba.fill_plus_minus(pd.read_csv(po_path))
         rs = pd.read_csv(rs_path)
 
         champ = identify_champion(po)

@@ -54,7 +54,7 @@ only. This makes the analysis fully reproducible offline and fast enough to
 re-run in under a minute.
 
 **Pre-1997 PLUS_MINUS.** The NBA.com API (`LeagueGameFinder`) returns null
-PLUS_MINUS for seasons before 1997. The helper `_fill_plus_minus` (in
+PLUS_MINUS for seasons before 1997. The helper `fill_plus_minus` (in
 `nbakit/data.py`) fills these from `PTS`: for each `GAME_ID`, the two rows are
 swapped to give each team the opponent's score, and `PLUS_MINUS = PTS − OPP_PTS`
 is computed exactly. This is algebraically exact for game margins. Without this
@@ -514,7 +514,7 @@ This is unambiguous: the actual Finals winner has more wins than every other tea
 by construction (they won the championship). For seasons where the data is
 complete and consistent, this is always the same as the documented champion.
 
-**`_fill_plus_minus`**
+**`fill_plus_minus`**
 For pre-1997 seasons where `PLUS_MINUS` is NaN, the helper uses the two-row
 structure of the game log (one row per team per game) to compute margins from
 `PTS`. For each `GAME_ID`, the `PTS` column is reversed within the group (using

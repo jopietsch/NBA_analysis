@@ -295,7 +295,7 @@ def plot_adjusted_margin_ranking(champions: pd.DataFrame) -> str:
 
 def plot_game_margin_distribution(po_2026: pd.DataFrame) -> str:
     import nbakit.data as _nba
-    logs = _nba._fill_plus_minus(po_2026)
+    logs = _nba.fill_plus_minus(po_2026)
     knicks = (
         logs[logs["TEAM_ID"] == 1610612752]
         .sort_values("GAME_DATE")

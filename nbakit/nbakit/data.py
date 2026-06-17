@@ -204,7 +204,7 @@ def fetch_standings(end_year: int,
 
 # ── SRS ────────────────────────────────────────────────────────────────────────
 
-def _fill_plus_minus(game_logs: pd.DataFrame) -> pd.DataFrame:
+def fill_plus_minus(game_logs: pd.DataFrame) -> pd.DataFrame:
     """Return game_logs with PLUS_MINUS filled from PTS where null.
 
     Pre-1997 NBA data from nba_api has PLUS_MINUS=NaN; we derive it from
@@ -238,7 +238,7 @@ def compute_srs(game_logs: pd.DataFrame) -> pd.Series:
 
     Returns pd.Series indexed by TEAM_ID, values in points per game.
     """
-    game_logs = _fill_plus_minus(game_logs)
+    game_logs = fill_plus_minus(game_logs)
     df = game_logs[["GAME_ID", "TEAM_ID", "PLUS_MINUS"]].dropna().copy()
     df["TEAM_ID"] = df["TEAM_ID"].astype(int)
 
