@@ -488,6 +488,8 @@ class TestComputeReboundStats:
                 "reb_diff":         [1.4, 2.6],
                 "reb_share_edge":   [1.0, 3.0],
                 "league_oreb_rate": [30.0, 26.0],
+                "oreb_rate_home":   [28.0, 32.0],
+                "oreb_rate_away":   [24.0, 26.0],
             })
 
         monkeypatch.setattr(nba, "fetch_rebound_data", fake_fetch)
