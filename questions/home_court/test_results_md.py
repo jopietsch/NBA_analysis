@@ -22,7 +22,7 @@ import re
 import pandas as pd
 import pytest
 
-import nba_home_court_regression as reg
+import nba_home_court_analysis as reg
 
 RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
 # Canonical shared monorepo cache (nba_analysis/cache), the same dir the

@@ -1,4 +1,4 @@
-# Statistical Explainer — `nba_home_court_regression.py`
+# Statistical Explainer — `nba_home_court_analysis.py`
 
 A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and —

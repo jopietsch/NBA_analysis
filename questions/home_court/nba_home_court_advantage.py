@@ -8,7 +8,7 @@ run regression analysis, and print results to stdout.
 
 Data pipeline:  nba_home_court_data.py
 Visualization:  nba_home_court_plots.py
-Regression:     nba_home_court_regression.py
+Analysis:       nba_home_court_analysis.py
 """
 
 import numpy as np
@@ -57,7 +57,7 @@ def main() -> None:
     )
     plot_differential_analysis(reg_diff_seasons, reg_diff_stats, po_diff_seasons, po_diff_stats)
 
-    import nba_home_court_regression as _reg
+    import nba_home_court_analysis as _reg
     game_df = _reg.build_game_dataset()
     plot_mediation(_reg.compute_mediation_decomposition(game_df))
     plot_rest_altitude(_reg.compute_rest_altitude_plotdata(game_df))

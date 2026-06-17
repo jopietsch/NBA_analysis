@@ -50,7 +50,7 @@ Six files:
 - **`nba_home_court_data.py`** — all constants, data fetching, and computation; no matplotlib dependency
 - **`nba_home_court_plots.py`** — all visualization; imports data module, no data logic of its own
 - **`nba_home_court_advantage.py`** — pipeline orchestration only; calls data, plots, and regression in sequence; regression module is imported inside `main()` to avoid circular imports
-- **`nba_home_court_regression.py`** — statistical analysis; `run()` is called by `main()`; outputs go to stdout and are captured in `RESULTS.md`
+- **`nba_home_court_analysis.py`** — statistical analysis; `run()` is called by `main()`; outputs go to stdout and are captured in `RESULTS.md`
 - **`generate_report.py`** — assembles PNGs and `home_court_FINDINGS.md` prose into a PDF; iterates `##` sections in order with no hardcoded section list; TOC auto-generated; Appendix A renders `RESULTS.md` verbatim
 - **`test_nba_home_court_advantage.py`** — unit tests for the data/computation layer (correctness, using synthetic DataFrames). Plots get smoke tests only (`test_nba_home_court_plots.py`): feed each `plot_*` synthetic inputs and assert it runs without raising. No pixel/image-comparison tests — they're brittle across font and library versions.
 
@@ -62,7 +62,7 @@ Every analysis follows the same steps, in this order:
 
 1. **Data** (`nba_home_court_data.py`) — add `fetch_*` and `compute_*` functions; all fetched data cached under `cache/`
 2. **Plot** (`nba_home_court_plots.py`) — add `plot_*` function; save the PNG via `_output_path("chart.png")` so it lands in `generated/`; wire the call into `main()` in `nba_home_court_advantage.py`
-3. **Regression** (`nba_home_court_regression.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
+3. **Regression** (`nba_home_court_analysis.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
 4. **Tests** — correctness unit tests for the data/computation layer in `test_nba_home_court_advantage.py` (use synthetic DataFrames); a no-raise smoke test for the new `plot_*` in `test_nba_home_court_plots.py`
 5. **home_court_FINDINGS.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](generated/chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
 \6. **`.gitignore`** — nothing to do: all PNGs land in `generated/`, which is already ignored as a whole
@@ -72,7 +72,7 @@ Every analysis follows the same steps, in this order:
 ## updating home_court_FINDINGS.md
 - when editing or adding to home_court_FINDINGS.md, act like an editor for a sports magazine and editor for their regular readors. Replace any statistical terms or language with something more readable. keep the overall voice concise and clear. We do not redundant information unless it's to strengthen a point. redudant information is usually confusing.
 - make sure that the home_court_FINDINGS.md actually matches the data from RESULTS.md and from the graphs that are produced
-- whenever the order of sections changes in home_court_FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_regression.py must be updated to the new order
+- whenever the order of sections changes in home_court_FINDINGS.md, the order needs to also change in RESULTS.md so nba_home_court_analysis.py must be updated to the new order
 - do not overexplain statistical analysis. make sure everything you write is backed up by the data.
 - throughout home_court_FINDINGS.md, make sure that both regular season and playoffs are mentinoned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.
 - when home_court_FINDINGS.md is edited, regenerate the PDF report with `python 3 generate_report.py`

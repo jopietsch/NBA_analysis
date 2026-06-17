@@ -358,7 +358,7 @@ def plot_mediation(decomp: dict) -> None:
     level (left) and of its 40-year decline (right), regular season vs playoffs.
 
     Renders the same numbers RESULTS.md prints — the dict comes from
-    nba_home_court_regression.compute_mediation_decomposition(). Bars are
+    nba_home_court_analysis.compute_mediation_decomposition(). Bars are
     normalized to 100% (the shares sum to 100 by accounting identity); the
     headline at each bar's end is how much of the level/decline the four
     channels capture.

@@ -42,8 +42,8 @@ Use this prompt with Claude Code:
 Before updating home_court_FINDINGS.md, verify that the analysis outputs are current:
 
 1. Check that RESULTS.md and all PNG files exist and were modified more recently
-   than nba_home_court_advantage.py and nba_home_court_regression.py.
-   Use: stat -f "%m %N" RESULTS.md generated/*.png nba_home_court_advantage.py nba_home_court_regression.py
+   than nba_home_court_advantage.py and nba_home_court_analysis.py.
+   Use: stat -f "%m %N" RESULTS.md generated/*.png nba_home_court_advantage.py nba_home_court_analysis.py
    If any output is older than the source files, stop and say so — the analysis
    must be re-run first: MPLBACKEND=Agg python3 nba_home_court_advantage.py
 

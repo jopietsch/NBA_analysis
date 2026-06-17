@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 import nba_home_court_data as nba
-import nba_home_court_regression as reg
+import nba_home_court_analysis as reg
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
