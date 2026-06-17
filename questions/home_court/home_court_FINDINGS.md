@@ -2,9 +2,9 @@
 
 Home court advantage in the NBA has been shrinking for four decades, and this report sets out to answer what has changed and why. **Has it really changed?** **What makes home court an advantage in the first place?** And **what's driving the decline — and, just as important, what isn't?**
 
-Yes, the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is a slow, steady erosion, with two sharper drops layered on top. The structural advantages home teams once relied on have worn away — at the whistle, in shot selection, in the move to the three-point line, and on the glass. The biggest surprise is where the largest share of the decline actually came from: not the headline factors — the narrowing whistle and the three-point shift — but the collapse of the home team's grip on the offensive boards, the one nobody was watching.
+Yes, the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is a slow, steady erosion, with two sharper drops layered on top. The structural advantages home teams once relied on have worn away — at the whistle, in shot selection, in the move to the three-point line, and on the glass. The biggest surprise is where the largest share of the decline actually came from: not the expected factors — the narrowing whistle and the three-point shift — but the collapse of the home team's grip on the offensive boards.
 
-What is *not* behind the decline matters too, because the usual suspects get blamed constantly: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the 2014 playoff format change. Each one is tested here, and each one is ruled out.
+What is *not* behind is also interesting: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the 2014 playoff format change. Each one is tested here, and each one is ruled out.
 
 Throughout, the regular season and the playoffs are tracked separately — they share a direction but not a timeline. The analysis runs across 52,000 regular-season and playoff games; the underlying statistical tables are shown in the appendix.
 
