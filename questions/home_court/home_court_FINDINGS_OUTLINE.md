@@ -63,7 +63,7 @@
 
 - **Referee foul bias narrowed sharply:**
   - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); playoffs **1.6 → 0.7**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25.*
-  - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (Fig 5).
+  - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (Fig 6).
 - **Shot zone advantage evaporated (reg season):**
   - Paint gap **~1.3 → 0.2 pp**. *RESULTS Paint trend −0.041***/yr reg.*
   - Playoffs: narrowed late 2010s then rebounded; downward drift NOT statistically established (playoff Paint trend −0.030, ns) → convergence is a reg-season phenomenon.
@@ -88,15 +88,15 @@
 - **3PA is real but narrow:** within-season link is genuine (−2.27 pp/10pp, p<0.001) but hits mainly the shooting channel. Shooting ≈ 21% of decline; REB+TOV (~57%) barely move under the 3PA control. Threes drove one channel, not the whole decline. (Point now made within the 3PA narrative in FINDINGS, not as a separate closing paragraph.)
 **Figures:**
 
-![Fig 5 — referee bias](generated/nba_home_court_referee.png)
+![Fig 5 — mediation shares (leads the section as the roadmap)](generated/nba_home_court_mediation.png)
 
-![Fig 6 — shot zones](generated/nba_home_court_shot_zones.png)
+![Fig 6 — referee bias](generated/nba_home_court_referee.png)
 
-![Fig 7 — 3PA vs HCA](generated/nba_home_court_3pa.png)
+![Fig 7 — shot zones](generated/nba_home_court_shot_zones.png)
 
-![Fig 8 — rebounding decomposition (OREB/DREB, share advantage, league OREB corr)](generated/nba_home_court_rebounding.png)
+![Fig 8 — 3PA vs HCA](generated/nba_home_court_3pa.png)
 
-![Fig 9 — mediation shares](generated/nba_home_court_mediation.png)
+![Fig 9 — rebounding decomposition (OREB/DREB, share advantage, league OREB corr)](generated/nba_home_court_rebounding.png)
 
 ![Fig 10 — 3PA-control channel test (which fades survive holding 3-point volume constant)](generated/nba_home_court_3pa_control.png)
 

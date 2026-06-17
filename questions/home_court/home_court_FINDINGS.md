@@ -62,15 +62,19 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 The same advantages that create home court advantage are the ones eroding over time. Three changes lead the story — and the one carrying the most weight is the one that never made the headlines.
 
+Here is the whole section in one chart. It splits both home court and its 40-year decline across the four box-score categories — shooting, rebounding, foul calls, and turnover margin. The left panel is what creates the advantage; the right is what's eroding it. The rest of this section walks each category in turn, with the precise shares tallied at the end.
+
+![Figure 5. Box-score category shares of the home-court advantage and of its decline, regular season vs. playoffs. The left panel is what creates the advantage; the right is what's eroding it. Bars sum to 100% by accounting identity.](generated/nba_home_court_mediation.png)
+
 **Referee foul bias has narrowed sharply.** The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In the playoffs it has fallen from 1.6 to 0.7. The advantage referees once gave home teams has nearly vanished in the regular season and significantly diminished in the playoffs.
 
 The playoff referee chart shows the generational shift clearly. The distribution across officials has compressed over time, not just shifted. Newer referees are not only less biased on average; they are also more uniform in their calling.
 
-![Figure 5. Distribution of per-official home foul bias by era, playoffs. The spread has compressed: newer officials are not only less biased on average but more uniform in their calling.](generated/nba_home_court_referee_era.png)
+![Figure 6. Distribution of per-official home foul bias by era, playoffs. The spread has compressed: newer officials are not only less biased on average but more uniform in their calling.](generated/nba_home_court_referee_era.png)
 
 **The shot zone advantage has evaporated.** In the 1990s, home teams generated about 1.3 percentage points more of their attempts from the paint than road teams. By 2023–26, that gap has shrunk to 0.2 points. Away teams now attack the basket nearly as aggressively as home teams. Our data can confirm the gap closed, not why. In the playoffs the gap narrowed in the late 2010s but has since rebounded close to its old level. Shot-selection convergence is, for now, a regular-season story.
 
-![Figure 6. Shot zone differentials (home minus road), regular season vs. playoffs.](generated/nba_home_court_shot_zones.png)
+![Figure 7. Shot zone differentials (home minus road), regular season vs. playoffs.](generated/nba_home_court_shot_zones.png)
 
 **The three-point revolution.** The league's three-point attempt rate and the home win rate have moved in opposite directions for 40 years. When 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%. The timing lines up with the second sharp drop: the three-point share leapt from about a quarter to nearly half of all shots in the three seasons after 2017, exactly when that drop began.
 
@@ -78,7 +82,7 @@ That 40-year lockstep looks convincing, but two long-run trends will always corr
 
 The three-point shift works through a specific channel: the shooting line of the box score. Hold three-point volume constant and the home shooting advantage holds up; let volume rise and it shrinks. Shooting accounts for roughly one-fifth of the regular-season decline. The larger share, more than half, runs through rebounding and turnover differential. When three-point volume is held constant, the rebounding fade barely moves; the turnover fade is about half explained by the perimeter shift. Three-point shooting is a real force on one channel, not the engine behind the whole decline. In the playoffs the within-season signal is weaker, since team quality swamps stylistic factors, but it still points the same direction.
 
-![Figure 7. League three-point attempt rate vs. home win %, regular season and playoffs.](generated/nba_home_court_3pa.png)
+![Figure 8. League three-point attempt rate vs. home win %, regular season and playoffs.](generated/nba_home_court_3pa.png)
 
 **The fourth strand — and the biggest driver: the glass.** The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise. Hold three-point volume constant and the home shooting advantage vanishes entirely, while the rebounding advantage barely moves. The answer is in the split between offensive and defensive boards.
 
@@ -88,13 +92,11 @@ This isn't a trick of pace or shot volume. Measured as the home team's share of 
 
 The home turnover advantage has eroded too, about half of it independent of the perimeter shift. The playoffs point the same way: the home rebound-share advantage has fallen by roughly three-quarters there too. With a fifteenth as many games, the playoff evidence is consistent with the regular-season story rather than established on its own. Player-tracking data from the last decade confirms the picture: home teams hold no measurable box-out advantage today, and their advantage in converting offensive-rebound chances has kept shrinking.
 
-![Figure 8. Why the home rebounding advantage faded. Left: offensive and defensive rebound edges season by season — the offensive edge collapses toward (and through) zero while the defensive edge only softens, for both regular season and playoffs. Right: the home rebound-share edge fades in lockstep with the league-wide retreat from offensive rebounding (r = 0.82).](generated/nba_home_court_rebounding.png)
+![Figure 9. Why the home rebounding advantage faded. Left: offensive and defensive rebound edges season by season — the offensive edge collapses toward (and through) zero while the defensive edge only softens, for both regular season and playoffs. Right: the home rebound-share edge fades in lockstep with the league-wide retreat from offensive rebounding (r = 0.82).](generated/nba_home_court_rebounding.png)
 
 **Adding it up.** The four box-score categories together account for roughly 96% of the entire regular-season decline. The two that get the headlines explain about 21% and 18%: shooting, where converging shot selection and the three-point shift register, and the narrowing whistle. Rebounding and turnovers carry the most: roughly 30% and 27%, together more than half the drop. In the regular season, almost nothing is left over. (These are accounting shares showing where the decline registers in the box score, not a claim about ultimate causes.)
 
 The playoffs don't close as neatly. The same four categories capture only about 67% of the decline, leaving roughly a third unaccounted for. With a fifteenth as many games as the regular season, only the foul and rebounding trends are statistically solid; the shooting and turnover trends can't be told apart from noise. The postseason breakdown is best read as consistent with the regular-season story, not independently proven.
-
-![Figure 9. Box-score category shares of the home-court advantage and of its decline, regular season vs. playoffs. The left panel is what creates the advantage; the right is what's eroding it. Bars sum to 100% by accounting identity.](generated/nba_home_court_mediation.png)
 
 Could rebounding and turnovers just be the three-point shift in disguise? No. Hold each game's three-point volume fixed and the **shooting** fade disappears completely. It really was the perimeter story all along. The **rebounding** fade barely moves and stays the surest of the four. Fouls and turnovers land in between. The categories doing the most work to drag home court down are doing it independently of the three-point boom. (In the playoffs the same test is too noisy to read; only the rebounding fade clears the bar. So this is a regular-season verdict.)
 
