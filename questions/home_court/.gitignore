@@ -9,3 +9,4 @@ generated/
 
 /.quarto/
 **/*.quarto_ipynb
+_*generated*
