@@ -50,10 +50,11 @@ def _check_prerequisites(cfg: ReportConfig) -> None:
         sys.exit(f"ERROR: {cfg.findings_path} not found.")
     with open(cfg.findings_path) as f:
         content = f.read()
+    findings_dir = os.path.dirname(os.path.abspath(cfg.findings_path))
     missing_pngs = [
         m.group(1)
         for m in re.finditer(r"!\[[^\]]*\]\(([^)]+\.png)\)", content)
-        if not os.path.exists(m.group(1))
+        if not os.path.exists(os.path.join(findings_dir, m.group(1)))
     ]
     if missing_pngs:
         print("WARNING: The following chart(s) are missing and will appear as placeholders:\n")

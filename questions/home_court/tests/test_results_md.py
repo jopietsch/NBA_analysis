@@ -25,9 +25,9 @@ import pytest
 import nba_home_court_analysis as reg
 import nba_home_court_data as nba
 
-RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
-TEST_RESULTS_PATH = os.path.join(os.path.dirname(__file__), "tests", "RESULTS.md")
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "tests", "data")
+RESULTS_PATH = os.path.join(os.path.dirname(__file__), "..", "docs", "RESULTS.md")
+TEST_RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 # Canonical shared monorepo cache (nba_analysis/cache), the same dir the
 # regression pipeline reads from — not a stale per-question cache/ directory.
 from nba_home_court_data import CACHE_DIR

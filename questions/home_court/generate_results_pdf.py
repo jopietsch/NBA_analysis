@@ -13,6 +13,6 @@ OUTPUT_DIR = "generated"
 
 if __name__ == "__main__":
     build(
-        "RESULTS.md",
+        "docs/RESULTS.md",
         output_path=os.path.join(OUTPUT_DIR, "nba_home_court_results.pdf"),
     )

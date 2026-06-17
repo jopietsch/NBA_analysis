@@ -6,7 +6,7 @@ import pytest
 
 import nba_home_court_data as nba
 
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "tests", "data")
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
 
 class TestSeasonFormatting:

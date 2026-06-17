@@ -158,7 +158,7 @@ def build(md_path: str, output_path: str | None = None,
     # Strip the leading H1 from the body so it doesn't duplicate the title block.
     body = md[title_m.end():].lstrip("\n") if title_m else md
 
-    temp_md = os.path.join(src_dir, "_body_generated.md")
+    temp_md = os.path.join(src_dir, "_body_generated.qmd")
     appendix_qmd = os.path.join(src_dir, "_appendix_generated.qmd")
     wrapper = None
     try:

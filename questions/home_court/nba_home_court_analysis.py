@@ -3666,7 +3666,7 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-_RESULTS_PATH = "RESULTS.md"
+_RESULTS_PATH = "docs/RESULTS.md"
 
 
 def generate_results_text(df: pd.DataFrame | None = None) -> str:
