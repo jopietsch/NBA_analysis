@@ -43,7 +43,6 @@ def _isolate_output(tmp_path, monkeypatch):
 def test_plot_results():
     plots.plot_results(
         SEASONS, _series(base=58.0), SEASONS, _series(base=62.0),
-        _series(6, 58.0), _series(6, 62.0), ERA_LABELS,
         _series(4, 58.0), _series(4, 62.0), FORMAT_LABELS,
     )
 

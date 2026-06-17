@@ -151,10 +151,9 @@ def _draw_paired_bars(
 def plot_results(
     reg_seasons: list[str], reg_pcts: list[float],
     po_seasons: list[str], po_pcts: list[float],
-    era_reg_avg: list[float], era_po_avg: list[float], era_labels_short: list[str],
     format_reg_avg: list[float], format_po_avg: list[float], format_labels_short: list[str],
 ) -> None:
-    """Save the standalone season, era, and format-period panels."""
+    """Save the standalone season and format-period panels."""
     plt.rcParams.update({
         "font.family":        "DejaVu Sans",
         "axes.spines.top":    False,
@@ -180,10 +179,6 @@ def plot_results(
     _save(_output_path("nba_home_court_advantage_season.png"),
           lambda ax: _draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts),
           (14, 7))
-    _save(_output_path("nba_home_court_advantage_era_bars.png"),
-          lambda ax: _draw_paired_bars(ax, era_reg_avg, era_po_avg, era_labels_short,
-                                       "Regular season vs playoffs\nhome win % by era"),
-          (5, 3))
     _save(_output_path("nba_home_court_advantage_format_bars.png"),
           lambda ax: _draw_paired_bars(ax, format_reg_avg, format_po_avg, format_labels_short,
                                        "Regular season vs playoffs\nhome win % by playoff format period"),
@@ -481,26 +476,26 @@ def plot_rebound_decomposition(
              f"Data: NBA.com  |  Positive = home team higher  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
-    # ── Panel 1: OREB vs DREB home edge by era ────────────────────────────────
-    reg_era, era_labels = bucket_stats_by_era(
-        reg_seasons, {"oreb": reg_stats["oreb_diff"], "dreb": reg_stats["dreb_diff"]})
-    po_era, _ = bucket_stats_by_era(
-        po_seasons, {"oreb": po_stats["oreb_diff"], "dreb": po_stats["dreb_diff"]})
-    xi = np.arange(len(era_labels))
-    w = 0.2
-    series = [
-        (reg_era["oreb"], -1.5*w, BLUE,  "Offensive (reg. season)"),
-        (reg_era["dreb"], -0.5*w, GREEN, "Defensive (reg. season)"),
-        (po_era["oreb"],  +0.5*w, "#9ec9ef", "Offensive (playoffs)"),
-        (po_era["dreb"],  +1.5*w, "#9bd8c0", "Defensive (playoffs)"),
+    # ── Panel 1: OREB vs DREB home edge over time ─────────────────────────────
+    y_oreb_reg = np.array(reg_stats["oreb_diff"], dtype=float)
+    y_dreb_reg = np.array(reg_stats["dreb_diff"], dtype=float)
+    y_oreb_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "oreb_diff")
+    y_dreb_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "dreb_diff")
+    p1_series = [
+        (y_oreb_reg, BLUE,      "Offensive (reg. season)"),
+        (y_dreb_reg, GREEN,     "Defensive (reg. season)"),
+        (y_oreb_po,  "#9ec9ef", "Offensive (playoffs)"),
+        (y_dreb_po,  "#9bd8c0", "Defensive (playoffs)"),
     ]
-    for vals, off, color, label in series:
-        ax1.bar(xi + off, vals, width=w, color=color, label=label, zorder=2)
+    for y, color, label in p1_series:
+        ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
+        _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
+    _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
-    ax1.set_xticks(xi)
-    ax1.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=9)
+    ax1.set_xticks(x[::tick_step])
+    ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.set_ylabel("Home minus away rebounds per game", fontsize=10)
-    ax1.set_title("Home rebounding edge by era — offensive vs defensive",
+    ax1.set_title("Home rebounding edge over time — offensive vs defensive",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax1.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd")
 

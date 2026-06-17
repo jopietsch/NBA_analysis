@@ -17,7 +17,7 @@ from nba_api.stats.library.parameters import SeasonType
 from nba_home_court_data import (
     START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, BBR_START_YEAR,
     fetch_all_seasons,
-    compute_era_averages, compute_playoff_format_averages,
+    compute_playoff_format_averages,
     compute_differential_stats, compute_rebound_stats, compute_margin_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_shot_zone_stats, compute_league_3pa_stats,
@@ -39,15 +39,11 @@ from nba_home_court_plots import (
 
 def main() -> None:
     reg_seasons, reg_pcts, po_seasons, po_pcts = fetch_all_seasons()
-    era_reg_avg, era_po_avg, era_labels_short = compute_era_averages(
-        reg_seasons, reg_pcts, po_seasons, po_pcts
-    )
     format_reg_avg, format_po_avg, format_labels_short = compute_playoff_format_averages(
         reg_seasons, reg_pcts, po_seasons, po_pcts
     )
     plot_results(
         reg_seasons, reg_pcts, po_seasons, po_pcts,
-        era_reg_avg, era_po_avg, era_labels_short,
         format_reg_avg, format_po_avg, format_labels_short,
     )
 
