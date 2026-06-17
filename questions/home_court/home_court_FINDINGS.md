@@ -2,7 +2,7 @@
 
 Home court advantage in the NBA has been shrinking for four decades, and this report sets out to answer what has changed and why. **Has it really changed?** **What makes home court an advantage in the first place?** And **what's driving the decline — and, just as important, what isn't?**
 
-Yes, the change is real — the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is a slow, steady erosion, with two sharper drops layered on top. The structural edges home teams once relied on have worn away — at the whistle, in shot selection, in the move to the three-point line, and on the glass. The biggest surprise is where the largest share of the decline actually came from: not the headline factors — the narrowing whistle and the three-point shift — but the collapse of the home team's grip on the offensive boards, the one nobody was watching.
+Yes, the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. Most of that fall is a slow, steady erosion, with two sharper drops layered on top. The structural advantages home teams once relied on have worn away — at the whistle, in shot selection, in the move to the three-point line, and on the glass. The biggest surprise is where the largest share of the decline actually came from: not the headline factors — the narrowing whistle and the three-point shift — but the collapse of the home team's grip on the offensive boards, the one nobody was watching.
 
 What is *not* behind the decline matters too, because the usual suspects get blamed constantly: rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the 2014 playoff format change. Each one is tested here, and each one is ruled out.
 
@@ -11,8 +11,7 @@ Throughout, the regular season and the playoffs are tracked separately — they 
 ---
 
 ## 1. The 40-Year Decline
-
-The home team in an NBA game used to win about 65 out of every 100. Today it wins about 55. That 10-point drop unfolded at roughly a quarter of a percentage point per year and the data leaves no room to doubt it.
+The 40-Year drop unfolded at roughly a quarter of a percentage point per year.
 
 The playoffs tell the same story with a slight lag. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today — a drop of roughly 9 to 10 points, comparable to the regular season but with more year-to-year noise given the smaller number of games.
 
@@ -199,7 +198,7 @@ The decline is real and one-directional: a slow, four-decade erosion with two sh
 
 **Referees are calling fairer games.** The systematic home-team foul benefit — 1.2 fouls per game in the regular season and 1.6 in the playoffs in the 1980s — has shrunk to roughly a quarter of a foul per game in the regular season and 0.7 in the playoffs. This is the largest single measurable change, and it shows up universally: 45 of 47 playoff officials with at least 50 games on record call fewer fouls on the home team.
 
-**Shot selection has converged.** Away teams now attack the paint nearly as aggressively as home teams. The structural edge in shot quality that home teams once carried into every possession has nearly disappeared, driven by the league-wide adoption of analytics-driven offense that applies regardless of venue.
+**Shot selection has converged.** Away teams now attack the paint nearly as aggressively as home teams. The structural advantage in shot quality that home teams once carried into every possession has nearly disappeared, driven by the league-wide adoption of analytics-driven offense that applies regardless of venue.
 
 **Three-point shooting equalizes outcomes.** The shift to the perimeter introduces more variance into every game. More variance means less predictability, and less predictability hurts home teams — who have historically relied on structural, consistent advantages — more than it hurts road teams. The decade-by-decade lockstep between three-point volume and home win rate is the most striking visual pattern in the dataset, though the reliable evidence is the within-game, within-era effect: games with more threes have lower home win rates even among contemporaries, independent of the shared long-run drift.
 
