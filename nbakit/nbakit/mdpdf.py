@@ -106,7 +106,7 @@ def _make_appendix_qmd(appendix_path: str, work_dir: str) -> str:
     lines = [f"## Appendix: {os.path.basename(appendix_path)}", ""]
     for title, body in sections:
         if title:
-            lines += ["", f"### {title}", ""]
+            lines += ["", f"**{title}**", ""]
         lines += ["```", body, "```", ""]
     qmd_path = os.path.join(work_dir, "_appendix_generated.qmd")
     with open(qmd_path, "w") as f:

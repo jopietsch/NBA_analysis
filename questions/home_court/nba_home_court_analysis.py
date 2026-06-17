@@ -423,7 +423,6 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
     po = df[df["is_playoff"] == 1]
     if po.empty:
         return
-    fmt_ref = nba.PLAYOFF_FORMAT_PERIODS[2][0]    # "2003–13"
     p_bar = po["home_win"].mean()
 
     _section("PLAYOFF FORMAT PERIODS — DID THE SCHEDULING CHANGES MATTER?")
@@ -444,6 +443,8 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
 
     print(f"\n   Consecutive periods — two-proportion z-tests:")
     avail = [lbl for lbl, *_ in nba.PLAYOFF_FORMAT_PERIODS if lbl in counts]
+    default_ref = nba.PLAYOFF_FORMAT_PERIODS[2][0]   # "2003–13"
+    fmt_ref = default_ref if default_ref in counts else (avail[0] if avail else default_ref)
     for a, b in zip(avail, avail[1:]):
         (wa, na), (wb, nb) = counts[a], counts[b]
         z, p = proportions_ztest([wa, wb], [na, nb])

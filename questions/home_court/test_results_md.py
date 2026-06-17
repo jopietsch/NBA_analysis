@@ -23,8 +23,11 @@ import pandas as pd
 import pytest
 
 import nba_home_court_analysis as reg
+import nba_home_court_data as nba
 
 RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
+TEST_RESULTS_PATH = os.path.join(os.path.dirname(__file__), "tests", "RESULTS.md")
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "tests", "data")
 # Canonical shared monorepo cache (nba_analysis/cache), the same dir the
 # regression pipeline reads from — not a stale per-question cache/ directory.
 from nba_home_court_data import CACHE_DIR
@@ -76,6 +79,48 @@ def test_results_md_headline_numbers():
     assert not missing, (
         "RESULTS.md no longer contains expected headline figures — if this is an "
         "intended change, update HEADLINE_ANCHORS:\n  " + "\n  ".join(missing)
+    )
+
+
+def test_results_md_matches_test_data(monkeypatch):
+    """Stable end-to-end golden: regenerate from tests/data/ and compare to
+    committed tests/RESULTS.md.  No network, no full cache required.
+
+    To regenerate tests/RESULTS.md after an intentional code change:
+        python3 -m pytest test_results_md.py::test_results_md_matches_test_data --regen
+    or run the helper directly:
+        python3 -c "
+        import os, pandas as pd
+        import nba_home_court_data as nba, nba_home_court_analysis as reg
+        nba.CACHE_DIR = 'tests/data'
+        nba.compute_attendance_season_stats = lambda *a, **k: ([], [])
+        nba.compute_attendance_covid_doseresponse = lambda *a, **k: pd.DataFrame()
+        nba.fetch_all_referee_data = lambda *a, **k: None
+        nba.compute_shot_zone_stats = lambda *a, **k: ([], {})
+        nba.compute_tracking_rebound_stats = lambda *a, **k: ([], {})
+        df = reg.build_game_dataset()
+        open('tests/RESULTS.md', 'w').write(reg.generate_results_text(df))
+        "
+    """
+    monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
+    monkeypatch.setattr(nba, "compute_attendance_season_stats",
+                        lambda *a, **k: ([], []))
+    monkeypatch.setattr(nba, "compute_attendance_covid_doseresponse",
+                        lambda *a, **k: pd.DataFrame())
+    monkeypatch.setattr(nba, "fetch_all_referee_data", lambda *a, **k: None)
+    monkeypatch.setattr(nba, "compute_shot_zone_stats", lambda *a, **k: ([], {}))
+    monkeypatch.setattr(nba, "compute_tracking_rebound_stats", lambda *a, **k: ([], {}))
+
+    df = reg.build_game_dataset()
+    regenerated = reg.generate_results_text(df)
+
+    with open(TEST_RESULTS_PATH) as f:
+        expected = f.read()
+
+    assert regenerated == expected, (
+        "Regenerated output differs from tests/RESULTS.md. "
+        "If the change is intended, re-run the helper in the docstring above "
+        "and commit tests/RESULTS.md."
     )
 
 
