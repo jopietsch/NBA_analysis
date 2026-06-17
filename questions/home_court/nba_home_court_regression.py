@@ -1831,6 +1831,54 @@ def run_parity_correlation(
         print(f"     (N is small and first-differences amplify measurement noise).")
 
 
+def compute_back_to_back_plotdata(df: pd.DataFrame) -> dict:
+    """Chart-ready 'load management' decomposition: visitor back-to-back rate by
+    era, and the shift-share split of the regular-season home win % decline into
+    a schedule (frequency) component and a within-situation (win-rate) component.
+    Same numbers run_back_to_back_analysis prints.
+    """
+    rs = df[df["is_playoff"] == 0].dropna(subset=["away_b2b", "home_b2b"]).copy()
+    order = ["neither_b2b", "vis_b2b_only", "home_b2b_only", "both_b2b"]
+
+    def _situ(r):
+        if r["away_b2b"] and r["home_b2b"]:
+            return "both_b2b"
+        if r["away_b2b"]:
+            return "vis_b2b_only"
+        if r["home_b2b"]:
+            return "home_b2b_only"
+        return "neither_b2b"
+
+    rs["situ"] = rs.apply(_situ, axis=1)
+
+    eras, vis_b2b = [], []
+    for era_label, y1, y2, _ in nba.ERA_DEFS:
+        e = rs[(rs["year"] >= y1) & (rs["year"] <= y2)]
+        if e.empty:
+            continue
+        eras.append(era_label)
+        vis_b2b.append(100.0 * e["away_b2b"].mean())
+
+    def _cells(sub):
+        c = sub.groupby("situ")["home_win"].agg(["count", "mean"]).reindex(order).fillna(0)
+        c["freq"] = c["count"] / c["count"].sum()
+        return c
+
+    _, fy1, fy2, _ = nba.ERA_DEFS[0]
+    _, ly1, ly2, _ = nba.ERA_DEFS[-1]
+    cf = _cells(rs[(rs["year"] >= fy1) & (rs["year"] <= fy2)])
+    cl = _cells(rs[(rs["year"] >= ly1) & (rs["year"] <= ly2)])
+    total = (float((cl["freq"] * cl["mean"]).sum()) - float((cf["freq"] * cf["mean"]).sum())) * 100
+    freq_comp = float(((cl["freq"] - cf["freq"]) * cf["mean"]).sum()) * 100
+    rate_comp = float((cf["freq"] * (cl["mean"] - cf["mean"])).sum()) * 100
+    return {
+        "eras": eras, "vis_b2b": vis_b2b,
+        "total": total, "freq_comp": freq_comp, "rate_comp": rate_comp,
+        "freq_share": 100.0 * freq_comp / total if total else float("nan"),
+        "rate_share": 100.0 * rate_comp / total if total else float("nan"),
+    }
+
+
 def run_back_to_back_analysis(df: pd.DataFrame) -> None:
     """Did the league-wide drop in back-to-backs drive the HCA decline?
     Tests the 'load management' story: visitor B2Bs have fallen, but how much

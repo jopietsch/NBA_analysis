@@ -32,7 +32,7 @@ from nba_home_court_plots import (
     plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_playoff_quality,
     plot_shot_zone_analysis, plot_3pa_hca_analysis,
-    plot_pace_hca_analysis, plot_team_hca_analysis, plot_referee_analysis,
+    plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis, plot_referee_analysis,
     plot_attendance, plot_tracking_rebounding,
 )
 
@@ -134,6 +134,7 @@ def main() -> None:
         reg_pace_seasons, reg_pace_vals, reg_pace_pcts,
         po_pace_seasons,  po_pace_vals,  po_pace_pcts,
     )
+    plot_back_to_back(_reg.compute_back_to_back_plotdata(game_df))
 
     reg_team_stats = compute_team_hca_stats(START_YEAR, END_YEAR, "Regular Season")
     po_team_stats  = compute_team_hca_stats(

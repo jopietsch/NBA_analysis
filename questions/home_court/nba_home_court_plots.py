@@ -729,6 +729,65 @@ def plot_margin_analysis(
     plt.close()
 
 
+def plot_back_to_back(data: dict) -> None:
+    """
+    Two-panel test of the 'load management' story. Left: the share of games in
+    which the visitor is on a back-to-back has fallen sharply by era — the
+    premise is true. Right: a shift-share split of the regular-season home win %
+    decline shows only a small slice comes from that schedule change (fewer tired
+    visitors); the rest is the home edge eroding within every rest situation
+    alike. Scheduling nudged home court; it didn't drive it down.
+
+    `data` comes from regression.compute_back_to_back_plotdata().
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    fig.suptitle("Did Fewer Tired Visitors Drive the Decline?",
+                 fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.95,
+             f"Data: NBA.com  |  back-to-back = game on zero days' rest  |  regular season  |  {season_range_label()}",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: visitor B2B rate by era ─────────────────────────────────────
+    eras, vis = data["eras"], data["vis_b2b"]
+    x = np.arange(len(eras))
+    bars = ax1.bar(x, vis, color=BLUE, width=0.66, edgecolor="white", linewidth=0.6)
+    for b, v in zip(bars, vis):
+        ax1.text(b.get_x() + b.get_width() / 2, v + 0.4, f"{v:.0f}%",
+                 ha="center", va="bottom", fontsize=8, color="#333")
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(eras, fontsize=8, rotation=30, ha="right")
+    ax1.set_ylabel("Share of games with visitor on a back-to-back", fontsize=10)
+    ax1.set_ylim(0, max(vis) * 1.18)
+    ax1.set_title("The premise is true: tired visitors grew rarer", fontsize=10.5,
+                  fontweight="bold", color="#2c2c2a", pad=6)
+
+    # ── Panel 2: shift-share of the decline ──────────────────────────────────
+    labels2 = ["Fewer tired\nvisitors\n(schedule)", "Home edge eroding\nin every rest\nsituation"]
+    vals2 = [data["freq_comp"], data["rate_comp"]]
+    # Fold the tiny interaction term into the win-rate share so the two parts
+    # read as a clean 100% split (matches the FINDINGS "8% vs the other 92%").
+    shares = [data["freq_share"], 100.0 - data["freq_share"]]
+    x2 = np.arange(2)
+    bars2 = ax2.bar(x2, vals2, color=[GRAY, RED], width=0.5, edgecolor="white", linewidth=0.6)
+    ax2.axhline(0, color="#444", linewidth=1.0)
+    for b, v, s in zip(bars2, vals2, shares):
+        ax2.text(b.get_x() + b.get_width() / 2, v - 0.2,
+                 f"{v:+.2f} pp\n({s:.0f}% of\nthe decline)", ha="center", va="top",
+                 fontsize=8.5, color="#333")
+    ax2.set_xticks(x2)
+    ax2.set_xticklabels(labels2, fontsize=9)
+    ax2.set_ylabel("Contribution to the home win % decline (pp)", fontsize=10)
+    ax2.set_ylim(min(vals2) * 1.25, 1.2)
+    ax2.set_title(f"Schedule explains only {data['freq_share']:.0f}% of the {data['total']:+.1f} pp decline",
+                  fontsize=10.5, fontweight="bold", color="#2c2c2a", pad=6)
+
+    plt.tight_layout()
+    output_path = _output_path("nba_home_court_back_to_back.png")
+    plt.savefig(output_path, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {output_path}")
+    plt.close()
+
+
 def plot_parity_analysis(
     parity_seasons: list[str], parity_std: list[float],
     reg_seasons: list[str], reg_pcts: list[float],

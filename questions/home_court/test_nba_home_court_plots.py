@@ -77,6 +77,13 @@ def test_plot_rebound_decomposition():
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_back_to_back():
+    data = {"eras": ERA_LABELS, "vis_b2b": [35.0, 34.6, 34.0, 32.7, 21.0, 18.8],
+            "total": -9.29, "freq_comp": -0.71, "rate_comp": -8.59,
+            "freq_share": 7.6, "rate_share": 92.5}
+    plots.plot_back_to_back(data)
+
+
 def test_plot_playoff_quality():
     data = {"pp_raw": -0.225, "pp_adj": -0.229, "retained": 102.0,
             "seed_bars": [("Higher seed\nhosts (G1–2)", 70.6, 1021),
