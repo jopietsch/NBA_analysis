@@ -19,7 +19,7 @@
   - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 to 10 pt drop, noisier).
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
-  - **Sharp — two drops** layered on top, each a moment one force shoved the same trend harder:
+  - **Sharp — two drops** layered on top, each a moment when one force accelerated the same trend:
     - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4); deep-dive detail (break-point test, confounds) deferred to §4. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - Flat for ~two decades.
     - Second drop: after 2017, below 56%. Coincides with the **three-point surge** hitting full stride — but the surge is the most visible *marker* of a broader move to the perimeter, not the whole cause (mechanics in §3). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
@@ -67,7 +67,7 @@
   - Playoffs: narrowed late 2010s then rebounded; downward drift NOT statistically established (playoff Paint trend −0.030, ns) → convergence is a reg-season phenomenon.
 - **Three-point revolution:**
   - Tracks decline over four decades in lockstep. 7% threes (1980s, 65% wins) → 40% (today, 55% wins).
-  - **Marks (not fully causes) the second drop (§1):** 3PA share leapt from ~¼ of shots to nearly 40% right after 2017 — the years home court slid below 56%. Timing coincidence is strong; the measured causal bite runs through the shooting channel (~1/5 of decline), with the broader perimeter shift carrying more elsewhere (rebounding). *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
+  - **Marks (not fully causes) the second drop (§1):** 3PA share rose from ~¼ of shots to nearly 40% right after 2017 — the years home court slid below 56%. Timing coincidence is strong; the measured causal bite runs through the shooting channel (~1/5 of decline), with the broader perimeter shift carrying more elsewhere (rebounding). *RESULTS 3PA%: 23.8% (2005–17) → 37.5% (2018–22) → 40.5% (2023–26).*
   - *RESULTS reg season-level Pearson r = −0.902, p<0.001.* **BUT: both series I(1) and NOT cointegrated; detrended partial r = −0.526 (raw r collapses ~40% once shared drift is removed); Granger test shows 3PA rate does NOT temporally lead HCA in either direction. Season-level correlation is largely a parallel-trend artifact — within-era game-level test is the reliable evidence.**
   - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.* This survives as the substantive finding.
   - **No temporal lead (Granger):** the annual rise in threes doesn't lead the HCA decline by a year, nor vice versa; both shift within the same season. *RESULTS: 3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns.* Consistent with both being downstream of the same strategic shift. (Note: folded into the 3PA narrative in FINDINGS, not a separate paragraph.)
@@ -103,7 +103,7 @@
 ## Section 4 — What Didn't Drive the Change
 **Q3 corollary: ruled-out factors**
 
-- **Rule changes:** only the **1994–95 season** left a mark (~**−2.6 pp** discrete step; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). Two changes that season — hand-check crackdown (likelier culprit) + shortened 3-pt line (1994–97) — confounded, can't separate at season level. The step was immediate but the multi-year adjustment continued through the late 1990s. **Break-point test:** formal QLR supremum-Chow test locates the *slope* shift in the **late 1990s** (sup F=10.22, p<5% by Andrews 1993 critical values), slope going from −0.65 pp/yr before to −0.26 pp/yr after — read as the 1994–95 adjustment settling in, though the ~4-yr lag makes the link an inference. Playoffs show no significant break (sup F=3.23, n.s.) — pure smooth drift. All other boundaries passed through; playoffs neither change registers (LR p=0.815).
+- **Rule changes:** only the **1994–95 season** left a mark (~**−2.6 pp** discrete step; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). Two changes that season — hand-check crackdown (likelier culprit) + shortened 3-pt line (1994–97) — confounded, can't separate at season level. The step was immediate but the multi-year adjustment continued through the late 1990s. **Break-point test:** formal QLR supremum-Chow test locates the *slope* shift in the **late 1990s** (sup F=10.22, p<5% by Andrews 1993 critical values), slope going from −0.65 pp/yr before to −0.26 pp/yr after — read as the 1994–95 adjustment settling in, though the ~4-yr lag makes the link an inference. Playoffs show no significant break (sup F=3.23, n.s.) — steady drift. All other boundaries passed through; playoffs neither change registers (LR p=0.815).
 - **Travel & time zones:**
   - Reg: ~**0.07 pp/100 mi** (RESULTS −0.07 pp/100mi, p=0.010), tiny & inconsistent direction; playoffs no effect (p=0.888).
   - Time zones flat both contexts (reg −0.4 pp p=0.086; playoffs +1.0 pp p=0.330).
@@ -124,7 +124,7 @@
 ![Fig 14 — attendance & empty-arena](generated/nba_home_court_attendance.png)
 - **Empty-arena experiment (2020–21):** empty **51.0%** vs. fans present **58.5%** (RESULTS n=573 vs 591). Presence > count (dose-response +0.51 pp/1000 fans, p=0.184 ns). Vanished when arenas refilled → a switch, not a slow dial.
 - **All together:** full model — era effect ≈ half of predictive power; situational factors ≈ other half. *RESULTS Shapley: Era 53%, Rest 17.9%, Altitude 23.7%, TZ 1.4%, COVID 4.5%.* Net era decline **−9.0 pp** (1984–94 → 2023–26) after all controls.
-- **Pre/post-2014 test:** rest/altitude/TZ effects statistically unchanged across line; baseline home advantage dropped **~4.7 pp** anyway (RESULTS post2014 level shift −0.196, −4.7 pp p<0.001; rest & TZ interactions ns, altitude weakened p=0.026). Situational factors held still while floor fell.
+- **Pre/post-2014 test:** rest/altitude/TZ effects statistically unchanged across line; baseline home advantage dropped **~4.7 pp** anyway (RESULTS post2014 level shift −0.196, −4.7 pp p<0.001; rest & TZ interactions ns, altitude weakened p=0.026). Situational factors held still while the baseline dropped.
 
 ---
 
@@ -157,7 +157,7 @@
 ![Fig 18 — referee rankings](generated/nba_home_court_referee_rankings.png)
 
 ![Fig 19 — franchise HCA](generated/nba_home_court_team_hca.png)
-- **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Fortress reputation = being a good team that plays more home games.
+- **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Apparent postseason home-court strength reflects being a good team that plays more home games.
 - **Home court worth more in playoffs:** reg **~20 pp** vs. playoffs **~27 pp** → **+7 pp postseason premium** (RESULTS +7.2 pp, SD 7.4). Reg/playoff consistency positive but weak (raw r=+0.362, p=0.042).
 - **Player-tracking caught the final chapter of the rebounding fade (Fig 20):** OREB-conversion advantage fell from ~1.5 pp (mid-2010s) to below zero (2025–26); box-out advantage essentially zero throughout. Cameras confirmed a fade already nearly complete before 2013–14. *RESULTS: OREB conversion p=0.024*, box-out p=0.775.*
 
