@@ -68,7 +68,7 @@ The same advantages that create home court advantage are the ones eroding over t
 
 **Referee foul bias has narrowed sharply.** The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In the playoffs it has fallen from 1.6 to 0.7. The advantage referees once gave home teams has nearly vanished in the regular season and significantly diminished in the playoffs.
 
-The playoff referee chart shows the generational shift clearly. Ron Garretson, Joe Crawford, and Eddie Rush, the officials with the most pronounced home-favoring patterns, all worked primarily in the 1990s and early 2000s. The distribution has compressed over time, not just shifted. Newer officials are not only less biased on average; they are also more uniform.
+The playoff referee chart shows the generational shift clearly. The distribution across officials has compressed over time, not just shifted. Newer referees are not only less biased on average; they are also more uniform in their calling.
 
 ![Figure 5. Referee home foul bias by official and era, playoffs.](generated/nba_home_court_referee.png)
 
