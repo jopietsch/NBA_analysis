@@ -73,7 +73,7 @@
   - Playoffs: directional but weaker within-era signal (r=−0.499; within-era p=0.027) — team quality dominates.
 - **Fourth strand — rebounding (the glass), biggest driver, now explained:**
   - Home rebounding advantage shrunk 40 yrs, NOT a 3-point byproduct.
-  - *RESULTS 3PA control (Fig 10):* eFG% trend fully absorbed (**210%** absorbed → shooting fade IS the 3-pt story); REB only **8%** absorbed (survives, p<0.001); TOV **54%** absorbed (~half independent); Foul 51%. Playoffs noisy — only REB survives.
+  - *RESULTS 3PA control (Fig 10):* eFG% **210%** absorbed → shooting decline not only disappears but reverses under 3PA control; net of 3PA, home shooting edge was actually improving; REB only **8%** absorbed (survives, p<0.001); TOV **54%** absorbed (~half independent); Foul 51%. Playoffs noisy — only REB survives.
   - **Died on the OFFENSIVE glass.** *RESULTS rebounding decomp (reg):* OREB diff +0.61 → **−0.05** (goes negative); DREB diff +1.64 → +0.59 (only softens); REB diff +2.24 → +0.54. Trends/yr all negative, all p<0.001 (OREB −0.018, DREB −0.027, REB −0.044).
   - **Direction of convergence:** home OREB rate fell **34% → 26%** (−8 pp); away OREB rate fell **31% → 26%** (−5 pp). The gap closed because home teams retreated faster, not because away teams improved. (Chart left panel now shows home vs. away OREB rates directly.)
   - **Pace-free share advantage** (home share of available boards − away) still collapses ~10×: **+2.14pp → +0.21pp** (trend −0.052/yr, p<0.001). → not a pace/volume artifact.
