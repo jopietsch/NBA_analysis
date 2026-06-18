@@ -26,6 +26,7 @@
   - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Handled in different sections because the events differ: discrete rule shock (§4) vs. gradual stylistic shift inside the categories (§3).
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
+- **Where the trend is headed:** 3PA share approaching ceiling (~40%); league OREB rate approaching floor (~26%, down from 33%). If both forces are near their asymptotes, pace of decline should slow. Floor from empty-arena data: home teams won 51% with no crowd/bias/prep edge, probably the long-run lower bound. Information diffusion as mechanism is not basketball-specific: other sports investing heavily in analytics are likely on the same trajectory (prediction, not tested here).
 **Figures:**
 
 ![Fig 1 — season trends](../generated/nba_home_court_advantage_season.png)
@@ -84,6 +85,7 @@
   - Reg season: four categories = **~96% of decline**; all four trends p<0.001. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
   - Playoffs: overall trend 4× less precisely measured than RS (CI [−0.359, −0.091] vs [−0.280, −0.209]); categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
 - **3PA is real but narrow:** within-season link is genuine (−2.27 pp/10pp, p<0.001) but hits mainly the shooting channel. Shooting ≈ 21% of decline; REB+TOV (~57%) barely move under the 3PA control. Threes drove one channel, not the whole decline. (Point now made within the 3PA narrative in FINDINGS, not as a separate closing paragraph.)
+- **Shape of the decline: continuous drift, not shocks.** CUSUM finds no structural instability across 40 seasons. Granger: 3PA does not temporally lead HCA; both co-move, pulled by the same underlying force. Data most consistent with information diffusion: as analytical strategies spread uniformly across all 30 teams, strategies converged toward the same optima regardless of venue, and the home familiarity advantage compressed alongside them.
 **Figures:**
 
 ![Fig 5 — mediation shares (leads the section as the roadmap)](../generated/nba_home_court_mediation.png)
@@ -167,6 +169,7 @@
   - *RESULTS reg season:* Q10 **−0.167 pts/yr**, Q90 **+0.050 pts/yr**; IQR widening **+0.217 pts/yr**.
   - *RESULTS playoffs:* Q10 −0.104 (ns), Q90 +0.222 pt/yr; IQR widening **+0.326 pts/yr** — playoff spread driven mainly by big home wins growing (Home wins trend +0.149***/yr).
   - ~0.2–0.3 pts/yr widening in both contexts. Era of close games → era of blowouts.
+- **Team strategy implications:** Rebounding is the most tractable remaining home-court lever (30% of decline; only 8% absorbed by 3PA control; tracking data shows conversion edge still declining). Turnover channel has independent component (~46% not 3PA-driven); pressure defense at home targets it. Crowd presence = switch (even a few thousand restores full effect; size above that adds little). Away teams: 3PA has already largely equalized the shooting channel. Offensive glass is where road disadvantage persists and no current trend is closing it. Rest: away team entering better-rested = ~3 pp drop in home win rate, available from scheduling.
 
 ![Fig 21 — margin trends](../generated/nba_home_court_margin.png)
 
