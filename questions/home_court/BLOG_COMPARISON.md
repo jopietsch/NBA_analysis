@@ -38,12 +38,22 @@ The altitude figures matching to the decimal — derived from independent pipeli
 
 The blog crowns the three-point revolution as *the* primary driver on the strength of a raw time-series correlation (r = −0.88), plus r = 0.85 for free throws and r = −0.85 for its EuroLeague comparison.
 
-We deliberately distrust those raw correlations: two series that both drift downward for 40 years will correlate near-perfectly whether or not one causes the other — the classic spurious-trend trap. (We make this exact argument when ruling out competitive balance.) So we do two things the blog does not:
+**Problem 1: the raw correlation is inflated.** Two series that both drift for 40 years will correlate near-perfectly whether or not one causes the other. Once the shared long-run drift is stripped from both series, the season-level correlation shrinks from −0.90 to −0.53: roughly 40% of that striking visual is two trends happening at the same time, not one driving the other. The within-era effect is real — games with higher 3PA rates are games home teams win less often, at **−2.64 pp per 10 pp of 3PA (RS), surviving the detrend (−2.27 pp, p<0.001)** — but the raw correlation overstates its size.
 
-- **Detrend / go within-era.** Holding the year-by-year drift constant, more threes in a given game still predict fewer home wins: **−2.64 pp per 10 pp of 3PA rate (RS), and it survives the detrend (−2.27 pp, p<0.001)**; playoffs −2.84 to −3.12 pp (p=0.027). So the three-point effect is real *and* robust — but it is one channel, not the whole story.
-- **Decompose the box score.** Of the regular-season decline, the channels split: **shooting 21%, the whistle 18%, turnovers 27%, rebounding 30%** (`RESULTS.md:257-261`). The two channels the blog never mentions — rebounding and turnovers — carry **57% of the decline between them**, more than shooting and fouls combined.
+**Problem 2: 3PA only fully explains one of four channels, and not the biggest one.** The blog measured shooting (eFG%) and free throws. When we decompose the full box-score decline, the channels split as **shooting 21%, fouls 18%, turnovers 27%, rebounding 30%**. The blog never looked at turnovers or rebounding.
 
-So we disagree on emphasis: the blog over-attributes to threes via a correlation that can't separate cause from shared trend, and in doing so misses where the accounting actually lands.
+When we then ask how much of each channel's trend survives after holding 3PA rate constant, the picture becomes clear:
+
+| Channel | Share of decline | Absorbed by 3PA control |
+|---|---|---|
+| Shooting (eFG%) | 21% | 210% — the trend *reverses*; the shooting convergence is entirely the 3PA story, and then some |
+| Fouls | 18% | ~51% — about half independent of 3PA |
+| Turnovers | 27% | ~54% — about half independent of 3PA |
+| Rebounding | 30% | ~8% — almost entirely independent of 3PA |
+
+The shooting channel is indeed the 3-point story — the blog is right about that channel. But it is only 21% of the total decline. Fouls and turnovers are each about half explained by the perimeter shift. Rebounding — the single largest channel — is almost entirely independent of 3PA volume.
+
+The blog's conclusion is correct within the shooting box. It is wrong to generalize from there to the full decline, because the two channels carrying the most weight are the ones least connected to the three-point rise. The blog never measured them.
 
 A related disagreement on the **free-throw share**: the blog says the FT/referee channel is ~40% of the margin decline (~1.0 of 2.25 points). Our trend decomposition puts the whistle at **18%** of the win-rate decline. The blog is decomposing *points of scoring margin*; we are decomposing *the win-rate trend* through cluster-robust channel coefficients — different denominators, but the blog's 40% is far above any share we can reproduce.
 
