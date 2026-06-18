@@ -4,8 +4,8 @@ A guide to every analysis that produces output in `RESULTS.md`: the data it uses
 the statistical approach, why that approach was chosen, what the results mean, and —
 where a section has one — **why its figure takes the form it does** (a `Why this
 chart` note). Sections appear in the same order as `RESULTS.md`. The figures
-themselves are displayed and captioned in `home_court_FINDINGS.md`; here we only explain the
-reasoning behind each chart choice. Unlike `home_court_FINDINGS.md`, this document uses
+themselves are displayed and captioned in `home_court_findings.md`; here we only explain the
+reasoning behind each chart choice. Unlike `home_court_findings.md`, this document uses
 statistical terminology freely — it is the methods companion, not the narrative
 report.
 
@@ -203,7 +203,7 @@ between-official SD ≈ 0.41 fouls/game), so even shrunken rankings should be re
 loosely. The era decomposition shows compression over time: mean bias fell from
 −2.24 (1995–01) to −0.75 (2023–26), and in the recent eras the true
 between-official SD estimates hit zero — modern officials are both less
-home-favoring and more uniform. (The headline numbers in `home_court_FINDINGS.md` quoting
+home-favoring and more uniform. (The headline numbers in `home_court_findings.md` quoting
 "−1.6 → −0.7" come from Section 4's game-level playoff table; this section's
 −1.10 league mean is an *across-officials* average and differs slightly by
 construction.)
@@ -308,7 +308,7 @@ differ by channel:
 - **Rebounding** is independent: only ≈8% of its year-trend is absorbed and it
   stays highly significant (p < 0.001). The home team's rebounding edge has slid
   for reasons the perimeter shift does not explain — a genuine fourth strand of
-  the decline, now reflected in `home_court_FINDINGS.md` §3 and §7 (Summary). In the playoffs the
+  the decline, now reflected in `home_court_findings.md` §3 and §7 (Summary). In the playoffs the
   rebounding fade is, if anything, sharper net of 3PA.
 - **Fouls and turnovers** are roughly half-and-half (≈51% and ≈54% absorbed) but
   both survive — partly the perimeter story, partly their own.
@@ -516,7 +516,7 @@ player-tracking and hustle data (offensive-rebound conversion, box-outs,
 second-chance points) split Home/Road via `location_nullable`. It corroborates the
 mechanism — no measurable home box-out edge today, offensive-rebound conversion
 still shrinking — but only covers the tracking era (~2014 on), too short to carry
-the 40-year story, so it is summarized in one sentence in `home_court_FINDINGS.md` §3 rather
+the 40-year story, so it is summarized in one sentence in `home_court_findings.md` §3 rather
 than reported as its own section here. The code is retained but unwired from the
 pipeline.
 
@@ -559,7 +559,7 @@ against year-only.
 drift* or in *discrete steps* at specific rule changes. The z-tests find the
 candidate steps; the trend-controlled model asks whether any step is bigger than
 the underlying drift would predict. Because almost none of them is, this analysis
-lives in `home_court_FINDINGS.md` §4 ("What Didn't Drive the Change") — rule changes are the
+lives in `home_court_findings.md` §4 ("What Didn't Drive the Change") — rule changes are the
 most natural suspect, yet only one left a mark.
 
 **What the results mean.** In the regular season, two boundaries show raw

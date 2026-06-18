@@ -41,9 +41,9 @@ Before finalizing prose, make sure what is written actually matches the data fro
 ## Standard document workflow
 
 Each project uses this naming convention:
-- `docs/<project>_FINDINGS.md` — main narrative; drives the PDF report
-- `docs/<project>_SUMMARY.md` — standalone one-page summary
-- `docs/<project>_STATS_EXPLAINER.md` — hand-edited methods companion to `RESULTS.md`
+- `docs/<project>_findings.md` — main narrative; drives the PDF report
+- `docs/<project>_summary.md` — standalone one-page summary
+- `docs/<project>_stats_explainer.md` — hand-edited methods companion to `RESULTS.md`
 - `docs/RESULTS.md` — auto-generated analysis output; never edit manually, always re-run the pipeline to refresh
 
 Standard commands (run from the project root):
@@ -51,8 +51,8 @@ Standard commands (run from the project root):
 - Any standalone doc PDF: `python3 generate_doc_pdf.py docs/<file>.md`
 
 Cascade rules: when a file changes, update its dependents before closing the task:
-- `RESULTS.md` changes: update `<project>_STATS_EXPLAINER.md` so every number and conclusion still matches; regenerate its PDF
-- `<project>_FINDINGS.md` changes: if headline figures changed, update `<project>_SUMMARY.md` to match; regenerate the main report PDF (and SUMMARY PDF if updated)
+- `RESULTS.md` changes: update `<project>_stats_explainer.md` so every number and conclusion still matches; regenerate its PDF
+- `<project>_findings.md` changes: if headline figures changed, update `<project>_summary.md` to match; regenerate the main report PDF (and summary PDF if updated)
 - Any standalone markdown doc changes: regenerate its PDF
 
 ## Standard commands
@@ -67,9 +67,9 @@ MPLBACKEND=Agg python3 <project>.py
 python3 generate_report.py
 
 # Regenerate any standalone doc PDF + HTML
-python3 generate_doc_pdf.py docs/<project>_FINDINGS.md
-python3 generate_doc_pdf.py docs/<project>_SUMMARY.md
-python3 generate_doc_pdf.py docs/<project>_STATS_EXPLAINER.md
+python3 generate_doc_pdf.py docs/<project>_findings.md
+python3 generate_doc_pdf.py docs/<project>_summary.md
+python3 generate_doc_pdf.py docs/<project>_stats_explainer.md
 
 # Run all tests
 python3 -m pytest
@@ -98,14 +98,14 @@ Each project follows a four-module pipeline plus two report generators:
 - **`<project>_plots.py`** — all visualization; imports the data module and holds no data logic of its own. Each `plot_*` function saves a PNG to `generated/`.
 - **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/RESULTS.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`.
 - **`<project>.py`** (or `<project>_<name>.py`) — pipeline orchestration only; sequences data → plots → analysis; imports the analysis module inside `main()` to avoid circular imports.
-- **`generate_report.py`** — assembles `docs/<project>_FINDINGS.md` prose and PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
+- **`generate_report.py`** — assembles `docs/<project>_findings.md` prose and PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
 - **`generate_doc_pdf.py`** — general Markdown-to-PDF renderer for standalone docs (headings, lists, tables, code fences, images, `--appendix` flag).
 
 Test pattern:
 - `tests/test_<project>.py` — correctness unit tests for the data/computation layer using synthetic DataFrames; never make live API calls.
 - `tests/test_<project>_plots.py` — no-raise smoke tests for each `plot_*`; no pixel or image comparison (brittle across font and library versions).
 
-Adding a new analysis always follows this order: data → plot → analysis → tests → FINDINGS section → run pipeline → update FINDINGS prose from RESULTS.
+Adding a new analysis always follows this order: data → plot → analysis → tests → findings section → run pipeline → update findings prose from RESULTS.
 
 ## nba_api quirks
 

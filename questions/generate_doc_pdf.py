@@ -4,9 +4,9 @@ Render a standalone Markdown document to a styled PDF.
 
 Thin wrapper around nbakit.mdpdf — all logic lives there.
 
-    python3 generate_doc_pdf.py STATS_TUTORIAL.md
-    python3 generate_doc_pdf.py STATS_TUTORIAL.md [output.pdf]
-    python3 generate_doc_pdf.py STATS_TUTORIAL.md --appendix RESULTS.md
+    python3 generate_doc_pdf.py stats_tutorial.md
+    python3 generate_doc_pdf.py stats_tutorial.md [output.pdf]
+    python3 generate_doc_pdf.py stats_tutorial.md --appendix RESULTS.md
 """
 
 import sys

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate illustrative tutorial diagrams for STATS_TUTORIAL.md."""
+"""Generate illustrative tutorial diagrams for stats_tutorial.md."""
 
 import numpy as np
 import matplotlib.pyplot as plt

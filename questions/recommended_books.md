@@ -1,11 +1,11 @@
 # Recommended Books — Statistics for NBA Analysis
 
-A reading path keyed to the methods in `STATS_TUTORIAL.md`. The tutorial sections
+A reading path keyed to the methods in `stats_tutorial.md`. The tutorial sections
 are noted so you can read selectively.
 
 ---
 
-## Foundations + OLS (STATS_TUTORIAL Parts 0–1)
+## Foundations + OLS (stats_tutorial Parts 0–1)
 
 **"Statistics" by Freedman, Pisani & Purves**
 The best conceptual foundations book: probability, confidence intervals, and
@@ -14,7 +14,7 @@ behind §§0–1 (probability, OLS, z-tests, chi-square, correlation).
 
 ---
 
-## Regression through GLMs (STATS_TUTORIAL Parts 2–4)
+## Regression through GLMs (stats_tutorial Parts 2–4)
 
 **"Regression and Other Stories" by Gelman, Hill & Vehtari**
 Covers OLS, logistic regression, GLMs, R², mediation, and interactions in one
@@ -27,7 +27,7 @@ interaction terms (§7.4).
 
 ---
 
-## Causal Inference and Robust SEs (STATS_TUTORIAL Parts 3, 7)
+## Causal Inference and Robust SEs (stats_tutorial Parts 3, 7)
 
 **"Mostly Harmless Econometrics" by Angrist & Pischke**
 The authoritative source on cluster-robust SEs, HAC/Newey-West, natural
@@ -43,7 +43,7 @@ theeffectbook.net. Good entry point before tackling Mostly Harmless.
 
 ---
 
-## Empirical Bayes (STATS_TUTORIAL Part 6)
+## Empirical Bayes (stats_tutorial Part 6)
 
 **"Introduction to Empirical Bayes" by David Robinson**
 A short free ebook. Directly covers the shrinkage estimator in §6 with worked
@@ -53,7 +53,7 @@ Covers: variance decomposition (§6.1), empirical-Bayes shrinkage (§6.2).
 
 ---
 
-## Quantile Regression (STATS_TUTORIAL Part 5)
+## Quantile Regression (stats_tutorial Part 5)
 
 **"Quantile Regression" by Roger Koenker**
 The authoritative text — dense but comprehensive. For practical use, the

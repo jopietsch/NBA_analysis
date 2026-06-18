@@ -3,8 +3,8 @@
 A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and
 (where a section has one) **why its figure takes the form it does**. Sections appear
-in the same order as `RESULTS.md`. The figures themselves are embedded in `knicks_2026_historic_FINDINGS.md`;
-here we only explain the reasoning behind each choice. Unlike `knicks_2026_historic_FINDINGS.md`, this
+in the same order as `RESULTS.md`. The figures themselves are embedded in `knicks_2026_historic_findings.md`;
+here we only explain the reasoning behind each choice. Unlike `knicks_2026_historic_findings.md`, this
 document uses statistical terminology freely; it is the methods companion, not the
 narrative report.
 

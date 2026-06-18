@@ -14,7 +14,7 @@ OUTPUT_DIR = "generated"
 
 if __name__ == "__main__":
     build_report(ReportConfig(
-        findings_path="docs/knicks_2026_historic_FINDINGS.md",
+        findings_path="docs/knicks_2026_historic_findings.md",
         results_path="docs/RESULTS.md",
         title="Did the 2026 Knicks Have a Historic Playoff Run?",
         subtitle="The 2025–26 New York Knicks in Context",

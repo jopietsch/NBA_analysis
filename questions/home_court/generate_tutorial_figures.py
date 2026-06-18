@@ -1,4 +1,4 @@
-"""Teaching figures for STATS_TUTORIAL.md.
+"""Teaching figures for stats_tutorial.md.
 
 Standalone and pedagogical — deliberately NOT part of the analysis pipeline in
 nba_home_court_advantage.py. These illustrate statistical *concepts*; some use

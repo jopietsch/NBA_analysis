@@ -44,7 +44,7 @@ The 2026 Knicks' playoff run is historically elite by every adjusted measure. Th
 | Document | Description |
 |---|---|
 | [Full Report](knicks_2026_historic_report.html) | Complete findings with all charts and section-by-section analysis. |
-| [Stats Explainer](knicks_2026_historic_STATS_EXPLAINER.html) | Guide to the statistical methods, written for a general audience. |
+| [Stats Explainer](knicks_2026_historic_stats_explainer.html) | Guide to the statistical methods, written for a general audience. |
 :::
 
 ::: {.content-visible when-format="typst"}
@@ -53,5 +53,5 @@ All files are in the same folder as this PDF (`generated/`).
 | Document | File | Description |
 |---|---|---|
 | Full Report | `knicks_2026_historic_report.pdf` | Complete findings with all charts and section-by-section analysis. |
-| Stats Explainer | `knicks_2026_historic_STATS_EXPLAINER.pdf` | Guide to the statistical methods, written for a general audience. |
+| Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods, written for a general audience. |
 :::

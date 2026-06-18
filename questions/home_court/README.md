@@ -19,7 +19,7 @@ python3 generate_report.py
 Game logs and shot zone data are cached as CSVs under `cache/`. The first run takes several minutes
 (API calls per season with polite pauses); subsequent runs use the cache and finish almost instantly.
 
-See `home_court_FINDINGS.md` for narrative interpretation and `RESULTS.md` for the full regression tables
+See `home_court_findings.md` for narrative interpretation and `RESULTS.md` for the full regression tables
 (auto-generated each run, never edit manually).
 
 ## Output
@@ -30,16 +30,16 @@ everything into `generated/nba_home_court_advantage_report.pdf` — sixteen sect
 the full regression tables. All generated PNGs and PDFs live under `generated/` (gitignored); `RESULTS.md`
 is the one generated file kept in the repo root.
 
-## Updating home_court_FINDINGS.md
+## Updating home_court_findings.md
 
-`home_court_FINDINGS.md` is the single source of truth for narrative prose and chart placement. Edit it when
+`home_court_findings.md` is the single source of truth for narrative prose and chart placement. Edit it when
 findings change, then regenerate the PDF with `python3 generate_report.py`.
 
 Before updating, verify outputs are current and then revise the narrative to match the latest data.
 Use this prompt with Claude Code:
 
 ```
-Before updating home_court_FINDINGS.md, verify that the analysis outputs are current:
+Before updating home_court_findings.md, verify that the analysis outputs are current:
 
 1. Check that RESULTS.md and all PNG files exist and were modified more recently
    than nba_home_court_advantage.py and nba_home_court_analysis.py.
@@ -50,20 +50,20 @@ Before updating home_court_FINDINGS.md, verify that the analysis outputs are cur
 2. Read RESULTS.md in full to understand the current numbers, significance levels,
    and era-by-era breakdowns.
 
-3. Read the current home_court_FINDINGS.md.
+3. Read the current home_court_findings.md.
 
-4. Update home_court_FINDINGS.md to reflect the current analysis. Rules:
-   - home_court_FINDINGS.md has seven ## sections (§1 the decline, §2 what creates HCA, §3 what's driving the decline, §4 what didn't, §5 the playoff picture, §6 other findings, §7 summary).
+4. Update home_court_findings.md to reflect the current analysis. Rules:
+   - home_court_findings.md has seven ## sections (§1 the decline, §2 what creates HCA, §3 what's driving the decline, §4 what didn't, §5 the playoff picture, §6 other findings, §7 summary).
      Do not rename or renumber sections without also updating any cross-references.
    - ### subheadings within a section are rendered as sub-headers in the PDF.
    - No specific coefficient values, R² values, or percentage points — those
      belong in RESULTS.md and go stale. Reference RESULTS.md for specifics.
    - Use qualitative language: "significant", "dominant", "narrowing", "no effect".
    - Describe the direction and relative magnitude of each effect.
-   - If anything in the current RESULTS.md contradicts what home_court_FINDINGS.md says,
+   - If anything in the current RESULTS.md contradicts what home_court_findings.md says,
      update the narrative to match.
 
-5. After editing home_court_FINDINGS.md, regenerate the PDF:
+5. After editing home_court_findings.md, regenerate the PDF:
    python3 generate_report.py
 ```
 

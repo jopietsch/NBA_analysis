@@ -2,7 +2,7 @@
 nba_home_court_analysis.py — statistical analysis of home court advantage.
 
 Game-level statistical analyses on all cached data — one run_* function per
-home_court_FINDINGS.md section that needs numbers: decline trend, format periods,
+home_court_findings.md section that needs numbers: decline trend, format periods,
 sequential R² decomposition, coefficient stability, rest/altitude/time zone,
 rest buckets, margins, box-score and shot-zone differentials, referees,
 travel, parity, 3PA rate, pace, series structure, and franchise HCA.
@@ -3710,7 +3710,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         results: dict = {}
 
-        # Section order mirrors how home_court_FINDINGS.md uses the data
+        # Section order mirrors how home_court_findings.md uses the data
         # (first appearance, top-to-bottom).
 
         # §1 The 40-Year Decline (magnitude, then shape/timing of the drop)

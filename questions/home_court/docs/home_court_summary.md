@@ -49,8 +49,8 @@ Home court is fading because the on-court advantages that built it — a friendl
 |---|---|
 | [Full Report](nba_home_court_advantage_report.html) | Complete findings with all charts, section-by-section analysis, and the ruled-out factors. |
 | [Regression Results](nba_home_court_results.html) | Full statistical output: regression tables, significance tests, and coefficient values. |
-| [Stats Explainer](home_court_STATS_EXPLAINER.html) | Guide to the statistical methods used, written for a general audience. |
-| [Stats Tutorial](../../generated/STATS_TUTORIAL.html) | Worked examples reproducing key results from the regression output. |
+| [Stats Explainer](home_court_stats_explainer.html) | Guide to the statistical methods used, written for a general audience. |
+| [Stats Tutorial](../../generated/stats_tutorial.html) | Worked examples reproducing key results from the regression output. |
 :::
 
 ::: {.content-visible when-format="typst"}
@@ -60,6 +60,6 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 |---|---|---|
 | Full Report | `nba_home_court_advantage_report.pdf` | Complete findings with all charts, section-by-section analysis, and the ruled-out factors. |
 | Regression Results | `nba_home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values. |
-| Stats Explainer | `home_court_STATS_EXPLAINER.pdf` | Guide to the statistical methods used, written for a general audience. |
-| Stats Tutorial | `../generated/STATS_TUTORIAL.pdf` | Worked examples reproducing key results from the regression output. |
+| Stats Explainer | `home_court_stats_explainer.pdf` | Guide to the statistical methods used, written for a general audience. |
+| Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
 :::

@@ -27,7 +27,7 @@ def _count_regular_season_games() -> int:
 
 if __name__ == "__main__":
     build_report(ReportConfig(
-        findings_path="docs/home_court_FINDINGS.md",
+        findings_path="docs/home_court_findings.md",
         title="NBA Home Court Advantage",
         subtitle="A 40-Year Decline",
         data_line=(

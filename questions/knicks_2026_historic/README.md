@@ -27,7 +27,7 @@ python3 generate_report.py
 Game logs are cached as CSVs under `cache/`. The first run hits the NBA.com API
 (with polite pauses); subsequent runs use the cache.
 
-See `knicks_2026_historic_FINDINGS.md` for narrative interpretation and `RESULTS.md` for the
+See `knicks_2026_historic_findings.md` for narrative interpretation and `RESULTS.md` for the
 auto-generated analysis output (never edit by hand).
 
 ## Tests
