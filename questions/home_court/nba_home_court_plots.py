@@ -486,11 +486,14 @@ def plot_rebound_decomposition(
     """
     3-panel figure on why the home rebounding edge faded.
 
-    Panel 1: home OREB rate vs away OREB rate over time (regular season).
-    Panel 2: home-minus-away OREB rate differential over time — shows home
-             teams retreated faster than away teams.
-    Panel 3: OREB differential vs home win % scatter — connects the rebounding
-             gap to HCA (association, not causation).
+    Panel 1: home OREB rate vs away OREB rate over time (regular season) —
+             the cleaner rate-based measure of offensive-rebounding aggressiveness,
+             not confounded by how well either team shoots.
+    Panel 2: raw OREB diff and DREB diff (home minus away per game) over time —
+             shows both sides of the glass declining, with DREB declining more
+             in absolute terms.
+    Panel 3: total rebound differential vs home win % scatter — connects the
+             full rebounding picture to HCA (association, not causation).
     """
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
@@ -519,24 +522,30 @@ def plot_rebound_decomposition(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
-    # ── Panel 2: home-minus-away OREB rate differential over time ────────────
-    y_diff = y_home - y_away
-    ax2.plot(x, y_diff, color=BLUE, linewidth=1.5, alpha=0.7, zorder=2)
-    _add_trend_line(ax2, x, y_diff, BLUE, linewidth=1.8, alpha=0.9, zorder=3)
+    # ── Panel 2: raw OREB diff and DREB diff over time ───────────────────────
+    y_oreb_diff = np.array(reg_stats["oreb_diff"], dtype=float)
+    y_dreb_diff = np.array(reg_stats["dreb_diff"], dtype=float)
+    for y, color, label in [
+        (y_oreb_diff, BLUE, "OREB diff (home − away)"),
+        (y_dreb_diff, RED,  "DREB diff (home − away)"),
+    ]:
+        ax2.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
+        _add_trend_line(ax2, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
     _shade_eras(ax2, reg_seasons, label_y=None)
     ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
     ax2.set_xticks(x[::tick_step])
     ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
-    ax2.set_ylabel("Home minus away OREB rate (pp)", fontsize=10)
-    ax2.set_title("The home offensive-rebounding edge\nclosed to zero (and crossed)",
+    ax2.set_ylabel("Home minus away rebounds per game", fontsize=10)
+    ax2.set_title("Both rebounding edges declined;\ndefensive edge fell more in raw counts",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+    ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
-    # ── Panel 3: OREB differential vs home win % ─────────────────────────────
+    # ── Panel 3: total rebound differential vs home win % ────────────────────
+    y_reb_diff = np.array(reg_stats["reb_diff"], dtype=float)
     if win_seasons is not None and win_pcts is not None:
-        # Align on season label
         win_map = dict(zip(win_seasons, win_pcts))
         aligned_diff, aligned_win = [], []
-        for s, d in zip(reg_seasons, y_diff):
+        for s, d in zip(reg_seasons, y_reb_diff):
             if s in win_map and np.isfinite(d):
                 aligned_diff.append(d)
                 aligned_win.append(win_map[s])
@@ -551,9 +560,9 @@ def plot_rebound_decomposition(
             ax3.text(0.05, 0.95, f"r = {r:+.2f}\np {'< 0.001' if p < 0.001 else f'= {p:.3f}'}",
                      transform=ax3.transAxes, va="top", fontsize=10, color="#2c2c2a",
                      bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, edgecolor="#ddd"))
-    ax3.set_xlabel("Home minus away OREB rate (pp)", fontsize=10)
+    ax3.set_xlabel("Total rebound differential (home − away per game)", fontsize=10)
     ax3.set_ylabel("Home win % (regular season)", fontsize=10)
-    ax3.set_title("Seasons where home teams crash more\ntend to be seasons where they win more",
+    ax3.set_title("Seasons with a larger home rebounding edge\ntend to be seasons where home teams win more",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
 
     plt.tight_layout()

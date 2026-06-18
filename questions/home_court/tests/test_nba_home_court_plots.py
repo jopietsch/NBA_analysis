@@ -73,10 +73,12 @@ def test_plot_rebound_decomposition():
             "reb_share_edge", "league_oreb_rate",
             "oreb_rate_home", "oreb_rate_away"]
     stats = {k: _series() for k in keys}
-    stats["league_oreb_rate"] = _series(base=30.0)
+    stats["oreb_diff"]      = _series(base=0.4)
+    stats["dreb_diff"]      = _series(base=1.2)
+    stats["reb_diff"]       = _series(base=1.6)
     stats["oreb_rate_home"] = _series(base=28.0)
     stats["oreb_rate_away"] = _series(base=26.0)
-    win_pcts = [59.0 + i * 0.1 for i in range(len(SEASONS))]
+    win_pcts = [59.0 + i * 0.3 for i in range(len(SEASONS))]
     plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats),
                                      win_seasons=SEASONS, win_pcts=win_pcts)
 
