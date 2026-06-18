@@ -78,6 +78,13 @@ def _rebase_image_paths(body: str, src_dir: str, target_dir: str) -> str:
     return re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", _fix, body)
 
 
+def _yaml_quote(value: str) -> str:
+    """Wrap value in double quotes if it contains YAML-special characters."""
+    if ":" in value or "`" in value or "#" in value:
+        return '"' + value.replace('"', '\\"') + '"'
+    return value
+
+
 # ── Quarto helpers ────────────────────────────────────────────────────────────
 
 def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
@@ -98,8 +105,8 @@ def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
             "--to", fmt,
             "--output-dir", tmp,
             "--metadata-file", _NBA_YML,
-            "--metadata", f"title:{title}",
-            "--metadata", f"author:{author}",
+            "--metadata", f"title:{_yaml_quote(title)}",
+            "--metadata", f"author:{_yaml_quote(author)}",
         ]
         if toc:
             cmd += ["--metadata", "toc:true"]
