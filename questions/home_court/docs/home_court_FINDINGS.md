@@ -64,7 +64,7 @@ The same categories that make up the create home court advantage are the ones le
 
 This chart splits both home court and its 40-year decline across the four box-score categories: shooting, rebounding (offensive and defensive combined), foul calls, and turnover margin. The left panel is what creates the advantage; the right is what's eroding it. The rest of this section walks each category in turn, with the precise shares tallied at the end.
 
-![Box-score category shares of the home-court advantage and of its decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in Figure 7. The left panel is what creates the advantage; the right is what's eroding it. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation.png)
+![Box-score category shares of the home-court advantage and of its decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below. The left panel is what creates the advantage; the right is what's eroding it. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation.png)
 
 **Referee foul bias has narrowed.** The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In the playoffs it has fallen from 1.6 to 0.7. The advantage referees once gave home teams has fallen by about 80% in the regular season and significantly diminished in the playoffs.
 
@@ -177,7 +177,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 The most recent shift, in 2014, coincided with the sharpest period of playoff HCA decline: a nearly 7-point raw drop from the 2003–13 period to the 2014–26 period. But when the year-by-year secular trend is accounted for, the format change has no independent effect. The playoff drop would have arrived on roughly the same schedule regardless. Format was not the cause.
 
-![Home win % by playoff format period, regular season vs. playoffs.](../generated/nba_home_court_advantage_format_bars.png){width=50%}
+![Home win % averaged over each playoff format period, for both the regular season and the playoffs. The regular season never changed format, so the fact that both series decline at similar rates across the same periods means the format change is not driving the playoff drop.](../generated/nba_home_court_advantage_format_bars.png){width=50%}
 
 ---
 
@@ -203,7 +203,7 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 **The blowouts are getting bigger, even as home teams win less.** As home court advantage has declined, the margin when the home team *does* win has grown. Home wins are more lopsided; home losses are worse. Track the full spread of margins regardless of who won: the gap between the biggest wins and biggest losses widens by about 0.2 points per year in the regular season and 0.3 in the playoffs. In the regular season blowouts grow in both directions; in the playoffs the spread widens mainly because the big home wins keep getting bigger. Fewer home wins overall, but the ones that happen are more decisive.
 
-![Home team win margin trends: mean margin per season and by era (regular season and playoffs), with the win-only vs. loss-only split for the regular season.](../generated/nba_home_court_margin.png)
+![Three panels. Left: mean all-game point margin per season for regular season and playoffs. Center: mean win margin and mean loss margin per season (regular season); the two lines diverging means the average home win is getting bigger while the average home loss is getting worse. Right: the same by era.](../generated/nba_home_court_margin.png)
 
 ---
 
