@@ -60,7 +60,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 ## 3. What's Driving the Decline
 
-The same advantages that create home court advantage are the ones lessening over time. 
+The same categories that make up the create home court advantage are the ones lessening over time. 
 
 This chart splits both home court and its 40-year decline across the four box-score categories: shooting, rebounding, foul calls, and turnover margin. The left panel is what creates the advantage; the right is what's eroding it. The rest of this section walks each category in turn, with the precise shares tallied at the end.
 
