@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 *)",
+      "Bash(MPLBACKEND=Agg python3 *)",
+      "Bash(python3 -m pytest *)",
+      "Bash(git *)",
+      "Bash(quarto *)",
+      "Bash(pdftoppm *)",
+      "Bash(grep *)",
+      "Read(//Users/justin/code/nba_analysis/**)"
+    ]
+  }
+}
