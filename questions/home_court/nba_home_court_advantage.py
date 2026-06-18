@@ -35,6 +35,7 @@ from nba_home_court_plots import (
     plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis,
     plot_attendance, plot_tracking_rebounding,
     plot_referee_era_distribution, plot_referee_rankings,
+    plot_team_hca_by_era,
 )
 
 
@@ -140,6 +141,10 @@ def main() -> None:
         skip_years=SKIP_PLAYOFF_YEARS, min_games=20,
     )
     plot_team_hca_analysis(reg_team_stats, po_team_stats)
+
+    early_team_stats = compute_team_hca_stats(START_YEAR, 2001, "Regular Season")
+    late_team_stats  = compute_team_hca_stats(2002, END_YEAR, "Regular Season")
+    plot_team_hca_by_era(early_team_stats, late_team_stats)
 
     print("\nFetching referee data (BoxScoreSummaryV3, cached under cache/)...")
     ref_df = fetch_all_referee_data(

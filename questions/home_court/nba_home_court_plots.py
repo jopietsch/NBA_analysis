@@ -1362,6 +1362,101 @@ def plot_team_hca_analysis(
     plt.close()
 
 
+def plot_team_hca_by_era(
+    early_stats: dict,
+    late_stats: dict,
+    early_label: str = "1984–2001",
+    late_label: str = "2002–24",
+    min_games: int = 400,
+) -> None:
+    """
+    Dumbbell chart: per-franchise HCA in the early era vs the recent era.
+    Sorted by early-era HCA so teams that started highest appear at the top.
+    Merges within-city name changes (Bullets→Wizards, LA/Los Angeles Clippers).
+    Saves → nba_home_court_team_hca_era.png
+    """
+    _NAME_MAP = {
+        "Washington Bullets": "Washington Wizards",
+        "LA Clippers": "Los Angeles Clippers",
+    }
+
+    def _normalize(stats: dict) -> dict:
+        raw: dict = {}
+        for name, s in stats.items():
+            key = _NAME_MAP.get(name, name)
+            if key not in raw:
+                raw[key] = {"hw": 0, "hn": 0, "rw": 0, "rn": 0}
+            raw[key]["hw"] += round(s["home_pct"] * s["n_home"] / 100)
+            raw[key]["hn"] += s["n_home"]
+            raw[key]["rw"] += round(s["road_pct"] * s["n_road"] / 100)
+            raw[key]["rn"] += s["n_road"]
+        out = {}
+        for name, c in raw.items():
+            if not c["hn"] or not c["rn"]:
+                continue
+            h = 100.0 * c["hw"] / c["hn"]
+            r = 100.0 * c["rw"] / c["rn"]
+            out[name] = {"home_pct": h, "road_pct": r, "hca": h - r,
+                         "n_home": c["hn"], "n_road": c["rn"]}
+        return out
+
+    early_n = _normalize(early_stats)
+    late_n  = _normalize(late_stats)
+
+    common = {
+        t for t in set(early_n) & set(late_n)
+        if early_n[t]["n_home"] >= min_games and late_n[t]["n_home"] >= min_games
+    }
+    sorted_teams = sorted(common, key=lambda t: early_n[t]["hca"], reverse=True)
+    early_hcas = [early_n[t]["hca"] for t in sorted_teams]
+    late_hcas  = [late_n[t]["hca"]  for t in sorted_teams]
+
+    league_early = sum(early_hcas) / len(early_hcas)
+    league_late  = sum(late_hcas)  / len(late_hcas)
+
+    height = max(8, len(sorted_teams) * 0.42 + 2)
+    fig, ax = plt.subplots(figsize=(12, height), facecolor=BG)
+    ax.set_facecolor(BG)
+    fig.suptitle(
+        f"Franchise HCA: {early_label} vs. {late_label}",
+        fontsize=14, fontweight="bold", color="#2c2c2a",
+    )
+    fig.text(
+        0.5, 0.965,
+        f"Data: NBA.com  |  HCA = home win% − road win%  |"
+        f"  Franchises with ≥{min_games} home games in each era",
+        ha="center", fontsize=9, color=GRAY,
+    )
+
+    y = np.arange(len(sorted_teams))
+    for i, (eh, lh) in enumerate(zip(early_hcas, late_hcas)):
+        ax.plot([eh, lh], [i, i], color=GRAY, linewidth=1.2, alpha=0.5, zorder=1)
+
+    ax.scatter(early_hcas, y, color=BLUE, s=65, zorder=3,
+               label=f"Early era ({early_label})", edgecolors="white", linewidths=0.8)
+    ax.scatter(late_hcas, y, color=GREEN, s=65, zorder=3,
+               label=f"Recent era ({late_label})", edgecolors="white", linewidths=0.8)
+
+    ax.axvline(league_early, color=BLUE, linewidth=1.2, linestyle="--", alpha=0.45,
+               label=f"League avg {early_label}: {league_early:.1f} pp")
+    ax.axvline(league_late, color=GREEN, linewidth=1.2, linestyle="--", alpha=0.45,
+               label=f"League avg {late_label}: {league_late:.1f} pp")
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(sorted_teams, fontsize=9)
+    ax.invert_yaxis()
+    ax.xaxis.set_major_formatter(mticker.FormatStrFormatter("%+.0f pp"))
+    ax.set_xlabel("Home court advantage (home win% − road win%)", fontsize=11)
+    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd", loc="lower right")
+    ax.grid(axis="x", alpha=0.3, linewidth=0.6)
+
+    plt.tight_layout()
+    out = _output_path("nba_home_court_team_hca_era.png")
+    plt.savefig(out, dpi=150, bbox_inches="tight", facecolor=BG)
+    print(f"\nSaved → {out}")
+    plt.close()
+
+
 def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
     """
     Single-panel: box plots of per-official era-mean foul_diff by era.
