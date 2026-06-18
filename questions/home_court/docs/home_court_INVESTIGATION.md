@@ -1,5 +1,9 @@
 # The Investigation: What We Ruled Out
 
+*Companion to [NBA Home Court Advantage: Findings](nba_home_court_advantage_report.html). That report covers what drove the decline; this one covers what didn't, and why each hypothesis seemed reasonable before the data ruled it out.*
+
+---
+
 NBA home court advantage has been falling for 40 years. Several explanations are compelling on their face: the rules changed, travel improved, tired visitors became rarer, bigger crowds made arenas louder, more parity compressed outcomes. Each deserves a direct test rather than an assumption.
 
 This document records those tests. For each hypothesis, we lay out why it seemed plausible, what was measured, what the data showed, and where the intuition went wrong. The statistical detail behind every test is in `RESULTS.md`; the charts here are the same ones used in the full analysis pipeline.
@@ -31,8 +35,6 @@ The practical implication for reading the main chart: the era labels tell you wh
 **The test.** We regressed game outcomes on great-circle travel distance between the two cities and on time-zone crossings, controlling for era, rest, and altitude.
 
 **The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points per 100 miles. A team flying coast-to-coast (roughly 2,500 miles) faces about the same odds as one driving two hours — a difference of about 1.8 percentage points. In the playoffs, travel distance has no measurable effect at all. Time zones are flat in both contexts.
-
-![Travel distance and time-zone effects on home win %, regular season and playoffs.](../generated/nba_home_court_travel.png)
 
 **Why the intuition failed.** Two reasons. First, home teams travel too. Away teams fly in; home teams flew back from their previous road trip. Better planes benefit both sides, so the relative disadvantage of arriving in a specific building doesn't shrink just because the flight got more comfortable. Second, the raw travel effect was always smaller than intuition suggests. Even a cross-country trip is worth less than 2 percentage points of home court in the model — against a baseline advantage of 7 to 10 points. Travel is a real but minor factor, and it hasn't changed over time in a way that explains the trend.
 
