@@ -513,8 +513,8 @@ def plot_rebound_decomposition(
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(21, 7))
-    fig.suptitle("Why the Home Rebounding Edge Faded",
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(28, 7))
+    fig.suptitle("Why the Home Rebounding and Turnover Edges Faded",
                  fontsize=15, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.955,
              f"Data: NBA.com  |  Regular season  |  {season_range_label()}",
@@ -578,6 +578,19 @@ def plot_rebound_decomposition(
     ax3.set_xlabel("Total rebound differential (home − away per game)", fontsize=10)
     ax3.set_ylabel("Home win % (regular season)", fontsize=10)
     ax3.set_title("Seasons with a larger home rebounding edge\ntend to be seasons where home teams win more",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+
+    # ── Panel 4: TOV differential over time ──────────────────────────────────
+    # Plot away − home TOVs so positive = home advantage (home commits fewer)
+    y_tov = -np.array(reg_stats.get("tov_diff", [np.nan] * len(reg_seasons)), dtype=float)
+    ax4.plot(x, y_tov, color=BLUE, linewidth=1.5, alpha=0.7, zorder=2)
+    _add_trend_line(ax4, x, y_tov, BLUE, linewidth=1.8, alpha=0.9, zorder=3)
+    _shade_eras(ax4, reg_seasons, label_y=None)
+    ax4.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+    ax4.set_xticks(x[::tick_step])
+    ax4.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax4.set_ylabel("Away minus home turnovers per game", fontsize=10)
+    ax4.set_title("Home turnover edge has eroded\n(positive = home commits fewer TOVs)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
 
     plt.tight_layout()

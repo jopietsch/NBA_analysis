@@ -370,6 +370,8 @@ def _compute_rebound_components(merged: pd.DataFrame) -> pd.DataFrame:
     home_oreb_chance = (oreb_h + dreb_a).replace(0, np.nan)
     away_oreb_chance = (oreb_a + dreb_h).replace(0, np.nan)
     total_reb = (oreb_h + oreb_a + dreb_h + dreb_a).replace(0, np.nan)
+    tov_h = merged["TOV_home"] if "TOV_home" in merged.columns else pd.Series(np.nan, index=merged.index)
+    tov_a = merged["TOV_away"] if "TOV_away" in merged.columns else pd.Series(np.nan, index=merged.index)
     return pd.DataFrame({
         "oreb_diff":        oreb_h - oreb_a,
         "dreb_diff":        dreb_h - dreb_a,
@@ -378,6 +380,7 @@ def _compute_rebound_components(merged: pd.DataFrame) -> pd.DataFrame:
         "league_oreb_rate": 100 * (oreb_h + oreb_a) / total_reb,
         "oreb_rate_home":   100 * oreb_h / home_oreb_chance,
         "oreb_rate_away":   100 * oreb_a / away_oreb_chance,
+        "tov_diff":         tov_h - tov_a,
     })
 
 
@@ -401,6 +404,7 @@ def compute_rebound_stats(
         "oreb_diff": [], "dreb_diff": [], "reb_diff": [],
         "reb_share_edge": [], "league_oreb_rate": [],
         "oreb_rate_home": [], "oreb_rate_away": [],
+        "tov_diff": [],
     }
 
     for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_rebound_data):
