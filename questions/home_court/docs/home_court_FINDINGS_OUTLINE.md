@@ -59,7 +59,7 @@
 ## Section 3 — What's Driving the Decline
 **Q3: What drove the change?**
 
-- **Referee foul bias narrowed sharply:**
+- **Referee foul bias narrowed:**
   - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); playoffs **1.6 → 0.7**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25.*
   - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (Fig 6).
 - **Shot selection changed in two ways (together ~21% of decline, both feeding the shooting line):**
@@ -81,8 +81,8 @@
   - Playoffs: share advantage **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01). 3PA-control absorption is unstable in playoffs (−42%, noisy small-N) → can't confirm independence the way RS does; read as consistent with RS, not proven.
   - **Player-tracking (last decade) fits:** no measurable home box-out advantage today (mean −0.00/gm, p=0.78); OREB-conversion advantage still shrinking (+0.71 pp mean, −0.086/yr, **p=0.024**); 2nd-chance-points advantage no significant trend (+0.29 mean, ns, p=0.304). *RESULTS: PLAYER-TRACKING REBOUNDING MECHANISM.* Full treatment moved to §6; brief mention kept here to close the rebounding argument.
 - **Adding it up (trend decomposition):**
-  - Reg season: four categories = **~96% of decline**. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
-  - Playoffs: categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
+  - Reg season: four categories = **~96% of decline**; all four trends p<0.001. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
+  - Playoffs: overall trend 4× less precisely measured than RS (CI [−0.359, −0.091] vs [−0.280, −0.209]); categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
 - **3PA is real but narrow:** within-season link is genuine (−2.27 pp/10pp, p<0.001) but hits mainly the shooting channel. Shooting ≈ 21% of decline; REB+TOV (~57%) barely move under the 3PA control. Threes drove one channel, not the whole decline. (Point now made within the 3PA narrative in FINDINGS, not as a separate closing paragraph.)
 **Figures:**
 
@@ -177,7 +177,7 @@
 - Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete step at 1994–95, multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line).
 - Three main drivers + the biggest driver of all (**together ~96% of RS decline**): (1) fairer refs — 1.2 → ~0.25 fouls/game RS, 1.6 → 0.7 playoffs; 45/47 officials home-favoring (largest single change), (2) shot selection changed in two ways: away teams closed the paint gap (1.3 → 0.2 pp) AND the league-wide 3PA rise compressed home court through the shooting line (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (3) rebounding advantage slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd presence = on/off switch (2020–21 51% vs 58.5%; isolates presence, not noise itself), not a slow fade.
-- Playoffs follow reg season with **nearly a two-decade delay**; accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.
+- Playoffs follow reg season with **nearly a two-decade delay**; trend direction not in doubt but 4× less precisely measured than RS (CI [−0.359, −0.091]); accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.
 - Franchise notes: Denver & Utah strongest reg-season home courts (~27 & ~26 pts above own road rate), altitude the likely reason (n=2, confounded with franchise) — washes out in playoffs (franchise spread indistinguishable from zero). Home court worth **~7 pts more in playoffs** than reg season.
 - Blowouts getting bigger as HCA falls (IQR widening ~0.2–0.3 pts/yr in both contexts).
 
