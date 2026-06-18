@@ -59,9 +59,6 @@
 ## Section 3 — What's Driving the Decline
 **Q3: What drove the change?**
 
-- **Referee foul bias narrowed:**
-  - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); playoffs **1.6 → 0.7**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25.*
-  - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (Fig 6).
 - **Shot selection changed in two ways (together ~21% of decline, both feeding the shooting line):**
   - **First: shot zone convergence (reg season).** Paint gap **~1.3 → 0.2 pp**. *RESULTS Paint trend −0.041***/yr reg.* Playoffs: narrowed late 2010s then rebounded; NOT statistically established (playoff Paint trend −0.030, ns) → reg-season story.
   - **Second: the three-point revolution.**
@@ -71,7 +68,7 @@
   - Within-era effect: ~**2 fewer home wins/100 per 10-pp rise** in 3PA. *RESULTS game-level −2.64 pp/10pp; within-era −2.27 pp, p<0.001.* This survives as the substantive finding.
   - **No temporal lead (Granger):** the annual rise in threes doesn't lead the HCA decline by a year, nor vice versa; both shift within the same season. *RESULTS: 3PA→HCA lag-1 F=1.49 p=0.23; lag-2 F=1.37 p=0.27; reverse also ns.* Consistent with both being downstream of the same strategic shift. (Note: folded into the 3PA narrative in FINDINGS, not a separate paragraph.)
   - Playoffs: directional but weaker within-era signal (r=−0.499; within-era p=0.027) — team quality dominates.
-- **Fourth strand — rebounding (the glass), biggest driver, now explained:**
+- **Rebounding (the glass), biggest driver, now explained:**
   - Home rebounding advantage shrunk 40 yrs, NOT a 3-point byproduct.
   - *RESULTS 3PA control (Fig 10):* eFG% **210%** absorbed → shooting decline not only disappears but reverses under 3PA control; net of 3PA, home shooting edge was actually improving; REB only **8%** absorbed (survives, p<0.001); TOV **54%** absorbed (~half independent); Foul 51%. Playoffs noisy — only REB survives.
   - **Died on the OFFENSIVE glass.** *RESULTS rebounding decomp (reg):* OREB diff +0.61 → **−0.05** (goes negative); DREB diff +1.64 → +0.59 (only softens); REB diff +2.24 → +0.54. Trends/yr all negative, all p<0.001 (OREB −0.018, DREB −0.027, REB −0.044).
@@ -80,6 +77,9 @@
   - **Cause = league-wide retreat from O-rebounding:** league OREB rate 33% → 26%; home share advantage declined alongside. **Cointegration check: both series I(1) and NOT cointegrated — the r=+0.82 is likely spurious (parallel long-run trends).** The reliable evidence for the rebounding fade's independence is the 3PA control (only 8% absorbed), not the season-level correlation.
   - Playoffs: share advantage **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01). 3PA-control absorption is unstable in playoffs (−42%, noisy small-N) → can't confirm independence the way RS does; read as consistent with RS, not proven.
   - **Player-tracking (last decade) fits:** no measurable home box-out advantage today (mean −0.00/gm, p=0.78); OREB-conversion advantage still shrinking (+0.71 pp mean, −0.086/yr, **p=0.024**); 2nd-chance-points advantage no significant trend (+0.29 mean, ns, p=0.304). *RESULTS: PLAYER-TRACKING REBOUNDING MECHANISM.* Full treatment moved to §6; brief mention kept here to close the rebounding argument.
+- **Referee foul bias narrowed:**
+  - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); playoffs **1.6 → 0.7**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25.*
+  - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (Fig 6).
 - **Adding it up (trend decomposition):**
   - Reg season: four categories = **~96% of decline**; all four trends p<0.001. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
   - Playoffs: overall trend 4× less precisely measured than RS (CI [−0.359, −0.091] vs [−0.280, −0.209]); categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
@@ -88,13 +88,13 @@
 
 ![Fig 5 — mediation shares (leads the section as the roadmap)](../generated/nba_home_court_mediation.png)
 
-![Fig 6 — referee era distribution](../generated/nba_home_court_referee_era.png)
+![Fig 6 — shot zones](../generated/nba_home_court_shot_zones.png)
 
-![Fig 7 — shot zones](../generated/nba_home_court_shot_zones.png)
+![Fig 7 — 3PA vs HCA](../generated/nba_home_court_3pa.png)
 
-![Fig 8 — 3PA vs HCA](../generated/nba_home_court_3pa.png)
+![Fig 8 — rebounding decomposition (home vs away OREB rates converging; share advantage vs league OREB rate)](../generated/nba_home_court_rebounding.png)
 
-![Fig 9 — rebounding decomposition (home vs away OREB rates converging; share advantage vs league OREB rate)](../generated/nba_home_court_rebounding.png)
+![Fig 9 — referee era distribution](../generated/nba_home_court_referee_era.png)
 
 ![Fig 10 — 3PA-control channel test (which fades survive holding 3-point volume constant)](../generated/nba_home_court_3pa_control.png)
 
