@@ -2,26 +2,26 @@
 
 ## 1. The Verdict (Up Front)
 
-**Yes — the 2025–26 New York Knicks had a historically dominant playoff run.**
+**Yes: the 2025–26 New York Knicks had a historically dominant playoff run.**
 
 They went 16-3 (88th percentile win rate among all 43 champions since 1983–84)
-and outscored opponents by an average of **+14.9 points per game** — the highest
+and outscored opponents by an average of **+14.9 points per game**, the highest
 raw playoff margin in the dataset. The 95% confidence interval on that margin
 (accounting for game-to-game variance across 19 games) is [+7.4, +22.4]: even
 at the unlucky end, the run would still rank above the historical average. Note that 2025–26 is the highest-scoring era
 since 1984; pace-adjusted, the raw margin drops to 3rd all-time (+13.3). After
 adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first
-all-time; after both opponent and pace adjustment, it's +10.1 — still first, but
+all-time; after both opponent and pace adjustment, it's +10.1, still first, but
 essentially tied with the 2016–17 Warriors (+10.0). The East was **not** historically weak: the West-East SRS gap in
-2025–26 was only +0.39 pts/game (37th percentile of West dominance) — in 63% of
+2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
-this — on a real schedule, against real competition.
+this, on a real schedule, against real competition.
 
 There is a real nuance in the East record: the Hawks, 76ers, and Cavaliers all
 played *below* their regular-season ratings in the postseason, so some of the
 rounds 1–3 dominance reflects opponents underperforming, not just Knicks
-excellence. The Finals tells the opposite story — the Spurs elevated from a
-regular-season SRS of +8.28 to a playoff SRS of +15.13, the most improved team
+excellence. The Finals tells the opposite story: the Spurs elevated from a
+regular-season SRS of +8.28 to a playoff SRS of +14.48, the most improved team
 in these playoffs. Winning that series 4-1, even narrowly (+2.4 avg margin),
 was the hardest test of the run.
 
@@ -29,7 +29,7 @@ All four opponents were essentially fully healthy when they played the Knicks
 (average availability 98%; the Spurs were at 100%), so injuries are not an
 explanation for any of it.
 
-![Opponent-adjusted playoff dominance — 2025-26 Knicks rank #1 all-time among 43 champions](../generated/knicks_2026_adjusted_margin_ranking.png){width=100%}
+![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/knicks_2026_adjusted_margin_ranking.png){width=100%}
 
 ---
 
@@ -38,9 +38,9 @@ explanation for any of it.
 The Knicks went **16-3** in the 2026 playoffs. Among all 43 champions in the
 data (1983–84 through 2025–26):
 
-- **Win-rate percentile: 88th** — 0.842, vs. mean 0.752, best (2016–17 Warriors)
+- **Win-rate percentile: 88th**: 0.842, vs. mean 0.752, best (2016–17 Warriors)
   0.941
-- **Average margin: 100th percentile** — +14.9 pts/game, best in 43 years
+- **Average margin: 100th percentile**: +14.9 pts/game, best in 43 years
 
 **Round-by-round** (SRS = team quality relative to schedule; higher = stronger):
 
@@ -51,13 +51,13 @@ data (1983–84 through 2025–26):
 | Conference Finals | Cleveland Cavaliers (SRS +3.77) | 4-0 | +19.2 |
 | NBA Finals | San Antonio Spurs (SRS +8.28) | 4-1 | +2.4 |
 
-The two sweeps — against Cleveland (SRS +3.77, a genuine title contender) and
-Philadelphia (SRS -0.27) — drove the record margin. The Finals were tight: four
+The two sweeps, against Cleveland (SRS +3.77, a genuine title contender) and
+Philadelphia (SRS -0.27), drove the record margin. The Finals were tight: four
 of the five games were decided by 4 points or fewer.
 
-![Playoff win rate — all 43 champions ranked](../generated/knicks_2026_win_rate_ranking.png){width=100%}
+![Playoff win rate, all 43 champions ranked](../generated/knicks_2026_win_rate_ranking.png){width=100%}
 
-![Average playoff margin — all 43 champions ranked](../generated/knicks_2026_margin_ranking.png){width=100%}
+![Average playoff margin, all 43 champions ranked](../generated/knicks_2026_margin_ranking.png){width=100%}
 
 ![2025-26 Knicks: game-by-game margins across 19 playoff games](../generated/knicks_2026_game_margins.png){width=100%}
 
@@ -66,21 +66,21 @@ of the five games were decided by 4 points or fewer.
 ## 3. Was the East Weak?
 
 **No, not historically.** The West-East SRS gap in 2025–26 was only **+0.39
-pts/game** — 37th percentile of West dominance and **0.21 standard deviations
+pts/game**: 37th percentile of West dominance and **0.21 standard deviations
 below the historical mean gap of +0.78** (z = −0.21, well within normal
 variation). The East inter-conference win rate was 0.487 (near parity). By any
-formal measure, the East in 2025–26 was unremarkable — if anything, slightly
-more competitive than the 42-year average.
+formal measure, the East in 2025–26 was unremarkable (if anything, slightly
+more competitive than the 42-year average).
 
 The three most West-dominant seasons on record were 2013–14 (+4.08), 2003–04
-(+3.73), and 2000–01 (+3.11) — all much larger gaps. The 2025–26 East was
+(+3.73), and 2000–01 (+3.11), all much larger gaps. The 2025–26 East was
 competitive.
 
 **Opponent SRS context:** The games-weighted average SRS of the Knicks' playoff
-opponents was **+3.67** (49th percentile among all 43 champions) — essentially at
+opponents was **+3.67** (49th percentile among all 43 champions), essentially at
 the historical median. The schedule was not unusually easy or hard.
 
-![Conference strength gap (West − East SRS) — 2025-26 flagged](../generated/knicks_2026_conference_gap.png){width=100%}
+![Conference strength gap (West − East SRS), 2025-26 flagged](../generated/knicks_2026_conference_gap.png){width=100%}
 
 ![2025-26 regular-season SRS by team, colored by conference](../generated/knicks_2026_team_srs_2026.png){width=100%}
 
@@ -98,7 +98,7 @@ opponent counts for 5 of 19 data points rather than 1 of 4.)
 | Opp SRS (games-weighted) | +3.67 pts/game | 49th pct |
 | **Adjusted margin** | **+11.2 pts/game** | **1st (100th pct)** |
 
-Comparison — top 5 adjusted-margin champions:
+Top 5 adjusted-margin champions:
 
 | Season | Raw | Opp SRS | Adj |
 |--------|-----|---------|-----|
@@ -111,14 +111,14 @@ Comparison — top 5 adjusted-margin champions:
 All 43 champion seasons are included. For pre-1997 seasons where nba_api returns
 null PLUS_MINUS, margins are derived from PTS (both team rows per game).
 
-**Playoff overperformance** — comparing actual margins to what the Knicks' own
+**Playoff overperformance**, comparing actual margins to what the Knicks' own
 regular-season SRS (+6.05) would predict against those opponents (+2.38 expected
-per game) — gives +12.5 pts/game of outperformance, 2nd all-time (97.7th pct)
+per game), gives +12.5 pts/game of outperformance, 2nd all-time (97.7th pct)
 behind only the 2000–01 Lakers. Their playoff SRS was +17.53, an elevation of
-+11.48 above their regular-season SRS — also 2nd all-time. The Knicks didn't
++11.48 above their regular-season SRS, also 2nd all-time. The Knicks didn't
 just face the right opponents: they played far above their regular-season level.
 
-![Strength of schedule — avg opponent SRS per champion](../generated/knicks_2026_opponent_srs_ranking.png){width=100%}
+![Strength of schedule, avg opponent SRS per champion](../generated/knicks_2026_opponent_srs_ranking.png){width=100%}
 
 ![2025-26 Knicks: playoff opponent SRS by round](../generated/knicks_2026_opponent_by_round.png){width=100%}
 
@@ -128,7 +128,7 @@ just face the right opponents: they played far above their regular-season level.
 
 The regular-season SRS numbers say no (§3). But a sharper question is whether
 the East teams the Knicks beat in rounds 1–3 actually played *weaker in the
-playoffs* than their regular-season ratings suggested — and whether the tight
+playoffs* than their regular-season ratings suggested, and whether the tight
 Finals was because the Spurs were truly the better team in May–June.
 
 The answer is yes on both counts.
@@ -146,48 +146,46 @@ Knicks), so they're excluded from this adjustment.
 | Finals | Spurs | +2.4 | −5.9 | −12.1 |
 
 The 76ers and Cavaliers played modestly below their regular-season ratings
-in their pre-Knicks games (−1.2 and −1.5 pts respectively) — a real effect,
+in their pre-Knicks games (−1.2 and −1.5 pts respectively), a real effect,
 but small. The big finding is the Spurs: their regular-season SRS was +8.28,
-but they played at +14.5 through the West bracket — a +6.2 elevation that is
+but they played at +14.5 through the West bracket, a +6.2 elevation that is
 entirely independent of the Knicks series. The Knicks beat a team playing at
 the highest independent playoff level in the dataset.
 
 **Net result:** Adjusting the full run for opponents' actual playoff
-performance (excluding the Knicks series) gives a margin of +9.1 pts/game —
+performance (excluding the Knicks series) gives a margin of +9.1 pts/game,
 1st all-time, edging the 1986–87 Lakers (+9.0). The Knicks dominated
 East opponents who were below their season-long form, and then beat the best
 playoff-performing team in the field.
 
-![Per-round raw vs. opponent-adjusted margins — adjustment using playoff SRS shifts the Finals story](../generated/knicks_2026_round_split.png){width=100%}
+![Per-round raw vs. opponent-adjusted margins: adjustment using playoff SRS shifts the Finals story](../generated/knicks_2026_round_split.png){width=100%}
 
 ---
 
 ## 6. Other Context
 
 **Clutch/close games:** 31.6% of Knicks playoff games were decided by 5 points
-or fewer (84th percentile — more clutch than average champions). The Finals in
+or fewer (84th percentile, more clutch than average champions). The Finals in
 particular were tight: four of five games were decided by 4 points or fewer.
 
 **Home/away splits:**
-- Home: 9 games, 77.8% win rate (23rd percentile vs. champions — relatively
+- Home: 9 games, 77.8% win rate (23rd percentile vs. champions, relatively
   weak at home for a champion)
-- Away: 10 games, 90.0% win rate (98th percentile — extraordinary road
-  dominance)
+- Away: 10 games, 90.0% win rate (98th percentile)
 
-The road-game dominance is striking. In this playoff run the Knicks were a better
-road team than all but one champion in the dataset.
+The Knicks won 90.0% of their road games, better than all but one champion in the dataset.
 
 ---
 
 ## 7. What the Betting Market Said
 
 Vegas pricing is the most efficient aggregation of expert opinion available.
-The market's verdict on the Knicks' playoff run is striking:
+The market's verdict on the Knicks' playoff run:
 
-**Overall:** 16-3 ATS (against the spread) — their cover record exactly matches
+**Overall:** 16-3 ATS (against the spread); their cover record exactly matches
 their win-loss record. They beat the spread by an average of **+16.9 pts/game**
-across 19 games, which is extraordinary. A binomial test against the null of
-50% coverage gives p = 0.002 (z = +2.98) — this cannot be attributed to
+across 19 games. A binomial test against the null of
+50% coverage gives p = 0.002 (z = +2.98); this cannot be attributed to
 random fluctuation. The signal comes entirely from the first three rounds:
 14-0 ATS against East opponents, with the Finals exactly dead-on (2-5 ATS).
 
@@ -203,11 +201,11 @@ random fluctuation. The signal comes entirely from the first three rounds:
 Against the three East opponents, the Knicks exceeded market expectations by
 21–26 points per round. The market priced them as modest favorites (-3 to -4)
 and they won by 17-22. Against the Spurs in the Finals, the market had them as
-slight underdogs (+2.5) and they won by an average of exactly +2.4 — essentially
+slight underdogs (+2.5) and they won by an average of exactly +2.4, essentially
 a coin-flip that they won 4-1 in games.
 
 **What this means:** The market clearly distinguished between the two halves of
-this run. The first three rounds were a statement — the Knicks were far better
+this run. The first three rounds were a statement: the Knicks were far better
 than anyone expected against East competition. The Finals was exactly the
 competitive series the market predicted: a nearly even matchup against a healthy,
 elite Spurs team that the Knicks won by grinding out close games.
@@ -232,8 +230,8 @@ the Knicks' series:
 | CF | Cleveland Cavaliers | 97% |
 | Finals | San Antonio Spurs | **100%** |
 
-Average across all four opponents: **98%**. The Spurs — the most dangerous team
-and the one that gave the Knicks the tightest series — were fully intact. The
+Average across all four opponents: **98%**. The Spurs, the most dangerous team
+and the one that gave the Knicks the tightest series, were fully intact. The
 close Finals margin (+2.4 avg) reflects genuine competition, not a depleted
 opponent. This removes the injury asterisk often attached to dominant runs.
 
@@ -245,8 +243,8 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide margin
 confidence interval ([+7.4, +22.4] at 95%). The comparison set is also only 43
-champions. Several of the metrics here — adjusted margin, overperformance,
-elevation — all measure closely related things; treat them as different angles
+champions. Several of the metrics here (adjusted margin, overperformance,
+elevation) all measure closely related things; treat them as different angles
 on one story, not independent votes. Exact rank (1st vs. 4th) carries more
 uncertainty than the numbers suggest.
 
@@ -262,7 +260,7 @@ Knicks' raw margin drops from 1st to 3rd (+13.3 pace-adj, behind 2000–01 Laker
 AND the pace adjustment, the Knicks retain first place at +10.1, but are
 essentially tied with the 2016–17 Warriors (+10.0). The SRS-based opponent
 adjustment partially controls for era because both the champion's margins and
-opponents' SRS are measured in the same scoring environment — but the raw-margin
+opponents' SRS are measured in the same scoring environment, but the raw-margin
 claim is clearly era-inflated.
 
 **Pre-1997 data:** PLUS_MINUS is null in the older NBA.com data. We derive it
