@@ -13,7 +13,7 @@ Throughout, the regular season and the playoffs are tracked separately. They sha
 ## 1. The 40-Year Decline
 The drop unfolded at roughly a quarter of a percentage point per year. The playoffs tell the same story with a slight lag. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today. That's a 9-to-10-point drop, comparable to the regular season but noisier given fewer games.
 
-![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall trend fits; background shading marks rule-change eras.](../generated/nba_home_court_advantage_season.png)
+![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall trend fits; background shading marks rule-change eras; red dots mark COVID-impacted seasons.](../generated/nba_home_court_advantage_season.png)
 
 Two things are happening at once. The first is a **slow, continuous erosion** of about a quarter of a point per year, driven by the box-score categories in Section 3 grinding down gradually. The second is **two sharp drops** layered on top.
 
@@ -52,7 +52,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just over a third of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
-![Home vs. away box-score differentials: foul rate, FG%, eFG%, 3PA rate, 3P%, FT%.](../generated/nba_home_court_advantage_differentials.png)
+![Home minus away differentials over time for six shooting and foul categories: foul calls per game, FG%, eFG%, 3PA rate, 3P%, and FT%. Each panel includes trend lines; a trend toward zero means that component of the home-team edge is narrowing. The rebounding and turnover differentials are covered in Section 3.](../generated/nba_home_court_advantage_differentials.png)
 
 **It all shows up in the box score.** The four box-score categories, shooting, rebounding, foul calls, and turnover differential, account for about 95% of the entire home advantage in the regular season, and a similar share in the playoffs. Shooting is the single biggest piece, more than 40% of it, followed by rebounding. Whatever the crowd and the familiar rims do, it reaches the scoreboard almost entirely through these measurable categories.
 
@@ -74,7 +74,7 @@ The playoff referee chart shows the generational shift clearly. The distribution
 
 **The shooting line is driven by two shot-selection shifts.** The first: away teams have closed the gap in paint attempts. In the 1990s, home teams generated about 1.3 percentage points more of their attempts from the paint than road teams. By 2023–26, that gap has shrunk to 0.2 points. Away teams now attack the basket nearly as aggressively as home teams. Our data can confirm the gap closed, not why. In the playoffs the gap narrowed in the late 2010s but has since rebounded close to its old level. This paint convergence is, for now, a regular-season story.
 
-![Shot zone differentials (home minus road), regular season vs. playoffs.](../generated/nba_home_court_shot_zones.png)
+![Shot zone differentials (home minus road) over time, regular season vs. playoffs. Four panels: paint, mid-range, corner 3, and above-break 3. The paint panel is the key one: the gap has nearly closed, meaning away teams now get close-range attempts at nearly the same rate as home teams. The three-point panels show little differential throughout.](../generated/nba_home_court_shot_zones.png)
 
 **The second shot-selection shift: the three-point revolution.** The league's three-point attempt rate and the home win rate have moved in opposite directions for 40 years. When 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%. The timing lines up with the second sharp drop: the three-point share rose from about a quarter to nearly half of all shots in the three seasons after 2017, exactly when that drop began.
 
@@ -84,7 +84,7 @@ The reliable evidence is within a single season: games in which both teams colle
 
 The three-point shift works through a specific category: the shooting line of the box score. Hold three-point volume constant and the home shooting advantage holds up; let volume rise and it shrinks. Shooting accounts for roughly one-fifth of the regular-season decline. The larger share, more than half, runs through rebounding and turnover differential. When three-point volume is held constant, the rebounding decline barely moves; the turnover decline is about half explained by the perimeter shift. Three-point shooting is a real force on one category, not the engine behind the whole decline. In the playoffs the within-season signal is weaker, since team quality swamps stylistic factors, but it still points the same direction.
 
-![League three-point attempt rate vs. home win %, regular season and playoffs.](../generated/nba_home_court_3pa.png)
+![Three panels. Left: dual-axis time series showing the 40-year lockstep between rising three-point volume (right axis) and falling home win % (left axis) in the regular season. Center and right: scatter of one season per point for regular season and playoffs, era-colored, showing the same inverse relationship.](../generated/nba_home_court_3pa.png)
 
 **Rebounding, the biggest contributor.** The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise. Hold three-point volume constant and the home shooting advantage vanishes entirely, while the rebounding advantage barely moves.
 
@@ -98,7 +98,7 @@ On that cleaner measure, the asymmetry is clear. In the mid-1980s, home teams co
 
 The home turnover advantage has eroded too, about half of it independent of the perimeter shift. The data can't explain why. Improved scouting and video preparation are the most plausible contributors: visiting teams are better prepared for unfamiliar defensive schemes than they once were. But that is hypothesis, not something this analysis can establish. The playoffs point the same way: the home rebound-share advantage has fallen by roughly three-quarters there too. With a fifteenth as many games, the playoff evidence is consistent with the regular-season story rather than established on its own. Player-tracking data from the last decade confirms the picture: home teams hold no measurable box-out advantage today, and their advantage in converting offensive-rebound chances has kept shrinking.
 
-![Why the home rebounding advantage faded. Left: home and away OREB rates (% of available offensive boards) over time — both fell, but the home rate dropped 8 pp (34% to 26%) while the away rate dropped only 5 (31% to 26%), causing the lines to converge and cross. Center: raw OREB and DREB differentials (home minus away per game) over time — both declined, with the defensive edge falling more in absolute terms. Right: seasons with a larger total home rebounding edge tend to be seasons where home teams win more (association, not causation).](../generated/nba_home_court_rebounding.png)
+![Why the home rebounding advantage faded. Left: home and away OREB rates (% of available offensive boards) over time; both fell, but the home rate dropped 8 pp (34% to 26%) while the away rate dropped only 5 (31% to 26%), causing the lines to converge and cross. Center: raw OREB and DREB differentials (home minus away per game) over time; both declined, with the defensive edge falling more in absolute terms. Right: seasons with a larger total home rebounding edge tend to be seasons where home teams win more (association, not causation).](../generated/nba_home_court_rebounding.png)
 
 **Adding it up.** The four box-score categories together account for roughly 96% of the entire regular-season decline. The two most-discussed categories explain about 21% and 18%: shooting, where converging shot selection and the three-point shift register, and the narrowing whistle. Rebounding and turnovers carry the most: roughly 30% and 27%, together more than half the drop. In the regular season, almost nothing is left over, and all four trends hold up under statistical testing. (These are accounting shares showing where the decline registers in the box score, not a claim about ultimate causes.)
 
@@ -134,13 +134,13 @@ For every other change, including zone legalization, the perimeter hand-check ba
 
 **Pace of play.** The game slowed dramatically from the 1980s to the mid-1990s, then sped back up after 2015. Home court advantage moved independently of both shifts. Season by season, pace shows no meaningful correlation with home win rates. Whatever pace does within a single game, it didn't drive the four-decade decline. The same holds in the playoffs.
 
-![Pace of play vs. home win %, regular season and playoffs.](../generated/nba_home_court_pace.png)
+![Three panels: a dual-axis time series overlaying pace and home win % in the regular season, and two scatters (regular season, playoffs) with one point per season. The scatters show no consistent relationship between pace and home win rate in either context.](../generated/nba_home_court_pace.png)
 
 **Whether home teams take more or fewer threes than their opponents.** The three-point story in Section 3 is about both teams taking more threes, not home teams outgunning visitors from deep. In reality, home and away teams have always attempted threes at nearly identical rates. Through most of the last 40 years, home teams actually took slightly *fewer* threes per shot attempt than road teams; today home teams take about 0.4 percentage points more. The home-vs-away three-point differential is tiny, trends the wrong direction, and is not the mechanism.
 
 **Competitive balance.** The idea: more parity compresses outcomes toward 50-50, dragging down home court. The raw correlation across seasons is near zero. The era breakdown contradicts the theory: the most unequal era (1995–01) had already seen HCA fall sharply, while the most balanced era (2002–04) saw it tick back up. There is a small wrinkle: once the shared long-run downtrend is removed, a weak year-to-year association emerges. But the effect is modest and nowhere near large enough to explain the 40-year decline.
 
-![Competitive balance (team win% spread) vs. home win %, regular season.](../generated/nba_home_court_parity.png)
+![Two panels: a dual-axis time series overlaying competitive balance (team win% standard deviation) and home win % per season, regular season; and a scatter of one point per season, era-colored, showing the relationship between parity and home win rate. No consistent association.](../generated/nba_home_court_parity.png)
 
 **Crowd size.** If a thinning crowd were draining home court, attendance should have fallen alongside it. It hasn't. NBA arenas have run at or near capacity across the 27 seasons with reliable gate figures: roughly 17,000 a night in the early 2000s, climbing to record highs above 18,000 in the 2020s, the very years home win rates hit their lowest. Season to season the two are unrelated; if anything they drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts, so crowd size barely varies, yet postseason home court has eroded right alongside the regular season.
 
@@ -160,7 +160,7 @@ The playoffs are not a shrunken version of the regular season. They have their o
 
 **Home court is the strongest predictor of playoff game outcomes.** Across all eras, the single strongest predictor of a playoff game outcome is which team has home court. Games 1 and 2, at the higher seed's arena, go to the home team 69% and 72% of the time. Games 3 and 4, at the lower seed's arena, are barely better than coin flips for the team playing there (55–56%). Game 5, back at the top seed, is the most lopsided of all: 74.5%. Even Game 7 still goes to the home team 64% of the time. Road teams show no evidence of adapting as a series deepens.
 
-![Playoff home win % by game number, all eras and by era.](../generated/nba_home_court_series_breakdown.png)
+![Two panels. Left: playoff home win % for each game within a series (G1 through G7), all eras combined, with a reference line at the overall playoff average. G5, back at the top seed's arena, is consistently the most lopsided. Right: the same G1–G7 breakdown broken out by era, one line per era.](../generated/nba_home_court_series_breakdown.png)
 
 **The playoff decline is real home-court weakening, not weaker seeds.** A natural objection: maybe playoff home teams win less now simply because top seeds no longer outclass their opponents the way they once did. The data says no. Account for the regular-season quality gap between the two teams and the year-by-year playoff decline doesn't budge. None of it is explained by seeds bunching together. The cleanest proof: when the objectively weaker team hosts Games 3 and 4, it still wins 51.5% of the time. Home court alone is still worth a coin-flip-beating advantage, and that advantage is what has been eroding.
 
