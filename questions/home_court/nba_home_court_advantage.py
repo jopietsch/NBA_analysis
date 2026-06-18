@@ -64,7 +64,8 @@ def main() -> None:
     po_reb_seasons, po_reb_stats = compute_rebound_stats(
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
-    plot_rebound_decomposition(reg_reb_seasons, reg_reb_stats, po_reb_seasons, po_reb_stats)
+    plot_rebound_decomposition(reg_reb_seasons, reg_reb_stats, po_reb_seasons, po_reb_stats,
+                               win_seasons=reg_seasons, win_pcts=reg_pcts)
 
     print("\nFetching player-tracking rebounding data (cached under cache/)...")
     track_seasons, track_stats = compute_tracking_rebound_stats(TRACKING_START_YEAR, END_YEAR)

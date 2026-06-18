@@ -76,7 +76,9 @@ def test_plot_rebound_decomposition():
     stats["league_oreb_rate"] = _series(base=30.0)
     stats["oreb_rate_home"] = _series(base=28.0)
     stats["oreb_rate_away"] = _series(base=26.0)
-    plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats))
+    win_pcts = [59.0 + i * 0.1 for i in range(len(SEASONS))]
+    plots.plot_rebound_decomposition(SEASONS, stats, SEASONS, dict(stats),
+                                     win_seasons=SEASONS, win_pcts=win_pcts)
 
 
 def test_plot_back_to_back():

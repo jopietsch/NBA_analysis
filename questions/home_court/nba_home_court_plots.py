@@ -480,21 +480,22 @@ def plot_differential_analysis(
 def plot_rebound_decomposition(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,
+    win_seasons: list[str] | None = None,
+    win_pcts: list[float] | None = None,
 ) -> None:
     """
-    2-panel figure on why the home rebounding edge faded.
+    3-panel figure on why the home rebounding edge faded.
 
-    Panel 1: home OREB rate vs away OREB rate over time (regular season) —
-             shows whether the convergence came from home teams crashing less,
-             away teams crashing more, or both.
-    Panel 2: home rebound-share edge vs league offensive-rebound rate (regular
-             season) — the edge fades in lockstep with the league abandoning
-             offensive rebounding.
+    Panel 1: home OREB rate vs away OREB rate over time (regular season).
+    Panel 2: home-minus-away OREB rate differential over time — shows home
+             teams retreated faster than away teams.
+    Panel 3: OREB differential vs home win % scatter — connects the rebounding
+             gap to HCA (association, not causation).
     """
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(21, 7))
     fig.suptitle("Why the Home Rebounding Edge Faded",
                  fontsize=15, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.955,
@@ -505,8 +506,8 @@ def plot_rebound_decomposition(
     y_home = np.array(reg_stats["oreb_rate_home"], dtype=float)
     y_away = np.array(reg_stats["oreb_rate_away"], dtype=float)
     for y, color, label in [
-        (y_home, BLUE,  "Home OREB rate"),
-        (y_away, RED,   "Away OREB rate"),
+        (y_home, BLUE, "Home OREB rate"),
+        (y_away, RED,  "Away OREB rate"),
     ]:
         ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
         _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
@@ -514,27 +515,45 @@ def plot_rebound_decomposition(
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.set_ylabel("Offensive rebound rate (% of available)", fontsize=10)
-    ax1.set_title("Home and away OREB rates converging\n(who is driving the collapse?)",
+    ax1.set_title("Both teams stopped crashing the glass,\nbut home teams fell further",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
     ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
-    # ── Panel 2: share edge vs league offensive-rebound rate ─────────────────
-    y_reg = np.array(reg_stats["reb_share_edge"], dtype=float)
-    rate = np.array(reg_stats["league_oreb_rate"], dtype=float)
-    mask = ~np.isnan(rate) & ~np.isnan(y_reg)
-    ax2.scatter(rate[mask], y_reg[mask], color=BLUE, s=30, alpha=0.75, zorder=2)
-    if mask.sum() >= 2:
-        z = np.polyfit(rate[mask], y_reg[mask], 1)
-        xs = np.linspace(rate[mask].min(), rate[mask].max(), 50)
-        ax2.plot(xs, np.poly1d(z)(xs), "--", color=RED, linewidth=1.8, alpha=0.9, zorder=3)
-        r, p = pearsonr(rate[mask], y_reg[mask])
-        ax2.text(0.05, 0.95, f"r = {r:+.2f}\np {'< 0.001' if p < 0.001 else f'= {p:.3f}'}",
-                 transform=ax2.transAxes, va="top", fontsize=10, color="#2c2c2a",
-                 bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, edgecolor="#ddd"))
+    # ── Panel 2: home-minus-away OREB rate differential over time ────────────
+    y_diff = y_home - y_away
+    ax2.plot(x, y_diff, color=BLUE, linewidth=1.5, alpha=0.7, zorder=2)
+    _add_trend_line(ax2, x, y_diff, BLUE, linewidth=1.8, alpha=0.9, zorder=3)
+    _shade_eras(ax2, reg_seasons, label_y=None)
     ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
-    ax2.set_xlabel("League offensive-rebound rate (%)", fontsize=10)
-    ax2.set_ylabel("Home rebound-share edge (pp)", fontsize=10)
-    ax2.set_title("As the league stopped crashing the glass,\nthe home edge faded (regular season)",
+    ax2.set_xticks(x[::tick_step])
+    ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
+    ax2.set_ylabel("Home minus away OREB rate (pp)", fontsize=10)
+    ax2.set_title("The home offensive-rebounding edge\nclosed to zero (and crossed)",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
+
+    # ── Panel 3: OREB differential vs home win % ─────────────────────────────
+    if win_seasons is not None and win_pcts is not None:
+        # Align on season label
+        win_map = dict(zip(win_seasons, win_pcts))
+        aligned_diff, aligned_win = [], []
+        for s, d in zip(reg_seasons, y_diff):
+            if s in win_map and np.isfinite(d):
+                aligned_diff.append(d)
+                aligned_win.append(win_map[s])
+        if len(aligned_diff) >= 2:
+            xd = np.array(aligned_diff)
+            yw = np.array(aligned_win)
+            ax3.scatter(xd, yw, color=BLUE, s=30, alpha=0.75, zorder=2)
+            z = np.polyfit(xd, yw, 1)
+            xs = np.linspace(xd.min(), xd.max(), 50)
+            ax3.plot(xs, np.poly1d(z)(xs), "--", color=RED, linewidth=1.8, alpha=0.9, zorder=3)
+            r, p = pearsonr(xd, yw)
+            ax3.text(0.05, 0.95, f"r = {r:+.2f}\np {'< 0.001' if p < 0.001 else f'= {p:.3f}'}",
+                     transform=ax3.transAxes, va="top", fontsize=10, color="#2c2c2a",
+                     bbox=dict(boxstyle="round", facecolor="white", alpha=0.8, edgecolor="#ddd"))
+    ax3.set_xlabel("Home minus away OREB rate (pp)", fontsize=10)
+    ax3.set_ylabel("Home win % (regular season)", fontsize=10)
+    ax3.set_title("Seasons where home teams crash more\ntend to be seasons where they win more",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
 
     plt.tight_layout()
