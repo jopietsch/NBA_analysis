@@ -140,7 +140,7 @@ Knicks), so they're excluded from this adjustment.
 
 | Round | Opponent | Raw | Reg-SRS Adj | Playoff-SRS Adj |
 |-------|----------|-----|-------------|-----------------|
-| R1 | Hawks | +17.5 | +15.1 | — (no independent data) |
+| R1 | Hawks | +17.5 | +15.1 | n/a (no independent data) |
 | R2 | 76ers | +22.2 | +22.5 | +23.7 |
 | CF | Cavaliers | +19.2 | +15.5 | +16.9 |
 | Finals | Spurs | +2.4 | −5.9 | −12.1 |
@@ -204,9 +204,9 @@ and they won by 17-22. Against the Spurs in the Finals, the market had them as
 slight underdogs (+2.5) and they won by an average of exactly +2.4, essentially
 a coin-flip that they won 4-1 in games.
 
-**What this means:** The market clearly distinguished between the two halves of
-this run. The first three rounds were a statement: the Knicks were far better
-than anyone expected against East competition. The Finals was exactly the
+The market clearly distinguished between the two halves of
+this run. In the first three rounds, the Knicks were far better than anyone
+expected against East competition. The Finals was exactly the
 competitive series the market predicted: a nearly even matchup against a healthy,
 elite Spurs team that the Knicks won by grinding out close games.
 

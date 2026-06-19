@@ -34,7 +34,7 @@ Vegas priced the Knicks as modest favorites against the three East opponents (ro
 
 ## The bottom line
 
-The 2026 Knicks' playoff run is historically elite by every adjusted measure. The dominant first three rounds were real: the schedule was not easy, opponents were healthy, and the East was competitive. The tight Finals were real too: the Spurs were the best-performing team in the playoffs, and the Knicks won a series that could have gone either way. The run stands up to scrutiny.
+The 2026 Knicks' playoff run is historically elite by every adjusted measure. The dominant first three rounds were real: the schedule was not easy, opponents were healthy, and the East was competitive. The tight Finals were real too: the Spurs were the best-performing team in the playoffs, and the Knicks won a series that could have gone either way.
 
 ---
 
