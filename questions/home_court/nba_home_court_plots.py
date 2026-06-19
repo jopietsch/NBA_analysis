@@ -145,6 +145,19 @@ def _draw_season_overview(
     if covid_idx:
         ax.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5, alpha=0.12, color=RED, zorder=1)
 
+    # Name the two events behind the sharp drops, on the line itself. Each falls
+    # on an era-shade boundary, so the label says what that boundary means.
+    events = [(1995, 78.5, "top",    "1994–95:\nhand-checking crackdown"),
+              (2018, 47.5, "bottom", "2017+:\nthree-point surge")]
+    for end_year, y_lab, va, label in events:
+        idx = next((i for i, s in enumerate(reg_seasons)
+                    if label_to_year(s) == end_year), None)
+        if idx is None:
+            continue
+        ax.axvline(idx, color=GRAY, linestyle=":", linewidth=1.1, alpha=0.6, zorder=1)
+        ax.text(idx, y_lab, label, ha="center", va=va, fontsize=7.5,
+                color="#5a5a55", linespacing=1.15, zorder=4)
+
     ax.set_title("Home win % fell about 10 points in 40 years, regular season and playoffs alike",
                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     tick_step = max(1, len(reg_seasons) // 14)
@@ -161,7 +174,7 @@ def _draw_season_overview(
         plt.Line2D([0], [0], color=BLUE,  linestyle="--", alpha=0.5, label="Overall trend (regular season)"),
         plt.Line2D([0], [0], color=GREEN, linestyle="--", alpha=0.5, label="Overall trend (playoffs)"),
     ]
-    ax.legend(handles=handles, fontsize=9, loc="upper right", framealpha=0.85, edgecolor="#ddd")
+    ax.legend(handles=handles, fontsize=9, loc="lower left", framealpha=0.85, edgecolor="#ddd")
 
     if reg_pcts:
         peak_i = int(np.argmax(reg_pcts))
