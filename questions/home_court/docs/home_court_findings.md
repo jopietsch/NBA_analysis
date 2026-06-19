@@ -16,18 +16,6 @@ Yes: the home team's win rate has fallen from about 65% to 55% in the regular se
 
 Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers almost 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables, and Appendix C for additional findings.
 
-```{=typst}
-#align(center)[
-  #text(size: 30pt, weight: "bold", fill: rgb("#378add"))[≈10 points]
-  #linebreak()
-  #text(size: 10pt, fill: rgb("#5a5a55"))[the fall in home win rate over 40 years, regular season and playoffs alike]
-]
-```
-
-::: {.content-visible when-format="html"}
-<p style="text-align:center; margin:1.4rem 0; line-height:1.15;"><span style="font-size:2.2rem; font-weight:700; color:#378add;">≈10 points</span><br><span style="color:#5a5a55;">the fall in home win rate over 40 years, regular season and playoffs alike</span></p>
-:::
-
 ---
 
 ## 1. The 40-Year Decline
@@ -65,18 +53,6 @@ A handful of concrete things have historically given home teams an edge on any g
 **Referee foul calls and free throws.** Across every era and in both regular season and playoffs, referees have called fewer fouls on home teams. In the 1984–94 regular season, home teams averaged about 1.2 fewer foul calls per game, translating to roughly 2 extra free throw attempts per game. In the playoffs the gap was even wider: about 1.6 fewer fouls per game and 2.4 more free throws. With fouls go free throws, and with free throws go points. This is the most consistent component of home court advantage.
 
 The playoff referee data shows how universal this is: 45 of 47 officials with at least 50 playoff games on record show a home-favoring foul differential. Nearly every referee who has worked the postseason has called the game differently depending on which team was at home.
-
-```{=typst}
-#align(center)[
-  #text(size: 30pt, weight: "bold", fill: rgb("#378add"))[45 of 47]
-  #linebreak()
-  #text(size: 10pt, fill: rgb("#5a5a55"))[playoff officials with at least 50 games call fewer fouls on the home team]
-]
-```
-
-::: {.content-visible when-format="html"}
-<p style="text-align:center; margin:1.4rem 0; line-height:1.15;"><span style="font-size:2.2rem; font-weight:700; color:#378add;">45 of 47</span><br><span style="color:#5a5a55;">playoff officials with at least 50 games call fewer fouls on the home team</span></p>
-:::
 
 **Shooting advantage.** Home teams have consistently shot better than road teams: typically around a percentage point better in effective field goal percentage across most eras in both regular season and playoffs. The usual explanations are crowd comfort and familiar rims. Our data can only confirm the gap is real, not pin down the cause.
 
@@ -167,18 +143,6 @@ The Section 1 chart shows six labeled eras, each marking a rule change. It would
 Most situational factors either don't matter or haven't changed enough to explain the decline. Travel distance matters at about 0.07 percentage points per 100 miles in the regular season (negligible) and has no measurable effect in the playoffs. Time zones are flat in both. Rest creates genuine variation (home teams win 63% when better-rested, 58% when the visitor has the edge) but that gap hasn't changed across eras. Load management cut back-to-back frequency from 35% to under 20%, which is real, but a shift-share decomposition shows that schedule change accounts for only 8% of the decline; home advantage eroded within every rest situation alike. Pace of play and the home-vs-away three-point differential show no meaningful relationship to the trend. Competitive balance shows none in the raw season-to-season comparison; a weak association appears only after both series are detrended, on a small sample, so it is best treated as exploratory.
 
 Crowds have stayed near capacity throughout (record highs in the 2020s, the very years home court hit its lowest), so crowd size is not the dial. Crowd *presence* is different. The 2020-21 pandemic seasons ran an accidental test: with buildings empty, home teams won just 51%; with any crowd at all, they won 58.5%. A crowd is a genuine ingredient of home court, worth about seven points on the night. But it is a switch that flips with the doors, not a 40-year dial slowly turning down. A combined model stacking all situational factors confirms it: after accounting for rest, altitude, time zones, and COVID seasons, the remaining explanatory power belongs entirely to which era the game was played in: the decline itself, not any off-court factor. The full treatment of each hypothesis, including why each seemed plausible and exactly what the data showed, is in [The Investigation](home_court_investigation.html).
-
-```{=typst}
-#align(center)[
-  #text(size: 30pt, weight: "bold", fill: rgb("#378add"))[51% → 58.5%]
-  #linebreak()
-  #text(size: 10pt, fill: rgb("#5a5a55"))[home win rate, empty arenas vs. any crowd (2020-21)]
-]
-```
-
-::: {.content-visible when-format="html"}
-<p style="text-align:center; margin:1.4rem 0; line-height:1.15;"><span style="font-size:2.2rem; font-weight:700; color:#378add;">51% → 58.5%</span><br><span style="color:#5a5a55;">home win rate, empty arenas vs. any crowd (2020-21)</span></p>
-:::
 
 ![Left: league average attendance per game vs. regular-season home win %, 2000–2026, with crowds holding near capacity (and lately setting records) while home court keeps falling. Right: 2020–21 home win % by game attendance, where an empty arena erases the advantage that even a small crowd restores.](../generated/nba_home_court_attendance.svg)
 
