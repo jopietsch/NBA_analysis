@@ -4,7 +4,7 @@ Home court advantage in the NBA has been shrinking for four decades. **Has it re
 
 Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two sharper drops layered on top.** The structural advantages home teams once relied on have worn away. **The decline came from the expected factors, the narrowing whistle and the three-point shift, and from the erosion of the home team's rebounding edge, on both sides of the glass.**
 
-What is *not* behind it is also interesting: **rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the playoff format changes, including the much-blamed 2014 change.** Each one is tested here, and each one is ruled out.
+**What is NOT** behind it is also interesting: **rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the playoff format changes, including the much-blamed 2014 change.** Each one is tested here, and each one is ruled out.
 
 Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers almost 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables, and Appendix C for additional findings.
 
@@ -21,7 +21,7 @@ The first sharp drop came in the mid-to-late 1990s, when regular-season home win
 
 Neither drop is a separate cause stacked on top of the trend. Each is a moment when one specific force accelerated the same trend. The first traces to the 1994–95 hand-checking crackdown, the one rule-change boundary that registers in the data and the exception in an otherwise flat rule-change story (Section 4). The second coincides with the three-point revolution: the share of shots from deep rose from about a quarter to nearly half in the three seasons after 2017. That shift accelerated the decline, but it's a marker of a broader move to the perimeter, not the whole explanation.
 
-The playoffs also dropped, but later. Postseason home court held near 64% from the mid-1990s through 2017, even as the regular season eroded below it. It then joined the slide after 2018, falling to 61%, then 58%.
+The playoffs also declined, but later. Postseason home court held near 64% from the mid-1990s through 2017, even as the regular season eroded below it. It then joined the slide after 2018, falling to 61%, then 58%.
 
 A word on era labels. The charts group seasons by the NBA's major rule changes, since each one reshaped how the game is played:
 
@@ -36,7 +36,7 @@ A word on era labels. The charts group seasons by the NBA's major rule changes, 
 
 Whether any of these rule changes caused the decline is a separate question, taken up in Section 4. For now they are just the calendar the rest of the report runs on.
 
-Three-point volume and the league-wide retreat from the offensive glass are both near their limits. Three-point attempts now make up about 40% of shots, a share that can't grow indefinitely. The offensive rebounding rate has fallen from 33% to 26% and is close to a floor where teams can't realistically pull back further. If both are leveling off, the pace of decline should slow. The empty-arena data provides the best guide to a lower bound: with no crowd, no foul bias, and no preparation edge, home teams still won 51%. Something near that is probably where the long-run trend settles. The best explanation the data supports is that analytical tools for shot selection, scouting, and preparation have reached all 30 teams at roughly the same pace. When every team runs the same approaches regardless of venue, the home team's preparation edge compresses. That is not specific to basketball, and every major sport investing in the same analytics is probably on the same path, though the data here can't test it.
+That raises the natural question of **where the trend goes from here**. Three-point volume and the league-wide retreat from the offensive glass are both near the limits of their effect on home court advantage. Three-point attempts now make up about 40% of shots, a share that can't grow indefinitely. The offensive rebounding rate has fallen from 33% to 26% and is close to a floor where teams can't realistically pull back further. If both are leveling off, the pace of decline should slow. The empty-arena data provides the best guide to a lower bound: with no crowd, no foul bias, and no preparation edge, home teams still won 51%. Something near that is probably where the long-run trend settles. The best explanation the data supports is that analytical tools for shot selection, scouting, and preparation have reached all 30 teams at roughly the same pace. When every team runs the same approaches regardless of venue, the home team's preparation edge compresses. That is not specific to basketball, and every major sport investing in the same analytics is probably on the same path, though the data here can't test it.
 
 ---
 
