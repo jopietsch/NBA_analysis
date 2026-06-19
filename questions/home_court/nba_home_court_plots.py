@@ -432,6 +432,24 @@ def plot_mediation(decomp: dict) -> None:
     print(f"\nSaved → {output_path}")
     plt.close()
 
+    # Individual panels for use in separate sections.
+    for which, title, headline_key, verb, suffix, resid_label in [
+        ("level", "What creates the home edge",  "pct_level", "explained", "level",   "Unexplained"),
+        ("trend", "What's driving the decline",  "pct_trend", "mediated",  "decline", "Unmediated"),
+    ]:
+        fig_s, ax_s = plt.subplots(1, 1, figsize=(8, 5.5))
+        fig_s.patch.set_facecolor(BG)
+        draw_panel(ax_s, which, title, headline_key, verb)
+        h = [mpatches.Patch(color=seg_colors[l], label=l) for l in seg_order]
+        h.append(mpatches.Patch(color=RESID, label=resid_label))
+        fig_s.legend(handles=h, fontsize=9, ncol=3, loc="lower center",
+                     framealpha=0.85, edgecolor="#ddd", bbox_to_anchor=(0.5, -0.04))
+        plt.tight_layout(rect=(0, 0.08, 1, 1))
+        out = _output_path(f"nba_home_court_mediation_{suffix}.png")
+        plt.savefig(out, dpi=150, bbox_inches="tight", facecolor=BG)
+        print(f"Saved → {out}")
+        plt.close()
+
 
 def plot_differential_analysis(
     reg_seasons: list[str], reg_stats: dict,

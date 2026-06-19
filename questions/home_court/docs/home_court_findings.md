@@ -34,7 +34,7 @@ A word on era labels. The charts group seasons by the NBA's major rule changes, 
 | 2018–22 | 2017–18 → 2021–22 | Freedom-of-movement emphasis |
 | 2023–26 | 2022–23 → 2025–26 | Transition take-foul rule |
 
-Whether any of these rule changes caused the decline is a separate question, taken up in Section 4. For now they are just the calendar the rest of the report runs on.
+**Whether any of these rule changes caused the decline is a separate question**, taken up in Section 4. For now they are just the calendar the rest of the report runs on.
 
 ---
 
@@ -52,19 +52,19 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just over a third of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
-![Home minus away differentials over time for six shooting and foul categories: foul calls per game, FG%, eFG%, 3PA rate, 3P%, and FT%. Each panel includes trend lines; a trend toward zero means that component of the home-team edge is narrowing. The rebounding and turnover differentials are covered in Section 3.](../generated/nba_home_court_advantage_differentials.png)
+**It all shows up in the box score.** The four categories together account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting is the largest piece, more than 40%, followed by rebounding.
 
-**It all shows up in the box score.** The four box-score categories, shooting, rebounding, foul calls, and turnover differential, account for about 95% of the entire home advantage in the regular season, and a similar share in the playoffs. Shooting is the single biggest piece, more than 40% of it, followed by rebounding.
+![Box-score category shares of the home-court advantage, regular season vs. playoffs. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation_level.png)
 
 ---
 
 ## 3. What's Driving the Decline
 
-The same categories that make up home court advantage are the ones lessening over time. 
+The same categories that make up home court advantage are the ones lessening over time. The chart below shows each category's share of the 40-year decline. The rest of this section walks each category in turn, with the precise shares tallied at the end.
 
-This chart splits both home court and its 40-year decline across the four box-score categories: shooting, rebounding (offensive and defensive combined), foul calls, and turnover margin. The left panel is what creates the advantage; the right is what's eroding it. The rest of this section walks each category in turn, with the precise shares tallied at the end.
+![Box-score category shares of the 40-year home-court decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation_decline.png)
 
-![Box-score category shares of the home-court advantage and of its decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below. The left panel is what creates the advantage; the right is what's eroding it. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation.png)
+![Home minus away differentials over time for six shooting and foul categories: foul calls per game, FG%, eFG%, 3PA rate, 3P%, and FT%. Each panel shows the per-season gap; a trend toward zero means that component of the home-team edge is narrowing. The rebounding and turnover differentials are covered below.](../generated/nba_home_court_advantage_differentials.png)
 
 **Three-point shooting shifted shot selection and narrowed the shooting edge.** The league's move to the perimeter changed shot selection in two visible ways. First, away teams have closed the gap in paint attempts: in the 1990s home teams generated about 1.3 percentage points more of their attempts from close range than road teams; by 2023–26 that gap has shrunk to 0.2 points. Second, three-point volume itself rose for everyone. When three-point shooting rates are the same across seasons, both effects disappear: the eFG% convergence reverses, and the shooting line turns from a decline into an improvement. The paint gap closing is part of the three-point story, not a separate cause on top of it. In the playoffs the paint gap narrowed in the late 2010s but has since rebounded close to its old level, making this a regular-season story for now.
 
