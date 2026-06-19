@@ -249,6 +249,8 @@ def plot_bayesian_changepoint(results: dict) -> None:
 
     fit2_map    = np.array(results["k2_map_fit"]) if results["k2_map_fit"] else None
     map_yrs2    = results.get("k2_map_years")
+    fit3_map    = np.array(results["k3_map_fit"]) if results.get("k3_map_fit") else None
+    map_yrs3    = results.get("k3_map_years")
 
     fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(15, 6), facecolor=BG)
     fig.suptitle("Bayesian Change-Point Model: How Many Structural Breaks in the HCA Decline?",
@@ -270,6 +272,10 @@ def plot_bayesian_changepoint(results: dict) -> None:
         ax_l.plot(x_idx, fit2_map, color=RED, linewidth=1.8, linestyle="-.",
                   alpha=0.85, zorder=4,
                   label=f"k=2  (P={k_probs[2]:.0%}, breaks {map_yrs2[0]}/{map_yrs2[1]})")
+    if fit3_map is not None and map_yrs3 is not None:
+        ax_l.plot(x_idx, fit3_map, color="#2a9d2a", linewidth=1.8, linestyle=":",
+                  alpha=0.85, zorder=4,
+                  label=f"k=3  (P={k_probs[3]:.0%}, breaks {map_yrs3[0]}/{map_yrs3[1]}/{map_yrs3[2]})")
 
     # Mark MAP break year
     break_x = int(np.where(years == map_yr1)[0][0])

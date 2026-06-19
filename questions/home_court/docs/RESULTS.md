@@ -111,46 +111,48 @@ All data from cache/ — same source as the plots above.
 
 
 ─── BAYESIAN CHANGE-POINT MODEL — HOW MANY BREAKS, AND WHERE? ──────────
-   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks).
+   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks), k=3 (three breaks).
    BIC-based marginal likelihood. Uniform prior over k and break locations.
-   Piecewise WLS (weights = game counts); outer 15% trimmed. Regular season only.
+   Piecewise WLS (weights = game counts); minimum 3 seasons per segment.
+   Regular season only.
 
    N = 43 seasons, 1984–2026
-   Candidate break positions: outer 15% trimmed
+   Candidate break positions: min segment size = 3 seasons
 
    ─ Posterior model probabilities ─
-   (Uniform prior over k ∈ {0,1,2} and over all valid break locations)
+   (Uniform prior over k ∈ {0,1,2,3} and over all valid break locations)
 
-   Model                    BF vs k=0  Posterior P(k)
-   ──────────────────────  ──────────  ──────────────
-   k=0  (no break)               1.0           1.8%
-   k=1  (one break)             18.0          31.9%
-   k=2  (two breaks)            37.4          66.3%
+   Model                       BF vs k=0  Posterior P(k)
+   ─────────────────────────  ──────────  ──────────────
+   k=0  (no break)                  1.0           1.4%
+   k=1  (one break)                14.2          19.3%
+   k=2  (two breaks)               29.9          40.5%
+   k=3  (three breaks)             28.6          38.8%
 
    ─ k=1 posterior over break year ─
    MAP break year:     1999
    95% HPD interval:   1992–2003
    Posterior-weighted slopes:
-     Pre-break:  -0.584 pp/yr  (±0.149 posterior SD)
+     Pre-break:  -0.577 pp/yr  (±0.170 posterior SD)
      Post-break: -0.255 pp/yr  (±0.032 posterior SD)
 
    Top break-year probabilities (k=1):
      Year   P(τ=year | k=1)
    ──────  ────────────────
-     1999            50.6%  ██████████████████████████████
-     2003            17.9%  ██████████
-     1998            11.6%  ██████
-     2000             6.2%  ███
-     1992             4.0%  ██
-     2002             3.4%  ██
+     1999            50.1%  ██████████████████████████████
+     2003            17.7%  ██████████
+     1998            11.5%  ██████
+     2000             6.1%  ███
+     1992             3.9%  ██
+     2002             3.3%  ██
      2001             1.9%  █
      1993             1.9%  █
 
-   ─ k=2 MAP break years: 1992 and 2003 ─
+   ─ k=2 MAP break years: 1992 and 2020 ─
 
-   ► k=2 is the most probable model (P = 66.3%).
-   ► BF(k=1 vs k=0) = 18.0: strong evidence for one structural break.
-   ► k=2 has P = 66.3%; second break at 2003 has some support.
+   ─ k=3 MAP break years: 1988, 1998, and 2020 ─
+   ► BF(k=1 vs k=0) = 14.2: strong evidence for at least one structural break.
+   ► BF(k=2 vs k=1) = 2.1  BF(k=3 vs k=2) = 1.0
 
 
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──

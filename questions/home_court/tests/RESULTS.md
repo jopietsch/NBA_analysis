@@ -102,21 +102,23 @@ All data from cache/ — same source as the plots above.
 
 
 ─── BAYESIAN CHANGE-POINT MODEL — HOW MANY BREAKS, AND WHERE? ──────────
-   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks).
+   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks), k=3 (three breaks).
    BIC-based marginal likelihood. Uniform prior over k and break locations.
-   Piecewise WLS (weights = game counts); outer 15% trimmed. Regular season only.
+   Piecewise WLS (weights = game counts); minimum 3 seasons per segment.
+   Regular season only.
 
    N = 12 seasons, 1984–2025
-   Candidate break positions: outer 15% trimmed
+   Candidate break positions: min segment size = 3 seasons
 
    ─ Posterior model probabilities ─
-   (Uniform prior over k ∈ {0,1,2} and over all valid break locations)
+   (Uniform prior over k ∈ {0,1,2,3} and over all valid break locations)
 
-   Model                    BF vs k=0  Posterior P(k)
-   ──────────────────────  ──────────  ──────────────
-   k=0  (no break)               1.0          74.6%
-   k=1  (one break)              0.3          20.0%
-   k=2  (two breaks)             0.1           5.4%
+   Model                       BF vs k=0  Posterior P(k)
+   ─────────────────────────  ──────────  ──────────────
+   k=0  (no break)                  1.0          74.6%
+   k=1  (one break)                 0.3          20.0%
+   k=2  (two breaks)                0.1           5.4%
+   k=3  (three breaks)              0.0           0.0%
 
    ─ k=1 posterior over break year ─
    MAP break year:     1990
@@ -139,7 +141,7 @@ All data from cache/ — same source as the plots above.
 
    ► k=0 is the most probable model (P = 74.6%).
    ► BF(k=1 vs k=0) = 0.3: weak evidence for a structural break.
-   ► k=2 has P = 5.4%; two-break model not preferred.
+   ► BF(k=2 vs k=1) = 0.3  BF(k=3 vs k=2) = 0.0
 
 
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──

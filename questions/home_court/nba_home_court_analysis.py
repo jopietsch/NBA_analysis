@@ -3271,12 +3271,19 @@ def run_cusum_test(df: pd.DataFrame, results: dict | None = None) -> None:
 def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
     """Piecewise WLS change-point computation (no printing).
 
-    Compares k=0 (linear), k=1 (one break), k=2 (two breaks) using BIC-based
-    marginal likelihoods under a uniform prior over model order and break locations.
+    Compares k=0..3 using BIC-based marginal likelihoods under a uniform prior
+    over model order and break locations.  Each segment must contain at least
+    MIN_SEG seasons (enough to fit a line with ≥1 residual df).  This is more
+    permissive than the 15% trim used by the QLR test (whose Andrews critical
+    values are calibrated to that trim); here the BIC penalty itself disciplines
+    against over-segmentation.
+
     Returns a results dict consumed by run_bayesian_changepoint() (prints) and
     plot_bayesian_changepoint() (chart).
     """
     from scipy.special import logsumexp
+
+    MIN_SEG = 3   # minimum seasons per segment
 
     sub = df[df["is_playoff"] == 0]
     agg = (sub.groupby("year")["home_win"]
@@ -3291,8 +3298,6 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
     x = agg["year"].values.astype(float)
     w = agg["games"].values.astype(float)
     w_norm = w / w.mean()   # normalize so BIC penalty uses n, not sum(w)
-
-    trim = max(3, int(np.ceil(0.15 * n)))
 
     def _wls(y_seg, x_seg, w_seg):
         """Weighted least squares: returns (beta[intercept, slope], weighted_RSS)."""
@@ -3321,7 +3326,7 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
     fit0 = b0[0] + b0[1] * x
 
     # ── k=1 ──
-    cands1 = list(range(trim, n - trim))
+    cands1 = list(range(MIN_SEG, n - MIN_SEG))
     bic1 = np.full(len(cands1), np.inf)
     fits1 = {}
     slopes1 = {}
@@ -3336,8 +3341,8 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
 
     # ── k=2 ──
     cands2 = [(t1, t2)
-              for t1 in range(trim, n - 2 * trim)
-              for t2 in range(t1 + trim, n - trim)]
+              for t1 in range(MIN_SEG, n - 2 * MIN_SEG)
+              for t2 in range(t1 + MIN_SEG, n - MIN_SEG)]
     bic2 = np.full(len(cands2), np.inf)
     fits2 = {}
     for i, (t1, t2) in enumerate(cands2):
@@ -3351,12 +3356,33 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
             bc[0] + bc[1] * x[t2:],
         ])
 
+    # ── k=3 ──
+    cands3 = [(t1, t2, t3)
+              for t1 in range(MIN_SEG, n - 3 * MIN_SEG)
+              for t2 in range(t1 + MIN_SEG, n - 2 * MIN_SEG)
+              for t3 in range(t2 + MIN_SEG, n - MIN_SEG)]
+    bic3 = np.full(len(cands3), np.inf)
+    fits3 = {}
+    for i, (t1, t2, t3) in enumerate(cands3):
+        ba, wra = _wls(y[:t1],    x[:t1],    w_norm[:t1])
+        bb, wrb = _wls(y[t1:t2],  x[t1:t2],  w_norm[t1:t2])
+        bc, wrc = _wls(y[t2:t3],  x[t2:t3],  w_norm[t2:t3])
+        bd, wrd = _wls(y[t3:],    x[t3:],    w_norm[t3:])
+        bic3[i] = _bic(wra + wrb + wrc + wrd, 8)
+        fits3[(t1, t2, t3)] = np.concatenate([
+            ba[0] + ba[1] * x[:t1],
+            bb[0] + bb[1] * x[t1:t2],
+            bc[0] + bc[1] * x[t2:t3],
+            bd[0] + bd[1] * x[t3:],
+        ])
+
     # ── Posterior model probabilities ──
     # log Z_k = logsumexp(-BIC/2 over configs) - log(n_configs)
     lz0 = -bic0 / 2
     lz1 = float(logsumexp(-bic1 / 2)) - np.log(len(cands1))
     lz2 = float(logsumexp(-bic2 / 2)) - np.log(len(cands2)) if cands2 else -np.inf
-    lz = np.array([lz0, lz1, lz2])
+    lz3 = float(logsumexp(-bic3 / 2)) - np.log(len(cands3)) if cands3 else -np.inf
+    lz = np.array([lz0, lz1, lz2, lz3])
     lz_shifted = lz - lz.max()
     k_probs = np.exp(lz_shifted) / np.exp(lz_shifted).sum()
 
@@ -3405,6 +3431,15 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
     else:
         map_years_k2, fit2_map, marg1, marg2 = None, None, {}, {}
 
+    # ── k=3 MAP ──
+    best_k3_i = int(np.argmin(bic3)) if cands3 else None
+    if best_k3_i is not None:
+        best_k3 = cands3[best_k3_i]
+        map_years_k3 = tuple(int(agg.iloc[t]["year"]) for t in best_k3)
+        fit3_map = fits3[best_k3]
+    else:
+        map_years_k3, fit3_map = None, None
+
     return {
         "years": x.astype(int).tolist(),
         "pct": y.tolist(),
@@ -3424,6 +3459,9 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
         "k2_map_fit": fit2_map.tolist() if fit2_map is not None else None,
         "k2_marg1": marg1,
         "k2_marg2": marg2,
+        "k3_map_years": map_years_k3,
+        "k3_map_fit": fit3_map.tolist() if fit3_map is not None else None,
+        "min_seg": MIN_SEG,
     }
 
 
@@ -3437,30 +3475,35 @@ def run_bayesian_changepoint(df: pd.DataFrame) -> dict:
     hpd_k1 = r["k1_hpd"]
     slopes = r["k1_slopes"]
     map_years_k2 = r.get("k2_map_years")
+    map_years_k3 = r.get("k3_map_years")
+    min_seg = r.get("min_seg", 3)
     x = r["years"]
 
     _section("BAYESIAN CHANGE-POINT MODEL — HOW MANY BREAKS, AND WHERE?")
-    print("   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks).")
+    print("   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks), k=3 (three breaks).")
     print("   BIC-based marginal likelihood. Uniform prior over k and break locations.")
-    print("   Piecewise WLS (weights = game counts); outer 15% trimmed. Regular season only.\n")
+    print(f"   Piecewise WLS (weights = game counts); minimum {min_seg} seasons per segment.")
+    print("   Regular season only.\n")
     print(f"   N = {len(x)} seasons, {x[0]}–{x[-1]}")
-    print(f"   Candidate break positions: outer 15% trimmed\n")
+    print(f"   Candidate break positions: min segment size = {min_seg} seasons\n")
 
-    lz0, lz1, lz2 = lz[0], lz[1], lz[2]
+    lz0, lz1, lz2, lz3 = lz[0], lz[1], lz[2], lz[3]
     bf1 = float(np.exp(lz1 - lz0))
     bf2 = float(np.exp(lz2 - lz0)) if np.isfinite(lz2) else 0.0
+    bf3 = float(np.exp(lz3 - lz0)) if np.isfinite(lz3) else 0.0
 
     print(f"   ─ Posterior model probabilities ─")
-    print(f"   (Uniform prior over k ∈ {{0,1,2}} and over all valid break locations)\n")
-    print(f"   {'Model':<22}  {'BF vs k=0':>10}  {'Posterior P(k)':>14}")
-    print(f"   {'─'*22}  {'─'*10}  {'─'*14}")
+    print(f"   (Uniform prior over k ∈ {{0,1,2,3}} and over all valid break locations)\n")
+    print(f"   {'Model':<25}  {'BF vs k=0':>10}  {'Posterior P(k)':>14}")
+    print(f"   {'─'*25}  {'─'*10}  {'─'*14}")
     for label, bf, kp in [
-        ("k=0  (no break)",   1.0,  k_probs[0]),
-        ("k=1  (one break)",  bf1,  k_probs[1]),
-        ("k=2  (two breaks)", bf2,  k_probs[2]),
+        ("k=0  (no break)",      1.0,  k_probs[0]),
+        ("k=1  (one break)",     bf1,  k_probs[1]),
+        ("k=2  (two breaks)",    bf2,  k_probs[2]),
+        ("k=3  (three breaks)",  bf3,  k_probs[3]),
     ]:
         bf_s = f"{bf:>9.1f}" if bf < 1000 else f"{bf:>9.0f}"
-        print(f"   {label:<22}  {bf_s}  {kp:>13.1%}")
+        print(f"   {label:<25}  {bf_s}  {kp:>13.1%}")
 
     print(f"\n   ─ k=1 posterior over break year ─")
     print(f"   MAP break year:     {map_year_k1}")
@@ -3479,19 +3522,20 @@ def run_bayesian_changepoint(df: pd.DataFrame) -> dict:
     if map_years_k2 is not None:
         print(f"\n   ─ k=2 MAP break years: {map_years_k2[0]} and {map_years_k2[1]} ─")
 
+    if map_years_k3 is not None:
+        print(f"\n   ─ k=3 MAP break years: {map_years_k3[0]}, {map_years_k3[1]}, and {map_years_k3[2]} ─")
+
     dominant_k = int(np.argmax(k_probs))
     if k_probs[dominant_k] > 0.5:
         print(f"\n   ► k={dominant_k} is the most probable model (P = {k_probs[dominant_k]:.1%}).")
     if bf1 > 10:
-        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: strong evidence for one structural break.")
+        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: strong evidence for at least one structural break.")
     elif bf1 > 3:
-        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: moderate evidence for one structural break.")
+        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: moderate evidence for at least one structural break.")
     else:
         print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: weak evidence for a structural break.")
-    if map_years_k2 is not None and k_probs[2] > 0.10:
-        print(f"   ► k=2 has P = {k_probs[2]:.1%}; second break at {map_years_k2[1]} has some support.")
-    elif map_years_k2 is not None:
-        print(f"   ► k=2 has P = {k_probs[2]:.1%}; two-break model not preferred.")
+    if map_years_k2 is not None:
+        print(f"   ► BF(k=2 vs k=1) = {(bf2/bf1):.1f}  BF(k=3 vs k=2) = {(bf3/bf2):.1f}" if bf2 > 0 else "")
     print()
     return r
 
