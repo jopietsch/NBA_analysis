@@ -1,12 +1,12 @@
 # NBA Home Court Advantage: Findings
 
-Home court advantage in the NBA has been shrinking for four decades, and this report sets out to answer what has changed and why. **Has it really changed?** **What makes home court an advantage in the first place?** And **what's driving the decline what isn't?**
+It appears that home court advantage in the NBA has been shrinking for four decades,**Has it really changed?** **What makes home court an advantage in the first place?** And **what's driving the decline what isn't?**
 
-Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two sharper drops layered on top.** The structural advantages home teams once relied on have worn away: at the whistle, in the three-point revolution (which reshaped shot selection with it), and on the glass. The largest share of the decline came not from the expected factors, the narrowing whistle and the three-point shift, but from the erosion of the home team's rebounding edge, on both sides of the glass.
+Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two sharper drops layered on top.** The structural advantages home teams once relied on have worn away. **The  decline came  from the expected factors, the narrowing whistle and the three-point shift, and from the erosion of the home team's rebounding edge, on both sides of the glass.**
 
 What is *not* behind it is also interesting: **rule changes, travel, time zones, pace of play, competitive balance, crowd size, and the playoff format changes, including the much-blamed 2014 change.** Each one is tested here, and each one is ruled out.
 
-Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables, and Appendix C for additional findings.
+Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers almost 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables, and Appendix C for additional findings.
 
 ---
 
