@@ -145,7 +145,7 @@ def _draw_season_overview(
     if covid_idx:
         ax.axvspan(min(covid_idx) - 0.5, max(covid_idx) + 0.5, alpha=0.12, color=RED, zorder=1)
 
-    ax.set_title("Regular season vs playoffs: home win % per season",
+    ax.set_title("Home win % fell about 10 points in 40 years, regular season and playoffs alike",
                  fontsize=12, fontweight="bold", color="#2c2c2a", pad=8)
     tick_step = max(1, len(reg_seasons) // 14)
     ax.set_xticks(x[::tick_step])
@@ -259,7 +259,7 @@ def plot_bayesian_changepoint(results: dict) -> None:
     map_yrs3    = results.get("k3_map_years")
 
     fig, (ax_l, ax_r) = plt.subplots(1, 2, figsize=(15, 6), facecolor=BG)
-    fig.suptitle("Bayesian Change-Point Model: How Many Structural Breaks in the HCA Decline?",
+    fig.suptitle("The decline bends at least once, near the late 1990s, but the year can't be pinned down",
                  fontsize=13, fontweight="bold", color="#2c2c2a")
     fig.text(0.5, 0.965,
              "Regular season  |  BIC-based marginal likelihood  |  Uniform prior over k and break locations",
@@ -354,7 +354,7 @@ def plot_rest_altitude(data: dict) -> None:
     numbers RESULTS.md prints, no new data.
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
-    fig.suptitle("The Situational Edges: Rest and Altitude",
+    fig.suptitle("Rest and altitude help home teams, but neither changed enough to drive the decline",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
              f"Data: NBA.com  |  home win % by situation  |  {season_range_label()}",
@@ -430,7 +430,7 @@ def plot_channel_3pa_control(data: dict) -> None:
     order = CATEGORY_ORDER
     ctxs = [("Regular season", GREEN), ("Playoffs", BLUE)]
     fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
-    fig.suptitle("Does Each Category's Decline Survive Controlling for Threes?",
+    fig.suptitle("Rebounding's decline survives the three-point shift; shooting's is fully absorbed by it",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
              "Share of each category's yearly decline left after holding 3-point volume constant  |  "
@@ -523,7 +523,7 @@ def plot_mediation(decomp: dict) -> None:
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 5.5))
     fig.patch.set_facecolor(BG)
-    fig.suptitle("Where Home Court Comes From, and Where It's Going",
+    fig.suptitle("Four box-score factors explain about 95% of home court, and most of its decline",
                  fontsize=14, fontweight="bold", y=1.05, color="#2c2c2a")
     fig.text(0.5, 0.965,
              "Box-score category shares of the home-court edge (left) and of its 40-year decline (right)",
@@ -577,7 +577,7 @@ def plot_differential_analysis(
     panels = DIFF_PANELS
 
     fig, axes = plt.subplots(2, 3, figsize=(22, 10))
-    fig.suptitle("Home vs Away Box-Score Differentials — Are the Gaps Closing?",
+    fig.suptitle("The home foul and shooting edges are shrinking toward zero",
                  fontsize=15, fontweight="bold", y=0.99, color="#2c2c2a")
     fig.text(0.5, 0.955,
              f"Data: NBA.com  |  Positive = home team higher  |  {season_range_label()}",
@@ -630,7 +630,7 @@ def plot_rebound_decomposition(
     tick_step = max(1, len(reg_seasons) // 14)
 
     fig, (ax1, ax2, ax3, ax4) = plt.subplots(1, 4, figsize=(28, 7))
-    fig.suptitle("Why the Home Rebounding and Turnover Edges Faded",
+    fig.suptitle("The home rebounding edge died on the offensive glass",
                  fontsize=15, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.955,
              f"Data: NBA.com  |  Regular season  |  {season_range_label()}",
@@ -746,7 +746,7 @@ def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
     panels = TRACKING_PANELS
 
     fig, axes = plt.subplots(1, 3, figsize=(20, 6))
-    fig.suptitle("Player-Tracking View of the Home Rebounding Edge (tracking era)",
+    fig.suptitle("By the tracking era, the home rebounding edge was already nearly gone",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
              "Data: NBA.com player tracking & hustle stats  |  "
@@ -797,7 +797,7 @@ def plot_margin_analysis(
     else:
         fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22, 7))
 
-    fig.suptitle("Home Team Point Margin and Net Rating — Are Wins Getting Closer?",
+    fig.suptitle("Home games are polarizing: bigger home wins and bigger home losses",
                  fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
              f"Data: NBA.com  |  Positive = home team winning by more  |  {season_range_label()}",
@@ -923,7 +923,7 @@ def plot_back_to_back(data: dict) -> None:
     `data` comes from regression.compute_back_to_back_plotdata().
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-    fig.suptitle("Did Fewer Tired Visitors Drive the Decline?",
+    fig.suptitle("Fewer back-to-backs explain only about 8% of the decline",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
              f"Data: NBA.com  |  back-to-back = game on zero days' rest  |  regular season  |  {season_range_label()}",
@@ -987,7 +987,7 @@ def plot_parity_analysis(
     tick_step = max(1, len(reg_seasons) // 14)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-    fig.suptitle("Does Competitive Balance Explain the Decline in Home Court Advantage?",
+    fig.suptitle("Competitive balance does not track the home-court decline",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
              "Data: NBA.com  |  Regular season  |  Parity = std dev of team win % per season  "
@@ -1064,7 +1064,7 @@ def plot_series_breakdown(
     Panel 2: G1–G7 home win % per era (one line per era, era-colored).
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-    fig.suptitle("Playoff Series Structure — Home Win % by Game Number",
+    fig.suptitle("Playoff results follow the arena, not series momentum",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
              f"Data: NBA.com  |  Playoffs {season_range_label()}  |  2020 bubble excluded  |  "
@@ -1196,7 +1196,7 @@ def plot_shot_zone_analysis(
     tick_step = max(1, len(reg_seasons) // 14)
 
     fig, axes = plt.subplots(2, 2, figsize=(16, 10))
-    fig.suptitle("Shot Zone Differentials: Home vs Road — Are Away Teams Getting Better Looks?",
+    fig.suptitle("Away teams have closed the home team's paint-shot edge",
                  fontsize=14, fontweight="bold", y=0.99, color="#2c2c2a")
     fig.text(0.5, 0.955,
              f"Data: NBA.com  |  Positive = home team higher share of FGA  |  {season_range_label()}",
@@ -1301,7 +1301,7 @@ def plot_3pa_hca_analysis(
     y_pct_po  = np.array(po_pcts, dtype=float)
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))
-    fig.suptitle("Does League-Wide 3-Point Shooting Explain the Decline in Home Court Advantage?",
+    fig.suptitle("Games with more threes go against home teams, even within the same era",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
              f"Data: NBA.com  |  3PA rate = share of all field-goal attempts that are 3-pointers  "
@@ -1367,7 +1367,7 @@ def plot_pace_hca_analysis(
     y_pct_po   = np.array(po_pcts,  dtype=float)
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(20, 6))
-    fig.suptitle("Does League-Wide Pace Explain the Decline in Home Court Advantage?",
+    fig.suptitle("Pace of play does not explain the home-court decline",
                  fontsize=14, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
              f"Data: NBA.com  |  Pace = estimated possessions per 48 min per team  "
@@ -1462,7 +1462,7 @@ def plot_team_hca_analysis(
         1, 2, figsize=(20, height),
         gridspec_kw={"width_ratios": [3, 2]},
     )
-    fig.suptitle("Franchise Home Court Advantage — Regular Season vs. Playoffs (All-Time)",
+    fig.suptitle("Denver and Utah hold the biggest home-court edge (altitude, most likely)",
                  fontsize=14, fontweight="bold", y=1.02, color="#2c2c2a")
     fig.text(
         0.5, 0.965,
@@ -1597,7 +1597,7 @@ def plot_team_hca_by_era(
     fig, ax = plt.subplots(figsize=(12, height), facecolor=BG)
     ax.set_facecolor(BG)
     fig.suptitle(
-        f"Franchise HCA: {early_label} vs. {late_label}",
+        f"Home court advantage shrank for most franchises: {early_label} vs. {late_label}",
         fontsize=14, fontweight="bold", color="#2c2c2a",
     )
     fig.text(
@@ -1678,7 +1678,7 @@ def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
         ax.set_xlabel("Era", fontsize=10)
         ax.set_ylabel("Per-official era-mean foul diff (home − away)", fontsize=9)
         ax.set_title(
-            "Distribution of per-official home foul bias by era\n(each point = one referee, playoffs)",
+            "Referee home-foul bias has shrunk and grown more uniform over time\n(each point = one referee, playoffs)",
             fontsize=11, fontweight="bold", color="#2c2c2a", pad=6,
         )
         ax.tick_params(axis="x", labelsize=8)
@@ -1741,7 +1741,7 @@ def plot_referee_rankings(bias_stats: list[dict]) -> None:
     ax.legend(handles=[neg, pos], fontsize=8, framealpha=0.85, edgecolor="#ddd")
     ax.invert_yaxis()
 
-    plt.suptitle("Referee Home Foul Bias — Playoffs", fontsize=13,
+    plt.suptitle("Nearly every playoff referee favors the home team, but the spread is mostly noise", fontsize=13,
                  fontweight="bold", color="#2c2c2a", y=1.01)
     plt.tight_layout()
     output_path = _output_path("nba_home_court_referee_rankings.svg")
@@ -1776,7 +1776,7 @@ def plot_attendance(
     tick_step = max(1, len(seasons) // 12)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
-    fig.suptitle("The Crowd and Home Court Advantage: Size vs. Presence",
+    fig.suptitle("A crowd's presence matters; its size does not",
                  fontsize=14, fontweight="bold", y=1.02, color="#2c2c2a")
     fig.text(0.5, 0.96,
              "Attendance: Basketball-Reference  |  Home win %: NBA.com  "
