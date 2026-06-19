@@ -366,11 +366,10 @@ def plot_mediation(decomp: dict) -> None:
     Two-panel decomposition: each box-score channel's share of the home-court
     level (left) and of its 40-year decline (right), regular season vs playoffs.
 
-    Renders the same numbers RESULTS.md prints — the dict comes from
+    Renders the same numbers RESULTS.md prints; the dict comes from
     nba_home_court_analysis.compute_mediation_decomposition(). Bars are
-    normalized to 100% (the shares sum to 100 by accounting identity); the
-    headline at each bar's end is how much of the level/decline the four
-    channels capture.
+    normalized to 100%; the headline at each bar's end is how much of the
+    level/decline the four channels capture.
     """
     seg_order  = CATEGORY_ORDER
     seg_colors = CATEGORY_COLORS
@@ -411,11 +410,10 @@ def plot_mediation(decomp: dict) -> None:
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 5.5))
     fig.patch.set_facecolor(BG)
-    fig.suptitle("Where Home Court Comes From — and Where It's Going",
+    fig.suptitle("Where Home Court Comes From, and Where It's Going",
                  fontsize=14, fontweight="bold", y=1.05, color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Box-score category shares of the home-court edge (left) and of its 40-year decline (right)  |  "
-             "shares sum to 100% by accounting identity",
+             "Box-score category shares of the home-court edge (left) and of its 40-year decline (right)",
              ha="center", fontsize=9, color=GRAY)
 
     draw_panel(ax1, "level", "What creates the home edge",   "pct_level", "explained")
