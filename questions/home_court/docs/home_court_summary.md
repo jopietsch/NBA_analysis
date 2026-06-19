@@ -26,7 +26,7 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
 
-But the categories that *created* the edge are not the ones that *erased* it (right). In the direct box-score channels, shooting accounts for about a fifth of the decline and fouls another fifth. Three-point shooting's effects extend through foul calls and turnovers too, pushing the perimeter shift to close to half the overall story. **The piece it does not explain is rebounding — the single largest channel, and the one that fades independently.**
+But the categories that *created* the edge are not the ones that *erased* it (right). In the four box-score categories, shooting accounts for about a fifth of the decline and fouls another fifth. Three-point shooting's effects extend through foul calls and turnovers too, pushing the perimeter shift to close to half the overall story. **The piece it does not explain is rebounding — the single largest category, and the one that fades independently.**
 
 ---
 
@@ -46,7 +46,7 @@ None of the usual explanations hold up: rule changes (with one exception, 1994�
 
 ## What caused it
 
-Home court is fading because the on-court advantages that built it have worn away: fairer officiating narrowed the whistle (home teams once attempted roughly **2 more free throws per game** than visitors; now it's barely half), the league-wide move to the three-point line shrank the home shooting edge, and home teams lost their grip on the boards and on the turnover margin. Rebounding is the biggest single piece, and the one the three-point shift doesn't explain. The crowd still shows up. The game just stopped rewarding it the way it once did.
+Home court is fading because the on-court advantages that built it have worn away: fairer officiating narrowed the whistle (home teams once attempted roughly **2 more free throws per game** than visitors; now it's barely half), the league-wide move to the three-point line shrank the home shooting edge, and home teams lost their grip on the boards and on the turnover margin. Rebounding is the largest independent category, and the one the three-point shift doesn't explain. The crowd still shows up. The game just stopped rewarding it the way it once did.
 
 ---
 
