@@ -54,7 +54,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **It all shows up in the box score.** The four categories together account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting is the largest piece, more than 40%, followed by rebounding.
 
-![Box-score category shares of the home-court advantage, regular season vs. playoffs. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation_level.png){width=50%}
+![Box-score category shares of the home-court advantage, regular season vs. playoffs.](../generated/nba_home_court_mediation_level.png){width=50%}
 
 ---
 
@@ -62,7 +62,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 The same categories that make up home court advantage are the ones lessening over time. The chart below shows each category's share of the 40-year decline. The rest of this section walks each category in turn, with the precise shares tallied at the end.
 
-![Box-score category shares of the 40-year home-court decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below. Bars sum to 100% by accounting identity.](../generated/nba_home_court_mediation_decline.png){width=50%}
+![Box-score category shares of the 40-year home-court decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below.](../generated/nba_home_court_mediation_decline.png){width=50%}
 
 ![Home minus away differentials over time for six shooting and foul categories: foul calls per game, FG%, eFG%, 3PA rate, 3P%, and FT%. Each panel shows the per-season gap; a trend toward zero means that component of the home-team edge is narrowing. The rebounding and turnover differentials are covered below.](../generated/nba_home_court_advantage_differentials.png)
 
