@@ -51,12 +51,6 @@ SHOT_ZONE_LABELS: dict[str, str] = {
     "corner3":  "Corner 3",
     "above3":   "Above Break 3",
 }
-SHOT_ZONE_COLORS: dict[str, str] = {
-    "paint":    BLUE,
-    "midrange": GRAY,
-    "corner3":  GREEN,
-    "above3":   RED,
-}
 
 # Canonical order and colors for the four box-score categories, used across
 # mediation, 3PA-control, and any other category-breakdown charts.
@@ -1215,8 +1209,11 @@ def plot_shot_zone_analysis(
              f"Data: NBA.com  |  Positive = home team higher share of FGA  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
+    # Highlight-and-mute: the finding is the paint panel, so color it and grey
+    # the other three zones (they are context for the one that carries the title).
     for ax, (zone, label) in zip(axes.flat, SHOT_ZONE_LABELS.items()):
-        color = SHOT_ZONE_COLORS[zone]
+        is_focus = zone == "paint"
+        color = BLUE if is_focus else "#c4c2bb"
         y_reg = np.array(reg_stats[zone], dtype=float)
         y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, zone)
 
@@ -1232,7 +1229,8 @@ def plot_shot_zone_analysis(
         _shade_eras(ax, reg_seasons, label_y=None)
         ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
         ax.set_title(f"{label} % differential (home − road)",
-                     fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+                     fontsize=11, fontweight="bold",
+                     color="#2c2c2a" if is_focus else GRAY, pad=6)
         ax.set_ylabel("Percentage points", fontsize=10)
         ax.set_xticks(x[::tick_step])
         ax.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -1468,7 +1466,10 @@ def plot_team_hca_analysis(
     sorted_teams = sorted(reg_stats, key=lambda t: reg_shrunk[t], reverse=True)
     hcas   = [reg_shrunk[t] for t in sorted_teams]
     errs   = [_ci_hw(reg_stats[t]) for t in sorted_teams]
-    colors = [GREEN if h >= 0 else RED for h in hcas]
+    # Highlight-and-mute: the headline is the top two, so color Denver/Utah and
+    # mute the rest of the pack to neutral grey (bar lengths still show the spread).
+    HIGHLIGHT = {"Denver Nuggets", "Utah Jazz"}
+    colors = [BLUE if t in HIGHLIGHT else "#cdcbc4" for t in sorted_teams]
 
     height = max(10, len(sorted_teams) * 0.33 + 2)
     fig, (ax1, ax2) = plt.subplots(
@@ -1491,6 +1492,10 @@ def plot_team_hca_analysis(
     ax1.axvline(0, color=GRAY, linewidth=1.0, zorder=1)
     ax1.set_yticks(y)
     ax1.set_yticklabels(sorted_teams, fontsize=8)
+    for lbl, t in zip(ax1.get_yticklabels(), sorted_teams):
+        if t in HIGHLIGHT:
+            lbl.set_fontweight("bold")
+            lbl.set_color("#2c2c2a")
     ax1.invert_yaxis()
     ax1.xaxis.set_major_formatter(mticker.FormatStrFormatter("%+.0f pp"))
     ax1.set_xlabel("Home court advantage (home win% − road win%)", fontsize=10)
