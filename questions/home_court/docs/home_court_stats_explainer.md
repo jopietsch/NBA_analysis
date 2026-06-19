@@ -394,13 +394,20 @@ rest coefficient absorbs team quality.
 **The data.** Per-game combined 3PA rate (`tpa_rate_avg`: both teams' threes as
 a share of both teams' FGA), in both contexts.
 
-**The approach.** Three layers, run for regular season and playoffs:
+**The approach.** Five layers, run for regular season and playoffs:
 
 1. **Season-level Pearson and Spearman correlations** between mean 3PA rate and
    home win %.
 2. A **game-level bivariate logistic** of `home_win ~ tpa_rate_avg` with
    season-clustered SEs.
 3. The same logistic **controlling for era** (`+ C(era)`) — the critical test.
+4. A **partial correlation**: detrend both season-level series against year, then
+   correlate the residuals. If the raw r collapses once the shared trend is gone,
+   the correlation was mostly the trend; if a substantial piece survives, there is
+   a genuine year-to-year link.
+5. A **rolling 10-season Pearson r** to check whether the relationship is stable
+   across the sample or only appears in one stretch (sign flips or wide swings
+   would point to a spurious, trend-driven correlation).
 
 **Why the era control is the crux.** 3PA rate and HCA both trended hard over 40
 years, so a raw correlation between them is guaranteed and proves nothing
@@ -420,14 +427,21 @@ at p = 0.027 on 3,292 games — directionally identical and now clearly
 significant. This is the strongest mechanistic candidate the data offers for
 the decline.
 
-**Cointegration check.** A **Engle-Granger cointegration test** confirms what
-the within-era approach already suspected: both 3PA rate and home win % are I(1)
-(nonstationary trending series, per ADF unit-root tests), but they are **not
-cointegrated**. The r = −0.90 season-level correlation is therefore spurious —
-two series that trend in opposite directions over 43 years will always correlate,
-whether or not they share a genuine long-run relationship. This makes the
-within-era game-level evidence the only reliable form: the cointegration failure
-reinforces why Section 10's critical test is "does it survive the era control,"
+**Cointegration and detrending.** Two checks confirm that the raw r = −0.90 is
+mostly, but not entirely, the shared trend. First, an **Engle-Granger
+cointegration test**: both 3PA rate and home win % are I(1) (nonstationary
+trending series, per ADF unit-root tests), but they are **not cointegrated**, so
+they have no genuine long-run equilibrium relationship and a large part of the raw
+correlation is just two series drifting in opposite directions for 43 years.
+Second, the **partial correlation** quantifies how much: detrending both series
+against year drops the season-level r from −0.902 to −0.526 (still p < 0.001), so
+roughly 40% of the raw correlation is the shared trend and a real year-to-year
+association remains. (The rolling 10-season r swings from −0.87 to −0.19 with no
+sign flips — moderate instability consistent with a relationship that is partly
+trend-driven.) The reconciliation is the within-era game-level effect: the raw r
+overstates the link, the detrended residual and the within-era logit agree that a
+genuine component survives, and the within-era result is the cleanest evidence of
+it. This is why Section 10's critical test is "does it survive the era control,"
 not "how strong is the raw r."
 
 **Why this chart.** Three panels that walk the trap and its resolution. Panel 1 is a
