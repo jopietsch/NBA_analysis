@@ -506,9 +506,9 @@ def plot_rebound_decomposition(
     """
     3-panel figure on why the home rebounding edge faded.
 
-    Panel 1: home OREB rate vs away OREB rate over time (regular season) —
-             the cleaner rate-based measure of offensive-rebounding aggressiveness,
-             not confounded by how well either team shoots.
+    Panel 1: home vs away OREB rate (left axis, solid) and DREB rate (right axis,
+             dotted) over time — DREB rate = 100 − opponent OREB rate by identity.
+             Symmetric y-limits so convergence reads the same on both axes.
     Panel 2: raw OREB diff and DREB diff (home minus away per game) over time —
              shows both sides of the glass declining, with DREB declining more
              in absolute terms.
@@ -525,9 +525,12 @@ def plot_rebound_decomposition(
              f"Data: NBA.com  |  Regular season  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
-    # ── Panel 1: home vs away OREB rate over time ─────────────────────────────
+    # ── Panel 1: home vs away OREB rate AND DREB rate over time ─────────────────
+    # DREB rate = 100 − opponent's OREB rate (accounting identity, no extra data needed)
     y_home = np.array(reg_stats["oreb_rate_home"], dtype=float)
     y_away = np.array(reg_stats["oreb_rate_away"], dtype=float)
+    y_dreb_home = 100 - y_away  # home DREB rate
+    y_dreb_away = 100 - y_home  # away DREB rate
     for y, color, label in [
         (y_home, BLUE, "Home OREB rate"),
         (y_away, RED,  "Away OREB rate"),
@@ -538,9 +541,23 @@ def plot_rebound_decomposition(
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.set_ylabel("Offensive rebound rate (% of available)", fontsize=10)
-    ax1.set_title("Both teams stopped crashing the glass,\nbut home teams fell further",
+    ax1.set_ylim(17, 37)
+
+    ax1_r = ax1.twinx()
+    for y, color, label in [
+        (y_dreb_home, BLUE, "Home DREB rate"),
+        (y_dreb_away, RED,  "Away DREB rate"),
+    ]:
+        ax1_r.plot(x, y, color=color, linewidth=1.5, alpha=0.4, linestyle=":", label=label, zorder=2)
+        _add_trend_line(ax1_r, x, y, color, linestyle="-.", linewidth=1.8, alpha=0.9, zorder=3)
+    ax1_r.set_ylabel("Defensive rebound rate (% of available)", fontsize=10)
+    ax1_r.set_ylim(63, 83)  # symmetric with left axis (100 − [17, 37])
+
+    ax1.set_title("Both rebound types: home edge has collapsed\n(solid = OREB rate, dotted = DREB rate)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
-    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax1_r.get_legend_handles_labels()
+    ax1.legend(lines1 + lines2, labels1 + labels2, fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     # ── Panel 2: raw OREB diff and DREB diff over time ───────────────────────
     y_oreb_diff = np.array(reg_stats["oreb_diff"], dtype=float)
