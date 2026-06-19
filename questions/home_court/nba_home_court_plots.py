@@ -41,6 +41,11 @@ def _output_path(name: str) -> str:
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 # Base palette (BLUE/GREEN/RED/GRAY/BG/PANEL) comes from nbakit.viz.
+# Color conventions (see questions/CLAUDE.md, "Chart design"), kept consistent so
+# readers build cross-chart intuition:
+#   - regular season = BLUE, playoffs = GREEN  (in any chart showing both)
+#   - positive / home-favoring = GREEN, negative / visitor-favoring = RED
+#   - the emphasized series (highlight-and-mute) = BLUE, muted context = grey
 # One background shade per era (matches order of ERA_DEFS)
 ERA_COLORS = ["#7c6fce", "#378add", "#1d9e75", "#e8a33d", "#c2538a", "#5a8f29"]
 
@@ -367,7 +372,7 @@ def plot_rest_altitude(data: dict) -> None:
              f"Data: NBA.com  |  home win % by situation  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
-    ctx_styles = [("reg", "Regular season", GREEN), ("po", "Playoffs", BLUE)]
+    ctx_styles = [("reg", "Regular season", BLUE), ("po", "Playoffs", GREEN)]
 
     # ── Panel 1: rest buckets ────────────────────────────────────────────────
     bucket_order = ["Away more rested", "Equal rest", "Home more rested"]
@@ -435,7 +440,7 @@ def plot_channel_3pa_control(data: dict) -> None:
     `data` comes from regression.compute_channel_3pa_control().
     """
     order = CATEGORY_ORDER
-    ctxs = [("Regular season", GREEN), ("Playoffs", BLUE)]
+    ctxs = [("Regular season", BLUE), ("Playoffs", GREEN)]
     fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
     fig.suptitle("Rebounding's decline survives the three-point shift; shooting's is fully absorbed by it",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
