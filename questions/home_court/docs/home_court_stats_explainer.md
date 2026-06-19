@@ -158,12 +158,17 @@ This resolves the QLR–CUSUM tension without contradicting either. The QLR asks
 
 ## 4. Foul & Shooting Differentials by Era (`run_differential_analysis`)
 
-**The data.** Per-game home-minus-away differentials in six box-score metrics —
-personal fouls, FG%, eFG%, 3PA rate, 3P%, FT% — for all games in both contexts.
+**The data.** Per-game home-minus-away differentials in seven box-score metrics —
+personal fouls, free throw attempts, FG%, eFG%, 3PA rate, 3P%, FT% — for all
+games in both contexts. The RESULTS.md table reports all seven; the six-panel
+chart uses FTA diff as its first panel rather than foul diff, because free throw
+attempts are the scoring consequence of foul-calling asymmetry and are more
+legible to a general audience.
 
 **The approach.** Era-bucketed means per metric, plus an **OLS trend on year**
 per metric with significance stars. Negative foul diff = referees call fewer
-fouls on the home team.
+fouls on the home team; positive FTA diff = home team earned more free throw
+attempts.
 
 **Why.** These differentials are the *mechanisms* of HCA — the measurable things
 home teams get on the court. The era means show levels; the year trends show
@@ -171,10 +176,14 @@ which mechanisms are eroding, which is the heart of research question 3.
 
 **What the results mean.** Two mechanisms are clearly eroding and one is not:
 
-- **Foul bias** collapsed: regular-season home foul advantage went from −1.23
-  fouls/game (1984–94) to −0.25 (2023–26), trend +0.022/yr, p < 0.001 — an ~80%
-  reduction. The playoffs show the same direction (−1.58 → −0.68, trend
-  +0.020/yr, p < 0.01) but retain about 2.7× the residual bias (−0.68 vs. −0.25).
+- **Foul/FTA bias** collapsed: the regular-season home foul advantage went from
+  −1.23 fouls/game (1984–94) to −0.25 (2023–26), trend +0.022/yr, p < 0.001 —
+  an ~80% reduction. The chart's first panel shows the same story via FTA: the
+  home free-throw-attempt edge fell from +1.97/game (1984–94) to +0.46 (2023–26),
+  trend −0.036/yr, p < 0.001. The playoffs show the same direction for fouls
+  (−1.58 → −0.68, trend +0.020/yr, p < 0.01) and FTA (+2.35 → +1.09, trend
+  −0.021/yr, not significant), retaining about 2.7× the residual foul bias
+  relative to the regular season.
 - **The shooting edge** is shrinking in the regular season: FG% diff trend
   −0.021 pp/yr and eFG% −0.015 pp/yr (both p < 0.001), from ~+1.6 pp to
   ~+0.7–1.0 pp. Playoff shooting trends point the same way but aren't
@@ -188,11 +197,14 @@ Section 7 takes these differentials and quantifies how much of the HCA level and
 its decline each one accounts for.
 
 **Why this chart.** Six small-multiple panels, one per box-score metric, each a
-home-minus-away line over time with a fitted trend and a zero reference line. Small
-multiples on a shared layout let a reader scan in one sweep which mechanisms are
-sliding toward zero (fouls, shooting) and which are flat (3P%, FT%); the era means
-in the table give the levels, the lines give the trends. The zero line matters —
-"toward zero" *is* the finding, so it has to be on the axis.
+home-minus-away line over time with a fitted trend and a zero reference line.
+The first panel shows FTA differential rather than foul differential: both tell
+the same story but FTA (free throw attempts taken) is the direct scoring
+consequence and is easier to interpret without statistical context. Small multiples
+on a shared layout let a reader scan in one sweep which mechanisms are sliding
+toward zero (free throw attempts, shooting) and which are flat (3P%, FT%); the
+era means in the table give the levels, the lines give the trends. The zero line
+matters — "toward zero" *is* the finding, so it has to be on the axis.
 
 ---
 
@@ -1208,7 +1220,46 @@ what make the claim airtight, and those live in the table, not a new plot.
 
 ---
 
-## 33. Multiple Comparisons — BH FDR Correction (`run_multiple_comparisons_summary`)
+## 33. Net Rating Split by Venue (`run_net_rating_analysis`)
+
+**The data.** Per-game home point differential divided by average possessions,
+scaled to per-100-possession terms, available from 1996–97 onward (when OREB and
+TOV columns became reliably available in the cached game logs). Possessions are
+estimated per team as FGA − OREB + TOV + 0.44 × FTA; pace is the average across
+both teams in the game. Games with zero estimated pace are excluded.
+
+**The approach.** Season-mean net rating (home team points per 100 possessions
+above zero, where zero is a tie), era-bucketed means, and an OLS trend on year.
+Run separately for regular season and playoffs, skipping the same
+lockout/COVID/playoff-gap years as the rest of the analysis.
+
+**Why.** Win percentage and raw point margin are the headline measures of HCA,
+but both are sensitive to pace. Net rating — the standard measure of team quality
+in basketball analytics — normalizes for pace and puts home court in units
+(points per 100 possessions) that are directly comparable across eras. It is also
+the familiar metric for readers who follow mainstream NBA analytics.
+
+**What the results mean.** The regular-season net rating gap is real and
+declining: from roughly +3.2 pts/100 in the late 1990s and 2005–17 era to about
++2.0 pts/100 in recent seasons (trend −0.067 pts/100/yr, p < 0.001; overall mean
++2.86). The playoff gap is substantially larger (+4.58 overall) and shows the
+same direction (trend −0.036 pts/100/yr) but does not reach significance on the
+noisier 80-game playoff seasons, consistent with the playoff decline being harder
+to detect in any single metric. The net rating picture agrees with the win-rate
+and margin stories: a real, persistent home edge that has been narrowing for
+decades.
+
+**Why this chart.** Net rating is displayed as the fourth panel of the margin
+analysis figure (a 2×2 layout alongside overall margin, wins-only margin, and
+losses-only margin), rather than as a standalone figure. The margin panels are
+the simplest evidence that the home edge is narrowing in points; net rating adds
+the pace-normalized view. Grouping them together lets a reader see that the
+pace-adjustment barely changes the story — the absolute margin and the
+possessions-adjusted margin track together.
+
+---
+
+## 34. Multiple Comparisons — BH FDR Correction (`run_multiple_comparisons_summary`)
 
 **The problem.** The report runs roughly 14 primary hypothesis tests across sections. At α = 0.05, we expect 0.7 false discoveries by chance even if every null is true. Reporting each test against its own α = 0.05 threshold is defensible when tests are pre-specified and have independent scientific rationale, but it is worth checking whether any findings are fragile.
 
@@ -1253,7 +1304,7 @@ The "ruled-out" findings remain correct descriptions of the data — the time zo
   season-level time-series OLS.
 - **Benjamini–Hochberg (BH FDR):** false-discovery-rate control when running
   many simultaneous hypothesis tests. Used for the 47 referee t-tests (Section 5)
-  and the 14 primary tests in the multiple-comparisons summary (Section 33).
+  and the 14 primary tests in the multiple-comparisons summary (Section 34).
   The threshold for test at rank i (sorted by ascending p-value) is (i/m)×q,
   where m is the total number of tests and q is the desired FDR level (0.05 here).
 - **ADF unit-root test (Augmented Dickey-Fuller):** tests whether a time series
