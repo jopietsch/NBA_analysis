@@ -14,7 +14,7 @@ For four decades, NBA home teams have been winning less. This is the one-page ve
 
 ## 1. Yes, it really changed
 
-![Home win % per season, 1983–84 through 2025–26: regular season (top) and playoffs (bottom), with long-run trend fits and rule-change-era shading.](../generated/nba_home_court_advantage_season.png){width=100%}
+![Home win % per season, 1983–84 through 2025–26: regular season (top) and playoffs (bottom), with long-run trend fits and rule-change-era shading.](../generated/nba_home_court_advantage_season.svg){width=100%}
 
 Home teams used to win about **65%** of regular-season games and nearly **68%** in the playoffs. Today it's about **55%** and **58%**, roughly a 10-point fall in both. In net rating terms, home teams used to outscore visitors by about **3 points per 100 possessions** in the regular season; now it's closer to **2**. Most of it is a slow, steady erosion of about a quarter of a percentage point a year, with two sharper drops layered on top: one in the mid-1990s, one after 2017. The playoffs followed the same path with nearly a two-decade lag, holding firm through the 2000s and 2010s before joining the slide.
 
@@ -22,7 +22,7 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 ## 2. What home court is made of, and where it broke
 
-![Box-score category shares. Left: what creates the home advantage. Right: what's eroding it. Regular season and playoffs.](../generated/nba_home_court_mediation.png){width=100%}
+![Box-score category shares. Left: what creates the home advantage. Right: what's eroding it. Regular season and playoffs.](../generated/nba_home_court_mediation.svg){width=100%}
 
 Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
 
@@ -32,7 +32,7 @@ But the categories that *created* the edge are not the ones that *erased* it (ri
 
 ## 3. The rebounding edge eroded
 
-![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates (solid) and defensive-rebound rates (dotted) converging over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/nba_home_court_rebounding.png){width=100%}
+![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates (solid) and defensive-rebound rates (dotted) converging over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/nba_home_court_rebounding.svg){width=100%}
 
 The home rebounding edge has shrunk for 40 years, and it isn't the three-point story in disguise. Hold three-point volume constant and the shooting edge vanishes while the rebounding edge barely moves.
 

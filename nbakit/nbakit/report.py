@@ -55,7 +55,7 @@ def _check_prerequisites(cfg: ReportConfig) -> None:
     findings_dir = os.path.dirname(os.path.abspath(cfg.findings_path))
     missing_pngs = [
         m.group(1)
-        for m in re.finditer(r"!\[[^\]]*\]\(([^)]+\.png)\)", content)
+        for m in re.finditer(r"!\[[^\]]*\]\(([^)]+\.(?:png|svg))\)", content)
         if not os.path.exists(os.path.join(findings_dir, m.group(1)))
     ]
     if missing_pngs:
