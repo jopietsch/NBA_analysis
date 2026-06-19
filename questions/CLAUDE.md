@@ -34,6 +34,17 @@ Only claim what the analysis can actually establish. Specifically:
 
 When editing or adding prose to any FINDINGS doc, write like a sports-magazine editor for regular readers. Replace statistical jargon with plain language. Keep the voice concise and clear. Avoid redundancy; repeated information usually confuses rather than reinforces.
 
+## Write like a person
+
+Avoid patterns that make prose sound generated rather than written:
+
+- No filler openers: "It appears that", "It is worth noting that", "Two things are happening at once." Start with the claim or the finding.
+- No filler transition words: "in conclusion", "moreover", "literally", "a related result confirms this." Cut them or recast the sentence.
+- No summarizing closing sentences that restate what was just said ("The result is what X looks like", "This is consistent with the pattern above").
+- Vary sentence length deliberately. Short sentences land findings. Longer ones carry context. Monotone rhythm is numbing regardless of content.
+- Replace vague or abstract phrases with concrete ones. Not "the advantage significantly diminished" but "the gap fell from 1.2 to 0.25 fouls per game." Not "strategies converged toward the same optima" but "every team ended up running similar offenses regardless of venue."
+- No jargon substituting for plain explanation: name what happened, don't label the process ("information diffusion", "structural instability").
+
 ## Verify narrative matches data
 
 Before finalizing prose, make sure what is written actually matches the data from RESULTS.md and the generated charts. Don't put specific coefficients or percentages in prose that will go stale; describe direction and relative magnitude, and reference RESULTS.md for exact figures.

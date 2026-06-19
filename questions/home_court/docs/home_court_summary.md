@@ -34,11 +34,11 @@ The erosion is entirely on the **offensive** glass (left): the home team's offen
 
 ## What *didn't* do it
 
-Plenty of usual suspects get ruled out: rule changes (with one exception, 1994–95), travel and time zones, pace of play, competitive balance, and crowd size. Arenas have stayed near capacity, setting records in the very years home court hit its lows. The cleanest test came by accident: in the empty arenas of 2020–21, home teams won just **51%**; the moment any crowd returned, **58.5%**. A live crowd is a switch that flips with the doors, not a dial that's been slowly turning down for 40 years.
+None of the usual explanations hold up: rule changes (with one exception, 1994–95), travel and time zones, pace of play, competitive balance, and crowd size. Arenas have stayed near capacity, setting records in the very years home court hit its lows. The cleanest test came by accident: in the empty arenas of 2020–21, home teams won just **51%**; the moment any crowd returned, **58.5%**. A live crowd is a switch that flips with the doors, not a dial that's been slowly turning down for 40 years.
 
-## The bottom line
+## What caused it
 
-Home court is fading because the on-court advantages that built it — a friendlier whistle and a rebounding edge — have been worn down by fairer officiating and a league-wide move away from the offensive boards. The crowd still shows up. The game just stopped rewarding it the way it once did.
+Home court is fading because the on-court advantages that built it, a friendlier whistle and a rebounding edge, have been worn down by fairer officiating and a league-wide move away from the offensive boards. The crowd still shows up. The game just stopped rewarding it the way it once did.
 
 ---
 
