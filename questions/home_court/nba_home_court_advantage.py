@@ -144,7 +144,7 @@ def main() -> None:
 
     early_team_stats = compute_team_hca_stats(START_YEAR, 2001, "Regular Season")
     late_team_stats  = compute_team_hca_stats(2002, END_YEAR, "Regular Season")
-    plot_team_hca_by_era(early_team_stats, late_team_stats)
+    plot_team_hca_by_era(early_team_stats, late_team_stats, late_label="2002–26")
 
     print("\nFetching referee data (BoxScoreSummaryV3, cached under cache/)...")
     ref_df = fetch_all_referee_data(
