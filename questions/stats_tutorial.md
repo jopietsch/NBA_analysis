@@ -46,7 +46,7 @@ else, so start there.
 
 - **Part 0, Foundations:** probability vs. odds vs. log-odds; percentage points;
   p-values, confidence intervals, and significance stars; statistical vs.
-  practical significance.
+  practical significance; frequentist vs. Bayesian inference.
 - **Part 1, Describing and comparing groups:** fitting a trend line (OLS);
   two-proportion z-test; chi-square test; Pearson vs. Spearman correlation.
 - **Part 2, Modeling a yes/no outcome:** logistic regression; turning log-odds
@@ -156,6 +156,50 @@ buckets don't even fall in order. The lesson appears repeatedly here: **with hug
 samples, significance is cheap; always check the effect size.** Conversely, a big
 effect with a fat CI (most single-era playoff numbers) may be real but
 unproven: the sample is just too small.
+
+## 0.5 Frequentist and Bayesian: two ways to talk about uncertainty
+
+Almost every number in this project is **frequentist**: the p-values, confidence
+intervals, and significance stars from §0.3 all come from one worldview. The
+change-point analysis (§7.12) switches to the **Bayesian** worldview, and the two
+answer different questions. Knowing which one you are reading keeps you from
+overclaiming.
+
+**The two questions.** A frequentist treats the true effect as a fixed unknown and
+asks about the *data*: "if there were no effect, how often would a result at least
+this extreme show up by chance?" That is the p-value. A Bayesian treats the *data*
+as fixed and asks about the *hypothesis*: "given what we observed, how probable is
+each possible answer?" That is a **posterior probability**. The frequentist never
+puts a probability on the hypothesis itself; the Bayesian does.
+
+**The trap this prevents.** The two kinds of interval look identical on the page
+and mean different things, and the mix-up is the single most common error in this
+tutorial's audience. A 95% **confidence interval** does *not* mean "95% chance the
+true value is in here." It means the recipe that built it traps the true value 95%
+of the time across many repeated studies; for your one interval, the true value is
+either inside it or not. A 95% **credible interval** (the Bayesian version, called
+an **HPD interval** when it is the narrowest such band) *does* carry the everyday
+reading: given the data and the model, there is a 95% probability the value sits
+inside it. Same picture, different license to speak.
+
+**One quantity, both treatments.** The break year in the regular-season decline
+gets all three objects, so the contrast is concrete:
+
+| object | section | what it lets you say |
+|---|---|---|
+| QLR p-value | §7.5 | "a break this strong is unlikely if the slope never changed" |
+| bootstrap CI 1993–2002 | §7.5 | a frequentist range for where the break sits |
+| posterior + HPD 1992–2003 | §7.12 | "given the data, the break most probably sits in here" |
+
+All three point at the same late-1990s bend, but only the last one licenses "most
+probably 1999."
+
+**Why the project is mostly frequentist.** The frequentist tools need no prior
+assumption and are the default language of the field, so they carry the bulk of
+the analysis. Bayesian methods earn their keep in exactly one place: *model
+comparison*. "How many breaks does the decline have, none, one, or two?" is a
+question about which model is most probable, and a posterior over models answers
+it cleanly (§7.12). The switch is practical, not philosophical.
 
 ---
 
@@ -388,13 +432,13 @@ p_avg*(1-p_avg) = 0.240. The rest coefficient is **+0.065 log-odds per day**:
 0.065 * 0.240 * 100  ~  +1.6 pp per day
 ```
 
--- exactly the "~+1.6 pp" you see next to it. Now you can sanity-check any
+That is exactly the "~+1.6 pp" you see next to it. Now you can sanity-check any
 log-odds-to-pp conversion in the file yourself.
 
 ## 2.3 The binomial GLM
 
-**The question:** same as the trend line, is the season-by-season decline real
--- but done with the *statistically correct* model for proportions.
+**The question:** same as the trend line, is the season-by-season decline real,
+but done with the *statistically correct* model for proportions.
 
 **The intuition.** Instead of treating each season's win *percentage* as a plain
 number and drawing an OLS line through it, the binomial GLM models the underlying
@@ -470,7 +514,7 @@ rules, the ball, the officiating climate). They're not 47,000 independent facts;
 they're more like 43 seasons' worth of correlated games. Treat them as fully
 independent and your error bars shrink too far.
 
-**The fix.** **Cluster-robust standard errors** group the games into clusters --
+**The fix.** **Cluster-robust standard errors** group the games into clusters,
 here, one cluster per season-year, and compute uncertainty *between* clusters
 rather than pretending every game is its own island. The point estimate doesn't
 change; the error bars get appropriately wider and the p-values more honest.
@@ -556,8 +600,7 @@ decline passing through that year, not the schedule change doing anything.
 
 **The trap it avoids.** It separates "this period is lower" (a raw difference,
 which the ever-present downward trend guarantees) from "this boundary *itself*
-moved the needle." If you remember one idea from this tutorial, make it this one
--- it recurs in the era, format, and (implicitly) the decomposition sections.
+moved the needle." If you remember one idea from this tutorial, make it this one: it recurs in the era, format, and (implicitly) the decomposition sections.
 
 ## 4.2 Splitting up R²: sequential vs. Shapley
 
@@ -591,7 +634,7 @@ to the era structure itself.
 ## 4.3 Mediation: the level and trend accounting identities
 
 **The question:** the home edge shows up in the box score as better shooting,
-fewer fouls called, fewer turnovers, more rebounds. How much of the home edge --
+fewer fouls called, fewer turnovers, more rebounds. How much of the home edge,
 and of its *decline*, flows through each of those four channels?
 
 **Why it needs the LPM (§2.4).** Because the answer is an **exact decomposition**:
@@ -753,7 +796,7 @@ own slope over the years.
                                                         shape changed.
 
   If the bottom (Q10) falls while the top (Q90) rises:  the distribution is
-                                                        spreading apart --
+                                                        spreading apart,
                                                         genuine polarization.
 ```
 
@@ -840,7 +883,7 @@ its extreme value is probably mostly luck. The pull weight is
 weight = true variance / (true variance + that group's sampling variance)
 ```
 
--- reliable (low-noise) estimates keep most of their distinctiveness; noisy ones
+Reliable (low-noise) estimates keep most of their distinctiveness; noisy ones
 mostly collapse to the average.
 
 **A worked example that reproduces the table exactly.** Using the regular-season
@@ -964,8 +1007,7 @@ arrow pointing backwards.
 **The fix: leave-one-out (LOO) "expected pace."** Don't use a game's *own*
 pace (contaminated by its own outcome). Instead, predict each game's pace from
 each team's pace in **all its *other* games that season**, and use that. Built
-only from *other* games, expected pace can't be inflated by *this* game's blowout
--- the backwards arrow is severed.
+only from *other* games, expected pace can't be inflated by *this* game's blowout: the backwards arrow is severed.
 
 **The result.** Realized pace shows a clean, significant **+2.3 pp per 10
 possessions (p < 0.001)**. Swap in expected pace and it falls to **+1.5 pp and
@@ -1423,7 +1465,7 @@ measurement of what the crowd is worth.
 
 **The caveats.** It is still not a true randomized trial: a single season, a
 small and lumpy set of "doses," and attendance that partly tracks market and
-date. So the result is read as *suggestive causal* and weighted accordingly --
+date. So the result is read as *suggestive causal* and weighted accordingly,
 but it is the strongest causal evidence in the report, which is why the
 empty-arena finding earns more interpretive weight than, say, the pace
 correlation. When you can't randomize, you look for a shock that did the
@@ -1435,8 +1477,10 @@ randomizing for you.
 
 **The question.** QLR (§7.5) assumes there is exactly one break and finds where it
 best fits. CUSUM (§7.6) asks only whether a single straight line holds up. Neither
-answers the prior question: *how many* breaks does the decline actually support --
-none, one, or two, and how confident are we about the location?
+answers the prior question: *how many* breaks does the decline actually support,
+none, one, or two, and how confident are we about the location? This is the
+project's one Bayesian analysis; §0.5 lays out how its posterior probabilities
+differ from the p-values everywhere else.
 
 **The intuition.** Fit three competing pictures of the 43-season series: k=0 (one
 straight line, no break), k=1 (two segments joined at one break), k=2 (three
