@@ -14,7 +14,7 @@
   - Change is real & one-directional: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**. Shape = a slow gradual erosion + **two sharper one-time drops** layered on top.
   - HCA is built from: referee foul calls, shooting/shot-selection advantage, plus smaller rest & altitude boosts.
   - Decline drivers: neutral whistle, converging shot selection, rise in three-point shooting eroding home court through the shooting channel — and the biggest driver of all (the one nobody was watching): the collapse of the home advantage on the boards (above all the offensive glass), which carries more of the decline than the headline causes combined.
-- **Ruled-out suspects:** rule changes, travel, time zones, pace, competitive balance, crowd size, playoff format changes (best-of-seven shifts and Finals reschedules, incl. 2014).
+- **Ruled-out suspects:** rule changes, travel, time zones, pace, crowd size, playoff format changes (best-of-seven shifts and Finals reschedules, incl. 2014). Competitive balance is a partial exception: it can't explain the long-run decline (parity is mean-reverting; HCA has declined steadily for 40 years), but year-to-year parity fluctuations show a weak association with HCA fluctuations in the same year.
 - **Scope:** regular season vs. playoffs tracked separately (same direction, different timeline); ~52,000 games; tables in RESULTS.md.
 
 ---
@@ -53,6 +53,7 @@
 - **Box-score accounting (mediation):** four categories = **~95% of advantage** (reg season); shooting biggest (**>40%**), then rebounding.
   - *RESULTS level decomp (reg):* eFG% **43%**, REB **25%**, Foul **14%**, TOV **13%**, unexplained 5%; category R²=0.615.
   - *RESULTS playoffs level:* eFG% 33%, Foul 17%, TOV 22%, REB 21%, unexplained 7% (~93% total).
+  - **Coefficient stability across eras:** re-fitting the LPM within each of the six eras confirms the channel weights are nearly constant (eFG% +3.28 to +3.61 pp, Fouls −1.63 to −2.20 pp, TOV −3.19 to −3.57 pp, REB +1.57 to +1.70 pp). The pooled decomposition is not an artifact of blending very different periods. *RESULTS: coefficient stability table in MEDIATION section.*
 - **Rest & altitude (Fig 4):**
   - Rest: home better-rested wins **62.8%** (+2.7 pp); away better-rested **57.6%** (−2.6). *RESULTS χ²(2)=79.22, p<0.001; +1.6 pp/day reg, +2.4 pp/day playoffs; no era change (LR p=0.474).*
   - Altitude (DEN/UTA): **+7.9 pp** reg season (RESULTS [+6.1,+9.7], p<0.001); **absent in playoffs** (−1.6, p=0.633) — team-quality confound.
@@ -129,7 +130,7 @@
 ![Fig 12 — pace vs HCA](../generated/nba_home_court_pace.png)
 
 - **Home vs. away 3PA differential:** home and away teams attempt threes at nearly identical rates; the trend moves the wrong direction — home teams now take *more* threes than visitors (+0.44 pp in 2023–26 vs. −0.35 pp in 1984–94, trend +0.018***/yr). Not the mechanism behind the decline. *RESULTS 3PA rate diff trend +0.018***/yr.*
-- **Competitive balance:** raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, small sample — best treated as exploratory, not a structural explanation.
+- **Competitive balance:** can't explain the long-run decline. Parity is mean-reverting (I(0) stationary) while HCA has declined steadily for 40 years — structurally, they can't be linked as cause and effect. Raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, small sample — means year-to-year parity fluctuations weakly track HCA fluctuations, not that parity drives the decline.
 
 ![Fig 13 — parity vs HCA](../generated/nba_home_court_parity.png)
 
@@ -191,7 +192,7 @@
 - Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**.
 - Shape: slow four-decade erosion + two sharper drops (slope steepening, not level jumps) — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line). Bayesian model: ≥1 break strongly favored (BF=18 vs no break); one-vs-two breaks close (k=2 P=66% vs k=1 P=32%, ~2:1) and break years not datable to better than a ~decade. QLR and CUSUM consistent.
 - Three main drivers + the biggest driver of all (**together ~96% of RS decline**): (1) fairer refs — 1.2 → ~0.25 fouls/game RS, 1.6 → 0.7 playoffs; 45/47 officials home-favoring (largest single change), (2) shot selection changed in two ways: away teams closed the paint gap (1.3 → 0.2 pp) AND the league-wide 3PA rise compressed home court through the shooting line (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (3) rebounding advantage slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
-- Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd presence = on/off switch (2020–21 51% vs 58.5%; isolates presence, not noise itself), not a slow fade.
+- Ruled out: rule changes (except 1994–95), travel, time zones, pace, crowd size, format. Competitive balance can't explain the long-run decline (parity is mean-reverting, HCA is a 40-year trend), though year-to-year parity fluctuations show a weak association; treated as exploratory. Fewer back-to-backs explain only ~8% of the RS decline. Crowd presence = on/off switch (2020–21 51% vs 58.5%; isolates presence, not noise itself), not a slow fade.
 - Playoffs follow reg season with **nearly a two-decade delay**; trend direction not in doubt but 4× less precisely measured than RS (CI [−0.359, −0.091]); accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.
 - Franchise notes: Denver & Utah strongest reg-season home courts (~27 & ~26 pts above own road rate), altitude the likely reason (n=2, confounded with franchise) — washes out in playoffs (franchise spread indistinguishable from zero). Home court worth **~7 pts more in playoffs** than reg season.
 - Blowouts getting bigger as HCA falls (IQR widening ~0.2–0.3 pts/yr in both contexts).

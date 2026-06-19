@@ -348,6 +348,21 @@ half right (turnovers, partly) and half wrong (rebounding is its own thing). One
 remaining caution: the playoff numbers fold in the seed-quality gap — the home
 team is usually the better team — which Section 26 isolates and controls.
 
+A fourth block checks whether the pooled coefficients are stable across eras.
+The pooled decomposition uses one set of channel weights estimated across all 43
+seasons, which assumes the marginal effect of each channel on home winning
+probability has not shifted over time. Re-fitting the LPM within each of the
+six rule-change eras (regular season only; playoffs have too few games per era
+for stable fits) shows the coefficients barely move: eFG% ranges +3.28 to +3.61
+pp per unit, fouls −1.63 to −2.20, turnovers −3.19 to −3.57, rebounds +1.57 to
++1.70 — all within roughly 20% of their pooled values. The slight recent drift
+in the foul coefficient (weaker in 2018–26) is consistent with foul differentials
+themselves compressing: when there are fewer fouls to call asymmetrically, each
+remaining foul call carries slightly less decisive advantage. None of the shifts
+are large enough to question the decomposition. The channel share percentages are
+a blend of very similar effects across eras, not an artifact of mixing radically
+different regimes.
+
 **Why this chart.** Stacked horizontal bars, normalized to 100% — one stack for the
 level, one for the decline, regular season vs. playoffs. The whole point of a
 decomposition is *composition*: how the edge splits into parts that sum to a whole.
