@@ -62,7 +62,7 @@ def test_plot_mediation():
 
 
 def test_plot_differential_analysis():
-    keys = ["foul_diff", "fg_pct_diff", "efg_pct_diff",
+    keys = ["fta_diff", "fg_pct_diff", "efg_pct_diff",
             "tpa_rate_diff", "fg3_pct_diff", "ft_pct_diff"]
     stats = {k: _series() for k in keys}
     plots.plot_differential_analysis(SEASONS, stats, SEASONS, dict(stats))

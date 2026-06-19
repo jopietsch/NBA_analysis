@@ -24,6 +24,7 @@ def _make_game_df(n=300, seed=0, include_quality_diff=False):
         "covid":         rng.integers(0, 2, n),
         "margin":        rng.normal(3.0, 10.0, n),
         "foul_diff":     rng.normal(-1.0, 2.0, n),
+        "fta_diff":      rng.normal(1.5, 2.0, n),
         "fg_pct_diff":   rng.normal(1.0, 3.0, n),
         "efg_pct_diff":  rng.normal(1.0, 3.0, n),
         "tpa_rate_diff": rng.normal(0.0, 1.0, n),

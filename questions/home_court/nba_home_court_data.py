@@ -301,13 +301,14 @@ _haversine = haversine
 # ── Box-score differential analysis ──────────────────────────────────────────
 
 def _compute_box_differentials(merged: pd.DataFrame) -> pd.DataFrame:
-    """Home-minus-away box-score differentials for fouls and shooting."""
+    """Home-minus-away box-score differentials for fouls, free throws, and shooting."""
     fg3a_home = merged["FG3A_home"].replace(0, np.nan)
     fg3a_away = merged["FG3A_away"].replace(0, np.nan)
     fta_home  = merged["FTA_home"].replace(0, np.nan)
     fta_away  = merged["FTA_away"].replace(0, np.nan)
     return pd.DataFrame({
         "foul_diff":     merged["PF_home"] - merged["PF_away"],
+        "fta_diff":      merged["FTA_home"] - merged["FTA_away"],
         "fg_pct_diff":   100 * (merged["FGM_home"] / merged["FGA_home"]
                                 - merged["FGM_away"] / merged["FGA_away"]),
         "efg_pct_diff":  100 * ((merged["FGM_home"] + 0.5 * merged["FG3M_home"]) / merged["FGA_home"]
@@ -339,11 +340,11 @@ def fetch_differential_data(end_year: int, season_type: str) -> pd.DataFrame | N
 def compute_differential_stats(
     start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
 ) -> tuple[list[str], dict]:
-    """Per-season mean home-minus-away differentials for fouls and shooting %."""
+    """Per-season mean home-minus-away differentials for fouls, free throws, and shooting %."""
     seasons: list[str] = []
     stats: dict[str, list[float]] = {
-        "foul_diff": [], "fg_pct_diff": [], "efg_pct_diff": [], "tpa_rate_diff": [],
-        "fg3_pct_diff": [], "ft_pct_diff": [],
+        "foul_diff": [], "fta_diff": [], "fg_pct_diff": [], "efg_pct_diff": [],
+        "tpa_rate_diff": [], "fg3_pct_diff": [], "ft_pct_diff": [],
     }
 
     for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_differential_data):
@@ -666,6 +667,46 @@ def compute_margin_stats(
         stats["home_wins_mean"].append(  wins["margin"].mean()   if len(wins)   else np.nan)
         stats["home_losses_mean"].append(losses["margin"].mean() if len(losses) else np.nan)
         stats["std_dev"].append(g["margin"].std())
+
+    return seasons, stats
+
+
+def fetch_net_rating_data(end_year: int, season_type: str) -> pd.DataFrame | None:
+    """Per-game home-team net rating (points per 100 possessions).
+
+    Requires TOV and OREB columns (available from ~1997 onward). Returns None
+    for seasons where pace cannot be computed.
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return None
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+    pace_cols = {"FGA_home", "FGA_away", "OREB_home", "OREB_away",
+                 "TOV_home", "TOV_away", "FTA_home", "FTA_away", "PLUS_MINUS_home"}
+    if not pace_cols.issubset(merged.columns):
+        return None
+    home_poss = (merged["FGA_home"] - merged["OREB_home"]
+                 + merged["TOV_home"] + 0.44 * merged["FTA_home"])
+    away_poss = (merged["FGA_away"] - merged["OREB_away"]
+                 + merged["TOV_away"] + 0.44 * merged["FTA_away"])
+    pace_avg = (home_poss + away_poss) / 2
+    net_rating = merged["PLUS_MINUS_home"] / pace_avg.replace(0, np.nan) * 100
+    result = pd.DataFrame({"net_rating": net_rating})
+    return result.dropna()
+
+
+def compute_net_rating_stats(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> tuple[list[str], dict]:
+    """Per-season mean home-team net rating (points per 100 possessions)."""
+    seasons: list[str] = []
+    stats: dict[str, list[float]] = {"net_rating_mean": []}
+
+    for year, g in _iter_season_frames(start_year, end_year, season_type, skip_years, fetch_net_rating_data):
+        seasons.append(short_label(year))
+        stats["net_rating_mean"].append(g["net_rating"].mean())
 
     return seasons, stats
 

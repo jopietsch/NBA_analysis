@@ -65,8 +65,8 @@ CATEGORY_COLORS: dict[str, str] = {
 # Panel descriptors for the box-score differential time-series chart.
 # Each entry: (data_key, panel_title, y_label, footnote)
 DIFF_PANELS: list[tuple[str, str, str, str]] = [
-    ("foul_diff",     "Foul differential (home PF − away PF)",
-     "Fouls per game",    "negative = refs call fewer fouls on home team"),
+    ("fta_diff",      "Free throw attempts (home FTA − away FTA)",
+     "FTA per game",      "positive = home team took more free throws"),
     ("fg_pct_diff",   "FG% differential (home − away)",
      "Percentage points", ""),
     ("efg_pct_diff",  "eFG% differential (home − away)",
@@ -762,20 +762,30 @@ def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
 def plot_margin_analysis(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,
+    reg_nr_seasons: list[str] | None = None, reg_nr_stats: dict | None = None,
+    po_nr_seasons: list[str] | None = None, po_nr_stats: dict | None = None,
 ) -> None:
     """
-    3-panel chart: has the home team's point margin compressed alongside the
-    decline in home win percentage?
+    4-panel chart (2×2) when net rating data is provided, otherwise 3-panel (1×3).
 
     Panel 1: mean all-game margin per season (reg + playoffs) with trend lines.
     Panel 2: mean win-only vs loss-only margin per season (regular season).
     Panel 3: era-bucketed bar chart of mean margin, reg vs playoffs.
+    Panel 4: home-team net rating per season (reg + playoffs), when data available.
     """
+    has_nr = reg_nr_seasons is not None and reg_nr_stats is not None
+
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22, 7))
-    fig.suptitle("Home Team Point Margin — Are Wins Getting Closer?",
+    if has_nr:
+        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
+        ax1, ax2 = axes[0]
+        ax3, ax4 = axes[1]
+    else:
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22, 7))
+
+    fig.suptitle("Home Team Point Margin and Net Rating — Are Wins Getting Closer?",
                  fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
     fig.text(0.5, 0.965,
              f"Data: NBA.com  |  Positive = home team winning by more  |  {season_range_label()}",
@@ -858,6 +868,29 @@ def plot_margin_analysis(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
     ax3.set_ylabel("Home point margin (home − away pts)", fontsize=10)
     ax3.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+
+    if has_nr:
+        # Panel 4: net rating per season (reg + playoffs)
+        x_nr = np.arange(len(reg_nr_seasons))
+        tick_step_nr = max(1, len(reg_nr_seasons) // 14)
+        y_nr_reg = np.array(reg_nr_stats["net_rating_mean"], dtype=float)
+        y_nr_po  = _align_to_seasons(reg_nr_seasons, po_nr_seasons, po_nr_stats, "net_rating_mean") \
+                   if po_nr_seasons is not None else np.full(len(reg_nr_seasons), np.nan)
+
+        for y, color, label in [(y_nr_reg, BLUE, "Regular season"), (y_nr_po, GREEN, "Playoffs")]:
+            ax4.plot(x_nr, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
+            _add_trend_line(ax4, x_nr, y, color, linewidth=1.8, alpha=0.9, zorder=3)
+
+        _shade_eras(ax4, reg_nr_seasons, label_y=None)
+        ax4.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+        ax4.set_xticks(x_nr[::tick_step_nr])
+        ax4.set_xticklabels(reg_nr_seasons[::tick_step_nr], rotation=45, ha="right", fontsize=8)
+        ax4.set_title("Net rating per season (pts per 100 possessions)",
+                      fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+        ax4.set_ylabel("Home net rating (pts/100 poss)", fontsize=10)
+        ax4.set_xlabel("pace-normalized; excludes early seasons without TOV/OREB data",
+                       fontsize=8, color=GRAY)
+        ax4.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
     output_path = _output_path("nba_home_court_margin.png")

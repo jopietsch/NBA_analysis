@@ -44,13 +44,13 @@
 ## Section 2 — What Creates Home Court Advantage
 **Q2: What makes up HCA?**
 
-- **Referee foul calls** (most consistent component):
-  - 1984–94 reg season: ~**1.2 fewer fouls** on home (RESULTS −1.23); playoffs ~**1.6 fewer** (RESULTS −1.58).
+- **Referee foul calls and free throws** (most consistent component; Dean Oliver's "FT rate" factor):
+  - 1984–94 reg season: ~**1.2 fewer fouls** on home (RESULTS −1.23) → **~2 more FTA/game** (RESULTS +1.97); playoffs ~**1.6 fewer fouls** (RESULTS −1.58) → **~2.4 more FTA/game** (RESULTS +2.35).
   - Playoff universality: **45 of 47** officials (≥50 playoff games) home-favoring; holds under all checks.
 - **Shooting advantage:** home shoot **>1 pp better FG%** (RESULTS 1984–94: +1.57 FG%, +1.56 eFG%); consistent across eras, both contexts.
 - **Shot selection:** more attempts from close range, fewer mid-range → structural expected-scoring advantage. *RESULTS shot zones 1995–01 reg: Paint +1.28, Mid-Range −1.24.*
 - **Rebounding & ball control:** ~**1.5 extra rebounds** (RESULTS REB diff +1.52) and ~**0.4 fewer turnovers** (TOV diff −0.38); together rival shooting.
-- **Box-score accounting (mediation):** four categories = **~95% of advantage** (reg season); shooting biggest (**>40%**), then rebounding.
+- **Box-score accounting (mediation):** Dean Oliver's Four Factors (eFG%, FT rate, TOV%, OREB%) = **~95% of advantage** (reg season); shooting (eFG%) biggest (**>40%**), then rebounding.
   - *RESULTS level decomp (reg):* eFG% **43%**, REB **25%**, Foul **14%**, TOV **13%**, unexplained 5%; category R²=0.615.
   - *RESULTS playoffs level:* eFG% 33%, Foul 17%, TOV 22%, REB 21%, unexplained 7% (~93% total).
   - **Coefficient stability across eras:** re-fitting the LPM within each of the six eras confirms the channel weights are nearly constant (eFG% +3.28 to +3.61 pp, Fouls −1.63 to −2.20 pp, TOV −3.19 to −3.57 pp, REB +1.57 to +1.70 pp). The pooled decomposition is not an artifact of blending very different periods. *RESULTS: coefficient stability table in MEDIATION section.*
@@ -88,7 +88,7 @@
   - Playoffs: share advantage **+2.74pp → +0.70pp** (trend −0.046/yr, p<0.01). 3PA-control absorption is unstable in playoffs (−42%, noisy small-N) → can't confirm independence the way RS does; read as consistent with RS, not proven.
   - **Player-tracking (last decade) fits:** no measurable home box-out advantage today (mean −0.00/gm, p=0.78); OREB-conversion advantage still shrinking (+0.71 pp mean, −0.086/yr, **p=0.024**); 2nd-chance-points advantage no significant trend (+0.29 mean, ns, p=0.304). *RESULTS: PLAYER-TRACKING REBOUNDING MECHANISM.* Full treatment moved to §6; brief mention kept here to close the rebounding argument.
 - **Referee foul bias narrowed:**
-  - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); playoffs **1.6 → 0.7**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25.*
+  - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); free throw edge **+1.97 → +0.46 FTA/game**. Playoffs **1.6 → 0.7 fouls**; **+2.35 → +1.09 FTA/game**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25 fouls, +0.46 FTA.*
   - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (Fig 6).
 - **Adding it up (trend decomposition):**
   - Reg season: four categories = **~96% of decline**; all four trends p<0.001. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
@@ -189,9 +189,9 @@
 ---
 
 ## Section 7 — Summary
-- Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**.
+- Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**. In net rating terms: reg-season gap **~3.2 → ~2.0 pts/100 poss** (trend −0.067***/yr); playoffs **~4.9 → ~3.9 pts/100 poss** (trend −0.036, ns). *RESULTS: NET RATING SPLIT BY VENUE.*
 - Shape: slow four-decade erosion + two sharper drops (slope steepening, not level jumps) — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line). Bayesian model: ≥1 break strongly favored (BF=18 vs no break); one-vs-two breaks close (k=2 P=66% vs k=1 P=32%, ~2:1) and break years not datable to better than a ~decade. QLR and CUSUM consistent.
-- Three main drivers + the biggest driver of all (**together ~96% of RS decline**): (1) fairer refs — 1.2 → ~0.25 fouls/game RS, 1.6 → 0.7 playoffs; 45/47 officials home-favoring (largest single change), (2) shot selection changed in two ways: away teams closed the paint gap (1.3 → 0.2 pp) AND the league-wide 3PA rise compressed home court through the shooting line (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (3) rebounding advantage slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
+- Three main drivers + the biggest driver of all (**together ~96% of RS decline**; all are Dean Oliver's Four Factors): (1) fairer refs — fouls 1.2 → ~0.25/game RS, FTA edge +1.97 → +0.46/game; 1.6 → 0.7 fouls playoffs, FTA +2.35 → +1.09/game; 45/47 officials home-favoring, (2) shot selection changed in two ways: away teams closed the paint gap (1.3 → 0.2 pp) AND the league-wide 3PA rise compressed home court through the shooting line (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (3) rebounding advantage slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, crowd size, format. Competitive balance can't explain the long-run decline (parity is mean-reverting, HCA is a 40-year trend), though year-to-year parity fluctuations show a weak association; treated as exploratory. Fewer back-to-backs explain only ~8% of the RS decline. Crowd presence = on/off switch (2020–21 51% vs 58.5%; isolates presence, not noise itself), not a slow fade.
 - Playoffs follow reg season with **nearly a two-decade delay**; trend direction not in doubt but 4× less precisely measured than RS (CI [−0.359, −0.091]); accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.
 - Franchise notes: Denver & Utah strongest reg-season home courts (~27 & ~26 pts above own road rate), altitude the likely reason (n=2, confounded with franchise) — washes out in playoffs (franchise spread indistinguishable from zero). Home court worth **~7 pts more in playoffs** than reg season.

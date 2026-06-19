@@ -101,35 +101,77 @@ All data from cache/ — same source as the plots above.
    Peak is 52% of the 5% boundary.
 
 
+─── BAYESIAN CHANGE-POINT MODEL — HOW MANY BREAKS, AND WHERE? ──────────
+   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks).
+   BIC-based marginal likelihood. Uniform prior over k and break locations.
+   Piecewise WLS (weights = game counts); outer 15% trimmed. Regular season only.
+
+   N = 12 seasons, 1984–2025
+   Candidate break positions: outer 15% trimmed
+
+   ─ Posterior model probabilities ─
+   (Uniform prior over k ∈ {0,1,2} and over all valid break locations)
+
+   Model                    BF vs k=0  Posterior P(k)
+   ──────────────────────  ──────────  ──────────────
+   k=0  (no break)               1.0          74.6%
+   k=1  (one break)              0.3          20.0%
+   k=2  (two breaks)             0.1           5.4%
+
+   ─ k=1 posterior over break year ─
+   MAP break year:     1990
+   95% HPD interval:   1987–2022
+   Posterior-weighted slopes:
+     Pre-break:  -0.225 pp/yr  (±0.629 posterior SD)
+     Post-break: -0.284 pp/yr  (±0.094 posterior SD)
+
+   Top break-year probabilities (k=1):
+     Year   P(τ=year | k=1)
+   ──────  ────────────────
+     1990            32.0%  ███████████████████
+     1987            25.4%  ███████████████
+     1988            14.4%  ████████
+     1989            11.1%  ██████
+     2021             9.6%  █████
+     2022             7.4%  ████
+
+   ─ k=2 MAP break years: 1987 and 1990 ─
+
+   ► k=0 is the most probable model (P = 74.6%).
+   ► BF(k=1 vs k=0) = 0.3: weak evidence for a structural break.
+   ► k=2 has P = 5.4%; two-break model not preferred.
+
+
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
+   Positive fta_diff = home team attempted more free throws.
    Trend = slope of trend line (change per season year); pp = percentage points.
 
    Regular season  (N = 12,842 games)
 
-   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   1984–94              -1.25         +1.67         +1.63         -0.50         +0.95         +0.32
-   1995–01                  —             —             —             —             —             —
-   2002–04                  —             —             —             —             —             —
-   2005–17                  —             —             —             —             —             —
-   2018–22              -0.17         +0.54         +0.71         +0.51         +0.45         +0.07
-   2023–26              -0.20         +0.72         +0.97         +0.37         +0.94         +0.66
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.029***     -0.027***     -0.020***     +0.026***     -0.001        +0.004   
+   Era              Foul diff      FTA diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
+   ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1984–94              -1.25         +2.05         +1.67         +1.63         -0.50         +0.95         +0.32
+   1995–01                  —             —             —             —             —             —             —
+   2002–04                  —             —             —             —             —             —             —
+   2005–17                  —             —             —             —             —             —             —
+   2018–22              -0.17         +0.45         +0.54         +0.71         +0.51         +0.45         +0.07
+   2023–26              -0.20         +0.43         +0.72         +0.97         +0.37         +0.94         +0.66
+   ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr         +0.029***     -0.044***     -0.027***     -0.020***     +0.026***     -0.001        +0.004   
 
    Playoffs  (N = 922 games)
 
-   Era              Foul diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   1984–94              -1.40         +1.67         +1.57         -0.83         -0.50         +0.93
-   1995–01                  —             —             —             —             —             —
-   2002–04                  —             —             —             —             —             —
-   2005–17                  —             —             —             —             —             —
-   2018–22              -0.82         +0.85         +1.05         +1.09         +0.10         +0.21
-   2023–26              -0.70         +1.03         +1.19         -0.11         +1.00         +2.68
-   ────────────────────────────────────────────────────────────────────────────────────────────────
-   Trend/yr         +0.018        -0.020        -0.013        +0.032  *     +0.030        +0.022   
+   Era              Foul diff      FTA diff      FG% (pp)     eFG% (pp) 3PA rate (pp)      3P% (pp)      FT% (pp)
+   ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1984–94              -1.40         +1.96         +1.67         +1.57         -0.83         -0.50         +0.93
+   1995–01                  —             —             —             —             —             —             —
+   2002–04                  —             —             —             —             —             —             —
+   2005–17                  —             —             —             —             —             —             —
+   2018–22              -0.82         +1.57         +0.85         +1.05         +1.09         +0.10         +0.21
+   2023–26              -0.70         +1.11         +1.03         +1.19         -0.11         +1.00         +2.68
+   ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   Trend/yr         +0.018        -0.017        -0.020        -0.013        +0.032  *     +0.030        +0.022   
 
    No cached referee data — run the analysis first to fetch it.
 
@@ -237,6 +279,25 @@ All data from cache/ — same source as the plots above.
    ► With 3PA controlled, neither the rebounding nor the turnover
      trend stays significant — both edges faded with the move to the
      perimeter, not as independent drivers.
+
+   ─ Coefficient stability by era (regular season only) ─
+   Re-fitting the LPM within each era to check whether the channel
+   coefficients are stable across 43 seasons.
+   (pp per unit of each home-minus-away differential)
+
+   Era            N games      eFG%     Fouls       TOV       REB
+   ────────────  ────────  ────────  ────────  ────────  ────────
+   1984–94          6,844    +3.41    -1.99    -3.18    +1.68
+   1995–01              0                             ⚠ too few
+   2002–04              0                             ⚠ too few
+   2005–17              0                             ⚠ too few
+   2018–22          2,310    +3.42    -1.82    -3.34    +1.66
+   2023–26          3,685    +3.34    -1.78    -3.28    +1.62
+
+   Pooled (all seasons):  eFG%=+3.39  Fouls=-1.92  TOV=-3.24  REB=+1.67  (pp per unit)
+   ► Stable coefficients validate the pooled decomposition.
+     Large era-to-era shifts would mean the 'share' percentages are
+     a blend of heterogeneous effects and should be interpreted with caution.
 
 
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
@@ -1169,6 +1230,40 @@ All data from cache/ — same source as the plots above.
      The conditional-on-outcome divergence in §6 reflects a real change in
      distribution shape, not just a composition effect.
 
+
+─── NET RATING SPLIT BY VENUE  (home team pts per 100 possessions) ─────
+   Net rating = (home pts − away pts) / avg possessions × 100.
+   Positive = home team outscored visitors per 100 possessions.
+   Requires pace data; seasons without TOV/OREB data are excluded.
+
+   Regular season  (N = 5,995 games with pace data)
+
+   Era           Net rating (pts/100)
+   ──────────────────────────────────
+   1984–94                          —
+   1995–01                          —
+   2002–04                          —
+   2005–17                          —
+   2018–22                      +1.36
+   2023–26                      +2.07
+   ──────────────────────────────────
+   Trend/yr                 +0.172   
+
+   Playoffs  (N = 422 games with pace data)
+
+   Era           Net rating (pts/100)
+   ──────────────────────────────────
+   1984–94                          —
+   1995–01                          —
+   2002–04                          —
+   2005–17                          —
+   2018–22                      +3.60
+   2023–26                      +4.67
+   ──────────────────────────────────
+   Trend/yr                 +0.506   
+
+   ► Overall reg-season mean net rating: +1.80 pts/100 poss.
+   ► Overall playoff mean net rating:    +4.23 pts/100 poss.
 
 ─── MULTIPLE COMPARISONS — BH FDR CORRECTION ACROSS PRIMARY TESTS ──────
    BH correction at q = 0.05; threshold for rank i (ascending p): (i/m) × 0.05.

@@ -401,6 +401,7 @@ class TestComputeDifferentialStats:
                 return None
             return pd.DataFrame({
                 "foul_diff":    [-1.0, -2.0],
+                "fta_diff":     [1.5,   2.5],
                 "fg_pct_diff":  [1.0,   3.0],
                 "efg_pct_diff": [1.5,   2.5],
                 "tpa_rate_diff":[0.1,   0.3],
@@ -490,6 +491,7 @@ class TestComputeReboundStats:
                 "league_oreb_rate": [30.0, 26.0],
                 "oreb_rate_home":   [28.0, 32.0],
                 "oreb_rate_away":   [24.0, 26.0],
+                "tov_diff":         [-0.3, -0.5],
             })
 
         monkeypatch.setattr(nba, "fetch_rebound_data", fake_fetch)

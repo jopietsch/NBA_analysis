@@ -19,6 +19,7 @@ from nba_home_court_data import (
     fetch_all_seasons,
     compute_playoff_format_averages,
     compute_differential_stats, compute_rebound_stats, compute_margin_stats,
+    compute_net_rating_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats,
@@ -79,7 +80,14 @@ def main() -> None:
     po_margin_seasons, po_margin_stats = compute_margin_stats(
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
-    plot_margin_analysis(reg_margin_seasons, reg_margin_stats, po_margin_seasons, po_margin_stats)
+    reg_nr_seasons, reg_nr_stats = compute_net_rating_stats(START_YEAR, END_YEAR, SeasonType.regular)
+    po_nr_seasons, po_nr_stats = compute_net_rating_stats(
+        START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
+    )
+    plot_margin_analysis(
+        reg_margin_seasons, reg_margin_stats, po_margin_seasons, po_margin_stats,
+        reg_nr_seasons, reg_nr_stats, po_nr_seasons, po_nr_stats,
+    )
 
     parity_seasons, parity_std = compute_parity_stats(START_YEAR, END_YEAR, SeasonType.regular)
     plot_parity_analysis(parity_seasons, parity_std, reg_seasons, reg_pcts)

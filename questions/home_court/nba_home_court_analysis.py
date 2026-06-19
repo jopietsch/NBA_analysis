@@ -160,7 +160,7 @@ def build_game_dataset() -> pd.DataFrame:
                 "GAME_ID",
                 "home_win", "year", "is_playoff", "era", "format_period", "covid",
                 "rest_diff", "away_b2b", "home_b2b", "altitude_home", "tz_diff",
-                "foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
+                "foul_diff", "fta_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                 "fg3_pct_diff", "ft_pct_diff", "tov_diff", "reb_diff",
                 "oreb_diff", "dreb_diff", "reb_share_edge", "league_oreb_rate",
                 "margin", "game_in_series", "distance_miles", "tpa_rate_avg",
@@ -1080,14 +1080,15 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
 # ── Analysis 4: Foul & shooting differentials by era ─────────────────────────
 
 def run_differential_analysis(df: pd.DataFrame) -> None:
-    col_keys   = ["foul_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
+    col_keys   = ["foul_diff", "fta_diff", "fg_pct_diff", "efg_pct_diff", "tpa_rate_diff",
                   "fg3_pct_diff", "ft_pct_diff"]
-    col_labels = ["Foul diff", "FG% (pp)", "eFG% (pp)", "3PA rate (pp)",
+    col_labels = ["Foul diff", "FTA diff", "FG% (pp)", "eFG% (pp)", "3PA rate (pp)",
                   "3P% (pp)", "FT% (pp)"]
     COL_W = 14
 
     _section("FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game)")
     print("   Negative foul diff = refs call fewer fouls on the home team.")
+    print("   Positive fta_diff = home team attempted more free throws.")
     print("   Trend = slope of trend line (change per season year); pp = percentage points.\n")
 
     for season_label, sub in [
@@ -1761,6 +1762,67 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
                 else:
                     print(f"   ► Mixed pattern; individual slopes above are the primary result.")
         print()
+
+
+# ── Analysis 4c: Net rating split by venue ───────────────────────────────────
+
+def run_net_rating_analysis(df: pd.DataFrame) -> None:
+    """Home-team net rating (pts per 100 poss) by era and trend over time.
+
+    Net rating = margin / pace_avg * 100. Requires pace data (OREB/TOV);
+    seasons without it are excluded (typically pre-1997).
+    """
+    _section("NET RATING SPLIT BY VENUE  (home team pts per 100 possessions)")
+    print("   Net rating = (home pts − away pts) / avg possessions × 100.")
+    print("   Positive = home team outscored visitors per 100 possessions.")
+    print("   Requires pace data; seasons without TOV/OREB data are excluded.\n")
+
+    COL_W = 22
+
+    for season_label, sub in [
+        ("Regular season", df[df["is_playoff"] == 0]),
+        ("Playoffs",       df[df["is_playoff"] == 1]),
+    ]:
+        valid = sub.dropna(subset=["margin", "pace_avg"])
+        valid = valid[valid["pace_avg"] > 0].copy()
+        valid["net_rating"] = valid["margin"] / valid["pace_avg"] * 100
+
+        n = len(valid)
+        print(f"   {season_label}  (N = {n:,} games with pace data)\n")
+
+        header  = f"   {'Era':<12}{'Net rating (pts/100)':>{COL_W}}"
+        divider = f"   {'─'*12}{'─'*COL_W}"
+        print(header)
+        print(divider)
+
+        for era_label, y1, y2, _ in nba.ERA_DEFS:
+            era_rows = valid[(valid["year"] >= y1) & (valid["year"] <= y2)]
+            if len(era_rows) < 10:
+                print(f"   {era_label:<12}{'—':>{COL_W}}")
+            else:
+                nr = era_rows["net_rating"].mean()
+                print(f"   {era_label:<12}{nr:>+{COL_W}.2f}")
+
+        print(divider)
+        if len(valid) >= 10:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                m = smf.ols("net_rating ~ year", data=valid).fit()
+            coef = m.params["year"]
+            pval = m.pvalues["year"]
+            print(f"   {'Trend/yr':<12}{coef:>+{COL_W - 3}.3f}{_stars(pval)}")
+        print()
+
+    reg = df[df["is_playoff"] == 0].dropna(subset=["margin", "pace_avg"])
+    reg = reg[reg["pace_avg"] > 0]
+    po  = df[df["is_playoff"] == 1].dropna(subset=["margin", "pace_avg"])
+    po  = po[po["pace_avg"] > 0]
+    if len(reg) > 0:
+        reg_nr = (reg["margin"] / reg["pace_avg"] * 100).mean()
+        print(f"   ► Overall reg-season mean net rating: {reg_nr:+.2f} pts/100 poss.")
+    if len(po) > 0:
+        po_nr = (po["margin"] / po["pace_avg"] * 100).mean()
+        print(f"   ► Overall playoff mean net rating:    {po_nr:+.2f} pts/100 poss.")
 
 
 # ── Analysis 6: Competitive balance / parity ─────────────────────────────────
@@ -4056,6 +4118,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
+        run_net_rating_analysis(df)
 
         # Cross-test multiple-comparisons summary (spans every test above)
         run_multiple_comparisons_summary(df)
