@@ -51,7 +51,19 @@ Before finalizing prose, make sure what is written actually matches the data fro
 
 ## Draft status
 
-All new docs start as drafts. Add `*Draft — <Month Year>*` on the line immediately after the `#` title in every new `_findings.md`, `_summary.md`, `_stats_explainer.md`, and `_findings_outline.md`. Remove it only when the analysis and prose are finalized.
+All new docs start as drafts. Add the following block immediately after the `#` title in every new `_findings.md`, `_summary.md`, `_stats_explainer.md`, and `_findings_outline.md`:
+
+````markdown
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+````
+
+Remove the block only when the analysis and prose are finalized.
 
 ## Standard document workflow
 

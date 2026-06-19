@@ -34,6 +34,7 @@ class ReportConfig:
     title: str
     subtitle: str = ""
     author: str = "Justin Pietsch"
+    date: str = ""
     data_line: str = ""
     footnote: str = ""
     appendix_desc: str = ""
@@ -142,9 +143,9 @@ def build_report(cfg: ReportConfig) -> None:
     try:
         wrapper = _make_wrapper_qmd(cfg, body, src_dir)
         _quarto_render(wrapper, "typst", pdf_path,  cfg.title, cfg.author,
-                       toc=True, extra_meta=extra_meta)
+                       toc=True, extra_meta=extra_meta, date=cfg.date or None)
         _quarto_render(wrapper, "html",  html_path, cfg.title, cfg.author,
-                       toc=True, extra_meta=extra_meta)
+                       toc=True, extra_meta=extra_meta, date=cfg.date or None)
     finally:
         for p in [wrapper, appendix_qmd]:
             if p and os.path.exists(p):

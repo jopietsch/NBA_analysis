@@ -35,7 +35,7 @@ from nba_home_court_plots import (
     plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis,
     plot_attendance, plot_tracking_rebounding,
     plot_referee_era_distribution, plot_referee_rankings,
-    plot_team_hca_by_era,
+    plot_team_hca_by_era, plot_bayesian_changepoint,
 )
 
 
@@ -159,6 +159,8 @@ def main() -> None:
         plot_referee_rankings(bias_stats)
     else:
         print("  No referee data cached yet — will fetch during next run.")
+
+    plot_bayesian_changepoint(_reg.compute_bayesian_changepoint(game_df))
 
     _reg.run(game_df)
 

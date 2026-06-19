@@ -1,6 +1,12 @@
 # NBA Home Court Advantage: Findings
 
-*Draft — June 2026*
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
 
 Home court advantage in the NBA has been shrinking for four decades. **Has it really changed?** **What makes it an advantage in the first place?** **And what's driving the decline, and what isn't?**
 
@@ -118,7 +124,11 @@ Could rebounding and turnovers just be the three-point shift in disguise? No. Wh
 
 ![Does each category's decline survive after accounting for three-point volume? Each bar is the share of that category's yearly decline that remains once three-point volume is accounted for: 100% means the decline has nothing to do with three-point shooting, 0% means it is entirely the three-point story, below zero means the advantage actually reverses. In the regular season the shooting decline not only disappears but reverses, while the rebounding decline is essentially untouched; the playoff bars are mostly small-sample noise (greyed), with only rebounding holding up.](../generated/nba_home_court_3pa_control.png)
 
-The decline is a smooth drift, not a staircase of rule-change shocks. The structural-break test does mark a change in slope around 1999, the decline ran steeper through the late 1990s and eased afterward, but that is a slope change, not a level jump, and the CUSUM test finds no structural instability across the 40 seasons. Three-point attempt rate also does not predict next season's home win rate, and Granger tests confirm neither series leads the other. The best explanation the data points to is that analytical tools for shot selection, scouting, and preparation have reached every team at roughly the same pace. When all 30 teams land on the same approaches regardless of venue, the home team's preparation edge has nowhere to go but down.
+The decline is a smooth drift, not a staircase of rule-change shocks. A Bayesian model comparison rules out a single linear trend with P=98%, but the preferred structure is two slope changes rather than one: a two-break model (P=66%) outpoints the single-break model (P=32%), with MAP breaks around 1992 and 2003. This doesn't contradict the frequentist QLR finding of a significant slope change near 1999: the two approaches are measuring slightly different things. The QLR finds the single year where a one-break model fits best; the Bayesian model says that the full 40-year pattern is better described as three segments. A second break around 2003 would correspond to the slope moderating again after the steep late-1990s fall, before the post-2017 acceleration. The CUSUM test still finds no structural instability across the full window, consistent with each break being a slope change rather than a discrete level jump. Three-point attempt rate also does not predict next season's home win rate, and Granger tests confirm neither series leads the other.
+
+![Bayesian change-point model for the 40-year HCA decline. Left: season-level home win % with fitted lines for each model (k=0 grey dashed, k=1 blue solid at the MAP break year, k=2 red dash-dot at both MAP break years); slope estimates for the k=1 model shown bottom-left. Right: posterior distribution over break year for k=1; the MAP at 1999 concentrates about half the probability, with the 95% HPD spanning 1992–2003.](../generated/nba_home_court_bayesian_changepoint.png)
+
+The best explanation the data points to is that analytical tools for shot selection, scouting, and preparation have reached every team at roughly the same pace. When all 30 teams land on the same approaches regardless of venue, the home team's preparation edge has nowhere to go but down.
 
 ---
 

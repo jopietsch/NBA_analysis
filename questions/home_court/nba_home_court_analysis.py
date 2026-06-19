@@ -3163,6 +3163,236 @@ def run_cusum_test(df: pd.DataFrame, results: dict | None = None) -> None:
             print(f"   {ctx_label}: CUSUM failed ({e})\n")
 
 
+# ── Bayesian change-point model ───────────────────────────────────────────────
+
+def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
+    """Piecewise WLS change-point computation (no printing).
+
+    Compares k=0 (linear), k=1 (one break), k=2 (two breaks) using BIC-based
+    marginal likelihoods under a uniform prior over model order and break locations.
+    Returns a results dict consumed by run_bayesian_changepoint() (prints) and
+    plot_bayesian_changepoint() (chart).
+    """
+    from scipy.special import logsumexp
+
+    sub = df[df["is_playoff"] == 0]
+    agg = (sub.groupby("year")["home_win"]
+              .agg(["sum", "count"])
+              .reset_index()
+              .rename(columns={"sum": "wins", "count": "games"}))
+    agg["pct"] = agg["wins"] / agg["games"] * 100
+    agg = agg.sort_values("year").reset_index(drop=True)
+
+    n = len(agg)
+    y = agg["pct"].values.astype(float)
+    x = agg["year"].values.astype(float)
+    w = agg["games"].values.astype(float)
+    w_norm = w / w.mean()   # normalize so BIC penalty uses n, not sum(w)
+
+    trim = max(3, int(np.ceil(0.15 * n)))
+
+    def _wls(y_seg, x_seg, w_seg):
+        """Weighted least squares: returns (beta[intercept, slope], weighted_RSS)."""
+        ns = len(y_seg)
+        if ns < 2:
+            return np.array([np.nan, np.nan]), np.inf
+        X = np.column_stack([np.ones(ns), x_seg])
+        W = np.diag(w_seg)
+        XtW = X.T @ W
+        try:
+            beta = np.linalg.solve(XtW @ X, XtW @ y_seg)
+        except np.linalg.LinAlgError:
+            return np.array([np.nan, np.nan]), np.inf
+        resid = y_seg - X @ beta
+        return beta, float((w_seg * resid ** 2).sum())
+
+    def _bic(wrss, p_params):
+        """BIC-comparable score (shared constant terms dropped)."""
+        if wrss <= 0 or not np.isfinite(wrss):
+            return np.inf
+        return n * np.log(wrss / n) + p_params * np.log(n)
+
+    # ── k=0 ──
+    b0, wrss0 = _wls(y, x, w_norm)
+    bic0 = _bic(wrss0, 2)
+    fit0 = b0[0] + b0[1] * x
+
+    # ── k=1 ──
+    cands1 = list(range(trim, n - trim))
+    bic1 = np.full(len(cands1), np.inf)
+    fits1 = {}
+    slopes1 = {}
+    for i, tau in enumerate(cands1):
+        ba, wra = _wls(y[:tau], x[:tau], w_norm[:tau])
+        bb, wrb = _wls(y[tau:], x[tau:], w_norm[tau:])
+        bic1[i] = _bic(wra + wrb, 4)
+        fa = ba[0] + ba[1] * x[:tau]
+        fb = bb[0] + bb[1] * x[tau:]
+        fits1[tau] = np.concatenate([fa, fb])
+        slopes1[tau] = (float(ba[1]), float(bb[1]))
+
+    # ── k=2 ──
+    cands2 = [(t1, t2)
+              for t1 in range(trim, n - 2 * trim)
+              for t2 in range(t1 + trim, n - trim)]
+    bic2 = np.full(len(cands2), np.inf)
+    fits2 = {}
+    for i, (t1, t2) in enumerate(cands2):
+        ba, wra = _wls(y[:t1],    x[:t1],    w_norm[:t1])
+        bb, wrb = _wls(y[t1:t2],  x[t1:t2],  w_norm[t1:t2])
+        bc, wrc = _wls(y[t2:],    x[t2:],    w_norm[t2:])
+        bic2[i] = _bic(wra + wrb + wrc, 6)
+        fits2[(t1, t2)] = np.concatenate([
+            ba[0] + ba[1] * x[:t1],
+            bb[0] + bb[1] * x[t1:t2],
+            bc[0] + bc[1] * x[t2:],
+        ])
+
+    # ── Posterior model probabilities ──
+    # log Z_k = logsumexp(-BIC/2 over configs) - log(n_configs)
+    lz0 = -bic0 / 2
+    lz1 = float(logsumexp(-bic1 / 2)) - np.log(len(cands1))
+    lz2 = float(logsumexp(-bic2 / 2)) - np.log(len(cands2)) if cands2 else -np.inf
+    lz = np.array([lz0, lz1, lz2])
+    lz_shifted = lz - lz.max()
+    k_probs = np.exp(lz_shifted) / np.exp(lz_shifted).sum()
+
+    # ── k=1 posterior over break year ──
+    lw1 = -bic1 / 2
+    lw1 -= lw1.max()
+    post1 = np.exp(lw1) / np.exp(lw1).sum()
+    tau_post = {int(agg.iloc[tau]["year"]): float(post1[i]) for i, tau in enumerate(cands1)}
+
+    # MAP and 95% HPD interval
+    map_i1 = int(np.argmax(post1))
+    map_tau = cands1[map_i1]
+    map_year_k1 = int(agg.iloc[map_tau]["year"])
+    sorted_desc = sorted(zip(post1, cands1), reverse=True)
+    hpd_taus, cumprob = [], 0.0
+    for prob, tau in sorted_desc:
+        hpd_taus.append(int(agg.iloc[tau]["year"]))
+        cumprob += prob
+        if cumprob >= 0.95:
+            break
+    hpd_k1 = (min(hpd_taus), max(hpd_taus))
+
+    # Posterior-weighted pre/post slopes for k=1
+    pre_sl  = np.array([slopes1[tau][0] for tau in cands1])
+    post_sl = np.array([slopes1[tau][1] for tau in cands1])
+    mean_pre  = float((post1 * pre_sl).sum())
+    mean_post = float((post1 * post_sl).sum())
+    std_pre   = float(np.sqrt((post1 * (pre_sl  - mean_pre) ** 2).sum()))
+    std_post  = float(np.sqrt((post1 * (post_sl - mean_post) ** 2).sum()))
+
+    # ── k=2 MAP ──
+    best_k2_i = int(np.argmin(bic2)) if cands2 else None
+    if best_k2_i is not None:
+        best_k2 = cands2[best_k2_i]
+        map_years_k2 = (int(agg.iloc[best_k2[0]]["year"]), int(agg.iloc[best_k2[1]]["year"]))
+        fit2_map = fits2[best_k2]
+        lw2 = -bic2 / 2
+        lw2 -= lw2.max()
+        post2 = np.exp(lw2) / np.exp(lw2).sum()
+        marg1: dict[int, float] = {}
+        marg2: dict[int, float] = {}
+        for i, (t1, t2) in enumerate(cands2):
+            yr1, yr2 = int(agg.iloc[t1]["year"]), int(agg.iloc[t2]["year"])
+            marg1[yr1] = marg1.get(yr1, 0.0) + float(post2[i])
+            marg2[yr2] = marg2.get(yr2, 0.0) + float(post2[i])
+    else:
+        map_years_k2, fit2_map, marg1, marg2 = None, None, {}, {}
+
+    return {
+        "years": x.astype(int).tolist(),
+        "pct": y.tolist(),
+        "n_games": w.tolist(),
+        "k_probs": k_probs.tolist(),
+        "lz": lz.tolist(),
+        "k0_fit": fit0.tolist(),
+        "k1_map_year": map_year_k1,
+        "k1_hpd": hpd_k1,
+        "k1_post": tau_post,
+        "k1_map_fit": fits1[map_tau].tolist(),
+        "k1_slopes": {
+            "pre_mean": mean_pre, "post_mean": mean_post,
+            "pre_std": std_pre,   "post_std": std_post,
+        },
+        "k2_map_years": map_years_k2,
+        "k2_map_fit": fit2_map.tolist() if fit2_map is not None else None,
+        "k2_marg1": marg1,
+        "k2_marg2": marg2,
+    }
+
+
+def run_bayesian_changepoint(df: pd.DataFrame) -> dict:
+    """Print Bayesian change-point results and return the results dict."""
+    r = compute_bayesian_changepoint(df)
+    k_probs = r["k_probs"]
+    lz = r["lz"]
+    tau_post = r["k1_post"]
+    map_year_k1 = r["k1_map_year"]
+    hpd_k1 = r["k1_hpd"]
+    slopes = r["k1_slopes"]
+    map_years_k2 = r.get("k2_map_years")
+    x = r["years"]
+
+    _section("BAYESIAN CHANGE-POINT MODEL — HOW MANY BREAKS, AND WHERE?")
+    print("   Model comparison: k=0 (linear), k=1 (one break), k=2 (two breaks).")
+    print("   BIC-based marginal likelihood. Uniform prior over k and break locations.")
+    print("   Piecewise WLS (weights = game counts); outer 15% trimmed. Regular season only.\n")
+    print(f"   N = {len(x)} seasons, {x[0]}–{x[-1]}")
+    print(f"   Candidate break positions: outer 15% trimmed\n")
+
+    lz0, lz1, lz2 = lz[0], lz[1], lz[2]
+    bf1 = float(np.exp(lz1 - lz0))
+    bf2 = float(np.exp(lz2 - lz0)) if np.isfinite(lz2) else 0.0
+
+    print(f"   ─ Posterior model probabilities ─")
+    print(f"   (Uniform prior over k ∈ {{0,1,2}} and over all valid break locations)\n")
+    print(f"   {'Model':<22}  {'BF vs k=0':>10}  {'Posterior P(k)':>14}")
+    print(f"   {'─'*22}  {'─'*10}  {'─'*14}")
+    for label, bf, kp in [
+        ("k=0  (no break)",   1.0,  k_probs[0]),
+        ("k=1  (one break)",  bf1,  k_probs[1]),
+        ("k=2  (two breaks)", bf2,  k_probs[2]),
+    ]:
+        bf_s = f"{bf:>9.1f}" if bf < 1000 else f"{bf:>9.0f}"
+        print(f"   {label:<22}  {bf_s}  {kp:>13.1%}")
+
+    print(f"\n   ─ k=1 posterior over break year ─")
+    print(f"   MAP break year:     {map_year_k1}")
+    print(f"   95% HPD interval:   {hpd_k1[0]}–{hpd_k1[1]}")
+    print(f"   Posterior-weighted slopes:")
+    print(f"     Pre-break:  {slopes['pre_mean']:+.3f} pp/yr  (±{slopes['pre_std']:.3f} posterior SD)")
+    print(f"     Post-break: {slopes['post_mean']:+.3f} pp/yr  (±{slopes['post_std']:.3f} posterior SD)")
+
+    print(f"\n   Top break-year probabilities (k=1):")
+    print(f"   {'Year':>6}  {'P(τ=year | k=1)':>16}")
+    print(f"   {'─'*6}  {'─'*16}")
+    for yr, prob in sorted(tau_post.items(), key=lambda kv: -kv[1])[:8]:
+        bar = "█" * int(prob * 60)
+        print(f"   {yr:>6}  {prob:>15.1%}  {bar}")
+
+    if map_years_k2 is not None:
+        print(f"\n   ─ k=2 MAP break years: {map_years_k2[0]} and {map_years_k2[1]} ─")
+
+    dominant_k = int(np.argmax(k_probs))
+    if k_probs[dominant_k] > 0.5:
+        print(f"\n   ► k={dominant_k} is the most probable model (P = {k_probs[dominant_k]:.1%}).")
+    if bf1 > 10:
+        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: strong evidence for one structural break.")
+    elif bf1 > 3:
+        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: moderate evidence for one structural break.")
+    else:
+        print(f"   ► BF(k=1 vs k=0) = {bf1:.1f}: weak evidence for a structural break.")
+    if map_years_k2 is not None and k_probs[2] > 0.10:
+        print(f"   ► k=2 has P = {k_probs[2]:.1%}; second break at {map_years_k2[1]} has some support.")
+    elif map_years_k2 is not None:
+        print(f"   ► k=2 has P = {k_probs[2]:.1%}; two-break model not preferred.")
+    print()
+    return r
+
+
 def run_its_test(df: pd.DataFrame) -> None:
     """Interrupted Time Series (ITS) model at the 1994-95 boundary.
 
@@ -3717,6 +3947,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         run_decline_trend(df)
         run_structural_break_test(df, results)
         run_cusum_test(df, results)
+        results["bayesian_cp"] = run_bayesian_changepoint(df)
 
         # §2 What Creates Home Court Advantage
         run_differential_analysis(df)

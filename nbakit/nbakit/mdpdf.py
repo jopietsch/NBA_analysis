@@ -88,7 +88,8 @@ def _yaml_quote(value: str) -> str:
 # ── Quarto helpers ────────────────────────────────────────────────────────────
 
 def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
-                   toc: bool = False, extra_meta: dict | None = None) -> None:
+                   toc: bool = False, extra_meta: dict | None = None,
+                   date: str | None = None) -> None:
     """Render src to fmt, placing the output file at dest.
 
     Renders to a temp dir first to avoid the conflict that arises when
@@ -110,6 +111,11 @@ def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
         ]
         if toc:
             cmd += ["--metadata", "toc:true"]
+        if date:
+            date_yml = os.path.join(tmp, "_date.yml")
+            with open(date_yml, "w") as _f:
+                _f.write(f'date: "{date}"\n')
+            cmd += ["--metadata-file", date_yml]
         if extra_meta:
             for k, v in extra_meta.items():
                 cmd += ["--metadata", f"{k}:{v}"]
@@ -154,7 +160,8 @@ def _make_wrapper_qmd(md_path: str, appendix_path: str) -> str:
 
 def build(md_path: str, output_path: str | None = None,
           appendix_path: str | None = None,
-          author: str = "Justin Pietsch") -> str:
+          author: str = "Justin Pietsch",
+          date: str | None = None) -> str:
     """Render a Markdown file to PDF and HTML. Returns the PDF output path."""
     if not os.path.exists(md_path):
         sys.exit(f"ERROR: {md_path} not found")
@@ -199,8 +206,8 @@ def build(md_path: str, output_path: str | None = None,
         else:
             render_src = temp_md
 
-        _quarto_render(render_src, "typst", pdf_path,  title, author, toc=False)
-        _quarto_render(render_src, "html",  html_path, title, author, toc=True)
+        _quarto_render(render_src, "typst", pdf_path,  title, author, toc=False, date=date)
+        _quarto_render(render_src, "html",  html_path, title, author, toc=True,  date=date)
 
     finally:
         for p in [temp_md, wrapper, appendix_qmd]:
