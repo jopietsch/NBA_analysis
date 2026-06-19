@@ -222,7 +222,7 @@ compressing, and a box plot is the standard tool for that.
 **The data.** Season-level (not game-level) home-minus-road differences in the
 share of FGA taken from four zones — paint, mid-range, corner 3, above-break 3 —
 from the NBA's shot-location tables, available only from 1996–97 (30 regular
-seasons, 29 playoff seasons).
+seasons, 23 playoff seasons).
 
 **The approach.** Same template as Section 4: era means per zone plus an OLS
 trend on year. N is seasons, not games, so power is much lower.
@@ -236,8 +236,8 @@ regular season: +1.28 pp of FGA share in 1995–01 down to +0.24 in 2023–26
 (trend −0.041/yr, p < 0.001), with the mid-range deficit shrinking in mirror
 image (+0.025/yr, p < 0.001). Visiting teams now generate paint shots nearly as
 well as home teams — analytics-driven offense doesn't care where it's played.
-The playoff trends point the same direction (paint −0.034/yr) but are not
-significant on only 29 seasons of noisier data; the 2023–26 playoff paint edge
+The playoff trends point the same direction (paint −0.032/yr) but are not
+significant on only 23 seasons of noisier data; the 2023–26 playoff paint edge
 (+1.35) remains near its historical level, so the convergence is only firmly
 established for the regular season.
 
@@ -520,14 +520,21 @@ the 40-year story, so it is summarized in one sentence in `home_court_findings.m
 than reported as its own section here. The code is retained but unwired from the
 pipeline.
 
-**Why this chart.** Three panels matched to the three claims. Panel 1 — grouped era
-bars, offensive vs. defensive — shows *where* the edge died: the offensive bars
-collapse through zero while the defensive bars only soften. Panel 2 — share edge
-over time as a line — carries the "still falls even as a pace-free share" claim.
-Panel 3 is a scatter of the share edge against the league offensive-rebound rate,
-because that claim is a *correlation* (r = +0.82), and a scatter with a fitted line
-is the honest way to show a two-variable association rather than dress it up as a
-time trend.
+**Why this chart.** Four panels for the rebounding and turnover story. Panel 1 puts
+home and away offensive-rebound rates on the left axis and defensive-rebound rates
+on the right, with symmetric y-limits (left 17–37%, right 63–83%) so the
+convergence reads at the same scale on both sides. The design makes the accounting
+identity explicit: DREB rate = 100 − opponent OREB rate, so a single asymmetric
+retreat from the offensive glass produces matching collapses on both sides
+simultaneously — one panel rather than two. Panel 2 shows the raw OREB and DREB
+differentials (home minus away per game), which are pace-sensitive but make the
+absolute magnitudes visible; the DREB edge fell more in absolute terms because it
+starts from a higher base. Panel 3 is a scatter of the total rebound differential
+against each season's home win rate — the claim is an association, and a scatter
+with a fitted line shows that more honestly than a time-series overlay. Panel 4
+shows the turnover edge (away minus home turnovers per game), placed here because
+the mediation analysis (Section 7) links both categories: they declined over the
+same span, and pairing them lets the eye compare their shape and timing.
 
 ---
 
