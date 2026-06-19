@@ -1394,6 +1394,47 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             print(f"     explained by the shooting revolution.")
         print()
 
+    # ── Coefficient stability by era ──────────────────────────────────────────
+    # The pooled decomposition assumes each channel's marginal effect on home
+    # winning probability is constant across 43 seasons. Re-fit the channel
+    # model within each era to check whether the coefficients shift materially.
+    # Regular season only (playoffs have too few games per era for stable fits).
+    print("   ─ Coefficient stability by era (regular season only) ─")
+    print("   Re-fitting the LPM within each era to check whether the channel")
+    print("   coefficients are stable across 43 seasons.")
+    print("   (pp per unit of each home-minus-away differential)\n")
+
+    rs = df[df["is_playoff"] == 0]
+    print(f"   {'Era':<12}  {'N games':>8}  "
+          f"{'eFG%':>8}  {'Fouls':>8}  {'TOV':>8}  {'REB':>8}")
+    print(f"   {'─'*12}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}  {'─'*8}")
+    for era_label, y1, y2, _ in nba.ERA_DEFS:
+        sub = rs[(rs["year"] >= y1) & (rs["year"] <= y2)].dropna(subset=keys + ["home_win"])
+        if len(sub) < 200:
+            print(f"   {era_label:<12}  {len(sub):>8,}  {'⚠ too few':>36}")
+            continue
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            rhs = " + ".join(keys)
+            m = smf.ols(f"home_win ~ {rhs}", data=sub).fit(
+                cov_type="cluster", cov_kwds={"groups": sub["year"]})
+        b = m.params
+        print(f"   {era_label:<12}  {len(sub):>8,}  "
+              f"{b['efg_pct_diff']*100:>+7.2f}  "
+              f"{b['foul_diff']*100:>+7.2f}  "
+              f"{b['tov_diff']*100:>+7.2f}  "
+              f"{b['reb_diff']*100:>+7.2f}")
+
+    print(f"\n   Pooled (all seasons):  "
+          f"eFG%={decomp['Regular season']['level'][0]['pp_per_unit']:+.2f}  "
+          f"Fouls={decomp['Regular season']['level'][1]['pp_per_unit']:+.2f}  "
+          f"TOV={decomp['Regular season']['level'][2]['pp_per_unit']:+.2f}  "
+          f"REB={decomp['Regular season']['level'][3]['pp_per_unit']:+.2f}  (pp per unit)")
+    print("   ► Stable coefficients validate the pooled decomposition.")
+    print("     Large era-to-era shifts would mean the 'share' percentages are")
+    print("     a blend of heterogeneous effects and should be interpreted with caution.")
+    print()
+
 
 # ── Analysis 5b: Rebounding decomposition ────────────────────────────────────
 

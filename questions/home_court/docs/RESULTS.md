@@ -366,6 +366,25 @@ All data from cache/ — same source as the plots above.
    ► Survives the 3PA control: REB diff — not fully
      explained by the shooting revolution.
 
+   ─ Coefficient stability by era (regular season only) ─
+   Re-fitting the LPM within each era to check whether the channel
+   coefficients are stable across 43 seasons.
+   (pp per unit of each home-minus-away differential)
+
+   Era            N games      eFG%     Fouls       TOV       REB
+   ────────────  ────────  ────────  ────────  ────────  ────────
+   1984–94         11,272    +3.39    -2.05    -3.19    +1.69
+   1995–01          7,777    +3.42    -1.98    -3.49    +1.65
+   2002–04          3,567    +3.61    -2.20    -3.25    +1.57
+   2005–17         15,749    +3.44    -2.01    -3.57    +1.69
+   2018–22          5,829    +3.43    -1.83    -3.41    +1.70
+   2023–26          4,910    +3.28    -1.63    -3.20    +1.61
+
+   Pooled (all seasons):  eFG%=+3.42  Fouls=-1.98  TOV=-3.38  REB=+1.67  (pp per unit)
+   ► Stable coefficients validate the pooled decomposition.
+     Large era-to-era shifts would mean the 'share' percentages are
+     a blend of heterogeneous effects and should be interpreted with caution.
+
 
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home
