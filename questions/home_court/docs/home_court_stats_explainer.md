@@ -333,8 +333,11 @@ turnovers real drivers or just downstream of the perimeter shift? The answers
 differ by channel:
 
 - **Shooting** is fully downstream: controlling for 3PA, the home eFG% trend
-  doesn't just vanish, it flips sign (absorbed ≈ 210%). The fading home shooting
-  edge *is* the three-point story.
+  vanishes (absorbed ≈ 210%). The fading home shooting edge *is* the three-point
+  story. The point estimate even flips sign, but 3PA rate is a *mediator* of the
+  same strategic shift, and conditioning on a mediator is exactly where a
+  coefficient can flip as an artifact — so read this as "fully absorbed," not as
+  a genuine reversal of the shooting edge.
 - **Rebounding** is independent: only ≈8% of its year-trend is absorbed and it
   stays highly significant (p < 0.001). The home team's rebounding edge has slid
   for reasons the perimeter shift does not explain — a genuine fourth strand of
