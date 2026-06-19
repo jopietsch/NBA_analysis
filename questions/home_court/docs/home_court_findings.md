@@ -60,7 +60,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 ## 3. What's Driving the Decline
 
-The same categories that make up home court advantage are the ones lessening over time. The chart below shows each category's share of the 40-year decline. The rest of this section walks each category in turn, with the precise shares tallied at the end.
+The same categories that make up home court advantage are the ones changing over time. 
 
 ![Box-score category shares of the 40-year home-court decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below.](../generated/nba_home_court_mediation_decline.png){width=50%}
 
