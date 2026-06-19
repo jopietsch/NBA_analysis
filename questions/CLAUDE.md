@@ -49,6 +49,17 @@ Avoid patterns that make prose sound generated rather than written:
 
 Before finalizing prose, make sure what is written actually matches the data from RESULTS.md and the generated charts. Don't put specific coefficients or percentages in prose that will go stale; describe direction and relative magnitude, and reference RESULTS.md for exact figures.
 
+## Chart design
+
+The same engagement and clarity rules that apply to prose apply to charts. When adding or editing any `plot_*` function, follow these:
+
+- **Save charts as SVG, not PNG.** Vector output is sharp at any zoom, smaller for line/bar charts, and embeds identically in the HTML and Typst/PDF builds. Use `_output_path("chart.svg")` and set `plt.rcParams["svg.fonttype"] = "path"` once at module level so label text renders as vector paths (no font dependency in the Typst build).
+- **Title states the finding, not the axes.** The chart title is the takeaway a skimming reader should absorb: "The home rebounding edge died on the offensive glass," not "Rebounding differentials over time." Keep a smaller grey subtitle for the descriptive detail (data source, what the axes mean). Title magnitudes/directions must match RESULTS.md, and follow the same no-drama, don't-overstate rules as prose.
+- **Annotate key events on the line.** On time-series charts, mark the moments that drive the story directly on the plot (a labelled vertical rule at a rule change, a band over an inflection) so the chart carries the narrative without prose.
+- **Highlight-and-mute.** When a chart has a "context" series and a "the one that matters" series, color only the series that carries the argument and mute the rest to neutral grey. The eye goes where you point it.
+- **Consistent color semantics across every chart.** Keep colors meaning the same thing report-wide so readers build intuition: regular season = blue, playoffs = green (in any chart showing both); positive / home-favoring = green, negative / visitor-favoring = red; the emphasized series = blue, muted context = grey. Era backgrounds use the shared era palette. Document the convention next to the palette in `<project>_plots.py`.
+- **Big-number callouts.** For a standout statistic, set it large as a visual anchor (a single number plus a short label) rather than burying it in a sentence. The number does the work; no drama needed.
+
 ## Draft status
 
 All new docs start as drafts. Add the following block immediately after the `#` title in every new `_findings.md`, `_summary.md`, `_stats_explainer.md`, and `_findings_outline.md`:
