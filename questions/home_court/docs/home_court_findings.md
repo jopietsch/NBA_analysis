@@ -13,7 +13,7 @@ Throughout, the regular season and the playoffs are tracked separately. They sha
 ## 1. The 40-Year Decline
 The drop unfolded at roughly a quarter of a percentage point per year. The playoffs tell the same story with a slight lag. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today. That's a 9-to-10-point drop, comparable to the regular season but noisier given fewer games.
 
-![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are piecewise phase trends: four segments for the regular season reveal the two-drop structure (steep 1990s drop, two-decade plateau, post-2017 drop); two segments for the playoffs show the pre-2018 plateau and later drop. Background shading marks rule-change eras; red dots mark COVID-impacted seasons.](../generated/nba_home_court_advantage_season.png)
+![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons.](../generated/nba_home_court_advantage_season.png)
 
 The decline has two layers. One is **slow, continuous erosion** of about a quarter of a point per year, the box-score categories in Section 3 grinding down over decades. The other is **two sharp drops** layered on top of it.
 

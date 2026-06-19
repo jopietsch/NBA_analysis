@@ -124,28 +124,15 @@ def _draw_season_overview(
     ax.plot(x, po_pcts_aligned, color=GREEN, linewidth=2, zorder=2)
     ax.scatter(x, po_pcts_aligned, color=GREEN, s=40, zorder=3, edgecolors="white", linewidths=0.8)
 
-    # Piecewise phase trends for regular season: four segments surface the two-drop
-    # structure (baseline → first drop → plateau → second drop) that a single
-    # overall trend line would flatten into a uniform slope.
-    for ph_start, ph_end in [(1984, 1994), (1995, 2001), (2002, 2017), (2018, 2050)]:
-        seg = np.array([i for i, s in enumerate(reg_seasons)
-                        if ph_start <= label_to_year(s) <= ph_end])
-        if len(seg) < 2:
-            continue
-        seg_y = np.array([reg_pcts[i] for i in seg])
-        zs = np.polyfit(seg, seg_y, 1)
-        ax.plot(seg, np.poly1d(zs)(seg), "--", color=BLUE, linewidth=1.4, alpha=0.5)
+    # Single overall trend lines across all seasons.
+    zs_reg = np.polyfit(x, reg_pcts, 1)
+    ax.plot(x, np.poly1d(zs_reg)(x), "--", color=BLUE, linewidth=1.4, alpha=0.5)
 
-    # Two-phase trend for playoffs: pre-2018 plateau then post-2018 drop.
     po_arr = np.array(po_pcts_aligned, dtype=float)
-    for ph_start, ph_end in [(1984, 2017), (2018, 2050)]:
-        seg = np.array([i for i, s in enumerate(reg_seasons)
-                        if ph_start <= label_to_year(s) <= ph_end and np.isfinite(po_arr[i])])
-        if len(seg) < 2:
-            continue
-        seg_y = po_arr[seg]
-        zs = np.polyfit(seg, seg_y, 1)
-        ax.plot(seg, np.poly1d(zs)(seg), "--", color=GREEN, linewidth=1.4, alpha=0.5)
+    po_mask = np.isfinite(po_arr)
+    if po_mask.sum() >= 2:
+        zs_po = np.polyfit(x[po_mask], po_arr[po_mask], 1)
+        ax.plot(x, np.poly1d(zs_po)(x), "--", color=GREEN, linewidth=1.4, alpha=0.5)
 
     _shade_eras(ax, reg_seasons)
     covid_idx = [i for i, s in enumerate(reg_seasons) if s in COVID_SEASONS]
@@ -165,8 +152,8 @@ def _draw_season_overview(
         mpatches.Patch(color=BLUE,  label="Regular season"),
         mpatches.Patch(color=GREEN, label="Playoffs"),
         mpatches.Patch(color=RED,   label="COVID-impacted seasons"),
-        plt.Line2D([0], [0], color=BLUE,  linestyle="--", alpha=0.5, label="Phase trends (regular season)"),
-        plt.Line2D([0], [0], color=GREEN, linestyle="--", alpha=0.5, label="Phase trends (playoffs)"),
+        plt.Line2D([0], [0], color=BLUE,  linestyle="--", alpha=0.5, label="Overall trend (regular season)"),
+        plt.Line2D([0], [0], color=GREEN, linestyle="--", alpha=0.5, label="Overall trend (playoffs)"),
     ]
     ax.legend(handles=handles, fontsize=9, loc="upper right", framealpha=0.85, edgecolor="#ddd")
 
