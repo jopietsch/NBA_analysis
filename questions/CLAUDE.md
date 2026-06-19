@@ -49,6 +49,10 @@ Avoid patterns that make prose sound generated rather than written:
 
 Before finalizing prose, make sure what is written actually matches the data from RESULTS.md and the generated charts. Don't put specific coefficients or percentages in prose that will go stale; describe direction and relative magnitude, and reference RESULTS.md for exact figures.
 
+## Draft status
+
+All new docs start as drafts. Add `*Draft — <Month Year>*` on the line immediately after the `#` title in every new `_findings.md`, `_summary.md`, `_stats_explainer.md`, and `_findings_outline.md`. Remove it only when the analysis and prose are finalized.
+
 ## Standard document workflow
 
 Each project uses this naming convention:

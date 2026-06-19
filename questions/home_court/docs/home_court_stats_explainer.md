@@ -1,5 +1,7 @@
 # Statistical Explainer — `nba_home_court_analysis.py`
 
+*Draft — June 2026*
+
 A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and —
 where a section has one — **why its figure takes the form it does** (a `Why this

@@ -1,5 +1,7 @@
 # NBA Home Court Advantage: The Short Version
 
+*Draft — June 2026*
+
 For four decades, NBA home teams have been winning less. This is the one-page version of a long report, built around three charts to answer three questions: **Has home court really changed? What makes it an advantage in the first place? And what's driving the decline, and what isn't?**
 
 ---
