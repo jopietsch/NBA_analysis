@@ -1,6 +1,12 @@
 # Detailed Outline — home_court_findings.md
 
-*Draft — June 2026*
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
 
 ## Introduction (Intro / TL;DR)
 - **Three guiding questions:** (1) Has HCA really changed? (2) What makes home court an advantage? (3) What's driving the decline — and what isn't?
@@ -21,7 +27,7 @@
   - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 to 10 pt drop, noisier).
 - **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
   - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
-  - **Sharp — two drops** layered on top, each a moment when one force accelerated the same trend:
+  - **Sharp — two drops** layered on top, each a moment when one force accelerated the same trend. "Drops" = stretches of steepened slope, not one-season level jumps; structural-break test (§3) finds slope change ~1999 with no discrete level jump; CUSUM still reads 40 yrs as smooth drift:
     - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4); deep-dive detail (break-point test, confounds) deferred to §4. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
     - Flat for ~two decades.
     - Second drop: after 2017, below 56%. Coincides with the **three-point surge** hitting full stride — but the surge is the most visible *marker* of a broader move to the perimeter, not the whole cause (mechanics in §3). *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
@@ -87,7 +93,9 @@
   - Reg season: four categories = **~96% of decline**; all four trends p<0.001. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
   - Playoffs: overall trend 4× less precisely measured than RS (CI [−0.359, −0.091] vs [−0.280, −0.209]); categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
 - **3PA reaches ~half the decline, but not the whole:** within-season link is genuine (−2.27 pp/10pp, p<0.001). It registers most directly as the shooting channel (~21% of decline; eFG% 210% absorbed under the 3PA control, i.e. fully + reverses), and also absorbs ~half of the foul (51%) and turnover (54%) channels — so the perimeter shift touches close to half the decline overall. Rebounding (the largest single channel, 30%) is the part it does NOT explain (only 8% absorbed). (Point now made within the 3PA narrative in FINDINGS, not as a separate closing paragraph.)
-- **Shape of the decline: continuous drift, not shocks.** The structural-break test marks a slope change ~1999 (decline ran steeper through the late 1990s, eased after) but no level jump; CUSUM finds no structural instability across 40 seasons. Granger: 3PA does not temporally lead HCA; both co-move, pulled by the same underlying force. Data most consistent with information diffusion: as analytical strategies spread uniformly across all 30 teams, strategies converged toward the same optima regardless of venue, and the home familiarity advantage compressed alongside them.
+- **Shape of the decline: continuous drift, not shocks.** The structural-break test marks a slope change ~1999 (decline ran steeper through the late 1990s, eased after) but no level jump; CUSUM finds no structural instability across 40 seasons. Granger: 3PA does not temporally lead HCA; both co-move, pulled by the same underlying force.
+- **Bayesian change-point model:** rules out single linear trend (k=0, P=1.8%); k=2 (two breaks) preferred (P=66.3%) over k=1 (P=31.9%). BF(k=1 vs k=0)=18.0, BF(k=2 vs k=0)=37.4. MAP break years for k=2: **1992 and 2003**. For k=1: MAP break **1999**, 95% HPD 1992–2003; pre-break slope **−0.584 pp/yr**, post-break **−0.255 pp/yr**. Consistent with QLR (best single break ~1999) and CUSUM (no level instability) — each test asks a different question. *RESULTS: BAYESIAN CHANGE-POINT MODEL.*
+- Data most consistent with information diffusion: as analytical strategies spread uniformly across all 30 teams, strategies converged toward the same optima regardless of venue, and the home familiarity advantage compressed alongside them.
 **Figures:**
 
 ![Fig 5 — mediation shares (leads the section as the roadmap)](../generated/nba_home_court_mediation.png)
@@ -101,6 +109,8 @@
 ![Fig 9 — referee era distribution](../generated/nba_home_court_referee_era.png)
 
 ![Fig 10 — 3PA-control channel test (which fades survive holding 3-point volume constant)](../generated/nba_home_court_3pa_control.png)
+
+![Fig X — Bayesian change-point model (k=0/1/2 fitted lines; posterior distribution over break year for k=1)](../generated/nba_home_court_bayesian_changepoint.png)
 
 ---
 
@@ -119,7 +129,7 @@
 ![Fig 12 — pace vs HCA](../generated/nba_home_court_pace.png)
 
 - **Home vs. away 3PA differential:** home and away teams attempt threes at nearly identical rates; the trend moves the wrong direction — home teams now take *more* threes than visitors (+0.44 pp in 2023–26 vs. −0.35 pp in 1984–94, trend +0.018***/yr). Not the mechanism behind the decline. *RESULTS 3PA rate diff trend +0.018***/yr.*
-- **Competitive balance:** raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, can't explain magnitude.
+- **Competitive balance:** raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, small sample — best treated as exploratory, not a structural explanation.
 
 ![Fig 13 — parity vs HCA](../generated/nba_home_court_parity.png)
 
@@ -179,7 +189,7 @@
 
 ## Section 7 — Summary
 - Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**.
-- Shape: slow four-decade erosion + two sharper drops — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; discrete step at 1994–95, multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line).
+- Shape: slow four-decade erosion + two sharper drops (slope steepening, not level jumps) — 1994–95 rule jolt (most likely hand-checking, confounded with the shortened 3-pt line; multi-year adjustment through late 1990s, outside the categories) and post-2017 perimeter shift (inside the categories — three-point surge on the shooting line, parallel offensive-glass retreat on the rebounding line). Bayesian model: k=2 preferred (P=66%), MAP breaks 1992 & 2003; k=1 (P=32%), k=0 (P=2%). QLR and CUSUM consistent.
 - Three main drivers + the biggest driver of all (**together ~96% of RS decline**): (1) fairer refs — 1.2 → ~0.25 fouls/game RS, 1.6 → 0.7 playoffs; 45/47 officials home-favoring (largest single change), (2) shot selection changed in two ways: away teams closed the paint gap (1.3 → 0.2 pp) AND the league-wide 3PA rise compressed home court through the shooting line (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (3) rebounding advantage slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, competitive balance, crowd size, format. Fewer back-to-backs explain only ~8% of the RS decline. Crowd presence = on/off switch (2020–21 51% vs 58.5%; isolates presence, not noise itself), not a slow fade.
 - Playoffs follow reg season with **nearly a two-decade delay**; trend direction not in doubt but 4× less precisely measured than RS (CI [−0.359, −0.091]); accelerated since 2018; genuine erosion (weaker host still winning less). Game-by-game structure stark: G1 69%, G2 72%, G5 74.5%, G7 64%.

@@ -1,6 +1,12 @@
 # NBA Home Court Advantage: The Short Version
 
-*Draft — June 2026*
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
 
 For four decades, NBA home teams have been winning less. This is the one-page version of a long report, built around three charts to answer three questions: **Has home court really changed? What makes it an advantage in the first place? And what's driving the decline, and what isn't?**
 
@@ -20,7 +26,7 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
 
-But the categories that *created* the edge are not the ones that *erased* it (right). The two everyone blames, the narrowing whistle and the three-point shift, explain only about a fifth each of the regular-season decline directly. **Rebounding and turnovers together carry more than half.** Rebounding is the largest single contributor, and unlike shooting it is not the three-point shift in disguise.
+But the categories that *created* the edge are not the ones that *erased* it (right). In the direct box-score channels, shooting accounts for about a fifth of the decline and fouls another fifth. Three-point shooting's effects extend through foul calls and turnovers too, pushing the perimeter shift to close to half the overall story. **The piece it does not explain is rebounding — the single largest channel, and the one that fades independently.**
 
 ---
 

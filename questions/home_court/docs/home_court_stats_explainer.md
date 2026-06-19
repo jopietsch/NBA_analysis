@@ -1,6 +1,12 @@
 # Statistical Explainer — `nba_home_court_analysis.py`
 
-*Draft — June 2026*
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
 
 A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and —
@@ -125,6 +131,28 @@ Because we take the max over ~33 candidates, the standard F-distribution p-value
 **The approach.** The **CUSUM test (Brown–Durbin–Evans)** accumulates the recursive residuals from the linear year-trend and tracks the running sum against a 5% critical band that widens through the sample. If the cumulative sum exits the band, the parameters are unstable somewhere in that stretch. Where QLR (Section 2) pinpoints one break, CUSUM tests overall stability — agreement raises confidence, disagreement flags something to investigate.
 
 **What the results mean.** Both contexts stay inside the band. The regular-season CUSUM peaks at **87% of the 5% boundary** (|CUSUM| = 14.0 at 2019 vs. a bound of ±16.1) — close, but never out; the playoffs are calmer (peak 32% of the boundary). The apparent tension with Section 2 — which *did* find a regular-season break near 1999 — is the point: that break is a **gradual slope change** (−0.65 → −0.25 pp/yr), not a discrete level jump, and CUSUM has low power against slope-only breaks. Read together, the two tests say the decline bent once, gently, in the late 1990s and has otherwise been a stable straight-line drift, with no hidden instability elsewhere.
+
+---
+
+## 3a. Bayesian Change-Point Model (`compute_bayesian_changepoint`)
+
+**The question.** Sections 2 and 3 run two frequentist tests with an apparent tension: the QLR finds a significant slope change near 1999, while CUSUM finds no structural instability. This section reconciles them by asking a broader question: how many slope breaks does the 40-year series actually need, integrating over all possible break locations?
+
+**The data.** Season-level home win % series, 43 regular-season observations, weighted by games per season. Regular season only; too few playoff seasons to support a k=2 model reliably.
+
+**The approach.** Three nested piecewise models: k=0 (a single linear trend), k=1 (two line segments joined at one break), and k=2 (three segments joined at two breaks). Each model is estimated by **weighted least squares (WLS)** with game counts as weights; within each segment the fit is an intercept plus slope. For a given k, break locations are treated as latent: every valid configuration (outer 15% trimmed so each segment has at least a few seasons) is evaluated, and the marginal likelihood is approximated using the **BIC**:
+
+> log Z_k ≈ logsumexp(−BIC(τ)/2 over all configurations τ) − log(n_configurations)
+
+The BIC score per configuration is n·log(weighted RSS/n) + p·log(n), with p = 2(k+1) parameters (intercept + slope per segment). Posterior model probabilities are proportional to exp(log Z_k), normalized across k=0, 1, 2. For k=1, the posterior distribution over individual break years follows directly from the per-year BIC values; the **MAP break** is the highest-posterior year and the **95% HPD** (highest-probability-density interval) is the narrowest set of years that accumulates 95% of the posterior mass.
+
+**Why BIC-based marginal likelihoods.** Exact Bayesian computation requires specifying priors on slope and intercept parameters. BIC approximates the marginal likelihood up to a constant that cancels in model-probability ratios (Bayes factors). With N=43, this is an approximation; the results are read as model-selection guidance, not exact posterior probabilities. A uniform prior is placed over k and over valid break locations within each k.
+
+**What the results mean.** The single linear trend is effectively ruled out (P=1.8%). The one-break model has P=31.9% and the two-break model P=66.3%; BF(k=1 vs k=0)=18.0 (strong evidence for at least one break on the Jeffreys scale), BF(k=2 vs k=0)=37.4 (very strong). MAP break years for k=2 are 1992 and 2003. For k=1, the MAP break is 1999 (95% HPD 1992–2003), with posterior-weighted slopes of −0.584 pp/yr before and −0.255 pp/yr after.
+
+This resolves the QLR–CUSUM tension without contradicting either. The QLR asks "if there is exactly one break, where does it best fit?" and answers 1999. The CUSUM asks "does the trend wander outside what a single straight line can absorb?" and says no, because each break is a slope moderation, not a level jump. The Bayesian model asks "how many breaks, integrating over all locations?" and says two are more likely than one: the dominant single-break signal concentrates near 1999 (50.6% of the k=1 posterior), with a secondary kink around 1992–2003 bracketing the 1994–95 rule-change adjustment and the early-2000s stabilization.
+
+**Why this chart.** Two panels for two purposes. The left panel overlays the k=0 (grey dashed), k=1 MAP (blue solid), and k=2 MAP (red dash-dot) fitted lines on the season-level time series: putting all three models together makes the structural comparison immediate and shows where each model's kinks fall. The right panel is a bar chart of the posterior distribution over break year for k=1, with the 95% HPD highlighted: it shows both *where* the model places the break and *how concentrated* the posterior is — the dominant mass at 1999 with the HPD spanning 1992–2003 carries more information than a single best-fit year would.
 
 ---
 
