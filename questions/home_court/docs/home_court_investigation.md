@@ -16,11 +16,11 @@ This document records those tests. For each hypothesis, we lay out why it seemed
 
 **The test.** A piecewise regression with indicator variables at each rule-change boundary, asking whether any boundary caused a statistically significant one-time shift in home win percentage beyond the ongoing secular trend.
 
-**The result.** Exactly one boundary registers: 1994-95, worth a genuine one-time drop of about 2.6 points beyond the trend (p=0.010). Every other change — zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, the take-foul rule — passed through the trend line with no significant step. In the playoffs, even 1994-95 doesn't register; the postseason slide is steady drift throughout.
+**The result.** Exactly one boundary registers: 1994-95, worth a genuine one-time drop of about 2.6 points beyond the trend (p=0.010). Every other change passed through the trend line with no significant step: zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, and the take-foul rule. In the playoffs, even 1994-95 doesn't register; the postseason slide is steady drift throughout.
 
 **Why the intuition failed.** Rule changes alter how the game looks, but most of them change things for both teams equally. If zone defense is legalized, both home and away teams can run it and face it. If hand-checking is restricted, both teams stop using it. The rule reshapes the game; it doesn't reshape who benefits from playing in their own building.
 
-The 1994-95 exception works for a specific reason. Hand-checking affected referee discretion, and referee behavior toward home teams is one of the few things that can shift asymmetrically. When referees were directed to call tighter games, the home-favoring foul bias compressed — not because home teams were less protected by the rule, but because tighter calling narrowed the gap across all calls. Foul calls responded immediately at the 1994-95 boundary (p=0.007). The shooting channel showed no significant immediate response (p=0.327). That asymmetry is the fingerprint of referee behavior, not shot-selection rules.
+The 1994-95 exception works for a specific reason. Hand-checking affected referee discretion, and referee behavior toward home teams is one of the few things that can shift asymmetrically. When referees were directed to call tighter games, the home-favoring foul bias compressed: not because home teams were less protected by the rule, but because tighter calling narrowed the gap across all calls. Foul calls responded immediately at the 1994-95 boundary (p=0.007). The shooting channel showed no significant immediate response (p=0.327). That asymmetry is the fingerprint of referee behavior, not shot-selection rules.
 
 One complication: the three-point line was also shortened in 1994-95 through 1996-97, and the two changes can't be fully separated at the season level. The channel data points more toward hand-checking, but the shortened line may have contributed. See RESULTS.md for the full event-study output.
 
@@ -34,9 +34,9 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The test.** We regressed game outcomes on great-circle travel distance between the two cities and on time-zone crossings, controlling for era, rest, and altitude.
 
-**The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points per 100 miles. A team flying coast-to-coast (roughly 2,500 miles) faces about the same odds as one driving two hours — a difference of about 1.8 percentage points. In the playoffs, travel distance has no measurable effect at all. Time zones are flat in both contexts.
+**The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points per 100 miles. A team flying coast-to-coast (roughly 2,500 miles) faces about the same odds as one driving two hours, a difference of about 1.8 percentage points. In the playoffs, travel distance has no measurable effect at all. Time zones are flat in both contexts.
 
-**Why the intuition failed.** Two reasons. First, home teams travel too. Away teams fly in; home teams flew back from their previous road trip. Better planes benefit both sides, so the relative disadvantage of arriving in a specific building doesn't shrink just because the flight got more comfortable. Second, the raw travel effect was always smaller than intuition suggests. Even a cross-country trip is worth less than 2 percentage points of home court in the model — against a baseline advantage of 7 to 10 points. Travel is a real but minor factor, and it hasn't changed over time in a way that explains the trend.
+**Why the intuition failed.** Two reasons. First, home teams travel too. Away teams fly in; home teams flew back from their previous road trip. Better planes benefit both sides, so the relative disadvantage of arriving in a specific building doesn't shrink just because the flight got more comfortable. Second, the raw travel effect was always smaller than intuition suggests. Even a cross-country trip is worth less than 2 percentage points of home court in the model, against a baseline advantage of 7 to 10 points. Travel is a real but minor factor, and it hasn't changed over time in a way that explains the trend.
 
 ---
 
@@ -78,7 +78,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 ![Pace vs. home win % over time, regular season and playoffs.](../generated/nba_home_court_pace.png)
 
-**Why the intuition failed.** Pace changes the number of opportunities in a game, but it doesn't systematically advantage one venue over the other. More possessions means more chances for crowd effects to operate — but also more chances for the better-shooting team to assert itself, and more possessions for an efficient away offense to score. The effects run in multiple directions and wash out. The data confirms there's no net signal.
+**Why the intuition failed.** Pace changes the number of opportunities in a game, but it doesn't systematically advantage one venue over the other. More possessions means more chances for crowd effects to operate, but also more chances for the better-shooting team to assert itself, and more possessions for an efficient away offense to score. The effects run in multiple directions and wash out. The data confirms there's no net signal.
 
 ---
 
@@ -104,7 +104,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 ![Competitive balance vs. home win % per season, regular season.](../generated/nba_home_court_parity.png)
 
-**Why the intuition failed.** Competitive balance compresses outcomes symmetrically. More parity means both home and away teams face more evenly matched opponents — but it can't create an asymmetric disadvantage specifically for the home team. If anything, greater parity should make home court *more* influential, not less, since the teams are closer in talent and venue effects are more likely to be decisive. The structural argument runs the wrong direction.
+**Why the intuition failed.** Competitive balance compresses outcomes symmetrically. More parity means both home and away teams face more evenly matched opponents, but it can't create an asymmetric disadvantage specifically for the home team. If anything, greater parity should make home court *more* influential, not less, since the teams are closer in talent and venue effects are more likely to be decisive. The structural argument runs the wrong direction.
 
 ---
 
@@ -114,7 +114,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The test.** We plotted league-average attendance per game against home win percentage across the 27 seasons with reliable gate figures.
 
-**The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s — the very years home win rates hit their lowest. Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court eroded right alongside the regular season.
+**The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s (the very years home win rates hit their lowest). Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court eroded right alongside the regular season.
 
 ![Left: league average attendance vs. regular-season home win %, 2000–2026. Right: 2020–21 home win % by game attendance.](../generated/nba_home_court_attendance.png)
 
@@ -126,11 +126,11 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 The pandemic provided a natural experiment that separates crowd *presence* from crowd *size*. In 2020-21, local health rules left some arenas completely empty while others had partial crowds in the same season.
 
-**The result.** With buildings completely empty (573 games), home teams won just 51% — a coin flip. With any crowd at all (591 games, median attendance 3,280), they won 58.5%, right back at the modern norm. Even a few thousand fans in an empty building restored nearly the full crowd effect. The dose-response is front-loaded: the jump comes from the first fans through the door, not from filling the last thousand seats.
+**The result.** With buildings completely empty (573 games), home teams won just 51%, effectively a coin flip. With any crowd at all (591 games, median attendance 3,280), they won 58.5%, right back at the modern norm. Even a few thousand fans in an empty building restored nearly the full crowd effect. The dose-response is front-loaded: the jump comes from the first fans through the door, not from filling the last thousand seats.
 
-This has two implications. First, crowd presence is a genuine ingredient of home court advantage — worth about 7 percentage points when you compare completely empty buildings to any crowd at all. Second, the relationship is a switch, not a dial. The full crowd effect restores with minimal attendance; larger crowds add little beyond what those first fans provide.
+This has two implications. First, crowd presence is a genuine ingredient of home court advantage, worth about 7 percentage points when you compare completely empty buildings to any crowd at all. Second, the relationship is a switch, not a dial. The full crowd effect restores with minimal attendance; larger crowds add little beyond what those first fans provide.
 
-**Why this rules out crowds as the 40-year explanation.** Buildings refilled the moment health rules allowed it, and the advantage snapped back immediately. Crowd presence creates home court; since arenas have been full throughout the decline, it is not what has been eroding. The pandemic experiment isolates the crowd component cleanly — and that component is stable. The change is elsewhere.
+**Why this rules out crowds as the 40-year explanation.** Buildings refilled the moment health rules allowed it, and the advantage snapped back immediately. Crowd presence creates home court; since arenas have been full throughout the decline, it is not what has been eroding. The pandemic experiment isolates the crowd component cleanly, and that component is stable. The change is elsewhere.
 
 ---
 
@@ -142,4 +142,4 @@ To verify that no combination of situational factors can collectively explain th
 
 The cleanest version of the test compares seasons on either side of 2014. The rest and time-zone coefficients are statistically unchanged between the two periods. Altitude's boost weakened somewhat. Yet the baseline home advantage still dropped about 4.7 points. The situational factors held still; the baseline eroded beneath them.
 
-**What this confirms.** By elimination, the decline lives in what happens between two evenly-situated teams on the court. The on-court changes — the narrowing whistle, the three-point shift, the rebounding collapse, the turnover edge erosion — are what remains once every off-court factor is fully accounted for. That is the Section 3 story, confirmed by subtraction.
+**What this confirms.** By elimination, the decline lives in what happens between two evenly-situated teams on the court. What remains after accounting for every off-court factor is the Section 3 story: the narrowing whistle, the three-point shift, the rebounding collapse, and the turnover edge erosion.
