@@ -17,6 +17,7 @@ import numpy as np
 
 import nbakit.data as _nba
 from nbakit import espn as _espn
+from nbakit.stats import t_interval
 from nbakit.espn import parse_vegas_line as _parse_vegas_line  # noqa: F401  (used in tests)
 
 # Re-export shared helpers so callers import from one place
@@ -266,16 +267,12 @@ def compute_margin_ci(po_logs: pd.DataFrame,
     Returns (lower, upper).  With 19 games the interval is wide — this is
     the honest uncertainty in the point estimate.
     """
-    from scipy import stats as _st
     logs    = _nba.fill_plus_minus(po_logs)
     margins = logs[logs["TEAM_ID"] == team_id]["PLUS_MINUS"].dropna()
     n = len(margins)
     if n < 2:
         return float("nan"), float("nan")
-    mean   = float(margins.mean())
-    se     = float(margins.std(ddof=1) / np.sqrt(n))
-    t_crit = float(_st.t.ppf((1 + confidence) / 2, df=n - 1))
-    return mean - t_crit * se, mean + t_crit * se
+    return t_interval(float(margins.mean()), float(margins.std(ddof=1)), n, confidence)
 
 
 def compute_series_margins(po_logs: pd.DataFrame,

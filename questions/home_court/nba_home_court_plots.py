@@ -23,6 +23,7 @@ from nbakit.viz import (
     annotate_bars as _annotate_bars,
     add_trend_line as _add_trend_line,
 )
+from nbakit.stats import shrink_to_mean
 
 # Charts are saved as SVG (vector): sharp at any zoom, small for line/bar charts,
 # and embedded identically in the HTML and Typst/PDF builds. svg.fonttype="path"
@@ -1436,7 +1437,6 @@ def plot_team_hca_analysis(
         letting small-sample defunct franchises top the raw list."""
         teams = list(stats)
         hcas = np.array([stats[t]["hca"] for t in teams], dtype=float)
-        league_mean = float(hcas.mean())
         samp_vars = np.array([
             1e4 * (
                 (stats[t]["home_pct"] / 100.0) * (1.0 - stats[t]["home_pct"] / 100.0) / stats[t]["n_home"]
@@ -1444,12 +1444,8 @@ def plot_team_hca_analysis(
             )
             for t in teams
         ])
-        true_var = max(0.0, float(np.var(hcas, ddof=1)) - float(samp_vars.mean()))
-        return {
-            t: (true_var / (true_var + samp_vars[i]) if true_var > 0 else 0.0) * stats[t]["hca"]
-               + (1.0 - (true_var / (true_var + samp_vars[i]) if true_var > 0 else 0.0)) * league_mean
-            for i, t in enumerate(teams)
-        }
+        shrunk, _ = shrink_to_mean(hcas, samp_vars)
+        return {t: float(shrunk[i]) for i, t in enumerate(teams)}
 
     reg_shrunk   = _shrunken_hca(reg_stats)
     sorted_teams = sorted(reg_stats, key=lambda t: reg_shrunk[t], reverse=True)

@@ -23,6 +23,7 @@ import statsmodels.formula.api as smf
 from nba_api.stats.library.parameters import SeasonType
 
 from nbakit.textfmt import section as _section_str, stars as _stars, p_value as _fmt_p
+from nbakit.stats import shrink_to_mean
 
 import nba_home_court_data as nba
 
@@ -280,8 +281,6 @@ def _shrink_hca(stats: dict) -> tuple[dict[str, float], dict[str, float]]:
     """
     teams = list(stats)
     hcas = np.array([stats[t]["hca"] for t in teams], dtype=float)
-    league_mean = float(hcas.mean())
-
     samp_vars = np.array([
         1e4 * (
             (stats[t]["home_pct"] / 100.0) * (1.0 - stats[t]["home_pct"] / 100.0) / stats[t]["n_home"]
@@ -290,17 +289,9 @@ def _shrink_hca(stats: dict) -> tuple[dict[str, float], dict[str, float]]:
         for t in teams
     ])
 
-    obs_var = float(np.var(hcas, ddof=1))
-    mean_sv = float(samp_vars.mean())
-    true_var = max(0.0, obs_var - mean_sv)
-
-    shrunken: dict[str, float] = {}
-    ci_hw: dict[str, float] = {}
-    for i, t in enumerate(teams):
-        sv_i = samp_vars[i]
-        w = true_var / (true_var + sv_i) if true_var > 0 else 0.0
-        shrunken[t] = w * stats[t]["hca"] + (1.0 - w) * league_mean
-        ci_hw[t] = 1.96 * float(np.sqrt(sv_i))
+    shrunk, _info = shrink_to_mean(hcas, samp_vars)
+    shrunken = {t: float(shrunk[i]) for i, t in enumerate(teams)}
+    ci_hw = {t: 1.96 * float(np.sqrt(samp_vars[i])) for i, t in enumerate(teams)}
     return shrunken, ci_hw
 
 

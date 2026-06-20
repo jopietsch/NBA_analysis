@@ -19,6 +19,7 @@ import numpy as np
 import pandas as pd
 
 from nbakit.textfmt import section as _section_str, subsection as _subsection_str
+from nbakit.stats import binom_sf_ge, t_interval
 
 from knicks_2026_data import (
     KNICKS_TEAM_ID,
@@ -170,9 +171,7 @@ def run_gap_history(gap_table: pd.DataFrame, out: io.StringIO) -> None:
     z_score  = (gap_2026 - gap_mean) / gap_std if gap_std > 0 else float("nan")
     n        = len(gaps)
     # 95% confidence interval on the mean (t-distribution, df=n-1)
-    from scipy.stats import t as t_dist
-    ci_half = t_dist.ppf(0.975, df=n - 1) * gap_std / n ** 0.5
-    ci_lo, ci_hi = gap_mean - ci_half, gap_mean + ci_half
+    ci_lo, ci_hi = t_interval(gap_mean, gap_std, n)
 
     print(f"2025-26 SRS gap (West − East): {gap_2026:+.2f} pts/game", file=out)
     print(f"Percentile among all {n} seasons "
@@ -741,8 +740,7 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
 
 def _binom_p_value(k: int, n: int, p: float = 0.5) -> float:
     """P(X >= k) under Binomial(n, p) — one-tailed test."""
-    from scipy.stats import binom
-    return float(binom.sf(k - 1, n, p))
+    return binom_sf_ge(k, n, p)
 
 
 def run_betting_market(ats_df: pd.DataFrame,
