@@ -218,10 +218,10 @@ each one-unit step in *x*.
 **A worked example.** Take one dot per season, the home win %, and fit a line
 against the year. That's the regular-season decline: a slope of **-0.250 pp per
 year** (the OLS line in `RESULTS.md`'s decline section). The
-`nba_home_court_advantage_season.png` figure is this line drawn through
+`nba_home_court_advantage_season.svg` figure is this line drawn through
 the season dots.
 
-![Season-level home win % with fitted decline](home_court/generated/images/nba_home_court_advantage_season.png)
+![Season-level home win % with fitted decline](home_court/generated/images/nba_home_court_advantage_season.svg)
 
 **R²: how tight is the fit?** Alongside the slope you'll see **R² = 0.745**.
 R² ("R-squared") is the share of the up-and-down variation in the points that the
@@ -381,7 +381,7 @@ probability with the S-shaped logistic curve. Predictions can never escape [0, 1
         favors road  <--  log-odds  -->  favors home
 ```
 
-![The logistic curve: log-odds map to probability](generated/images/tutorial_logistic_curve.png)
+![The logistic curve: log-odds map to probability](generated/images/tutorial_logistic_curve.svg)
 
 The green arrows make the key quirk visible: **the same +1 step in log-odds is
 worth ~23 pp near a 50/50 game but only ~5 pp out in the tail.** That's why
@@ -800,7 +800,7 @@ own slope over the years.
                                                         genuine polarization.
 ```
 
-![Pure level shift vs. genuine polarization](generated/images/tutorial_quantile_diagnostic.png)
+![Pure level shift vs. genuine polarization](generated/images/tutorial_quantile_diagnostic.svg)
 
 The left panel is the hypothetical "boring" outcome, every quantile sliding down
 in parallel at the median's rate. The right panel is the *actual* regular-season
@@ -900,7 +900,7 @@ true variance ~4.1^2 = 16.8 and the league mean +20.0 pp:
 That's the whole idea: shrinkage demotes lucky small samples (Kansas City) while
 leaving well-measured ones (Denver) essentially untouched.
 
-![Shrinkage pulls noisy estimates toward the league mean](generated/images/tutorial_shrinkage.png)
+![Shrinkage pulls noisy estimates toward the league mean](generated/images/tutorial_shrinkage.svg)
 
 Read the figure as "length of the red arrow = how much we distrust the raw
 number." Kansas City's huge error bar (only 82 games) earns an 11.6 pp pull;
@@ -980,7 +980,7 @@ with caution": it's a small effect on ~43 points, and first differencing
 amplifies measurement noise. The discipline to report it *and* caveat it is the
 model to imitate.
 
-![A correlation that is really just a shared trend](generated/images/tutorial_spurious_detrend.png)
+![A correlation that is really just a shared trend](generated/images/tutorial_spurious_detrend.svg)
 
 The figure walks the trap end to end (using two illustrative trending series).
 Left: both just drift over the decades. Middle: plot one against the other and
@@ -1569,7 +1569,7 @@ better," not "better than 43 other teams."
 win rate <= 0.842: 38 teams. 38/43 * 100 = **88.4th percentile**. The Knicks
 were better than 88% of all champions by win rate.
 
-![How empirical percentile rank works](generated/images/tutorial_percentile_rank.png)
+![How empirical percentile rank works](generated/images/tutorial_percentile_rank.svg)
 
 The left panel is the ranked bar chart, the same form used in `RESULTS.md`. The
 right panel makes the counting explicit: 38 champions are at or below the Knicks,
@@ -1623,7 +1623,7 @@ at -0.27 were slightly below average. This spread is exactly why average opponen
 SRS (§8.3) matters: a team that beats a +8 Finals opponent looks different from
 one that beats a +1.
 
-![SRS: strength ratings that account for schedule](generated/images/tutorial_srs_intuition.png)
+![SRS: strength ratings that account for schedule](generated/images/tutorial_srs_intuition.svg)
 
 **Why regular-season SRS for opponents, not playoff SRS.** Playoff SRS would be
 circular: a team's playoff rating partly reflects games against the Knicks

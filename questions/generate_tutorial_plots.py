@@ -5,13 +5,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
+plt.rcParams["svg.fonttype"] = "path"
+
 OUT = "generated/images"
 os.makedirs(OUT, exist_ok=True)
 
 
 def save(name):
     plt.tight_layout()
-    plt.savefig(f"{OUT}/{name}", dpi=150, bbox_inches="tight")
+    plt.savefig(f"{OUT}/{name}", bbox_inches="tight")
     plt.close()
     print(f"  {OUT}/{name}")
 
@@ -51,7 +53,7 @@ def plot_logistic_curve():
     ax.set_ylim(-0.02, 1.02)
     ax.set_yticks([0, 0.25, 0.50, 0.75, 1.0])
     ax.set_yticklabels(["0%", "25%", "50%", "75%", "100%"])
-    save("tutorial_logistic_curve.png")
+    save("tutorial_logistic_curve.svg")
 
 
 # ── 2. tutorial_quantile_diagnostic.png ─────────────────────────────────────
@@ -91,7 +93,7 @@ def plot_quantile_diagnostic():
     ax.legend(fontsize=9)
 
     fig.suptitle("Quantile Regression Diagnostics", fontsize=12, y=1.01)
-    save("tutorial_quantile_diagnostic.png")
+    save("tutorial_quantile_diagnostic.svg")
 
 
 # ── 3. tutorial_shrinkage.png ────────────────────────────────────────────────
@@ -136,7 +138,7 @@ def plot_shrinkage():
     ax.set_xlabel("Home court advantage (pp)")
     ax.set_title("Shrinkage Pulls Noisy Estimates Toward the League Mean")
     ax.legend(fontsize=9)
-    save("tutorial_shrinkage.png")
+    save("tutorial_shrinkage.svg")
 
 
 # ── 4. tutorial_spurious_detrend.png ────────────────────────────────────────
@@ -189,7 +191,7 @@ def plot_spurious_detrend():
     ax.set_ylabel("HCA (detrended)")
 
     fig.suptitle("Spurious Correlation from a Shared Trend", fontsize=12, y=1.01)
-    save("tutorial_spurious_detrend.png")
+    save("tutorial_spurious_detrend.svg")
 
 
 # ── 5. tutorial_percentile_rank.png ─────────────────────────────────────────
@@ -241,7 +243,7 @@ def plot_percentile_rank():
         ax.text(i, v + 0.3, str(v), ha="center", fontsize=11, fontweight="bold")
 
     fig.suptitle("How Empirical Percentile Rank Works", fontsize=12, y=1.01)
-    save("tutorial_percentile_rank.png")
+    save("tutorial_percentile_rank.svg")
 
 
 # ── 6. tutorial_srs_intuition.png ───────────────────────────────────────────
@@ -290,7 +292,7 @@ def plot_srs_intuition():
                 color="#1e293b" if line else "white")
 
     fig.suptitle("SRS (Simple Rating System) Intuition", fontsize=12, y=1.01)
-    save("tutorial_srs_intuition.png")
+    save("tutorial_srs_intuition.svg")
 
 
 if __name__ == "__main__":
