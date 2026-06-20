@@ -9,7 +9,9 @@ trap 'rm -rf "$STAGE"' EXIT
 
 echo "Staging site..."
 
-# Copy HTMLs from every questions/* project that has a generated/ directory
+# Mirror the local questions/ layout (each project keeps its generated/ subdir)
+# so relative cross-doc links resolve the same on the published site as locally
+# (e.g. a project doc linking ../../generated/stats_tutorial.html).
 for project_dir in "$REPO_ROOT/questions"/*/; do
     project=$(basename "$project_dir")
     # questions/generated/ holds shared, cross-project docs, not a project; handled below.
@@ -18,19 +20,19 @@ for project_dir in "$REPO_ROOT/questions"/*/; do
     [[ -d "$gen_dir" ]] || continue
     htmls=("$gen_dir"/*.html)
     [[ -e "${htmls[0]}" ]] || continue
-    mkdir -p "$STAGE/$project"
-    cp "${htmls[@]}" "$STAGE/$project/"
+    mkdir -p "$STAGE/$project/generated"
+    cp "${htmls[@]}" "$STAGE/$project/generated/"
     echo "  $project: ${#htmls[@]} files"
 done
 
-# Copy shared, cross-project docs that live in questions/generated/ (e.g. stats_tutorial)
+# Shared, cross-project docs (e.g. stats_tutorial) mirror questions/generated/.
 shared_gen="$REPO_ROOT/questions/generated"
 if [[ -d "$shared_gen" ]]; then
     shared_htmls=("$shared_gen"/*.html)
     if [[ -e "${shared_htmls[0]}" ]]; then
-        mkdir -p "$STAGE/guides"
-        cp "${shared_htmls[@]}" "$STAGE/guides/"
-        echo "  guides: ${#shared_htmls[@]} files"
+        mkdir -p "$STAGE/generated"
+        cp "${shared_htmls[@]}" "$STAGE/generated/"
+        echo "  shared: ${#shared_htmls[@]} files"
     fi
 fi
 
@@ -64,16 +66,30 @@ header = """\
   <h1>NBA Analysis</h1>
 """
 
+# HTMLs live one level down in <project>/generated/; the shared docs sit in the
+# top-level generated/ (labelled "Guides"). hrefs keep the generated/ segment so
+# the index links match the mirrored layout.
+def section(top):
+    if top.name == "generated":
+        return "Guides", top, "generated"
+    gen = top / "generated"
+    if gen.is_dir():
+        return top.name.replace("_", " ").title(), gen, f"{top.name}/generated"
+    return None
+
 sections = []
-for project_dir in sorted(stage.iterdir()):
-    if not project_dir.is_dir():
+for top in sorted(stage.iterdir()):
+    if not top.is_dir():
         continue
-    htmls = sorted(project_dir.glob("*.html"))
+    info = section(top)
+    if not info:
+        continue
+    heading, html_dir, prefix = info
+    htmls = sorted(html_dir.glob("*.html"))
     if not htmls:
         continue
-    heading = project_dir.name.replace("_", " ").title()
     items = "\n".join(
-        f'    <li><a href="{project_dir.name}/{h.name}">{get_title(h)}</a></li>'
+        f'    <li><a href="{prefix}/{h.name}">{get_title(h)}</a></li>'
         for h in htmls
     )
     sections.append(f"  <h2>{heading}</h2>\n  <ul>\n{items}\n  </ul>")
