@@ -24,7 +24,7 @@ from nbakit.viz import (  # noqa: E402
     new_fig as _fig,
 )
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "generated")
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "generated", "images")
 
 # ── Team accent colors (Knicks-specific) ──────────────────────────────────────
 KNICKS_BLUE   = "#006BB6"

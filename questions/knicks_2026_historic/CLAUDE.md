@@ -28,7 +28,7 @@ All fetched data is cached as CSVs under `cache/` to avoid re-fetching.
 
 ## Key files
 
-- `docs/knicks_2026_historic_findings.md` — narrative interpretation in numbered `## N. Title` sections; the single source of truth for report prose and chart placement. Edit by hand when understanding changes; the PDF picks up sections automatically. Image references use `../generated/<chart>.png`.
+- `docs/knicks_2026_historic_findings.md` — narrative interpretation in numbered `## N. Title` sections; the single source of truth for report prose and chart placement. Edit by hand when understanding changes; the PDF picks up sections automatically. Image references use `../generated/images/<chart>.svg`.
 - `docs/knicks_2026_historic_summary.md` — standalone one-page summary built around three core charts (adjusted margin ranking, round split, market vs actual) and the main question.
 - `docs/knicks_2026_historic_stats_explainer.md` — hand-edited methods companion; regenerate its PDF with `python3 generate_doc_pdf.py docs/knicks_2026_historic_stats_explainer.md`.
 - `docs/RESULTS.md` — auto-generated analysis output; **never edit manually**, always re-run the pipeline to refresh.
@@ -41,7 +41,7 @@ Follow this order (same as the sibling project):
 2. **Plot** (`knicks_2026_plots.py`) — add a `plot_*`; wire its call into `main()` in `knicks_2026_historic.py`.
 3. **Analysis** (`knicks_2026_analysis.py`) — add a `run_*`; call it from `run()`. Output goes to stdout and is captured into `RESULTS.md`. Use the box-drawing header convention the appendix parser expects: `print("─── SECTION TITLE " + "─" * 50)`.
 4. **Tests** — correctness tests for new `compute_*` in `tests/test_knicks_2026.py`; a no-raise smoke test for the new `plot_*` in `tests/test_knicks_2026_plots.py`.
-5. **docs/knicks_2026_historic_findings.md** — add a `## N. Title` section with prose and `![caption](../generated/knicks_2026_*.svg)` references.
+5. **docs/knicks_2026_historic_findings.md** — add a `## N. Title` section with prose and `![caption](../generated/images/knicks_2026_*.svg)` references.
 6. **Run** — `MPLBACKEND=Agg python3 knicks_2026_historic.py` to regenerate PNGs and `docs/RESULTS.md`, then `python3 generate_report.py`.
 
 ## Updating docs/knicks_2026_historic_findings.md

@@ -13,7 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 DPI = 120
-OUTPUT_DIR = "generated"
+OUTPUT_DIR = "generated/images"
 
 
 def _output_path(name: str) -> str:

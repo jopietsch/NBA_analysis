@@ -115,7 +115,7 @@ python3 -m pytest
 pip install -r requirements.txt
 ```
 
-Always use `MPLBACKEND=Agg` when running the analysis script to suppress display windows. All PNGs and PDFs land in `generated/` (gitignored). `docs/RESULTS.md` is the exception — it is committed. Image references in `docs/` use `../generated/<chart>.png`.
+Always use `MPLBACKEND=Agg` when running the analysis script to suppress display windows. Chart images land in `generated/images/` (gitignored); PDFs and HTML reports land in `generated/`. `docs/RESULTS.md` is the exception — it is committed. Image references in `docs/` use `../generated/images/<chart>.svg`.
 
 ## Standard directory layout
 
@@ -124,7 +124,8 @@ Always use `MPLBACKEND=Agg` when running the analysis script to suppress display
 ├── docs/          — prose files (FINDINGS, SUMMARY, STATS_EXPLAINER, RESULTS.md)
 ├── tests/         — test files; test fixture CSVs go in tests/data/
 ├── cache/         — fetched data CSVs (gitignored)
-└── generated/     — all PNGs and PDFs (gitignored)
+└── generated/     — PDFs and HTML reports (gitignored)
+    └── images/    — all chart SVGs/PNGs (gitignored)
 ```
 
 ## Standard architecture
@@ -132,7 +133,7 @@ Always use `MPLBACKEND=Agg` when running the analysis script to suppress display
 Each project follows a four-module pipeline plus two report generators:
 
 - **`<project>_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. All fetched data is cached as CSVs under `cache/`. This is the only module that calls external APIs.
-- **`<project>_plots.py`** — all visualization; imports the data module and holds no data logic of its own. Each `plot_*` function saves a PNG to `generated/`.
+- **`<project>_plots.py`** — all visualization; imports the data module and holds no data logic of its own. Each `plot_*` function saves an SVG to `generated/images/`.
 - **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/RESULTS.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`.
 - **`<project>.py`** (or `<project>_<name>.py`) — pipeline orchestration only; sequences data → plots → analysis; imports the analysis module inside `main()` to avoid circular imports.
 - **`generate_report.py`** — assembles `docs/<project>_findings.md` prose and PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.

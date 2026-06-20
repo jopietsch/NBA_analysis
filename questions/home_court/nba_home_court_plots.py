@@ -29,7 +29,7 @@ from nbakit.stats import shrink_to_mean
 # and embedded identically in the HTML and Typst/PDF builds).
 
 # All generated charts are written here.
-OUTPUT_DIR = "generated"
+OUTPUT_DIR = "generated/images"
 
 
 # ── Colors ────────────────────────────────────────────────────────────────────

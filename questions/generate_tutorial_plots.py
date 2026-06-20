@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-OUT = "generated"
+OUT = "generated/images"
 os.makedirs(OUT, exist_ok=True)
 
 

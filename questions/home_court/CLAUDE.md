@@ -53,11 +53,11 @@ All fetched data is cached as CSVs under `cache/` to avoid re-fetching.
 Every analysis follows the same steps, in this order:
 
 1. **Data** (`nba_home_court_data.py`) — add `fetch_*` and `compute_*` functions; all fetched data cached under `cache/`
-2. **Plot** (`nba_home_court_plots.py`) — add `plot_*` function; save the chart as SVG via `_output_path("chart.svg")` so it lands in `generated/`; wire the call into `main()` in `nba_home_court_advantage.py`
+2. **Plot** (`nba_home_court_plots.py`) — add `plot_*` function; save the chart as SVG via `save_chart("chart.svg", OUTPUT_DIR)` so it lands in `generated/images/`; wire the call into `main()` in `nba_home_court_advantage.py`
 3. **Regression** (`nba_home_court_analysis.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `RESULTS.md`
 4. **Tests** — correctness unit tests for the data/computation layer in `tests/test_nba_home_court_advantage.py` (use synthetic DataFrames); a no-raise smoke test for the new `plot_*` in `tests/test_nba_home_court_plots.py`
-5. **docs/home_court_findings.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](../generated/chart.png)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
-\6. **`.gitignore`** — nothing to do: all PNGs land in `generated/`, which is already ignored as a whole
+5. **docs/home_court_findings.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](../generated/images/chart.svg)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
+\6. **`.gitignore`** — nothing to do: all images land in `generated/images/`, which is inside the already-ignored `generated/` tree
 7. **Run** — `MPLBACKEND=Agg python3 nba_home_court_advantage.py` to regenerate all PNGs and `docs/RESULTS.md`
 8. **Update docs/home_court_findings.md** — replace placeholder prose with actual numbers and directions from `docs/RESULTS.md`; then regenerate the main report with `python3 generate_report.py` and the results report with `python3 generate_results_pdf.py`
 
