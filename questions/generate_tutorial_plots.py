@@ -18,7 +18,7 @@ def save(name):
     print(f"  {OUT}/{name}")
 
 
-# ── 1. tutorial_logistic_curve.png ──────────────────────────────────────────
+# ── 1. tutorial_logistic_curve.svg ──────────────────────────────────────────
 def plot_logistic_curve():
     lo = np.linspace(-4, 4, 400)
     p = 1 / (1 + np.exp(-lo))
@@ -56,7 +56,7 @@ def plot_logistic_curve():
     save("tutorial_logistic_curve.svg")
 
 
-# ── 2. tutorial_quantile_diagnostic.png ─────────────────────────────────────
+# ── 2. tutorial_quantile_diagnostic.svg ─────────────────────────────────────
 def plot_quantile_diagnostic():
     years = np.arange(1980, 2024)
     n = len(years)
@@ -96,7 +96,7 @@ def plot_quantile_diagnostic():
     save("tutorial_quantile_diagnostic.svg")
 
 
-# ── 3. tutorial_shrinkage.png ────────────────────────────────────────────────
+# ── 3. tutorial_shrinkage.svg ────────────────────────────────────────────────
 def plot_shrinkage():
     league_mean = 20.0
     teams = [
@@ -141,7 +141,7 @@ def plot_shrinkage():
     save("tutorial_shrinkage.svg")
 
 
-# ── 4. tutorial_spurious_detrend.png ────────────────────────────────────────
+# ── 4. tutorial_spurious_detrend.svg ────────────────────────────────────────
 def plot_spurious_detrend():
     np.random.seed(42)
     n = 43
@@ -194,7 +194,7 @@ def plot_spurious_detrend():
     save("tutorial_spurious_detrend.svg")
 
 
-# ── 5. tutorial_percentile_rank.png ─────────────────────────────────────────
+# ── 5. tutorial_percentile_rank.svg ─────────────────────────────────────────
 def plot_percentile_rank():
     np.random.seed(7)
     # Illustrative champion win rates, mean ~0.75, range roughly matching reality
@@ -246,7 +246,7 @@ def plot_percentile_rank():
     save("tutorial_percentile_rank.svg")
 
 
-# ── 6. tutorial_srs_intuition.png ───────────────────────────────────────────
+# ── 6. tutorial_srs_intuition.svg ───────────────────────────────────────────
 def plot_srs_intuition():
     np.random.seed(3)
     n_teams = 8
