@@ -78,11 +78,9 @@ def _rebase_image_paths(body: str, src_dir: str, target_dir: str) -> str:
     return re.sub(r"!\[([^\]]*)\]\(([^)]+)\)", _fix, body)
 
 
-def _yaml_quote(value: str) -> str:
-    """Wrap value in double quotes if it contains YAML-special characters."""
-    if ":" in value or "`" in value or "#" in value:
-        return '"' + value.replace('"', '\\"') + '"'
-    return value
+def _yaml_dq(value: str) -> str:
+    """Render value as a double-quoted YAML scalar (safe for any content)."""
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
 # ── Quarto helpers ────────────────────────────────────────────────────────────
@@ -101,21 +99,24 @@ def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
     ext = ".pdf" if fmt == "typst" else f".{fmt}"
 
     with tempfile.TemporaryDirectory() as tmp:
+        # Pass title/author/date via a metadata file, not --metadata: a metadata
+        # file populates the HTML <title>, whereas --metadata leaves <title> as
+        # the input filename and embeds literal quotes in the title block.
+        meta_yml = os.path.join(tmp, "_meta.yml")
+        with open(meta_yml, "w") as mf:
+            mf.write(f"title: {_yaml_dq(title)}\n")
+            mf.write(f"author: {_yaml_dq(author)}\n")
+            if date:
+                mf.write(f"date: {_yaml_dq(date)}\n")
         cmd = [
             "quarto", "render", src,
             "--to", fmt,
             "--output-dir", tmp,
             "--metadata-file", _NBA_YML,
-            "--metadata", f"title:{_yaml_quote(title)}",
-            "--metadata", f"author:{_yaml_quote(author)}",
+            "--metadata-file", meta_yml,
         ]
         if toc:
             cmd += ["--metadata", "toc:true"]
-        if date:
-            date_yml = os.path.join(tmp, "_date.yml")
-            with open(date_yml, "w") as _f:
-                _f.write(f'date: "{date}"\n')
-            cmd += ["--metadata-file", date_yml]
         if extra_meta:
             for k, v in extra_meta.items():
                 cmd += ["--metadata", f"{k}:{v}"]
