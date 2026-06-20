@@ -18,6 +18,8 @@ import sys
 import numpy as np
 import pandas as pd
 
+from nbakit.textfmt import section as _section_str, subsection as _subsection_str
+
 from knicks_2026_data import (
     KNICKS_TEAM_ID,
     SUBJECT_YEAR,
@@ -75,12 +77,11 @@ def _pct_rank(series: pd.Series, value: float, ascending: bool = True) -> float:
 
 
 def _hdr(title: str) -> str:
-    width = 72
-    return f"\n{'═' * width}\n{title}\n{'─' * width}"
+    return _section_str(title)
 
 
 def _subhdr(title: str) -> str:
-    return f"\n── {title} ──"
+    return _subsection_str(title)
 
 
 # ── Section 1: Raw claim ─────────────────────────────────────────────────────

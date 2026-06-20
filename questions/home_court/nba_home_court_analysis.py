@@ -22,6 +22,8 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 from nba_api.stats.library.parameters import SeasonType
 
+from nbakit.textfmt import section as _section_str, stars as _stars, p_value as _fmt_p
+
 import nba_home_court_data as nba
 
 
@@ -231,21 +233,7 @@ def _header(title: str) -> None:
 
 
 def _section(title: str) -> None:
-    pad = max(0, _W - 5 - len(title))
-    print(f"\n─── {title} {'─' * pad}")
-
-
-def _stars(p: float) -> str:
-    if p < 0.001: return "***"
-    if p < 0.01:  return " **"
-    if p < 0.05:  return "  *"
-    return "   "
-
-
-def _fmt_p(p: float) -> str:
-    if np.isnan(p):
-        return "n/a"
-    return "<0.001" if p < 0.001 else f"{p:.3f}"
+    print(_section_str(title, _W))
 
 
 def _mcfadden(model) -> float:
