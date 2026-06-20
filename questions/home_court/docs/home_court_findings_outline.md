@@ -38,7 +38,7 @@
 - **Where the trend is headed:** 3PA share approaching ceiling (~40%); league OREB rate approaching floor (~26%, down from 33%). If both forces are near their asymptotes, pace of decline should slow. Floor from empty-arena data: home teams won 51% with no crowd/bias/prep edge, probably the long-run lower bound. Information diffusion as mechanism is not basketball-specific: other sports investing heavily in analytics are likely on the same trajectory (prediction, not tested here).
 **Figures:**
 
-![Season trends](../generated/images/nba_home_court_advantage_season.svg){#fig-advantage-season}
+![Season trends](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
 ---
 
@@ -61,9 +61,9 @@
   - Playoff rest confounded: controlling for quality, rest shrinks to nothing (RESULTS rest +1.6 pp p=0.113; quality_diff dominant).
 **Figures:**
 
-![Box-score differentials](../generated/images/nba_home_court_advantage_differentials.svg){#fig-advantage-differentials}
+![Box-score differentials](../generated/images/home_court_advantage_differentials.svg){#fig-advantage-differentials}
 
-![Rest & altitude (home win % by rest situation; altitude teams vs league)](../generated/images/nba_home_court_rest_altitude.svg){#fig-rest-altitude}
+![Rest & altitude (home win % by rest situation; altitude teams vs league)](../generated/images/home_court_rest_altitude.svg){#fig-rest-altitude}
 
 ---
 
@@ -100,19 +100,19 @@
 - Data most consistent with information diffusion: as analytical strategies spread uniformly across all 30 teams, strategies converged toward the same optima regardless of venue, and the home familiarity advantage compressed alongside them.
 **Figures:**
 
-![Mediation shares (leads the section as the roadmap)](../generated/images/nba_home_court_mediation.svg){#fig-mediation}
+![Mediation shares (leads the section as the roadmap)](../generated/images/home_court_mediation.svg){#fig-mediation}
 
-![Shot zones](../generated/images/nba_home_court_shot_zones.svg){#fig-shot-zones}
+![Shot zones](../generated/images/home_court_shot_zones.svg){#fig-shot-zones}
 
-![3PA vs HCA](../generated/images/nba_home_court_3pa.svg){#fig-3pa}
+![3PA vs HCA](../generated/images/home_court_3pa.svg){#fig-3pa}
 
-![Rebounding decomposition (home vs away OREB rates converging; share advantage vs league OREB rate)](../generated/images/nba_home_court_rebounding.svg){#fig-rebounding}
+![Rebounding decomposition (home vs away OREB rates converging; share advantage vs league OREB rate)](../generated/images/home_court_rebounding.svg){#fig-rebounding}
 
-![Referee era distribution](../generated/images/nba_home_court_referee_era.svg){#fig-referee-era}
+![Referee era distribution](../generated/images/home_court_referee_era.svg){#fig-referee-era}
 
-![3PA-control channel test (which fades survive holding 3-point volume constant)](../generated/images/nba_home_court_3pa_control.svg){#fig-3pa-control}
+![3PA-control channel test (which fades survive holding 3-point volume constant)](../generated/images/home_court_3pa_control.svg){#fig-3pa-control}
 
-![Bayesian change-point model (k=0/1/2/3 fitted lines; posterior distribution over break year for k=1)](../generated/images/nba_home_court_bayesian_changepoint.svg){#fig-bayesian-changepoint}
+![Bayesian change-point model (k=0/1/2/3 fitted lines; posterior distribution over break year for k=1)](../generated/images/home_court_bayesian_changepoint.svg){#fig-bayesian-changepoint}
 
 ---
 
@@ -126,18 +126,18 @@
 - **Back-to-backs / load management (@fig-back-to-back):** visitor B2B rate fell **35.0% → 18.8%** (1984–94 → 2023–26), confirming the blog's premise. But shift-share of the −9.29 pp RS decline: frequency component only **−0.71 pp (~8%)**; win-rate component −8.59 pp (~92%). Per-situation home win%: visitor-B2B-only 64.7% vs neither 59.1% (narrow gap). RS only (B2Bs rare in playoffs). Scheduling nudged HCA, didn't drive it.
 - **Pace of play:** moves independently of HCA. *RESULTS reg season-level r=+0.241 (p=0.120, wrong direction); playoffs r=−0.142 (ns).*
 
-![Back-to-back / load management (visitor B2B rate by era; shift-share of decline)](../generated/images/nba_home_court_back_to_back.svg){#fig-back-to-back}
+![Back-to-back / load management (visitor B2B rate by era; shift-share of decline)](../generated/images/home_court_back_to_back.svg){#fig-back-to-back}
 
-![Pace vs HCA](../generated/images/nba_home_court_pace.svg){#fig-pace}
+![Pace vs HCA](../generated/images/home_court_pace.svg){#fig-pace}
 
 - **Home vs. away 3PA differential:** home and away teams attempt threes at nearly identical rates; the trend moves the wrong direction — home teams now take *more* threes than visitors (+0.44 pp in 2023–26 vs. −0.35 pp in 1984–94, trend +0.018***/yr). Not the mechanism behind the decline. *RESULTS 3PA rate diff trend +0.018***/yr.*
 - **Competitive balance:** can't explain the long-run decline. Parity is mean-reverting (I(0) stationary) while HCA has declined steadily for 40 years — structurally, they can't be linked as cause and effect. Raw correlation near zero (RESULTS r=−0.092, p=0.556); era pattern inconsistent. Small wrinkle: detrended association emerges (first-diff r=−0.330 p=0.033; residual r=−0.345 p=0.023) but modest, small sample — means year-to-year parity fluctuations weakly track HCA fluctuations, not that parity drives the decline.
 
-![Parity vs HCA](../generated/images/nba_home_court_parity.svg){#fig-parity}
+![Parity vs HCA](../generated/images/home_court_parity.svg){#fig-parity}
 
 - **Crowd size:** arenas near capacity throughout (~17k→18k+), records set as HCA hit lows. *RESULTS r=+0.248 (p=0.212); detrended ns.* Playoffs ~guaranteed sellouts yet eroded too.
 
-![Attendance & empty-arena](../generated/images/nba_home_court_attendance.svg){#fig-attendance}
+![Attendance & empty-arena](../generated/images/home_court_attendance.svg){#fig-attendance}
 
 - **Empty-arena experiment (2020–21):** empty **51.0%** vs. fans present **58.5%** (RESULTS n=573 vs 591). Presence > count (dose-response +0.51 pp/1000 fans, p=0.184 ns). Vanished when arenas refilled → a switch, not a slow dial.
 - **All together:** full model — era effect ≈ half of predictive power; situational factors ≈ other half. *RESULTS Shapley: Era 53%, Rest 17.9%, Altitude 23.7%, TZ 1.4%, COVID 4.5%.* Net era decline **−9.0 pp** (1984–94 → 2023–26) after all controls.
@@ -151,9 +151,9 @@
   - *RESULTS by game:* G1 **69.4%**, G2 **71.9%**, G3 **55.0%**, G4 **55.3%**, G5 **74.5%**, G6 **55.5%**, G7 **63.8%**. χ²(6)=84.54, p<0.001.
   - No evidence road teams adapt as series deepens; home-away split explains it entirely.
 
-![Playoff win % by game number](../generated/images/nba_home_court_series_breakdown.svg){#fig-series-breakdown}
+![Playoff win % by game number](../generated/images/home_court_series_breakdown.svg){#fig-series-breakdown}
 
-![Playoff seeding decomposition (decline survives quality control; weaker host still wins)](../generated/images/nba_home_court_playoff_quality.svg){#fig-playoff-quality}
+![Playoff seeding decomposition (decline survives quality control; weaker host still wins)](../generated/images/home_court_playoff_quality.svg){#fig-playoff-quality}
 
 - **Decline is real weakening, not weaker seeds (@fig-playoff-quality):**
   - *RESULTS:* year trend retained **102%** after quality control; quality absorbs −2%.
@@ -161,7 +161,7 @@
   - Seed-quality gap did trend slightly (−0.00026/yr, p<0.001) but doesn't explain HCA decline.
 - **2014 format change didn't cause drop:** raw −6.8 pp from 2003–13 → 2014–26 (z=3.10, p=0.002), but trend-controlled dummy ns (p=0.298); LR χ²(3)=4.68, p=0.197. Format table (4 periods).
 
-![Win % by format period](../generated/images/nba_home_court_advantage_format_bars.svg){#fig-advantage-format-bars}
+![Win % by format period](../generated/images/home_court_advantage_format_bars.svg){#fig-advantage-format-bars}
 
 ---
 
@@ -172,15 +172,15 @@
 
 - **Referee differences real but detailed (@fig-referee-rankings):** top/bottom 15 officials ranked by career mean shrunken home foul differential — Garretson, Crawford, Rush most home-favoring; Brothers, Tiven, Forte most even-handed.
 
-![Referee rankings](../generated/images/nba_home_court_referee_rankings.svg){#fig-referee-rankings}
+![Referee rankings](../generated/images/home_court_referee_rankings.svg){#fig-referee-rankings}
 
-![Franchise HCA](../generated/images/nba_home_court_team_hca.svg){#fig-team-hca}
+![Franchise HCA](../generated/images/home_court_team_hca.svg){#fig-team-hca}
 
 - **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Apparent postseason home-court strength reflects being a good team that plays more home games.
 - **Home court worth more in playoffs:** reg **~20 pp** vs. playoffs **~27 pp** → **+7 pp postseason premium** (RESULTS +7.2 pp, SD 7.4). Reg/playoff consistency positive but weak (raw r=+0.362, p=0.042).
 - **Player-tracking caught the final chapter of the rebounding fade (@fig-rebounding-tracking):** OREB-conversion advantage fell from ~1.5 pp (mid-2010s) to below zero (2025–26); box-out advantage essentially zero throughout. Cameras confirmed a fade already nearly complete before 2013–14. *RESULTS: OREB conversion p=0.024*, box-out p=0.775.*
 
-![Player-tracking rebounding](../generated/images/nba_home_court_rebounding_tracking.svg){#fig-rebounding-tracking}
+![Player-tracking rebounding](../generated/images/home_court_rebounding_tracking.svg){#fig-rebounding-tracking}
 
 - **Margins polarizing — blowouts getting bigger:** home wins bigger, home losses worse, even as home teams win less.
   - Not just a composition effect — confirmed by unconditional quantile regression.
@@ -189,7 +189,7 @@
   - ~0.2–0.3 pts/yr widening in both contexts. Era of close games → era of blowouts.
 - **Team strategy implications:** Rebounding is the most tractable remaining home-court lever (30% of decline; only 8% absorbed by 3PA control; tracking data shows conversion edge still declining). Turnover channel has independent component (~46% not 3PA-driven); pressure defense at home targets it. Crowd presence = switch (even a few thousand restores full effect; size above that adds little). Away teams: 3PA has already largely equalized the shooting channel. Offensive glass is where road disadvantage persists and no current trend is closing it. Rest: away team entering better-rested = ~3 pp drop in home win rate, available from scheduling.
 
-![Margin trends](../generated/images/nba_home_court_margin.svg){#fig-margin}
+![Margin trends](../generated/images/home_court_margin.svg){#fig-margin}
 
 ---
 

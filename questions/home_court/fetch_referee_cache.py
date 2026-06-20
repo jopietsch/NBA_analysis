@@ -9,7 +9,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from nba_home_court_data import (
+from home_court_data import (
     START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, fetch_referee_data
 )
 

@@ -218,10 +218,10 @@ each one-unit step in *x*.
 **A worked example.** Take one dot per season, the home win %, and fit a line
 against the year. That's the regular-season decline: a slope of **-0.250 pp per
 year** (the OLS line in `RESULTS.md`'s decline section). The
-`nba_home_court_advantage_season.svg` figure is this line drawn through
+`home_court_advantage_season.svg` figure is this line drawn through
 the season dots.
 
-![Season-level home win % with fitted decline](home_court/generated/images/nba_home_court_advantage_season.svg)
+![Season-level home win % with fitted decline](home_court/generated/images/home_court_advantage_season.svg)
 
 **R²: how tight is the fit?** Alongside the slope you'll see **R² = 0.745**.
 R² ("R-squared") is the share of the up-and-down variation in the points that the
@@ -818,7 +818,7 @@ changed.
 
 The top rises *as* the bottom falls. The spread between them (Q90 - Q10) widens
 by **+0.22 pts/yr**, confirmed **polarization**: home blowout wins *and* home
-blowout losses are both becoming more common. The `nba_home_court_margin.png`
+blowout losses are both becoming more common. The `home_court_margin.png`
 figure shows this fanning-apart visually.
 
 **The trap it avoids: this is the whole reason the section exists.** The simpler
@@ -905,7 +905,7 @@ leaving well-measured ones (Denver) essentially untouched.
 Read the figure as "length of the red arrow = how much we distrust the raw
 number." Kansas City's huge error bar (only 82 games) earns an 11.6 pp pull;
 Denver's tight bar (1,730 games) barely moves. The project's own
-`nba_home_court_team_hca.png` shows the same raw-vs-shrunken comparison for all 39
+`home_court_team_hca.png` shows the same raw-vs-shrunken comparison for all 39
 franchises.
 
 **And when there's no true spread (playoffs)?** Shrinkage collapses *every*

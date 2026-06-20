@@ -4,17 +4,17 @@ NBA Home Court Advantage — orchestrates the full analysis pipeline.
 Run this module to fetch data (cached under cache/), generate all PNG charts,
 run regression analysis, and print results to stdout.
 
-  MPLBACKEND=Agg python3 nba_home_court_advantage.py
+  MPLBACKEND=Agg python3 home_court.py
 
-Data pipeline:  nba_home_court_data.py
-Visualization:  nba_home_court_plots.py
-Analysis:       nba_home_court_analysis.py
+Data pipeline:  home_court_data.py
+Visualization:  home_court_plots.py
+Analysis:       home_court_analysis.py
 """
 
 import numpy as np
 from nba_api.stats.library.parameters import SeasonType
 
-from nba_home_court_data import (
+from home_court_data import (
     START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, BBR_START_YEAR,
     fetch_all_seasons,
     compute_playoff_format_averages,
@@ -27,7 +27,7 @@ from nba_home_court_data import (
     fetch_all_referee_data, compute_referee_bias_stats,
     compute_attendance_season_stats, compute_attendance_covid_doseresponse,
 )
-from nba_home_court_plots import (
+from home_court_plots import (
     plot_results, plot_mediation, plot_rest_altitude, plot_channel_3pa_control,
     plot_differential_analysis, plot_rebound_decomposition,
     plot_margin_analysis, plot_parity_analysis,
@@ -56,7 +56,7 @@ def main() -> None:
     )
     plot_differential_analysis(reg_diff_seasons, reg_diff_stats, po_diff_seasons, po_diff_stats)
 
-    import nba_home_court_analysis as _reg
+    import home_court_analysis as _reg
     game_df = _reg.build_game_dataset()
     plot_mediation(_reg.compute_mediation_decomposition(game_df))
     plot_rest_altitude(_reg.compute_rest_altitude_plotdata(game_df))

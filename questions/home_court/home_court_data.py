@@ -1,9 +1,9 @@
 """
-nba_home_court_data.py — data pipeline for NBA home court advantage analysis.
+home_court_data.py — data pipeline for NBA home court advantage analysis.
 
 Fetches game logs from NBA.com via nba_api, caches them as CSVs, and provides
-fetch_* and compute_* functions consumed by nba_home_court_plots and
-nba_home_court_analysis.
+fetch_* and compute_* functions consumed by home_court_plots and
+home_court_analysis.
 
 Data sources:
   - NBA.com via the nba_api package (LeagueGameFinder etc.): every game result,

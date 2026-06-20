@@ -22,15 +22,15 @@ import re
 import pandas as pd
 import pytest
 
-import nba_home_court_analysis as reg
-import nba_home_court_data as nba
+import home_court_analysis as reg
+import home_court_data as nba
 
 RESULTS_PATH = os.path.join(os.path.dirname(__file__), "..", "docs", "RESULTS.md")
 TEST_RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 # Canonical shared monorepo cache (nba_analysis/cache), the same dir the
 # regression pipeline reads from — not a stale per-question cache/ directory.
-from nba_home_court_data import CACHE_DIR
+from home_court_data import CACHE_DIR
 
 # Substrings that must appear verbatim in RESULTS.md. Each pins one headline
 # result; a shift in any of these numbers fails the test at that line.
@@ -91,7 +91,7 @@ def test_results_md_matches_test_data(monkeypatch):
     or run the helper directly:
         python3 -c "
         import os, pandas as pd
-        import nba_home_court_data as nba, nba_home_court_analysis as reg
+        import home_court_data as nba, home_court_analysis as reg
         nba.CACHE_DIR = 'tests/data'
         nba.compute_attendance_season_stats = lambda *a, **k: ([], [])
         nba.compute_attendance_covid_doseresponse = lambda *a, **k: pd.DataFrame()
@@ -145,5 +145,5 @@ def test_results_md_matches_regeneration(monkeypatch):
     assert _normalize(regenerated) == _normalize(committed), (
         "Regenerated regression output differs from committed RESULTS.md. "
         "If the change is intended, re-run "
-        "`MPLBACKEND=Agg python3 nba_home_court_advantage.py` and commit RESULTS.md."
+        "`MPLBACKEND=Agg python3 home_court.py` and commit RESULTS.md."
     )

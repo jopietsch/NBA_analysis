@@ -10,7 +10,7 @@ analyzes how home court advantage has changed over time, and investigates the me
 pip install -r requirements.txt
 
 # Run the full analysis — generates all PNGs and prints regression output
-MPLBACKEND=Agg python3 nba_home_court_advantage.py
+MPLBACKEND=Agg python3 home_court.py
 
 # Generate the PDF report (run after the above)
 python3 generate_report.py
@@ -26,7 +26,7 @@ See `home_court_findings.md` for narrative interpretation and `RESULTS.md` for t
 
 Running the analysis produces eighteen PNG charts (written to `generated/`) and prints fourteen regression
 analyses to stdout (captured in `RESULTS.md` in the repo root). Running `generate_report.py` assembles
-everything into `generated/nba_home_court_advantage_report.pdf` — sixteen sections plus an appendix with
+everything into `generated/home_court_report.pdf` — sixteen sections plus an appendix with
 the full regression tables. All generated PNGs and PDFs live under `generated/` (gitignored); `RESULTS.md`
 is the one generated file kept in the repo root.
 
@@ -42,10 +42,10 @@ Use this prompt with Claude Code:
 Before updating home_court_findings.md, verify that the analysis outputs are current:
 
 1. Check that RESULTS.md and all chart (SVG) files exist and were modified more recently
-   than nba_home_court_advantage.py and nba_home_court_analysis.py.
-   Use: stat -f "%m %N" RESULTS.md generated/*.svg nba_home_court_advantage.py nba_home_court_analysis.py
+   than home_court.py and home_court_analysis.py.
+   Use: stat -f "%m %N" RESULTS.md generated/*.svg home_court.py home_court_analysis.py
    If any output is older than the source files, stop and say so — the analysis
-   must be re-run first: MPLBACKEND=Agg python3 nba_home_court_advantage.py
+   must be re-run first: MPLBACKEND=Agg python3 home_court.py
 
 2. Read RESULTS.md in full to understand the current numbers, significance levels,
    and era-by-era breakdowns.

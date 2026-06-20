@@ -1,5 +1,5 @@
 """
-Smoke tests for the plotting layer (nba_home_court_plots.py).
+Smoke tests for the plotting layer (home_court_plots.py).
 
 These do NOT check pixels — image-comparison tests are brittle across font and
 library versions. They feed each plot_* function minimal, well-formed synthetic
@@ -17,8 +17,8 @@ matplotlib.use("Agg")  # no display; must precede any pyplot import
 import matplotlib.pyplot as plt
 import pytest
 
-import nba_home_court_data as nba
-import nba_home_court_plots as plots
+import home_court_data as nba
+import home_court_plots as plots
 
 SEASONS = [nba.short_label(y) for y in range(nba.START_YEAR, nba.END_YEAR + 1)]
 N = len(SEASONS)

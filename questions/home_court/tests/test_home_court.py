@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import nba_home_court_data as nba
+import home_court_data as nba
 
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 
@@ -1252,7 +1252,7 @@ class TestShapleyShares:
 
     def _make_reg_df(self, n=200, seed=42):
         """Minimal synthetic game-level DataFrame for testing Shapley fits."""
-        import nba_home_court_analysis as reg_mod
+        import home_court_analysis as reg_mod
         rng = np.random.default_rng(seed)
         year = rng.integers(1984, 2025, size=n)
         era = np.where(year <= 1994, "1984–94",
@@ -1276,20 +1276,20 @@ class TestShapleyShares:
         })
 
     def test_shares_sum_to_100(self):
-        import nba_home_court_analysis as reg_mod
+        import home_court_analysis as reg_mod
         df = self._make_reg_df()
         shares = reg_mod._compute_shapley_shares(df, "1984–94")
         total = sum(shares.values())
         assert abs(total - 100.0) < 0.5  # allow small floating-point discrepancy
 
     def test_all_shares_finite(self):
-        import nba_home_court_analysis as reg_mod
+        import home_court_analysis as reg_mod
         df = self._make_reg_df()
         shares = reg_mod._compute_shapley_shares(df, "1984–94")
         assert all(np.isfinite(v) for v in shares.values())
 
     def test_returns_all_five_blocks(self):
-        import nba_home_court_analysis as reg_mod
+        import home_court_analysis as reg_mod
         df = self._make_reg_df()
         shares = reg_mod._compute_shapley_shares(df, "1984–94")
         assert set(shares.keys()) == {"era", "rest", "altitude", "tz", "covid"}

@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import nba_home_court_data as nba
-import nba_home_court_analysis as reg
+import home_court_data as nba
+import home_court_analysis as reg
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

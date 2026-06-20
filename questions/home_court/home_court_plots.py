@@ -1,8 +1,8 @@
 """
-nba_home_court_plots.py — visualization for NBA home court advantage analysis.
+home_court_plots.py — visualization for NBA home court advantage analysis.
 
 All plot_* functions that generate and save PNG charts. Data is provided
-by nba_home_court_data; this module adds only matplotlib rendering.
+by home_court_data; this module adds only matplotlib rendering.
 """
 
 import os
@@ -13,7 +13,7 @@ import matplotlib.patches as mpatches
 import matplotlib.ticker as mticker
 from scipy.stats import pearsonr
 
-from nba_home_court_data import (
+from home_court_data import (
     ERA_DEFS, COVID_SEASONS,
     label_to_year, bucket_stats_by_era, _align_to_seasons, season_range_label,
 )
@@ -228,10 +228,10 @@ def plot_results(
         plt.tight_layout()
         save_chart(name, OUTPUT_DIR)
 
-    _save("nba_home_court_advantage_season.svg",
+    _save("home_court_advantage_season.svg",
           lambda ax: _draw_season_overview(ax, reg_seasons, reg_pcts, po_seasons, po_pcts),
           (14, 7))
-    _save("nba_home_court_advantage_format_bars.svg",
+    _save("home_court_advantage_format_bars.svg",
           lambda ax: _draw_paired_bars(ax, format_reg_avg, format_po_avg, format_labels_short,
                                        "Regular season vs playoffs\nhome win % by playoff format period"),
           (5, 3))
@@ -244,7 +244,7 @@ def plot_bayesian_changepoint(results: dict) -> None:
     breaks, labelled with each option's probability and best-fit break years.
     Right: for the one-break option, how likely each year is to be the break.
 
-    Saves → nba_home_court_bayesian_changepoint.svg
+    Saves → home_court_bayesian_changepoint.svg
     """
     years    = np.array(results["years"])
     pct      = np.array(results["pct"])
@@ -338,7 +338,7 @@ def plot_bayesian_changepoint(results: dict) -> None:
     ax_r.grid(axis="y", alpha=0.35, linewidth=0.6)
 
     plt.tight_layout()
-    save_chart("nba_home_court_bayesian_changepoint.svg", OUTPUT_DIR)
+    save_chart("home_court_bayesian_changepoint.svg", OUTPUT_DIR)
 
 
 def plot_rest_altitude(data: dict) -> None:
@@ -409,7 +409,7 @@ def plot_rest_altitude(data: dict) -> None:
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
-    save_chart("nba_home_court_rest_altitude.svg", OUTPUT_DIR)
+    save_chart("home_court_rest_altitude.svg", OUTPUT_DIR)
 
 
 def plot_channel_3pa_control(data: dict) -> None:
@@ -465,7 +465,7 @@ def plot_channel_3pa_control(data: dict) -> None:
     axes[0].text(-0.45, 4, "fully the three-point story", fontsize=7.5, color="#444", va="bottom")
 
     plt.tight_layout()
-    save_chart("nba_home_court_3pa_control.svg", OUTPUT_DIR)
+    save_chart("home_court_3pa_control.svg", OUTPUT_DIR)
 
 
 def plot_mediation(decomp: dict) -> None:
@@ -474,7 +474,7 @@ def plot_mediation(decomp: dict) -> None:
     level (left) and of its 40-year decline (right), regular season vs playoffs.
 
     Renders the same numbers RESULTS.md prints; the dict comes from
-    nba_home_court_analysis.compute_mediation_decomposition(). Bars are
+    home_court_analysis.compute_mediation_decomposition(). Bars are
     normalized to 100%; the headline at each bar's end is how much of the
     level/decline the four channels capture.
     """
@@ -532,7 +532,7 @@ def plot_mediation(decomp: dict) -> None:
                framealpha=0.85, edgecolor="#ddd", bbox_to_anchor=(0.5, -0.04))
 
     plt.tight_layout(rect=(0, 0.05, 1, 0.95))
-    save_chart("nba_home_court_mediation.svg", OUTPUT_DIR)
+    save_chart("home_court_mediation.svg", OUTPUT_DIR)
 
     # Individual panels for use in separate sections.
     for which, title, headline_key, verb, suffix, resid_label in [
@@ -547,7 +547,7 @@ def plot_mediation(decomp: dict) -> None:
         fig_s.legend(handles=h, fontsize=9, ncol=3, loc="lower center",
                      framealpha=0.85, edgecolor="#ddd", bbox_to_anchor=(0.5, -0.04))
         plt.tight_layout(rect=(0, 0.08, 1, 1))
-        save_chart(f"nba_home_court_mediation_{suffix}.svg", OUTPUT_DIR)
+        save_chart(f"home_court_mediation_{suffix}.svg", OUTPUT_DIR)
 
 
 def plot_differential_analysis(
@@ -590,7 +590,7 @@ def plot_differential_analysis(
             ax.set_xlabel(note, fontsize=8, color=GRAY)
 
     plt.tight_layout()
-    save_chart("nba_home_court_advantage_differentials.svg", OUTPUT_DIR)
+    save_chart("home_court_advantage_differentials.svg", OUTPUT_DIR)
 
 
 def plot_rebound_decomposition(
@@ -696,7 +696,7 @@ def plot_rebound_decomposition(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
 
     plt.tight_layout()
-    save_chart("nba_home_court_rebounding.svg", OUTPUT_DIR)
+    save_chart("home_court_rebounding.svg", OUTPUT_DIR)
 
 
 def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
@@ -731,7 +731,7 @@ def plot_tracking_rebounding(seasons: list[str], stats: dict) -> None:
         ax.set_xlabel(note, fontsize=8, color=GRAY)
 
     plt.tight_layout()
-    save_chart("nba_home_court_rebounding_tracking.svg", OUTPUT_DIR)
+    save_chart("home_court_rebounding_tracking.svg", OUTPUT_DIR)
 
 
 def plot_margin_analysis(
@@ -868,7 +868,7 @@ def plot_margin_analysis(
         ax4.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
-    save_chart("nba_home_court_margin.svg", OUTPUT_DIR)
+    save_chart("home_court_margin.svg", OUTPUT_DIR)
 
 
 def plot_back_to_back(data: dict) -> None:
@@ -924,7 +924,7 @@ def plot_back_to_back(data: dict) -> None:
                   fontsize=10.5, fontweight="bold", color="#2c2c2a", pad=6)
 
     plt.tight_layout()
-    save_chart("nba_home_court_back_to_back.svg", OUTPUT_DIR)
+    save_chart("home_court_back_to_back.svg", OUTPUT_DIR)
 
 
 def plot_parity_analysis(
@@ -1000,7 +1000,7 @@ def plot_parity_analysis(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
 
     plt.tight_layout()
-    save_chart("nba_home_court_parity.svg", OUTPUT_DIR)
+    save_chart("home_court_parity.svg", OUTPUT_DIR)
 
 
 def plot_series_breakdown(
@@ -1071,7 +1071,7 @@ def plot_series_breakdown(
                title="Era", title_fontsize=8)
 
     plt.tight_layout()
-    save_chart("nba_home_court_series_breakdown.svg", OUTPUT_DIR)
+    save_chart("home_court_series_breakdown.svg", OUTPUT_DIR)
 
 
 def plot_playoff_quality(data: dict) -> None:
@@ -1128,7 +1128,7 @@ def plot_playoff_quality(data: dict) -> None:
                   fontsize=10.5, fontweight="bold", color="#2c2c2a", pad=6)
 
     plt.tight_layout()
-    save_chart("nba_home_court_playoff_quality.svg", OUTPUT_DIR)
+    save_chart("home_court_playoff_quality.svg", OUTPUT_DIR)
 
 
 def plot_shot_zone_analysis(
@@ -1178,7 +1178,7 @@ def plot_shot_zone_analysis(
         ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
-    save_chart("nba_home_court_shot_zones.svg", OUTPUT_DIR)
+    save_chart("home_court_shot_zones.svg", OUTPUT_DIR)
 
 
 def _scatter_panel(
@@ -1287,7 +1287,7 @@ def plot_3pa_hca_analysis(
                    "League 3PA rate (% of FGA)", fmt_x=True)
 
     plt.tight_layout()
-    save_chart("nba_home_court_3pa.svg", OUTPUT_DIR)
+    save_chart("home_court_3pa.svg", OUTPUT_DIR)
 
 
 def plot_pace_hca_analysis(
@@ -1350,7 +1350,7 @@ def plot_pace_hca_analysis(
                    "Pace (possessions per 48 min)")
 
     plt.tight_layout()
-    save_chart("nba_home_court_pace.svg", OUTPUT_DIR)
+    save_chart("home_court_pace.svg", OUTPUT_DIR)
 
 
 def plot_team_hca_analysis(
@@ -1480,7 +1480,7 @@ def plot_team_hca_analysis(
                  fontsize=12, color=GRAY)
 
     plt.tight_layout()
-    save_chart("nba_home_court_team_hca.svg", OUTPUT_DIR)
+    save_chart("home_court_team_hca.svg", OUTPUT_DIR)
 
 
 def plot_team_hca_by_era(
@@ -1494,7 +1494,7 @@ def plot_team_hca_by_era(
     Dumbbell chart: per-franchise HCA in the early era vs the recent era.
     Sorted by early-era HCA so teams that started highest appear at the top.
     Merges within-city name changes (Bullets→Wizards, LA/Los Angeles Clippers).
-    Saves → nba_home_court_team_hca_era.svg
+    Saves → home_court_team_hca_era.svg
     """
     _NAME_MAP = {
         "Washington Bullets": "Washington Wizards",
@@ -1572,14 +1572,14 @@ def plot_team_hca_by_era(
     ax.grid(axis="x", alpha=0.3, linewidth=0.6)
 
     plt.tight_layout()
-    save_chart("nba_home_court_team_hca_era.svg", OUTPUT_DIR)
+    save_chart("home_court_team_hca_era.svg", OUTPUT_DIR)
 
 
 def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
     """
     Single-panel: box plots of per-official era-mean foul_diff by era.
     Shows whether the distribution of referee biases has compressed over time.
-    Saves → nba_home_court_referee_era.svg
+    Saves → home_court_referee_era.svg
     """
     if not bias_stats:
         print("plot_referee_era_distribution: no bias stats, skipping.")
@@ -1627,13 +1627,13 @@ def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
                 fontsize=12, color=GRAY)
 
     plt.tight_layout()
-    save_chart("nba_home_court_referee_era.svg", OUTPUT_DIR)
+    save_chart("home_court_referee_era.svg", OUTPUT_DIR)
 
 
 def plot_referee_rankings(bias_stats: list[dict]) -> None:
     """
     Single-panel: top/bottom officials ranked by career mean home foul_diff.
-    Saves → nba_home_court_referee_rankings.svg
+    Saves → home_court_referee_rankings.svg
     """
     if not bias_stats:
         print("plot_referee_rankings: no bias stats, skipping.")
@@ -1680,7 +1680,7 @@ def plot_referee_rankings(bias_stats: list[dict]) -> None:
     plt.suptitle("Nearly every playoff referee favors the home team, but the spread is mostly noise", fontsize=13,
                  fontweight="bold", color="#2c2c2a", y=1.01)
     plt.tight_layout()
-    save_chart("nba_home_court_referee_rankings.svg", OUTPUT_DIR)
+    save_chart("home_court_referee_rankings.svg", OUTPUT_DIR)
 
 
 def plot_attendance(
@@ -1768,4 +1768,4 @@ def plot_attendance(
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
 
     plt.tight_layout()
-    save_chart("nba_home_court_attendance.svg", OUTPUT_DIR)
+    save_chart("home_court_attendance.svg", OUTPUT_DIR)

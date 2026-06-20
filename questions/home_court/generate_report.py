@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
 Generate the NBA home court advantage PDF report.
-Run after nba_home_court_advantage.py — all PNGs and RESULTS.md must exist.
+Run after home_court.py — all PNGs and RESULTS.md must exist.
 
     python3 generate_report.py
 """
 
 import os
 
-import nba_home_court_data as nba
+import home_court_data as nba
 from nbakit.report import ReportConfig, build_report
 
 OUTPUT_DIR = "generated"
@@ -41,6 +41,6 @@ if __name__ == "__main__":
             "See Appendix A for companion documents."
         ),
         include_appendix=False,
-        output_path=os.path.join(OUTPUT_DIR, "nba_home_court_advantage_report.pdf"),
-        pipeline_cmd="MPLBACKEND=Agg python3 nba_home_court_advantage.py",
+        output_path=os.path.join(OUTPUT_DIR, "home_court_report.pdf"),
+        pipeline_cmd="MPLBACKEND=Agg python3 home_court.py",
     ))

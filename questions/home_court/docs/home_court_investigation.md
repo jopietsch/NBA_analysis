@@ -1,6 +1,6 @@
 # The Investigation: What We Ruled Out
 
-*Companion to [NBA Home Court Advantage: Findings](nba_home_court_advantage_report.html). That report covers what drove the decline; this one covers what didn't, and why each hypothesis seemed reasonable before the data ruled it out.*
+*Companion to [NBA Home Court Advantage: Findings](home_court_report.html). That report covers what drove the decline; this one covers what didn't, and why each hypothesis seemed reasonable before the data ruled it out.*
 
 ---
 
@@ -48,7 +48,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The result.** Rest creates genuine variation. Home teams win about 63% of regular-season games when they enter better-rested, and 58% when the visitor has the rest edge. That 5-point gap is real. Denver and Utah add about 8 percentage points to their regular-season home win rates, the largest franchise-level effect in the dataset.
 
-![Left: home win % by rest situation. Right: altitude franchises (Denver and Utah) vs. league average, regular season and playoffs.](../generated/images/nba_home_court_rest_altitude.svg){#fig-rest-altitude}
+![Left: home win % by rest situation. Right: altitude franchises (Denver and Utah) vs. league average, regular season and playoffs.](../generated/images/home_court_rest_altitude.svg){#fig-rest-altitude}
 
 **Why neither explains the decline.** The rest gap has stayed roughly constant across all eras. It existed in the 1980s and it exists now; it did not shrink as home court eroded. Altitude's effect is confined to two franchises and has actually weakened somewhat in recent years; it can't explain a league-wide trend. In the playoffs, rest is confounded with team quality: extra days between rounds almost always mean you swept the previous series, making you likely the stronger team regardless. Control for team quality and the playoff rest advantage largely disappears. Neither factor moved in the direction or at the scale needed to drive the decline.
 
@@ -62,7 +62,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The result.** The premise is correct: visitor back-to-back frequency fell from about 35% in the 1980s to under 20% today. But the schedule change accounts for only about 0.7 percentage points of the 9-10 point regular-season decline, roughly 8%. The other 92% comes from home court eroding within every rest situation alike. In games with no back-to-back, home teams win less than they used to. In games with a tired visitor, home teams also win less than they used to. The schedule shift nudged home court; it didn't drive it down.
 
-![Left: visitor back-to-back frequency over time (the premise is correct). Right: shift-share decomposition showing 8% from schedule change, 92% from within-situation erosion.](../generated/images/nba_home_court_back_to_back.svg){#fig-back-to-back}
+![Left: visitor back-to-back frequency over time (the premise is correct). Right: shift-share decomposition showing 8% from schedule change, 92% from within-situation erosion.](../generated/images/home_court_back_to_back.svg){#fig-back-to-back}
 
 **Why the intuition overshot.** The home advantage against a tired visitor (about 65%) is only 6 points above the baseline (about 59%). Even a 16-point drop in back-to-back frequency moves the league-wide average by less than a full percentage point. The mechanism is real; the magnitude is just too small to carry the story. And crucially: if tired visitors were the main driver, you would expect the advantage to hold steady in games with rested visitors and only fall in back-to-back games. The data shows it fell equally in both.
 
@@ -76,7 +76,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The result.** No meaningful relationship in either direction. Pace fell for two decades and home court held roughly flat, then fell; pace rose sharply after 2015 and home court kept falling. The two series move independently. Within any given era, higher-pace seasons do not consistently produce higher or lower home win rates. The same holds in the playoffs.
 
-![Pace vs. home win % over time, regular season and playoffs.](../generated/images/nba_home_court_pace.svg){#fig-pace}
+![Pace vs. home win % over time, regular season and playoffs.](../generated/images/home_court_pace.svg){#fig-pace}
 
 **Why the intuition failed.** Pace changes the number of opportunities in a game, but it doesn't systematically advantage one venue over the other. More possessions means more chances for crowd effects to operate, but also more chances for the better-shooting team to assert itself, and more possessions for an efficient away offense to score. The effects run in multiple directions and wash out. The data confirms there's no net signal.
 
@@ -102,7 +102,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The result.** The raw season-level correlation between parity and home court advantage is near zero. The era breakdown actually contradicts the theory: the most unequal era (1995-01) had already seen HCA fall sharply from its 1980s peak, while the most balanced era (2002-04) saw HCA tick back up briefly. After removing the shared downtrend from both series, a small year-to-year association does emerge, but the effect is modest and nowhere near large enough to explain the 40-year decline.
 
-![Competitive balance vs. home win % per season, regular season.](../generated/images/nba_home_court_parity.svg){#fig-parity}
+![Competitive balance vs. home win % per season, regular season.](../generated/images/home_court_parity.svg){#fig-parity}
 
 **Why the intuition failed.** Competitive balance compresses outcomes symmetrically. More parity means both home and away teams face more evenly matched opponents, but it can't create an asymmetric disadvantage specifically for the home team. If anything, greater parity should make home court *more* influential, not less, since the teams are closer in talent and venue effects are more likely to be decisive. The structural argument runs the wrong direction.
 
@@ -116,7 +116,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s (the very years home win rates hit their lowest). Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court eroded right alongside the regular season.
 
-![Left: league average attendance vs. regular-season home win %, 2000–2026. Right: 2020–21 home win % by game attendance.](../generated/images/nba_home_court_attendance.svg){#fig-attendance}
+![Left: league average attendance vs. regular-season home win %, 2000–2026. Right: 2020–21 home win % by game attendance.](../generated/images/home_court_attendance.svg){#fig-attendance}
 
 **Why the intuition failed.** The dial didn't turn. Arenas stayed full. If anything, the crowd has been getting bigger in the years home court advantage has been weakest, which is the opposite of what the hypothesis predicts.
 

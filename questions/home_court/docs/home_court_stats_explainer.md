@@ -1,4 +1,4 @@
-# Statistical Explainer — `nba_home_court_analysis.py`
+# Statistical Explainer — `home_court_analysis.py`
 
 ```{=typst}
 #align(center)[_Draft_]
