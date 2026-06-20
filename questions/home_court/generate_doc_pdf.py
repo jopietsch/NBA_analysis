@@ -31,5 +31,13 @@ if __name__ == "__main__":
         out_path = args[1]
     else:
         stem = os.path.splitext(os.path.basename(md_path))[0]
-        out_path = os.path.join("generated", stem + ".pdf")
+        # Write into the source's project generated/ dir, derived from the
+        # markdown's location rather than the cwd. A doc inside docs/ lands in
+        # its project root's generated/ (home_court/docs/x.md -> home_court/
+        # generated/); a doc elsewhere lands in a sibling generated/
+        # (../stats_tutorial.md -> ../generated/).
+        src_dir = os.path.dirname(md_path)
+        if os.path.basename(src_dir) == "docs":
+            src_dir = os.path.dirname(src_dir)
+        out_path = os.path.join(src_dir, "generated", stem + ".pdf")
     build(md_path, out_path, appendix_path=appendix)

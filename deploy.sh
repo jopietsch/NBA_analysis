@@ -12,6 +12,8 @@ echo "Staging site..."
 # Copy HTMLs from every questions/* project that has a generated/ directory
 for project_dir in "$REPO_ROOT/questions"/*/; do
     project=$(basename "$project_dir")
+    # questions/generated/ holds shared, cross-project docs, not a project; handled below.
+    [[ "$project" == "generated" ]] && continue
     gen_dir="$project_dir/generated"
     [[ -d "$gen_dir" ]] || continue
     htmls=("$gen_dir"/*.html)
@@ -20,6 +22,17 @@ for project_dir in "$REPO_ROOT/questions"/*/; do
     cp "${htmls[@]}" "$STAGE/$project/"
     echo "  $project: ${#htmls[@]} files"
 done
+
+# Copy shared, cross-project docs that live in questions/generated/ (e.g. stats_tutorial)
+shared_gen="$REPO_ROOT/questions/generated"
+if [[ -d "$shared_gen" ]]; then
+    shared_htmls=("$shared_gen"/*.html)
+    if [[ -e "${shared_htmls[0]}" ]]; then
+        mkdir -p "$STAGE/guides"
+        cp "${shared_htmls[@]}" "$STAGE/guides/"
+        echo "  guides: ${#shared_htmls[@]} files"
+    fi
+fi
 
 # Build index.html using real <title> tags extracted from each HTML file
 python3 - "$STAGE" <<'PYEOF'
