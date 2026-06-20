@@ -273,3 +273,6 @@ I'm using this project as an exercise to learn Claude Code, statistics, and NBA 
     - I did make Claude create a page that goes over every statistics, why, and what it means. I'm still making me way through that.
     - I also had Claude create a tutorial based on the statics used, I'm still making my way through that.
 - Claude did write almost all the text of this document and others (Except this appendix). I have spend dozens of hours go through and make sure that I understand the text, the graphs, etc. I have forced Claude to make things coherent, corrected logic errors etc. It's like arguing with the dumbest brialliant grad student. It will do want it thinks you want, and sometims much better than you asked, but it doesn't really understand what it's doing.
+- All the code, and all the results of the statistics in checked into github
+
+If after all that I still have something wrong, please let me know.
