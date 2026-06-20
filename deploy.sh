@@ -7,14 +7,32 @@ REPO_ROOT="$(cd "$(dirname "$0")" && pwd)"
 STAGE=$(mktemp -d)
 trap 'rm -rf "$STAGE"' EXIT
 
-echo "Staging site in $STAGE..."
+echo "Staging site..."
 
-mkdir -p "$STAGE/home_court" "$STAGE/knicks_2026_historic"
+# Copy HTMLs from every questions/* project that has a generated/ directory
+for project_dir in "$REPO_ROOT/questions"/*/; do
+    project=$(basename "$project_dir")
+    gen_dir="$project_dir/generated"
+    [[ -d "$gen_dir" ]] || continue
+    htmls=("$gen_dir"/*.html)
+    [[ -e "${htmls[0]}" ]] || continue
+    mkdir -p "$STAGE/$project"
+    cp "${htmls[@]}" "$STAGE/$project/"
+    echo "  $project: ${#htmls[@]} files"
+done
 
-cp "$REPO_ROOT/questions/home_court/generated/"*.html       "$STAGE/home_court/"
-cp "$REPO_ROOT/questions/knicks_2026_historic/generated/"*.html "$STAGE/knicks_2026_historic/"
+# Build index.html using real <title> tags extracted from each HTML file
+python3 - "$STAGE" <<'PYEOF'
+import sys, re
+from pathlib import Path
 
-cat > "$STAGE/index.html" <<'EOF'
+stage = Path(sys.argv[1])
+
+def get_title(path):
+    m = re.search(r'<title>([^<]+)</title>', path.read_text(errors='replace'), re.IGNORECASE)
+    return m.group(1).strip() if m else path.stem
+
+header = """\
 <!doctype html>
 <html lang="en">
 <head>
@@ -31,31 +49,29 @@ cat > "$STAGE/index.html" <<'EOF'
 </head>
 <body>
   <h1>NBA Analysis</h1>
+"""
 
-  <h2>Home Court Advantage</h2>
-  <ul>
-    <li><a href="home_court/nba_home_court_advantage_report.html">Full report</a></li>
-    <li><a href="home_court/home_court_summary.html">Summary</a></li>
-    <li><a href="home_court/home_court_investigation.html">Ruled-out hypotheses</a></li>
-    <li><a href="home_court/nba_home_court_results.html">Regression results</a></li>
-    <li><a href="home_court/home_court_stats_explainer.html">Stats explainer</a></li>
-    <li><a href="home_court/stats_tutorial.html">Stats tutorial</a></li>
-    <li><a href="home_court/home_court_findings_outline.html">Findings outline</a></li>
-  </ul>
+sections = []
+for project_dir in sorted(stage.iterdir()):
+    if not project_dir.is_dir():
+        continue
+    htmls = sorted(project_dir.glob("*.html"))
+    if not htmls:
+        continue
+    heading = project_dir.name.replace("_", " ").title()
+    items = "\n".join(
+        f'    <li><a href="{project_dir.name}/{h.name}">{get_title(h)}</a></li>'
+        for h in htmls
+    )
+    sections.append(f"  <h2>{heading}</h2>\n  <ul>\n{items}\n  </ul>")
 
-  <h2>Knicks 2026</h2>
-  <ul>
-    <li><a href="knicks_2026_historic/knicks_2026_historic_report.html">Full report</a></li>
-    <li><a href="knicks_2026_historic/knicks_2026_historic_summary.html">Summary</a></li>
-  </ul>
-</body>
-</html>
-EOF
+footer = "</body>\n</html>"
+(stage / "index.html").write_text(header + "\n".join(sections) + "\n" + footer)
+print("  index.html generated")
+PYEOF
 
 echo "Checking for ghp-import..."
-if ! command -v ghp-import &>/dev/null; then
-  pip install --quiet ghp-import
-fi
+command -v ghp-import &>/dev/null || pip install --quiet ghp-import
 
 echo "Pushing to gh-pages..."
 ghp-import -n -p -f "$STAGE"
