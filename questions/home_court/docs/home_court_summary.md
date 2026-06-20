@@ -46,7 +46,7 @@ None of the usual explanations hold up: rule changes (with one exception, 1994â€
 
 ## What caused it
 
-Home court is fading because the on-court advantages that built it have worn away: fairer officiating narrowed the whistle (home teams once attempted roughly **2 more free throws per game** than visitors; now it's barely half), the league-wide move to the three-point line shrank the home shooting edge, and home teams lost their grip on the boards and on the turnover margin. Rebounding is the largest independent category, and the one the three-point shift doesn't explain. The crowd still shows up. The game just stopped rewarding it the way it once did.
+Home court is fading because the on-court advantages that built it have worn away: fairer officiating narrowed the whistle (home teams once attempted roughly **2 more free throws per game** than visitors; now it's barely half), the league-wide move to the three-point line shrank the home shooting edge, and home teams lost their grip on the boards and on the turnover margin. Rebounding is the largest category not influenced by the other categoires, and the one the three-point shift doesn't explain. The crowd still shows up. The game just stopped rewarding it the way it once did.
 
 ---
 
