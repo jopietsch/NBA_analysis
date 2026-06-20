@@ -16,7 +16,7 @@ MPLBACKEND=Agg python3 knicks_2026_historic.py
 Four pipeline modules plus two report generators, mirroring `nba_home_court`:
 
 - **`knicks_2026_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. `fetch_games()` pulls game logs via nba_api's `LeagueGameFinder` and caches them as CSVs under `cache/`. `compute_*` metrics turn raw frames into the numbers we rank.
-- **`knicks_2026_plots.py`** — all visualization (`plot_*` functions saving `knicks_2026_*.png`); imports the data module, holds no data logic of its own.
+- **`knicks_2026_plots.py`** — all visualization (`plot_*` functions saving `knicks_2026_*.svg`); imports the data module, holds no data logic of its own.
 - **`knicks_2026_analysis.py`** — statistical/comparative analysis; `run()` prints all sections to stdout. The method is percentile/ranking against the historical champion set.
 - **`knicks_2026_historic.py`** — pipeline orchestration only: sequences data → plots → analysis, and captures `analysis.run()`'s stdout into `RESULTS.md` inside a ``` fence. The analysis module is imported inside `main()`.
 - **`generate_report.py`** — assembles `docs/knicks_2026_historic_findings.md` prose + PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated; appendix renders `docs/RESULTS.md` verbatim.
@@ -41,7 +41,7 @@ Follow this order (same as the sibling project):
 2. **Plot** (`knicks_2026_plots.py`) — add a `plot_*`; wire its call into `main()` in `knicks_2026_historic.py`.
 3. **Analysis** (`knicks_2026_analysis.py`) — add a `run_*`; call it from `run()`. Output goes to stdout and is captured into `RESULTS.md`. Use the box-drawing header convention the appendix parser expects: `print("─── SECTION TITLE " + "─" * 50)`.
 4. **Tests** — correctness tests for new `compute_*` in `tests/test_knicks_2026.py`; a no-raise smoke test for the new `plot_*` in `tests/test_knicks_2026_plots.py`.
-5. **docs/knicks_2026_historic_findings.md** — add a `## N. Title` section with prose and `![caption](../generated/knicks_2026_*.png)` references.
+5. **docs/knicks_2026_historic_findings.md** — add a `## N. Title` section with prose and `![caption](../generated/knicks_2026_*.svg)` references.
 6. **Run** — `MPLBACKEND=Agg python3 knicks_2026_historic.py` to regenerate PNGs and `docs/RESULTS.md`, then `python3 generate_report.py`.
 
 ## Updating docs/knicks_2026_historic_findings.md

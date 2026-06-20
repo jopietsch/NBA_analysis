@@ -31,6 +31,24 @@ def output_path(name: str, output_dir: str) -> str:
     return os.path.join(output_dir, name)
 
 
+def save_chart(name: str, output_dir: str, *, fig=None,
+               facecolor: str = BG, close: bool = True) -> str:
+    """Save a chart as SVG under output_dir and print the path.
+
+    Renders label text as vector paths (``svg.fonttype='path'``) so it carries
+    into the Typst/PDF build with no font dependency, on the shared off-white
+    background with a tight bounding box. Saves the current figure unless ``fig``
+    is given. Returns the saved path.
+    """
+    plt.rcParams["svg.fonttype"] = "path"
+    path = output_path(name, output_dir)
+    (fig or plt).savefig(path, bbox_inches="tight", facecolor=facecolor)
+    print(f"Saved → {path}")
+    if close:
+        plt.close(fig) if fig is not None else plt.close()
+    return path
+
+
 # ── Axis / figure styling ────────────────────────────────────────────────────────
 
 def style_axes(ax: plt.Axes) -> None:

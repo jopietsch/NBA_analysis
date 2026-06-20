@@ -2,7 +2,7 @@
 knicks_2026_plots.py — visualization for the 2026 Knicks playoff analysis.
 
 Each plot_* function takes pre-computed frames/values, draws one figure,
-and saves to generated/knicks_2026_*.png.
+and saves to generated/knicks_2026_*.svg.
 
 Run via:  MPLBACKEND=Agg python3 knicks_2026_historic.py
 """
@@ -19,7 +19,7 @@ import pandas as pd                    # noqa: E402
 from knicks_2026_data import SUBJECT_YEAR, short_label, season_range_label, START_YEAR, END_YEAR
 from nbakit.viz import (  # noqa: E402
     BLUE, GREEN, RED, GRAY, LGRAY, BG, PANEL,
-    output_path,
+    save_chart,
     style_axes as _style,
     new_fig as _fig,
 )
@@ -31,10 +31,6 @@ KNICKS_BLUE   = "#006BB6"
 KNICKS_ORANGE = "#F58426"
 
 SUBJECT_LABEL = short_label(SUBJECT_YEAR)   # "25-26"
-
-
-def _out(name: str) -> str:
-    return output_path(name, OUTPUT_DIR)
 
 
 # ── 1. Champions ranked by playoff win rate ───────────────────────────────────
@@ -68,9 +64,7 @@ def plot_win_rate_ranking(champions: pd.DataFrame) -> str:
     ]
     ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_win_rate_ranking.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_win_rate_ranking.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -105,9 +99,7 @@ def plot_margin_ranking(champions: pd.DataFrame) -> str:
     ]
     ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_margin_ranking.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_margin_ranking.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -149,9 +141,7 @@ def plot_conference_gap(gap_table: pd.DataFrame) -> str:
     _style(ax)
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_conference_gap.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_conference_gap.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -192,9 +182,7 @@ def plot_team_srs_2026(reg_srs: pd.Series, standings: pd.DataFrame) -> str:
     ]
     ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_team_srs_2026.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_team_srs_2026.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -225,9 +213,7 @@ def plot_opponent_srs_ranking(champions: pd.DataFrame) -> str:
     ]
     ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_opponent_srs_ranking.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_opponent_srs_ranking.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -268,9 +254,7 @@ def plot_adjusted_margin_ranking(champions: pd.DataFrame) -> str:
     ]
     ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_adjusted_margin_ranking.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_adjusted_margin_ranking.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -317,9 +301,7 @@ def plot_game_margin_distribution(po_2026: pd.DataFrame) -> str:
     ]
     ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd", loc="upper left")
     fig.tight_layout()
-    path = _out("knicks_2026_game_margins.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_game_margins.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -392,9 +374,7 @@ def plot_opponent_srs_by_round(po_2026: pd.DataFrame, reg_srs: pd.Series,
     ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_opponent_by_round.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_opponent_by_round.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -453,9 +433,7 @@ def plot_market_vs_actual(ats_df: pd.DataFrame) -> str:
     ax.grid(axis="both", color="#e0dfd8", linewidth=0.7, zorder=0)
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_market_vs_actual.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_market_vs_actual.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -524,9 +502,7 @@ def plot_round_split(series_df: pd.DataFrame,
     ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
 
-    path = _out("knicks_2026_round_split.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_round_split.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
@@ -587,9 +563,7 @@ def plot_opponent_health(health_df: pd.DataFrame) -> str:
     ]
     ax.legend(handles=patches, fontsize=8, framealpha=0.85, edgecolor="#ddd")
     fig.tight_layout()
-    path = _out("knicks_2026_opponent_health.png")
-    fig.savefig(path, dpi=150, bbox_inches="tight")
-    plt.close(fig)
+    path = save_chart("knicks_2026_opponent_health.svg", OUTPUT_DIR, fig=fig)
     return path
 
 
