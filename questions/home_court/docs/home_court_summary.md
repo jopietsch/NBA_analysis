@@ -26,7 +26,7 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 Four measurable categories account for about **95%** of the entire advantage (left), in both the regular season and the playoffs: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece.
 
-The same four categories show up in both panels, but their relative weights shift (right). Shooting dominates the left panel, the single biggest piece of the advantage, but accounts for only about a fifth of the decline. Fouls account for another fifth. Three-point shooting's effects extend through foul calls and turnovers too, pushing the perimeter shift to close to half the overall story. **The piece it does not explain is rebounding — the single largest category, and the one that fades independently.**
+The same four categories show up in both panels, but their relative weights shift (right). Shooting dominates the left panel, the single biggest piece of the advantage, but accounts for only about a fifth of the decline. Fouls account for another fifth. Three-point shooting's effects extend through foul calls and turnovers too, pushing the perimeter shift to close to half the overall story. **The piece it does not explain is rebounding — the single largest category, and the one not impacted by 3PA.**
 
 ---
 
