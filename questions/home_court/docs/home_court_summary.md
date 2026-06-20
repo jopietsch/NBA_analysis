@@ -32,7 +32,7 @@ But the categories that *created* the edge are not the ones that *erased* it (ri
 
 ## 3. The rebounding edge eroded
 
-![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates (solid) and defensive-rebound rates (dotted) converging over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/nba_home_court_rebounding.svg){width=100%}
+![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates converging and crossing over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/nba_home_court_rebounding.svg){width=100%}
 
 The home rebounding edge has shrunk for 40 years, and it isn't the three-point story in disguise. Hold three-point volume constant and the shooting edge vanishes while the rebounding edge barely moves.
 
