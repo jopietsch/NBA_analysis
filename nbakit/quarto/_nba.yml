@@ -1,6 +1,6 @@
 author: "Justin Pietsch"
 date: today
-number-figures: false
+number-figures: true
 
 format:
   typst:
