@@ -249,9 +249,9 @@ def plot_results(
 def plot_bayesian_changepoint(results: dict) -> None:
     """Two-panel Bayesian change-point chart.
 
-    Left: season-level home win % with k=0, k=1 (MAP), and k=2 (MAP) fits
-    and posterior probability annotation.
-    Right: posterior distribution over break year for k=1.
+    Left: season-level home win % with fitted lines for zero, one, two, and three
+    breaks, labelled with each option's probability and best-fit break years.
+    Right: for the one-break option, how likely each year is to be the break.
 
     Saves → nba_home_court_bayesian_changepoint.svg
     """
@@ -274,7 +274,7 @@ def plot_bayesian_changepoint(results: dict) -> None:
     fig.suptitle("The decline bends at least once, near the late 1990s, but the year can't be pinned down",
                  fontsize=13, fontweight="bold", color="#2c2c2a")
     fig.text(0.5, 0.965,
-             "Regular season  |  BIC-based marginal likelihood  |  Uniform prior over k and break locations",
+             "Regular season  |  how many times the pace of decline changed, and when",
              ha="center", fontsize=9, color=GRAY)
 
     # ── Left panel: time series + model fits ─────────────────────────────────
@@ -283,17 +283,17 @@ def plot_bayesian_changepoint(results: dict) -> None:
 
     ax_l.scatter(x_idx, pct, color="#aab4bb", s=28, zorder=3, label="Season home win %")
     ax_l.plot(x_idx, fit0, color=GRAY, linewidth=1.5, linestyle="--", alpha=0.7,
-              label=f"k=0  (P={k_probs[0]:.0%})")
+              label=f"No break  ({k_probs[0]:.0%})")
     ax_l.plot(x_idx, fit1_map, color=BLUE, linewidth=2.2, zorder=4,
-              label=f"k=1  (P={k_probs[1]:.0%}, break {map_yr1})")
+              label=f"One break  ({k_probs[1]:.0%}, ~{map_yr1})")
     if fit2_map is not None and map_yrs2 is not None:
         ax_l.plot(x_idx, fit2_map, color=RED, linewidth=1.8, linestyle="-.",
                   alpha=0.85, zorder=4,
-                  label=f"k=2  (P={k_probs[2]:.0%}, breaks {map_yrs2[0]}/{map_yrs2[1]})")
+                  label=f"Two breaks  ({k_probs[2]:.0%}, {map_yrs2[0]}/{map_yrs2[1]})")
     if fit3_map is not None and map_yrs3 is not None:
         ax_l.plot(x_idx, fit3_map, color="#2a9d2a", linewidth=1.8, linestyle=":",
                   alpha=0.85, zorder=4,
-                  label=f"k=3  (P={k_probs[3]:.0%}, breaks {map_yrs3[0]}/{map_yrs3[1]}/{map_yrs3[2]})")
+                  label=f"Three breaks  ({k_probs[3]:.0%}, {map_yrs3[0]}/{map_yrs3[1]}/{map_yrs3[2]})")
 
     # Mark MAP break year
     break_x = int(np.where(years == map_yr1)[0][0])
@@ -311,7 +311,7 @@ def plot_bayesian_changepoint(results: dict) -> None:
     ax_l.set_xticklabels(years[::tick_step], rotation=45, ha="right", fontsize=8)
     ax_l.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
     ax_l.set_ylabel("Home win %", fontsize=10)
-    ax_l.set_title("HCA time series with piecewise model fits",
+    ax_l.set_title("Home win % with a fitted line for each number of breaks",
                    fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
     ax_l.legend(fontsize=8.5, framealpha=0.88, edgecolor="#ddd", loc="upper right")
     ax_l.grid(axis="y", alpha=0.35, linewidth=0.6)
@@ -328,12 +328,12 @@ def plot_bayesian_changepoint(results: dict) -> None:
 
     map_r_idx = sorted_years.index(map_yr1)
     ax_r.axvline(map_r_idx, color="#1a1a1a", linewidth=1.4, linestyle="--", alpha=0.75,
-                 label=f"MAP: {map_yr1}")
-    ax_r.text(map_r_idx + 0.3, max(probs) * 0.92, f"MAP\n{map_yr1}",
+                 label=f"Most likely: {map_yr1}")
+    ax_r.text(map_r_idx + 0.3, max(probs) * 0.92, f"Most likely\n{map_yr1}",
               fontsize=8, color="#1a1a1a")
 
-    hpd_patch = mpatches.Patch(color=BLUE, label=f"95% HPD: {hpd[0]}–{hpd[1]}")
-    grey_patch = mpatches.Patch(color="#c0c8cc", label="Outside 95% HPD")
+    hpd_patch = mpatches.Patch(color=BLUE, label=f"Likely range: {hpd[0]}–{hpd[1]}")
+    grey_patch = mpatches.Patch(color="#c0c8cc", label="Less likely")
     ax_r.legend(handles=[hpd_patch, grey_patch], fontsize=8.5, framealpha=0.88,
                 edgecolor="#ddd")
 
@@ -341,8 +341,8 @@ def plot_bayesian_changepoint(results: dict) -> None:
     ax_r.set_xticks(x_r[::tick_step_r])
     ax_r.set_xticklabels(sorted_years[::tick_step_r], rotation=45, ha="right", fontsize=8)
     ax_r.yaxis.set_major_formatter(mticker.PercentFormatter(xmax=1, decimals=0))
-    ax_r.set_ylabel("Posterior probability", fontsize=10)
-    ax_r.set_title(f"Posterior over break year  (k=1, P={k_probs[1]:.0%})",
+    ax_r.set_ylabel("Chance it's the break year", fontsize=10)
+    ax_r.set_title("If the decline has one break, where it most likely falls",
                    fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
     ax_r.grid(axis="y", alpha=0.35, linewidth=0.6)
 
