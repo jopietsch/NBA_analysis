@@ -1188,10 +1188,11 @@ class TestFetchRefereeData:
 
     def test_is_rate_limit_error_classification(self):
         import requests
-        assert nba._is_rate_limit_error(requests.exceptions.ReadTimeout("slow"))
-        assert nba._is_rate_limit_error(requests.exceptions.ConnectionError("dropped"))
-        assert nba._is_rate_limit_error(RuntimeError("HTTP 429 Too Many Requests"))
-        assert not nba._is_rate_limit_error(ValueError("missing key 'personId'"))
+        from nbakit.data import is_rate_limit_error
+        assert is_rate_limit_error(requests.exceptions.ReadTimeout("slow"))
+        assert is_rate_limit_error(requests.exceptions.ConnectionError("dropped"))
+        assert is_rate_limit_error(RuntimeError("HTTP 429 Too Many Requests"))
+        assert not is_rate_limit_error(ValueError("missing key 'personId'"))
 
 
 class TestComputeRefereeBiasStats:

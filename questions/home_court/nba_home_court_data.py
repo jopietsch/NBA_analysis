@@ -834,17 +834,6 @@ def compute_series_stats_by_era(
 # LeagueDashTeamShotLocations column names for each shot zone's FGA.
 # RA = Restricted Area, PITP = Paint In The Paint (non-RA), MR = Mid-Range,
 # LC3/RC3 = Left/Right Corner 3, ATB3 = Above the Break 3, BC = Back Court.
-# Mapping from the API's MultiIndex (zone, stat) column tuples to flat CSV names.
-_ZONE_COL_MAP: dict[tuple[str, str], str] = {
-    ("Restricted Area",       "FGA"): "FGA_RA",
-    ("In The Paint (Non-RA)", "FGA"): "FGA_NON_RA",
-    ("Mid-Range",             "FGA"): "FGA_MR",
-    ("Left Corner 3",         "FGA"): "FGA_LC3",
-    ("Right Corner 3",        "FGA"): "FGA_RC3",
-    ("Above the Break 3",     "FGA"): "FGA_ATB3",
-    ("Backcourt",             "FGA"): "FGA_BC",
-}
-
 SHOT_ZONE_GROUPS: dict[str, list[str]] = {
     "paint":    ["FGA_RA", "FGA_NON_RA"],
     "midrange": ["FGA_MR"],
@@ -855,54 +844,9 @@ SHOT_ZONE_GROUPS: dict[str, list[str]] = {
 
 
 def fetch_shot_zones(end_year: int, season_type: str, location: str) -> pd.DataFrame | None:
-    """
-    Fetch team-level shot zone FGA totals from LeagueDashTeamShotLocations,
-    split by location ('Home' or 'Road'). Cached as shot_zones_*.csv.
-    """
-    path = os.path.join(
-        CACHE_DIR,
-        f"shot_zones_{season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv",
-    )
-    if os.path.exists(path):
-        try:
-            df = pd.read_csv(path)
-        except pd.errors.EmptyDataError:
-            return None
-        return df if not df.empty else None
-
-    os.makedirs(CACHE_DIR, exist_ok=True)
-
-    try:
-        from nba_api.stats.endpoints import leaguedashteamshotlocations
-        result = leaguedashteamshotlocations.LeagueDashTeamShotLocations(
-            season=season_str(end_year),
-            season_type_all_star=season_type,
-            location_nullable=location,
-            per_mode_detailed="Totals",
-            timeout=60,
-        )
-        df = result.get_data_frames()[0]
-    except Exception as e:
-        print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}")
-        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
-        return None
-
-    if df.empty:
-        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
-        return None
-
-    # The API returns a MultiIndex DataFrame: columns are (zone_name, stat) tuples.
-    # Flatten to simple names before caching so the CSV round-trips cleanly.
-    id_map = {("", "TEAM_ID"): "TEAM_ID", ("", "TEAM_NAME"): "TEAM_NAME"}
-    col_map = {**id_map, **_ZONE_COL_MAP}
-    present = [c for c in col_map if c in df.columns]
-    df = df[present].copy()
-    df.columns = [col_map[c] for c in present]
-
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    df.to_csv(path, index=False)
-    time.sleep(SLEEP_SEC)
-    return df
+    """Team-level shot-zone FGA totals, split by location. See nbakit.data.fetch_shot_zones."""
+    return _nbakit.fetch_shot_zones(end_year, season_type, location,
+                                    cache_dir=CACHE_DIR, sleep=SLEEP_SEC)
 
 
 def _zone_pcts(df: pd.DataFrame) -> dict[str, float]:
@@ -949,97 +893,14 @@ def compute_shot_zone_stats(
 
 # ── Referee crew analysis ─────────────────────────────────────────────────────
 
-# True if an exception looks like API throttling rather than a permanent data
-# error. Lives in nbakit.data now.
-_is_rate_limit_error = _nbakit.is_rate_limit_error
-
-
 def fetch_referee_data(end_year: int, season_type: str) -> pd.DataFrame | None:
-    """
-    Fetch officials for every game in the cached game log via BoxScoreSummaryV3
-    (data_sets[3]). Caches one row per official per game as
-    cache/referee_{season}_{type}.csv with columns [GAME_ID, personId, name].
-    Returns None if no game log or no officials found.
-    """
-    cache_file = os.path.join(
-        CACHE_DIR,
-        f"referee_{season_str(end_year)}_{season_type.replace(' ', '_')}.csv",
-    )
-    if os.path.exists(cache_file):
-        try:
-            df = pd.read_csv(cache_file)
-        except pd.errors.EmptyDataError:
-            return None
-        return df if not df.empty else None
-
+    """Officials for every game in the cached game log. See nbakit.data.fetch_referees."""
     game_log = _load_game_log(end_year, season_type)
-    if game_log is None:
-        return None
-
-    game_ids = sorted(game_log["GAME_ID"].unique())
-    from nba_api.stats.endpoints import boxscoresummaryv3
-
-    records: list[dict] = []
-    failed = 0
-    rate_limited = 0
-    print(f"  Fetching referee data: {season_str(end_year)} {season_type} "
-          f"({len(game_ids)} games)...", flush=True)
-    for i, gid in enumerate(game_ids, 1):
-        gid_str = f"{int(float(gid)):010d}"
-        try:
-            b = boxscoresummaryv3.BoxScoreSummaryV3(game_id=gid_str, timeout=60)
-            for _, row in b.data_sets[3].get_data_frame().iterrows():
-                records.append({
-                    "GAME_ID":   gid_str,
-                    "personId":  int(row["personId"]),
-                    "name":      str(row["name"]),
-                })
-        except Exception as e:
-            failed += 1
-            if _is_rate_limit_error(e):
-                rate_limited += 1
-            if failed <= 3:
-                print(f"    WARN {gid_str}: {e!r}")
-        time.sleep(SLEEP_SEC)
-        if i % 100 == 0:
-            print(f"    ...{i}/{len(game_ids)}", flush=True)
-
-    if failed:
-        tag = f" — {rate_limited} look rate-limited" if rate_limited else ""
-        print(f"    {failed} games failed (API errors){tag}")
-    if rate_limited:
-        print(f"    RATE LIMITED: {rate_limited} call(s) throttled this season — "
-              f"slow SLEEP_SEC down or retry later.")
-
-    os.makedirs(CACHE_DIR, exist_ok=True)
-    if not records:
-        if failed:
-            # No records *and* API errors occurred: this is a transient failure
-            # (rate limit, timeout, outage), not genuine absence of data. Do not
-            # cache an empty file, or every later run would read it back and
-            # never retry. Leave the cache absent so the next run tries again.
-            print("    No records and API errors occurred — not caching; "
-                  "will retry next run.")
-            return None
-        if (end_year >= OFFICIALS_DATA_START_YEAR
-                and end_year not in OFFICIALS_KNOWN_EMPTY_YEARS):
-            # SUSPECT: this season should carry officials data, yet every call
-            # returned an empty result with no error — the hallmark of a silent
-            # rate-limit (an empty 200 body) rather than genuine absence. Do not
-            # cache, or we would mark a real season permanently empty. Retry next.
-            print(f"    SUSPECT empty: {season_str(end_year)} should have officials "
-                  f"data (>= {OFFICIALS_DATA_START_YEAR}) but returned none — likely "
-                  f"a silent rate-limit. Not caching; will retry next run.")
-            return None
-        # Every call succeeded but returned no officials. Before OFFICIALS_DATA_
-        # START_YEAR (or for a known-empty in-range season) this absence is real
-        # and permanent, so cache an empty file to skip it on future runs.
-        pd.DataFrame().to_csv(cache_file, index=False)
-        return None
-
-    df = pd.DataFrame(records)
-    df.to_csv(cache_file, index=False)
-    return df
+    game_ids = sorted(game_log["GAME_ID"].unique()) if game_log is not None else None
+    return _nbakit.fetch_referees(
+        end_year, season_type, game_ids=game_ids, cache_dir=CACHE_DIR, sleep=SLEEP_SEC,
+        officials_start_year=OFFICIALS_DATA_START_YEAR,
+        known_empty_years=OFFICIALS_KNOWN_EMPTY_YEARS)
 
 
 def fetch_all_referee_data(

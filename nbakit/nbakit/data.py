@@ -394,3 +394,138 @@ def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
     df.to_csv(path, index=False)
     time.sleep(sleep_sec)
     return df
+
+
+# ── Shot-zone and referee fetchers (generic nba_api endpoint wrappers) ──────────
+
+# LeagueDashTeamShotLocations returns a MultiIndex (zone, stat); flatten the FGA
+# column of each zone to a flat name so the cached CSV round-trips cleanly.
+SHOT_ZONE_FGA_COLS = {
+    ("Restricted Area",       "FGA"): "FGA_RA",
+    ("In The Paint (Non-RA)", "FGA"): "FGA_NON_RA",
+    ("Mid-Range",             "FGA"): "FGA_MR",
+    ("Left Corner 3",         "FGA"): "FGA_LC3",
+    ("Right Corner 3",        "FGA"): "FGA_RC3",
+    ("Above the Break 3",     "FGA"): "FGA_ATB3",
+    ("Backcourt",             "FGA"): "FGA_BC",
+}
+
+
+def fetch_shot_zones(end_year: int, season_type: str, location: str, *,
+                     cache_dir: str | None = None,
+                     sleep: float = SLEEP_SEC) -> "pd.DataFrame | None":
+    """Team-level shot-zone FGA totals from LeagueDashTeamShotLocations, split by
+    location ('Home' or 'Road'). Cached as shot_zones_*.csv. Returns None on an
+    empty/error result (the miss is cached so it is not retried)."""
+    cache_dir = cache_dir or default_cache_dir()
+    path = os.path.join(
+        cache_dir,
+        f"shot_zones_{season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv",
+    )
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+
+    os.makedirs(cache_dir, exist_ok=True)
+    try:
+        from nba_api.stats.endpoints import leaguedashteamshotlocations
+        result = leaguedashteamshotlocations.LeagueDashTeamShotLocations(
+            season=season_str(end_year),
+            season_type_all_star=season_type,
+            location_nullable=location,
+            per_mode_detailed="Totals",
+            timeout=60,
+        )
+        df = result.get_data_frames()[0]
+    except Exception as e:
+        print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}")
+        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
+        return None
+
+    if df.empty:
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    id_map = {("", "TEAM_ID"): "TEAM_ID", ("", "TEAM_NAME"): "TEAM_NAME"}
+    col_map = {**id_map, **SHOT_ZONE_FGA_COLS}
+    present = [c for c in col_map if c in df.columns]
+    df = df[present].copy()
+    df.columns = [col_map[c] for c in present]
+    df.to_csv(path, index=False)
+    time.sleep(sleep)
+    return df
+
+
+def fetch_referees(end_year: int, season_type: str, *,
+                   game_ids=None, cache_dir: str | None = None,
+                   sleep: float = SLEEP_SEC, officials_start_year: int = 2002,
+                   known_empty_years=frozenset({2003})) -> "pd.DataFrame | None":
+    """Officials for every game via BoxScoreSummaryV3 (data_sets[3]). Cached as
+    referee_*.csv with [GAME_ID, personId, name]. On a cache hit returns the
+    cached frame; otherwise needs ``game_ids`` (returns None without them). The
+    empty-result handling distinguishes genuine absence (cache the miss) from a
+    likely silent rate-limit, which is not cached so it retries next run."""
+    cache_dir = cache_dir or default_cache_dir()
+    cache_file = os.path.join(
+        cache_dir, f"referee_{season_str(end_year)}_{season_type.replace(' ', '_')}.csv")
+    if os.path.exists(cache_file):
+        try:
+            df = pd.read_csv(cache_file)
+        except pd.errors.EmptyDataError:
+            return None
+        return df if not df.empty else None
+    if not game_ids:
+        return None
+
+    from nba_api.stats.endpoints import boxscoresummaryv3
+    records: list[dict] = []
+    failed = rate_limited = 0
+    game_ids = sorted(game_ids)
+    print(f"  Fetching referee data: {season_str(end_year)} {season_type} "
+          f"({len(game_ids)} games)...", flush=True)
+    for i, gid in enumerate(game_ids, 1):
+        gid_str = f"{int(float(gid)):010d}"
+        try:
+            b = boxscoresummaryv3.BoxScoreSummaryV3(game_id=gid_str, timeout=60)
+            for _, row in b.data_sets[3].get_data_frame().iterrows():
+                records.append({"GAME_ID": gid_str, "personId": int(row["personId"]),
+                                "name": str(row["name"])})
+        except Exception as e:
+            failed += 1
+            if is_rate_limit_error(e):
+                rate_limited += 1
+            if failed <= 3:
+                print(f"    WARN {gid_str}: {e!r}")
+        time.sleep(sleep)
+        if i % 100 == 0:
+            print(f"    ...{i}/{len(game_ids)}", flush=True)
+
+    if failed:
+        tag = f" — {rate_limited} look rate-limited" if rate_limited else ""
+        print(f"    {failed} games failed (API errors){tag}")
+    if rate_limited:
+        print(f"    RATE LIMITED: {rate_limited} call(s) throttled this season.")
+
+    os.makedirs(cache_dir, exist_ok=True)
+    if not records:
+        if failed:
+            # No records *and* API errors: transient failure, not genuine absence.
+            # Do not cache an empty file, or later runs would never retry.
+            print("    No records and API errors occurred — not caching; will retry next run.")
+            return None
+        if end_year >= officials_start_year and end_year not in known_empty_years:
+            # Every call returned empty with no error: the hallmark of a silent
+            # rate-limit (empty 200 body) for a season that should carry data.
+            print(f"    SUSPECT empty: {season_str(end_year)} should have officials "
+                  f"data (>= {officials_start_year}) but returned none — likely a "
+                  f"silent rate-limit. Not caching; will retry next run.")
+            return None
+        pd.DataFrame().to_csv(cache_file, index=False)  # genuine, permanent absence
+        return None
+
+    df = pd.DataFrame(records)
+    df.to_csv(cache_file, index=False)
+    return df
