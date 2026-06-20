@@ -264,3 +264,12 @@ A few results surfaced along the way that don't bear directly on the three quest
 **The box-score breakdown has implications for teams on both sides of a matchup.** For a home team, the rebounding category is the most tractable remaining lever: it carries 30% of the regular-season decline, is almost entirely separate from three-point volume, and has not been equalized by the league-wide strategic shift to the perimeter. Player-tracking data confirms the offensive-rebound conversion edge is still declining rather than structurally fixed, meaning effort and roster decisions can still move it. The turnover category (27% of the decline) has a component separate from three-point volume as well; pressure defense at home, where crowd noise compounds visiting teams' communication problems, targets it directly. On crowd: the pandemic data shows that even a few thousand fans restores nearly the full crowd effect, but larger crowds add little beyond that. Engagement matters more than capacity.
 
 For an away team, three-point heavy shot selection has already largely equalized the shooting category, and the data confirms this. The offensive glass is where the road disadvantage persists most and where no current strategic trend is closing the gap. On rest: when the away team enters better-rested than the home team, home win rate falls roughly 3 percentage points below the baseline, a scheduling-available edge the data supports consistently across all eras.
+
+## Appendix D: Caveats
+I'm using this project as an exercise to learn Claude Code, statistics, and NBA analytics. I am not a statistician.
+
+- Every calculation and data gathering is done by Python. Claude doesn't have a change to hulicinate data or get a calcuation wrong.
+- Claude did come up with what statistics to use, and what they mean.
+    - I did make Claude create a page that goes over every statistics, why, and what it means. I'm still making me way through that.
+    - I also had Claude create a tutorial based on the statics used, I'm still making my way through that.
+- Claude did write almost all the text of this document and others (Except this appendix). I have spend dozens of hours go through and make sure that I understand the text, the graphs, etc. I have forced Claude to make things coherent, corrected logic errors etc. It's like arguing with the dumbest brialliant grad student. It will do want it thinks you want, and sometims much better than you asked, but it doesn't really understand what it's doing.
