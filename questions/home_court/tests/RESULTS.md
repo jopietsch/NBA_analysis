@@ -283,6 +283,31 @@ All data from cache/ — same source as the plots above.
      home team is usually the better team) — see the seeding
      decomposition for that control.
 
+   ─ Bootstrap 95% CIs on the shares (season block resample, B=500) ─
+   Resamples whole seasons with replacement and recomputes the shares;
+   the band is the 2.5–97.5 percentile across resamples. Wide bands
+   (especially in the playoffs) mean the point share is loosely pinned.
+
+   Regular season  (B = 500 resamples)
+   Channel            % level           95% CI   % trend           95% CI
+   ────────────────  ────────  ───────────────  ────────  ───────────────
+   eFG% diff (pp)         39%  [  +34,  +47]%       22%  [  +13,  +32]%
+   Foul diff              13%  [  +10,  +16]%       18%  [  +15,  +22]%
+   TOV diff               15%  [   +9,  +18]%       25%  [  +18,  +32]%
+   REB diff               24%  [  +22,  +26]%       25%  [  +21,  +30]%
+   ────────────────
+   Channels carry 91% of the level (95% CI [87, 96]%) and 90% of the decline (95% CI [80, 100]%).
+
+   Playoffs  (B = 500 resamples)
+   Channel            % level           95% CI   % trend           95% CI
+   ────────────────  ────────  ───────────────  ────────  ───────────────
+   eFG% diff (pp)         32%  [  +23,  +43]%       16%  [  -13,  +40]%
+   Foul diff              13%  [   +8,  +18]%       11%  [   +2,  +21]%
+   TOV diff               32%  [  +22,  +48]%        5%  [  -23,  +39]%
+   REB diff               24%  [  +18,  +32]%       21%  [   -4,  +40]%
+   ────────────────
+   Channels carry 102% of the level (95% CI [88, 122]%) and 52% of the decline (95% CI [31, 82]%).
+
    ─ Are the channel trends downstream of the 3-point shift? ─
    Each differential's year-trend, before and after controlling for the
    game's 3PA rate. A trend that survives the control is an independent

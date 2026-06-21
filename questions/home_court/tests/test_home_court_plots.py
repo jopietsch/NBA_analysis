@@ -58,7 +58,13 @@ def test_plot_mediation():
             "pct_level": 80.0,
             "pct_trend": 72.0,
         }
-    plots.plot_mediation({"Regular season": _ctx(), "Playoffs": _ctx()})
+    decomp = {"Regular season": _ctx(), "Playoffs": _ctx()}
+    plots.plot_mediation(decomp)  # no bootstrap (back-compat path)
+    boot = {
+        c: {"pct_level_ci": (74.0, 86.0), "pct_trend_ci": (60.0, 84.0)}
+        for c in ("Regular season", "Playoffs")
+    }
+    plots.plot_mediation(decomp, boot)
 
 
 def test_plot_differential_analysis():

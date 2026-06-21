@@ -60,7 +60,8 @@ def main() -> None:
 
     import home_court_analysis as _reg
     game_df = _reg.build_game_dataset()
-    plot_mediation(_reg.compute_mediation_decomposition(game_df))
+    plot_mediation(_reg.compute_mediation_decomposition(game_df),
+                   _reg.compute_mediation_bootstrap(game_df))
     plot_rest_altitude(_reg.compute_rest_altitude_plotdata(game_df))
     plot_channel_3pa_control(_reg.compute_channel_3pa_control(game_df))
 

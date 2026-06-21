@@ -1322,6 +1322,86 @@ def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
     return out
 
 
+_MED_KEYS = ["efg_pct_diff", "foul_diff", "tov_diff", "reb_diff"]
+
+
+def _mediation_shares_np(Y: np.ndarray, YEAR: np.ndarray, CH: np.ndarray):
+    """One bootstrap replicate of the mediation shares, in pure numpy.
+
+    Reproduces the point-estimate identities in compute_mediation_decomposition
+    (the cluster-robust SEs there don't change the coefficients), but with
+    pre-built design matrices so 500 resamples stay fast. Returns
+    (level_pct[4], trend_pct[4], pct_level, pct_trend).
+    """
+    ols = lambda X, y: np.linalg.lstsq(X, y, rcond=None)[0]
+    ones = np.ones(len(Y))
+    b_chan = ols(np.column_stack([ones, CH]), Y)          # [int, 4 channel betas]
+    b_year = ols(np.column_stack([ones, YEAR]), Y)        # [int, year]
+    b_full = ols(np.column_stack([ones, YEAR, CH]), Y)    # [int, year, 4 betas]
+    gammas = np.array([ols(np.column_stack([ones, YEAR]), CH[:, j])[1]
+                       for j in range(CH.shape[1])])
+
+    level   = Y.mean() * 100.0 - 50.0
+    t_total = b_year[1] * 100.0
+    level_contrib = b_chan[1:] * 100.0 * CH.mean(axis=0)
+    trend_contrib = b_full[2:] * 100.0 * gammas
+    resid_level   = b_chan[0] * 100.0 - 50.0
+
+    level_pct = 100.0 * level_contrib / level if level else np.full(4, np.nan)
+    trend_pct = 100.0 * trend_contrib / t_total if t_total else np.full(4, np.nan)
+    pct_level = 100.0 * (level - resid_level) / level if level else float("nan")
+    pct_trend = 100.0 * trend_contrib.sum() / t_total if t_total else float("nan")
+    return level_pct, trend_pct, pct_level, pct_trend
+
+
+def compute_mediation_bootstrap(df: pd.DataFrame, n_boot: int = 500,
+                                seed: int = 0) -> dict:
+    """Season-block bootstrap 95% CIs for the mediation shares (RS and playoffs).
+
+    Resamples whole seasons with replacement (the cluster unit, matching the
+    cluster-robust SEs the point decomposition uses) and recomputes each
+    channel's % of the level and % of the decline, plus the two headline
+    "channels carry X%" figures. Seeded, so RESULTS.md stays reproducible.
+    """
+    rng = np.random.default_rng(seed)
+    out: dict = {}
+    for label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po].dropna(subset=_MED_KEYS + ["home_win", "year"])
+        if len(sub) < 100:
+            continue
+        Y    = sub["home_win"].to_numpy(dtype=float)
+        YEAR = sub["year"].to_numpy(dtype=float)
+        CH   = sub[_MED_KEYS].to_numpy(dtype=float)
+        years   = np.unique(YEAR)
+        idx_by  = {y: np.flatnonzero(YEAR == y) for y in years}
+
+        lvl = [[] for _ in _MED_KEYS]
+        trd = [[] for _ in _MED_KEYS]
+        pls, pts = [], []
+        for _ in range(n_boot):
+            pick = rng.choice(years, size=len(years), replace=True)
+            rows = np.concatenate([idx_by[y] for y in pick])
+            try:
+                lp, tp, pl, pt = _mediation_shares_np(Y[rows], YEAR[rows], CH[rows])
+            except Exception:
+                continue
+            for j in range(len(_MED_KEYS)):
+                lvl[j].append(lp[j]); trd[j].append(tp[j])
+            pls.append(pl); pts.append(pt)
+
+        ci = lambda a: (
+            (float(np.nanpercentile(a, 2.5)), float(np.nanpercentile(a, 97.5)))
+            if a else (float("nan"), float("nan")))
+        out[label] = {
+            "n_boot": len(pts),
+            "level_ci": {k: ci(lvl[j]) for j, k in enumerate(_MED_KEYS)},
+            "trend_ci": {k: ci(trd[j]) for j, k in enumerate(_MED_KEYS)},
+            "pct_level_ci": ci(pls),
+            "pct_trend_ci": ci(pts),
+        }
+    return out
+
+
 def compute_channel_3pa_control(df: pd.DataFrame) -> dict:
     """Each box-score channel's home-differential year-trend, before and after
     controlling for the game's 3PA rate — the test behind "the shooting fade is
@@ -1459,6 +1539,33 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             print("     home team is usually the better team) — see the seeding")
             print("     decomposition for that control.")
         print()
+
+    # ── Bootstrap CIs on the shares (season block resample) ───────────────────
+    print("   ─ Bootstrap 95% CIs on the shares (season block resample, B=500) ─")
+    print("   Resamples whole seasons with replacement and recomputes the shares;")
+    print("   the band is the 2.5–97.5 percentile across resamples. Wide bands")
+    print("   (especially in the playoffs) mean the point share is loosely pinned.\n")
+    boot = compute_mediation_bootstrap(df)
+    for label in ("Regular season", "Playoffs"):
+        b, ctx = boot.get(label), decomp.get(label)
+        if not b or ctx is None:
+            continue
+        lvl_pt = {r["key"]: r["pct"] for r in ctx["level"]}
+        trd_pt = {r["key"]: r["pct"] for r in ctx["trend"]}
+        print(f"   {label}  (B = {b['n_boot']} resamples)")
+        print(f"   {'Channel':<16}  {'% level':>8}  {'95% CI':>15}  "
+              f"{'% trend':>8}  {'95% CI':>15}")
+        print(f"   {'─'*16}  {'─'*8}  {'─'*15}  {'─'*8}  {'─'*15}")
+        for k, tl, _ in decomp["channels"]:
+            ll, lh = b["level_ci"][k]
+            tlo, thi = b["trend_ci"][k]
+            print(f"   {tl:<16}  {lvl_pt[k]:>7.0f}%  [{ll:>+5.0f},{lh:>+5.0f}]%  "
+                  f"{trd_pt[k]:>7.0f}%  [{tlo:>+5.0f},{thi:>+5.0f}]%")
+        pl, pt = b["pct_level_ci"], b["pct_trend_ci"]
+        print(f"   {'─'*16}")
+        print(f"   Channels carry {ctx['pct_level']:.0f}% of the level "
+              f"(95% CI [{pl[0]:.0f}, {pl[1]:.0f}]%) and {ctx['pct_trend']:.0f}% of the "
+              f"decline (95% CI [{pt[0]:.0f}, {pt[1]:.0f}]%).\n")
 
     channels = [(k, tl) for k, tl, _ in decomp["channels"]]
     keys = [k for k, _ in channels]

@@ -52,7 +52,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **It all shows up in the box score.** The Four Factors together account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting (eFG%) is the largest piece, more than 40%, followed by rebounding. The weights of each factor on the home win rate have held nearly constant across all six eras, so the overall decomposition is not an artifact of mixing different effects from different periods: the game got fairer, not different in how its components combine.
 
-![Box-score category shares of the home-court advantage, regular season vs. playoffs.](../generated/images/home_court_mediation_level.svg){#fig-mediation-level width=50%}
+![Box-score category shares of the home-court advantage, regular season vs. playoffs. The headline at each bar's end (with its 95% bootstrap confidence interval) is how much of the home edge the four channels capture together.](../generated/images/home_court_mediation_level.svg){#fig-mediation-level width=50%}
 
 ---
 
@@ -62,7 +62,9 @@ The same categories that make up home court advantage are the ones narrowing ove
 
 The Four Factors together account for roughly **96%** of the regular-season decline. Rebounding and turnovers carry the most at roughly **30%** and **27%**, together more than half the drop. Shooting (eFG%), where the three-point shift registers, accounts for about **21%**, and the narrowing whistle for about **18%**. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; that edge has narrowed to under half a free throw. In the playoffs the same four categories capture only about 67% of the decline, with only the foul and rebounding trends standing clearly above the noise; the playoff breakdown is consistent with the regular-season story, not established on its own. (These shares show where the decline registers in the box score, not a claim about ultimate causes.) The sections below trace how each piece works.
 
-![Box-score category shares of the 40-year home-court decline, regular season vs. playoffs. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below.](../generated/images/home_court_mediation_decline.svg){#fig-mediation-decline width=50%}
+These shares carry uncertainty, and resampling whole seasons shows where it bites. The regular-season figures are pinned tightly: rebounding's share of the decline lands between about a quarter and a third, and the four channels together cover essentially all of it. The playoff shares are loose: the 67% could be anywhere from about 40% to all of the decline, which is the statistical reason the playoff breakdown is read as consistent with the regular season rather than established on its own.
+
+![Box-score category shares of the 40-year home-court decline, regular season vs. playoffs. The headline at each bar's end (with its 95% bootstrap confidence interval) is how much of the decline the four channels capture together; the playoff interval is wide. Rebounding here is total boards (offensive + defensive); the OREB and DREB breakdown is in the rebounding chart further below.](../generated/images/home_court_mediation_decline.svg){#fig-mediation-decline width=50%}
 
 ![Home minus away differentials over time: free throw attempts per game (the whistle's practical effect), FG%, eFG%, 3PA rate, 3P%, and FT%. Each panel shows the per-season gap; a trend toward zero means that component of the home-team edge is narrowing. The rebounding and turnover differentials are covered below.](../generated/images/home_court_advantage_differentials.svg){#fig-advantage-differentials}
 

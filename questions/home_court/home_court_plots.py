@@ -486,7 +486,7 @@ def plot_channel_3pa_control(data: dict) -> None:
     save_chart("home_court_3pa_control.svg", OUTPUT_DIR)
 
 
-def plot_mediation(decomp: dict) -> None:
+def plot_mediation(decomp: dict, boot: dict | None = None) -> None:
     """
     Two-panel decomposition: each box-score channel's share of the home-court
     level (left) and of its 40-year decline (right), regular season vs playoffs.
@@ -521,8 +521,12 @@ def plot_mediation(decomp: dict) -> None:
                     ax.text(left + pct / 2, y, f"{pct:.0f}%", ha="center", va="center",
                             fontsize=9, color="white", fontweight="bold", zorder=3)
                 left += pct
-            ax.text(102, y, f"{decomp[ctx_key][headline_key]:.0f}% {verb}",
-                    ha="left", va="center", fontsize=9.5, color="#2c2c2a", fontweight="bold")
+            head = f"{decomp[ctx_key][headline_key]:.0f}% {verb}"
+            if boot and ctx_key in boot:
+                lo, hi = boot[ctx_key][f"{headline_key}_ci"]
+                head += f"\n95% CI {lo:.0f}–{hi:.0f}%"
+            ax.text(102, y, head, ha="left", va="center", fontsize=9.5,
+                    color="#2c2c2a", fontweight="bold")
         ax.set_yticks([y_pos[c] for c in contexts])
         ax.set_yticklabels(contexts, fontsize=10)
         ax.set_xlim(0, 118)
