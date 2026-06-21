@@ -378,6 +378,20 @@ are large enough to question the decomposition. The channel share percentages ar
 a blend of very similar effects across eras, not an artifact of mixing radically
 different regimes.
 
+A fifth block puts bootstrap 95% confidence intervals on every share percentage
+by resampling whole seasons with replacement (B = 500) and recomputing the
+decomposition each time. The band is the 2.5–97.5 percentile across resamples.
+In the regular season the shares are tightly pinned: level [91, 97]% total
+mediated, trend [87, 107]%; individual channel trend bands are 10–15 pp wide
+(e.g. eFG% trend: [11, 28]%, REB trend: [25, 38]%). In the playoffs the bands
+are far wider because each playoff season carries only ~80 games; the eFG% and
+turnover trend shares have CIs spanning ±40 pp, meaning those individual playoff
+shares are loosely determined. The playoff headline (67% of the decline mediated)
+has a bootstrap band of [38, 107]%. Read the regular-season shares as reliable;
+read the playoff trend shares as directional. Resampling seasons rather than
+individual games preserves the block structure of the data — correlations within
+a season are intact in every resample.
+
 **Why this chart.** Stacked horizontal bars, normalized to 100% — one stack for the
 level, one for the decline, regular season vs. playoffs. The whole point of a
 decomposition is *composition*: how the edge splits into parts that sum to a whole.
@@ -385,6 +399,49 @@ A stacked bar is the one chart form that shows shares adding to 100% at a glance
 line or grouped bars would hide the very accounting identity the LPM exists to
 deliver. The grey residual segment is deliberate too — it shows the unexplained
 remainder rather than quietly dropping it.
+
+---
+
+## 7a. Out-of-Sample Forecast (`run_out_of_sample_forecast`)
+
+**Why this section exists.** The mediation decomposition (Section 7) fits the
+four-channel model on all 43 seasons and reports that channels explain 96% of the
+decline. Fitting and testing on the same data risks overfitting: the model has four
+predictors and 43 data points, so it might be capturing historical noise as
+structure. This section answers the harder question: does the channel mapping
+estimated on *early* seasons predict the *later* decline it never saw?
+
+**The approach.** A **train/test split** on the season-level mediation series.
+The LPM from Section 7 is re-estimated on the training seasons (1984–2013) only;
+all four channel coefficients are frozen at those 1984–2013 values and never
+updated. For each held-out season (2014–2026), the model predicts that season's
+home win % by applying the frozen mapping to that season's actual box-score
+channel edges. Two baselines compete: (a) a flat forecast using the training-era
+mean home win %, and (b) a trend extrapolation projecting the training-era linear
+year-trend forward into the test window. The quality metric is **RMSE** (root
+mean squared error) across the 13 held-out regular-season seasons (12 playoff
+seasons, with the 2020 playoff bubble excluded).
+
+**What the results mean.** In the regular season the frozen early channel model
+reaches 0.95 pp RMSE vs. 1.45 pp for the trend extrapolation and 5.48 pp for
+the flat mean. The channel model wins because it responds to the actual edges in
+each held-out season: when rebounding and foul differentials compressed sharply in
+2020–22, the frozen coefficients translated that compression into lower predicted
+home win rates, tracking what actually happened. The trend extrapolation cannot do
+that — it projects the pre-2014 slope, which is slightly too steep for the
+post-2018 period. In the playoffs the margin is larger in absolute terms (3.87 pp
+channel vs. 7.30 trend vs. 8.11 flat) but noisier, because each playoff season is
+only ~80 games; the individual-season predictions vary more wildly. The out-of-
+sample result is the sharpest validation of the mediation mechanism: the
+box-score mapping is stable across the train/test split, not a post-hoc fit to
+hindsight.
+
+**Why this chart.** A dual-line plot of actual vs. channel-predicted home win %
+for the 2014–2026 held-out seasons, with the trend-extrapolation line as a third
+reference. Putting all three on one panel makes the main claim immediately visible
+— the channel line tracks the actual season-to-season zigzag while the trend line
+slowly diverges — without needing a table. The RMSE numbers in the text then
+quantify what the chart shows.
 
 ---
 

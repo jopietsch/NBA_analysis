@@ -717,6 +717,35 @@ but only **67%** of the playoff decline: 33% of the playoff story runs outside
 the box score (and folds in seed quality, which §7.1 isolates). The rebounding
 fade, if anything, is sharper in the playoffs once 3PA is controlled.
 
+**Pinning down the uncertainty: bootstrap confidence intervals on the shares.**
+The point shares (43%, 25%, 14%, 13%) are estimates with sampling uncertainty.
+`RESULTS.md` reports 95% bootstrap CIs built by resampling whole seasons with
+replacement 500 times and recomputing the decomposition each time. Resampling
+whole seasons (rather than individual games) preserves the within-season
+correlation structure. In the regular season the level shares are tight: the
+eFG% level share has a CI of [40, 46]%, and the total "channels carry 95% of
+the level" claim has a band of [91, 97]%. Trend shares are a bit wider —
+rebounding: [25, 38]%, eFG%: [11, 28]% — but none crosses zero. In the
+playoffs the trend-share CIs are far wider (eFG% trend: [−28, +38]%), reflecting
+how noisy 80-game playoff seasons are. The overall playoff headline of 67%
+mediated has a band of [38, 107]%. Read: the regular-season shares are reliable;
+the playoff trend shares should be treated as directional, not precise.
+
+**Validating the decomposition: out-of-sample forecasting.** Fitting a model and
+testing it on the same data risks overfitting — the model might have memorized
+historical noise rather than a real mechanism. The out-of-sample forecast in
+`RESULTS.md` guards against this by freezing the four-channel LPM on the training
+seasons (1984–2013) and asking it to predict each *held-out* season (2014–2026)
+from that season's actual box-score edges. The frozen model reaches 0.95 pp RMSE
+on the 13 held-out regular seasons, beating a naive trend extrapolation (1.45 pp)
+and a flat-mean forecast (5.48 pp). The channel model beats the trend extrapolation
+because it responds to the *actual* edges in each season: when foul differentials
+and rebounding gaps compressed in 2020–22, the frozen coefficients correctly
+predicted lower home win rates. A model that had just memorized the trend would
+miss those season-to-season moves. The out-of-sample win is the cleanest evidence
+that the mechanism in the decomposition is real and stable, not a product of
+fitting all 43 seasons simultaneously.
+
 ## 4.4 Shift-share decomposition (schedule vs. per-matchup erosion)
 
 **The question:** the home win rate fell 9.3 pp from the 1980s to today. Two very
