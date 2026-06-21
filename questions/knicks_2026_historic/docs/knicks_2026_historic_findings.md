@@ -67,9 +67,8 @@ of the five games were decided by 4 points or fewer.
 ## 3. Was the East Weak?
 
 **No, not historically.** The West-East SRS gap in 2025–26 was only **+0.39
-pts/game**: 37th percentile of West dominance and **0.21 standard deviations
-below the historical mean gap of +0.78** (z = −0.21, well within normal
-variation). The East inter-conference win rate was 0.487 (near parity). By any
+pts/game**: 37th percentile of West dominance, and well within the normal
+season-to-season swing. The East inter-conference win rate was 0.487 (near parity). By any
 formal measure, the East in 2025–26 was unremarkable (if anything, slightly
 more competitive than the 42-year average).
 
@@ -198,7 +197,7 @@ mostly the same scoreline told from the bookmaker's side. The signal comes
 entirely from the first three rounds: 14-0 against the spread vs. East
 opponents, with the Finals exactly dead-on (2-5).
 
-**But the story splits sharply by opponent:**
+**But the two halves look nothing alike:**
 
 | Round | Opponent | Avg Spread | Avg Actual | ATS Margin | Cover |
 |-------|----------|-----------|------------|------------|-------|
@@ -213,10 +212,8 @@ and they won by 17-22. Against the Spurs in the Finals, the market had them as
 slight underdogs (+2.5) and they won by an average of exactly +2.4, essentially
 a coin-flip that they won 4-1 in games.
 
-The market clearly distinguished between the two halves of
-this run. In the first three rounds, the Knicks were far better than anyone
-expected against East competition. The Finals was exactly the
-competitive series the market predicted: a nearly even matchup against a healthy,
+The market saw the two halves differently before either began: modest East
+favorites who then blew the doors off, and a near-even Finals against a healthy,
 elite Spurs team that the Knicks won by grinding out close games.
 
 ![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){width=100%}
@@ -258,13 +255,13 @@ replacement) and re-ranked the result against the other 42 champions each time.
 The Knicks finish #1 in about 60% of those re-runs, in the top three in 70%, and
 in the top five in 82%. Their single most likely finish is #1, but across
 re-draws the rank ranges from 1st to roughly 11th, and the opponent-adjusted
-margin itself lands anywhere from +5.1 to +17.7 (point estimate +11.2).
+margin itself lands anywhere from +5.1 to +17.7 (best estimate +11.2).
 
 A second check pushes the same way. A 19-game number that stands out partly
 stands out by luck, so we pulled the Knicks' adjusted margin back toward what
 championship runs normally look like (the other 42 champions average about +3
 per game). Because playoff margins swing so much, 19 games only pin down about
-40% of the estimate; the rest gets pulled toward the pack. That regularized
+40% of the estimate; the rest gets pulled toward the pack. That pulled-back
 margin lands at **+6.5 per game**, with a plausible range of roughly +1.5 to
 +11.5. Even after that haircut it still clears about 83% of champions.
 
