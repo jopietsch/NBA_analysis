@@ -1,6 +1,6 @@
 Review one or more reader-facing docs for voice and plain-language problems. This is the deep on-demand pass that complements the `voice_check.py` hook: the hook only flags hard jargon on save, while this also catches drama, em-dashes, overstated causation, and generated-sounding prose.
 
-Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review both `docs/home_court_findings.md` and `docs/home_court_summary.md`.
+Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md` (the standard doc names from `questions/CLAUDE.md`).
 
 Pick the standard by filename (see the audience-tier table in `questions/CLAUDE.md`):
 - `*_findings.md` / `*_summary.md` — general reader: strip statistical jargon to plain language.
@@ -18,4 +18,4 @@ Steps:
    - Leave real NBA stats as-is (eFG%, net rating, pace, Four Factors, OREB%); do not flag these.
 4. For each flag, quote the phrase with its line number, say briefly why it's a problem, and propose a specific rewrite.
 5. Present the review grouped by severity. Do NOT edit yet.
-6. Ask whether to apply. On confirmation, apply the edits, then regenerate the affected output: findings → `python3 generate_report.py`; summary → `python3 generate_doc_pdf.py docs/home_court_summary.md`. If the findings changed, also follow the cascade in `questions/home_court/CLAUDE.md` (update `docs/home_court_findings_outline.md` and regenerate its PDF).
+6. Ask whether to apply. On confirmation, apply the edits, then regenerate the affected output following the project's "Standard document workflow" and cascade rules in `questions/CLAUDE.md`: findings → `python3 generate_report.py`; any other standalone doc → `python3 generate_doc_pdf.py docs/<file>.md`. If the findings changed, also follow any project-specific cascade in the project's own `CLAUDE.md` (e.g. updating a findings outline and regenerating its PDF).
