@@ -131,6 +131,32 @@ def test_plot_opponent_srs_by_round(tmp_path, monkeypatch):
     assert os.path.isfile(path)
 
 
+def _mini_reg_logs() -> pd.DataFrame:
+    rows = []
+    for gid in ["R001", "R002"]:
+        rows.append({"GAME_ID": gid, "TEAM_ID": KNICKS_ID,
+                     "WL": "W", "PTS": 110, "PLUS_MINUS": 8.0,
+                     "MATCHUP": "NYK vs. BOS"})
+        rows.append({"GAME_ID": gid, "TEAM_ID": OPP1_ID,
+                     "WL": "L", "PTS": 102, "PLUS_MINUS": -8.0,
+                     "MATCHUP": "BOS @ NYK"})
+        rows.append({"GAME_ID": gid + "b", "TEAM_ID": OPP2_ID,
+                     "WL": "W", "PTS": 108, "PLUS_MINUS": 3.0,
+                     "MATCHUP": "GSW vs. BOS"})
+        rows.append({"GAME_ID": gid + "b", "TEAM_ID": OPP1_ID,
+                     "WL": "L", "PTS": 105, "PLUS_MINUS": -3.0,
+                     "MATCHUP": "BOS @ GSW"})
+    return pd.DataFrame(rows)
+
+
+def test_plot_playoff_field_elevation(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_playoff_field_elevation(
+        _mini_po_2026(), _mini_reg_logs(), _mini_standings()
+    )
+    assert os.path.exists(path)
+
+
 def test_plot_bootstrap_margin(tmp_path, monkeypatch):
     monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
     path = plots.plot_bootstrap_margin(

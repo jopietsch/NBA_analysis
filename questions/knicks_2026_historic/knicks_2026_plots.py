@@ -622,6 +622,62 @@ def plot_bootstrap_margin(po_2026: pd.DataFrame, reg_srs: pd.Series,
 
 # ── Orchestrator ─────────────────────────────────────────────────────────────
 
+# ── 12. Reg→playoff SRS elevation across the 2025-26 field ───────────────────
+
+def plot_playoff_field_elevation(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
+                                 standings: pd.DataFrame) -> str:
+    from knicks_2026_data import compute_playoff_field_elevation, KNICKS_TEAM_ID
+
+    field = compute_playoff_field_elevation(po_2026, reg_2026)
+    name_map = standings.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1).to_dict()
+    spurs_id = next((int(t) for t, nm in name_map.items() if "Spurs" in str(nm)), None)
+
+    df = field.sort_values("elevation").reset_index(drop=True)   # smallest at bottom
+    labels = [name_map.get(int(t), f"Team {int(t)}") for t in df["team_id"]]
+
+    def _color(tid):
+        tid = int(tid)
+        if tid == KNICKS_TEAM_ID:
+            return KNICKS_BLUE
+        if tid == spurs_id:
+            return KNICKS_ORANGE
+        return LGRAY
+    colors = [_color(t) for t in df["team_id"]]
+
+    fig, ax = _fig(figsize=(8, max(5, len(df) * 0.34)))
+    ax.barh(range(len(df)), df["elevation"], color=colors, edgecolor="none", zorder=2)
+    ax.axvline(0, color=GRAY, linewidth=0.8)
+    ax.set_yticks(range(len(df)))
+    ax.set_yticklabels(labels, fontsize=8)
+    ax.set_xlabel("Playoff SRS − regular-season SRS (pts/game)", fontsize=10)
+    ax.set_title("The Knicks improved more than any 2025-26 playoff team",
+                 fontsize=11, fontweight="bold", color="#2c2c2a", pad=18)
+    ax.text(0.0, 1.012,
+            "Regular-season to playoff jump in team rating; the Spurs were second",
+            transform=ax.transAxes, fontsize=8.5, color=GRAY)
+    _style(ax)
+
+    for i, row in df.iterrows():
+        tid = int(row["team_id"])
+        if tid in (KNICKS_TEAM_ID, spurs_id):
+            v = float(row["elevation"])
+            ax.text(v + (0.15 if v >= 0 else -0.15), i, f"{v:+.1f}",
+                    va="center", ha="left" if v >= 0 else "right", fontsize=8,
+                    fontweight="bold",
+                    color=KNICKS_BLUE if tid == KNICKS_TEAM_ID else KNICKS_ORANGE)
+
+    handles = [
+        mpatches.Patch(color=KNICKS_BLUE, label="Knicks"),
+        mpatches.Patch(color=KNICKS_ORANGE, label="Spurs (Finals opponent)"),
+        mpatches.Patch(color=LGRAY, label="Other playoff teams"),
+    ]
+    ax.legend(handles=handles, fontsize=9, framealpha=0.85, edgecolor="#ddd",
+              loc="lower right")
+    fig.tight_layout()
+    return save_chart("knicks_2026_field_elevation.svg", OUTPUT_DIR, fig=fig)
+
+
 def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              standings_2026: pd.DataFrame, champions: pd.DataFrame,
              gap_table: pd.DataFrame,
@@ -641,6 +697,7 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
         plot_game_margin_distribution(po_2026),
         plot_opponent_srs_by_round(po_2026, reg_srs, standings_2026),
         plot_bootstrap_margin(po_2026, reg_srs, champions),
+        plot_playoff_field_elevation(po_2026, reg_2026, standings_2026),
     ]
     if series_df is not None and not series_df.empty:
         p = plot_round_split(series_df)

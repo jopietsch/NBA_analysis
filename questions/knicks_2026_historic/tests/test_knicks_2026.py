@@ -84,6 +84,38 @@ def test_compute_playoff_elevation():
     assert not np.isnan(elev)  # should compute without error
 
 
+def test_compute_playoff_field_elevation():
+    po = _mini_po_2026()
+    # Reg season connecting all three teams (OPP1 is the common opponent).
+    rs_rows = []
+    for gid in ["R001", "R002"]:
+        rs_rows.append({"GAME_ID": gid, "TEAM_ID": KNICKS_ID,
+                        "WL": "W", "PTS": 105, "PLUS_MINUS": 5.0,
+                        "MATCHUP": "NYK vs. OPP"})
+        rs_rows.append({"GAME_ID": gid, "TEAM_ID": OPP1_ID,
+                        "WL": "L", "PTS": 100, "PLUS_MINUS": -5.0,
+                        "MATCHUP": "OPP @ NYK"})
+    rs_rows.append({"GAME_ID": "R003", "TEAM_ID": OPP2_ID,
+                    "WL": "W", "PTS": 102, "PLUS_MINUS": 2.0,
+                    "MATCHUP": "GSW vs. OPP"})
+    rs_rows.append({"GAME_ID": "R003", "TEAM_ID": OPP1_ID,
+                    "WL": "L", "PTS": 100, "PLUS_MINUS": -2.0,
+                    "MATCHUP": "OPP @ GSW"})
+    rs = pd.DataFrame(rs_rows)
+
+    field = data.compute_playoff_field_elevation(po, rs)
+    # One row per playoff team
+    assert set(field["team_id"]) == {KNICKS_ID, OPP1_ID, OPP2_ID}
+    # Sorted most-improved first
+    assert list(field["elevation"]) == sorted(field["elevation"], reverse=True)
+    # Knicks went +5 (reg) → dominant in playoffs, so elevation is positive
+    knicks = field[field["team_id"] == KNICKS_ID].iloc[0]
+    assert knicks["elevation"] > 0
+    assert knicks["po_games"] == 3
+    # Knicks are the most-improved here (they win every playoff game)
+    assert int(field.iloc[0]["team_id"]) == KNICKS_ID
+
+
 def test_compute_league_scoring_avg():
     po = _mini_po_2026()
     # All rows have PTS=120 or PTS=110; mean is 115

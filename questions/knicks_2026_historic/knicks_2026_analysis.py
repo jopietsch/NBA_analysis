@@ -47,6 +47,7 @@ from knicks_2026_data import (
     compute_adjusted_margin,
     compute_playoff_srs,
     compute_playoff_elevation,
+    compute_playoff_field_elevation,
     compute_series_margins,
     compute_opponent_playoff_srs_excl,
     compute_margin_ci,
@@ -422,6 +423,27 @@ def run_round_split(po_2026: pd.DataFrame,
                     f"  adj {r.adj_playoff_margin:+.2f}{marker}",
                     file=out,
                 )
+
+    # 2025-26 playoff field: who improved most from the regular season
+    field = compute_playoff_field_elevation(po_2026, reg_2026)
+    print(_subhdr("2025-26 playoff field — most improved (reg→playoff SRS)"), file=out)
+    print(
+        "Full playoff SRS (all of a team's playoff games, unlike the opponent\n"
+        "table above which excludes the Knicks series) minus regular-season SRS,\n"
+        "computed identically for every 2025-26 playoff team.\n",
+        file=out,
+    )
+    fhdr = f"{'Team':<28} {'Reg SRS':>8} {'PO SRS':>8} {'Elev':>7} {'PO G':>5}"
+    print(fhdr, file=out)
+    print("─" * len(fhdr), file=out)
+    for _, frow in field.iterrows():
+        nm     = name_map.get(int(frow["team_id"]), f"Team {int(frow['team_id'])}")
+        marker = "  ← Knicks" if int(frow["team_id"]) == KNICKS_TEAM_ID else ""
+        print(
+            f"{nm:<28} {frow['reg_srs']:>+8.2f} {frow['po_srs']:>+8.2f} "
+            f"{frow['elevation']:>+7.2f} {int(frow['po_games']):>5}{marker}",
+            file=out,
+        )
 
 
 # ── Section 7: Other deflators ───────────────────────────────────────────────

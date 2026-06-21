@@ -662,6 +662,36 @@ def compute_playoff_elevation(po_logs: pd.DataFrame,
     return p - r
 
 
+def compute_playoff_field_elevation(po_logs: pd.DataFrame,
+                                    rs_logs: pd.DataFrame) -> pd.DataFrame:
+    """Reg-season → playoff SRS elevation for every team that made the playoffs.
+
+    For each playoff team: regular-season SRS, full playoff SRS (all of that
+    team's playoff games), the elevation (playoff − regular), and playoff games
+    played.  Uses the same full-playoff-SRS definition as
+    compute_playoff_elevation, so the number is comparable across the whole
+    field.  Sorted most-improved first.
+    """
+    rs_srs = compute_srs(rs_logs)
+    po_srs = compute_playoff_srs(po_logs)
+    games  = po_logs.groupby("TEAM_ID")["GAME_ID"].nunique()
+
+    rows = []
+    for tid in po_logs["TEAM_ID"].unique():
+        r = float(rs_srs.get(tid, float("nan")))
+        p = float(po_srs.get(tid, float("nan")))
+        rows.append({
+            "team_id":   int(tid),
+            "reg_srs":   r,
+            "po_srs":    p,
+            "elevation": p - r,
+            "po_games":  int(games.get(tid, 0)),
+        })
+    return (pd.DataFrame(rows)
+            .sort_values("elevation", ascending=False)
+            .reset_index(drop=True))
+
+
 # ── Opponent health / player availability ─────────────────────────────────────
 
 def compute_opponent_health(

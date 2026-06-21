@@ -12,7 +12,7 @@ the run would still rank above the historical average. Note that 2025–26 is th
 highest-scoring era since 1984; once margins are scaled to a common scoring
 level, the raw margin drops to 3rd all-time (+13.3). After adjusting for opponent
 strength, the margin of **+11.2 pts/game** ranks first all-time (though that #1
-is a close call, see §9); after both the opponent and the scoring adjustment,
+is a close call, see §10); after both the opponent and the scoring adjustment,
 it's +10.1, still first, but essentially tied with the 2016–17 Warriors (+10.0). The East was **not** historically weak: the West-East SRS gap in
 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
@@ -24,8 +24,9 @@ of the rounds 1–3 dominance may reflect opponents underperforming, not just Kn
 excellence (the Hawks played only the Knicks, so there is no independent read on
 them; see §5). The Finals tells the opposite story: the Spurs elevated from a
 regular-season SRS of +8.28 to a playoff SRS of +14.48, the most improved of the
-Knicks' four opponents. Winning that series 4-1, even narrowly (+2.4 avg margin),
-was the hardest test of the run.
+Knicks' four opponents (and, across the whole 2026 field, second only to the
+Knicks themselves; see §6). Winning that series 4-1, even narrowly (+2.4 avg
+margin), was the hardest test of the run.
 
 All four opponents were essentially fully healthy when they played the Knicks
 (average availability 98%; the Spurs were at 100%), so injuries are not an
@@ -164,7 +165,44 @@ their season-long form, then beat the best playoff-performing team in the field.
 
 ---
 
-## 6. Other Context
+## 6. Both Finalists Were the Biggest Risers
+
+The Knicks did not reach the Finals as a polished regular-season team that simply
+held form. By team rating (SRS, quality adjusted for schedule), they were only
+the fifth-strongest team in the playoff field during the regular season, at
++6.05. In the playoffs they jumped to +17.53. That rise of **+11.48** was the
+largest of any team in the 2026 playoffs.
+
+The team they beat in the Finals made the second-biggest jump. The Spurs were a
+stronger regular-season team than the Knicks, +8.28, second only to Oklahoma City
+(+11.04) among playoff teams. They climbed to +15.13 in the playoffs, a rise of
+**+6.85**. The Spurs entered the Finals both very good to begin with and getting
+better, which is part of why the series was close. (This +15.13 covers all of
+their playoff games, including the Finals against the Knicks, so it sits a little
+above the +14.48 in §5, which leaves the Knicks series out to judge the Spurs
+independently.)
+
+| Team | Reg-season rating | Playoff rating | Jump |
+|------|-------------------|----------------|------|
+| **New York Knicks** | +6.05 | +17.53 | **+11.48** |
+| **San Antonio Spurs** | +8.28 | +15.13 | **+6.85** |
+| Portland Trail Blazers | -0.28 | +2.73 | +3.01 |
+| Oklahoma City Thunder | +11.04 | +11.42 | +0.38 |
+
+Two things stand out. The regular-season rating leader, Oklahoma City (+11.04),
+barely changed in the playoffs (+0.38) and finished well behind both finalists.
+And the Finals paired the two teams that had improved the most since October: the
+field's two hottest teams, not its two best regular-season teams.
+
+These playoff ratings rest on a few weeks of games, so the exact figures carry
+the same small-sample caution as the rest of the run (see §11). The order is
+clear, though: both finalists rose further than anyone else.
+
+![Regular-season to playoff jump in team rating: the Knicks rose more than any 2025-26 playoff team, the Spurs second](../generated/images/knicks_2026_field_elevation.svg){width=100%}
+
+---
+
+## 7. Other Context
 
 **Clutch/close games:** 31.6% of Knicks playoff games were decided by 5 points
 or fewer (84th percentile, more clutch than average champions). The Finals in
@@ -179,7 +217,7 @@ The Knicks won 90.0% of their road games, better than all but one champion in th
 
 ---
 
-## 7. What the Betting Market Said
+## 8. What the Betting Market Said
 
 Betting spreads price in public information about each game, so they are a useful
 outside benchmark for how good the Knicks looked at the time. The market's view
@@ -221,7 +259,7 @@ elite Spurs team that the Knicks won by grinding out close games.
 
 ---
 
-## 8. Opponent Health (No Injury Asterisk)
+## 9. Opponent Health (No Injury Asterisk)
 
 One recurring question about dominant playoff runs is whether key opposing players
 were injured. The answer here: **no, they weren't.**
@@ -246,7 +284,7 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 
 ---
 
-## 9. How Solid Is the #1 Ranking?
+## 10. How Solid Is the #1 Ranking?
 
 The "best opponent-adjusted margin of any champion" claim rests on a 19-game
 run, and 19 games is a small sample. To see how solid the top spot is, we
@@ -284,13 +322,13 @@ played.
 
 ---
 
-## 10. Limitations
+## 11. Limitations
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range
 on the margin ([+7.4, +22.4]). The comparison set is also only 43 champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all
 measure closely related things; treat them as different angles on one story, not
-independent votes. §9 puts numbers on this: the exact #1 rank is roughly a
+independent votes. §10 puts numbers on this: the exact #1 rank is roughly a
 60/40 call, not a settled fact.
 
 **Opponent SRS** for the reg-season-adjusted metrics is from regular-season
@@ -317,7 +355,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 11. Methodology
+## 12. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS

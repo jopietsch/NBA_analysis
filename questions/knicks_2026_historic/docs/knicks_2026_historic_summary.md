@@ -20,7 +20,7 @@ The East was **not historically weak**. The West-East strength gap in 2025–26 
 
 The run has two distinct halves. Against the East (Hawks, 76ers, Cavaliers) the Knicks went 12-2 with an average margin of +19.7 points. Against the Spurs in the Finals, they won 4-1 with an average margin of +2.4, with four of five games decided by 4 points or fewer.
 
-This split is not just a story about opponent quality. The Spurs improved more than any of the Knicks' four opponents: their regular-season SRS of +8.28 rose to a playoff SRS of +14.48 through the West bracket. The 76ers and Cavaliers played slightly below their regular-season ratings against other opponents. The Knicks dominated East opponents who were below form, and then beat the best-performing team in the field in a genuine series.
+This split is not just a story about opponent quality. The two teams that improved most from the regular season met in the Finals: the Knicks rose further than any team in the 2026 field, and the Spurs were second, climbing from a regular-season SRS of +8.28 to +14.48 against teams other than the Knicks. The 76ers and Cavaliers played slightly below their regular-season ratings against other opponents. The Knicks dominated East opponents who were below form, and then beat the best-performing team in the field in a genuine series.
 
 ---
 

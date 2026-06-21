@@ -143,6 +143,30 @@ Gap (pre − Finals)             +17.3    +23.6    +32.4
     90–91: raw +11.71  opp-po-SRS +5.10  adj +6.61
     13–14: raw +9.30  opp-po-SRS +3.30  adj +6.00
 
+── 2025-26 playoff field — most improved (reg→playoff SRS) ──
+Full playoff SRS (all of a team's playoff games, unlike the opponent
+table above which excludes the Knicks series) minus regular-season SRS,
+computed identically for every 2025-26 playoff team.
+
+Team                          Reg SRS   PO SRS    Elev  PO G
+────────────────────────────────────────────────────────────
+New York Knicks                 +6.05   +17.53  +11.48    19  ← Knicks
+San Antonio Spurs               +8.28   +15.13   +6.85    23
+Portland Trail Blazers          -0.28    +2.73   +3.01     5
+Oklahoma City Thunder          +11.04   +11.42   +0.38    15
+Atlanta Hawks                   +2.38    +0.03   -2.35     6
+Minnesota Timberwolves          +3.07    -1.04   -4.11    12
+Philadelphia 76ers              -0.27    -4.72   -4.45    11
+Cleveland Cavaliers             +3.77    -1.72   -5.50    18
+Toronto Raptors                 +2.75    -3.43   -6.19     7
+Los Angeles Lakers              +1.68    -4.58   -6.26    10
+Phoenix Suns                    +1.75    -5.83   -7.58     4
+Orlando Magic                   +0.81    -7.86   -8.67     7
+Boston Celtics                  +7.37    -1.86   -9.23     7
+Denver Nuggets                  +4.97    -5.54  -10.51     6
+Detroit Pistons                 +7.53    -3.15  -10.68    14
+Houston Rockets                 +4.87    -7.08  -11.95     6
+
 ─── §7  OTHER DEFLATORS ────────────────────────────────────────────────
 
 ── Clutch / close games ──
