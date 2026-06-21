@@ -28,7 +28,7 @@ The playoffs followed a different path. Playoff home win rates held near **64%**
 
 Four categories account for about **95%** of the entire home advantage: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece at more than **40%**, followed by rebounding at **25%**.
 
-The right panel shows where the decline has registered. Rebounding carries the largest share at roughly **30%**, followed by turnovers at about **27%**. Together they account for more than half the drop. Shooting accounts for about **21%** and the narrowing foul gap for about **18%**. The three-point revolution reaches into the foul and turnover categories too: holding three-point volume constant absorbs roughly half of each one's trend. What it does not explain is rebounding: the largest single driver, and one that barely moves when three-point volume is held constant.
+The right panel shows where the decline has registered. Rebounding carries the largest share at roughly **30%**, followed by turnovers at about **27%**. Together they account for more than half the drop. Shooting accounts for about **21%** and the narrowing foul gap for about **18%**. As three-point attempts rose, the foul and turnover gaps each shrank by about half. Rebounding tells a different story: it is the largest single driver of the decline, and it barely moves with three-point volume.
 
 The playoff picture is similar in shape, though a larger share of the playoff decline runs through factors not captured by the four box-score categories, consistent with the quality gap between home and away seeds compressing over time.
 
