@@ -325,4 +325,15 @@ Pulling it toward how dominant championship runs typically are (the other
   95% credible interval:        [+1.53, +11.48]
   Even shrunken, that margin still beats 83% of champions outright.
 
+── Adding opponent-strength uncertainty ──
+The opponent adjustment treats each opponent's SRS as exact, but it
+is estimated from ~82 games.  Re-running the bootstrap while also
+shocking each opponent's SRS by its standard error each time:
+
+  90% interval on adj margin:  [+4.94, +17.88]
+  P(rank #1 all-time):          59.4%  (games-only was 59.6%)
+  P(top 5):                     81.7%
+  Opponent-strength noise barely moves the picture: game-to-game
+  variance dominates the uncertainty in this ranking.
+
 ```

@@ -355,6 +355,98 @@ def bootstrap_adjusted_margin_rank(po_logs: pd.DataFrame,
     }
 
 
+def compute_srs_se(reg_logs: pd.DataFrame) -> pd.Series:
+    """Approximate standard error of each team's regular-season SRS.
+
+    A team's SRS is dominated by its own average point margin; the schedule
+    term (average opponent strength) is comparatively stable across a full
+    season.  We therefore approximate SE(SRS) by the sampling error of the mean
+    margin, sd(margin) / sqrt(n_games), indexed by TEAM_ID.  This understates
+    total uncertainty slightly by ignoring schedule-term error, but captures the
+    dominant source — enough to ask whether not knowing opponents' exact
+    strength changes the ranking.
+    """
+    logs = _nba.fill_plus_minus(reg_logs)
+    out = {}
+    for tid, grp in logs.groupby("TEAM_ID"):
+        m = grp["PLUS_MINUS"].dropna()
+        n = len(m)
+        out[int(tid)] = float(m.std(ddof=1) / np.sqrt(n)) if n >= 2 else float("nan")
+    return pd.Series(out, name="SRS_SE")
+
+
+def bootstrap_adjusted_margin_rank_srs_error(po_logs: pd.DataFrame,
+                                             reg_srs: pd.Series,
+                                             srs_se: pd.Series,
+                                             team_id: int,
+                                             other_champ_adj,
+                                             n_boot: int = 20000,
+                                             confidence: float = 0.90,
+                                             seed: int = 0) -> dict:
+    """Bootstrap the adjusted-margin rank while ALSO perturbing each opponent's
+    SRS by its standard error.
+
+    Same game-level resampling as ``bootstrap_adjusted_margin_rank``, but each
+    iteration additionally draws a Normal(0, SE) shock for every opponent's SRS
+    (one shock per opponent per iteration, shared across that opponent's games).
+    The resulting interval reflects both game-to-game variance and the fact that
+    the opponents' true strength is itself estimated.  The other champions are
+    held at their point estimates, so this is a stress test of the subject's
+    number, not a full re-ranking.
+    """
+    logs = _nba.fill_plus_minus(po_logs)
+    team_logs = logs[logs["TEAM_ID"] == team_id]
+    gid_to_teams = po_logs.groupby("GAME_ID")["TEAM_ID"].apply(list).to_dict()
+
+    margins, opp_ids = [], []
+    for _, row in team_logs.iterrows():
+        margin = float(row["PLUS_MINUS"])
+        if np.isnan(margin):
+            continue
+        opp = [t for t in gid_to_teams.get(row["GAME_ID"], []) if t != team_id]
+        if not opp:
+            continue
+        osrs = float(reg_srs.get(opp[0], float("nan")))
+        if np.isnan(osrs):
+            continue
+        margins.append(margin)
+        opp_ids.append(int(opp[0]))
+
+    other = np.asarray([float(a) for a in other_champ_adj], dtype=float)
+    other = other[~np.isnan(other)]
+    if len(margins) < 2 or other.size == 0:
+        return {}
+
+    m = np.asarray(margins, dtype=float)
+    uniq = list(dict.fromkeys(opp_ids))
+    opp_pos = {oid: i for i, oid in enumerate(uniq)}
+    oi = np.asarray([opp_pos[o] for o in opp_ids])
+    s = np.asarray([float(reg_srs.get(o)) for o in opp_ids])
+    se_vec = np.asarray([float(srs_se.get(o, 0.0)) for o in uniq])
+    se_vec = np.nan_to_num(se_vec, nan=0.0)
+
+    n = m.size
+    rng  = np.random.default_rng(seed)
+    idx  = rng.integers(0, n, size=(n_boot, n))
+    deltas = rng.normal(0.0, 1.0, size=(n_boot, len(uniq))) * se_vec[None, :]
+    rows = np.arange(n_boot)[:, None]
+    gd   = deltas[rows, oi[idx]]
+    draws = (m[idx] - s[idx] - gd).mean(axis=1)
+    ranks = 1 + (other[None, :] > draws[:, None]).sum(axis=1)
+
+    lo_q, hi_q = (1 - confidence) / 2, (1 + confidence) / 2
+    return {
+        "adj_point":  float((m - s).mean()),
+        "ci_lo":      float(np.quantile(draws, lo_q)),
+        "ci_hi":      float(np.quantile(draws, hi_q)),
+        "confidence": confidence,
+        "p_rank1":    float((ranks == 1).mean()),
+        "p_top3":     float((ranks <= 3).mean()),
+        "p_top5":     float((ranks <= 5).mean()),
+        "rank_median": float(np.median(ranks)),
+    }
+
+
 def shrink_adjusted_margin(po_logs: pd.DataFrame,
                            reg_srs: pd.Series,
                            team_id: int,

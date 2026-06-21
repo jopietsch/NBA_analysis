@@ -896,6 +896,8 @@ def run_robustness(po_2026: pd.DataFrame,
     """
     from knicks_2026_data import (
         bootstrap_adjusted_margin_rank,
+        bootstrap_adjusted_margin_rank_srs_error,
+        compute_srs_se,
         shrink_adjusted_margin,
     )
 
@@ -951,6 +953,27 @@ def run_robustness(po_2026: pd.DataFrame,
     other_adj_pct = _pct_rank(other_adj.dropna(), shr["post_mean"], ascending=True)
     print(f"  Even shrunken, that margin still beats {other_adj_pct:.0f}% of "
           f"champions outright.", file=out)
+
+    # Opponent-strength uncertainty: opponent SRS is itself estimated (~82 games)
+    srs_se = compute_srs_se(reg_2026)
+    se_boot = bootstrap_adjusted_margin_rank_srs_error(
+        po_2026, srs_2026, srs_se, KNICKS_TEAM_ID, other_adj
+    )
+    print(_subhdr("Adding opponent-strength uncertainty"), file=out)
+    if se_boot:
+        print(
+            "The opponent adjustment treats each opponent's SRS as exact, but it\n"
+            "is estimated from ~82 games.  Re-running the bootstrap while also\n"
+            "shocking each opponent's SRS by its standard error each time:\n",
+            file=out,
+        )
+        print(f"  {int(round(se_boot['confidence']*100))}% interval on adj margin:  "
+              f"[{se_boot['ci_lo']:+.2f}, {se_boot['ci_hi']:+.2f}]", file=out)
+        print(f"  P(rank #1 all-time):          {se_boot['p_rank1']:.1%}  "
+              f"(games-only was {boot['p_rank1']:.1%})", file=out)
+        print(f"  P(top 5):                     {se_boot['p_top5']:.1%}", file=out)
+        print("  Opponent-strength noise barely moves the picture: game-to-game\n"
+              "  variance dominates the uncertainty in this ranking.", file=out)
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────

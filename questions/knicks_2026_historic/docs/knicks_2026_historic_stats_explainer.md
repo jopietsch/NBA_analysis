@@ -463,18 +463,100 @@ The z-score is computed as `(k − np) / sqrt(np(1−p))` = `(16 − 9.5) / sqrt
 expected, not whether they differed from 50% in either direction. The question
 ("was this ATS performance unusual?") is directional.
 
-**What the results mean.** Z = +2.98, p = 0.0022.  A team covering 16 of 19
-games under a fair-coin null has only a 0.22% probability. This is not random
-variation: the East-opponent performance (14-0 ATS in rounds 1-3) drove the
-signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
+**What the results mean (iid).** Z = +2.98, p = 0.0022.  A team covering 16 of 19
+games under a fair-coin null has only a 0.22% probability. The East-opponent
+performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS)
+was exactly what the efficient market predicted.
 
-**An important caveat.** This p-value applies to one team in one playoff run. We
-identified this run because it was interesting (the champion); if we instead asked
-"of all playoff champions, how often do we see ATS records this extreme?", the
-reference distribution would be different and we'd need historical ATS data for
-all 43 champions. The p-value is best interpreted as "the ATS outperformance
-against East opponents was systematic, not luck", not as an unbiased statistical
-claim across all possible playoff runs.
+**Adjusting for series correlation (`clustered_cover_significance`).** The iid
+binomial assumes 19 independent Bernoulli trials, but the games cluster into 4
+series, and covers within a series are correlated (same matchup, same direction
+of pricing error). We estimate the intraclass correlation (ICC) of the cover
+indicator via one-way ANOVA across the four series and inflate the variance by
+the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the (variance-style)
+average cluster size. That gives an effective sample size `N / deff` and a
+p-value computed on it:
+
+- ICC ≈ 0.49 (covers are strongly clustered: three series are 100% covers, one is 2/5)
+- design effect ≈ 2.82, so effective N ≈ 6.7 (not 19)
+- adjusted z ≈ +1.78, one-tailed p ≈ 0.038
+
+Still beyond chance, but an order of magnitude weaker than the iid 0.0022. With
+only four clusters the ICC is itself imprecise, so treat 0.038 as "weakened but
+still suggestive," not a sharp figure.
+
+**ATS is not independent evidence.** The ATS margin is the actual margin minus a
+spread that averaged about −2 (near zero), so the cover record is largely the raw
+dominance result re-expressed, not a separate confirmation of it.
+
+**An important caveat.** Both p-values apply to one team in one playoff run,
+chosen because it was interesting (the champion). An unbiased "how often do
+champions cover this much?" question would need historical ATS data for all 43
+champions. Read these as "the ATS outperformance against East opponents was
+systematic, not luck," not as an unbiased claim across all possible runs.
+
+---
+
+## 11. Robustness of the #1 Ranking (`run_robustness`)
+
+**The data.** The Knicks' 19 per-game opponent-adjusted contributions
+`g_i = margin_i − opp_reg_SRS_i` (mean = the +11.23 adjusted margin from §5), the
+other 42 champions' `adj_margin` values, and the 2025–26 regular-season margin
+standard errors.
+
+**Why this section exists.** Sections 1–9 report point estimates and percentile
+ranks. A 19-game run is a small sample, and the headline "1st of 43 on adjusted
+margin" is a point estimate with no stated uncertainty. This section quantifies
+how fragile that #1 is, three ways.
+
+**(a) Game-level bootstrap of the rank (`bootstrap_adjusted_margin_rank`).**
+Resample the 19 values `g_i` with replacement 20,000 times; each resample mean is
+a draw from the sampling distribution of the adjusted margin. Rank each draw
+against the *fixed* other-champion `adj_margin` set (the subject's own season is
+excluded so the rank is not self-referential). Results:
+
+- P(rank 1) ≈ 60%, P(top 3) ≈ 70%, P(top 5) ≈ 82%
+- median rank 1, 90% rank interval 1–11
+- 90% interval on the adjusted margin itself: roughly [+5, +18]
+
+This is an iid game bootstrap; games within a series are correlated, so the true
+spread is modestly wider. Interpretation: most-likely #1, near-certain top five,
+but the exact #1 is roughly a 60/40 call.
+
+**(b) Empirical-Bayes shrinkage (`shrink_adjusted_margin`).** An extreme value
+chosen because it is extreme is biased upward (selection / regression to the
+mean). A normal–normal conjugate update regularizes it: the prior is the other
+champions' adjusted-margin distribution N(prior_mean ≈ +3.2, prior_var = observed
+between-champion variance); the likelihood is the 19-game sample mean with
+sampling variance `s²/n`. The posterior mean is the precision-weighted average.
+
+- weight on the 19-game data ≈ 41% (playoff margins are noisy, so 19 games carry
+  less than half the estimate)
+- posterior (shrunken) adjusted margin ≈ +6.5 pts/game, 95% credible interval
+  ≈ [+1.5, +11.5]
+- even shrunken it still exceeds ~83% of champions
+
+This is deliberately conservative in two ways: only the subject is shrunk (the
+other champions keep their own noisy point estimates), and `prior_var` is the
+*observed* between-champion variance, which still contains each champion's own
+sampling noise and so shrinks a little less than a noise-free prior would.
+
+**(c) Opponent-strength uncertainty (`compute_srs_se`,
+`bootstrap_adjusted_margin_rank_srs_error`).** Opponent SRS is itself estimated
+from ~82 games. We approximate each team's SE(SRS) by the sampling error of its
+mean margin, `sd(margin)/√n_games` (the schedule term is comparatively stable, so
+this captures the dominant source while slightly understating total uncertainty).
+The bootstrap is re-run with an added Normal(0, SE) shock to each opponent's SRS
+per iteration (one shock per opponent, shared across that opponent's games).
+P(rank 1) moves from ~59.6% to ~59.4% and the margin interval barely widens:
+the ranking's uncertainty is overwhelmingly the 19-game sample size, not doubt
+about opponent strength.
+
+**Why this chart (bootstrap histogram).** The histogram of the 20,000 resampled
+adjusted margins, with the two nearest rivals (2016–17 Warriors, 1986–87 Lakers)
+drawn as reference lines, makes the rank fragility visual: the share of the
+distribution lying left of the Warriors line is `1 − P(rank 1)`. The title states
+P(rank 1) directly so a skimming reader gets the headline.
 
 ---
 
@@ -527,10 +609,13 @@ comparable across sections with slightly different sample sizes (some metrics
 have fewer than 43 valid values due to NaN, e.g. in pre-1997 margins before the
 fill).
 
-**Why no regression.** The analysis is fundamentally descriptive: it ranks a
-single team against a historical distribution. Regression would add complexity
-(what is the outcome variable? what are the controls?) without answering the
-simpler and more direct question of "where does this run rank?" The adjusted margin
-is the closest thing to a model; it makes a specific functional-form assumption
-(opponent adjustment = direct subtraction), but it is explicitly stated and
-motivated by the SRS identity rather than fit from data.
+**Why no regression.** The core analysis is descriptive: it ranks a single team
+against a historical distribution. A regression of playoff margin on opponent SRS
+would add complexity (outcome variable? controls?) without better answering "where
+does this run rank?" The adjusted margin is the closest thing to a structural
+model; it makes one explicit functional-form assumption (opponent adjustment =
+direct subtraction), motivated by the SRS identity rather than fit from data.
+What §11 adds is not a predictive model but uncertainty quantification on that
+descriptive rank: bootstrap resampling, empirical-Bayes shrinkage, and
+error-propagation, each chosen because the headline rests on a 19-game sample and
+the point-estimate rank alone hides how wide that uncertainty is.

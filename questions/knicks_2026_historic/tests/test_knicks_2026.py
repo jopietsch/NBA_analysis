@@ -214,6 +214,37 @@ def test_bootstrap_adjusted_margin_rank_contested():
     assert res["ci_lo"] <= res["adj_point"] <= res["ci_hi"]
 
 
+def test_compute_srs_se():
+    # Knicks margins +10 and +6 → mean 8, sd=sqrt(8)=2.828, se=2.828/sqrt(2)=2.0
+    rs = pd.DataFrame([
+        {"GAME_ID": "R1", "TEAM_ID": KNICKS_ID, "PLUS_MINUS": 10.0, "PTS": 110},
+        {"GAME_ID": "R1", "TEAM_ID": OPP1_ID,   "PLUS_MINUS": -10.0, "PTS": 100},
+        {"GAME_ID": "R2", "TEAM_ID": KNICKS_ID, "PLUS_MINUS": 6.0,  "PTS": 106},
+        {"GAME_ID": "R2", "TEAM_ID": OPP1_ID,   "PLUS_MINUS": -6.0, "PTS": 100},
+    ])
+    se = data.compute_srs_se(rs)
+    assert se[KNICKS_ID] == pytest.approx(2.0, abs=1e-6)
+
+
+def test_bootstrap_srs_error_widens_interval():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    other = [7.0, 5.0]
+    no_se   = pd.Series({OPP1_ID: 0.0, OPP2_ID: 0.0})
+    with_se = pd.Series({OPP1_ID: 3.0, OPP2_ID: 3.0})
+    base = data.bootstrap_adjusted_margin_rank_srs_error(
+        po, srs, no_se, KNICKS_ID, other, n_boot=4000, seed=3
+    )
+    wide = data.bootstrap_adjusted_margin_rank_srs_error(
+        po, srs, with_se, KNICKS_ID, other, n_boot=4000, seed=3
+    )
+    # Perturbing opponent strength leaves the point estimate but widens the range
+    assert base["adj_point"] == pytest.approx(wide["adj_point"])
+    base_w = base["ci_hi"] - base["ci_lo"]
+    wide_w = wide["ci_hi"] - wide["ci_lo"]
+    assert wide_w > base_w
+
+
 def test_shrink_adjusted_margin_pulls_toward_prior():
     po  = _mini_po_2026()
     srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})

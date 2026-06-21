@@ -275,6 +275,13 @@ clearly above-average championship; at the high end it is the best
 opponent-adjusted run on record. The single best guess stays near the top, but
 "#1 by a wide margin" is not what the uncertainty supports.
 
+We also checked whether not knowing the opponents' exact strength matters: the
+opponent ratings come from full regular seasons, and re-running the re-draws
+while jostling each opponent's rating by its own margin of error barely moves
+the result (the #1 chance stays at about 60%). The wobble in this ranking is
+almost entirely the shortness of a 19-game run, not doubt about who the Knicks
+played.
+
 ![How often the 2025-26 run still ranks #1 when its games are re-drawn](../generated/images/knicks_2026_bootstrap_margin.svg){width=100%}
 
 ---
