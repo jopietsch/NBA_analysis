@@ -34,11 +34,14 @@
     - Second drop: after 2017, below 56%. Coincides with the **three-point surge** hitting full stride — but the surge is the most visible *marker* of a broader move to the perimeter, not the whole cause (mechanics in §3). Bayesian break locates near 2020, not 2017, likely reflecting COVID disruption + acceleration. *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
   - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Handled in different sections because the events differ: discrete rule shock (§4) vs. gradual stylistic shift inside the categories (§3).
   - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
+- **Still near-universal today (@fig-team-season-hca):** most recent regular season, all but one team won a higher share of home than road games. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). ~41 home games/team → noisy snapshot of how widespread HCA still is, not a franchise ranking. Engagement / "find your team" hook closing §1; smaller but not gone.
 - **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
 - **Where the trend is headed:** 3PA share approaching ceiling (~40%); league OREB rate approaching floor (~26%, down from 33%). If both forces are near their asymptotes, pace of decline should slow. Floor from empty-arena data: home teams won 51% with no crowd/bias/prep edge, probably the long-run lower bound. Information diffusion as mechanism is not basketball-specific: other sports investing heavily in analytics are likely on the same trajectory (prediction, not tested here).
 **Figures:**
 
 ![Season trends](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
+
+![Current-season team home vs road win%](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
 ---
 
@@ -166,10 +169,6 @@
 ---
 
 ## Section 6 — Other Findings
-
-- **Home court still near-universal year to year (@fig-team-season-hca):** most recent regular season, all but one team won a higher share of home than road games. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). ~41 home games/team → noisy snapshot of how widespread HCA still is, not a franchise ranking. Engagement / "find your team" chart; ties to thesis that HCA is smaller but not gone.
-
-![Current-season team home vs road win%](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
 - **Referee differences real but overstated:** 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing.
 - **Denver & Utah best home court — altitude the likely reason:** Nuggets **+26.8 pp**, Jazz **+25.7 pp** shrunken (league mean +20.0). ~70% of franchise variation is real (true SD ≈4.1 pp). Altitude piece ≈8 of those points. (n=2 high-altitude teams — elevation can't be fully separated from other franchise-specific factors.)

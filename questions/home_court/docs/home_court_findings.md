@@ -33,6 +33,10 @@ Neither drop is a separate cause stacked on top of the trend. Each is a moment w
 
 The playoffs also declined, but later. Postseason home court held near 64% from the mid-1990s through 2017, even as the regular season eroded below it. It then joined the slide after 2018, falling to 61%, then 58%.
 
+Smaller than it was does not mean gone. In the most recent regular season, nearly every team still won a higher share of its home games than its road games, with only one exception. The chart below puts each team's home and road win rate side by side. A single season of about 41 home games is noisy, so the spread between teams is a snapshot rather than a ranking, but the direction is nearly universal: good teams that win everywhere still win more at home, and weak teams pick up most of their wins there. Where each piece of that edge comes from, and why it has shrunk, is the rest of this report.
+
+![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy, so this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
+
 A word on era labels. The charts group seasons by the NBA's major rule changes, since each one reshaped how the game is played:
 
 | Era | Seasons | Defining rule change |
@@ -240,10 +244,6 @@ The empty-arena numbers look different for a methodological reason. The blog's "
 ## Appendix C: Additional Findings
 
 A few results surfaced along the way that don't bear directly on the three questions but are worth noting.
-
-**Home court still shows up almost everywhere, year to year.** Smaller than it was does not mean gone. In the most recent regular season, nearly every team won a higher share of its home games than its road games, with only one exception. The chart below places each team's home and road win rate side by side: a single season of about 41 home games is noisy, so the spread between teams is a snapshot rather than a ranking, but the direction is nearly universal. Even good teams that win everywhere still win more at home, and weak teams pick up most of their wins there.
-
-![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy, so this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
 **Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit close to a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is small-sample noise. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
 
