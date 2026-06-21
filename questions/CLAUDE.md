@@ -56,7 +56,7 @@ In `*_findings.md` and `*_summary.md`, translate the statistician's term into wh
 | bootstrap, resampling | "re-running on re-drawn samples", or just give the range |
 | sampling noise / noise-adjusted | "the random bounce of a short schedule" / "once the randomness is accounted for" |
 | correlation, correlated | "move together", "parallel", "in lockstep" |
-| control for X, holding X fixed, hold X constant, holding X constant | describe the relationship directly: "as X rose, Y fell" or "with more X, Y shrank by about half" — never use "hold constant", which is regression-speak meaningless to a sports reader |
+| control for X, holding X fixed, hold X constant, holding X constant, accounting for X | describe the relationship directly: "as X rose, Y fell" or "with more X, Y shrank by about half" — never use "hold constant" or "accounting for", which are regression-speak meaningless to a sports reader. Note: "X accounts for 30% of the decline" (meaning "comprises") is fine |
 | coefficient, weight (regression) | "how much each factor counts toward winning" |
 | OLS / logistic regression / R-squared | "a trend line" / "a model of who wins" / "how much of the variation is explained" |
 | decomposition / mediation | "breakdown", "where the decline shows up" |
