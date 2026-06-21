@@ -32,7 +32,7 @@ Four categories account for about **95%** of the entire home advantage: **shooti
 
 The right panel shows where the decline has registered. Rebounding carries the largest share at roughly **30%**, followed by turnovers at about **27%**. Together they account for more than half the drop. Shooting accounts for about **21%** and the narrowing foul gap for about **18%**. As three-point attempts rose, the foul and turnover gaps each shrank by about half. Rebounding tells a different story: it is the largest single driver of the decline, and it barely moves with three-point volume.
 
-The playoff picture is similar in shape, though a larger share of the playoff decline runs through factors not captured by the four box-score categories, consistent with the quality gap between home and away seeds compressing over time.
+The playoff picture is similar in shape, though a larger share of the playoff decline runs through factors not captured by the four box-score categories, consistent with better and lower seeds becoming more evenly matched over time.
 
 ---
 
@@ -40,7 +40,7 @@ The playoff picture is similar in shape, though a larger share of the playoff de
 
 ![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates converging and crossing over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding width=100%}
 
-The home rebounding edge has shrunk for 40 years, and it isn't the three-point story in disguise. Holding three-point volume constant erases the shooting edge; the rebounding edge barely moves.
+The home rebounding edge has shrunk for 40 years, and it isn't the three-point story in disguise. In games with similar three-point rates, the shooting edge disappears; the rebounding edge barely moves.
 
 The cleaner measure is the **offensive** share of available rebounds. The home team's offensive-rebound rate fell from about **34% to 26%** while the away team's fell only from **31% to 26%**. The lines converge and cross by 2025–26: home teams no longer crash the offensive boards more aggressively than visitors. The home **turnover** edge faded over the same span. Home teams once committed about **0.4 fewer turnovers per game** than visitors; that gap is now essentially zero. The playoffs show the same fade on both counts.
 
@@ -50,7 +50,7 @@ The cleaner measure is the **offensive** share of available rebounds. The home t
 
 A live crowd turns out to be a real ingredient. In the empty arenas of 2020–21, home teams won just **51%**. With any crowd at all: **58.5%**. That seven-point gap reflects something genuine. But arenas have held near capacity for 25 years while home court fell; crowd presence is a switch that flips with the doors, not a dial that has been slowly turning.
 
-Referees are calling fairer games. Home teams once attempted roughly **2 more free throws per game** than visitors; now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. Other rule-change eras show no statistical signature once the underlying year trend is accounted for. Travel distance, time zones, pace of play, and competitive balance each have effects too small and inconsistent to account for a 40-year trend.
+Referees are calling fairer games. Home teams once attempted roughly **2 more free throws per game** than visitors; now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. Other rule-change eras leave no clear footprint once the underlying year-by-year trend is removed. Travel distance, time zones, pace of play, and competitive balance each have effects too small and inconsistent to account for a 40-year trend.
 
 The three-point revolution shifted shooting patterns, and the foul and turnover trends move with it. But more than half the decline runs through rebounding and turnovers, channels that move independently of the three-point shift.
 
