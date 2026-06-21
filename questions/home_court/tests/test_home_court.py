@@ -1094,6 +1094,44 @@ class TestComputeTeamHcaStats:
         assert result == {}
 
 
+class TestComputeTeamSeasonHca:
+    def _make_game_log(self, tmp_path, year, rows):
+        df = pd.DataFrame({
+            "MATCHUP":   [r[0] for r in rows],
+            "WL":        [r[1] for r in rows],
+            "TEAM_NAME": [r[2] for r in rows],
+        })
+        df.to_csv(nba.cache_path(year, "Regular Season"), index=False)
+
+    def test_single_season_snapshot(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        # Boston: 6 home wins / 8 home = 75%; 4 road wins / 8 road = 50% → +25
+        # Miami:  2 home wins / 8 home = 25%; 3 road wins / 8 road = 37.5% → -12.5
+        rows = (
+            [("BOS vs. MIA", "W", "Boston Celtics")] * 6 +
+            [("BOS vs. MIA", "L", "Boston Celtics")] * 2 +
+            [("BOS @ MIA",   "W", "Boston Celtics")] * 4 +
+            [("BOS @ MIA",   "L", "Boston Celtics")] * 4 +
+            [("MIA vs. BOS", "W", "Miami Heat")] * 2 +
+            [("MIA vs. BOS", "L", "Miami Heat")] * 6 +
+            [("MIA @ BOS",   "W", "Miami Heat")] * 3 +
+            [("MIA @ BOS",   "L", "Miami Heat")] * 5
+        )
+        self._make_game_log(tmp_path, 2026, rows)
+
+        result = nba.compute_team_season_hca(2026, "Regular Season")
+
+        assert result["Boston Celtics"]["home_pct"] == pytest.approx(75.0)
+        assert result["Boston Celtics"]["road_pct"] == pytest.approx(50.0)
+        assert result["Boston Celtics"]["hca"]      == pytest.approx(25.0)
+        # No min_games filter: Miami is kept even with a negative gap.
+        assert result["Miami Heat"]["hca"] == pytest.approx(-12.5)
+
+    def test_returns_empty_when_cache_missing(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        assert nba.compute_team_season_hca(2026, "Regular Season") == {}
+
+
 class TestFetchRefereeData:
     def _make_game_log(self, path, game_ids):
         rows = []

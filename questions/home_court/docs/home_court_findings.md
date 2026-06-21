@@ -241,6 +241,10 @@ The empty-arena numbers look different for a methodological reason. The blog's "
 
 A few results surfaced along the way that don't bear directly on the three questions but are worth noting.
 
+**Home court still shows up almost everywhere, year to year.** Smaller than it was does not mean gone. In the most recent regular season, nearly every team won a higher share of its home games than its road games, with only one exception. The chart below places each team's home and road win rate side by side: a single season of about 41 home games is noisy, so the spread between teams is a snapshot rather than a ranking, but the direction is nearly universal. Even good teams that win everywhere still win more at home, and weak teams pick up most of their wins there.
+
+![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy, so this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
+
 **Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit close to a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is small-sample noise. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
 
 ![Top/bottom 15 referees ranked by home foul differential (≥50 playoff games). Values are adjusted for how few games each official worked: raw differences are pulled toward the league average so that small samples don't dominate the leaderboard.](../generated/images/home_court_referee_rankings.svg){#fig-referee-rankings}

@@ -22,7 +22,7 @@ from home_court_data import (
     compute_net_rating_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
     compute_shot_zone_stats, compute_league_3pa_stats,
-    compute_league_pace_stats, compute_team_hca_stats,
+    compute_league_pace_stats, compute_team_hca_stats, compute_team_season_hca,
     compute_tracking_rebound_stats, TRACKING_START_YEAR,
     fetch_all_referee_data, compute_referee_bias_stats,
     compute_attendance_season_stats, compute_attendance_covid_doseresponse,
@@ -36,7 +36,7 @@ from home_court_plots import (
     plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis,
     plot_attendance, plot_tracking_rebounding,
     plot_referee_era_distribution, plot_referee_rankings,
-    plot_team_hca_by_era, plot_bayesian_changepoint,
+    plot_team_hca_by_era, plot_team_season_hca, plot_bayesian_changepoint,
 )
 
 
@@ -153,6 +153,8 @@ def main() -> None:
     early_team_stats = compute_team_hca_stats(START_YEAR, 2001, "Regular Season")
     late_team_stats  = compute_team_hca_stats(2002, END_YEAR, "Regular Season")
     plot_team_hca_by_era(early_team_stats, late_team_stats, late_label="2002–26")
+
+    plot_team_season_hca(compute_team_season_hca(END_YEAR, "Regular Season"), END_YEAR)
 
     print("\nFetching referee data (BoxScoreSummaryV3, cached under cache/)...")
     ref_df = fetch_all_referee_data(

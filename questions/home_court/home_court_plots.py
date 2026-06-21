@@ -1575,6 +1575,65 @@ def plot_team_hca_by_era(
     save_chart("home_court_team_hca_era.svg", OUTPUT_DIR)
 
 
+def plot_team_season_hca(stats: dict, end_year: int) -> None:
+    """
+    Single-season snapshot: each team's home vs. road win% for one season,
+    as a dumbbell (road dot, home dot, connecting bar), sorted by home win%.
+    A "find your team" engagement chart, not an estimate — one season of ~41
+    home games per team is noisy, so the figure reads the spread as a snapshot.
+    Saves → home_court_team_season_hca.svg
+    """
+    season = f"{end_year - 1}-{str(end_year)[2:]}"
+    teams = sorted(stats, key=lambda t: stats[t]["home_pct"])  # bottom-to-top
+    home = np.array([stats[t]["home_pct"] for t in teams])
+    road = np.array([stats[t]["road_pct"] for t in teams])
+    y = np.arange(len(teams))
+    n_pos = int(sum(1 for t in teams if stats[t]["hca"] > 0))
+
+    avg_home = float(home.mean())
+    avg_road = float(road.mean())
+
+    fig, ax = plt.subplots(figsize=(11, max(8, len(teams) * 0.33 + 2)))
+    fig.suptitle(
+        f"In {season}, {n_pos} of {len(teams)} teams won more at home than on the road",
+        fontsize=13, fontweight="bold", y=0.99, color="#2c2c2a",
+    )
+    fig.text(
+        0.5, 0.945,
+        f"Data: NBA.com  |  one dot per team for home and road win%, "
+        f"sorted by home win%  |  {season} regular season (~41 home games each)",
+        ha="center", fontsize=9, color=GRAY,
+    )
+
+    # Connecting bar per team; red marks a team that did NOT hold home court.
+    for yi, h, r in zip(y, home, road):
+        seg = RED if h < r else "#cdcbc4"
+        ax.plot([r, h], [yi, yi], color=seg, linewidth=2.4, zorder=2,
+                solid_capstyle="round")
+    ax.scatter(road, y, color=GRAY, s=42, zorder=3, label="Road win%",
+               edgecolors="white", linewidths=0.8)
+    ax.scatter(home, y, color=BLUE, s=46, zorder=3, label="Home win%",
+               edgecolors="white", linewidths=0.8)
+
+    ax.axvline(avg_home, color=BLUE, linestyle="--", linewidth=1.1, alpha=0.5, zorder=1)
+    ax.axvline(avg_road, color=GRAY, linestyle="--", linewidth=1.1, alpha=0.5, zorder=1)
+    ax.text(avg_home + 0.5, len(teams) - 0.4, f"avg home {avg_home:.0f}%",
+            ha="left", va="bottom", fontsize=7.5, color=BLUE)
+    ax.text(avg_road - 0.5, len(teams) - 0.4, f"avg road {avg_road:.0f}%",
+            ha="right", va="bottom", fontsize=7.5, color=GRAY)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(teams, fontsize=8)
+    ax.set_ylim(-0.7, len(teams) - 0.1)
+    ax.set_xlabel("Win %", fontsize=10)
+    ax.xaxis.set_major_formatter(mticker.PercentFormatter(decimals=0))
+    ax.grid(axis="x", alpha=0.3, linewidth=0.6)
+    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd", loc="upper left")
+
+    plt.tight_layout(rect=(0, 0, 1, 0.94))
+    save_chart("home_court_team_season_hca.svg", OUTPUT_DIR)
+
+
 def plot_referee_era_distribution(bias_stats: list[dict]) -> None:
     """
     Single-panel: box plots of per-official era-mean foul_diff by era.

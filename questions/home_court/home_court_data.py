@@ -635,6 +635,39 @@ def compute_team_hca_stats(
     return result
 
 
+def compute_team_season_hca(end_year: int, season_type: str) -> dict[str, dict]:
+    """
+    Single-season per-team home and road win% for one season.
+    Returns dict: TEAM_NAME -> {home_pct, road_pct, hca, n_home, n_road}.
+    Unlike compute_team_hca_stats this is one season, so no min_games filter
+    (every team plays a full home/road slate); it is a snapshot, not an estimate.
+    """
+    df = _load_game_log(end_year, season_type)
+    if df is None:
+        return {}
+
+    is_home = df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)
+    is_road = df["MATCHUP"].str.contains(" @ ", regex=False, na=False)
+
+    result: dict[str, dict] = {}
+    for team in sorted(df["TEAM_NAME"].unique()):
+        home = df[is_home & (df["TEAM_NAME"] == team)]
+        road = df[is_road & (df["TEAM_NAME"] == team)]
+        n_h, n_r = len(home), len(road)
+        if n_h == 0 or n_r == 0:
+            continue
+        h_pct = 100.0 * int((home["WL"] == "W").sum()) / n_h
+        r_pct = 100.0 * int((road["WL"] == "W").sum()) / n_r
+        result[team] = {
+            "home_pct": round(h_pct, 1),
+            "road_pct": round(r_pct, 1),
+            "hca":      round(h_pct - r_pct, 1),
+            "n_home":   n_h,
+            "n_road":   n_r,
+        }
+    return result
+
+
 def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-home-game point margin from the cached game log.

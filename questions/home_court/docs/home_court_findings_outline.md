@@ -167,6 +167,10 @@
 
 ## Section 6 — Other Findings
 
+- **Home court still near-universal year to year (@fig-team-season-hca):** most recent regular season, all but one team won a higher share of home than road games. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). ~41 home games/team → noisy snapshot of how widespread HCA still is, not a franchise ranking. Engagement / "find your team" chart; ties to thesis that HCA is smaller but not gone.
+
+![Current-season team home vs road win%](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
+
 - **Referee differences real but overstated:** 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing.
 - **Denver & Utah best home court — altitude the likely reason:** Nuggets **+26.8 pp**, Jazz **+25.7 pp** shrunken (league mean +20.0). ~70% of franchise variation is real (true SD ≈4.1 pp). Altitude piece ≈8 of those points. (n=2 high-altitude teams — elevation can't be fully separated from other franchise-specific factors.)
 

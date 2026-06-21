@@ -194,6 +194,14 @@ def test_plot_team_hca_analysis():
     plots.plot_team_hca_analysis(_team_stats(teams, 4.0), _team_stats(teams, 6.0))
 
 
+def test_plot_team_season_hca():
+    teams = [f"Team {c}" for c in "ABCDEFGH"]
+    stats = _team_stats(teams, 4.0)
+    stats["Team A"] = {"hca": -3.0, "home_pct": 42.0, "road_pct": 45.0,
+                       "n_home": 41, "n_road": 41}  # one team below road, red segment
+    plots.plot_team_season_hca(stats, nba.END_YEAR)
+
+
 def _referee_bias_stats(n=10):
     return [
         {"name": f"Ref Number{i}", "mean_foul_diff": 1.0 - 0.2 * i,
