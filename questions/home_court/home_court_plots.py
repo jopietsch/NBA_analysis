@@ -759,24 +759,18 @@ def plot_margin_analysis(
     po_nr_seasons: list[str] | None = None, po_nr_stats: dict | None = None,
 ) -> None:
     """
-    4-panel chart (2×2) when net rating data is provided, otherwise 3-panel (1×3).
+    2-panel chart (1×2).
 
-    Panel 1: mean all-game margin per season (reg + playoffs) with trend lines.
-    Panel 2: mean win-only vs loss-only margin per season (regular season).
-    Panel 3: era-bucketed bar chart of mean margin, reg vs playoffs.
-    Panel 4: home-team net rating per season (reg + playoffs), when data available.
+    Panel 1: mean all-game margin per season (reg + playoffs, left axis) with
+             net rating overlaid on a right axis (dashed, when data available).
+    Panel 2: win-only vs loss-only margin per season (regular season).
     """
     has_nr = reg_nr_seasons is not None and reg_nr_stats is not None
 
     x = np.arange(len(reg_seasons))
     tick_step = max(1, len(reg_seasons) // 14)
 
-    if has_nr:
-        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-        ax1, ax2 = axes[0]
-        ax3, ax4 = axes[1]
-    else:
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(22, 7))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
 
     fig.suptitle("Home games are polarizing: bigger home wins and bigger home losses",
                  fontsize=15, fontweight="bold", y=1.03, color="#2c2c2a")
@@ -784,11 +778,11 @@ def plot_margin_analysis(
              f"Data: NBA.com  |  Positive = home team winning by more  |  {season_range_label()}",
              ha="center", fontsize=9, color=GRAY)
 
-    # Panel 1: all-game mean margin per season (reg + playoffs aligned)
+    # Panel 1: mean all-game margin (left axis) + net rating (right axis, dashed)
     y_reg = np.array(reg_stats["all_games_mean"], dtype=float)
     y_po  = _align_to_seasons(reg_seasons, po_seasons, po_stats, "all_games_mean")
 
-    for y, color, label in [(y_reg, BLUE, "Regular season"), (y_po, GREEN, "Playoffs")]:
+    for y, color, label in [(y_reg, BLUE, "Reg season (pts)"), (y_po, GREEN, "Playoffs (pts)")]:
         ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
         _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
@@ -798,8 +792,42 @@ def plot_margin_analysis(
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.set_title("Mean margin per season (all games)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
-    ax1.set_ylabel("Home point margin (home − away pts)", fontsize=10)
-    ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
+    ax1.set_ylabel("Home point margin (pts)", fontsize=10)
+
+    if has_nr:
+        # Align net rating values to the reg_seasons x-axis (NaN where unavailable)
+        season_to_idx = {s: i for i, s in enumerate(reg_seasons)}
+        nr_reg = np.full(len(reg_seasons), np.nan)
+        nr_po  = np.full(len(reg_seasons), np.nan)
+        for i, s in enumerate(reg_nr_seasons):
+            if s in season_to_idx:
+                nr_reg[season_to_idx[s]] = reg_nr_stats["net_rating_mean"][i]
+        if po_nr_seasons is not None:
+            for i, s in enumerate(po_nr_seasons):
+                if s in season_to_idx:
+                    nr_po[season_to_idx[s]] = po_nr_stats["net_rating_mean"][i]
+
+        ax1r = ax1.twinx()
+        for y, color, label in [
+            (nr_reg, BLUE,  "Reg season (net rtg)"),
+            (nr_po,  GREEN, "Playoffs (net rtg)"),
+        ]:
+            mask = ~np.isnan(y)
+            xm = x[mask]
+            ax1r.plot(xm, y[mask], color=color, linewidth=1.5, alpha=0.5,
+                      linestyle="--", label=label, zorder=2)
+            _add_trend_line(ax1r, xm, y[mask], color, linewidth=1.8, alpha=0.6,
+                            linestyle="--", zorder=3)
+
+        ax1r.set_ylabel("Home net rating (pts/100 poss)", fontsize=10)
+        ax1r.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
+
+        # Combine legends from both axes
+        h1, l1 = ax1.get_legend_handles_labels()
+        h2, l2 = ax1r.get_legend_handles_labels()
+        ax1.legend(h1 + h2, l1 + l2, fontsize=8, framealpha=0.85, edgecolor="#ddd")
+    else:
+        ax1.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     # Panel 2: win-only vs loss-only margin per season (regular season)
     y_wins   = np.array(reg_stats["home_wins_mean"],   dtype=float)
@@ -818,72 +846,8 @@ def plot_margin_analysis(
     ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax2.set_title("Win/loss margin by season (regular season)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
-    ax2.set_ylabel("Home point margin (home − away pts)", fontsize=10)
+    ax2.set_ylabel("Home point margin (pts)", fontsize=10)
     ax2.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    # Panel 3: era-bucketed bar chart (reg vs playoff mean all-game margin)
-    reg_era, era_labels = bucket_stats_by_era(reg_seasons, {"reg": reg_stats["all_games_mean"]})
-    po_era,  _          = bucket_stats_by_era(po_seasons,  {"po":  po_stats["all_games_mean"]})
-
-    # bucket_stats_by_era returns 0 for eras with no underlying data (margin
-    # data starts 1996–97, so the 1984–94 era is empty). Mask those to NaN so
-    # no bar is drawn rather than a misleading ~0 bar.
-    def _mask_empty_eras(seasons, values):
-        out = []
-        for _, y1, y2, _ in ERA_DEFS:
-            has = any(y1 <= label_to_year(s) <= y2 and not np.isnan(v)
-                      for s, v in zip(seasons, values))
-            out.append(not has)
-        return np.array(out)
-
-    reg_vals = np.array(reg_era["reg"], dtype=float)
-    po_vals  = np.array(po_era["po"],   dtype=float)
-    reg_vals[_mask_empty_eras(reg_seasons, reg_stats["all_games_mean"])] = np.nan
-    po_vals[_mask_empty_eras(po_seasons,  po_stats["all_games_mean"])]  = np.nan
-
-    xi = np.arange(len(era_labels))
-    w  = 0.35
-    bars1 = ax3.bar(xi - w / 2, reg_vals, width=w, color=BLUE,  label="Regular season", zorder=2)
-    bars2 = ax3.bar(xi + w / 2, po_vals,  width=w, color=GREEN, label="Playoffs",        zorder=2)
-    for bars, color in [(bars1, BLUE), (bars2, GREEN)]:
-        for bar in bars:
-            h  = bar.get_height()
-            if np.isnan(h):
-                continue
-            va = "bottom" if h >= 0 else "top"
-            ax3.text(bar.get_x() + bar.get_width() / 2, h + (0.1 if h >= 0 else -0.1),
-                     f"{h:+.1f}", ha="center", va=va, fontsize=7.5, color=color)
-
-    ax3.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
-    ax3.set_xticks(xi)
-    ax3.set_xticklabels(era_labels, rotation=30, ha="right", fontsize=9)
-    ax3.set_title("Mean margin by era",
-                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
-    ax3.set_ylabel("Home point margin (home − away pts)", fontsize=10)
-    ax3.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
-
-    if has_nr:
-        # Panel 4: net rating per season (reg + playoffs)
-        x_nr = np.arange(len(reg_nr_seasons))
-        tick_step_nr = max(1, len(reg_nr_seasons) // 14)
-        y_nr_reg = np.array(reg_nr_stats["net_rating_mean"], dtype=float)
-        y_nr_po  = _align_to_seasons(reg_nr_seasons, po_nr_seasons, po_nr_stats, "net_rating_mean") \
-                   if po_nr_seasons is not None else np.full(len(reg_nr_seasons), np.nan)
-
-        for y, color, label in [(y_nr_reg, BLUE, "Regular season"), (y_nr_po, GREEN, "Playoffs")]:
-            ax4.plot(x_nr, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
-            _add_trend_line(ax4, x_nr, y, color, linewidth=1.8, alpha=0.9, zorder=3)
-
-        _shade_eras(ax4, reg_nr_seasons, label_y=None)
-        ax4.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
-        ax4.set_xticks(x_nr[::tick_step_nr])
-        ax4.set_xticklabels(reg_nr_seasons[::tick_step_nr], rotation=45, ha="right", fontsize=8)
-        ax4.set_title("Net rating per season (pts per 100 possessions)",
-                      fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
-        ax4.set_ylabel("Home net rating (pts/100 poss)", fontsize=10)
-        ax4.set_xlabel("pace-normalized; excludes early seasons without TOV/OREB data",
-                       fontsize=8, color=GRAY)
-        ax4.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
     save_chart("home_court_margin.svg", OUTPUT_DIR)

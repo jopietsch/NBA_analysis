@@ -672,6 +672,8 @@ def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     """
     Per-home-game point margin from the cached game log.
     PLUS_MINUS for a home row equals home_pts − away_pts exactly.
+    For pre-1997 seasons where PLUS_MINUS is not populated, falls back to
+    joining home/away rows on GAME_ID and subtracting PTS.
     Returns a DataFrame with columns ['margin', 'WL']; None if no data.
     """
     df = _load_game_log(end_year, season_type)
@@ -680,7 +682,15 @@ def fetch_margin_data(end_year: int, season_type: str) -> pd.DataFrame | None:
     home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)].copy()
     if home.empty:
         return None
-    return home[["PLUS_MINUS", "WL"]].rename(columns={"PLUS_MINUS": "margin"})
+    if home["PLUS_MINUS"].notna().sum() > 1:
+        return home[["PLUS_MINUS", "WL"]].rename(columns={"PLUS_MINUS": "margin"})
+    # Pre-1997 fallback: compute margin from PTS via home/away join
+    merged = _merge_home_away_rows(df)
+    if merged is None:
+        return None
+    out = merged[["PTS_home", "PTS_away", "WL_home"]].copy()
+    out["margin"] = out["PTS_home"] - out["PTS_away"]
+    return out[["margin", "WL_home"]].rename(columns={"WL_home": "WL"})
 
 
 def compute_margin_stats(
