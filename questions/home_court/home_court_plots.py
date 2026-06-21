@@ -106,6 +106,22 @@ def _shade_eras(ax: plt.Axes, seasons: list[str], label_y: float | None = 46) ->
             ax.text(mid, label_y, label, ha="center", va="bottom", fontsize=7.5, color=GRAY)
 
 
+def _annotate_event(ax: plt.Axes, seasons: list[str], end_year: int, label: str, *,
+                    y_frac: float = 0.88) -> None:
+    """Mark a rule-change year on a time-series axis with a dotted rule and label.
+
+    Uses ax.get_xaxis_transform() so x is in data coordinates and y is in axes
+    fraction — label stays inside the panel regardless of y-axis scale.
+    """
+    idx = next((i for i, s in enumerate(seasons) if label_to_year(s) == end_year), None)
+    if idx is None:
+        return
+    ax.axvline(idx, color=GRAY, linestyle=":", linewidth=1.1, alpha=0.6, zorder=1)
+    ax.text(idx, y_frac, label, ha="center", va="top", fontsize=7.5,
+            color="#5a5a55", linespacing=1.15, zorder=4,
+            transform=ax.get_xaxis_transform())
+
+
 def _draw_season_overview(
     ax: plt.Axes,
     reg_seasons: list[str], reg_pcts: list[float],
@@ -601,7 +617,6 @@ def plot_differential_analysis(
             ax.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
             _add_trend_line(ax, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
-        _shade_eras(ax, reg_seasons, label_y=None)
         ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
         ax.set_xticks(x[::tick_step])
         ax.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -610,6 +625,8 @@ def plot_differential_analysis(
         ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd")
         if note:
             ax.set_xlabel(note, fontsize=8, color=GRAY)
+        if key == "fta_diff":
+            _annotate_event(ax, reg_seasons, 1995, "1994–95:\nhand-checking\ncrackdown")
 
     plt.tight_layout()
     save_chart("home_court_advantage_differentials.svg", OUTPUT_DIR)
@@ -652,7 +669,6 @@ def plot_rebound_decomposition(
     ]:
         ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
         _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
-    _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax1.set_ylabel("Offensive rebound rate (% of available)", fontsize=10)
@@ -670,7 +686,6 @@ def plot_rebound_decomposition(
     ]:
         ax2.plot(x, y, color=color, linewidth=1.5, alpha=0.7, label=label, zorder=2)
         _add_trend_line(ax2, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
-    _shade_eras(ax2, reg_seasons, label_y=None)
     ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
     ax2.set_xticks(x[::tick_step])
     ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -709,7 +724,6 @@ def plot_rebound_decomposition(
     y_tov = -np.array(reg_stats.get("tov_diff", [np.nan] * len(reg_seasons)), dtype=float)
     ax4.plot(x, y_tov, color=BLUE, linewidth=1.5, alpha=0.7, zorder=2)
     _add_trend_line(ax4, x, y_tov, BLUE, linewidth=1.8, alpha=0.9, zorder=3)
-    _shade_eras(ax4, reg_seasons, label_y=None)
     ax4.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
     ax4.set_xticks(x[::tick_step])
     ax4.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -790,7 +804,6 @@ def plot_margin_analysis(
         ax1.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
         _add_trend_line(ax1, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
-    _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -844,7 +857,6 @@ def plot_margin_analysis(
         ax2.plot(x, y, color=color, linewidth=1.5, alpha=0.8, label=label, zorder=2)
         _add_trend_line(ax2, x, y, color, linewidth=1.8, alpha=0.9, zorder=3)
 
-    _shade_eras(ax2, reg_seasons, label_y=None)
     ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
     ax2.set_xticks(x[::tick_step])
     ax2.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -938,7 +950,6 @@ def plot_parity_analysis(
              ha="center", fontsize=9, color=GRAY)
 
     # Panel 1: dual-axis time series
-    _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.plot(x, y_reg, color=BLUE, linewidth=2, label="Home win %", zorder=2)
     ax1.set_xticks(x[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -1246,7 +1257,6 @@ def plot_shot_zone_analysis(
             _add_trend_line(ax, x, y, lcolor, linestyle=":", linewidth=1.5,
                             alpha=alpha * 0.7, zorder=3)
 
-        _shade_eras(ax, reg_seasons, label_y=None)
         ax.axhline(0, color=GRAY, linewidth=0.8, linestyle=":", zorder=1)
         ax.set_title(f"{label} % differential (home − road)",
                      fontsize=11, fontweight="bold",
@@ -1337,7 +1347,6 @@ def plot_3pa_hca_analysis(
              ha="center", fontsize=9, color=GRAY)
 
     # ── Panel 1: dual-axis time series (regular season) ─────────────────────
-    _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.plot(x_reg, y_pct_reg, color=BLUE, linewidth=2, label="Home win %", zorder=2)
     ax1.set_xticks(x_reg[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
@@ -1346,6 +1355,7 @@ def plot_3pa_hca_analysis(
     ax1.tick_params(axis="y", labelcolor=BLUE)
     ax1.set_title("Regular-season 3PA rate vs. home win %\nover time",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    _annotate_event(ax1, reg_seasons, 2018, "2017+:\nthree-point\nsurge")
 
     ax1r = ax1.twinx()
     ax1r.plot(x_reg, y_tpa_reg, color=ORANGE, linewidth=2, label="3PA rate %", zorder=2, alpha=0.85)
@@ -1400,7 +1410,6 @@ def plot_pace_hca_analysis(
              ha="center", fontsize=9, color=GRAY)
 
     # ── Panel 1: dual-axis time series (regular season) ─────────────────────
-    _shade_eras(ax1, reg_seasons, label_y=None)
     ax1.plot(x_reg, y_pct_reg, color=BLUE, linewidth=2, label="Home win %", zorder=2)
     ax1.set_xticks(x_reg[::tick_step])
     ax1.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
