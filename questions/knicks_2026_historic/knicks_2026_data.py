@@ -275,6 +275,86 @@ def compute_margin_ci(po_logs: pd.DataFrame,
     return t_interval(float(margins.mean()), float(margins.std(ddof=1)), n, confidence)
 
 
+def per_game_adjusted_margins(po_logs: pd.DataFrame,
+                              reg_srs: pd.Series,
+                              team_id: int) -> np.ndarray:
+    """Per-game opponent-adjusted margin for one team's playoff run.
+
+    For each game i: g_i = actual_margin_i − opponent_reg_SRS_i.
+    The opponent-adjusted margin reported elsewhere is mean(g_i); returning the
+    per-game array lets callers bootstrap or shrink it.  Games whose opponent has
+    no SRS (or a NaN margin) are dropped.
+    """
+    logs = _nba.fill_plus_minus(po_logs)
+    team_logs = logs[logs["TEAM_ID"] == team_id]
+    if team_logs.empty:
+        return np.array([], dtype=float)
+
+    gid_to_teams = po_logs.groupby("GAME_ID")["TEAM_ID"].apply(list).to_dict()
+    vals: list[float] = []
+    for _, row in team_logs.iterrows():
+        margin = float(row["PLUS_MINUS"])
+        if np.isnan(margin):
+            continue
+        opp = [t for t in gid_to_teams.get(row["GAME_ID"], []) if t != team_id]
+        if not opp:
+            continue
+        osrs = float(reg_srs.get(opp[0], float("nan")))
+        if np.isnan(osrs):
+            continue
+        vals.append(margin - osrs)
+    return np.asarray(vals, dtype=float)
+
+
+def bootstrap_adjusted_margin_rank(po_logs: pd.DataFrame,
+                                   reg_srs: pd.Series,
+                                   team_id: int,
+                                   other_champ_adj,
+                                   n_boot: int = 20000,
+                                   confidence: float = 0.90,
+                                   seed: int = 0) -> dict:
+    """Bootstrap the team's opponent-adjusted margin and its all-time rank.
+
+    Resamples the team's playoff games with replacement (iid game-level
+    bootstrap) and recomputes the opponent-adjusted margin each time.  Each
+    resample is then ranked against ``other_champ_adj`` (the adjusted margins of
+    every OTHER champion — exclude the team's own season so the rank is not
+    self-referential).  Rank 1 = best.
+
+    Game-level resampling treats games as independent; games within a series are
+    correlated, so the true spread is somewhat wider than this reports.
+
+    Returns a dict with the point estimate, a credible interval on the adjusted
+    margin, and the probability of finishing 1st / top-3 / top-5.
+    """
+    g = per_game_adjusted_margins(po_logs, reg_srs, team_id)
+    other = np.asarray([float(a) for a in other_champ_adj], dtype=float)
+    other = other[~np.isnan(other)]
+    if g.size < 2 or other.size == 0:
+        return {}
+
+    rng   = np.random.default_rng(seed)
+    draws = rng.choice(g, size=(n_boot, g.size), replace=True).mean(axis=1)
+    ranks = 1 + (other[None, :] > draws[:, None]).sum(axis=1)
+
+    lo_q, hi_q = (1 - confidence) / 2, (1 + confidence) / 2
+    return {
+        "adj_point":  float(g.mean()),
+        "n_games":    int(g.size),
+        "n_other":    int(other.size),
+        "ci_lo":      float(np.quantile(draws, lo_q)),
+        "ci_hi":      float(np.quantile(draws, hi_q)),
+        "confidence": confidence,
+        "p_rank1":    float((ranks == 1).mean()),
+        "p_top3":     float((ranks <= 3).mean()),
+        "p_top5":     float((ranks <= 5).mean()),
+        "rank_median": float(np.median(ranks)),
+        "rank_lo":    float(np.quantile(ranks, lo_q)),
+        "rank_hi":    float(np.quantile(ranks, hi_q)),
+        "draws":      draws,
+    }
+
+
 def compute_series_margins(po_logs: pd.DataFrame,
                            team_id: int,
                            reg_srs: pd.Series,

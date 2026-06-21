@@ -239,7 +239,29 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 
 ---
 
-## 9. Limitations
+## 9. How Solid Is the #1 Ranking?
+
+The "best opponent-adjusted margin of any champion" claim rests on a 19-game
+run, and 19 games is a small sample. To see how solid the top spot is, we
+re-played the run 20,000 times by re-drawing its 19 games at random (with
+replacement) and re-ranked the result against the other 42 champions each time.
+
+The Knicks finish #1 in about 60% of those re-runs, in the top three in 70%, and
+in the top five in 82%. Their single most likely finish is #1, but across
+re-draws the rank ranges from 1st to roughly 11th, and the opponent-adjusted
+margin itself lands anywhere from +5.1 to +17.7 (point estimate +11.2).
+
+So the honest reading is narrower than "best ever, full stop": the Knicks are
+the most likely #1 and almost certainly a top-five all-time title run, but the
+exact #1 is a call that leans their way rather than a settled fact. Games within
+a series rise and fall together, so the real spread is a touch wider than even
+this shows.
+
+![How often the 2025-26 run still ranks #1 when its games are re-drawn](../generated/images/knicks_2026_bootstrap_margin.svg){width=100%}
+
+---
+
+## 10. Limitations
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide margin
 confidence interval ([+7.4, +22.4] at 95%). The comparison set is also only 43
@@ -269,7 +291,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 10. Methodology
+## 11. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS

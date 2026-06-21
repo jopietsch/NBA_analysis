@@ -283,4 +283,19 @@ Avg ATS margin:         +16.9 pts (how much they beat the spread)
 Finals market view: Knicks were near even odds.
   Actual avg margin: +2.4 (vs. spread of +2.5)
 
+─── §13 ROBUSTNESS OF THE #1 RANKING ───────────────────────────────────
+
+── Bootstrapped rank of opponent-adjusted margin ──
+Resamples the 19 playoff games with replacement (20,000 times) and
+re-ranks the opponent-adjusted margin against the other 42 champions.
+Games within a series are correlated, so the true spread is a little
+wider than an iid game bootstrap shows.
+
+  Point estimate (adj margin):  +11.23 pts/game
+  90% interval on adj margin:  [+5.08, +17.71]
+  P(rank #1 all-time):          59.6%
+  P(top 3):                     69.9%
+  P(top 5):                     82.4%
+  Median rank:                  1  (90% interval: 1–11)
+
 ```

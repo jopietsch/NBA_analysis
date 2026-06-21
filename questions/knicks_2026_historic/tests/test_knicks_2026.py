@@ -181,6 +181,39 @@ def test_compute_expected_margin_overperformance():
     assert result == pytest.approx((7.0 + 7.0 + 9.0) / 3, abs=1e-6)
 
 
+def test_per_game_adjusted_margins():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    g = data.per_game_adjusted_margins(po, srs, KNICKS_ID)
+    # G001/G002 vs OPP1 (srs 2): 10-2=8 each; G003 vs OPP2 (srs 4): 10-4=6
+    assert sorted(g.tolist()) == pytest.approx([6.0, 8.0, 8.0])
+
+
+def test_bootstrap_adjusted_margin_rank_point_estimate():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    # Other champions all far below any possible resample mean (min draw is 6)
+    res = data.bootstrap_adjusted_margin_rank(
+        po, srs, KNICKS_ID, other_champ_adj=[5.0, 1.0, -2.0], n_boot=2000, seed=1
+    )
+    assert res["adj_point"] == pytest.approx((8.0 + 8.0 + 6.0) / 3)
+    # Every resample mean (>=6) beats all other champions → always rank 1
+    assert res["p_rank1"] == pytest.approx(1.0)
+    assert res["rank_median"] == pytest.approx(1.0)
+    assert 1 <= res["rank_lo"] <= res["rank_hi"] <= res["n_other"] + 1
+
+
+def test_bootstrap_adjusted_margin_rank_contested():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    # A champion at +7 sits inside the resample range [6, 8] → sometimes beaten
+    res = data.bootstrap_adjusted_margin_rank(
+        po, srs, KNICKS_ID, other_champ_adj=[7.0, 5.0], n_boot=2000, seed=2
+    )
+    assert 0.0 < res["p_rank1"] < 1.0
+    assert res["ci_lo"] <= res["adj_point"] <= res["ci_hi"]
+
+
 def test_parse_min():
     assert data.parse_min("35:42") == pytest.approx(35.7, abs=0.1)
     assert data.parse_min(30.0) == pytest.approx(30.0)

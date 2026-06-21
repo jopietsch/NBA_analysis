@@ -131,6 +131,14 @@ def test_plot_opponent_srs_by_round(tmp_path, monkeypatch):
     assert os.path.isfile(path)
 
 
+def test_plot_bootstrap_margin(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_bootstrap_margin(
+        _mini_po_2026(), _mini_reg_srs(), _mini_champions()
+    )
+    assert os.path.isfile(path)
+
+
 def _mini_series_df() -> pd.DataFrame:
     return pd.DataFrame([
         {"opp_id": OPP1_ID, "n_games": 4, "raw_margin": 20.0,

@@ -850,6 +850,52 @@ def run_betting_market(ats_df: pd.DataFrame,
               file=out)
 
 
+# ── Section 13: Robustness of the #1 ranking ─────────────────────────────────
+
+def run_robustness(po_2026: pd.DataFrame,
+                   reg_2026: pd.DataFrame,
+                   champions: pd.DataFrame,
+                   out: io.StringIO) -> None:
+    """How fragile is the "#1 opponent-adjusted margin" claim?
+
+    The headline rank comes from a single 19-game point estimate.  This section
+    puts uncertainty on it two ways: a game-level bootstrap of the rank, and an
+    empirical-Bayes shrinkage of the margin toward the champion average.
+    """
+    from knicks_2026_data import bootstrap_adjusted_margin_rank
+
+    print(_hdr("§13 ROBUSTNESS OF THE #1 RANKING"), file=out)
+
+    srs_2026   = compute_srs(reg_2026)
+    other_adj  = champions.loc[champions["year"] != SUBJECT_YEAR, "adj_margin"]
+
+    boot = bootstrap_adjusted_margin_rank(
+        po_2026, srs_2026, KNICKS_TEAM_ID, other_adj
+    )
+
+    print(_subhdr("Bootstrapped rank of opponent-adjusted margin"), file=out)
+    if not boot:
+        print("  Insufficient data to bootstrap.", file=out)
+        return
+
+    conf_pct = int(round(boot["confidence"] * 100))
+    print(
+        "Resamples the 19 playoff games with replacement (20,000 times) and\n"
+        "re-ranks the opponent-adjusted margin against the other 42 champions.\n"
+        "Games within a series are correlated, so the true spread is a little\n"
+        "wider than an iid game bootstrap shows.\n",
+        file=out,
+    )
+    print(f"  Point estimate (adj margin):  {boot['adj_point']:+.2f} pts/game", file=out)
+    print(f"  {conf_pct}% interval on adj margin:  "
+          f"[{boot['ci_lo']:+.2f}, {boot['ci_hi']:+.2f}]", file=out)
+    print(f"  P(rank #1 all-time):          {boot['p_rank1']:.1%}", file=out)
+    print(f"  P(top 3):                     {boot['p_top3']:.1%}", file=out)
+    print(f"  P(top 5):                     {boot['p_top5']:.1%}", file=out)
+    print(f"  Median rank:                  {boot['rank_median']:.0f}  "
+          f"({conf_pct}% interval: {boot['rank_lo']:.0f}–{boot['rank_hi']:.0f})", file=out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -884,6 +930,7 @@ def main() -> None:
     odds_df  = fetch_game_odds(po_2026, KNICKS_TEAM_ID)
     ats_df   = compute_ats_stats(odds_df, po_2026, KNICKS_TEAM_ID)
     run_betting_market(ats_df, po_2026, standings_2026, out)
+    run_robustness(po_2026, reg_2026, champions, out)
 
     body = out.getvalue()
 

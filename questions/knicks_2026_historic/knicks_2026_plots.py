@@ -567,6 +567,59 @@ def plot_opponent_health(health_df: pd.DataFrame) -> str:
     return path
 
 
+# ── 12. Bootstrapped adjusted-margin distribution vs. the field ──────────────
+
+def plot_bootstrap_margin(po_2026: pd.DataFrame, reg_srs: pd.Series,
+                          champions: pd.DataFrame) -> str:
+    """Histogram of the bootstrapped opponent-adjusted margin, with the nearest
+    rivals' fixed values marked, so the reader sees how often the Knicks fall
+    below #2 all-time."""
+    from knicks_2026_data import bootstrap_adjusted_margin_rank, KNICKS_TEAM_ID
+
+    other_adj = champions.loc[champions["year"] != SUBJECT_YEAR, "adj_margin"]
+    boot = bootstrap_adjusted_margin_rank(po_2026, reg_srs, KNICKS_TEAM_ID, other_adj)
+    if not boot:
+        return ""
+
+    draws = boot["draws"]
+    fig, ax = _fig(figsize=(9, 4.5))
+    ax.hist(draws, bins=50, color=KNICKS_BLUE, alpha=0.85, edgecolor="none", zorder=2)
+
+    # Nearest rivals above the field — the top other champions
+    rivals = (
+        champions.loc[champions["year"] != SUBJECT_YEAR]
+        .dropna(subset=["adj_margin"])
+        .nlargest(2, "adj_margin")
+    )
+    for _, r in rivals.iterrows():
+        v = float(r["adj_margin"])
+        ax.axvline(v, color=RED, linewidth=1.3, linestyle="--", zorder=3)
+        ax.text(v, ax.get_ylim()[1] * 0.92, f" {short_label(int(r['year']))} {v:+.1f}",
+                color=RED, fontsize=8, rotation=90, va="top", ha="left")
+
+    ax.axvline(boot["adj_point"], color=KNICKS_ORANGE, linewidth=1.6, zorder=4,
+               label=f"Point estimate {boot['adj_point']:+.1f}")
+
+    ax.set_xlabel("Opponent-adjusted margin, resampled games (pts/game)", fontsize=10)
+    ax.set_ylabel("Resamples", fontsize=10)
+    ax.set_title(
+        f"The #1 ranking is likely but not certain: P(1st) = {boot['p_rank1']:.0%}",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+    )
+    ax.text(
+        0.5, 1.005,
+        "20,000 game-level bootstraps of the 2025-26 run vs. the fixed champion field",
+        transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color=GRAY,
+    )
+    _style(ax)
+    ax.grid(axis="x", visible=False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.legend(fontsize=9, framealpha=0.85, edgecolor="#ddd", loc="upper left")
+    fig.tight_layout()
+    path = save_chart("knicks_2026_bootstrap_margin.svg", OUTPUT_DIR, fig=fig)
+    return path
+
+
 # ── Orchestrator ─────────────────────────────────────────────────────────────
 
 def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
@@ -587,6 +640,7 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
         plot_adjusted_margin_ranking(champions),
         plot_game_margin_distribution(po_2026),
         plot_opponent_srs_by_round(po_2026, reg_srs, standings_2026),
+        plot_bootstrap_margin(po_2026, reg_srs, champions),
     ]
     if series_df is not None and not series_df.empty:
         p = plot_round_split(series_df)
