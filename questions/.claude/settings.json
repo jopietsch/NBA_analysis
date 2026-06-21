@@ -10,5 +10,18 @@
       "Bash(grep *)",
       "Read(//Users/justin/code/nba_analysis/**)"
     ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/justin/code/nba_analysis/questions/.claude/hooks/voice_check.py"
+          }
+        ]
+      }
+    ]
   }
 }
