@@ -862,7 +862,10 @@ def run_robustness(po_2026: pd.DataFrame,
     puts uncertainty on it two ways: a game-level bootstrap of the rank, and an
     empirical-Bayes shrinkage of the margin toward the champion average.
     """
-    from knicks_2026_data import bootstrap_adjusted_margin_rank
+    from knicks_2026_data import (
+        bootstrap_adjusted_margin_rank,
+        shrink_adjusted_margin,
+    )
 
     print(_hdr("§13 ROBUSTNESS OF THE #1 RANKING"), file=out)
 
@@ -894,6 +897,28 @@ def run_robustness(po_2026: pd.DataFrame,
     print(f"  P(top 5):                     {boot['p_top5']:.1%}", file=out)
     print(f"  Median rank:                  {boot['rank_median']:.0f}  "
           f"({conf_pct}% interval: {boot['rank_lo']:.0f}–{boot['rank_hi']:.0f})", file=out)
+
+    shr = shrink_adjusted_margin(po_2026, srs_2026, KNICKS_TEAM_ID, other_adj)
+    print(_subhdr("Empirical-Bayes shrinkage of the adjusted margin"), file=out)
+    if not shr:
+        print("  Insufficient data to shrink.", file=out)
+        return
+    shr_pct = int(round(shr["confidence"] * 100))
+    print(
+        "A 19-game margin singled out for being extreme overstates true strength.\n"
+        "Pulling it toward how dominant championship runs typically are (the other\n"
+        "42 champions, mean adj margin shown below) gives a regularized estimate.\n",
+        file=out,
+    )
+    print(f"  Raw adjusted margin (data):   {shr['data_mean']:+.2f} pts/game", file=out)
+    print(f"  Champion prior mean:          {shr['prior_mean']:+.2f} pts/game", file=out)
+    print(f"  Weight on the 19-game data:   {shr['weight_data']:.0%}", file=out)
+    print(f"  Shrunken (posterior) margin:  {shr['post_mean']:+.2f} pts/game", file=out)
+    print(f"  {shr_pct}% credible interval:        "
+          f"[{shr['ci_lo']:+.2f}, {shr['ci_hi']:+.2f}]", file=out)
+    other_adj_pct = _pct_rank(other_adj.dropna(), shr["post_mean"], ascending=True)
+    print(f"  Even shrunken, that margin still beats {other_adj_pct:.0f}% of "
+          f"champions outright.", file=out)
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────

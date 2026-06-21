@@ -251,11 +251,20 @@ in the top five in 82%. Their single most likely finish is #1, but across
 re-draws the rank ranges from 1st to roughly 11th, and the opponent-adjusted
 margin itself lands anywhere from +5.1 to +17.7 (point estimate +11.2).
 
-So the honest reading is narrower than "best ever, full stop": the Knicks are
-the most likely #1 and almost certainly a top-five all-time title run, but the
-exact #1 is a call that leans their way rather than a settled fact. Games within
-a series rise and fall together, so the real spread is a touch wider than even
-this shows.
+A second check pushes the same way. A 19-game number that stands out partly
+stands out by luck, so we pulled the Knicks' adjusted margin back toward what
+championship runs normally look like (the other 42 champions average about +3
+per game). Because playoff margins swing so much, 19 games only pin down about
+40% of the estimate; the rest gets pulled toward the pack. That regularized
+margin lands at **+6.5 per game**, with a plausible range of roughly +1.5 to
++11.5. Even after that haircut it still clears about 83% of champions.
+
+This second test is deliberately tough: it pulls only the Knicks back toward the
+average while leaving every other champion at their own (also noisy) number. Read
+together, the two checks bracket the answer. At the low end the 2025-26 run is a
+clearly above-average championship; at the high end it is the best
+opponent-adjusted run on record. The single best guess stays near the top, but
+"#1 by a wide margin" is not what the uncertainty supports.
 
 ![How often the 2025-26 run still ranks #1 when its games are re-drawn](../generated/images/knicks_2026_bootstrap_margin.svg){width=100%}
 

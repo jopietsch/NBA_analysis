@@ -355,6 +355,61 @@ def bootstrap_adjusted_margin_rank(po_logs: pd.DataFrame,
     }
 
 
+def shrink_adjusted_margin(po_logs: pd.DataFrame,
+                           reg_srs: pd.Series,
+                           team_id: int,
+                           champ_adj_values,
+                           confidence: float = 0.95) -> dict:
+    """Normal-normal posterior for the team's TRUE opponent-adjusted margin.
+
+    A 19-game margin selected because it is extreme overstates true strength.
+    This pulls it back toward how dominant championship runs typically are.
+
+    Prior : the other champions' adjusted-margin distribution, N(prior_mean,
+            prior_var) with prior_var the observed between-champion variance.
+            That variance still carries each champion's own small-sample noise,
+            so it shrinks a little less than a noise-free prior would — i.e. the
+            shrinkage here is conservative.
+    Data  : the team's per-game adjusted margins, summarized by their sample mean
+            with sampling variance s^2 / n.
+
+    Returns the precision-weighted posterior mean, its credible interval, and the
+    weight the data carries (vs. the prior).
+    """
+    from scipy.stats import norm
+
+    g = per_game_adjusted_margins(po_logs, reg_srs, team_id)
+    prior = np.asarray([float(v) for v in champ_adj_values], dtype=float)
+    prior = prior[~np.isnan(prior)]
+    if g.size < 2 or prior.size < 2:
+        return {}
+
+    data_mean    = float(g.mean())
+    sampling_var = float(g.var(ddof=1)) / g.size
+    prior_mean   = float(prior.mean())
+    prior_var    = float(prior.var(ddof=1))
+    if sampling_var <= 0 or prior_var <= 0:
+        return {}
+
+    post_prec  = 1.0 / prior_var + 1.0 / sampling_var
+    post_var   = 1.0 / post_prec
+    post_mean  = post_var * (prior_mean / prior_var + data_mean / sampling_var)
+    weight_data = (1.0 / sampling_var) / post_prec
+
+    z = float(norm.ppf((1.0 + confidence) / 2.0))
+    half = z * float(np.sqrt(post_var))
+    return {
+        "data_mean":   data_mean,
+        "prior_mean":  prior_mean,
+        "post_mean":   post_mean,
+        "post_sd":     float(np.sqrt(post_var)),
+        "ci_lo":       post_mean - half,
+        "ci_hi":       post_mean + half,
+        "weight_data": float(weight_data),
+        "confidence":  confidence,
+    }
+
+
 def compute_series_margins(po_logs: pd.DataFrame,
                            team_id: int,
                            reg_srs: pd.Series,

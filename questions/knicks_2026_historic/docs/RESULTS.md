@@ -298,4 +298,16 @@ wider than an iid game bootstrap shows.
   P(top 5):                     82.4%
   Median rank:                  1  (90% interval: 1–11)
 
+── Empirical-Bayes shrinkage of the adjusted margin ──
+A 19-game margin singled out for being extreme overstates true strength.
+Pulling it toward how dominant championship runs typically are (the other
+42 champions, mean adj margin shown below) gives a regularized estimate.
+
+  Raw adjusted margin (data):   +11.23 pts/game
+  Champion prior mean:          +3.18 pts/game
+  Weight on the 19-game data:   41%
+  Shrunken (posterior) margin:  +6.50 pts/game
+  95% credible interval:        [+1.53, +11.48]
+  Even shrunken, that margin still beats 83% of champions outright.
+
 ```

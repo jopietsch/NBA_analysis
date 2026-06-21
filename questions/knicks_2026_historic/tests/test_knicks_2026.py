@@ -214,6 +214,32 @@ def test_bootstrap_adjusted_margin_rank_contested():
     assert res["ci_lo"] <= res["adj_point"] <= res["ci_hi"]
 
 
+def test_shrink_adjusted_margin_pulls_toward_prior():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    # Data mean = (8+8+6)/3 = 7.33; prior centered at +1
+    res = data.shrink_adjusted_margin(
+        po, srs, KNICKS_ID, champ_adj_values=[0.0, 2.0]
+    )
+    assert res["data_mean"] == pytest.approx(7.3333, abs=1e-3)
+    assert res["prior_mean"] == pytest.approx(1.0)
+    # Posterior sits strictly between the prior and the data
+    assert res["prior_mean"] < res["post_mean"] < res["data_mean"]
+    assert 0.0 < res["weight_data"] < 1.0
+    assert res["ci_lo"] < res["post_mean"] < res["ci_hi"]
+
+
+def test_shrink_adjusted_margin_wide_prior_keeps_data():
+    po  = _mini_po_2026()
+    srs = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+    # A very wide prior carries little weight → posterior ≈ data mean
+    wide = data.shrink_adjusted_margin(
+        po, srs, KNICKS_ID, champ_adj_values=[-100.0, 0.0, 100.0]
+    )
+    assert wide["post_mean"] == pytest.approx(wide["data_mean"], abs=0.5)
+    assert wide["weight_data"] > 0.9
+
+
 def test_parse_min():
     assert data.parse_min("35:42") == pytest.approx(35.7, abs=0.1)
     assert data.parse_min(30.0) == pytest.approx(30.0)
