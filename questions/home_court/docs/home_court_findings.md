@@ -20,6 +20,8 @@ Yes: the home team's win rate has fallen from about 65% to 55% in the regular se
 
 Throughout, the regular season and the playoffs are tracked separately. They share a direction but not a timeline. The analysis covers almost 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables, and Appendix C for additional findings.
 
+**Short on time?** The introduction and Section 6 (Summary) cover the full story in about five minutes. Each middle section goes deeper on one of the three questions above.
+
 ---
 
 ## 1. The 40-Year Decline
