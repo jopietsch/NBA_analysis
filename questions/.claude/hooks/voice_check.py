@@ -44,7 +44,8 @@ HARD = [
     (r"cluster[\s-]?robust",              "drop it"),
     (r"logistic regression|\blogit\b",    'just say "a model of who wins"'),
     (r"correlations?|correlated",         '"move together" / "parallel"'),
-    (r"\bcontrol(?:led|ling)?\s+for\b",   '"hold X constant"'),
+    (r"\bcontrol(?:led|ling)?\s+for\b",   'describe the relationship directly: "as X rose, Y fell"'),
+    (r"\bhold(?:ing)?\s+\w+\s+constant\b", 'describe the relationship directly: "as X rose, Y fell" — never use "hold constant"'),
     (r"—",                           "em-dash banned: use a colon, comma, or split the sentence"),
 ]
 HARD = [(re.compile(p, re.IGNORECASE), fix) for p, fix in HARD]
