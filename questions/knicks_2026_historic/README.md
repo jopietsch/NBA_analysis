@@ -4,7 +4,7 @@ Fetches NBA playoff game logs via [nba_api](https://github.com/swar/nba_api) and
 ranks the 2025–26 New York Knicks playoff run against historical playoff runs to
 answer one question: **how historic was it?**
 
-Built on the same toolchain and conventions as the sibling `nba_home_court`
+Built on the same toolchain and conventions as the sibling `home_court`
 project (Python data pipeline → matplotlib charts → statistical analysis →
 reportlab PDF).
 

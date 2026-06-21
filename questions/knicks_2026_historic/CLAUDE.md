@@ -13,7 +13,7 @@ MPLBACKEND=Agg python3 knicks_2026_historic.py
 
 ## Architecture
 
-Four pipeline modules plus two report generators, mirroring `nba_home_court`:
+Four pipeline modules plus two report generators, mirroring `home_court`:
 
 - **`knicks_2026_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. `fetch_games()` pulls game logs via nba_api's `LeagueGameFinder` and caches them as CSVs under `cache/`. `compute_*` metrics turn raw frames into the numbers we rank.
 - **`knicks_2026_plots.py`** — all visualization (`plot_*` functions saving `knicks_2026_*.svg`); imports the data module, holds no data logic of its own.
