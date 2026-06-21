@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-For four decades, NBA home teams have been winning less. This is the short version of a long report, built around three charts to answer three questions: **Has home court really changed? What makes it an advantage in the first place? And what's driving the decline?**
+In the 1980s, a weaker team playing at home in the NBA playoffs won 65% of those games, nearly the same rate as the stronger team hosting. Today that number is 47%. Home court used to compensate for being outmatched. It no longer does. This is the short version of a report that asks why, built around three charts and three questions: **Has home court really changed? What makes it an advantage in the first place? And what's driving the decline?**
 
 ---
 
@@ -19,8 +19,6 @@ For four decades, NBA home teams have been winning less. This is the short versi
 Home teams used to win about **65%** of regular-season games and nearly **68%** in the playoffs. Today it's about **55%** and **58%**, a drop of roughly 10 percentage points in both. The scoring edge shrank to match: by the mid-1990s home teams outscored visitors by about **3 points per 100 possessions** in the regular season; now it's about **2**. Most of the erosion is a slow, steady drift of about a quarter of a percentage point per year, with two notable drops on top: one in the mid-1990s and one starting around 2018.
 
 The playoffs followed a different path. Playoff home win rates held near **64%** through the 2000s and 2010s while the regular season was already sliding, then fell to **58%** over the past few seasons. The per-game edge is still real: Games 1 and 2 go to the home team **69%** and **72%** of the time; Game 5, back at the top seed's building after two road games, reaches **74.5%**; even Game 7 still goes to the home team **64%** of the time. But a best-of-7 series flattens this considerably. A team with home court in the 1980s had about a **55%** chance of winning the series; today that has fallen to just under **52%**, barely better than a coin flip.
-
-In the 1980s and 1990s, the lower-seeded team (the weaker opponent) won **65%** and **61%** of their home playoff games, nearly identical to what the higher seed won at home. Quality barely mattered once you were in your own building. Today the lower seed at home wins about **47%**, while the higher seed's rate is roughly what it always was. The decline is not mainly about better teams winning more at home. It is about worse teams winning less.
 
 ---
 
