@@ -47,6 +47,7 @@ HARD = [
     (r"\bcontrol(?:led|ling)?\s+for\b",   'describe the relationship directly: "as X rose, Y fell"'),
     (r"\bhold(?:ing)?\s+\w+\s+constant\b", 'describe the relationship directly: "as X rose, Y fell" — never use "hold constant"'),
     (r"\baccounting\s+for\b",              'describe the relationship directly: "as X rose, Y fell" — same ban as "control for"'),
+    (r"\bsituational\s+factors?\b",        '"off-court explanations", or name specifically what they are'),
     (r"—",                           "em-dash banned: use a colon, comma, or split the sentence"),
 ]
 HARD = [(re.compile(p, re.IGNORECASE), fix) for p, fix in HARD]

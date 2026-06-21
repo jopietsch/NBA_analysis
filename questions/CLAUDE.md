@@ -72,7 +72,7 @@ Avoid patterns that make prose sound generated rather than written:
 - No filler transition words: "in conclusion", "moreover", "literally", "a related result confirms this." Cut them or recast the sentence.
 - No summarizing closing sentences that restate what was just said ("The result is what X looks like", "This is consistent with the pattern above").
 - Vary sentence length deliberately. Short sentences land findings. Longer ones carry context. Monotone rhythm is numbing regardless of content.
-- Replace vague or abstract phrases with concrete ones. Not "the advantage significantly diminished" but "the gap fell from 1.2 to 0.25 fouls per game." Not "strategies converged toward the same optima" but "every team ended up running similar offenses regardless of venue."
+- Replace vague or abstract phrases with concrete ones. Not "the advantage significantly diminished" but "the gap fell from 1.2 to 0.25 fouls per game." Not "strategies converged toward the same optima" but "every team ended up running similar offenses regardless of venue." Not "situational factors" but "off-court explanations" or the specific things (rest, travel, altitude).
 - No jargon substituting for plain explanation: name what happened, don't label the process ("information diffusion", "structural instability").
 
 ## Verify narrative matches data
