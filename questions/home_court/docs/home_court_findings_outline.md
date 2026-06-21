@@ -26,16 +26,14 @@
 - **Core stat:** Home win rate ~65 → ~55 per 100; ~quarter-point/year.
   - *RESULTS:* Reg season GLM **−0.244 pp/yr** [−0.280, −0.209], p<0.001, total ≈ **−10.3 pp**; OLS −0.250 pp/yr, R²=0.745.
   - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 to 10 pt drop, noisier).
-- **Two speeds — gradual drift vs. sharp drops** (key framing for the whole report):
-  - **Gradual:** a continuous ~quarter-point/year erosion underneath everything, from the §3 box-score categories grinding down.
-  - **Two stretches of steeper slope** each a moment when one force accelerated the same trend. "Drops" = stretches of steepened slope, not one-season level jumps. Change-point tests (§3) formally resolve only the first (slope change in the late 1990s, no level jump; CUSUM still reads 40 yrs as smooth drift); the post-2017 steepening shows up as a step down in era win rates, not a dated structural break:
-    - First drop: sharp mid-to-late 1990s fall ~65% → 60% (steepest move). Cause = **1994–95 rule shock** (§4); deep-dive detail (break-point test, confounds) deferred to §4. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
-    - Brief uptick ~2002-04: visible (+1.2 pp vs 1995-01) but not statistically significant (p=0.23, only 3 seasons). Zone defense legalized 2001-02; one plausible explanation is that home teams adapted faster to new defensive complexity. Data is consistent with this hypothesis, not conclusive.
-    - Second drop: after 2017, below 56%. Coincides with the **three-point surge** hitting full stride — but the surge is the most visible *marker* of a broader move to the perimeter, not the whole cause (mechanics in §3). Bayesian break locates near 2020, not 2017, likely reflecting COVID disruption + acceleration. *RESULTS era slopes: 2018–22 −1.183 pp/yr (p=0.009), 2023–26 −0.773 pp/yr (p=0.223).*
-  - The drops are not extra causes — they're the same box-score categories' story told at faster speed. Handled in different sections because the events differ: discrete rule shock (§4) vs. gradual stylistic shift inside the categories (§3).
-  - Playoffs lagged: steady ~64% through 2017 across 3 eras, joined slide after 2018 → 61% → 58%.
-- **Still near-universal today (@fig-team-season-hca):** most recent regular season, all but one team won a higher share of home than road games. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). ~41 home games/team → noisy snapshot of how widespread HCA still is, not a franchise ranking. Engagement / "find your team" hook closing §1; smaller but not gone.
-- **Era table** (6 eras, 1984–94 through 2023–26, defined by major rule changes — used as calendar only; causation deferred to §4).
+- **Two speeds — gradual drift vs. steeper stretches:**
+  - Slow erosion (~quarter-point/year) underlying everything.
+  - First steeper stretch: mid-to-late 1990s, ~65% → 60%, traces to 1994–95 hand-checking crackdown. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+  - Brief uptick ~2002–04: visible but only 3 seasons, not significant (p=0.23).
+  - Second steeper stretch: after 2017, below 56%, coincides with three-point surge.
+  - Playoffs lagged: steady ~64% through 2017, then joined slide → 61% → 58%.
+- **Still near-universal today (@fig-team-season-hca):** most recent regular season, all but one team won more at home than on the road. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). Noisy snapshot of how widespread HCA still is, not a franchise ranking.
+- **Era table** moved to §4 (where rule changes are analyzed); in §1 the eras serve as the calendar the rest of the report runs on.
 - **Where the trend is headed:** 3PA share approaching ceiling (~40%); league OREB rate approaching floor (~26%, down from 33%). If both forces are near their asymptotes, pace of decline should slow. Floor from empty-arena data: home teams won 51% with no crowd/bias/prep edge, probably the long-run lower bound. Information diffusion as mechanism is not basketball-specific: other sports investing heavily in analytics are likely on the same trajectory (prediction, not tested here).
 **Figures:**
 

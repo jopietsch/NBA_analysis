@@ -21,34 +21,15 @@ Throughout, the regular season and the playoffs are tracked separately. They sha
 ---
 
 ## 1. The 40-Year Decline
-The drop unfolded at roughly a quarter of a percentage point per year. The playoffs tell the same story with a slight lag. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today. That's a 9-to-10-point drop, comparable to the regular season but noisier given fewer games.
+The drop unfolded at roughly a quarter of a percentage point per year. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today, a comparable drop but noisier given fewer games.
 
 ![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
-The decline has two layers. One is **slow, continuous erosion** of about a quarter of a point per year, the box-score categories in Section 3 grinding down over decades. The other is sharper steepening at two specific stretches. "Drops" here means stretches where the slope steepened, not one-season cliffs. The analysis in Section 3 can pin down only the first: it finds a change in the slope in the late 1990s, with no sudden jump in level (which is why the full 40 years still read as one smooth, gradual decline rather than a sharp break). The second steepening, after 2017, shows up as a step down in the era-by-era win rates, not a single datable break point.
+The decline has two layers: slow erosion of about a quarter of a point per year, with two steeper stretches on top. The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%, most likely from the 1994–95 hand-checking crackdown. A brief uptick around 2002–04 followed, visible but resting on only three seasons. The second steepening arrived after 2017, when the share of shots from deep rose from about a quarter to nearly half, pushing the regular-season rate below 56%. The playoffs held near 64% from the mid-1990s through 2017, then joined the slide, falling to 61%, then 58%.
 
-The first sharp drop came in the mid-to-late 1990s, when regular-season home win % fell from about 65% to 60%, the steepest move in the dataset. The chart then shows a brief uptick around 2002-04 before eroding again, with a second steepening after 2017 pushing the regular-season rate below 56%. The 2002-04 uptick is visible but rests on only three seasons, too few to be sure it's real. Zone defense was legalized starting in 2001-02; one plausible explanation is that the new defensive complexity initially favored home teams, who could practice the schemes in a familiar building while visitors adjusted. That is consistent with the data, not a conclusion it supports.
+Smaller than it was does not mean gone. In the most recent regular season, nearly every team still won more at home than on the road, with only one exception. Good teams that win everywhere still win more at home; weak teams pick up most of their wins there.
 
-Neither drop is a separate cause stacked on top of the trend. Each is a moment when one specific force accelerated the same trend. The first traces to the 1994–95 hand-checking crackdown, the one rule-change boundary that registers in the data and the exception in an otherwise flat rule-change story (Section 4). The second coincides with the three-point revolution: the share of shots from deep rose from about a quarter to nearly half in the three seasons after 2017. That shift accelerated the decline, but it's a marker of a broader move to the perimeter, not the whole explanation.
-
-The playoffs also declined, but later. Postseason home court held near 64% from the mid-1990s through 2017, even as the regular season eroded below it. It then joined the slide after 2018, falling to 61%, then 58%.
-
-Smaller than it was does not mean gone. In the most recent regular season, nearly every team still won a higher share of its home games than its road games, with only one exception. The chart below puts each team's home and road win rate side by side. A single season of about 41 home games is noisy, so the spread between teams is a snapshot rather than a ranking, but the direction is nearly universal: good teams that win everywhere still win more at home, and weak teams pick up most of their wins there. Where each piece of that edge comes from, and why it has shrunk, is the rest of this report.
-
-![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy, so this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
-
-A word on era labels. The charts group seasons by the NBA's major rule changes, since each one reshaped how the game is played:
-
-| Era | Seasons | Defining rule change |
-|-----|---------|----------------------|
-| 1984–94 | 1983–84 → 1993–94 | Illegal-defense rules (no zone defense) |
-| 1995–01 | 1994–95 → 2000–01 | Hand-checking restrictions; zone still illegal |
-| 2002–04 | 2001–02 → 2003–04 | Zone defense legalized; defensive three-seconds added |
-| 2005–17 | 2004–05 → 2016–17 | Perimeter hand-checking banned (the pace-and-space era) |
-| 2018–22 | 2017–18 → 2021–22 | Freedom-of-movement emphasis |
-| 2023–26 | 2022–23 → 2025–26 | Transition take-foul rule |
-
-**Whether any of these rule changes caused the decline is a separate question**, taken up in Section 4. For now they are just the calendar the rest of the report runs on.
+![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy; this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
 ---
 
@@ -138,7 +119,18 @@ The best explanation the data points to is that analytical tools for shot select
 
 ## 4. What Didn't Drive the Change
 
-The Section 1 chart shows six labeled eras, each marking a rule change. It would be natural to read those era boundaries as explaining where home court bent. They mostly don't. Check each boundary against the trend line and only 1994–95 registers: a genuine one-time drop of about 2.6 points, most likely from the hand-checking crackdown (though the simultaneously shortened three-point line adds some ambiguity). Hand-checking registered because it directly affected referee discretion, one of the few things that can shift asymmetrically between home and away teams. Every other rule change reshaped how the game looks without reshaping who benefits from playing at home: zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, and the take-foul rule. In the playoffs, even 1994–95 doesn't register; the postseason slide is steady drift throughout.
+The charts in this report group seasons by the NBA's major rule changes:
+
+| Era | Seasons | Defining rule change |
+|-----|---------|----------------------|
+| 1984–94 | 1983–84 → 1993–94 | Illegal-defense rules (no zone defense) |
+| 1995–01 | 1994–95 → 2000–01 | Hand-checking restrictions; zone still illegal |
+| 2002–04 | 2001–02 → 2003–04 | Zone defense legalized; defensive three-seconds added |
+| 2005–17 | 2004–05 → 2016–17 | Perimeter hand-checking banned (the pace-and-space era) |
+| 2018–22 | 2017–18 → 2021–22 | Freedom-of-movement emphasis |
+| 2023–26 | 2022–23 → 2025–26 | Transition take-foul rule |
+
+It would be natural to read those era boundaries as explaining where home court bent. They mostly don't. Check each boundary against the trend line and only 1994–95 registers: a genuine one-time drop of about 2.6 points, most likely from the hand-checking crackdown (though the simultaneously shortened three-point line adds some ambiguity). Hand-checking registered because it directly affected referee discretion, one of the few things that can shift asymmetrically between home and away teams. Every other rule change reshaped how the game looks without reshaping who benefits from playing at home: zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, and the take-foul rule. In the playoffs, even 1994–95 doesn't register; the postseason slide is steady drift throughout.
 
 Most situational factors either don't matter or haven't changed enough to explain the decline. Travel distance matters at about 0.07 percentage points per 100 miles in the regular season (negligible) and has no measurable effect in the playoffs. Time zones are flat in both. Rest creates genuine variation (home teams win 63% when better-rested, 58% when the visitor has the edge) but that gap hasn't changed across eras. Load management cut back-to-back frequency from 35% to under 20%, which is real, but that schedule change accounts for only 8% of the decline; home advantage eroded within every rest situation alike. Pace of play and the home-vs-away three-point differential show no meaningful relationship to the trend. Competitive balance shows none in the raw season-to-season comparison; a faint link appears only after setting aside each series' long-run drift, on a small sample, so it is best treated as a hint, not a finding.
 
