@@ -12,6 +12,8 @@ Home court advantage in the NBA has been shrinking for four decades. **Has it re
 
 Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two sharper drops layered on top.** The structural advantages home teams once relied on have worn away. **The decline came from the expected factors, the narrowing whistle and the three-point shift, and from the erosion of the home team's rebounding edge, on both sides of the glass.**
 
+![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
+
 **Why this matters.** Home court is the prize the regular season is built to award. Seeding, the playoff series format, and the penalty for a hard road draw are all priced on the assumption that playing at home is worth a lot, and it is now worth less than it was. The decline is also a measuring instrument. Tracking which pieces faded shows three real changes in the game: officiating grew more even between home and road teams, the leaguewide move to the three-point line flattened the home shooting edge, and teams walked away from the offensive glass. It also corrects a common assumption. The crowd is not the engine of the decline: arenas are fuller than ever, setting attendance records in the same years home court hit its lows.
 
 **What is NOT** behind it is also interesting: **rule changes, travel, time zones, pace of play, crowd size, and the playoff format changes, including the much-blamed 2014 change.** Each one is tested here and ruled out. Competitive balance is tested too: it can't explain the long-run decline, though year to year, parity and home court wobble together a little, but only a little.
@@ -21,9 +23,6 @@ Throughout, the regular season and the playoffs are tracked separately. They sha
 ---
 
 ## 1. The 40-Year Decline
-The drop unfolded at roughly a quarter of a percentage point per year. The postseason home win rate peaked near 68% in the 1980s before sliding to 58% today, a comparable drop but noisier given fewer games.
-
-![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
 The decline has two layers: slow erosion of about a quarter of a point per year, with two steeper stretches on top. The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%, most likely from the 1994–95 hand-checking crackdown. A brief uptick around 2002–04 followed, visible but resting on only three seasons. The second steepening arrived after 2017, when the share of shots from deep rose from about a quarter to nearly half, pushing the regular-season rate below 56%. The playoffs held near 64% from the mid-1990s through 2017, then joined the slide, falling to 61%, then 58%.
 
