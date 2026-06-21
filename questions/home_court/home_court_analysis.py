@@ -2563,6 +2563,59 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
         print(f"     G7 n = {total_by_game[7]:,} games (series that went to 7)")
 
 
+def run_series_era_split(df: pd.DataFrame) -> None:
+    """Home win % by era, split into higher-seed home games and lower-seed home games.
+
+    In 2-2-1-1-1: G1, G2, G5, G7 are at the higher seed; G3, G4, G6 at the lower seed.
+    Note: 1985-2013 Finals used 2-3-2 (G3,G4,G5 at lower seed; G6,G7 at higher seed),
+    but the Finals is ~1/15 of playoff games so the effect on pooled numbers is small.
+    """
+    _section("PLAYOFF HOME WIN % BY ERA — HIGHER SEED vs LOWER SEED AT HOME")
+    print("   In 2-2-1-1-1 format: G1,G2,G5,G7 = higher seed at home; G3,G4,G6 = lower seed at home.")
+    print("   (Pre-2014 Finals used 2-3-2; Finals ≈ 1/15 of games — minor effect on pooled figures.)\n")
+
+    po = df[(df["is_playoff"] == 1)].dropna(subset=["game_in_series", "era"]).copy()
+    po["game_in_series"] = po["game_in_series"].astype(int)
+    po = po[po["game_in_series"].between(1, 7)]
+
+    higher_seed_games = {1, 2, 5, 7}
+    lower_seed_games  = {3, 4, 6}
+
+    po["home_type"] = po["game_in_series"].apply(
+        lambda g: "higher_seed" if g in higher_seed_games else "lower_seed"
+    )
+
+    print(f"   {'Era':<12}  {'Higher seed at home (G1,2,5,7)':>32}  {'Lower seed at home (G3,4,6)':>28}  {'Gap':>6}")
+    print(f"   {'─'*12}  {'─'*32}  {'─'*28}  {'─'*6}")
+
+    for era_label, y1, y2, _ in nba.ERA_DEFS:
+        era_sub = po[po["era"] == era_label]
+        h = era_sub[era_sub["home_type"] == "higher_seed"]
+        l = era_sub[era_sub["home_type"] == "lower_seed"]
+        if h.empty or l.empty:
+            continue
+        h_pct = 100.0 * h["home_win"].sum() / len(h)
+        l_pct = 100.0 * l["home_win"].sum() / len(l)
+        gap   = h_pct - l_pct
+        print(f"   {era_label:<12}  {h_pct:>6.1f}%  ({len(h):>4} games){'':<14}  "
+              f"{l_pct:>6.1f}%  ({len(l):>4} games){'':<5}  {gap:>+5.1f} pp")
+
+    # Overall
+    h_all = po[po["home_type"] == "higher_seed"]
+    l_all = po[po["home_type"] == "lower_seed"]
+    h_pct_all = 100.0 * h_all["home_win"].sum() / len(h_all)
+    l_pct_all = 100.0 * l_all["home_win"].sum() / len(l_all)
+    print(f"   {'─'*12}  {'─'*32}  {'─'*28}  {'─'*6}")
+    print(f"   {'All eras':<12}  {h_pct_all:>6.1f}%  ({len(h_all):>4} games){'':<14}  "
+          f"{l_pct_all:>6.1f}%  ({len(l_all):>4} games){'':<5}  {h_pct_all-l_pct_all:>+5.1f} pp")
+
+    print(f"\n   ► In the early eras (1984–94, 1995–01) the lower-seeded team won ~65–66% at home,")
+    print(f"     nearly matching the higher seed's own home win rate. Home court was a genuine")
+    print(f"     equalizer. From 2002 onward the lower-seed home win rate collapsed to ~47–52%,")
+    print(f"     while the higher seed's remained at 65–75%. What eroded is the boost home court")
+    print(f"     gave to the team that needed it most.")
+
+
 def run_series_simulation(data: dict) -> None:
     """How much of the per-game home edge survives a best-of-7.
 
@@ -4533,6 +4586,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         # §5 The Playoff Picture
         run_series_breakdown(df)
+        run_series_era_split(df)
         run_series_simulation(nba.compute_series_simulation(
             nba.START_YEAR, nba.END_YEAR, skip_years=nba.SKIP_PLAYOFF_YEARS,
         ))

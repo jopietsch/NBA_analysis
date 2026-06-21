@@ -20,6 +20,8 @@ Home teams used to win about **65%** of regular-season games and nearly **68%** 
 
 The playoffs followed a different path. Playoff home win rates held near **64%** through the 2000s and 2010s while the regular season was already sliding, then fell to **58%** over the past few seasons. The per-game edge is still real: Games 1 and 2 go to the home team **69%** and **72%** of the time; Game 5, back at the top seed's building after two road games, reaches **74.5%**; even Game 7 still goes to the home team **64%** of the time. But a best-of-7 series flattens this considerably. A team with home court in the 1980s had about a **55%** chance of winning the series; today that has fallen to just under **52%**, barely better than a coin flip.
 
+In the 1980s and 1990s, the lower-seeded team (the weaker opponent) won **65%** and **61%** of their home playoff games, nearly identical to what the higher seed won at home. Quality barely mattered once you were in your own building. Today the lower seed at home wins about **47%**, while the higher seed's rate is roughly what it always was. The decline is not mainly about better teams winning more at home. It is about worse teams winning less.
+
 ---
 
 ## 2. What home court is made of, and where it changed

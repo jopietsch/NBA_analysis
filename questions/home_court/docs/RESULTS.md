@@ -1265,6 +1265,27 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 63.8%  (vs. G1 = 69.4%, diff = -5.5 pp)
      G7 n = 188 games (series that went to 7)
 
+─── PLAYOFF HOME WIN % BY ERA — HIGHER SEED vs LOWER SEED AT HOME ──────
+   In 2-2-1-1-1 format: G1,G2,G5,G7 = higher seed at home; G3,G4,G6 = lower seed at home.
+   (Pre-2014 Finals used 2-3-2; Finals ≈ 1/15 of games — minor effect on pooled figures.)
+
+   Era             Higher seed at home (G1,2,5,7)   Lower seed at home (G3,4,6)     Gap
+   ────────────  ────────────────────────────────  ────────────────────────────  ──────
+   1984–94         71.0%  ( 345 games)                  65.4%  ( 260 games)        +5.6 pp
+   1995–01         60.1%  ( 198 games)                  65.8%  ( 158 games)        -5.7 pp
+   2002–04         74.2%  ( 132 games)                  52.3%  ( 109 games)       +21.9 pp
+   2005–17         75.2%  ( 589 games)                  51.5%  ( 501 games)       +23.7 pp
+   2018–22         71.7%  ( 184 games)                  47.4%  ( 152 games)       +24.4 pp
+   2023–26         64.7%  ( 184 games)                  49.0%  ( 151 games)       +15.7 pp
+   ────────────  ────────────────────────────────  ────────────────────────────  ──────
+   All eras        70.8%  (1632 games)                  55.2%  (1331 games)       +15.6 pp
+
+   ► In the early eras (1984–94, 1995–01) the lower-seeded team won ~65–66% at home,
+     nearly matching the higher seed's own home win rate. Home court was a genuine
+     equalizer. From 2002 onward the lower-seed home win rate collapsed to ~47–52%,
+     while the higher seed's remained at 65–75%. What eroded is the boost home court
+     gave to the team that needed it most.
+
 ─── PLAYOFF SERIES SIMULATION — DOES THE PER-GAME EDGE SURVIVE A BEST-OF-7? 
    Monte Carlo: 200,000 simulated 2-2-1-1-1 series between two
    otherwise-equal teams, home-court team hosting games 1,2,5,6,7. Input is
