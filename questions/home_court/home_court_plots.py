@@ -414,24 +414,28 @@ def plot_rest_altitude(data: dict) -> None:
 
 def plot_channel_3pa_control(data: dict) -> None:
     """
-    Does each box-score channel's fade survive holding three-point volume
-    constant? Per channel, the bar is the share of that channel's yearly decline
-    trend that remains after controlling for the game's 3PA rate: 100% = the fade
-    is unrelated to the three-point shift, 0% = it is fully the three-point story,
-    below 0 = the trend reverses once threes are held constant. The regular-season
-    panel is the clean test; the playoff panel is mostly small-sample noise (only
-    rebounding stays significant), so non-significant bars are greyed.
+    Does each box-score channel's contribution to the home-court decline survive
+    holding three-point volume constant? Each channel's per-year slope is scaled
+    to win-percentage-points per decade (the mediation chart's currency) so the
+    four channels share one axis. Per channel a dumbbell runs from the raw decline
+    contribution (open marker) to the contribution after the 3PA control (filled):
+    a filled dot pulled to the zero line means the three-point shift fully accounts
+    for that channel's decline; one that stays put is an independent driver. The
+    regular-season panel is the clean test; the playoff panel is mostly small-
+    sample noise (only rebounding stays significant), so non-significant rows are
+    greyed.
 
     `data` comes from regression.compute_channel_3pa_control().
     """
-    order = CATEGORY_ORDER
+    order = list(reversed(CATEGORY_ORDER))   # Shooting at the top
     ctxs = [("Regular season", BLUE), ("Playoffs", GREEN)]
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(15, 5.6), sharex=True, sharey=True)
     fig.suptitle("Rebounding's decline survives the three-point shift; shooting's is fully absorbed by it",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
-             "Share of each category's yearly decline left after holding 3-point volume constant  |  "
-             "100% = unrelated to threes, 0% = fully the three-point story",
+             "Each channel's share of the home-court decline, in win % per decade, "
+             "before (○) and after (●) holding three-point volume constant  |  "
+             "a dot pulled to the zero line means the three-point shift accounts for it",
              ha="center", fontsize=9, color=GRAY)
 
     for ax, (ctx, color) in zip(axes, ctxs):
@@ -442,27 +446,41 @@ def plot_channel_3pa_control(data: dict) -> None:
             continue
         rows = {r["chart_label"]: r for r in blk["channels"]}
         labels = [l for l in order if l in rows]
-        x = np.arange(len(labels))
-        vals = [rows[l]["surviving"] for l in labels]
-        colors = [color if rows[l]["p_ctrl"] < 0.05 else GRAY for l in labels]
-        bars = ax.bar(x, vals, color=colors, edgecolor="white", linewidth=0.6, width=0.62)
-        ax.axhline(100, color=GRAY, linewidth=1.0, linestyle="--", zorder=1)
-        ax.axhline(0, color="#444", linewidth=1.0, zorder=1)
-        for bar, l in zip(bars, labels):
-            v = rows[l]["surviving"]
-            note = "" if rows[l]["p_ctrl"] < 0.05 else " n.s."
-            ax.text(bar.get_x() + bar.get_width() / 2, v + (4 if v >= 0 else -4),
-                    f"{v:.0f}%{note}", ha="center",
-                    va="bottom" if v >= 0 else "top", fontsize=8, color="#333")
-        ax.set_xticks(x)
-        ax.set_xticklabels(labels, fontsize=9)
+        ys = np.arange(len(labels))
+        ax.axvline(0, color="#444", linewidth=1.1, zorder=1)
+        for yi, l in zip(ys, labels):
+            r = rows[l]
+            sig = r["p_ctrl"] < 0.05
+            after_c = color if sig else GRAY
+            ax.plot([r["win_raw"], r["win_ctrl"]], [yi, yi], color="#c9c7c0",
+                    linewidth=2.5, solid_capstyle="round", zorder=2)
+            ax.scatter(r["win_raw"], yi, s=72, facecolors="white",
+                       edgecolors=GRAY, linewidths=1.6, zorder=3)
+            ax.scatter(r["win_ctrl"], yi, s=72, color=after_c, zorder=4)
+            note = "" if sig else " n.s."
+            right = r["win_ctrl"] >= r["win_raw"]
+            ax.text(r["win_ctrl"] + (0.04 if right else -0.04), yi + 0.24,
+                    f"{r['win_ctrl']:+.2f}{note}", ha="left" if right else "right",
+                    va="bottom", fontsize=8, color="#333")
+        ax.set_yticks(ys)
+        ax.set_yticklabels(labels, fontsize=10)
         ax.set_title(f"{ctx}  (n = {blk['n']:,} games)", fontsize=11,
                      fontweight="bold", color="#2c2c2a", pad=6)
-        ax.set_ylim(-150, 180)
+        ax.set_ylim(-0.6, len(labels) - 0.4)
+        ax.set_xlabel("Contribution to the home-court decline (win % per decade)", fontsize=10)
+        for spine in ("top", "right", "left"):
+            ax.spines[spine].set_visible(False)
 
-    axes[0].set_ylabel("Decline trend surviving the 3PA control (%)", fontsize=10)
-    axes[0].text(-0.45, 104, "unrelated to threes", fontsize=7.5, color=GRAY, va="bottom")
-    axes[0].text(-0.45, 4, "fully the three-point story", fontsize=7.5, color="#444", va="bottom")
+    axes[0].annotate("threes fully\naccount for it", xy=(0, len(order) - 1),
+                     xytext=(0.05, len(order) - 0.62), fontsize=7.5, color=GRAY, va="center")
+    handles = [
+        plt.Line2D([0], [0], marker="o", linestyle="none", markerfacecolor="white",
+                   markeredgecolor=GRAY, markersize=9, label="Before control"),
+        plt.Line2D([0], [0], marker="o", linestyle="none", markerfacecolor=GRAY,
+                   markeredgecolor=GRAY, markersize=9, label="After holding threes constant"),
+    ]
+    axes[0].legend(handles=handles, loc="lower left", fontsize=8.5,
+                   framealpha=0.85, edgecolor="#ddd")
 
     plt.tight_layout()
     save_chart("home_court_3pa_control.svg", OUTPUT_DIR)

@@ -113,7 +113,7 @@
 
 ![Referee era distribution](../generated/images/home_court_referee_era.svg){#fig-referee-era}
 
-![3PA-control channel test (which fades survive holding 3-point volume constant)](../generated/images/home_court_3pa_control.svg){#fig-3pa-control}
+![3PA-control channel test, as a before/after dumbbell in win-% per decade: each channel's contribution to the decline before (open dot) and after (filled dot) holding 3-point volume constant; a dot pulled to the zero line = fully absorbed by the perimeter shift. RS shooting collapses past zero (absorbed), rebounding barely moves (survives), fouls/turnovers ~half; playoffs greyed except rebounding.](../generated/images/home_court_3pa_control.svg){#fig-3pa-control}
 
 ![Bayesian change-point model (k=0/1/2/3 fitted lines; posterior distribution over break year for k=1)](../generated/images/home_court_bayesian_changepoint.svg){#fig-bayesian-changepoint}
 

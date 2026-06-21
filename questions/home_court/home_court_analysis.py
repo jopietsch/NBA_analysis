@@ -1200,9 +1200,12 @@ def compute_channel_3pa_control(df: pd.DataFrame) -> dict:
     plot layer so the chart and RESULTS never diverge.
 
     Returns {ctx: {"channels": [{chart_label, g_raw, g_ctrl, surviving, absorbed,
-    p_raw, p_ctrl}, ...], "n": int}} for ctx in ("Regular season", "Playoffs").
-    `surviving` = g_ctrl/g_raw as a percent (100 = untouched by the control,
-    0 = fully absorbed, <0 = the trend reverses once threes are held constant).
+    win_raw, win_ctrl, p_raw, p_ctrl}, ...], "n": int}} for ctx in
+    ("Regular season", "Playoffs"). `surviving` = g_ctrl/g_raw as a percent
+    (100 = untouched by the control, 0 = fully absorbed, <0 = the trend reverses
+    once threes are held constant). `win_raw`/`win_ctrl` re-express the channel's
+    before/after slope as win-percentage-points per decade (channel slope × the
+    full-model win coefficient × 10), giving the dumbbell chart one shared axis.
     """
     channels = [
         ("efg_pct_diff", "Shooting"),
@@ -1211,27 +1214,37 @@ def compute_channel_3pa_control(df: pd.DataFrame) -> dict:
         ("reb_diff",     "Rebounding"),
     ]
     keys = [k for k, _ in channels]
+    rhs = " + ".join(keys)
     out: dict = {}
     for label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
         ("Playoffs",       df[df["is_playoff"] == 1]),
     ]:
-        d = sub.dropna(subset=keys + ["year", "tpa_rate_avg"])
+        d = sub.dropna(subset=keys + ["year", "tpa_rate_avg", "home_win"])
         if len(d) < 100:
             continue
         rows = []
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             cl = {"groups": d["year"]}
+            # Full win-model coefficients convert each channel's per-year slope
+            # into win-percentage-points — the same currency as the mediation
+            # chart — so the before/after dumbbell can share one axis across the
+            # four channels (which are otherwise in different box-score units).
+            m_win = smf.ols(f"home_win ~ year + {rhs}", data=d).fit(
+                cov_type="cluster", cov_kwds=cl)
             for k, clbl in channels:
                 m_raw  = smf.ols(f"{k} ~ year", data=d).fit(cov_type="cluster", cov_kwds=cl)
                 m_ctrl = smf.ols(f"{k} ~ year + tpa_rate_avg", data=d).fit(
                     cov_type="cluster", cov_kwds=cl)
                 g_raw, g_ctrl = float(m_raw.params["year"]), float(m_ctrl.params["year"])
                 surviving = 100.0 * g_ctrl / g_raw if g_raw != 0 else float("nan")
+                coef = float(m_win.params[k]) * 100.0  # win pp per unit of channel k
                 rows.append({
                     "chart_label": clbl, "g_raw": g_raw, "g_ctrl": g_ctrl,
                     "surviving": surviving, "absorbed": 100.0 - surviving,
+                    "win_raw":  coef * g_raw  * 10.0,  # win pp/decade, before 3PA control
+                    "win_ctrl": coef * g_ctrl * 10.0,  # win pp/decade, after 3PA control
                     "p_raw": float(m_raw.pvalues["year"]),
                     "p_ctrl": float(m_ctrl.pvalues["year"]),
                 })

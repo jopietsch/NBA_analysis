@@ -100,12 +100,16 @@ def test_plot_playoff_quality():
 
 def test_plot_channel_3pa_control():
     def _ctx(n):
-        chans = [("Shooting", -110.0, 0.03), ("Turnovers", 46.0, 0.04),
-                 ("Fouls", 49.0, 0.01), ("Rebounding", 92.0, 0.001)]
+        # (label, surviving%, p_ctrl, win_raw, win_ctrl) — one row crosses zero
+        chans = [("Shooting", -110.0, 0.03, -0.52, 0.57),
+                 ("Turnovers", 46.0, 0.04, -0.65, -0.30),
+                 ("Fouls", 49.0, 0.01, -0.44, -0.21),
+                 ("Rebounding", 92.0, 0.001, -0.74, -0.68)]
         return {"n": n, "channels": [
             {"chart_label": c, "g_raw": -0.02, "g_ctrl": -0.01,
-             "surviving": s, "absorbed": 100 - s, "p_raw": 0.001, "p_ctrl": p}
-            for c, s, p in chans]}
+             "surviving": s, "absorbed": 100 - s, "win_raw": wr, "win_ctrl": wc,
+             "p_raw": 0.001, "p_ctrl": p}
+            for c, s, p, wr, wc in chans]}
     plots.plot_channel_3pa_control({"Regular season": _ctx(49000), "Playoffs": _ctx(3300)})
 
 
