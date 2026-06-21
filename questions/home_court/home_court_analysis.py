@@ -390,6 +390,136 @@ def run_decline_trend(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis: Is the decline league-wide? (multilevel model) ──────────────────
+
+def compute_multilevel_decline(df: pd.DataFrame) -> dict:
+    """Is the HCA decline league-wide or concentrated in particular franchises?
+
+    Builds a regular-season team-season panel of the HCA gap
+    (home win% − road win%, which nets out each team's overall strength),
+    fits each franchise's own year-slope by OLS, then separates the true
+    between-team spread in those slopes from sampling noise — the same
+    empirical-Bayes / variance-decomposition idiom this report uses for
+    franchise HCA levels and referee bias. The pooled (cluster-robust) slope is
+    the league-wide decline; the noise-adjusted between-team SD says how much
+    franchises genuinely differ from it. Per-team slopes are EB-shrunken toward
+    the league slope for display.
+
+    Regular season only — per-franchise playoff samples (a handful of games per
+    team-season) are far too small for a season-by-season panel.
+
+    Returns a dict consumed by both run_multilevel_decline() and the plot.
+    """
+    MIN_G       = 15  # min home and road games per team-season (keeps lockouts)
+    MIN_SEASONS = 10  # franchises need a long enough panel for a slope estimate
+    sub = df[df["is_playoff"] == 0]
+
+    home = sub.groupby(["year", "TEAM_NAME_home"])["home_win"].agg(hw="sum", hn="count")
+    away = sub.groupby(["year", "TEAM_NAME_away"])["home_win"].agg(rl="sum", an="count")
+    home.index = home.index.rename(["year", "team"])
+    away.index = away.index.rename(["year", "team"])
+    panel = home.join(away, how="inner").reset_index()
+    panel = panel[(panel["hn"] >= MIN_G) & (panel["an"] >= MIN_G)].copy()
+    if panel.empty:
+        return {"teams": []}
+
+    panel["home_pct"] = 100.0 * panel["hw"] / panel["hn"]
+    # home_win == 1 is a road loss for the away team, so road wins = an − rl.
+    panel["road_pct"] = 100.0 * (panel["an"] - panel["rl"]) / panel["an"]
+    panel["hca_gap"]  = panel["home_pct"] - panel["road_pct"]
+    panel["year_c"]   = panel["year"] - panel["year"].mean()
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        pooled = smf.ols("hca_gap ~ year_c", data=panel).fit(
+            cov_type="cluster", cov_kwds={"groups": panel["team"]})
+    league_slope = float(pooled.params["year_c"])
+    league_se    = float(pooled.bse["year_c"])
+    league_p     = float(pooled.pvalues["year_c"])
+
+    rows: list[tuple[str, float, float, int]] = []  # (team, slope, slope_se, n)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        for t, g in panel.groupby("team"):
+            if g["year"].nunique() < MIN_SEASONS:
+                continue
+            m = smf.ols("hca_gap ~ year_c", data=g).fit()
+            rows.append((str(t), float(m.params["year_c"]),
+                         float(m.bse["year_c"]), int(len(g))))
+    if not rows:
+        return {"teams": []}
+
+    slopes = np.array([r[1] for r in rows])
+    ses    = np.array([r[2] for r in rows])
+    obs_var  = float(np.var(slopes, ddof=1))
+    mean_se2 = float(np.mean(ses ** 2))
+    true_var = max(0.0, obs_var - mean_se2)        # method-of-moments
+    true_sd  = float(np.sqrt(true_var))
+    noise_share = min(1.0, mean_se2 / obs_var) if obs_var > 0 else 1.0
+
+    shrunk, _info = shrink_to_mean(slopes, ses ** 2)  # EB toward grand mean
+    teams = sorted(
+        [{"team": rows[i][0], "slope": float(slopes[i]), "se": float(ses[i]),
+          "shrunk": float(shrunk[i]), "n": rows[i][3]}
+         for i in range(len(rows))],
+        key=lambda r: r["slope"],
+    )
+
+    return {
+        "panel_rows": int(len(panel)),
+        "n_teams": int(panel["team"].nunique()),
+        "n_modeled": len(rows),
+        "league_slope": league_slope, "league_se": league_se, "league_p": league_p,
+        "obs_sd": float(np.sqrt(obs_var)), "true_sd": true_sd,
+        "noise_share": noise_share,
+        "teams": teams,  # dicts with raw slope + se + shrunken, sorted by raw slope
+    }
+
+
+def run_multilevel_decline(df: pd.DataFrame) -> None:
+    """Print the verdict on whether the decline is league-wide or concentrated."""
+    _section("IS THE DECLINE LEAGUE-WIDE? — PER-FRANCHISE HCA SLOPE DECOMPOSITION")
+    print("   Regular-season team-season HCA gap = home win% − road win% (nets out")
+    print("   each team's overall strength). Each franchise gets its own year-slope")
+    print("   by OLS; the pooled cluster-robust slope is the league-wide decline.")
+    print("   A method-of-moments split separates the true between-team spread in")
+    print("   those slopes from sampling noise (same idiom as franchise HCA and")
+    print("   referee bias). Near-zero true spread → the decline is league-wide.\n")
+
+    d = compute_multilevel_decline(df)
+    if not d.get("teams"):
+        print("   Insufficient data.\n")
+        return
+
+    print(f"   Panel: {d['panel_rows']:,} team-seasons; per-team slopes fit for "
+          f"{d['n_modeled']} franchises (≥10 seasons)\n")
+    print(f"   League-wide slope (pooled, cluster-robust):  {d['league_slope']:+.3f} pp/yr  "
+          f"(SE {d['league_se']:.3f}, p = {_fmt_p(d['league_p'])}  {_stars(d['league_p']).strip()})")
+    print(f"   Observed SD of per-team slopes:              {d['obs_sd']:.3f} pp/yr")
+    print(f"   Noise-adjusted true between-team SD:         {d['true_sd']:.3f} pp/yr")
+    print(f"   Share of observed spread that is noise:      {d['noise_share'] * 100:.0f}%\n")
+
+    teams  = d["teams"]
+    n_pos  = sum(1 for r in teams if r["slope"] > 0)
+    steep, shallow = teams[0], teams[-1]
+    print(f"   Per-franchise raw slopes (extremes; both within noise of the league rate):")
+    print(f"   Steepest decline:  {steep['slope']:+.3f} pp/yr  ({steep['team']})")
+    print(f"   Shallowest/rising: {shallow['slope']:+.3f} pp/yr  ({shallow['team']})")
+    print(f"   Franchises with a positive (rising) raw slope: {n_pos}/{len(teams)}")
+    print(f"   After EB shrinkage every franchise collapses to ≈{d['league_slope']:+.2f} pp/yr.\n")
+
+    if d["true_sd"] > abs(d["league_slope"]) and d["noise_share"] < 0.5:
+        print("   ► Franchises differ meaningfully in how fast their edge faded — the")
+        print("     decline is concentrated, not a uniform league-wide drift.")
+    else:
+        print("   ► Once sampling noise is removed, franchises barely differ: most of the")
+        print("     raw spread in team slopes is noise, and the shrunken slopes collapse")
+        print("     onto one shared league rate. The decline is broadly league-wide, not")
+        print("     driven by a handful of franchises losing their edge.")
+    print("   ► Playoffs are excluded: per-franchise playoff samples are far too small")
+    print("     for a season-by-season panel; the playoff decline is league-wide (§1, §5).\n")
+
+
 # ── Analysis: Playoff format periods ──────────────────────────────────────────
 
 def run_format_period_analysis(df: pd.DataFrame) -> None:
@@ -4135,6 +4265,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         run_structural_break_test(df, results)
         run_cusum_test(df, results)
         results["bayesian_cp"] = run_bayesian_changepoint(df)
+        run_multilevel_decline(df)
 
         # §2 What Creates Home Court Advantage
         run_differential_analysis(df)

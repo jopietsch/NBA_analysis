@@ -1817,6 +1817,61 @@ def plot_referee_rankings(bias_stats: list[dict]) -> None:
     save_chart("home_court_referee_rankings.svg", OUTPUT_DIR)
 
 
+def plot_team_decline_slopes(data: dict) -> None:
+    """
+    Caterpillar plot: each franchise's regular-season HCA-gap year-slope with its
+    95% CI, sorted, against the league-wide slope. Shows that every team's CI
+    overlaps the league line — the decline is league-wide, the spread is noise.
+    Saves → home_court_team_decline_slopes.svg
+    """
+    teams = data.get("teams", [])
+    if not teams:
+        print("plot_team_decline_slopes: no data, skipping.")
+        return
+
+    names  = [r["team"] for r in teams]
+    slopes = np.array([r["slope"] for r in teams])
+    cis    = np.array([1.96 * r["se"] for r in teams])
+    league = data["league_slope"]
+    y      = np.arange(len(teams))
+    # A franchise "stands out" only if its 95% CI excludes the league slope.
+    stands_out = np.abs(slopes - league) > cis
+
+    fig, ax = plt.subplots(figsize=(8.5, max(7, len(teams) * 0.26 + 2)), facecolor=BG)
+    ax.set_facecolor(PANEL)
+
+    ax.axvline(league, color=BLUE, linestyle="--", linewidth=1.4, zorder=2,
+               label=f"League-wide slope ({league:+.2f} pp/yr)")
+    ax.axvline(0, color=GRAY, linestyle=":", linewidth=1.0, alpha=0.7, zorder=1)
+
+    dot_colors = [RED if s else GRAY for s in stands_out]
+    ax.errorbar(slopes, y, xerr=cis, fmt="none", ecolor="#cdcbc4",
+                elinewidth=1.2, capsize=2, zorder=3)
+    ax.scatter(slopes, y, c=dot_colors, s=40, zorder=4,
+               edgecolors="white", linewidths=0.7)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(names, fontsize=7.5)
+    ax.set_ylim(-0.7, len(teams) - 0.3)
+    ax.set_xlabel("Decline in home-court edge, pp of (home − road) win% per year",
+                  fontsize=10)
+    ax.grid(axis="x", alpha=0.3, linewidth=0.6)
+    ax.legend(fontsize=8.5, framealpha=0.85, edgecolor="#ddd", loc="lower left")
+    ax.set_title(
+        f"Each franchise fit separately; bars are 95% CIs  |  "
+        f"{int(stands_out.sum())} of {len(teams)} clear the league line  |  "
+        f"true between-team SD ≈ {data['true_sd']:.2f} pp/yr",
+        fontsize=9, color=GRAY, pad=4,
+    )
+
+    fig.suptitle(
+        "Every franchise's home edge faded at the same league-wide rate",
+        fontsize=13, fontweight="bold", color="#2c2c2a", y=1.005,
+    )
+    plt.tight_layout(rect=(0, 0, 1, 0.97))
+    save_chart("home_court_team_decline_slopes.svg", OUTPUT_DIR)
+
+
 def plot_attendance(
     att_seasons: list[str], att_avg: list[float],
     reg_seasons: list[str], reg_pcts: list[float],

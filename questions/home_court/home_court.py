@@ -38,6 +38,7 @@ from home_court_plots import (
     plot_attendance, plot_tracking_rebounding,
     plot_referee_era_distribution, plot_referee_rankings,
     plot_team_hca_by_era, plot_team_season_hca, plot_bayesian_changepoint,
+    plot_team_decline_slopes,
 )
 
 
@@ -175,6 +176,7 @@ def main() -> None:
         print("  No referee data cached yet — will fetch during next run.")
 
     plot_bayesian_changepoint(_reg.compute_bayesian_changepoint(game_df))
+    plot_team_decline_slopes(_reg.compute_multilevel_decline(game_df))
 
     _reg.run(game_df)
 

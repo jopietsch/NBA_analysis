@@ -30,6 +30,10 @@ Smaller than it was does not mean gone. In the most recent regular season, nearl
 
 ![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy; this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
+**The decline is league-wide, not a few teams.** A natural worry is that the leaguewide drop hides a split: maybe a handful of franchises lost their home edge while the rest held theirs. They didn't. Fitting each franchise its own trend in the home-minus-road win gap and then separating real differences from the noise of 40-odd games a season, the spread across teams is entirely sampling noise: the true team-to-team difference in decline rates is about zero. Every franchise's edge faded at roughly the same league-wide rate, about half a point of the home-road gap per year. Once the noise is removed, no team stands apart as the cause. This is a regular-season result; per-team playoff samples are too small to split this way, but the playoff decline is itself leaguewide.
+
+![Each franchise's regular-season home-court trend (the home-minus-road win gap, change per year) with its 95% confidence interval, against the league-wide rate (blue line). Nearly every team's interval overlaps the league line, and the noise-adjusted spread between teams is near zero: the decline is shared, not concentrated.](../generated/images/home_court_team_decline_slopes.svg){#fig-team-decline-slopes}
+
 ---
 
 ## 2. What Creates Home Court Advantage

@@ -113,6 +113,24 @@ def test_plot_channel_3pa_control():
     plots.plot_channel_3pa_control({"Regular season": _ctx(49000), "Playoffs": _ctx(3300)})
 
 
+def test_plot_team_decline_slopes():
+    rng = [(-0.55 + 0.03 * i, 0.18) for i in range(12)]
+    data = {
+        "league_slope": -0.49, "league_se": 0.026, "league_p": 0.0,
+        "obs_sd": 0.32, "true_sd": 0.0, "noise_share": 1.0,
+        "n_modeled": 12, "n_teams": 12, "panel_rows": 1200,
+        "teams": [
+            {"team": f"Team {c}", "slope": s, "se": se, "shrunk": -0.49, "n": 30}
+            for c, (s, se) in zip("ABCDEFGHIJKL", rng)
+        ],
+    }
+    plots.plot_team_decline_slopes(data)
+
+
+def test_plot_team_decline_slopes_empty():
+    plots.plot_team_decline_slopes({"teams": []})  # must no-op, not raise
+
+
 def test_plot_rest_altitude():
     def _ctx(base):
         return {

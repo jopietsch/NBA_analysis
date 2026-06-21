@@ -144,6 +144,35 @@ All data from cache/ — same source as the plots above.
    ► BF(k=2 vs k=1) = 0.3  BF(k=3 vs k=2) = 0.0
 
 
+─── IS THE DECLINE LEAGUE-WIDE? — PER-FRANCHISE HCA SLOPE DECOMPOSITION 
+   Regular-season team-season HCA gap = home win% − road win% (nets out
+   each team's overall strength). Each franchise gets its own year-slope
+   by OLS; the pooled cluster-robust slope is the league-wide decline.
+   A method-of-moments split separates the true between-team spread in
+   those slopes from sampling noise (same idiom as franchise HCA and
+   referee bias). Near-zero true spread → the decline is league-wide.
+
+   Panel: 317 team-seasons; per-team slopes fit for 19 franchises (≥10 seasons)
+
+   League-wide slope (pooled, cluster-robust):  -0.612 pp/yr  (SE 0.035, p = <0.001  ***)
+   Observed SD of per-team slopes:              0.193 pp/yr
+   Noise-adjusted true between-team SD:         0.057 pp/yr
+   Share of observed spread that is noise:      91%
+
+   Per-franchise raw slopes (extremes; both within noise of the league rate):
+   Steepest decline:  -0.863 pp/yr  (Portland Trail Blazers)
+   Shallowest/rising: -0.139 pp/yr  (Los Angeles Lakers)
+   Franchises with a positive (rising) raw slope: 0/19
+   After EB shrinkage every franchise collapses to ≈-0.61 pp/yr.
+
+   ► Once sampling noise is removed, franchises barely differ: most of the
+     raw spread in team slopes is noise, and the shrunken slopes collapse
+     onto one shared league rate. The decline is broadly league-wide, not
+     driven by a handful of franchises losing their edge.
+   ► Playoffs are excluded: per-franchise playoff samples are far too small
+     for a season-by-season panel; the playoff decline is league-wide (§1, §5).
+
+
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
    Positive fta_diff = home team attempted more free throws.
