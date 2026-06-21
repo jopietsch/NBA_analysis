@@ -1872,6 +1872,71 @@ def plot_team_decline_slopes(data: dict) -> None:
     save_chart("home_court_team_decline_slopes.svg", OUTPUT_DIR)
 
 
+def plot_oos_forecast(data: dict) -> None:
+    """
+    Two panels (regular season, playoffs): actual home win % across all seasons,
+    with the channel-model forecast and the trend extrapolation drawn over the
+    held-out test window. A frozen early model that tracks the held-out decline
+    means the box-score mechanism isn't fitted to hindsight.
+    Saves → home_court_oos_forecast.svg
+    """
+    panels = [("reg", "Regular season", BLUE), ("po", "Playoffs", GREEN)]
+    if not any(data.get(k) for k, *_ in panels):
+        print("plot_oos_forecast: no data, skipping.")
+        return
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), facecolor=BG)
+
+    for ax, (key, title, actual_c) in zip(axes, panels):
+        d = data.get(key) or {}
+        ax.set_facecolor(PANEL)
+        if not d:
+            ax.text(0.5, 0.5, "Insufficient data", ha="center", va="center",
+                    transform=ax.transAxes, fontsize=11, color=GRAY)
+            ax.set_title(title, fontsize=11, color="#2c2c2a")
+            continue
+
+        full_years = [y for y, _ in d["actual_full"]]
+        full_pcts  = [p for _, p in d["actual_full"]]
+        ax.plot(full_years, full_pcts, color=actual_c, linewidth=1.8,
+                marker="o", markersize=3, zorder=3, label="Actual")
+
+        test_years = [r[0] for r in d["rows"]]
+        pred_ch    = [r[2] for r in d["rows"]]
+        pred_tr    = [r[3] for r in d["rows"]]
+        ax.plot(test_years, pred_ch, color="#c2538a", linewidth=2.0,
+                marker="s", markersize=3.5, zorder=4,
+                label=f"Channel forecast (RMSE {d['rmse_channel']:.1f})")
+        ax.plot(test_years, pred_tr, color=GRAY, linewidth=1.4, linestyle="--",
+                zorder=2, label=f"Trend extrapolation (RMSE {d['rmse_trend']:.1f})")
+
+        cut = d["cut_year"]
+        ax.axvline(cut - 0.5, color="#2c2c2a", linewidth=1.0, linestyle=":",
+                   alpha=0.6, zorder=1)
+        ax.text(cut - 0.5, ax.get_ylim()[1], "  trained ←  → held out",
+                ha="center", va="bottom", fontsize=7.5, color="#2c2c2a")
+
+        ax.set_title(title, fontsize=11, fontweight="bold", color="#2c2c2a")
+        ax.set_xlabel("Season ending", fontsize=9)
+        ax.set_ylabel("Home win %", fontsize=9)
+        ax.yaxis.set_major_formatter(mticker.PercentFormatter(decimals=0))
+        ax.grid(alpha=0.3, linewidth=0.6)
+        ax.legend(fontsize=7.8, framealpha=0.85, edgecolor="#ddd", loc="lower left")
+
+    fig.suptitle(
+        "The box-score channels, frozen on early seasons, forecast the later decline",
+        fontsize=13, fontweight="bold", color="#2c2c2a", y=1.0,
+    )
+    fig.text(
+        0.5, 0.93,
+        "Win model trained only on pre-2014 games, then used to predict each "
+        "later season from its box-score edges  |  the mechanism isn't fitted to hindsight",
+        ha="center", fontsize=8.5, color=GRAY,
+    )
+    plt.tight_layout(rect=(0, 0, 1, 0.9))
+    save_chart("home_court_oos_forecast.svg", OUTPUT_DIR)
+
+
 def plot_attendance(
     att_seasons: list[str], att_avg: list[float],
     reg_seasons: list[str], reg_pcts: list[float],

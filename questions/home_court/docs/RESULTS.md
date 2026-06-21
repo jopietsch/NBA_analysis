@@ -669,6 +669,60 @@ All data from cache/ — same source as the plots above.
      before high-resolution tracking even began.
 
 
+─── OUT-OF-SAMPLE FORECAST — DO THE CHANNELS PREDICT THE LATER DECLINE? 
+   Freeze the four-channel win model (eFG%, fouls, turnovers, rebounds)
+   on the training seasons, then predict each later season's home win %
+   from that season's box-score edges. A frozen early mapping that tracks
+   the held-out decline means the mechanism is stable, not fitted to
+   hindsight. Baselines: extrapolating the training trend line, and a flat
+   training-mean forecast. Lower RMSE on the held-out seasons is better.
+
+   Regular season  (train 1984–2013, test 2014–2026)
+
+    Season    Actual   Channel pred   Trend pred
+   ───────  ────────  ─────────────  ───────────
+      2014     58.0%          58.4%        58.3%
+      2015     57.5%          58.0%        58.1%
+      2016     58.9%          58.7%        57.8%
+      2017     58.4%          59.9%        57.6%
+      2018     57.9%          57.3%        57.4%
+      2019     59.3%          57.8%        57.1%
+      2020     55.1%          56.7%        56.9%
+      2021     54.4%          53.4%        56.6%
+      2022     54.4%          55.2%        56.4%
+      2023     58.0%          57.3%        56.2%
+      2024     54.3%          55.6%        55.9%
+      2025     54.4%          54.5%        55.7%
+      2026     55.4%          54.9%        55.5%
+
+   Held-out RMSE:  channel = 0.95 pp   trend = 1.45 pp   flat mean = 5.48 pp
+   ► The frozen early channel model reconstructs the 2014–2026 decline
+     it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
+     split, not an artifact of fitting on the full history.
+
+   Playoffs  (train 1984–2013, test 2014–2026)
+
+    Season    Actual   Channel pred   Trend pred
+   ───────  ────────  ─────────────  ───────────
+      2014     56.2%          59.8%        65.5%
+      2015     59.3%          59.2%        65.4%
+      2016     67.4%          71.9%        65.4%
+      2017     57.0%          56.1%        65.3%
+      2018     70.7%          66.5%        65.3%
+      2019     56.1%          60.6%        65.2%
+      2021     56.5%          60.2%        65.1%
+      2022     59.8%          63.2%        65.1%
+      2023     59.5%          63.1%        65.0%
+      2024     58.5%          63.0%        65.0%
+      2025     57.1%          63.8%        64.9%
+      2026     55.3%          57.5%        64.9%
+
+   Held-out RMSE:  channel = 3.87 pp   trend = 7.30 pp   flat mean = 8.11 pp
+   ► The frozen early channel model reconstructs the 2014–2026 decline
+     it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
+     split, not an artifact of fitting on the full history.
+
+
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
    Home win % by rule-change era; pairwise tests between consecutive eras.
    Trend-controlled model: home_win ~ year + C(era).

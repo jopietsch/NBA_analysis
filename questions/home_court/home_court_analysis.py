@@ -1559,6 +1559,114 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
     print()
 
 
+# ── Analysis: Out-of-sample forecast of the decline from the channels ────────
+
+_OOS_CHANNELS = ["efg_pct_diff", "foul_diff", "tov_diff", "reb_diff"]
+
+
+def _oos_forecast(df: pd.DataFrame, is_playoff: int, cut_year: int) -> dict:
+    """Freeze the channel→win mapping on seasons before cut_year, then predict
+    each later season's home win % from that season's box-score edges. Compares
+    against two baselines: extrapolating the training-window trend line, and a
+    flat "training mean" forecast. Returns per-season actual/predicted plus RMSEs.
+    """
+    sub = df[df["is_playoff"] == is_playoff].copy()
+    if is_playoff:
+        sub = sub[~sub["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+    sub = sub.dropna(subset=_OOS_CHANNELS + ["home_win"])
+    train = sub[sub["year"] < cut_year]
+    test  = sub[sub["year"] >= cut_year]
+    if train["year"].nunique() < 5 or test["year"].nunique() < 3:
+        return {}
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        lpm = smf.ols("home_win ~ " + " + ".join(_OOS_CHANNELS), data=train).fit()
+        tr_season = train.groupby("year")["home_win"].agg(p="mean", n="count").reset_index()
+        tr_season["p"] *= 100.0
+        wls = smf.wls("p ~ year", data=tr_season,
+                      weights=tr_season["n"]).fit()
+
+    train_mean = 100.0 * train["home_win"].mean()
+    rows = []
+    for y, g in test.groupby("year"):
+        actual  = 100.0 * g["home_win"].mean()
+        pred_ch = 100.0 * (lpm.params["Intercept"]
+                           + sum(lpm.params[c] * g[c].mean() for c in _OOS_CHANNELS))
+        pred_tr = float(wls.params["Intercept"] + wls.params["year"] * y)
+        rows.append((int(y), actual, pred_ch, pred_tr))
+
+    actual_full = [
+        (int(y), 100.0 * float(p))
+        for y, p in sub.groupby("year")["home_win"].mean().items()
+    ]
+
+    A  = np.array([r[1] for r in rows])
+    Pc = np.array([r[2] for r in rows])
+    Pt = np.array([r[3] for r in rows])
+    rmse = lambda p: float(np.sqrt(np.mean((A - p) ** 2)))
+
+    return {
+        "is_playoff": is_playoff, "cut_year": cut_year,
+        "train_years": (int(train["year"].min()), int(train["year"].max())),
+        "test_years":  (int(test["year"].min()),  int(test["year"].max())),
+        "rows": rows, "actual_full": actual_full,
+        "rmse_channel": rmse(Pc), "rmse_trend": rmse(Pt),
+        "rmse_naive": rmse(np.full_like(A, train_mean)),
+        "train_mean": train_mean,
+    }
+
+
+def compute_oos_forecast(df: pd.DataFrame, cut_year: int = 2014) -> dict:
+    """Out-of-sample decline forecast for regular season and playoffs."""
+    return {
+        "reg": _oos_forecast(df, 0, cut_year),
+        "po":  _oos_forecast(df, 1, cut_year),
+    }
+
+
+def run_oos_forecast(df: pd.DataFrame) -> None:
+    """Does the channel mechanism, fit only on early seasons, forecast the later
+    decline out of sample? If yes, the box-score story isn't fitted to hindsight."""
+    _section("OUT-OF-SAMPLE FORECAST — DO THE CHANNELS PREDICT THE LATER DECLINE?")
+    print("   Freeze the four-channel win model (eFG%, fouls, turnovers, rebounds)")
+    print("   on the training seasons, then predict each later season's home win %")
+    print("   from that season's box-score edges. A frozen early mapping that tracks")
+    print("   the held-out decline means the mechanism is stable, not fitted to")
+    print("   hindsight. Baselines: extrapolating the training trend line, and a flat")
+    print("   training-mean forecast. Lower RMSE on the held-out seasons is better.\n")
+
+    data = compute_oos_forecast(df)
+    for ctx_label, key in [("Regular season", "reg"), ("Playoffs", "po")]:
+        d = data.get(key) or {}
+        if not d:
+            print(f"   {ctx_label}: insufficient data for a train/test split.\n")
+            continue
+        tr0, tr1 = d["train_years"]
+        te0, te1 = d["test_years"]
+        print(f"   {ctx_label}  (train {tr0}–{tr1}, test {te0}–{te1})\n")
+        print(f"   {'Season':>7}  {'Actual':>8}  {'Channel pred':>13}  {'Trend pred':>11}")
+        print(f"   {'─'*7}  {'─'*8}  {'─'*13}  {'─'*11}")
+        for y, a, pc, pt in d["rows"]:
+            print(f"   {y:>7}  {a:>7.1f}%  {pc:>12.1f}%  {pt:>10.1f}%")
+        print(f"\n   Held-out RMSE:  channel = {d['rmse_channel']:.2f} pp   "
+              f"trend = {d['rmse_trend']:.2f} pp   flat mean = {d['rmse_naive']:.2f} pp")
+
+        if d["rmse_channel"] < d["rmse_naive"]:
+            if d["rmse_channel"] < d["rmse_trend"] - 0.25:
+                extra = " and beats a naive extension of the early trend line"
+            elif d["rmse_channel"] <= d["rmse_trend"] + 0.25:
+                extra = " and matches the extrapolated trend line"
+            else:
+                extra = ""
+            print(f"   ► The frozen early channel model reconstructs the {te0}–{te1} decline")
+            print(f"     it never saw{extra} — the box-score mechanism is stable across the")
+            print(f"     split, not an artifact of fitting on the full history.\n")
+        else:
+            print(f"   ► The frozen channel model does not beat a flat forecast out of")
+            print(f"     sample here — read the held-out fit with caution.\n")
+
+
 # ── Analysis 5b: Rebounding decomposition ────────────────────────────────────
 
 def run_rebounding_decomposition(df: pd.DataFrame) -> None:
@@ -4300,6 +4408,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
             run_tracking_rebound_analysis(track_seasons, track_stats)
         else:
             print("   No cached player-tracking data — run the analysis first to fetch it.\n")
+        run_oos_forecast(df)
 
         # §4 What Didn't Drive the Change (rule changes lead, then the situational
         # suspects, then the combined "put it all together" models)

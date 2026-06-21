@@ -542,6 +542,45 @@ All data from cache/ — same source as the plots above.
    No cached player-tracking data — run the analysis first to fetch it.
 
 
+─── OUT-OF-SAMPLE FORECAST — DO THE CHANNELS PREDICT THE LATER DECLINE? 
+   Freeze the four-channel win model (eFG%, fouls, turnovers, rebounds)
+   on the training seasons, then predict each later season's home win %
+   from that season's box-score edges. A frozen early mapping that tracks
+   the held-out decline means the mechanism is stable, not fitted to
+   hindsight. Baselines: extrapolating the training trend line, and a flat
+   training-mean forecast. Lower RMSE on the held-out seasons is better.
+
+   Regular season  (train 1984–1990, test 2021–2025)
+
+    Season    Actual   Channel pred   Trend pred
+   ───────  ────────  ─────────────  ───────────
+      2021     54.4%          54.3%        65.1%
+      2022     54.4%          56.0%        65.1%
+      2023     58.0%          58.0%        65.1%
+      2024     54.3%          56.4%        65.0%
+      2025     54.4%          55.3%        65.0%
+
+   Held-out RMSE:  channel = 1.24 pp   trend = 10.06 pp   flat mean = 11.19 pp
+   ► The frozen early channel model reconstructs the 2021–2025 decline
+     it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
+     split, not an artifact of fitting on the full history.
+
+   Playoffs  (train 1984–1990, test 2021–2025)
+
+    Season    Actual   Channel pred   Trend pred
+   ───────  ────────  ─────────────  ───────────
+      2021     56.5%          60.2%        86.7%
+      2022     59.8%          63.2%        87.2%
+      2023     59.5%          63.2%        87.8%
+      2024     58.5%          63.1%        88.3%
+      2025     57.1%          64.1%        88.9%
+
+   Held-out RMSE:  channel = 4.67 pp   trend = 29.54 pp   flat mean = 9.60 pp
+   ► The frozen early channel model reconstructs the 2021–2025 decline
+     it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
+     split, not an artifact of fitting on the full history.
+
+
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
    Home win % by rule-change era; pairwise tests between consecutive eras.
    Trend-controlled model: home_win ~ year + C(era).

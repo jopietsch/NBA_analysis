@@ -131,6 +131,25 @@ def test_plot_team_decline_slopes_empty():
     plots.plot_team_decline_slopes({"teams": []})  # must no-op, not raise
 
 
+def test_plot_oos_forecast():
+    def _ctx(off):
+        rows = [(2014 + i, 58.0 - 0.3 * i + off, 58.2 - 0.3 * i + off,
+                 58.1 - 0.2 * i + off) for i in range(12)]
+        return {
+            "is_playoff": 0, "cut_year": 2014,
+            "train_years": (1984, 2013), "test_years": (2014, 2025),
+            "rows": rows,
+            "actual_full": [(1984 + i, 64.0 - 0.2 * i + off) for i in range(42)],
+            "rmse_channel": 0.9, "rmse_trend": 1.4, "rmse_naive": 5.5,
+            "train_mean": 61.0,
+        }
+    plots.plot_oos_forecast({"reg": _ctx(0.0), "po": _ctx(4.0)})
+
+
+def test_plot_oos_forecast_empty():
+    plots.plot_oos_forecast({"reg": {}, "po": {}})  # must no-op, not raise
+
+
 def test_plot_rest_altitude():
     def _ctx(base):
         return {
