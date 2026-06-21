@@ -22,7 +22,7 @@ The playoffs followed a different path. Playoff home win rates held near **64%**
 
 ---
 
-## 2. What home court is made of, and where it broke
+## 2. What home court is made of, and where it changed
 
 ![Box-score category shares. Left: what creates the home advantage (level). Right: what share of the 40-year decline each category carries. Regular season and playoffs.](../generated/images/home_court_mediation.svg){#fig-mediation width=100%}
 
