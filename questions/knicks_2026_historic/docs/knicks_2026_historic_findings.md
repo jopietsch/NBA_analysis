@@ -18,12 +18,13 @@ it's +10.1, still first, but essentially tied with the 2016–17 Warriors (+10.0
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
 this, on a real schedule, against real competition.
 
-There is a real nuance in the East record: the Hawks, 76ers, and Cavaliers all
-played *below* their regular-season ratings in the postseason, so some of the
-rounds 1–3 dominance reflects opponents underperforming, not just Knicks
-excellence. The Finals tells the opposite story: the Spurs elevated from a
-regular-season SRS of +8.28 to a playoff SRS of +14.48, the most improved team
-in these playoffs. Winning that series 4-1, even narrowly (+2.4 avg margin),
+There is a real nuance in the East record: the 76ers and Cavaliers played a
+touch *below* their regular-season ratings in their other playoff games, so some
+of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks
+excellence (the Hawks played only the Knicks, so there is no independent read on
+them; see §5). The Finals tells the opposite story: the Spurs elevated from a
+regular-season SRS of +8.28 to a playoff SRS of +14.48, the most improved of the
+Knicks' four opponents. Winning that series 4-1, even narrowly (+2.4 avg margin),
 was the hardest test of the run.
 
 All four opponents were essentially fully healthy when they played the Knicks

@@ -20,7 +20,7 @@ The East was **not historically weak**. The West-East strength gap in 2025–26 
 
 The run has two distinct halves. Against the East (Hawks, 76ers, Cavaliers) the Knicks went 12-2 with an average margin of +19.7 points. Against the Spurs in the Finals, they won 4-1 with an average margin of +2.4, with four of five games decided by 4 points or fewer.
 
-This split is not just a story about opponent quality. The Spurs were the most improved team in these playoffs: their regular-season SRS of +8.28 rose to a playoff SRS of +14.48 through the West bracket, the largest elevation in the dataset. The 76ers and Cavaliers played slightly below their regular-season ratings against other opponents. The Knicks dominated East opponents who were below form, and then beat the best-performing team in the field in a genuine series.
+This split is not just a story about opponent quality. The Spurs improved more than any of the Knicks' four opponents: their regular-season SRS of +8.28 rose to a playoff SRS of +14.48 through the West bracket. The 76ers and Cavaliers played slightly below their regular-season ratings against other opponents. The Knicks dominated East opponents who were below form, and then beat the best-performing team in the field in a genuine series.
 
 ---
 
@@ -28,13 +28,13 @@ This split is not just a story about opponent quality. The Spurs were the most i
 
 ![Market expectations vs. actual margins by round. The Knicks beat the spread by 21-26 points against each East opponent; the Finals was dead-on.](../generated/images/knicks_2026_market_vs_actual.svg){width=100%}
 
-Vegas priced the Knicks as modest favorites against the three East opponents (roughly -4 each round) and they won by 17-22 points, a gap of +21 to +26 points above the spread. The overall ATS record was 14-0 against the East. Against the Spurs, the market had the Knicks as slight underdogs (+2.5) and they won by an average of exactly +2.4. The market clearly saw the Spurs as a near-equal opponent before the series started, and the games confirmed it. The two halves of this run are genuinely different in kind, not just in margin.
+Vegas priced the Knicks as modest favorites against the three East opponents (roughly -3 to -4 each round) and they won by 17-22 points, a gap of +21 to +26 points above the spread. The overall ATS record was 14-0 against the East. Against the Spurs, the market had the Knicks as slight underdogs (+2.5) and they won by an average of exactly +2.4. The market clearly saw the Spurs as a near-equal opponent before the series started, and the games confirmed it. The two halves of this run are genuinely different in kind, not just in margin.
 
 ---
 
 ## The bottom line
 
-The 2026 Knicks' playoff run is historically elite by every adjusted measure. The dominant first three rounds were real: the schedule was not easy, opponents were healthy, and the East was competitive. The tight Finals were real too: the Spurs were the best-performing team in the playoffs, and the Knicks won a series that could have gone either way.
+The 2026 Knicks' playoff run is historically elite by every adjusted measure. The dominant first three rounds were real: the schedule was average rather than soft, opponents were healthy, and the East was competitive. The tight Finals were real too: the Spurs were the best-performing team in the playoffs, and the Knicks won a series that could have gone either way.
 
 ---
 
