@@ -720,6 +720,69 @@ def fetch_game_odds(po_2026: pd.DataFrame,
     return df
 
 
+def clustered_cover_significance(covered,
+                                 clusters,
+                                 p_null: float = 0.5) -> dict:
+    """One-tailed test that the cover rate beats ``p_null``, adjusted for the
+    clustering of games within playoff series.
+
+    Games inside one series share a matchup and correlated spread errors, so
+    treating them as independent coin flips overstates the evidence.  This
+    inflates the variance by the design effect ``deff = 1 + (m0 − 1)·ICC``,
+    where ICC is the one-way-ANOVA intraclass correlation of the cover outcomes
+    within series and ``m0`` is the average cluster size.  The result is an
+    effective sample size ``N / deff`` and a p-value computed on it.
+
+    Returns a dict with the game-weighted cover rate, ICC, design effect,
+    effective N, z and the adjusted p-value.
+    """
+    from scipy.stats import norm
+
+    x = np.asarray(list(covered), dtype=float)
+    c = np.asarray(list(clusters))
+    N = x.size
+    labels = pd.unique(c)
+    k = len(labels)
+    if N < 2 or k < 2 or k >= N:
+        return {}
+
+    grand = float(x.mean())
+    sizes, means = [], []
+    ss_within = 0.0
+    for lab in labels:
+        xi = x[c == lab]
+        sizes.append(xi.size)
+        means.append(float(xi.mean()))
+        ss_within += float(((xi - xi.mean()) ** 2).sum())
+    sizes = np.asarray(sizes, dtype=float)
+    means = np.asarray(means, dtype=float)
+
+    ss_between = float((sizes * (means - grand) ** 2).sum())
+    msb = ss_between / (k - 1)
+    msw = ss_within / (N - k)
+    m0  = (N - (sizes ** 2).sum() / N) / (k - 1)
+
+    denom = msb + (m0 - 1) * msw
+    icc = (msb - msw) / denom if denom > 0 else 0.0
+    icc = float(min(1.0, max(0.0, icc)))
+    deff = 1.0 + (m0 - 1) * icc
+    n_eff = N / deff
+
+    se = float(np.sqrt(p_null * (1 - p_null) / n_eff))
+    z  = (grand - p_null) / se if se > 0 else float("nan")
+    p  = float(norm.sf(z)) if not np.isnan(z) else float("nan")
+    return {
+        "cover_rate": grand,
+        "n_games":    int(N),
+        "n_series":   int(k),
+        "icc":        icc,
+        "deff":       float(deff),
+        "n_eff":      float(n_eff),
+        "z":          float(z),
+        "p_value":    p,
+    }
+
+
 def compute_ats_stats(odds_df: pd.DataFrame,
                       po_2026: pd.DataFrame,
                       knicks_team_id: int) -> pd.DataFrame:

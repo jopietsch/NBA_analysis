@@ -240,6 +240,39 @@ def test_shrink_adjusted_margin_wide_prior_keeps_data():
     assert wide["weight_data"] > 0.9
 
 
+def test_clustered_cover_significance_independent():
+    # Cover/no-cover alternates within each series → cluster means all equal,
+    # so ICC clamps to 0, design effect 1, effective N == N.
+    covered  = [1, 0, 1, 0, 1, 0, 1, 0]
+    clusters = ["A", "A", "A", "A", "B", "B", "B", "B"]
+    res = data.clustered_cover_significance(covered, clusters)
+    assert res["icc"] == pytest.approx(0.0)
+    assert res["deff"] == pytest.approx(1.0)
+    assert res["n_eff"] == pytest.approx(8.0)
+
+
+def test_clustered_cover_significance_fully_clustered():
+    # One series all covers, one series all misses → outcomes perfectly track
+    # the series. ICC = 1, so effective N collapses toward the series count.
+    covered  = [1, 1, 1, 0, 0, 0]
+    clusters = ["A", "A", "A", "B", "B", "B"]
+    res = data.clustered_cover_significance(covered, clusters)
+    assert res["icc"] == pytest.approx(1.0)
+    assert res["deff"] == pytest.approx(3.0)       # 1 + (m0-1)*1, m0 = 3
+    assert res["n_eff"] == pytest.approx(2.0)
+    assert res["n_series"] == 2
+
+
+def test_clustered_cover_significance_weakens_vs_independent():
+    # The real 2026 shape: rounds 1-3 perfect, Finals split. Clustering pulls
+    # the effective N well below 19 and the p-value up from the iid 0.002.
+    covered  = [1] * 6 + [1] * 4 + [1] * 4 + [1, 1, 0, 0, 0]
+    clusters = ["R1"] * 6 + ["R2"] * 4 + ["CF"] * 4 + ["F"] * 5
+    res = data.clustered_cover_significance(covered, clusters)
+    assert res["n_eff"] < 19
+    assert res["p_value"] > 0.002
+
+
 def test_parse_min():
     assert data.parse_min("35:42") == pytest.approx(35.7, abs=0.1)
     assert data.parse_min(30.0) == pytest.approx(30.0)

@@ -272,6 +272,21 @@ Avg ATS margin:         +16.9 pts (how much they beat the spread)
   One-tailed p-value (P(X≥16) under null): 0.0022
   Interpretation: Highly significant (p < 0.01).
 
+── Adjusted for series correlation ──
+  The 19 games are 4 series; covers within a series move together
+  (same matchup, correlated spread error), so the iid test above
+  overstates the evidence.  Inflating the variance by the design
+  effect gives:
+    Within-series correlation (ICC): 0.49
+    Design effect:                   2.82
+    Effective sample size:           6.7 (of 19 games, 4 series)
+    Adjusted z-score:                +1.78
+    Adjusted one-tailed p-value:     0.0378
+  Still beyond chance, but an order of magnitude weaker than the iid
+  0.0022.  Note too that ATS margin is the raw margin minus a near-zero
+  average spread, so this is not independent confirmation of the
+  dominance result — it is largely the same data re-expressed.
+
 ── Round-by-round ATS ──
   Round    Opponent                       Spread   Actual      ATS Cover
   ─────────────────────────────────────────────────────────────────

@@ -184,10 +184,16 @@ The market's verdict on the Knicks' playoff run:
 
 **Overall:** 16-3 ATS (against the spread); their cover record exactly matches
 their win-loss record. They beat the spread by an average of **+16.9 pts/game**
-across 19 games. A binomial test against the null of
-50% coverage gives p = 0.002 (z = +2.98); this cannot be attributed to
-random fluctuation. The signal comes entirely from the first three rounds:
-14-0 ATS against East opponents, with the Finals exactly dead-on (2-5 ATS).
+across 19 games. Beating the market in 16 of 19 tries is well beyond a coin
+flip. Two cautions keep that from being as strong as it looks. First, those 19
+games are really four series, and games inside a series move together (same
+opponent, same kind of pricing miss), so they are not 19 independent bets:
+adjust for that and the effective sample is closer to seven, leaving the result
+weaker but still better than chance. Second, ATS margin is just the final margin
+minus a near-zero spread, so this is not separate proof of dominance, it is
+mostly the same scoreline told from the bookmaker's side. The signal comes
+entirely from the first three rounds: 14-0 against the spread vs. East
+opponents, with the Finals exactly dead-on (2-5).
 
 **But the story splits sharply by opponent:**
 

@@ -58,6 +58,7 @@ from knicks_2026_data import (
     compute_opponent_health,
     fetch_game_odds,
     compute_ats_stats,
+    clustered_cover_significance,
     build_champions_table,
     build_conference_gap_table,
 )
@@ -798,6 +799,37 @@ def run_betting_market(ats_df: pd.DataFrame,
         lambda x: int(x[0]) if x else None
     )
     knicks_w_opp = knicks_w_opp.sort_values("GAME_DATE")
+
+    # Cluster-adjusted significance: the 19 games are 4 series, and outcomes
+    # inside a series are correlated, so the iid binomial p above overstates it.
+    opp_by_game = knicks_w_opp.set_index("GAME_ID")["OPP_ID"].to_dict()
+    clust = ats_df["GAME_ID"].map(opp_by_game)
+    valid = clust.notna()
+    clus_res = clustered_cover_significance(
+        ats_df.loc[valid, "covered"], clust[valid]
+    )
+    if clus_res:
+        print(_subhdr("Adjusted for series correlation"), file=out)
+        print(
+            "  The 19 games are 4 series; covers within a series move together\n"
+            "  (same matchup, correlated spread error), so the iid test above\n"
+            "  overstates the evidence.  Inflating the variance by the design\n"
+            "  effect gives:",
+            file=out,
+        )
+        print(f"    Within-series correlation (ICC): {clus_res['icc']:.2f}", file=out)
+        print(f"    Design effect:                   {clus_res['deff']:.2f}", file=out)
+        print(f"    Effective sample size:           {clus_res['n_eff']:.1f} "
+              f"(of {clus_res['n_games']} games, {clus_res['n_series']} series)", file=out)
+        print(f"    Adjusted z-score:                {clus_res['z']:+.2f}", file=out)
+        print(f"    Adjusted one-tailed p-value:     {clus_res['p_value']:.4f}", file=out)
+        print(
+            "  Still beyond chance, but an order of magnitude weaker than the iid\n"
+            "  0.0022.  Note too that ATS margin is the raw margin minus a near-zero\n"
+            "  average spread, so this is not independent confirmation of the\n"
+            "  dominance result — it is largely the same data re-expressed.",
+            file=out,
+        )
 
     name_map = standings_2026.set_index("TeamID").apply(
         lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
