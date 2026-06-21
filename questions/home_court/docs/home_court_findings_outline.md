@@ -166,6 +166,13 @@
 
 ![Win % by format period](../generated/images/home_court_advantage_format_bars.svg){#fig-advantage-format-bars}
 
+- **Best-of-7 absorbs most of home court, and most of its decline (@fig-series-simulation):** Monte Carlo, 200,000 simulated 2-2-1-1-1 series between two equal teams, home-court team hosts G1,2,5,6,7. Per-game home win % → series win % for the home-court team.
+  - *RESULTS series simulation table:* RS 1984–94 **64.9%/game → 54.9% series**; 2023–26 **55.6% → 51.9%**. PO 1984–94 **67.9% → 56.0%**; 2023–26 **57.6% → 52.5%**.
+  - Format compresses level and decline: RS per-game edge fell **9.3 pp** across eras but series edge fell only **3.0 pp** (now 51.9%, barely a coin flip); PO per-game −10.3 pp → series −3.4 pp (now 52.5%).
+  - Caveats: PO per-game conflates home court with seeding (RS row is cleaner pure-venue input); sim assumes game independence → illustrates format leverage, not a forecast.
+
+![Series simulation: per-game edge → much smaller series edge, drifting toward 50% over eras](../generated/images/home_court_series_simulation.svg){#fig-series-simulation}
+
 ---
 
 ## Section 6 — Other Findings

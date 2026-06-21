@@ -21,6 +21,7 @@ from home_court_data import (
     compute_differential_stats, compute_rebound_stats, compute_margin_stats,
     compute_net_rating_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
+    compute_series_simulation,
     compute_shot_zone_stats, compute_league_3pa_stats,
     compute_league_pace_stats, compute_team_hca_stats, compute_team_season_hca,
     compute_tracking_rebound_stats, TRACKING_START_YEAR,
@@ -31,7 +32,7 @@ from home_court_plots import (
     plot_results, plot_mediation, plot_rest_altitude, plot_channel_3pa_control,
     plot_differential_analysis, plot_rebound_decomposition,
     plot_margin_analysis, plot_parity_analysis,
-    plot_series_breakdown, plot_playoff_quality,
+    plot_series_breakdown, plot_series_simulation, plot_playoff_quality,
     plot_shot_zone_analysis, plot_3pa_hca_analysis,
     plot_pace_hca_analysis, plot_back_to_back, plot_team_hca_analysis,
     plot_attendance, plot_tracking_rebounding,
@@ -108,6 +109,9 @@ def main() -> None:
     )
     overall_po_pct = float(np.mean(po_pcts)) if po_pcts else 60.0
     plot_series_breakdown(game_nums, series_pcts, game_counts, era_series_data, overall_po_pct)
+    plot_series_simulation(compute_series_simulation(
+        START_YEAR, END_YEAR, skip_years=SKIP_PLAYOFF_YEARS,
+    ))
     plot_playoff_quality(_reg.compute_playoff_quality_plotdata(game_df))
 
     print("\nFetching shot zone data (LeagueDashTeamShotLocations)...")

@@ -1056,6 +1056,99 @@ def plot_series_breakdown(
     save_chart("home_court_series_breakdown.svg", OUTPUT_DIR)
 
 
+def plot_series_simulation(data: dict) -> None:
+    """
+    Two panels showing that a best-of-7 absorbs most of home court, and most of
+    its decline.
+
+    Left: the transfer curve. A single-game home edge (x) maps to a much smaller
+    series edge (y); the gap to the dashed 1:1 line is the compression. Era dots
+    sit on the curve, drifting down toward the 50% coin flip over time.
+    Right: the series-level home edge by era for the regular season and the
+    playoffs, with the per-game edge shown muted for contrast.
+    """
+    eras   = data["era_labels"]
+    n_sims = data["n_sims"]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+    fig.suptitle("A best-of-7 absorbs most of home court — and most of its decline",
+                 fontsize=14, fontweight="bold", y=1.02, color="#2c2c2a")
+    fig.text(0.5, 0.955,
+             f"Monte Carlo: {n_sims:,} simulated 2-2-1-1-1 series between two equal teams  |  "
+             f"home win % per game from NBA.com, {season_range_label()}",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: the transfer curve ──────────────────────────────────────────
+    cx = data["curve_pgame"]
+    cy = data["curve_series"]
+    ax1.plot(cx, cx, color=GRAY, linewidth=1.2, linestyle="--", alpha=0.7,
+             label="If it transferred 1:1")
+    ax1.plot(cx, cy, color="#2c2c2a", linewidth=2.4, label="Best-of-7 series")
+    ax1.axhline(50, color=GRAY, linewidth=1.0, linestyle=":", alpha=0.7)
+
+    # Era dots on the curve: regular season (blue) and playoffs (green).
+    for pgame, series, color in (
+        (data["reg_pgame"], data["reg_series"], BLUE),
+        (data["po_pgame"],  data["po_series"],  GREEN),
+    ):
+        xs = [p for p in pgame if p is not None]
+        ys = [s for s in series if s is not None]
+        ax1.scatter(xs, ys, s=34, color=color, zorder=4,
+                    edgecolor="white", linewidth=0.8)
+
+    # Annotate the drift for the regular-season points (cleaner venue measure).
+    reg_pts = [(p, s, e) for p, s, e in
+               zip(data["reg_pgame"], data["reg_series"], eras) if p is not None]
+    if reg_pts:
+        for idx, lbl in ((0, "oldest era"), (-1, "newest era")):
+            px, py, era = reg_pts[idx]
+            ax1.annotate(f"{era}\n({px:.0f}% → {py:.0f}%)", (px, py),
+                         textcoords="offset points", xytext=(8, -14 if idx else 6),
+                         fontsize=7.5, color=BLUE)
+    ax1.set_xlabel("Home win % in a single game", fontsize=10)
+    ax1.set_ylabel("Home-court team's series win %", fontsize=10)
+    ax1.set_xlim(50, 70)
+    ax1.set_ylim(48, 72)
+    ax1.xaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax1.set_title("A per-game edge shrinks to a much smaller series edge",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax1.legend(fontsize=8.5, framealpha=0.85, edgecolor="#ddd", loc="upper left")
+
+    # ── Panel 2: series edge by era, regular season vs playoffs ───────────────
+    x = np.arange(len(eras))
+
+    def _line(vals, color, label, **kw):
+        xs = [i for i, v in zip(x, vals) if v is not None]
+        ys = [v for v in vals if v is not None]
+        ax2.plot(xs, ys, color=color, label=label, **kw)
+
+    # Per-game edge muted for context; series edge emphasized.
+    _line(data["reg_pgame"], "#b9c6d6", "Reg. season, per game",
+          linewidth=1.6, linestyle="--", marker="o", markersize=4)
+    _line(data["po_pgame"],  "#bcd6c4", "Playoffs, per game",
+          linewidth=1.6, linestyle="--", marker="o", markersize=4)
+    _line(data["reg_series"], BLUE, "Reg. season, series",
+          linewidth=2.4, marker="o", markersize=6, markeredgecolor="white", markeredgewidth=0.8)
+    _line(data["po_series"],  GREEN, "Playoffs, series",
+          linewidth=2.4, marker="o", markersize=6, markeredgecolor="white", markeredgewidth=0.8)
+
+    ax2.axhline(50, color=GRAY, linewidth=1.0, linestyle=":", alpha=0.8)
+    ax2.text(len(eras) - 0.5, 50.4, "50% — coin flip", fontsize=7.5,
+             color=GRAY, va="bottom", ha="right")
+    ax2.set_xticks(x)
+    ax2.set_xticklabels(eras, fontsize=8.5, rotation=20, ha="right")
+    ax2.set_ylim(48, 72)
+    ax2.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.0f%%"))
+    ax2.set_ylabel("Home win %", fontsize=10)
+    ax2.set_title("At the series level, today's home court is barely a coin flip",
+                  fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax2.legend(fontsize=8, framealpha=0.85, edgecolor="#ddd", ncol=2)
+
+    plt.tight_layout()
+    save_chart("home_court_series_simulation.svg", OUTPUT_DIR)
+
+
 def plot_playoff_quality(data: dict) -> None:
     """
     Two-panel proof that the playoff decline is genuine home-court weakening, not

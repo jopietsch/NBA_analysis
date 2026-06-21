@@ -968,6 +968,30 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 61.8%  (vs. G1 = 68.3%, diff = -6.5 pp)
      G7 n = 55 games (series that went to 7)
 
+─── PLAYOFF SERIES SIMULATION — DOES THE PER-GAME EDGE SURVIVE A BEST-OF-7? 
+   Monte Carlo: 200,000 simulated 2-2-1-1-1 series between two
+   otherwise-equal teams, home-court team hosting games 1,2,5,6,7. Input is
+   the observed single-game home win % per era.
+
+   Era         RS /game  RS series   PO /game  PO series
+   ─────────────────────────────────────────────────────
+   1984–94        66.2%      55.3%      67.8%      55.9%
+   1995–01            —          —          —          —
+   2002–04            —          —          —          —
+   2005–17            —          —          —          —
+   2018–22        54.4%      51.5%      58.1%      52.7%
+   2023–26        55.6%      51.9%      58.4%      52.8%
+
+   ► Regular season: per-game home edge fell 10.6 pp across eras,
+     but the series edge fell only 3.4 pp (now 51.9%).
+   ► Playoffs: per-game edge fell 9.4 pp, series edge fell 3.2 pp (now 52.8%).
+
+   Caveats: the playoff per-game % conflates home court with seeding (better
+   teams host more), so the regular-season row is the cleaner pure-venue
+   input. The sim assumes games are independent given the per-game edge, so
+   it illustrates the format's leverage rather than forecasting a series.
+
+
 ─── PLAYOFF HCA — SEEDING QUALITY DECOMPOSITION ────────────────────────
    Does the playoff HCA decline reflect true home-court weakening, or do
    better seeds simply fail to dominate lower seeds as they once did?

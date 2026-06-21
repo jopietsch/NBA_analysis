@@ -166,6 +166,22 @@ def test_plot_series_breakdown():
     plots.plot_series_breakdown(game_nums, pcts, counts, era_data, 60.0)
 
 
+def test_plot_series_simulation():
+    n = len(ERA_LABELS)
+    data = {
+        "era_labels": ERA_LABELS,
+        "reg_pgame":  [65.0 - i for i in range(n)],
+        "po_pgame":   [67.0 - i for i in range(n)],
+        "reg_series": [55.0 - 0.5 * i for i in range(n)],
+        "po_series":  [56.0 - 0.5 * i for i in range(n)],
+        "curve_pgame":  [50.0 + i for i in range(21)],
+        "curve_series": [50.0 + 0.4 * i for i in range(21)],
+        "pattern": [1, 1, 0, 0, 1, 0, 1],
+        "n_sims": 1000,
+    }
+    plots.plot_series_simulation(data)
+
+
 def test_plot_shot_zone_analysis():
     stats = {z: _series(base=1.0) for z in plots.SHOT_ZONE_LABELS}
     plots.plot_shot_zone_analysis(SEASONS, stats, SEASONS, dict(stats))

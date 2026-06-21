@@ -1584,3 +1584,61 @@ class TestComputeSeriesStatsByEra:
                                                     "HOME_WIN": [1] * 6}))
         result = nba.compute_series_stats_by_era(2010, 2010, skip_years={2010})
         assert result == {}
+
+
+class TestSimulateSeriesHomeWinProb:
+    def test_fair_coin_is_a_coin_flip(self):
+        # p=0.5 single game -> ~0.5 series win for either side, regardless of pattern
+        assert nba.simulate_series_home_win_prob(0.5, n_sims=50_000) == pytest.approx(0.5, abs=0.01)
+
+    def test_monotonic_in_per_game_edge(self):
+        probs = [nba.simulate_series_home_win_prob(p, n_sims=40_000)
+                 for p in (0.55, 0.60, 0.65, 0.70)]
+        assert probs == sorted(probs)
+
+    def test_compresses_the_per_game_edge(self):
+        # a 60% single-game edge yields a series edge strictly between 50% and 60%
+        s = nba.simulate_series_home_win_prob(0.60, n_sims=80_000)
+        assert 0.50 < s < 0.60
+
+    def test_certain_winner_sweeps(self):
+        assert nba.simulate_series_home_win_prob(1.0, n_sims=1_000) == pytest.approx(1.0)
+
+    def test_seed_is_reproducible(self):
+        a = nba.simulate_series_home_win_prob(0.62, n_sims=20_000, seed=7)
+        b = nba.simulate_series_home_win_prob(0.62, n_sims=20_000, seed=7)
+        assert a == b
+
+    def test_rejects_out_of_range_probability(self):
+        with pytest.raises(ValueError):
+            nba.simulate_series_home_win_prob(1.5)
+
+
+class TestComputeSeriesSimulation:
+    def test_assembles_per_era_and_curve(self, monkeypatch):
+        # one regular-season home win % and one playoff home win % per era,
+        # via a fake game log: 3 home rows, home WL controls the win %.
+        def fake_log(year, season_type):
+            wl = ["W", "W", "L"] if season_type == "Playoffs" else ["W", "L", "L"]
+            return pd.DataFrame({
+                "MATCHUP": ["AAA vs. BBB"] * 3,
+                "WL": wl,
+            })
+        monkeypatch.setattr(nba, "_load_game_log", fake_log)
+
+        data = nba.compute_series_simulation(
+            nba.START_YEAR, nba.END_YEAR, n_sims=20_000,
+        )
+        eras = [e[0] for e in nba.ERA_DEFS]
+        assert data["era_labels"] == eras
+        # playoffs 2/3 home wins -> 66.7%, regular season 1/3 -> 33.3%
+        assert data["po_pgame"][0] == pytest.approx(100 * 2 / 3, abs=0.1)
+        assert data["reg_pgame"][0] == pytest.approx(100 * 1 / 3, abs=0.1)
+        # a >50% per-game edge compresses toward 50 at the series level
+        assert 50 < data["po_series"][0] < data["po_pgame"][0]
+        # a <50% per-game "edge" leaves the host below the coin flip
+        assert data["reg_series"][0] < 50
+        # transfer curve spans the 50–70% input grid
+        assert data["curve_pgame"][0] == pytest.approx(50.0)
+        assert data["curve_pgame"][-1] == pytest.approx(70.0)
+        assert len(data["curve_series"]) == len(data["curve_pgame"])

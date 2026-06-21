@@ -873,6 +873,109 @@ def compute_series_stats_by_era(
     return result
 
 
+# ── Series Monte Carlo: per-game home edge → best-of-7 series edge ────────────
+# 2-2-1-1-1 best-of-7: the home-court team hosts games 1, 2, 5, 6, 7
+# (1 = home-court team hosts, 0 = opponent hosts). Used for every round since
+# 2014 and for the Finals in all but the 2-3-2 years; we use it as the canonical
+# format for the simulation.
+SERIES_PATTERN = (1, 1, 0, 0, 1, 0, 1)
+
+
+def simulate_series_home_win_prob(
+    p_home_game: float, n_sims: int = 200_000, seed: int = 12345,
+) -> float:
+    """
+    Monte Carlo P(home-court team wins a best-of-7) for two otherwise-equal
+    teams, given the single-game home win probability p_home_game. The
+    home-court team hosts games per SERIES_PATTERN (2-2-1-1-1) and wins each
+    game with probability p_home_game when it hosts, (1 - p_home_game) when it
+    visits. A series ends when either side reaches four wins.
+    """
+    if not 0.0 <= p_home_game <= 1.0:
+        raise ValueError("p_home_game must be in [0, 1]")
+    rng = np.random.default_rng(seed)
+    pwin  = np.where(np.array(SERIES_PATTERN) == 1, p_home_game, 1.0 - p_home_game)
+    draws = rng.random((n_sims, 7)) < pwin           # True = home-court team wins game
+    hca_clinch = np.cumsum(draws,  axis=1) >= 4
+    opp_clinch = np.cumsum(~draws, axis=1) >= 4
+    first_hca = np.where(hca_clinch.any(1), hca_clinch.argmax(1), 99)
+    first_opp = np.where(opp_clinch.any(1), opp_clinch.argmax(1), 99)
+    return float(np.mean(first_hca < first_opp))
+
+
+def _home_win_pct_by_era(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> dict[str, float]:
+    """Single-game home win % pooled within each era (games, not seasons, equally weighted)."""
+    wins  = {e[0]: 0 for e in ERA_DEFS}
+    total = {e[0]: 0 for e in ERA_DEFS}
+    for year in range(start_year, end_year + 1):
+        if year in skip_years:
+            continue
+        era_label = next((lbl for lbl, y1, y2, _ in ERA_DEFS if y1 <= year <= y2), None)
+        if era_label is None:
+            continue
+        df = _load_game_log(year, season_type)
+        if df is None:
+            continue
+        home = df[df["MATCHUP"].str.contains(" vs. ", regex=False, na=False)]
+        if home.empty:
+            continue
+        wins[era_label]  += int((home["WL"] == "W").sum())
+        total[era_label] += len(home)
+    return {e: 100.0 * wins[e] / total[e] for e in wins if total[e] > 0}
+
+
+def compute_series_simulation(
+    start_year: int, end_year: int, skip_years: set[int] = frozenset(),
+    n_sims: int = 200_000, seed: int = 12345,
+) -> dict:
+    """
+    Translate the per-game home edge into a best-of-7 series edge, by era, via
+    Monte Carlo. For each era, take the observed single-game home win % (the
+    regular season and, separately, the playoffs) and simulate 2-2-1-1-1 series
+    between two otherwise-equal teams to get the home-court team's series win %.
+    Shows how much best-of-7 compresses both the level of home court and its
+    decline across eras.
+
+    Also returns a smooth transfer curve (single-game home win % → series win %)
+    so the plot can draw the compression without holding simulation logic.
+
+    Returns a dict with parallel per-era lists (era_labels, reg_pgame, po_pgame,
+    reg_series, po_series), the transfer curve (curve_pgame, curve_series),
+    and n_sims. Per-era entries are None where an era has no data.
+    """
+    reg_by_era = _home_win_pct_by_era(start_year, end_year, SeasonType.regular)
+    po_by_era  = _home_win_pct_by_era(start_year, end_year, "Playoffs", skip_years)
+
+    def _series(pct: float | None) -> float | None:
+        if pct is None:
+            return None
+        return 100.0 * simulate_series_home_win_prob(pct / 100.0, n_sims, seed)
+
+    era_labels, reg_pgame, po_pgame, reg_series, po_series = [], [], [], [], []
+    for era_def in ERA_DEFS:
+        label = era_def[0]
+        rp, pp = reg_by_era.get(label), po_by_era.get(label)
+        era_labels.append(label)
+        reg_pgame.append(rp)
+        po_pgame.append(pp)
+        reg_series.append(_series(rp))
+        po_series.append(_series(pp))
+
+    curve_pgame  = [float(p) for p in np.arange(50.0, 70.0 + 1e-9, 1.0)]
+    curve_series = [100.0 * simulate_series_home_win_prob(p / 100.0, n_sims, seed)
+                    for p in curve_pgame]
+
+    return {
+        "era_labels": era_labels,
+        "reg_pgame": reg_pgame, "po_pgame": po_pgame,
+        "reg_series": reg_series, "po_series": po_series,
+        "curve_pgame": curve_pgame, "curve_series": curve_series,
+        "pattern": list(SERIES_PATTERN), "n_sims": n_sims,
+    }
+
+
 # ── Shot-zone analysis ────────────────────────────────────────────────────────
 # LeagueDashTeamShotLocations column names for each shot zone's FGA.
 # RA = Restricted Area, PITP = Paint In The Paint (non-RA), MR = Mid-Range,

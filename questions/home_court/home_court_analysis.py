@@ -2218,6 +2218,54 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
         print(f"     G7 n = {total_by_game[7]:,} games (series that went to 7)")
 
 
+def run_series_simulation(data: dict) -> None:
+    """How much of the per-game home edge survives a best-of-7.
+
+    Monte Carlo (data layer): for each era, take the observed single-game home
+    win % and simulate 2-2-1-1-1 series between two otherwise-equal teams. The
+    best-of-7 compresses both the level of home court and its decline.
+    """
+    _section("PLAYOFF SERIES SIMULATION — DOES THE PER-GAME EDGE SURVIVE A BEST-OF-7?")
+    print(f"   Monte Carlo: {data['n_sims']:,} simulated 2-2-1-1-1 series between two")
+    print("   otherwise-equal teams, home-court team hosting games 1,2,5,6,7. Input is")
+    print("   the observed single-game home win % per era.\n")
+
+    eras = data["era_labels"]
+    print(f"   {'Era':<10}{'RS /game':>10}{'RS series':>11}{'PO /game':>11}{'PO series':>11}")
+    print(f"   {'─'*10}{'─'*10}{'─'*11}{'─'*11}{'─'*11}")
+    for i, era in enumerate(eras):
+        def _f(key):
+            v = data[key][i]
+            return f"{v:.1f}%" if v is not None else "—"
+        print(f"   {era:<10}{_f('reg_pgame'):>10}{_f('reg_series'):>11}"
+              f"{_f('po_pgame'):>11}{_f('po_series'):>11}")
+
+    def _span(pg_key, s_key):
+        pg = [v for v in data[pg_key] if v is not None]
+        s  = [v for v in data[s_key]  if v is not None]
+        if len(pg) < 2:
+            return None
+        return pg[0] - pg[-1], s[0] - s[-1], s[-1]
+
+    print()
+    rs = _span("reg_pgame", "reg_series")
+    if rs is not None:
+        dpg, ds, last = rs
+        print(f"   ► Regular season: per-game home edge fell {dpg:.1f} pp across eras,")
+        print(f"     but the series edge fell only {ds:.1f} pp (now {last:.1f}%).")
+    po = _span("po_pgame", "po_series")
+    if po is not None:
+        dpg, ds, last = po
+        print(f"   ► Playoffs: per-game edge fell {dpg:.1f} pp, series edge fell {ds:.1f} pp"
+              f" (now {last:.1f}%).")
+    print()
+    print("   Caveats: the playoff per-game % conflates home court with seeding (better")
+    print("   teams host more), so the regular-season row is the cleaner pure-venue")
+    print("   input. The sim assumes games are independent given the per-game edge, so")
+    print("   it illustrates the format's leverage rather than forecasting a series.")
+    print()
+
+
 # ── Analysis: Playoff HCA — seeding quality decomposition ────────────────────
 
 def compute_playoff_quality_plotdata(df: pd.DataFrame) -> dict:
@@ -4138,6 +4186,9 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         # §5 The Playoff Picture
         run_series_breakdown(df)
+        run_series_simulation(nba.compute_series_simulation(
+            nba.START_YEAR, nba.END_YEAR, skip_years=nba.SKIP_PLAYOFF_YEARS,
+        ))
         run_playoff_quality_decomposition(df)
         run_team_quality_robustness(df)
         run_format_period_analysis(df)
