@@ -165,6 +165,26 @@ def test_plot_bootstrap_margin(tmp_path, monkeypatch):
     assert os.path.isfile(path)
 
 
+def _mini_posterior_df() -> pd.DataFrame:
+    return pd.DataFrame([
+        {"year": SUBJECT_YEAR, "adj_mean": 11.2, "post_mean": 4.7, "post_sd": 1.8},
+        {"year": 1991, "adj_mean": 9.2, "post_mean": 5.3, "post_sd": 1.6},
+        {"year": 2017, "adj_mean": 10.2, "post_mean": 5.1, "post_sd": 1.7},
+        {"year": 2001, "adj_mean": 7.3, "post_mean": 4.7, "post_sd": 1.5},
+    ]).sort_values("post_mean", ascending=False).reset_index(drop=True)
+
+
+def test_plot_hierarchical_posterior(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_hierarchical_posterior(_mini_posterior_df(), p_rank1=0.09)
+    assert os.path.isfile(path)
+
+
+def test_plot_hierarchical_posterior_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    assert plots.plot_hierarchical_posterior(pd.DataFrame(), p_rank1=0.1) == ""
+
+
 def _mini_series_df() -> pd.DataFrame:
     return pd.DataFrame([
         {"opp_id": OPP1_ID, "n_games": 4, "raw_margin": 20.0,

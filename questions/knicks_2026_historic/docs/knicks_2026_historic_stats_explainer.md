@@ -560,6 +560,77 @@ P(rank 1) directly so a skimming reader gets the headline.
 
 ---
 
+## 12. Hierarchical Partial-Pooling Rank (`run_hierarchical`)
+
+**The data.** `build_adjusted_margin_samples` returns, for every champion, the
+per-game opponent-adjusted margins summarized as `(adj_mean, n_games, samp_var)`
+with `samp_var = var(g)/n`. This is the same `g_i = margin_i − opp_reg_SRS_i`
+used in §11, now computed for all 43 champions, not just the Knicks.
+
+**Why this section exists (what §11 could not do).** The §11 bootstrap and
+shrinkage both held the *other* 42 champions at their point estimates. That is
+unfair in two opposite ways: it never lets a rival's true value exceed its noisy
+estimate, and (in the shrinkage) it pulls only the subject toward the mean. To
+ask the actual question — "what is the probability the Knicks have the highest
+*true* adjusted margin?" — every champion must be shrunk and must carry posterior
+uncertainty simultaneously.
+
+**The model (Gaussian random-effects / hierarchical).**
+
+```
+y_c | theta_c ~ Normal(theta_c, v_c)     # observed champion mean, known sampling var
+theta_c       ~ Normal(mu, tau^2)        # population of true dominance
+```
+
+- `tau^2` (between-champion variance) is estimated by **DerSimonian–Laird**, the
+  method-of-moments estimator from random-effects meta-analysis:
+  `tau^2 = max(0, (Q − (k−1)) / c)` where `Q = Σ w_c (y_c − ȳ)²`,
+  `w_c = 1/v_c`, and `c = Σw_c − Σw_c²/Σw_c`. Crucially, DL subtracts the
+  sampling noise from the observed spread, so `tau` (≈ 2.0) is smaller than the
+  raw SD of the champions' `adj_mean` — this is why shrinkage here is stronger
+  than the §11 shrinkage, which used the noise-inflated observed variance as its
+  prior.
+- `mu` (≈ +3.1) is the inverse-variance weighted mean using weights `1/(v_c+tau^2)`.
+- Each champion's posterior is `Normal(post_mean_c, post_var_c)` with
+  `post_var_c = 1/(1/v_c + 1/tau^2)` and
+  `post_mean_c = post_var_c·(y_c/v_c + mu/tau^2)`.
+
+We then draw all `theta_c` jointly 40,000 times and record the subject's rank
+each draw. Hyperparameters are treated as fixed (empirical Bayes), which ignores
+hyperparameter uncertainty — modest with 43 seasons.
+
+**What the results mean (the headline finding).** The Knicks' raw adjusted margin
+(+11.2, 1st) shrinks to a posterior mean of about **+4.7**, which ranks roughly
+4th by posterior mean — and because the credible intervals overlap heavily,
+**P(Knicks are the true #1) ≈ 9%**, P(top 3) ≈ 23%, P(top 5) ≈ 34%, with a median
+posterior rank near 9. Two mechanisms drive the gap from §11's ~60%:
+
+1. *Stronger, fairer shrinkage.* The Knicks' per-game adjusted margins are highly
+   variable (blowout sweeps next to a +2.4 Finals), so `v_c` is large and the
+   posterior pulls hard toward `mu`. A volatile run is weaker evidence of a high
+   true mean than a steady one.
+2. *Rivals are now uncertain too.* The 1990–91 Bulls, 2022–23 Nuggets, and
+   2016–17 Warriors have posterior means at or above the Knicks' and can win any
+   given draw.
+
+This is the most complete answer to "best ever?": most likely a top-handful run,
+but only ~9% to be the single best once the comparison is made fair.
+
+**Why this chart (posterior caterpillar).** Posterior mean ± 90% credible
+interval for the top dozen champions, with each raw (pre-shrink) point estimate
+marked as a tick. It shows two things at once: how far each champion is pulled in
+from its raw number, and how completely the intervals overlap — the visual reason
+no champion is a clear #1.
+
+**Caveat — reconciling §11 and §12.** These are not contradictory; they answer
+different questions. §11 asks "given the rest of history as fixed truth, where
+does the Knicks' resampled run land?" (~60% #1). §12 asks "accounting for every
+champion's uncertainty, are the Knicks the best?" (~9%). The §12 framing is the
+honest answer to the all-time-best question; the §11 framing is the right one for
+"how repeatable was *this* run."
+
+---
+
 ## Recurring Methods: Quick Reference
 
 **`_pct_rank(series, value, ascending=True)`**

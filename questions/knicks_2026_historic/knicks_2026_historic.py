@@ -44,9 +44,14 @@ def main() -> None:
         po_2026, data.KNICKS_TEAM_ID, reg_srs_2026, opp_po_excl
     )
 
+    adj_samples = data.build_adjusted_margin_samples(data.START_YEAR, data.END_YEAR)
+    hier = data.hierarchical_adjusted_margin_rank(adj_samples, data.SUBJECT_YEAR)
+
     print("Generating charts...")
     paths = plots.plot_all(po_2026, reg_2026, standings_2026, champions, gap_table,
-                           health_df=health_df, ats_df=ats_df, series_df=series_df)
+                           health_df=health_df, ats_df=ats_df, series_df=series_df,
+                           posterior_df=hier.get("posterior"),
+                           p_rank1=hier.get("p_rank1"))
     for p in paths:
         print(f"  Saved → {os.path.basename(p)}")
 

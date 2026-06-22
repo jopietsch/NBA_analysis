@@ -62,6 +62,8 @@ from knicks_2026_data import (
     clustered_cover_significance,
     build_champions_table,
     build_conference_gap_table,
+    build_adjusted_margin_samples,
+    hierarchical_adjusted_margin_rank,
 )
 
 OUTPUT_DIR   = os.path.join(os.path.dirname(__file__), "generated")
@@ -998,6 +1000,57 @@ def run_robustness(po_2026: pd.DataFrame,
               "  variance dominates the uncertainty in this ranking.", file=out)
 
 
+# ── Section 14: Hierarchical (partial-pooling) ranking ───────────────────────
+
+def run_hierarchical(samples_df: pd.DataFrame, out: io.StringIO) -> None:
+    """Rank the champions by a partial-pooling Bayesian model.
+
+    The §13 bootstrap and shrinkage each fixed the other 42 champions at their
+    point estimates.  Here every champion is shrunk and carries its own posterior
+    uncertainty, so a noisy rival can genuinely overtake the Knicks in a draw.
+    The headline number is P(the Knicks have the highest TRUE adjusted margin).
+    """
+    print(_hdr("§14 HIERARCHICAL (PARTIAL-POOLING) RANK"), file=out)
+
+    res = hierarchical_adjusted_margin_rank(samples_df, SUBJECT_YEAR)
+    if not res:
+        print("  Insufficient data for the hierarchical model.", file=out)
+        return
+
+    print(
+        "Random-effects model over all champions' opponent-adjusted margins:\n"
+        "  y_c | theta_c ~ Normal(theta_c, v_c)     (observed mean, sampling var)\n"
+        "  theta_c       ~ Normal(mu, tau^2)        (population of true dominance)\n"
+        "tau^2 by DerSimonian-Laird; every champion shrunk toward mu by its own\n"
+        "reliability, then all champions simulated jointly and ranked.\n",
+        file=out,
+    )
+    print(f"  Population mean (mu):            {res['mu']:+.2f} pts/game", file=out)
+    print(f"  Between-champion SD (tau):       {res['tau']:.2f} pts/game", file=out)
+    print(f"  Knicks raw adj margin:           "
+          f"{float(samples_df.loc[samples_df['year']==SUBJECT_YEAR,'adj_mean'].iloc[0]):+.2f}", file=out)
+    print(f"  Knicks posterior (shrunk) mean:  {res['subj_post_mean']:+.2f} pts/game", file=out)
+    print(f"  {int(round(res['confidence']*100))}% credible interval:        "
+          f"[{res['subj_ci_lo']:+.2f}, {res['subj_ci_hi']:+.2f}]", file=out)
+    print(f"\n  P(Knicks are the true #1):       {res['p_rank1']:.1%}", file=out)
+    print(f"  P(top 3):                        {res['p_top3']:.1%}", file=out)
+    print(f"  P(top 5):                        {res['p_top5']:.1%}", file=out)
+    print(f"  Median posterior rank:           {res['rank_median']:.0f}  "
+          f"({int(round(res['confidence']*100))}% interval: "
+          f"{res['rank_lo']:.0f}–{res['rank_hi']:.0f})", file=out)
+
+    post = res["posterior"]
+    print(_subhdr("Top champions by posterior (shrunk) adjusted margin"), file=out)
+    print(f"  {'Season':<8} {'Raw adj':>8} {'Posterior':>10} {'±90% CI':>16}", file=out)
+    for _, r in post.head(6).iterrows():
+        marker = "  ← Knicks" if int(r["year"]) == SUBJECT_YEAR else ""
+        z90 = 1.6448536
+        lo = r["post_mean"] - z90 * r["post_sd"]
+        hi = r["post_mean"] + z90 * r["post_sd"]
+        print(f"  {short_label(int(r['year'])):<8} {r['adj_mean']:>+8.2f} "
+              f"{r['post_mean']:>+10.2f}   [{lo:+.1f}, {hi:+.1f}]{marker}", file=out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1012,6 +1065,9 @@ def main() -> None:
 
     print("Building conference gap table (all seasons)...")
     gap_table = build_conference_gap_table(START_YEAR, END_YEAR)
+
+    print("Building adjusted-margin samples (all seasons)...")
+    adj_samples = build_adjusted_margin_samples(START_YEAR, END_YEAR)
 
     print(f"Ready: {len(champions)} champion seasons, {len(gap_table)} gap seasons\n")
 
@@ -1033,6 +1089,7 @@ def main() -> None:
     ats_df   = compute_ats_stats(odds_df, po_2026, KNICKS_TEAM_ID)
     run_betting_market(ats_df, po_2026, standings_2026, out)
     run_robustness(po_2026, reg_2026, champions, out)
+    run_hierarchical(adj_samples, out)
 
     body = out.getvalue()
 

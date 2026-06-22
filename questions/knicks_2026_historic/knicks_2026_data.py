@@ -1042,3 +1042,130 @@ def build_conference_gap_table(start_year: int = START_YEAR,
             "east_h2h_wr": h2h,
         })
     return pd.DataFrame(rows)
+
+
+# ── Hierarchical (partial-pooling) ranking ───────────────────────────────────
+
+def build_adjusted_margin_samples(start_year: int = START_YEAR,
+                                  end_year: int = END_YEAR,
+                                  cache_dir: str | None = None) -> pd.DataFrame:
+    """Per-champion opponent-adjusted margin with its sampling variance.
+
+    For each season's champion, computes the per-game adjusted margins
+    g_i = margin_i − opp_reg_SRS_i and summarizes them by their mean, game
+    count, and sampling variance var(g)/n.  This is the input for the
+    hierarchical model: the mean is the point estimate, the sampling variance
+    says how trustworthy each champion's mean is given how many games it rests on.
+
+    Columns: year, champion_id, adj_mean, n_games, samp_var.
+    """
+    rows = []
+    for year in range(start_year, end_year + 1):
+        po_path = cache_path(year, PLAYOFFS, cache_dir)
+        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
+        if not os.path.exists(po_path) or not os.path.exists(rs_path):
+            continue
+        po = _nba.fill_plus_minus(pd.read_csv(po_path))
+        rs = pd.read_csv(rs_path)
+        champ = identify_champion(po)
+        srs = compute_srs(rs)
+        g = per_game_adjusted_margins(po, srs, champ)
+        if g.size < 2:
+            continue
+        rows.append({
+            "year":        year,
+            "champion_id": champ,
+            "adj_mean":    float(g.mean()),
+            "n_games":     int(g.size),
+            "samp_var":    float(g.var(ddof=1) / g.size),
+        })
+    return pd.DataFrame(rows)
+
+
+def hierarchical_adjusted_margin_rank(samples_df: pd.DataFrame,
+                                      subject_year: int,
+                                      n_draws: int = 40000,
+                                      confidence: float = 0.90,
+                                      seed: int = 0) -> dict:
+    """Partial-pool every champion's true adjusted margin, then rank by posterior.
+
+    A Gaussian hierarchical (random-effects) model:
+        y_c  | theta_c ~ Normal(theta_c, v_c)       # observed mean, sampling var v_c
+        theta_c        ~ Normal(mu, tau^2)          # population of true dominance
+
+    The between-champion variance tau^2 is estimated by DerSimonian-Laird (the
+    standard method-of-moments estimator from random-effects meta-analysis), and
+    mu by inverse-variance weighting with (v_c + tau^2).  Each champion's
+    posterior is then Normal(post_mean_c, post_var_c) with
+        post_var_c  = 1 / (1/v_c + 1/tau^2)
+        post_mean_c = post_var_c * (y_c/v_c + mu/tau^2),
+    i.e. small-sample champions are pulled toward mu more strongly.
+
+    Unlike the single-team shrinkage (`shrink_adjusted_margin`), EVERY champion
+    is shrunk and carries its own posterior uncertainty, so the rank is a fair
+    fight: a noisy rival can still come out on top in a given draw.  We simulate
+    all champions jointly and report how often the subject is the true #1.
+
+    Hyperparameters are treated as fixed (empirical Bayes); this ignores
+    hyperparameter uncertainty, which is modest with 43 seasons.
+    """
+    df = samples_df.dropna(subset=["adj_mean", "samp_var"]).reset_index(drop=True)
+    if len(df) < 3 or subject_year not in set(df["year"]):
+        return {}
+
+    y = df["adj_mean"].to_numpy(dtype=float)
+    v = df["samp_var"].to_numpy(dtype=float)
+    v = np.where(v <= 0, np.nanmin(v[v > 0]) if np.any(v > 0) else 1e-6, v)
+    k = len(y)
+
+    # DerSimonian-Laird tau^2
+    w_fixed = 1.0 / v
+    mu_fixed = float(np.sum(w_fixed * y) / np.sum(w_fixed))
+    Q = float(np.sum(w_fixed * (y - mu_fixed) ** 2))
+    c = float(np.sum(w_fixed) - np.sum(w_fixed ** 2) / np.sum(w_fixed))
+    tau2 = max(0.0, (Q - (k - 1)) / c) if c > 0 else 0.0
+
+    # Random-effects mu and per-champion posteriors
+    w_re = 1.0 / (v + tau2)
+    mu = float(np.sum(w_re * y) / np.sum(w_re))
+    if tau2 > 0:
+        post_var = 1.0 / (1.0 / v + 1.0 / tau2)
+        post_mean = post_var * (y / v + mu / tau2)
+    else:
+        # No between-champion variance detected → full pooling (all equal to mu)
+        post_var = np.zeros_like(v)
+        post_mean = np.full_like(y, mu)
+
+    rng = np.random.default_rng(seed)
+    draws = rng.normal(post_mean[None, :], np.sqrt(post_var)[None, :],
+                       size=(n_draws, k))
+    subj_idx = int(np.where(df["year"].to_numpy() == subject_year)[0][0])
+    subj = draws[:, subj_idx]
+    ranks = 1 + (draws > subj[:, None]).sum(axis=1)
+
+    from scipy.stats import norm
+    z = float(norm.ppf((1 + confidence) / 2))
+    lo_q, hi_q = (1 - confidence) / 2, (1 + confidence) / 2
+    order = np.argsort(-post_mean)
+    posterior = df.assign(
+        post_mean=post_mean,
+        post_sd=np.sqrt(post_var),
+    ).iloc[order].reset_index(drop=True)
+
+    return {
+        "tau": float(np.sqrt(tau2)),
+        "mu": mu,
+        "n_champions": k,
+        "subj_post_mean": float(post_mean[subj_idx]),
+        "subj_post_sd": float(np.sqrt(post_var[subj_idx])),
+        "subj_ci_lo": float(post_mean[subj_idx] - z * np.sqrt(post_var[subj_idx])),
+        "subj_ci_hi": float(post_mean[subj_idx] + z * np.sqrt(post_var[subj_idx])),
+        "confidence": confidence,
+        "p_rank1": float((ranks == 1).mean()),
+        "p_top3": float((ranks <= 3).mean()),
+        "p_top5": float((ranks <= 5).mean()),
+        "rank_median": float(np.median(ranks)),
+        "rank_lo": float(np.quantile(ranks, lo_q)),
+        "rank_hi": float(np.quantile(ranks, hi_q)),
+        "posterior": posterior,
+    }

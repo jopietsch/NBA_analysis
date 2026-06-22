@@ -11,8 +11,9 @@ run, that margin could sit anywhere from +7.4 to +22.4: even at the unlucky end,
 the run would still rank above the historical average. Note that 2025–26 is the
 highest-scoring era since 1984; once margins are scaled to a common scoring
 level, the raw margin drops to 3rd all-time (+13.3). After adjusting for opponent
-strength, the margin of **+11.2 pts/game** ranks first all-time (though that #1
-is a close call, see §10); after both the opponent and the scoring adjustment,
+strength, the margin of **+11.2 pts/game** ranks first all-time (though once every
+champion's uncertainty is weighed fairly, being the single best is far from
+settled, see §10); after both the opponent and the scoring adjustment,
 it's +10.1, still first, but essentially tied with the 2016–17 Warriors (+10.0). The East was **not** historically weak: the West-East SRS gap in
 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
@@ -304,12 +305,9 @@ per game). Because playoff margins swing so much, 19 games only pin down about
 margin lands at **+6.5 per game**, with a plausible range of roughly +1.5 to
 +11.5. Even after that haircut it still clears about 83% of champions.
 
-This second test is deliberately tough: it pulls only the Knicks back toward the
-average while leaving every other champion at their own (also noisy) number. Read
-together, the two checks bracket the answer. At the low end the 2025-26 run is a
-clearly above-average championship; at the high end it is the best
-opponent-adjusted run on record. The single best guess stays near the top, but
-"#1 by a wide margin" is not what the uncertainty supports.
+This second test is deliberately tough on the Knicks, but it is also unfair in
+their favor: it pulls only the Knicks back toward the average while leaving every
+other champion frozen at its exact career number.
 
 We also checked whether not knowing the opponents' exact strength matters: the
 opponent ratings come from full regular seasons, and re-running the re-draws
@@ -319,6 +317,32 @@ almost entirely the shortness of a 19-game run, not doubt about who the Knicks
 played.
 
 ![How often the 2025-26 run still ranks #1 when its games are re-drawn](../generated/images/knicks_2026_bootstrap_margin.svg){width=100%}
+
+**The fairest test treats every champion as uncertain, and it humbles the #1
+claim.** The checks above froze the other 42 champions at their exact numbers.
+But those numbers are noisy too: a champion that looks like +10 might truly be +7
+or +13. When we shrink every champion toward the typical level by how shaky its
+own number is, and then let all 43 compete while accounting for everyone's
+uncertainty at once, the Knicks come out as the single best only about **9% of
+the time**. They land in the top three about 23% of the time and the top five
+about 34%; their most likely spot is the middle of the top ten, with a range
+that runs from 1st to deep in the pack.
+
+Why so much lower than the 60% above? Two reasons. The Knicks' run was streaky:
+huge blowouts in the sweeps next to a +2.4 Finals. A streaky run is weaker
+evidence of a high true level than a steady one, so it gets pulled back harder
+(from +11.2 down to about +4.7). And several rivals, the 1990-91 Bulls, the
+2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier
+evidence, so once everyone's wobble is in play they overtake the Knicks often.
+
+The honest bottom line across all of these checks: the 2025-26 Knicks own the
+best raw opponent-adjusted number of any champion, and they are very likely one
+of the best handful of title runs ever, but the data cannot crown them the single
+best. Their chance of being the true #1 runs from roughly 60% (holding the rest
+of history fixed) down to about 9% (the fairest test, where every champion is
+allowed to be as uncertain as the Knicks).
+
+![After fair shrinkage the champion field bunches together: the Knicks are about 9% to be the true #1](../generated/images/knicks_2026_hierarchical_posterior.svg){width=100%}
 
 ---
 

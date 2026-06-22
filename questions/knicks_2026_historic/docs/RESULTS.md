@@ -360,4 +360,31 @@ shocking each opponent's SRS by its standard error each time:
   Opponent-strength noise barely moves the picture: game-to-game
   variance dominates the uncertainty in this ranking.
 
+─── §14 HIERARCHICAL (PARTIAL-POOLING) RANK ────────────────────────────
+Random-effects model over all champions' opponent-adjusted margins:
+  y_c | theta_c ~ Normal(theta_c, v_c)     (observed mean, sampling var)
+  theta_c       ~ Normal(mu, tau^2)        (population of true dominance)
+tau^2 by DerSimonian-Laird; every champion shrunk toward mu by its own
+reliability, then all champions simulated jointly and ranked.
+
+  Population mean (mu):            +3.07 pts/game
+  Between-champion SD (tau):       1.97 pts/game
+  Knicks raw adj margin:           +11.23
+  Knicks posterior (shrunk) mean:  +4.70 pts/game
+  90% credible interval:        [+1.80, +7.60]
+
+  P(Knicks are the true #1):       9.0%
+  P(top 3):                        22.8%
+  P(top 5):                        33.7%
+  Median posterior rank:           9  (90% interval: 1–32)
+
+── Top champions by posterior (shrunk) adjusted margin ──
+  Season    Raw adj  Posterior          ±90% CI
+  90–91       +9.20      +5.28   [+2.7, +7.9]
+  22–23       +7.68      +5.16   [+2.8, +7.6]
+  16–17      +10.23      +5.13   [+2.4, +7.9]
+  25–26      +11.23      +4.70   [+1.8, +7.6]  ← Knicks
+  00–01       +7.26      +4.68   [+2.1, +7.2]
+  85–86       +7.72      +4.43   [+1.7, +7.2]
+
 ```

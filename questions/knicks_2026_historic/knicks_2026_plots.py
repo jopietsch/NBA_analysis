@@ -620,6 +620,62 @@ def plot_bootstrap_margin(po_2026: pd.DataFrame, reg_srs: pd.Series,
     return path
 
 
+# ── 13. Hierarchical posterior: the field bunches up ─────────────────────────
+
+def plot_hierarchical_posterior(posterior_df: pd.DataFrame, p_rank1: float,
+                                top_n: int = 12) -> str:
+    """Posterior (shrunk) adjusted margin ± 90% credible interval for the top
+    champions, with each one's raw point estimate shown as a faint tick, so the
+    reader sees how partial pooling pulls everyone together and how much the
+    credible intervals overlap (which is why no champion is a clear #1)."""
+    if posterior_df.empty or "post_mean" not in posterior_df.columns:
+        return ""
+
+    df = posterior_df.head(top_n).iloc[::-1].reset_index(drop=True)  # best at top
+    z90 = 1.6448536
+    y = np.arange(len(df))
+    is_knicks = df["year"] == SUBJECT_YEAR
+    colors = [KNICKS_BLUE if k else GRAY for k in is_knicks]
+
+    fig, ax = _fig(figsize=(8.5, max(4.5, len(df) * 0.42)))
+    for yi, (_, row), col in zip(y, df.iterrows(), colors):
+        ax.errorbar(
+            row["post_mean"], yi, xerr=z90 * row["post_sd"],
+            fmt="none", ecolor=col, elinewidth=2.4, capsize=3, zorder=2,
+        )
+    ax.scatter(df["post_mean"], y, color=colors, s=42, zorder=3)
+    # raw (unshrunk) point estimate as a faint tick, to show the pull
+    ax.scatter(df["adj_mean"], y, marker="|", color=RED, s=90, zorder=4,
+               label="Raw adj margin (pre-shrink)")
+
+    ax.set_yticks(y)
+    ax.set_yticklabels([short_label(int(yr)) for yr in df["year"]], fontsize=8.5)
+    ax.set_xlabel("Posterior opponent-adjusted margin (pts/game)", fontsize=10)
+    ax.set_title(
+        f"After fair shrinkage the field bunches: Knicks ~{p_rank1:.0%} to be the true #1",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+    )
+    ax.text(
+        0.5, 1.005,
+        "Partial-pooling posterior mean ± 90% credible interval, top champions",
+        transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color=GRAY,
+    )
+    _style(ax)
+    ax.grid(axis="y", visible=False)
+    ax.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+    handles = [
+        mpatches.Patch(color=KNICKS_BLUE, label="2025-26 Knicks"),
+        mpatches.Patch(color=GRAY, label="Other champions"),
+        plt.Line2D([0], [0], marker="|", color=RED, linestyle="none",
+                   markersize=9, label="Raw margin (pre-shrink)"),
+    ]
+    ax.legend(handles=handles, fontsize=8.5, framealpha=0.85, edgecolor="#ddd",
+              loc="lower right")
+    fig.tight_layout()
+    path = save_chart("knicks_2026_hierarchical_posterior.svg", OUTPUT_DIR, fig=fig)
+    return path
+
+
 # ── Orchestrator ─────────────────────────────────────────────────────────────
 
 # ── 12. Reg→playoff SRS elevation across the 2025-26 field ───────────────────
@@ -683,7 +739,9 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              gap_table: pd.DataFrame,
              health_df: pd.DataFrame | None = None,
              ats_df: pd.DataFrame | None = None,
-             series_df: pd.DataFrame | None = None) -> list:
+             series_df: pd.DataFrame | None = None,
+             posterior_df: pd.DataFrame | None = None,
+             p_rank1: float | None = None) -> list:
     from knicks_2026_data import compute_srs
     reg_srs = compute_srs(reg_2026)
 
@@ -709,6 +767,10 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
             paths.append(p)
     if ats_df is not None and not ats_df.empty:
         p = plot_market_vs_actual(ats_df)
+        if p:
+            paths.append(p)
+    if posterior_df is not None and not posterior_df.empty and p_rank1 is not None:
+        p = plot_hierarchical_posterior(posterior_df, p_rank1)
         if p:
             paths.append(p)
     return paths

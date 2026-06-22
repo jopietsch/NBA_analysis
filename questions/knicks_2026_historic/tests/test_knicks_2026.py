@@ -336,6 +336,37 @@ def test_clustered_cover_significance_weakens_vs_independent():
     assert res["p_value"] > 0.002
 
 
+def test_hierarchical_rank_subject_clearly_best():
+    # Subject far above the field with tiny sampling variance → almost surely #1.
+    df = pd.DataFrame([
+        {"year": 2026, "champion_id": KNICKS_ID, "adj_mean": 20.0, "n_games": 19, "samp_var": 0.05},
+        {"year": 2025, "champion_id": 10, "adj_mean": 2.0, "n_games": 19, "samp_var": 0.05},
+        {"year": 2024, "champion_id": 11, "adj_mean": 1.0, "n_games": 19, "samp_var": 0.05},
+        {"year": 2023, "champion_id": 12, "adj_mean": 0.0, "n_games": 19, "samp_var": 0.05},
+    ])
+    res = data.hierarchical_adjusted_margin_rank(df, 2026, n_draws=4000, seed=1)
+    assert res["p_rank1"] > 0.99
+    assert res["tau"] > 0           # real between-champion spread detected
+    # Posterior mean is shrunk toward mu (below the raw 20)
+    assert res["subj_post_mean"] < 20.0
+
+
+def test_hierarchical_rank_noisy_rival_steals_first():
+    # Subject's point estimate leads, but a high-variance rival sits close enough
+    # that it sometimes wins → P(#1) well below 1.
+    df = pd.DataFrame([
+        {"year": 2026, "champion_id": KNICKS_ID, "adj_mean": 11.0, "n_games": 19, "samp_var": 4.0},
+        {"year": 2017, "champion_id": 10, "adj_mean": 10.0, "n_games": 16, "samp_var": 6.0},
+        {"year": 2024, "champion_id": 11, "adj_mean": 3.0, "n_games": 19, "samp_var": 3.0},
+        {"year": 2023, "champion_id": 12, "adj_mean": 2.0, "n_games": 19, "samp_var": 3.0},
+        {"year": 2022, "champion_id": 13, "adj_mean": 1.0, "n_games": 19, "samp_var": 3.0},
+    ])
+    res = data.hierarchical_adjusted_margin_rank(df, 2026, n_draws=8000, seed=2)
+    assert 0.3 < res["p_rank1"] < 0.9
+    assert res["p_top3"] >= res["p_rank1"]
+    assert res["subj_ci_lo"] < res["subj_post_mean"] < res["subj_ci_hi"]
+
+
 def test_parse_min():
     assert data.parse_min("35:42") == pytest.approx(35.7, abs=0.1)
     assert data.parse_min(30.0) == pytest.approx(30.0)
