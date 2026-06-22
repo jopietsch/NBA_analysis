@@ -33,7 +33,7 @@
   - Second steeper stretch: after 2017, below 56%, coincides with three-point surge.
   - Playoffs lagged: steady ~64% through 2017, then joined slide → 61% → 58%.
 - **Still near-universal today (@fig-team-season-hca):** most recent regular season, all but one team won more at home than on the road. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). Noisy snapshot of how widespread HCA still is, not a franchise ranking.
-- **Decline is league-wide, not team-concentrated (@fig-team-decline-slopes):** per-franchise year-slopes of the home-minus-road win gap, fit separately by OLS then split into true spread vs sampling noise (EB / variance-decomposition idiom). *RESULTS: pooled league slope −0.49 pp/yr (p<0.001); observed SD of team slopes 0.32, noise-adjusted true between-team SD ≈ 0.00 (100% of spread is noise); 0/35 franchises with a positive raw slope.* Every franchise faded at one shared league rate; no team stands apart as the cause. Regular season only (per-team playoff samples too small); playoff decline is itself league-wide.
+- **Decline is league-wide, not team-concentrated (@fig-team-decline-slopes):** per-franchise year-slopes of the home-minus-road win gap, fit separately by OLS then split into true spread vs sampling noise (EB / variance-decomposition idiom). *RESULTS: pooled league slope −0.49 pp/yr (p<0.001); observed SD of team slopes 0.213, noise-adjusted true between-team SD ≈ 0.00 (100% of spread is noise); 0/31 franchises with a positive raw slope.* Every franchise faded at one shared league rate; no team stands apart as the cause. Regular season only (per-team playoff samples too small); playoff decline is itself league-wide.
 - **Era table** moved to §4 (where rule changes are analyzed); in §1 the eras serve as the calendar the rest of the report runs on.
 - **Where the trend is headed:** 3PA share approaching ceiling (~40%); league OREB rate approaching floor (~26%, down from 33%). If both forces are near their asymptotes, pace of decline should slow. Floor from empty-arena data: home teams won 51% with no crowd/bias/prep edge, probably the long-run lower bound. Information diffusion as mechanism is not basketball-specific: other sports investing heavily in analytics are likely on the same trajectory (prediction, not tested here).
 **Figures:**
@@ -195,7 +195,7 @@
 
 - **Playoff franchise differences = illusion:** true between-franchise SD ≈ **0.0** (100% noise); all collapse to league mean +26.9 pp. Apparent postseason home-court strength reflects being a good team that plays more home games.
 - **Home court worth more in playoffs:** reg **~20 pp** vs. playoffs **~27 pp** → **+7 pp postseason premium** (RESULTS +7.2 pp, SD 7.4). Reg/playoff consistency positive but weak (raw r=+0.362, p=0.042).
-- **Player-tracking caught the final chapter of the rebounding fade (@fig-rebounding-tracking):** OREB-conversion advantage fell from ~1.5 pp (mid-2010s) to below zero (2025–26); box-out advantage essentially zero throughout. Cameras confirmed a fade already nearly complete before 2013–14. *RESULTS: OREB conversion p=0.024*, box-out p=0.775.*
+- **Player-tracking caught the final chapter of the rebounding fade (@fig-rebounding-tracking):** OREB-conversion advantage fell from ~1.2 pp (mid-2010s) to under 0.2 today; box-out advantage essentially zero throughout. Cameras confirmed a fade already nearly complete before 2013–14. *RESULTS: OREB conversion p=0.024*, box-out p=0.775.*
 
 ![Player-tracking rebounding](../generated/images/home_court_rebounding_tracking.svg){#fig-rebounding-tracking}
 
@@ -211,7 +211,7 @@
 ---
 
 ## Section 7 — Summary
-- Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**. In net rating terms: reg-season gap **~3.2 → ~2.0 pts/100 poss** (trend −0.067***/yr); playoffs **~4.9 → ~3.9 pts/100 poss** (trend −0.036, ns). *RESULTS: NET RATING SPLIT BY VENUE.*
+- Recap: HCA nearly halved over 40 yrs; reg **65% → ~55%**, playoffs **~68% → 58%**. In net rating terms: reg-season gap **~3.2 → ~2.0 pts/100 poss** (trend −0.067***/yr); playoffs **~4.3–4.9 → ~3.9 pts/100 poss** (trend −0.036, ns). *RESULTS: NET RATING SPLIT BY VENUE.*
 - Shape: slow four-decade erosion + steeper stretches in the mid-1990s and post-2017, with a brief visible uptick around 2002-04. 1994–95 rule jolt (most likely hand-checking, confounded with shortened 3-pt line; multi-year adjustment). Post-2017 perimeter shift (three-point surge on the shooting line, parallel offensive-glass retreat on rebounding line); Bayesian model places break near 2020, not 2017 (COVID + acceleration). Bayesian model: ≥1 break strongly favored (BF=14.2 vs no break); k=2 (40%) and k=3 (39%) essentially tied (BF=1.0); break years not datable to better than ~decade. QLR and CUSUM consistent.
 - Three main drivers + the largest independent channel (**together ~96% of RS decline**; all are Dean Oliver's Four Factors): (1) fairer refs — fouls 1.2 → ~0.25/game RS, FTA edge +1.97 → +0.46/game; 1.6 → 0.7 fouls playoffs, FTA +2.35 → +1.09/game; 45/47 officials home-favoring, (2) shot selection changed in two ways: away teams closed the paint gap (1.3 → 0.2 pp) AND the league-wide 3PA rise compressed home court through the shooting line (within-era game-level effect is real; season-level r=−0.902 is co-trending; no Granger temporal lead), (3) rebounding advantage slipping independently (3PA control shows independence; season-level r=0.82 with OREB rate is parallel-trend correlation, not cointegration).
 - Ruled out: rule changes (except 1994–95), travel, time zones, pace, crowd size, format. Competitive balance can't explain the long-run decline (parity is mean-reverting, HCA is a 40-year trend), though year-to-year parity fluctuations show a weak association; treated as exploratory. Fewer back-to-backs explain only ~8% of the RS decline. Crowd presence = on/off switch (2020–21 51% vs 58.5%; isolates presence, not noise itself), not a slow fade.
@@ -228,3 +228,76 @@
 - **Empty-arena numbers:** blog's "empty arena" figure (54.4%) = 2020–21 season average blending zero-fan and partial-crowd games. Our split: empty 51.0% vs. any fans 58.5%. No disagreement on conclusion (presence = switch); blog averaged over the distinction.
 - **Back-to-backs:** blog claimed 15–20% of decline; we tested directly — frequency premise confirmed (35.0% → 18.8%); magnitude is ~8%, not 15–20% (shift-share: frequency component −0.71 pp; within-situation component −8.59 pp).
 - **What the blog missed:** rebounding channel (absent entirely from blog's box-score account), turnover-edge erosion, shot-zone convergence, formal playoff seeding control (G3–G4 weaker-host still 51.5%), ruling-out tests for format/balance/crowd.
+
+---
+
+## Key Numbers Registry
+
+Checklist for `/check-consistency`. Each row is one prose claim with the RESULTS.md value it must match. Covers all headline numbers — those in the intro, summary, and section leads, plus numbers that appear in more than one place. Update this table whenever findings prose or the analysis pipeline changes.
+
+**How to use:** work through each row in ID order, locate the prose claim in the findings (use the line number), compare against the RESULTS.md section named, and verify the value matches. After finishing, do a free scan for any numbers in the prose not listed here.
+
+| ID | Findings location | Prose claim | RESULTS.md section | Authoritative value |
+|---|---|---|---|---|
+| N01 | intro L13; §6 L193 | RS win rate fell from ~65% to ~55% | OVERALL DECLINE, RS era table | 65.0% (1984–94) → 55.6% (2023–26) |
+| N02 | intro L13; §6 L193 | PO win rate fell from ~68% to ~58% | OVERALL DECLINE, PO era table | 67.9% (1984–94) → 57.6% (2023–26) |
+| N03 | intro L17; §5 L162; §6 L205 | PO lower seed won 65% and 66% at home in 1980s/90s | SEEDING ERA SPLIT, lower-seed column | 65.4% (1984–94), 65.8% (1995–01) |
+| N04 | intro L17; §6 L205 | PO lower seed today wins ~49% at home | SEEDING ERA SPLIT, lower-seed column | 49.0% (2023–26) |
+| N05 | intro L17; §6 L205 | PO higher seed fell from ~71% to ~65% | SEEDING ERA SPLIT, higher-seed column | 71.0% (1984–94) → 64.7% (2023–26) |
+| N06 | §1 L29; §6 L195 | RS decline ~quarter-point per year | OVERALL DECLINE, RS Binomial GLM | −0.244 pp/yr |
+| N07 | §1 L29 | RS fell from ~65% to ~60% in mid-1990s | RULE-CHANGE ERAS, RS era table | 65.0% (1984–94) → 59.9% (1995–01) |
+| N08 | §1 L29; §3 L75 | 3PA share rose from ~quarter to ~40% | FOUL & SHOOTING ERAS, RS 3PA rate column | 23.8% (2005–17) → 40.5% (2023–26) |
+| N09 | §1 L29 | RS rate pushed below 56% (2nd steepening) | RULE-CHANGE ERAS, RS era table | 55.6% (2023–26) |
+| N10 | §1 L29 | PO held near 64% through 2017, then 61%, then 58% | RULE-CHANGE ERAS, PO era table | 64.3% (2005–17) → 60.7% (2018–22) → 57.6% (2023–26) |
+| N11 | §2 L43; §3 L105 | 1980s RS foul diff ~1.2 fewer fouls/game | FOUL & SHOOTING ERAS, RS 1984–94 foul diff | −1.23 |
+| N12 | §2 L43; §3 L105; §6 L197 | 1980s RS FTA diff ~2 more/game | FOUL & SHOOTING ERAS, RS 1984–94 FTA diff | +1.97 |
+| N13 | §2 L43; §3 L105; §6 L197 | 1980s PO foul diff ~1.6 fewer fouls/game | FOUL & SHOOTING ERAS, PO 1984–94 foul diff | −1.58 |
+| N14 | §2 L43; §3 L105; §6 L197 | 1980s PO FTA diff ~2.4 more/game | FOUL & SHOOTING ERAS, PO 1984–94 FTA diff | +2.35 |
+| N15 | §2 L45; §C L259 | 45 of 47 playoff officials home-favoring | REFEREE CREW | 45/47 (96%) |
+| N16 | §2 L53 | Four Factors carry ~95% of RS level | MEDIATION, RS level — bootstrap summary | 95% (95% CI [91, 97]%) |
+| N17 | §2 L53 | eFG% largest piece, >40% of RS level | MEDIATION, RS level decomp | 43% |
+| N18 | §2 L53 | REB is second-largest, 25% of RS level | MEDIATION, RS level decomp | 25% |
+| N19 | §3 L63; §6 L195 | Four Factors carry ~96% of RS decline | MEDIATION, RS trend — bootstrap summary | 96% (95% CI [87, 107]%) |
+| N20 | §3 L63; §6 L199 | REB 30% of RS decline | MEDIATION, RS trend decomp | 30% |
+| N21 | §3 L63; §6 L199 | TOV 27% of RS decline | MEDIATION, RS trend decomp | 27% |
+| N22 | §3 L63; §6 L199 | eFG% 21% of RS decline | MEDIATION, RS trend decomp | 21% |
+| N23 | §3 L63; §6 L197 | Foul 18% of RS decline | MEDIATION, RS trend decomp | 18% |
+| N24 | §3 L63; §6 L197 | PO channels ~67% of decline | MEDIATION, PO trend — bootstrap summary | 67% (95% CI [38, 107]%) |
+| N25 | §3 L71; §6 L199 | Paint shot gap fell from 1.3 pp to 0.2 pp (RS) | SHOT ZONE DIFFERENTIALS, RS Paint column | +1.28 (1995–01) → +0.24 (2023–26) |
+| N26 | §3 L75 | 7% threes in 1980s, home teams won 65% | LEAGUE-WIDE 3-POINT, RS era table | 6.8% / 65.0% (1984–94) |
+| N27 | §3 L77 | ~40% of 40-yr 3PA-HCA correlation is trend artifact | LEAGUE-WIDE 3-POINT, partial correlation | raw r=−0.902 → partial r=−0.526; 42% shrinkage |
+| N28 | §3 L79 | 2–3 fewer home wins/100 per 10-pp 3PA rise | LEAGUE-WIDE 3-POINT, game-level logistic | −2.64 pp/10pp (bivariate); −2.27 pp within-era |
+| N29 | §3 L87; §6 L201 | DREB diff fell from +1.64 to +0.59 | REBOUNDING DECOMP, RS DREB diff column | +1.64 (1984–94) → +0.59 (2023–26) |
+| N30 | §3 L87; §6 L201 | OREB diff fell from +0.61 to slightly below zero | REBOUNDING DECOMP, RS OREB diff column | +0.61 (1984–94) → −0.05 (2023–26) |
+| N31 | §3 L91; §6 L201 | Home OREB rate 34% → 26%, fell 8 pp | REBOUNDING DECOMP, RS — league rate + share edge | derived: league 32.9% + share edge +2.74pp → home ≈34.3%; final ≈25.75% |
+| N32 | §3 L91; §6 L201 | Away OREB rate 31% → 26%, fell 5 pp | REBOUNDING DECOMP, RS — league rate + share edge | derived: away ≈31.5% → ≈26.1% |
+| N33 | §3 L105; §6 L197 | RS foul diff 1.2 → 0.25 fouls (80% reduction) | FOUL & SHOOTING ERAS, RS foul diff column | −1.23 (1984–94) → −0.25 (2023–26); 80% = (1.23−0.25)/1.23 |
+| N34 | §3 L105; §6 L197 | RS FTA edge +2 → under 0.5/game | FOUL & SHOOTING ERAS, RS FTA diff column | +1.97 (1984–94) → +0.46 (2023–26) |
+| N35 | §3 L105; §6 L197 | PO foul gap 1.6 → 0.7 fouls | FOUL & SHOOTING ERAS, PO foul diff column | −1.58 (1984–94) → −0.68 (2023–26) |
+| N36 | §3 L105; §6 L197 | PO FTA edge 2.4 → 1.1/game | FOUL & SHOOTING ERAS, PO FTA diff column | +2.35 (1984–94) → +1.09 (2023–26) |
+| N37 | §4 L142 | 1994–95 discrete step ~−2.6 pp | RULE-CHANGE ERAS, RS trend-controlled era:1995–01 | ≈pp = −2.6 (log-odds −0.108, p=0.010) |
+| N38 | §4 L144 | Travel ~0.07 pp per 100 miles (RS) | REST, ALTITUDE, AND TIME ZONE | −0.07 pp/100 mi (bivariate logistic) |
+| N39 | §4 L144 | B2B frequency 35% → under 20% | BACK-TO-BACKS, visitor B2B by era | 35.0% (1984–94) → 18.8% (2023–26) |
+| N40 | §4 L144 | Schedule shift explains ~8% of RS decline | BACK-TO-BACKS, shift-share | frequency component −0.71 pp ≈ 8% of −9.29 pp total |
+| N41 | §4 L144 | Rest: home better-rested 63%, visitor better-rested 58% | REST DIFFERENTIAL, RS bucket table | home-more-rest: 62.8%; away-more-rest: 57.6% |
+| N42 | §4 L146 | Empty arena 51%, any crowd 58.5% | ARENA ATTENDANCE, 2020-21 | empty 51.0% (n=573); fans present 58.5% (n=591) |
+| N43 | §5 L160; §6 L205 | G1 69%, G2 72% | PLAYOFF SERIES STRUCTURE, game table | G1=69.4%, G2=71.9% |
+| N44 | §5 L160; §6 L205 | G5 74.5% | PLAYOFF SERIES STRUCTURE, game table | G5=74.5% |
+| N45 | §5 L160; §6 L205 | G7 64% | PLAYOFF SERIES STRUCTURE, game table | G7=63.8% |
+| N46 | §5 L162; §6 L205 | Lower seed won 65% and 66% in 1980s/90s | SEEDING ERA SPLIT, lower-seed column | 65.4% (1984–94), 65.8% (1995–01) — same as N03 |
+| N47 | §5 L162; §6 L205 | Lower seed today: ~49% at home | SEEDING ERA SPLIT, lower-seed column | 49.0% (2023–26) — same as N04 |
+| N48 | §5 L162 | Higher seed held 70–77% through 2022 | SEEDING ERA SPLIT, higher-seed column | 74.2% (2002–04), 75.2% (2005–17), 71.7% (2018–22) |
+| N49 | §5 L162 | Higher seed fell to ~65% recently | SEEDING ERA SPLIT, higher-seed column | 64.7% (2023–26) |
+| N50 | §5 L162 | Gap: 3–5 pp → 20+ pp peak → 15 pp today | SEEDING ERA SPLIT, Gap column | 5.6 pp (1984–94) → 24.4 pp peak (2018–22) → 15.7 pp (2023–26) |
+| N51 | §5 L166 | Weaker host (G3–4) wins 51.5% | SEEDING QUALITY DECOMP, lower-seed check | 51.5% (N=827) |
+| N52 | §5 L183 | RS: 65%/game → 55% series (1980s) | SERIES SIMULATION, RS 1984–94 row | 64.9%/game → 54.9% series |
+| N53 | §5 L183 | RS: ~56%/game → under 52% series (today) | SERIES SIMULATION, RS 2023–26 row | 55.6%/game → 51.9% series |
+| N54 | §5 L183 | PO series edge ~52.5% today | SERIES SIMULATION, PO 2023–26 row | 52.5% series |
+| N55 | §5 L183 | RS per-game fell ~9 pp, series fell ~3 pp | SERIES SIMULATION, RS summary note | per-game −9.3 pp; series −3.0 pp |
+| N56 | §6 L193 | RS net rating ~3 pts → ~2 pts per 100 poss | NET RATING SPLIT BY VENUE, RS era table | 3.22 (1995–01) → 1.97 (2023–26) |
+| N57 | §6 L193 | PO net rating ~4.3–4.9 → just under 4 pts | NET RATING SPLIT BY VENUE, PO era table | 4.31 (1995–01), 4.89 peak (2002–04) → 3.93 (2023–26) |
+| N58 | §6 L207 | OREB rate fell from 33% to 26% | REBOUNDING DECOMP, RS — share edge note | 32.9% → 25.9% |
+| N59 | §C L263 | Denver +27 pp, Utah +26 pp HCA (raw) | FRANCHISE HCA, RS table top rows | +27.9 pp (Denver raw), +26.6 pp (Utah raw) |
+| N60 | §C L263 | League average HCA ~20 pp | FRANCHISE HCA, RS summary line | +20.0 pp |
+| N61 | §C L263 | ~70% of franchise variation is real | FRANCHISE HCA, RS variance decomp | noise=30%, true SD=4.1/observed SD=4.9 → (4.1/4.9)²≈70% |
+| N62 | §C L263 | Altitude adds ~8 pp for Denver/Utah | REST, ALTITUDE, AND TIME ZONE | +7.9 pp [+6.1, +9.7] |
