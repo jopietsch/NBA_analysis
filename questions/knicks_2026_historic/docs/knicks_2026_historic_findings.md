@@ -136,7 +136,7 @@ the East teams the Knicks beat in rounds 1–3 actually played *weaker in the
 playoffs* than their regular-season ratings suggested, and whether the tight
 Finals was because the Spurs were truly the better team in May–June.
 
-The Finals answer is a clear yes; the rounds 1–3 answer is a weak maybe.
+The rounds 1–3 answer is a weak maybe; the Finals answer is a clear yes — the Spurs were genuinely the better team in May–June.
 
 Each opponent's playoff SRS is computed from their games **excluding** the
 Knicks series, so it's an independent measure of their form against other
@@ -198,7 +198,7 @@ And the Finals paired the two teams that had improved the most since October: th
 field's two hottest teams, not its two best regular-season teams.
 
 These playoff ratings rest on a few weeks of games, so the exact figures carry
-the same small-sample caution as the rest of the run (see §11). The order is
+the same small-sample caution as the rest of the run (see §10). The order is
 clear, though: both finalists rose further than anyone else.
 
 ![Regular-season to playoff jump in team rating: the Knicks rose more than any 2025-26 playoff team, the Spurs second](../generated/images/knicks_2026_field_elevation.svg){width=100%}
