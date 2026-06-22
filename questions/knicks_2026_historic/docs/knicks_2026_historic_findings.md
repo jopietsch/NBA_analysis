@@ -21,14 +21,15 @@ also first. The East was **not** historically weak: the West-East SRS gap in
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
 this, on a real schedule, against real competition.
 
-There is a real nuance in the East record: the 76ers and Cavaliers played a
+There is a possible nuance in the East record: the 76ers and Cavaliers played a
 touch *below* their regular-season ratings in their other playoff games, so some
 of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks
-excellence (the Hawks played only the Knicks, so there is no independent read on
-them; see §5). The Finals tells the opposite story: the Spurs elevated from a
-regular-season SRS of +8.28 to a playoff SRS of +14.48, the most improved of the
-Knicks' four opponents (and, across the whole 2026 field, second only to the
-Knicks themselves; see §6). Winning that series 4-1, even narrowly (+2.4 avg
+excellence, though that gap is small enough to be noise (the Hawks played only the
+Knicks, so there is no independent read on them; see §5). The Finals tells the
+opposite story: the Spurs were the most improved of the Knicks' four opponents,
+climbing from a regular-season SRS of +8.28 to a playoff SRS of +15.13 (the
+second-biggest rise of any team in the whole 2026 field, behind only the Knicks
+themselves; see §6). Winning that series 4-1, even narrowly (+2.4 avg
 margin), was the hardest test of the run.
 
 All four opponents were essentially fully healthy when they played the Knicks
@@ -332,8 +333,9 @@ that runs from 1st to deep in the pack.
 
 Why so much lower than the 60% above? Two reasons. The Knicks' run was streaky:
 huge blowouts in the sweeps next to a +2.4 Finals. A streaky run is weaker
-evidence of a high true level than a steady one, so it gets pulled back harder
-(from +11.2 down to about +4.7). And several rivals, the 1990-91 Bulls, the
+evidence of a high true level than a steady one, so this test pulls the margin
+back harder than the simple shrink above did: from +11.2 down to about +4.7,
+rather than the +6.5 of the second check (which ignored streakiness). And several rivals, the 1990-91 Bulls, the
 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier
 evidence, so once everyone's wobble is in play they overtake the Knicks often.
 
