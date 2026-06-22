@@ -280,14 +280,19 @@ A few results surfaced along the way that don't bear directly on the three quest
 
 For an away team, three-point heavy shot selection has already largely equalized the shooting category, and the data confirms this. The offensive glass is where the road disadvantage persists most and where no current strategic trend is closing the gap. On rest: when the away team enters better-rested than the home team, home win rate falls roughly 3 percentage points below the baseline, a scheduling-available edge the data supports consistently across every decade.
 
-## Appendix D: Caveats
+## Appendix D: Why is this draft?
 I'm using this project as an exercise to learn Claude Code, statistics, and NBA analytics. I am not a statistician.
 
-- Every calculation and data gathering is done by Python. Claude doesn't have a change to hulicinate data or get a calcuation wrong.
+- Every calculation and all data gathering is done by Python. Claude doesn't have a chance to hulicinate data or get a calcuation wrong.
 - Claude did come up with what statistics to use, and what they mean.
     - I did make Claude create a page that goes over every statistics, why, and what it means. I'm still making me way through that.
     - I also had Claude create a tutorial based on the statics used, I'm still making my way through that.
 - Claude did write almost all the text of this document and others (Except this appendix). I have spend dozens of hours go through and make sure that I understand the text, the graphs, etc. I have forced Claude to make things coherent, corrected logic errors etc. It's like arguing with the dumbest brialliant grad student. It will do want it thinks you want, and sometims much better than you asked, but it doesn't really understand what it's doing.
 - All the code, and all the results of the statistics in checked into github
 
-If after all that I still have something wrong, please let me know.
+- This is as good as my ability to ask good questions. I'm sure as I learn more I'll get better at asking good questions. I might even find more nuance as I learn better analytical approaches. I doubt anything I've found so far is directionally wrong. 
+- i have made it explain things if I don't understand it. At one point a critical analysis had a graph that showed < -100% and I could not make heads or tails of what that mean. I had it describe it over and over. Finally i said I couldn't understand and maybe we should get rid of that graph and then it said, no, that graph is confusing, we can make another one. Im sure a more experienced Claude user would have gotten their sooner.
+	- but I wanted to demonstrate that I have interrogate it over and over
+	- and more experienced people would have done it more quickly
+	- but lazier people would have just let it write the whole thing without interrogating it, and that would have made the document useless; 
+	- I'm trying to justify my approach us ing Claude If after all that I still have something wrong, please let me know.
