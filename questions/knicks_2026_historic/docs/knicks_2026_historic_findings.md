@@ -15,7 +15,7 @@ true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-
 scoring version drops it to 3rd). After adjusting for opponent
 strength, the margin of **+11.2 pts/game** ranks first all-time (though once every
 champion's uncertainty is weighed fairly, being the single best is far from
-settled, see §10); on the same pace-neutral basis the opponent-adjusted margin is
+settled, see §10–§11); on the same pace-neutral basis the opponent-adjusted margin is
 also first. The East was **not** historically weak: the West-East SRS gap in
 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
@@ -136,7 +136,7 @@ the East teams the Knicks beat in rounds 1–3 actually played *weaker in the
 playoffs* than their regular-season ratings suggested, and whether the tight
 Finals was because the Spurs were truly the better team in May–June.
 
-The rounds 1–3 answer is a weak maybe; the Finals answer is a clear yes — the Spurs were genuinely the better team in May–June.
+The rounds 1–3 answer is a weak maybe; the Finals answer is a clearer yes: the Spurs were the toughest opponent of the run, playing well above their regular-season level.
 
 Each opponent's playoff SRS is computed from their games **excluding** the
 Knicks series, so it's an independent measure of their form against other
