@@ -2186,8 +2186,10 @@ vertical-align: -.125em;
   <li><a href="#how-solid-is-the-1-ranking" id="toc-how-solid-is-the-1-ranking" class="nav-link" data-scroll-target="#how-solid-is-the-1-ranking">§10. How Solid Is the #1 Ranking?</a></li>
   <li><a href="#a-second-opinion-other-rating-systems" id="toc-a-second-opinion-other-rating-systems" class="nav-link" data-scroll-target="#a-second-opinion-other-rating-systems">§11. A Second Opinion: Other Rating Systems</a></li>
   <li><a href="#how-unlikely-was-a-16-3-run" id="toc-how-unlikely-was-a-16-3-run" class="nav-link" data-scroll-target="#how-unlikely-was-a-16-3-run">§12. How Unlikely Was a 16-3 Run?</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§13. Limitations</a></li>
-  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">§14. Methodology</a></li>
+  <li><a href="#what-does-not-diminish-the-run" id="toc-what-does-not-diminish-the-run" class="nav-link" data-scroll-target="#what-does-not-diminish-the-run">§13. What Does NOT Diminish the Run</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§14. Limitations</a></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">§15. Methodology</a></li>
+  <li><a href="#appendix-a-companion-documents" id="toc-appendix-a-companion-documents" class="nav-link" data-scroll-target="#appendix-a-companion-documents">Appendix A: Companion Documents</a></li>
   <li><a href="#key-numbers-registry" id="toc-key-numbers-registry" class="nav-link" data-scroll-target="#key-numbers-registry">Key Numbers Registry</a></li>
   </ul>
 </nav>
@@ -2354,8 +2356,18 @@ vertical-align: -.125em;
 <li>RESULTS.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL</li>
 </ul>
 </section>
+<section id="what-does-not-diminish-the-run" class="level2">
+<h2 class="anchored" data-anchor-id="what-does-not-diminish-the-run">§13. What Does NOT Diminish the Run</h2>
+<ul>
+<li>Synthesis section (prose only, no new RESULTS analysis): scorecard of the six deflationary objections, each with a verdict and a pointer to the section that tests it.</li>
+<li>East weak → no (§3, gap +0.39); bracket soft → no (§3–§4, opp SRS +3.67, 49th pct); early-round teams fading → a little at the edges (§5, 76ers/Cavs ~1.2–1.5 below on few games, Spurs +6.2); margins padded → no (§11, wins-only #1); scoring-era inflation → mostly no (§14, per-possession still #1); opponent injured → no (§9, 98% health).</li>
+<li>The one genuine caveat is not on the list: 19-game small sample → single best only ~9% under the fairest test (§10–§11).</li>
+<li>Full per-objection treatment lives in the companion doc <code>knicks_2026_historic_investigation.md</code>.</li>
+<li>RESULTS.md refs: none new (points to §3, §4, §5, §9, §11, §13, §14 of RESULTS via the cited findings sections).</li>
+</ul>
+</section>
 <section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">§13. Limitations</h2>
+<h2 class="anchored" data-anchor-id="limitations">§14. Limitations</h2>
 <ul>
 <li>19 games: wide CI. Comparison set only 43 champions.</li>
 <li>Pre-1997: PLUS_MINUS null; derived from PTS (algebraically exact for game margins).</li>
@@ -2364,11 +2376,18 @@ vertical-align: -.125em;
 </ul>
 </section>
 <section id="methodology" class="level2">
-<h2 class="anchored" data-anchor-id="methodology">§14. Methodology</h2>
+<h2 class="anchored" data-anchor-id="methodology">§15. Methodology</h2>
 <ul>
 <li>Python (pandas, numpy). Data via nba_api (LeagueGameFinder, LeagueStandingsV3).</li>
 <li>SRS: least-squares system (I − A) @ srs = mean_margin, constrained to sum = 0.</li>
-<li>Full details in RESULTS.md and knicks_2026_analysis.py.</li>
+<li>Full details in RESULTS.md (linked as a companion doc, not inlined) and knicks_2026_analysis.py.</li>
+</ul>
+</section>
+<section id="appendix-a-companion-documents" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-a-companion-documents">Appendix A: Companion Documents</h2>
+<ul>
+<li>Findings now end with “Appendix A: Companion Documents” linking the standalone Regression Results (RESULTS), The Investigation, the one-page Summary, the Stats Explainer, and this Outline.</li>
+<li>The report is built with <code>include_appendix=False</code>: RESULTS is no longer inlined as a report appendix; it is a linked companion doc.</li>
 </ul>
 <hr>
 </section>
