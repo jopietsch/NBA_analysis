@@ -1099,6 +1099,70 @@ def compute_elo_ratings(reg_logs: pd.DataFrame,
     return (s - s.mean()) / elo_per_point
 
 
+def compute_bradley_terry_ratings(reg_logs: pd.DataFrame,
+                                  reg: float = 1.0,
+                                  points_scale: float = 6.2,
+                                  max_iter: int = 500,
+                                  tol: float = 1e-10) -> pd.Series:
+    """Wins-only Bradley–Terry strength ratings, converted to a points scale.
+
+    Bradley–Terry models P(i beats j) = pi_i / (pi_i + pi_j) and is fit by
+    maximum likelihood from win/loss ONLY — it never sees a point margin, making
+    it the most independent cross-check on SRS (which is built entirely from
+    margins).  Fit by the standard minorization–maximization iteration
+    (Hunter 2004):
+
+        pi_i ← (W_i + reg) / ( Σ_{j≠i} n_ij/(pi_i+pi_j) + 2·reg/(pi_i + 1) )
+
+    The ``reg`` term adds one phantom win and one phantom loss against a
+    league-average anchor (strength 1), which keeps undefeated or winless teams
+    finite.  ``pi`` is renormalized to mean 1 each step.
+
+    The raw rating is the centered log-strength ``log(pi)`` (natural-log-odds).
+    To make it subtractable from a point margin it is multiplied by
+    ``points_scale`` ≈ 6.2 points per log-odds — the conversion implied purely by
+    the Elo convention (400 Elo per base-10 odds, 28 Elo per point), NOT fit to
+    any margins.  So only the UNITS borrow a constant; the ordering stays
+    100% wins-based.
+    """
+    logs = reg_logs.copy()
+    teams = sorted(int(t) for t in logs["TEAM_ID"].unique())
+    idx = {t: i for i, t in enumerate(teams)}
+    n = len(teams)
+
+    W = np.zeros(n, dtype=float)
+    N = np.zeros((n, n), dtype=float)
+    for _, grp in logs.groupby("GAME_ID", sort=False):
+        if len(grp) != 2:
+            continue
+        rows = grp.to_dict("records")
+        a, b = int(rows[0]["TEAM_ID"]), int(rows[1]["TEAM_ID"])
+        ia, ib = idx[a], idx[b]
+        N[ia, ib] += 1.0
+        N[ib, ia] += 1.0
+        if rows[0]["WL"] == "W":
+            W[ia] += 1.0
+        else:
+            W[ib] += 1.0
+
+    pi = np.ones(n, dtype=float)
+    for _ in range(max_iter):
+        pi_old = pi.copy()
+        denom = np.zeros(n, dtype=float)
+        for i in range(n):
+            s = N[i] / (pi[i] + pi)
+            s[i] = 0.0
+            denom[i] = s.sum() + 2.0 * reg / (pi[i] + 1.0)
+        pi = (W + reg) / np.where(denom > 0, denom, 1e-12)
+        pi *= n / pi.sum()
+        if np.max(np.abs(pi - pi_old)) < tol:
+            break
+
+    rating = np.log(pi)
+    rating -= rating.mean()
+    return pd.Series(rating * points_scale, index=teams, dtype=float)
+
+
 def build_alt_rating_adjusted_table(rating_fn,
                                     start_year: int = START_YEAR,
                                     end_year: int = END_YEAR,

@@ -671,6 +671,43 @@ schedule looks harder under Elo).
 
 ---
 
+## 14. Wins-Only Bradley–Terry Cross-Check (`run_bt_check`)
+
+**The data.** Same `build_alt_rating_adjusted_table` machinery as §13, with
+`compute_bradley_terry_ratings` supplying the opponent rating.
+
+**Why a wins-only rating.** SRS and Elo are both built from point margins, so
+neither rules out the worry that the Knicks' margin is padded (blowouts, garbage
+time). Bradley–Terry is fit from win/loss only, sharing no information with the
+margin, so it isolates that concern: if the Knicks still rank first when margins
+are stripped from the *opponent* side, the dominance is not a margin artifact.
+
+**The model.** `P(i beats j) = pi_i/(pi_i+pi_j)`, fit by Hunter's (2004)
+minorization–maximization iteration `pi_i ← (W_i+reg) / (Σ_j n_ij/(pi_i+pi_j) +
+2·reg/(pi_i+1))`. The `reg = 1` term is one phantom win and loss against a
+league-average anchor, which keeps undefeated/winless teams finite; `pi` is
+renormalized to mean 1 each step. The fitted log-strength `log(pi)` is centered
+and multiplied by ≈6.2 points per natural-log-odds — the conversion implied by
+the Elo convention (400 Elo per base-10 odds ÷ 28 Elo per point), **not** fit to
+any margins. Only the units borrow that constant; the ordering is 100% wins-based.
+
+**A note on units.** Subtracting a log-odds rating from a point margin would be
+dimensionally meaningless, which is why the 6.2 scaling is applied. The scaling is
+a fixed convention rather than a per-season fit, so it does not smuggle margin
+information back in; it only puts the wins-based ordering on a points axis so the
+same `adj = raw − opp_rating` subtraction is interpretable.
+
+**What the results mean.** Bradley–Terry rates the Knicks' schedule at +3.5
+(essentially identical to SRS's +3.7) and leaves their adjusted margin at +11.4,
+**1st of 43** (correlation with the SRS-adjusted margin across champions ≈ +0.99).
+So the wins-only check agrees with SRS, not with Elo. The decisive factor in the
+§13 disagreement was therefore *recency weighting* (Elo crediting opponents' late
+form), not margin-vs-wins: on full-season opponent quality, by either margins
+(SRS) or wins (Bradley–Terry), the Knicks are #1; only Elo's recency weighting
+moves them to 3rd. This also cleanly rebuts the "padded by blowouts" objection.
+
+---
+
 ## Recurring Methods: Quick Reference
 
 **`_pct_rank(series, value, ascending=True)`**

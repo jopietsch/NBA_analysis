@@ -413,4 +413,25 @@ home edge, MOV multiplier), converted to points above average (~28 Elo =
   Atlanta Hawks                  +2.38    +4.25
   Philadelphia 76ers             -0.27    +1.84
 
+─── §16 WINS-ONLY (BRADLEY–TERRY) CROSS-CHECK ──────────────────────────
+SRS and Elo are both built from point margins.  Bradley–Terry is fit from
+win/loss ONLY (P(i beats j) = pi_i/(pi_i+pi_j)), so it shares no margin
+information with the raw dominance number.  Ratings are log-odds converted
+to points by the Elo convention (~6.2 pts/log-odds); only the units borrow
+that constant, the ordering is 100% wins-based.  This is the strongest test
+that the result isn't a margin-inflation artifact.
+
+  Knicks games-wtd opp rating (Bradley–Terry): +3.52 pts/game
+  Knicks Bradley–Terry-adjusted margin:        +11.37 pts/game
+  Rank among champions:               #1 of 43 (100.0th pct)
+  For comparison, SRS-adjusted rank:  #1 of 43
+  Correlation with SRS-adjusted margin (all champions): +0.990
+
+  Top 5 by Bradley–Terry-adjusted margin:
+    25–26    raw +14.89  opp +3.52  adj +11.37  ← Knicks
+    16–17    raw +13.65  opp +3.22  adj +10.43
+    90–91    raw +11.71  opp +2.39  adj +9.31
+    86–87    raw +10.83  opp +1.59  adj +9.24
+    85–86    raw +10.56  opp +2.31  adj +8.24
+
 ```

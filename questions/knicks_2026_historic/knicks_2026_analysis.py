@@ -65,6 +65,7 @@ from knicks_2026_data import (
     build_adjusted_margin_samples,
     hierarchical_adjusted_margin_rank,
     compute_elo_ratings,
+    compute_bradley_terry_ratings,
     build_alt_rating_adjusted_table,
 )
 
@@ -1130,6 +1131,25 @@ def run_elo_check(elo_table: pd.DataFrame,
               f"{float(elo_2026.get(int(opp_id), float('nan'))):>+8.2f}", file=out)
 
 
+# ── Section 16: Wins-only (Bradley–Terry) cross-check ────────────────────────
+
+def run_bt_check(bt_table: pd.DataFrame,
+                 champions: pd.DataFrame,
+                 out: io.StringIO) -> None:
+    """Re-rank using a wins-only rating that never sees a point margin."""
+    print(_hdr("§16 WINS-ONLY (BRADLEY–TERRY) CROSS-CHECK"), file=out)
+    print(
+        "SRS and Elo are both built from point margins.  Bradley–Terry is fit from\n"
+        "win/loss ONLY (P(i beats j) = pi_i/(pi_i+pi_j)), so it shares no margin\n"
+        "information with the raw dominance number.  Ratings are log-odds converted\n"
+        "to points by the Elo convention (~6.2 pts/log-odds); only the units borrow\n"
+        "that constant, the ordering is 100% wins-based.  This is the strongest test\n"
+        "that the result isn't a margin-inflation artifact.\n",
+        file=out,
+    )
+    _alt_rating_ranking(bt_table, champions, "Bradley–Terry", out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1150,6 +1170,11 @@ def main() -> None:
 
     print("Building Elo-adjusted table (all seasons)...")
     elo_table = build_alt_rating_adjusted_table(compute_elo_ratings, START_YEAR, END_YEAR)
+
+    print("Building Bradley–Terry-adjusted table (all seasons)...")
+    bt_table = build_alt_rating_adjusted_table(
+        compute_bradley_terry_ratings, START_YEAR, END_YEAR
+    )
 
     print(f"Ready: {len(champions)} champion seasons, {len(gap_table)} gap seasons\n")
 
@@ -1173,6 +1198,7 @@ def main() -> None:
     run_robustness(po_2026, reg_2026, champions, out)
     run_hierarchical(adj_samples, out)
     run_elo_check(elo_table, champions, reg_2026, po_2026, standings_2026, out)
+    run_bt_check(bt_table, champions, out)
 
     body = out.getvalue()
 

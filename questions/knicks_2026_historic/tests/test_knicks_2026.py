@@ -366,6 +366,36 @@ def test_compute_elo_ratings_orders_and_centers():
     assert 0 < elo[KNICKS_ID] < 30
 
 
+def test_compute_bradley_terry_orders_and_centers():
+    reg = _round_robin_reg()
+    bt = data.compute_bradley_terry_ratings(reg)
+    # A beat everyone, C lost everything → A > B > C; centered at 0
+    assert bt[KNICKS_ID] > bt[OPP1_ID] > bt[OPP2_ID]
+    assert abs(float(bt.mean())) < 1e-9
+
+
+def test_compute_bradley_terry_ignores_margin():
+    # Same win/loss pattern but wildly different margins → identical BT ratings,
+    # because Bradley-Terry never sees the margin.
+    small = _round_robin_reg(dominant_margin=2.0)
+    huge  = _round_robin_reg(dominant_margin=40.0)
+    bt_small = data.compute_bradley_terry_ratings(small)
+    bt_huge  = data.compute_bradley_terry_ratings(huge)
+    for tid in [KNICKS_ID, OPP1_ID, OPP2_ID]:
+        assert bt_small[tid] == pytest.approx(bt_huge[tid], abs=1e-9)
+
+
+def test_compute_bradley_terry_undefeated_finite():
+    # A wins all its games; regularization must keep its rating finite.
+    rows = []
+    for g, (w, l) in enumerate([(KNICKS_ID, OPP1_ID), (KNICKS_ID, OPP2_ID),
+                                (KNICKS_ID, OPP1_ID), (KNICKS_ID, OPP2_ID)]):
+        rows.append({"GAME_ID": f"G{g}", "TEAM_ID": w, "WL": "W", "MATCHUP": "A vs. B"})
+        rows.append({"GAME_ID": f"G{g}", "TEAM_ID": l, "WL": "L", "MATCHUP": "B @ A"})
+    bt = data.compute_bradley_terry_ratings(pd.DataFrame(rows))
+    assert np.isfinite(bt[KNICKS_ID]) and bt[KNICKS_ID] == bt.max()
+
+
 def test_build_alt_rating_adjusted_table_matches_manual(monkeypatch):
     # rating_fn that returns fixed ratings; verify adj = raw - games_wtd_opp_rating
     fixed = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
