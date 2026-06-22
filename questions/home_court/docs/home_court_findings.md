@@ -71,7 +71,7 @@ These shares carry uncertainty. The regular-season figures are tight: rebounding
 
 ![Shot zone differentials (home minus road) over time, regular season vs. playoffs. Four panels: paint, mid-range, corner 3, and above-break 3. The paint panel is the key one: the gap has nearly closed, meaning away teams now get close-range attempts at nearly the same rate as home teams. The three-point panels show little differential throughout.](../generated/images/home_court_shot_zones.svg){#fig-shot-zones}
 
-The league's three-point attempt rate and the home win rate have moved in opposite directions for 40 years. When 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%. The timing lines up with the second sharp drop: the three-point share rose from about a quarter to about 40% of all shots in the three seasons after 2017, exactly when that drop began.
+The league's three-point attempt rate and the home win rate have moved in opposite directions for 40 years. When 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%. The timing lines up with the second steepening: the three-point share rose from about a quarter to about 40% of all shots in the three seasons after 2017, exactly when that steepening began.
 
 That 40-year lockstep looks convincing, but a tighter test exposes its limits. Once you set aside the fact that both lines simply drift over the decades and ask whether they still move together year to year, the link weakens by about half: roughly 40% of that 40-year chart is two trends heading the same direction over time, not one driving the other.
 
