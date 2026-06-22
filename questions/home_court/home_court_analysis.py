@@ -3312,6 +3312,11 @@ def run_franchise_era_comparison(
         if early_n[t]["n_home"] >= min_games and late_n[t]["n_home"] >= min_games
     }
 
+    if not common:
+        print(f"   N = 0 franchises with ≥{min_games} home games in both eras "
+              f"(insufficient data for an era comparison)\n")
+        return
+
     rows = sorted(
         [(t, early_n[t]["hca"], late_n[t]["hca"], late_n[t]["hca"] - early_n[t]["hca"])
          for t in common],

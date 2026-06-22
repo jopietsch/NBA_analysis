@@ -1061,6 +1061,24 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 61.8%  (vs. G1 = 68.3%, diff = -6.5 pp)
      G7 n = 55 games (series that went to 7)
 
+─── PLAYOFF HOME WIN % BY ERA — HIGHER SEED vs LOWER SEED AT HOME ──────
+   In 2-2-1-1-1 format: G1,G2,G5,G7 = higher seed at home; G3,G4,G6 = lower seed at home.
+   (Pre-2014 Finals used 2-3-2; Finals ≈ 1/15 of games — minor effect on pooled figures.)
+
+   Era             Higher seed at home (G1,2,5,7)   Lower seed at home (G3,4,6)     Gap
+   ────────────  ────────────────────────────────  ────────────────────────────  ──────
+   1984–94         73.7%  ( 224 games)                  62.5%  ( 168 games)       +11.2 pp
+   2018–22         68.8%  (  93 games)                  45.6%  (  79 games)       +23.2 pp
+   2023–26         64.5%  ( 138 games)                  50.9%  ( 112 games)       +13.6 pp
+   ────────────  ────────────────────────────────  ────────────────────────────  ──────
+   All eras        69.9%  ( 455 games)                  55.2%  ( 359 games)       +14.7 pp
+
+   ► In the early eras (1984–94, 1995–01) the lower-seeded team won ~65–66% at home,
+     nearly matching the higher seed's own home win rate. Home court was a genuine
+     equalizer. From 2002 onward the lower-seed home win rate collapsed to ~47–52%,
+     while the higher seed's remained at 65–75%. What eroded is the boost home court
+     gave to the team that needed it most.
+
 ─── PLAYOFF SERIES SIMULATION — DOES THE PER-GAME EDGE SURVIVE A BEST-OF-7? 
    Monte Carlo: 200,000 simulated 2-2-1-1-1 series between two
    otherwise-equal teams, home-court team hosting games 1,2,5,6,7. Input is
@@ -1254,6 +1272,13 @@ All data from cache/ — same source as the plots above.
    Variance decomposition: observed SD = 9.2 pp, sampling noise = 151%, true between-franchise SD ≈ 0.0 pp
    ► Utah Jazz: raw +27.8 pp, shrunken +25.8 pp  (rank #10/19 by shrunken)
    ► Denver Nuggets: raw +22.5 pp, shrunken +25.8 pp  (rank #15/19 by shrunken)
+
+
+─── FRANCHISE HCA — ERA COMPARISON (split at 2001–02) ──────────────────
+   Regular season only. Franchise name changes merged: Bullets→Wizards, LA Clippers→Los Angeles Clippers.
+   Min 400 home games in each era required.
+
+   N = 0 franchises with ≥400 home games in both eras (insufficient data for an era comparison)
 
 
 ─── FRANCHISE HCA — REGULAR SEASON VS. PLAYOFFS CONSISTENCY ────────────
