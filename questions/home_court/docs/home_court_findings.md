@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-Home court advantage in the NBA has been shrinking for four decades. **Has it really changed?** **What makes  factors create the advtange?** **And what's driving the decline, and what isn't?**
+Home court advantage in the NBA has been shrinking for four decades. **Has it really changed?** **What factors create the advantage?** **And what's driving the decline, and what isn't?**
 
 Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two sharper drops layered on top.** The structural advantages home teams once relied on have worn away. **Four things drove the decline: fairer officiating, the shift to three-point shooting, the erosion of the home rebounding edge, and the closing turnover gap.**
 
