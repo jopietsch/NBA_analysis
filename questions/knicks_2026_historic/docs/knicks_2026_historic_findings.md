@@ -382,6 +382,8 @@ opponent quality the Knicks are first, and only when recent form is weighted
 heavily do they slip to third. That is the same lesson as §10: clearly elite,
 plausibly the best, but not the unambiguous #1 the single SRS number suggests.
 
+![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){width=100%}
+
 ---
 
 ## 12. How Unlikely Was a 16-3 Run?

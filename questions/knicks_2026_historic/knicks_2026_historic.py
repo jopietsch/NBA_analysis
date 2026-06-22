@@ -47,11 +47,17 @@ def main() -> None:
     adj_samples = data.build_adjusted_margin_samples(data.START_YEAR, data.END_YEAR)
     hier = data.hierarchical_adjusted_margin_rank(adj_samples, data.SUBJECT_YEAR)
 
+    elo_table = data.build_alt_rating_adjusted_table(
+        data.compute_elo_ratings, data.START_YEAR, data.END_YEAR)
+    bt_table = data.build_alt_rating_adjusted_table(
+        data.compute_bradley_terry_ratings, data.START_YEAR, data.END_YEAR)
+
     print("Generating charts...")
     paths = plots.plot_all(po_2026, reg_2026, standings_2026, champions, gap_table,
                            health_df=health_df, ats_df=ats_df, series_df=series_df,
                            posterior_df=hier.get("posterior"),
-                           p_rank1=hier.get("p_rank1"))
+                           p_rank1=hier.get("p_rank1"),
+                           elo_table=elo_table, bt_table=bt_table)
     for p in paths:
         print(f"  Saved → {os.path.basename(p)}")
 

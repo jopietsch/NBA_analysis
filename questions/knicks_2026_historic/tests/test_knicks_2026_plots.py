@@ -165,6 +165,24 @@ def test_plot_title_run_rarity(tmp_path, monkeypatch):
     assert os.path.exists(path)
 
 
+def _mini_alt_table(adj_subject: float) -> pd.DataFrame:
+    years = list(range(2020, 2026)) + [SUBJECT_YEAR]
+    rows = []
+    for i, y in enumerate(years):
+        adj = adj_subject if y == SUBJECT_YEAR else 3.0 + i * 0.5
+        rows.append({"year": y, "champion_id": 1, "avg_margin": 12.0,
+                     "avg_opp_rating": 3.0, "adj_margin": adj})
+    return pd.DataFrame(rows)
+
+
+def test_plot_rating_systems(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_rating_systems(
+        _mini_champions(), _mini_alt_table(11.0), _mini_alt_table(9.4)
+    )
+    assert os.path.exists(path)
+
+
 def test_plot_bootstrap_margin(tmp_path, monkeypatch):
     monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
     path = plots.plot_bootstrap_margin(

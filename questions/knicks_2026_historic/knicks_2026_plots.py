@@ -734,6 +734,62 @@ def plot_playoff_field_elevation(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     return save_chart("knicks_2026_field_elevation.svg", OUTPUT_DIR, fig=fig)
 
 
+# ── 15. Second opinion: the Knicks under three rating systems ─────────────────
+
+def plot_rating_systems(champions: pd.DataFrame, elo_table: pd.DataFrame,
+                        bt_table: pd.DataFrame, top_n: int = 6) -> str:
+    """Where the Knicks rank under three different opponent ratings.
+
+    The whole #1 claim leans on SRS.  This re-runs the opponent adjustment with a
+    wins-only rating (Bradley-Terry) and a recency-weighted one (Elo) and shows
+    the top champions under each, Knicks highlighted, so the reader sees the
+    answer holds: top-3 every way, #1 on two of the three.
+    """
+    panels = [
+        ("By season margin (SRS)", champions),
+        ("By wins only (Bradley-Terry)", bt_table),
+        ("By recent form (Elo)", elo_table),
+    ]
+
+    fig, axes = plt.subplots(1, 3, figsize=(11, 4.2), sharex=True)
+    fig.patch.set_facecolor(BG)
+
+    for ax, (label, table) in zip(axes, panels):
+        df = table.dropna(subset=["adj_margin"]).copy()
+        subj = df.loc[df["year"] == SUBJECT_YEAR, "adj_margin"]
+        rank = int((df["adj_margin"] > float(subj.iloc[0])).sum()) + 1 if not subj.empty else None
+
+        top = df.nlargest(top_n, "adj_margin").sort_values("adj_margin")  # best at top
+        labels = [short_label(int(y)) for y in top["year"]]
+        colors = [KNICKS_BLUE if int(y) == SUBJECT_YEAR else LGRAY for y in top["year"]]
+
+        ax.barh(range(len(top)), top["adj_margin"], color=colors, edgecolor="none", zorder=2)
+        ax.set_yticks(range(len(top)))
+        ax.set_yticklabels(labels, fontsize=8.5)
+        rank_txt = f"Knicks #{rank}" if rank else ""
+        ax.set_title(f"{label}\n{rank_txt}", fontsize=9.5, fontweight="bold",
+                     color="#2c2c2a", pad=6)
+        _style(ax)
+        ax.grid(axis="y", visible=False)
+        ax.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+        for i, (_, r) in enumerate(top.iterrows()):
+            if int(r["year"]) == SUBJECT_YEAR:
+                v = float(r["adj_margin"])
+                ax.text(v - 0.15, i, f"{v:+.1f}", va="center", ha="right",
+                        fontsize=8, fontweight="bold", color="white", zorder=3)
+
+    axes[0].set_xlabel("")
+    fig.supxlabel("Opponent-adjusted playoff margin (pts/game)", fontsize=10, y=0.02)
+    fig.suptitle("All three rating systems put the Knicks among the best title runs ever",
+                 fontsize=12, fontweight="bold", color="#2c2c2a", y=1.0)
+    fig.text(0.5, 0.92,
+             "Top 6 champions under each system; switching margins for wins keeps them #1, only recent-form weighting drops them to #3",
+             ha="center", fontsize=8.5, color=GRAY)
+    fig.tight_layout(rect=(0, 0.04, 1, 0.9))
+    return save_chart("knicks_2026_rating_systems.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── 14. How rare a 16-3 title run was, given the regular season ──────────────
 
 def plot_title_run_rarity(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
@@ -820,7 +876,9 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              ats_df: pd.DataFrame | None = None,
              series_df: pd.DataFrame | None = None,
              posterior_df: pd.DataFrame | None = None,
-             p_rank1: float | None = None) -> list:
+             p_rank1: float | None = None,
+             elo_table: pd.DataFrame | None = None,
+             bt_table: pd.DataFrame | None = None) -> list:
     from knicks_2026_data import compute_srs
     reg_srs = compute_srs(reg_2026)
 
@@ -851,6 +909,11 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
             paths.append(p)
     if posterior_df is not None and not posterior_df.empty and p_rank1 is not None:
         p = plot_hierarchical_posterior(posterior_df, p_rank1)
+        if p:
+            paths.append(p)
+    if (elo_table is not None and not elo_table.empty
+            and bt_table is not None and not bt_table.empty):
+        p = plot_rating_systems(champions, elo_table, bt_table)
         if p:
             paths.append(p)
     return paths
