@@ -18,7 +18,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-from nbakit.textfmt import section as _section_str, subsection as _subsection_str
+from nbakit.textfmt import section as _hdr, subsection as _subhdr
 from nbakit.stats import binom_sf_ge, t_interval
 
 from knicks_2026_data import (
@@ -86,14 +86,6 @@ def _pct_rank(series: pd.Series, value: float, ascending: bool = True) -> float:
         return float((clean <= value).mean() * 100)
     else:
         return float((clean >= value).mean() * 100)
-
-
-def _hdr(title: str) -> str:
-    return _section_str(title)
-
-
-def _subhdr(title: str) -> str:
-    return _subsection_str(title)
 
 
 # ── Section 1: Raw claim ─────────────────────────────────────────────────────
