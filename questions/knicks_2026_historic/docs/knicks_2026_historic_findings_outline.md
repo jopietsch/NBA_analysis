@@ -140,7 +140,7 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K04 | §1 L16 | adj margin +11.2 pts/game, first all-time | §5 OPPONENT-ADJUSTED | adj margin +11.23, 100th pct |
 | K05 | §3 L75 | West-East SRS gap +0.39, 37th pct | §3 HOW WEAK IS THE EAST | gap +0.39, 37.2th pct; mean +0.78 |
 | K06 | §1 L21 | 63% of seasons West more dominant | §3 HOW WEAK IS THE EAST | 37.2th pct West dominance → 62.8% more dominant |
-| K07 | §1 L29 | Spurs SRS +8.28 reg → +14.48 playoff | §6 ROUND-BY-ROUND (opp SRS table) | Spurs reg +8.28, playoff SRS +14.48, gap +6.20 |
+| K07 | §1 L29 | Spurs SRS +8.28 reg → +15.13 playoff | §6 ROUND-BY-ROUND (field elevation table) | Spurs reg +8.28, playoff SRS +15.13 (incl. Knicks series), elev +6.85 |
 | K08 | §1 L35 | avg opponent availability 98% | §11 OPPONENT PLAYER AVAILABILITY | avg health 98% |
 | K09 | §2 L47 | win rate 0.842 vs. mean 0.752 | §1 THE RAW CLAIM | mean 0.752; best 0.941 |
 | K10 | §2 L62 | 4 of 5 Finals games decided by 4 pts or fewer | §7 OTHER DEFLATORS | not directly; 31.6% games <=5 pts |

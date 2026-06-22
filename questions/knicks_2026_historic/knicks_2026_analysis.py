@@ -507,6 +507,22 @@ def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
         opp_name = name_map.get(int(opp_id), f"Team {int(opp_id)}")
         print(f"  vs. {opp_name:<28} {series_wins}-{series_losses}  avg margin {avg_mgn:+.1f}", file=out)
 
+    # East (pre-Finals) combined vs. Finals close-game shape.  Series run in
+    # date order, so the last opponent is the Finals; the rest are the East run.
+    ordered_opps = list(dict.fromkeys(knicks_w_opp["OPP_ID"].tolist()))
+    if len(ordered_opps) >= 2:
+        finals_opp = ordered_opps[-1]
+        east   = knicks_w_opp[knicks_w_opp["OPP_ID"] != finals_opp]
+        finals = knicks_w_opp[knicks_w_opp["OPP_ID"] == finals_opp]
+        east_w = int((east["WL"] == "W").sum())
+        east_l = int((east["WL"] == "L").sum())
+        east_margin  = float(east["PLUS_MINUS"].mean())
+        finals_close = int((finals["PLUS_MINUS"].abs() <= 4).sum())
+        print(_subhdr("East (pre-Finals) combined vs. Finals shape"), file=out)
+        print(f"  East opponents (R1–CF), games-weighted: {east_w}-{east_l}, "
+              f"avg margin {east_margin:+.1f} pts/game over {len(east)} games", file=out)
+        print(f"  Finals games decided by ≤4 pts: {finals_close} of {len(finals)}", file=out)
+
 
 # ── Section 8: Playoff SRS and elevation ─────────────────────────────────────
 
