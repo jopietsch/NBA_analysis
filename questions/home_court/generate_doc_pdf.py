@@ -9,35 +9,8 @@ Thin wrapper around nbakit.mdpdf — all logic lives there.
     python3 generate_doc_pdf.py home_court_stats_explainer.md --appendix RESULTS.md
 """
 
-import os
 import sys
-from nbakit.mdpdf import build
+from nbakit.mdpdf import main
 
 if __name__ == "__main__":
-    args = sys.argv[1:]
-    appendix = None
-    if "--appendix" in args:
-        idx = args.index("--appendix")
-        try:
-            appendix = args[idx + 1]
-        except IndexError:
-            sys.exit("usage: --appendix requires a path (e.g. --appendix docs/RESULTS.md)")
-        del args[idx:idx + 2]
-    if not args:
-        sys.exit("usage: python3 generate_doc_pdf.py <markdown_file> "
-                 "[output.pdf] [--appendix docs/RESULTS.md]")
-    md_path = args[0]
-    if len(args) > 1:
-        out_path = args[1]
-    else:
-        stem = os.path.splitext(os.path.basename(md_path))[0]
-        # Write into the source's project generated/ dir, derived from the
-        # markdown's location rather than the cwd. A doc inside docs/ lands in
-        # its project root's generated/ (home_court/docs/x.md -> home_court/
-        # generated/); a doc elsewhere lands in a sibling generated/
-        # (../stats_tutorial.md -> ../generated/).
-        src_dir = os.path.dirname(md_path)
-        if os.path.basename(src_dir) == "docs":
-            src_dir = os.path.dirname(src_dir)
-        out_path = os.path.join(src_dir, "generated", stem + ".pdf")
-    build(md_path, out_path, appendix_path=appendix)
+    main(sys.argv[1:])

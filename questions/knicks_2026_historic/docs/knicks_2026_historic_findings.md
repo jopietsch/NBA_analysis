@@ -155,8 +155,9 @@ The 76ers and Cavaliers rated a touch below their regular-season marks in their
 pre-Knicks games (−1.2 and −1.5 pts). Read those two lightly: each rests on only
 a handful of independent playoff games, so a gap that small is as likely to be
 noise as a real dip. The Spurs are the firmer finding, because their number
-comes from a full West bracket: a regular-season SRS of +8.28 but +14.5 in the
-playoffs, a +6.2 jump and the largest of any Knicks opponent this postseason.
+comes from a full West bracket: a regular-season SRS of +8.28 but +14.48 in the
+playoffs, a +6.2 jump (excluding the Finals; §6 reports +6.85 including it) and
+the largest of any Knicks opponent this postseason.
 The Knicks beat a team playing well above its own regular-season level.
 
 **Net result:** Adjusting the full run for opponents' actual playoff
@@ -238,7 +239,7 @@ weaker but still better than chance. Second, ATS margin is just the final margin
 minus a near-zero spread, so this is not separate proof of dominance, it is
 mostly the same scoreline told from the bookmaker's side. The signal comes
 entirely from the first three rounds: 14-0 against the spread vs. East
-opponents, with the Finals exactly dead-on (2-5).
+opponents, with the Finals exactly dead-on (covered 2 of 5).
 
 **But the two halves look nothing alike:**
 
@@ -415,8 +416,10 @@ overperformance does not.)
 on the margin ([+7.4, +22.4]). The comparison set is also only 43 champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all
 measure closely related things; treat them as different angles on one story, not
-independent votes. §10 puts numbers on this: the exact #1 rank is roughly a
-60/40 call, not a settled fact.
+independent votes. §10 puts numbers on this: holding the rest of history fixed
+the #1 rank is roughly a 60/40 call, and under the fairer test that lets every
+champion be as uncertain as the Knicks it falls to about 1-in-11. Not a settled
+fact either way.
 
 **Opponent SRS** for the reg-season-adjusted metrics is from regular-season
 performance. For the playoff-adjusted metrics (§5), each opponent's playoff SRS

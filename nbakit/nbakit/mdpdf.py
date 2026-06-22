@@ -220,17 +220,39 @@ def build(md_path: str, output_path: str | None = None,
     return pdf_path
 
 
-if __name__ == "__main__":
-    args = sys.argv[1:]
+def main(argv: list[str]) -> None:
+    """CLI entry: render a Markdown doc to PDF + HTML.
+
+        <markdown_file> [output.pdf] [--appendix RESULTS.md]
+
+    With no explicit output path, the PDF lands in the source's project
+    generated/ dir, derived from the markdown's location rather than the cwd:
+    a doc inside docs/ lands in its project root's generated/
+    (foo/docs/x.md -> foo/generated/); a doc elsewhere lands in a sibling
+    generated/ (./x.md -> generated/).
+    """
     appendix = None
-    if "--appendix" in args:
-        idx = args.index("--appendix")
+    if "--appendix" in argv:
+        idx = argv.index("--appendix")
         try:
-            appendix = args[idx + 1]
+            appendix = argv[idx + 1]
         except IndexError:
-            sys.exit("usage: --appendix requires a path")
-        del args[idx:idx + 2]
-    if not args:
+            sys.exit("usage: --appendix requires a path (e.g. --appendix RESULTS.md)")
+        del argv[idx:idx + 2]
+    if not argv:
         sys.exit("usage: python3 -m nbakit.mdpdf <markdown_file> "
                  "[output.pdf] [--appendix RESULTS.md]")
-    build(args[0], args[1] if len(args) > 1 else None, appendix_path=appendix)
+    md_path = argv[0]
+    if len(argv) > 1:
+        out_path = argv[1]
+    else:
+        stem = os.path.splitext(os.path.basename(md_path))[0]
+        src_dir = os.path.dirname(md_path)
+        if os.path.basename(src_dir) == "docs":
+            src_dir = os.path.dirname(src_dir)
+        out_path = os.path.join(src_dir, "generated", stem + ".pdf")
+    build(md_path, out_path, appendix_path=appendix)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
