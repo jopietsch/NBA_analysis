@@ -287,7 +287,7 @@ Checklist for `/check-consistency`. Each row is one prose claim with the RESULTS
 | N45 | §5 L159; §6 L205 | G7 64% | PLAYOFF SERIES STRUCTURE, game table | G7=63.8% |
 | N46 | §5 L161; §6 L205 | Lower seed won 65% and 66% in 1980s/90s | SEEDING ERA SPLIT, lower-seed column | 65.4% (1984–94), 65.8% (1995–01) — same as N03 |
 | N47 | §5 L161; §6 L205 | Lower seed today: ~49% at home | SEEDING ERA SPLIT, lower-seed column | 49.0% (2023–26) — same as N04 |
-| N48 | §5 L161 | Higher seed held 70–77% through 2022 | SEEDING ERA SPLIT, higher-seed column | 74.2% (2002–04), 75.2% (2005–17), 71.7% (2018–22) |
+| N48 | §5 L161; §6 L208 | Higher seed held 70–75% through 2022 | SEEDING ERA SPLIT, higher-seed column | 74.2% (2002–04), 75.2% (2005–17), 71.7% (2018–22) |
 | N49 | §5 L161 | Higher seed fell to ~65% recently | SEEDING ERA SPLIT, higher-seed column | 64.7% (2023–26) |
 | N50 | §5 L161 | Gap: 3–5 pp → 20+ pp peak → 15 pp today | SEEDING ERA SPLIT, Gap column | 5.6 pp (1984–94) → 24.4 pp peak (2018–22) → 15.7 pp (2023–26) |
 | N51 | §5 L165 | Weaker host (G3–4) wins 51.5% | SEEDING QUALITY DECOMP, lower-seed check | 51.5% (N=827) |
