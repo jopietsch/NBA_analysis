@@ -410,8 +410,9 @@ def compute_multilevel_decline(df: pd.DataFrame) -> dict:
 
     Returns a dict consumed by both run_multilevel_decline() and the plot.
     """
-    MIN_G       = 15  # min home and road games per team-season (keeps lockouts)
-    MIN_SEASONS = 10  # franchises need a long enough panel for a slope estimate
+    MIN_G         = 15    # min home and road games per team-season (keeps lockouts)
+    MIN_SEASONS   = 10    # franchises need a long enough panel for a slope estimate
+    ACTIVE_CUTOFF = 2015  # drop franchises whose last season is before this year
     sub = df[df["is_playoff"] == 0]
 
     home = sub.groupby(["year", "TEAM_NAME_home"])["home_win"].agg(hw="sum", hn="count")
@@ -442,6 +443,8 @@ def compute_multilevel_decline(df: pd.DataFrame) -> dict:
         warnings.simplefilter("ignore")
         for t, g in panel.groupby("team"):
             if g["year"].nunique() < MIN_SEASONS:
+                continue
+            if int(g["year"].max()) < ACTIVE_CUTOFF:
                 continue
             m = smf.ols("hca_gap ~ year_c", data=g).fit()
             rows.append((str(t), float(m.params["year_c"]),

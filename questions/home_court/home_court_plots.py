@@ -1856,6 +1856,8 @@ def plot_team_decline_slopes(data: dict) -> None:
     ax.axvline(league, color=BLUE, linestyle="--", linewidth=1.4, zorder=2,
                label=f"League-wide slope ({league:+.2f} pp/yr)")
     ax.axvline(0, color=GRAY, linestyle=":", linewidth=1.0, alpha=0.7, zorder=1)
+    ax.text(0, len(teams) - 0.5, "no change", fontsize=7.5, color=GRAY,
+            ha="center", va="top")
 
     dot_colors = [RED if s else GRAY for s in stands_out]
     ax.errorbar(slopes, y, xerr=cis, fmt="none", ecolor="#cdcbc4",
@@ -1866,19 +1868,19 @@ def plot_team_decline_slopes(data: dict) -> None:
     ax.set_yticks(y)
     ax.set_yticklabels(names, fontsize=7.5)
     ax.set_ylim(-0.7, len(teams) - 0.3)
-    ax.set_xlabel("Decline in home-court edge, pp of (home − road) win% per year",
-                  fontsize=10)
+    ax.set_xlabel("Change in home-court advantage per year (percentage points;"
+                  " negative = declining)", fontsize=10)
     ax.grid(axis="x", alpha=0.3, linewidth=0.6)
     ax.legend(fontsize=8.5, framealpha=0.85, edgecolor="#ddd", loc="lower left")
     ax.set_title(
         f"Each franchise fit separately; bars are 95% CIs  |  "
         f"{int(stands_out.sum())} of {len(teams)} clear the league line  |  "
-        f"true between-team SD ≈ {data['true_sd']:.2f} pp/yr",
+        f"true between-team SD ≈ {data['true_sd']:.2f} pp/yr  |  active franchises only",
         fontsize=9, color=GRAY, pad=4,
     )
 
     fig.suptitle(
-        "Every franchise's home edge faded at the same league-wide rate",
+        "Every franchise's home-court advantage has declined at the same league-wide rate",
         fontsize=13, fontweight="bold", color="#2c2c2a", y=1.005,
     )
     plt.tight_layout(rect=(0, 0, 1, 0.97))
