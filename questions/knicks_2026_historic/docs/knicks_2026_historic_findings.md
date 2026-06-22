@@ -408,6 +408,8 @@ above their regular-season level when it counted. (The exact percentages shift a
 little under a different assumed game-to-game swing, but the size of the
 overperformance does not.)
 
+![How rare a 16-3 run was: from the Knicks' regular season the model gave them a 15% title shot, and a run this clean about 1%](../generated/images/knicks_2026_title_run_rarity.svg){width=100%}
+
 ---
 
 ## 13. Limitations

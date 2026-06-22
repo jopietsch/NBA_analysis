@@ -1251,6 +1251,43 @@ def build_alt_rating_adjusted_table(rating_fn,
 _BO7_HOME_PATTERN = (True, True, False, False, True, False, True)  # 2-2-1-1-1
 
 
+def build_title_run_specs(po_2026: pd.DataFrame,
+                          reg_2026: pd.DataFrame,
+                          standings_2026: pd.DataFrame) -> tuple:
+    """Build the four-round bracket for the forward title-run simulation.
+
+    Returns ``(champ_srs, series_specs, meta, name_map)``: the Knicks'
+    regular-season SRS, the per-round ``series_specs`` for ``simulate_title_run``
+    (opponent SRS + Knicks home-court), round metadata, and a team-id→name map.
+    Shared by the analysis writeup and the rarity chart so both simulate the
+    identical bracket.
+    """
+    srs = compute_srs(reg_2026)
+    champ_srs = float(srs.get(KNICKS_TEAM_ID, float("nan")))
+
+    gid_to_opp = {}
+    for gid, grp in po_2026.groupby("GAME_ID"):
+        for tid in grp["TEAM_ID"].tolist():
+            if tid != KNICKS_TEAM_ID:
+                gid_to_opp[gid] = int(tid)
+    kn = po_2026[po_2026["TEAM_ID"] == KNICKS_TEAM_ID].copy()
+    kn["OPP_ID"] = kn["GAME_ID"].map(gid_to_opp)
+    kn = kn.dropna(subset=["OPP_ID"]).sort_values("GAME_DATE")
+
+    name_map = standings_2026.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1).to_dict()
+
+    specs, meta = [], []
+    for opp_id in kn.drop_duplicates("OPP_ID")["OPP_ID"]:
+        grp = kn[kn["OPP_ID"] == opp_id].sort_values("GAME_DATE")
+        opener = grp.iloc[0]
+        knicks_home = " vs." in str(opener["MATCHUP"]) or " vs " in str(opener["MATCHUP"])
+        opp_srs = float(srs.get(int(opp_id), float("nan")))
+        specs.append({"opp_srs": opp_srs, "knicks_home": knicks_home})
+        meta.append((int(opp_id), opp_srs, knicks_home))
+    return champ_srs, specs, meta, name_map
+
+
 def simulate_title_run(champ_srs: float,
                        series_specs: list,
                        sigma: float = 12.0,
@@ -1316,6 +1353,7 @@ def simulate_title_run(champ_srs: float,
 
     return {
         "p_title": p_title,
+        "title_losses": title_losses,   # total losses in each simulated title run
         "series_winprob": series_winprob,
         "exp_losses_given_title": float(title_losses.mean()) if title_losses.size else float("nan"),
         "p_title_and_le3_losses": float((title & (losses.sum(axis=1) <= 3)).mean()),

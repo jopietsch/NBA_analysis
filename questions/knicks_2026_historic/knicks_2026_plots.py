@@ -734,6 +734,85 @@ def plot_playoff_field_elevation(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     return save_chart("knicks_2026_field_elevation.svg", OUTPUT_DIR, fig=fig)
 
 
+# ── 14. How rare a 16-3 title run was, given the regular season ──────────────
+
+def plot_title_run_rarity(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
+                          standings_2026: pd.DataFrame) -> str:
+    """How unlikely the 16-3 run was from the Knicks' regular-season strength.
+
+    A forward simulation of the actual bracket that does NOT know the Knicks
+    would elevate in May.  Bars show how many games a simulated title run lost;
+    the ≤3-loss zone (this clean or cleaner) is highlighted and the actual 16-3
+    flagged.  A text box carries the two headline rarities: winning the title at
+    all, and winning it this cleanly.
+    """
+    from knicks_2026_data import build_title_run_specs, simulate_title_run
+
+    champ_srs, specs, _meta, _name = build_title_run_specs(
+        po_2026, reg_2026, standings_2026)
+    res = simulate_title_run(champ_srs, specs)
+    title_losses = np.asarray(res["title_losses"])
+    if title_losses.size == 0:
+        return ""
+
+    p_title          = res["p_title"]
+    p_le3_given      = res["p_le3_losses_given_title"]
+    p_title_and_le3  = res["p_title_and_le3_losses"]
+    exp_losses       = res["exp_losses_given_title"]
+    ACTUAL = 3
+
+    max_l = int(title_losses.max())
+    loss_vals = list(range(max_l + 1))
+    # share of TITLE runs that lost exactly k games
+    shares = [100.0 * (title_losses == k).sum() / title_losses.size for k in loss_vals]
+    colors = [KNICKS_BLUE if k <= ACTUAL else LGRAY for k in loss_vals]
+
+    fig, ax = _fig(figsize=(9, 4.6))
+    # highlight the "this clean or cleaner" zone
+    ax.axvspan(-0.5, ACTUAL + 0.5, color=KNICKS_BLUE, alpha=0.07, zorder=0)
+    ax.bar(loss_vals, shares, width=0.85, color=colors, edgecolor="none", zorder=2)
+
+    # typical title run loses ~exp_losses games
+    ax.axvline(exp_losses, color=GRAY, linewidth=1.2, linestyle="--", zorder=3)
+    ax.text(exp_losses + 0.15, ax.get_ylim()[1] * 0.96,
+            f"Typical title run:\n{exp_losses:.1f} losses",
+            color=GRAY, fontsize=8, va="top", ha="left")
+
+    # flag the actual 16-3
+    y3 = shares[ACTUAL]
+    ax.annotate("Actual: 16-3", xy=(ACTUAL, y3), xytext=(ACTUAL, y3 + ax.get_ylim()[1] * 0.18),
+                color=KNICKS_BLUE, fontsize=9, fontweight="bold", ha="center",
+                arrowprops=dict(arrowstyle="->", color=KNICKS_BLUE, linewidth=1.4))
+
+    ax.set_xlabel("Losses in a simulated title run", fontsize=10)
+    ax.set_ylabel("Share of title runs (%)", fontsize=10)
+    ax.set_xticks(loss_vals)
+    ax.set_title(
+        "A 16-3 run was deep in the rare tail of what the Knicks' season predicted",
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=20,
+    )
+    ax.text(
+        0.5, 1.012,
+        "Forward simulation from regular-season strength only; losses among simulated title runs",
+        transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color=GRAY,
+    )
+    _style(ax)
+    ax.grid(axis="x", visible=False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+    box = (
+        f"Win the title at all:  {p_title:.0%}\n"
+        f"16-3 or cleaner, if a title:  {p_le3_given:.0%}\n"
+        f"Both (title AND ≤3 losses):  {p_title_and_le3:.0%}"
+    )
+    ax.text(0.03, 0.97, box, transform=ax.transAxes, ha="left", va="top",
+            fontsize=9, color="#2c2c2a",
+            bbox=dict(boxstyle="round,pad=0.5", facecolor="white", edgecolor="#ddd"))
+
+    fig.tight_layout()
+    return save_chart("knicks_2026_title_run_rarity.svg", OUTPUT_DIR, fig=fig)
+
+
 def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              standings_2026: pd.DataFrame, champions: pd.DataFrame,
              gap_table: pd.DataFrame,
@@ -756,6 +835,7 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
         plot_opponent_srs_by_round(po_2026, reg_srs, standings_2026),
         plot_bootstrap_margin(po_2026, reg_srs, champions),
         plot_playoff_field_elevation(po_2026, reg_2026, standings_2026),
+        plot_title_run_rarity(po_2026, reg_2026, standings_2026),
     ]
     if series_df is not None and not series_df.empty:
         p = plot_round_split(series_df)

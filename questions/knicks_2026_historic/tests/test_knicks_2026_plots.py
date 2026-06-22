@@ -157,6 +157,14 @@ def test_plot_playoff_field_elevation(tmp_path, monkeypatch):
     assert os.path.exists(path)
 
 
+def test_plot_title_run_rarity(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    path = plots.plot_title_run_rarity(
+        _mini_po_2026(), _mini_reg_logs(), _mini_standings()
+    )
+    assert os.path.exists(path)
+
+
 def test_plot_bootstrap_margin(tmp_path, monkeypatch):
     monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
     path = plots.plot_bootstrap_margin(
