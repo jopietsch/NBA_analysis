@@ -2562,6 +2562,124 @@ shocking each opponent&#39;s SRS by its standard error each time:
   P(top 5):                     81.7%
   Opponent-strength noise barely moves the picture: game-to-game
   variance dominates the uncertainty in this ranking.
+
+─── §14 HIERARCHICAL (PARTIAL-POOLING) RANK ────────────────────────────
+Random-effects model over all champions&#39; opponent-adjusted margins:
+  y_c | theta_c ~ Normal(theta_c, v_c)     (observed mean, sampling var)
+  theta_c       ~ Normal(mu, tau^2)        (population of true dominance)
+tau^2 by DerSimonian-Laird; every champion shrunk toward mu by its own
+reliability, then all champions simulated jointly and ranked.
+
+  Population mean (mu):            +3.07 pts/game
+  Between-champion SD (tau):       1.97 pts/game
+  Knicks raw adj margin:           +11.23
+  Knicks posterior (shrunk) mean:  +4.70 pts/game
+  90% credible interval:        [+1.80, +7.60]
+
+  P(Knicks are the true #1):       9.0%
+  P(top 3):                        22.8%
+  P(top 5):                        33.7%
+  Median posterior rank:           9  (90% interval: 1–32)
+
+── Top champions by posterior (shrunk) adjusted margin ──
+  Season    Raw adj  Posterior          ±90% CI
+  90–91       +9.20      +5.28   [+2.7, +7.9]
+  22–23       +7.68      +5.16   [+2.8, +7.6]
+  16–17      +10.23      +5.13   [+2.4, +7.9]
+  25–26      +11.23      +4.70   [+1.8, +7.6]  ← Knicks
+  00–01       +7.26      +4.68   [+2.1, +7.2]
+  85–86       +7.72      +4.43   [+1.7, +7.2]
+
+─── §15 ELO OPPONENT-RATING CROSS-CHECK ────────────────────────────────
+SRS rates teams from season-aggregate margins.  Elo is a sequential,
+recency-weighted alternative (FiveThirtyEight NBA formula, K=20, 100-pt
+home edge, MOV multiplier), converted to points above average (~28 Elo =
+1 pt).  If the Knicks&#39; ranking holds under Elo, it isn&#39;t an SRS artifact.
+
+  Knicks games-wtd opp rating (Elo): +5.53 pts/game
+  Knicks Elo-adjusted margin:        +9.36 pts/game
+  Rank among champions:               #3 of 43 (95.3th pct)
+  For comparison, SRS-adjusted rank:  #1 of 43
+  Correlation with SRS-adjusted margin (all champions): +0.958
+
+  Top 5 by Elo-adjusted margin:
+    16–17    raw +13.65  opp +3.19  adj +10.46
+    90–91    raw +11.71  opp +1.51  adj +10.20
+    25–26    raw +14.89  opp +5.53  adj +9.36  ← Knicks
+    86–87    raw +10.83  opp +1.65  adj +9.18
+    00–01    raw +12.75  opp +4.00  adj +8.75
+
+── 2025-26 Knicks opponents: SRS vs Elo (points) ──
+  Opponent                         SRS  Elo-pts
+  San Antonio Spurs              +8.28   +10.71
+  Cleveland Cavaliers            +3.77    +4.67
+  Atlanta Hawks                  +2.38    +4.25
+  Philadelphia 76ers             -0.27    +1.84
+
+─── §16 WINS-ONLY (BRADLEY–TERRY) CROSS-CHECK ──────────────────────────
+SRS and Elo are both built from point margins.  Bradley–Terry is fit from
+win/loss ONLY (P(i beats j) = pi_i/(pi_i+pi_j)), so it shares no margin
+information with the raw dominance number.  Ratings are log-odds converted
+to points by the Elo convention (~6.2 pts/log-odds); only the units borrow
+that constant, the ordering is 100% wins-based.  This is the strongest test
+that the result isn&#39;t a margin-inflation artifact.
+
+  Knicks games-wtd opp rating (Bradley–Terry): +3.52 pts/game
+  Knicks Bradley–Terry-adjusted margin:        +11.37 pts/game
+  Rank among champions:               #1 of 43 (100.0th pct)
+  For comparison, SRS-adjusted rank:  #1 of 43
+  Correlation with SRS-adjusted margin (all champions): +0.990
+
+  Top 5 by Bradley–Terry-adjusted margin:
+    25–26    raw +14.89  opp +3.52  adj +11.37  ← Knicks
+    16–17    raw +13.65  opp +3.22  adj +10.43
+    90–91    raw +11.71  opp +2.39  adj +9.31
+    86–87    raw +10.83  opp +1.59  adj +9.24
+    85–86    raw +10.56  opp +2.31  adj +8.24
+
+─── §17 POSSESSIONS-BASED PACE ADJUSTMENT ──────────────────────────────
+Estimated possessions (FGA − OREB + TOV + 0.44·FTA):
+  2025-26 poss/team/game:     101.8
+  Historical mean (1984–2026): 98.0
+  2025-26 pace is above average by 3.8 poss/game.
+
+Knicks raw margin:              +14.89 pts/game
+  Per-100-possessions:         +14.63  → #1 of 43 (100.0th pct)
+Knicks opponent-adjusted margin:+11.23 pts/game
+  Per-100-possessions:         +11.02  → #1 of 43 (100.0th pct)
+
+  For contrast, the §9 scoring-share adjustment put the raw margin at #3.
+  Possessions isolate pace from the 3-point scoring boom, so 2025-26 is
+  penalized less than the scoring-share number implied.
+
+  Top 5 by opponent-adjusted margin per 100 possessions:
+    25–26    raw +14.89  pace 101.8  adj/100 +11.02  ← Knicks
+    16–17    raw +13.65  pace 98.8  adj/100 +10.36
+    86–87    raw +10.83  pace 104.2  adj/100 +9.13
+    90–91    raw +11.71  pace 101.1  adj/100 +9.10
+    00–01    raw +12.75  pace 93.9  adj/100 +7.73
+
+─── §18 SERIES-LEVEL WIN-PROBABILITY MODEL ─────────────────────────────
+Forward model from regular-season strength only (it does NOT know the
+Knicks would elevate in May).  Per game: win prob = Phi((SRS_NYK − SRS_opp
+± home edge)/sigma), sigma=12 pts, home edge=3 pts, best-of-7 per round.
+Knicks regular-season SRS: +6.05
+
+  Round    Opponent                  Opp SRS NYK home?  P(win series)
+  R1       Hawks                       +2.38       yes         77.2%
+  R2       76ers                       -0.27       yes         88.9%
+  CF       Cavaliers                   +3.77       yes         68.7%
+  Finals   Spurs                       +8.28        no         31.4%
+
+  P(Knicks win the title):           14.7%
+  Expected losses in a title run:    6.5 (actual: 3)
+  P(a title run loses ≤3 games):     6.7% (this is how clean 16-3 is)
+  P(title AND ≤3 losses), unconditional: 1.0%
+
+The model made the Knicks a Finals underdog (the Spurs out-rated them in
+the regular season), so a 16-3 title was well above the forward forecast:
+they beat the bracket their own regular season predicted, echoing the
+margin-based overperformance in §5.
 </code></pre>
 
 </main>
