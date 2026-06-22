@@ -631,6 +631,46 @@ honest answer to the all-time-best question; the §11 framing is the right one f
 
 ---
 
+## 13. Elo Opponent-Rating Cross-Check (`run_elo_check`)
+
+**The data.** Each season's regular-season game logs. `compute_elo_ratings`
+produces an end-of-season rating per team; `build_alt_rating_adjusted_table`
+recomputes `adj = raw_margin − games_weighted_opponent_rating` for every champion
+with Elo in place of SRS.
+
+**Why a second rating system.** Every opponent adjustment in §4–§12 uses SRS, so
+the rankings could in principle be an artifact of SRS's assumptions (linear,
+margin-based, season-aggregate). Re-running with a structurally different rating
+tests that. Elo is the natural choice: sequential and recency-weighted rather
+than season-aggregate.
+
+**The Elo model.** FiveThirtyEight's NBA parameters: start every team at 1500,
+process games in date order, K = 20, 100-Elo home-court bump, and the
+margin-of-victory multiplier `ln(|margin|+1) · 2.2/(0.001·Δelo_winner + 2.2)`
+(the Δelo term damps blowouts by favorites). The final Elo is centered at the
+league mean and divided by ≈28 Elo-per-point to land on the same points-above-
+average scale as SRS, so it slots into the identical games-weighted opponent
+machinery.
+
+**What the results mean (an instructive disagreement).** Across all 43 champions
+the Elo-adjusted and SRS-adjusted margins are almost the same ordering
+(correlation ≈ +0.96), so the two systems broadly agree. But they differ on the
+Knicks specifically: Elo rates the Knicks' opponents *tougher* (games-weighted
++5.5 vs SRS's +3.7), because Elo weights recent form and New York's opponents
+(notably the Spurs: Elo +10.7 vs SRS +8.3) were playing well late. A larger
+opponent adjustment lowers the Knicks' Elo-adjusted margin to +9.4, ranking **3rd**
+(behind 2016–17 Golden State and 1990–91 Chicago) rather than 1st. The takeaway
+matches §12: the #1 is rating-dependent; under a defensible alternative the Knicks
+are a top-three, not unique-#1, run.
+
+**Why no new chart.** The result is a single rank shift (1st → 3rd) plus a
+high correlation; the §4 adjusted-margin bar already visualizes the SRS ranking,
+and a second near-identical bar would add length without insight. The opponent
+SRS-vs-Elo table in the appendix carries the one number that matters (the Knicks'
+schedule looks harder under Elo).
+
+---
+
 ## Recurring Methods: Quick Reference
 
 **`_pct_rank(series, value, ascending=True)`**

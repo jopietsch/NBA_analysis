@@ -336,6 +336,58 @@ def test_clustered_cover_significance_weakens_vs_independent():
     assert res["p_value"] > 0.002
 
 
+def _round_robin_reg(dominant_margin: float = 12.0) -> pd.DataFrame:
+    """Three teams; A beats B and C, B beats C, each pairing twice (home/away)."""
+    rows = []
+    gid = 0
+    schedule = [
+        (KNICKS_ID, OPP1_ID, dominant_margin),   # A beats B
+        (KNICKS_ID, OPP2_ID, dominant_margin),   # A beats C
+        (OPP1_ID,   OPP2_ID, dominant_margin),   # B beats C
+    ]
+    for _ in range(2):  # play each pairing twice, alternating home
+        for winner, loser, mgn in schedule:
+            gid += 1
+            g = f"G{gid:03d}"
+            rows.append({"GAME_ID": g, "TEAM_ID": winner, "GAME_DATE": f"2026-01-{gid:02d}",
+                         "WL": "W", "PTS": 110, "PLUS_MINUS": mgn, "MATCHUP": "AAA vs. BBB"})
+            rows.append({"GAME_ID": g, "TEAM_ID": loser, "GAME_DATE": f"2026-01-{gid:02d}",
+                         "WL": "L", "PTS": 110 - mgn, "PLUS_MINUS": -mgn, "MATCHUP": "BBB @ AAA"})
+    return pd.DataFrame(rows)
+
+
+def test_compute_elo_ratings_orders_and_centers():
+    reg = _round_robin_reg()
+    elo = data.compute_elo_ratings(reg)
+    # A (beat everyone) > B > C, and the points scale is centered near zero
+    assert elo[KNICKS_ID] > elo[OPP1_ID] > elo[OPP2_ID]
+    assert abs(float(elo.mean())) < 1e-9
+    # Units are points-like: the top team is a few points above average, not hundreds
+    assert 0 < elo[KNICKS_ID] < 30
+
+
+def test_build_alt_rating_adjusted_table_matches_manual(monkeypatch):
+    # rating_fn that returns fixed ratings; verify adj = raw - games_wtd_opp_rating
+    fixed = pd.Series({OPP1_ID: 2.0, OPP2_ID: 4.0, KNICKS_ID: 5.0})
+
+    def fake_rating(_reg):
+        return fixed
+
+    # Build a one-season table by pointing the loader at synthetic frames
+    po = _mini_po_2026()
+    monkeypatch.setattr(data.os.path, "exists", lambda p: True)
+    monkeypatch.setattr(data._nba, "fill_plus_minus", lambda df: df)
+    monkeypatch.setattr(data.pd, "read_csv",
+                        lambda p: po if "Playoffs" in str(p) else po)
+    monkeypatch.setattr(data, "identify_champion", lambda _po: KNICKS_ID)
+    tbl = data.build_alt_rating_adjusted_table(fake_rating, 2026, 2026)
+    row = tbl.iloc[0]
+    # raw +10; games-weighted opp rating = (2+2+4)/3; adj = 10 - that
+    assert row["avg_margin"] == pytest.approx(10.0)
+    assert row["avg_opp_rating"] == pytest.approx((2.0 + 2.0 + 4.0) / 3)
+    assert row["adj_margin"] == pytest.approx(10.0 - (2.0 + 2.0 + 4.0) / 3)
+
+
 def test_hierarchical_rank_subject_clearly_best():
     # Subject far above the field with tiny sampling variance → almost surely #1.
     df = pd.DataFrame([

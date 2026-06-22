@@ -387,4 +387,30 @@ reliability, then all champions simulated jointly and ranked.
   00–01       +7.26      +4.68   [+2.1, +7.2]
   85–86       +7.72      +4.43   [+1.7, +7.2]
 
+─── §15 ELO OPPONENT-RATING CROSS-CHECK ────────────────────────────────
+SRS rates teams from season-aggregate margins.  Elo is a sequential,
+recency-weighted alternative (FiveThirtyEight NBA formula, K=20, 100-pt
+home edge, MOV multiplier), converted to points above average (~28 Elo =
+1 pt).  If the Knicks' ranking holds under Elo, it isn't an SRS artifact.
+
+  Knicks games-wtd opp rating (Elo): +5.53 pts/game
+  Knicks Elo-adjusted margin:        +9.36 pts/game
+  Rank among champions:               #3 of 43 (95.3th pct)
+  For comparison, SRS-adjusted rank:  #1 of 43
+  Correlation with SRS-adjusted margin (all champions): +0.958
+
+  Top 5 by Elo-adjusted margin:
+    16–17    raw +13.65  opp +3.19  adj +10.46
+    90–91    raw +11.71  opp +1.51  adj +10.20
+    25–26    raw +14.89  opp +5.53  adj +9.36  ← Knicks
+    86–87    raw +10.83  opp +1.65  adj +9.18
+    00–01    raw +12.75  opp +4.00  adj +8.75
+
+── 2025-26 Knicks opponents: SRS vs Elo (points) ──
+  Opponent                         SRS  Elo-pts
+  San Antonio Spurs              +8.28   +10.71
+  Cleveland Cavaliers            +3.77    +4.67
+  Atlanta Hawks                  +2.38    +4.25
+  Philadelphia 76ers             -0.27    +1.84
+
 ```

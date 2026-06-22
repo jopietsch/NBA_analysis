@@ -64,6 +64,8 @@ from knicks_2026_data import (
     build_conference_gap_table,
     build_adjusted_margin_samples,
     hierarchical_adjusted_margin_rank,
+    compute_elo_ratings,
+    build_alt_rating_adjusted_table,
 )
 
 OUTPUT_DIR   = os.path.join(os.path.dirname(__file__), "generated")
@@ -1051,6 +1053,83 @@ def run_hierarchical(samples_df: pd.DataFrame, out: io.StringIO) -> None:
               f"{r['post_mean']:>+10.2f}   [{lo:+.1f}, {hi:+.1f}]{marker}", file=out)
 
 
+# ── Section 15: Elo opponent-rating cross-check ──────────────────────────────
+
+def _alt_rating_ranking(alt_table: pd.DataFrame,
+                        champions: pd.DataFrame,
+                        rating_label: str,
+                        out: io.StringIO) -> None:
+    """Shared printer: rank the Knicks' adjusted margin under an alternative
+    opponent rating and compare to the SRS-based rank."""
+    subj = alt_table[alt_table["year"] == SUBJECT_YEAR]
+    if subj.empty:
+        print(f"  No {rating_label} data for the subject season.", file=out)
+        return
+    knicks_adj = float(subj["adj_margin"].iloc[0])
+    knicks_opp = float(subj["avg_opp_rating"].iloc[0])
+    series = alt_table["adj_margin"].dropna()
+    pct = _pct_rank(series, knicks_adj, ascending=True)
+    rank = int((series > knicks_adj).sum()) + 1
+
+    # SRS-based rank for comparison
+    srs_series = champions["adj_margin"].dropna()
+    srs_subj = float(champions.loc[champions["year"] == SUBJECT_YEAR, "adj_margin"].iloc[0])
+    srs_rank = int((srs_series > srs_subj).sum()) + 1
+
+    print(f"  Knicks games-wtd opp rating ({rating_label}): {knicks_opp:+.2f} pts/game", file=out)
+    print(f"  Knicks {rating_label}-adjusted margin:        {knicks_adj:+.2f} pts/game", file=out)
+    print(f"  Rank among champions:               #{rank} of {len(series)} "
+          f"({pct:.1f}th pct)", file=out)
+    print(f"  For comparison, SRS-adjusted rank:  #{srs_rank} of {len(srs_series)}", file=out)
+
+    # Agreement between the two systems across all champions
+    merged = alt_table.merge(
+        champions[["year", "adj_margin"]], on="year", suffixes=("_alt", "_srs")
+    ).dropna(subset=["adj_margin_alt", "adj_margin_srs"])
+    if len(merged) >= 3:
+        corr = float(merged["adj_margin_alt"].corr(merged["adj_margin_srs"]))
+        print(f"  Correlation with SRS-adjusted margin (all champions): {corr:+.3f}", file=out)
+
+    top5 = alt_table.dropna(subset=["adj_margin"]).nlargest(5, "adj_margin")
+    print(f"\n  Top 5 by {rating_label}-adjusted margin:", file=out)
+    for _, r in top5.iterrows():
+        marker = "  ← Knicks" if int(r["year"]) == SUBJECT_YEAR else ""
+        print(f"    {short_label(int(r['year'])):<8} raw {r['avg_margin']:+.2f}  "
+              f"opp {r['avg_opp_rating']:+.2f}  adj {r['adj_margin']:+.2f}{marker}", file=out)
+
+
+def run_elo_check(elo_table: pd.DataFrame,
+                  champions: pd.DataFrame,
+                  reg_2026: pd.DataFrame,
+                  po_2026: pd.DataFrame,
+                  standings_2026: pd.DataFrame,
+                  out: io.StringIO) -> None:
+    """Re-rank the opponent-adjusted margin using Elo instead of SRS."""
+    print(_hdr("§15 ELO OPPONENT-RATING CROSS-CHECK"), file=out)
+    print(
+        "SRS rates teams from season-aggregate margins.  Elo is a sequential,\n"
+        "recency-weighted alternative (FiveThirtyEight NBA formula, K=20, 100-pt\n"
+        "home edge, MOV multiplier), converted to points above average (~28 Elo =\n"
+        "1 pt).  If the Knicks' ranking holds under Elo, it isn't an SRS artifact.\n",
+        file=out,
+    )
+    _alt_rating_ranking(elo_table, champions, "Elo", out)
+
+    # Sanity: the 2025-26 Knicks' opponents under both systems
+    elo_2026 = compute_elo_ratings(reg_2026)
+    srs_2026 = compute_srs(reg_2026)
+    opp_srs = compute_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
+    name_map = standings_2026.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
+    ).to_dict()
+    print(_subhdr("2025-26 Knicks opponents: SRS vs Elo (points)"), file=out)
+    print(f"  {'Opponent':<28} {'SRS':>7} {'Elo-pts':>8}", file=out)
+    for opp_id in opp_srs.sort_values(ascending=False).index:
+        nm = name_map.get(int(opp_id), f"Team {int(opp_id)}")
+        print(f"  {nm:<28} {float(opp_srs[opp_id]):>+7.2f} "
+              f"{float(elo_2026.get(int(opp_id), float('nan'))):>+8.2f}", file=out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1068,6 +1147,9 @@ def main() -> None:
 
     print("Building adjusted-margin samples (all seasons)...")
     adj_samples = build_adjusted_margin_samples(START_YEAR, END_YEAR)
+
+    print("Building Elo-adjusted table (all seasons)...")
+    elo_table = build_alt_rating_adjusted_table(compute_elo_ratings, START_YEAR, END_YEAR)
 
     print(f"Ready: {len(champions)} champion seasons, {len(gap_table)} gap seasons\n")
 
@@ -1090,6 +1172,7 @@ def main() -> None:
     run_betting_market(ats_df, po_2026, standings_2026, out)
     run_robustness(po_2026, reg_2026, champions, out)
     run_hierarchical(adj_samples, out)
+    run_elo_check(elo_table, champions, reg_2026, po_2026, standings_2026, out)
 
     body = out.getvalue()
 

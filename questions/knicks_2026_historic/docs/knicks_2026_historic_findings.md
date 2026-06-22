@@ -346,7 +346,31 @@ allowed to be as uncertain as the Knicks).
 
 ---
 
-## 11. Limitations
+## 11. A Second Opinion: Other Rating Systems
+
+Every opponent adjustment so far leans on one rating, SRS, which grades teams by
+their season-long scoring margins. If the Knicks' #1 hinges on that single
+choice, it is shaky. So we re-ran the whole opponent adjustment with a different,
+well-known rating: Elo, the running, recency-weighted system popularized by
+FiveThirtyEight. Across champions the two systems agree closely (their adjusted
+margins move in near-lockstep), which is reassuring, but they disagree about the
+Knicks in a telling way.
+
+Elo rated the Knicks' opponents tougher than SRS did, because Elo leans on recent
+form and the teams New York drew were playing well down the stretch (Elo pegs the
+Spurs at +10.7 points above average, against SRS's +8.3). Tougher-rated opponents
+mean a bigger adjustment, so the Knicks' Elo-adjusted margin is **+9.4 per game,
+third-best** among champions, behind the 2016-17 Warriors (+10.5) and 1990-91
+Bulls (+10.2), rather than first.
+
+The rating choice matters right at the top: SRS puts the Knicks first, Elo puts
+them third, and both agree they are a top-three opponent-adjusted run. That lines
+up with the uncertainty picture in §10: clearly elite, plausibly the best, but
+not the unambiguous #1 that the single SRS number alone suggests.
+
+---
+
+## 12. Limitations
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range
 on the margin ([+7.4, +22.4]). The comparison set is also only 43 champions.
@@ -379,7 +403,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 12. Methodology
+## 13. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS

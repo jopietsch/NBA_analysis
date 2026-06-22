@@ -1044,6 +1044,96 @@ def build_conference_gap_table(start_year: int = START_YEAR,
     return pd.DataFrame(rows)
 
 
+# ── Alternative opponent ratings (Elo, wins-only) ────────────────────────────
+
+def compute_elo_ratings(reg_logs: pd.DataFrame,
+                        k: float = 20.0,
+                        home_adv: float = 100.0,
+                        elo_per_point: float = 28.0) -> pd.Series:
+    """End-of-season MOV-adjusted Elo for each team, expressed in points/game.
+
+    A sequential, recency-weighted alternative to SRS.  Every team starts the
+    season at 1500; games are processed in date order with the FiveThirtyEight
+    NBA update:
+
+        expected_home = 1 / (1 + 10^(-(elo_home + home_adv − elo_away)/400))
+        mult          = ln(|margin| + 1) · 2.2 / (0.001·elo_diff_winner + 2.2)
+        change        = k · mult · (result_home − expected_home)
+
+    where ``elo_diff_winner`` is the winner's pre-game Elo (incl. home edge) minus
+    the loser's; the margin-of-victory multiplier with that autocorrelation term
+    is what stops favorites from running up the score.
+
+    The final Elo is converted to points above league average by centering at the
+    mean and dividing by ``elo_per_point`` (≈28 Elo per point of margin), so the
+    result is on the same scale as SRS and can be dropped into the same
+    games-weighted opponent-rating machinery.
+    """
+    logs = _nba.fill_plus_minus(reg_logs).copy()
+    logs = logs.sort_values("GAME_DATE")
+    elo = {int(t): 1500.0 for t in logs["TEAM_ID"].unique()}
+
+    for _, grp in logs.groupby("GAME_ID", sort=False):
+        if len(grp) != 2:
+            continue
+        rows = grp.to_dict("records")
+        if is_home(rows[0]["MATCHUP"]):
+            home, away = rows[0], rows[1]
+        else:
+            home, away = rows[1], rows[0]
+        margin = float(home["PLUS_MINUS"])
+        if np.isnan(margin):
+            continue
+        hid, aid = int(home["TEAM_ID"]), int(away["TEAM_ID"])
+        eh, ea = elo[hid], elo[aid]
+        eh_adj = eh + home_adv
+        exp_home = 1.0 / (1.0 + 10.0 ** (-(eh_adj - ea) / 400.0))
+        result_home = 1.0 if margin > 0 else (0.5 if margin == 0 else 0.0)
+        elo_diff_w = (eh_adj - ea) if margin > 0 else (ea - eh_adj)
+        mult = np.log(abs(margin) + 1.0) * (2.2 / (0.001 * elo_diff_w + 2.2))
+        change = k * mult * (result_home - exp_home)
+        elo[hid] = eh + change
+        elo[aid] = ea - change
+
+    s = pd.Series(elo, dtype=float)
+    return (s - s.mean()) / elo_per_point
+
+
+def build_alt_rating_adjusted_table(rating_fn,
+                                    start_year: int = START_YEAR,
+                                    end_year: int = END_YEAR,
+                                    cache_dir: str | None = None) -> pd.DataFrame:
+    """Opponent-adjusted margin for every champion using an ALTERNATIVE rating.
+
+    ``rating_fn(reg_logs) -> Series`` supplies the opponent rating (Elo points,
+    Bradley–Terry log-strength, ...).  For each champion it computes
+    ``adj = raw_margin − games_weighted_opponent_rating`` exactly as the SRS path
+    does, so the only thing that changes is the rating system.
+
+    Columns: year, champion_id, avg_margin, avg_opp_rating, adj_margin.
+    """
+    rows = []
+    for year in range(start_year, end_year + 1):
+        po_path = cache_path(year, PLAYOFFS, cache_dir)
+        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
+        if not os.path.exists(po_path) or not os.path.exists(rs_path):
+            continue
+        po = _nba.fill_plus_minus(pd.read_csv(po_path))
+        rs = pd.read_csv(rs_path)
+        champ = identify_champion(po)
+        rating = rating_fn(rs)
+        margin = compute_playoff_margin(po, champ)
+        avg_opp = compute_games_weighted_opponent_srs(po, rating, champ)
+        rows.append({
+            "year":           year,
+            "champion_id":    champ,
+            "avg_margin":     margin,
+            "avg_opp_rating": avg_opp,
+            "adj_margin":     compute_adjusted_margin(margin, avg_opp),
+        })
+    return pd.DataFrame(rows)
+
+
 # ── Hierarchical (partial-pooling) ranking ───────────────────────────────────
 
 def build_adjusted_margin_samples(start_year: int = START_YEAR,
