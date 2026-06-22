@@ -164,7 +164,7 @@
 
 ![Playoff seeding decomposition (decline survives quality control; weaker host still wins)](../generated/images/home_court_playoff_quality.svg){#fig-playoff-quality}
 
-- **Lower-seed home win rate collapsed by decade (run_series_era_split):** 1984–94: lower seed at home **65.4%** vs higher seed **71.0%** (gap 5.6 pp); 1995–01: **61.1%** vs **60.2%** (gap −0.9 pp); 2005–17: **52.6%** vs **71.0%**; 2018–22: **47.4%** vs **71.7%** (gap 24.4 pp). In the early eras the lower seed won nearly as often at home as the higher seed did. By the modern era the gap widened to 22+ pp. FINDINGS frames this as: quality barely mattered once you were in your own building (1980s–90s); it does now.
+- **Lower-seed home win rate collapsed by decade (run_series_era_split):** 1984–94: lower seed at home **65.4%** vs higher seed **71.0%** (gap 5.6 pp); 1995–01: **65.8%** vs **60.1%** (gap −5.7 pp — lower seed won MORE at home this era); 2005–17: **52.6%** vs **71.0%**; 2018–22: **47.4%** vs **71.7%** (gap 24.4 pp). In the early eras the lower seed won nearly as often at home as the higher seed did. By the modern era the gap widened to 22+ pp. FINDINGS frames this as: quality barely mattered once you were in your own building (1980s–90s); it does now.
 - **Decline is real weakening, not weaker seeds (@fig-playoff-quality):**
   - *RESULTS:* year trend retained **102%** after quality control; quality absorbs −2%.
   - Lower-seed-at-home (G3+G4): still wins **51.5%** (n=827) — pure venue effect.
