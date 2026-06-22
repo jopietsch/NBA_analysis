@@ -604,10 +604,10 @@ def plot_bootstrap_margin(po_2026: pd.DataFrame, reg_srs: pd.Series,
     ax.set_ylabel("Resamples", fontsize=10)
     ax.set_title(
         f"The #1 ranking is likely but not certain: P(1st) = {boot['p_rank1']:.0%}",
-        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=20,
     )
     ax.text(
-        0.5, 1.005,
+        0.5, 1.012,
         "20,000 game-level bootstraps of the 2025-26 run vs. the fixed champion field",
         transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color=GRAY,
     )
@@ -653,10 +653,10 @@ def plot_hierarchical_posterior(posterior_df: pd.DataFrame, p_rank1: float,
     ax.set_xlabel("Posterior opponent-adjusted margin (pts/game)", fontsize=10)
     ax.set_title(
         f"After fair shrinkage the field bunches: Knicks ~{p_rank1:.0%} to be the true #1",
-        fontsize=11, fontweight="bold", color="#2c2c2a", pad=8,
+        fontsize=11, fontweight="bold", color="#2c2c2a", pad=20,
     )
     ax.text(
-        0.5, 1.005,
+        0.5, 1.012,
         "Partial-pooling posterior mean ± 90% credible interval, top champions",
         transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color=GRAY,
     )
