@@ -3267,6 +3267,81 @@ def run_team_hca_analysis(reg_stats: dict, po_stats: dict) -> None:
         print()
 
 
+# ── Analysis: Franchise HCA era comparison ────────────────────────────────────
+
+def run_franchise_era_comparison(
+    early_stats: dict, late_stats: dict,
+    early_label: str = "1984–2001",
+    late_label: str = "2002–26",
+    min_games: int = 400,
+) -> None:
+    """Per-franchise HCA in the early era vs. the recent era (split at 2001–02)."""
+    _section("FRANCHISE HCA — ERA COMPARISON (split at 2001–02)")
+    print(f"   Regular season only. Franchise name changes merged: "
+          f"Bullets→Wizards, LA Clippers→Los Angeles Clippers.")
+    print(f"   Min {min_games} home games in each era required.\n")
+
+    _NAME_MAP = {
+        "Washington Bullets": "Washington Wizards",
+        "LA Clippers": "Los Angeles Clippers",
+    }
+
+    def _aggregate(stats: dict) -> dict:
+        raw: dict[str, dict] = {}
+        for name, s in stats.items():
+            key = _NAME_MAP.get(name, name)
+            if key not in raw:
+                raw[key] = {"hw": 0, "hn": 0, "rw": 0, "rn": 0}
+            raw[key]["hw"] += round(s["home_pct"] * s["n_home"] / 100)
+            raw[key]["hn"] += s["n_home"]
+            raw[key]["rw"] += round(s["road_pct"] * s["n_road"] / 100)
+            raw[key]["rn"] += s["n_road"]
+        out: dict[str, dict] = {}
+        for name, c in raw.items():
+            if c["hn"] and c["rn"]:
+                h = 100.0 * c["hw"] / c["hn"]
+                r = 100.0 * c["rw"] / c["rn"]
+                out[name] = {"hca": round(h - r, 1), "n_home": c["hn"]}
+        return out
+
+    early_n = _aggregate(early_stats)
+    late_n  = _aggregate(late_stats)
+
+    common = {
+        t for t in set(early_n) & set(late_n)
+        if early_n[t]["n_home"] >= min_games and late_n[t]["n_home"] >= min_games
+    }
+
+    rows = sorted(
+        [(t, early_n[t]["hca"], late_n[t]["hca"], late_n[t]["hca"] - early_n[t]["hca"])
+         for t in common],
+        key=lambda x: x[3],
+    )
+
+    league_early = sum(early_n[t]["hca"] for t in common) / len(common)
+    league_late  = sum(late_n[t]["hca"]  for t in common) / len(common)
+
+    print(f"   N = {len(rows)} franchises with ≥{min_games} home games in both eras")
+    print(f"   League avg HCA — {early_label}: {league_early:.1f} pp  |  "
+          f"{late_label}: {league_late:.1f} pp  |  change: {league_late - league_early:+.1f} pp\n")
+
+    print(f"   {'Franchise':<30}  {early_label:>9}  {late_label:>8}  {'Change':>7}  {'N early':>7}")
+    print(f"   {'─' * 30}  {'─' * 9}  {'─' * 8}  {'─' * 7}  {'─' * 7}")
+    for t, e, l, chg in rows:
+        ne = early_n[t]["n_home"]
+        print(f"   {t:<30}  {e:>+9.1f}  {l:>+8.1f}  {chg:>+7.1f}  {ne:>7}")
+
+    biggest  = rows[:3]
+    smallest = rows[-3:][::-1]
+    print(f"\n   ► Every franchise declined: {len([r for r in rows if r[3] < 0])}/{len(rows)} "
+          f"with a negative change.")
+    print(f"   ► Biggest declines: "
+          + ", ".join(f"{t} ({chg:+.1f} pp)" for t, _, _, chg in biggest))
+    print(f"   ► Smallest declines (least negative): "
+          + ", ".join(f"{t} ({chg:+.1f} pp)" for t, _, _, chg in smallest))
+    print()
+
+
 # ── Analysis: Franchise HCA consistency (regular season vs. playoffs) ─────────
 
 def run_hca_consistency_analysis(reg_stats: dict, po_stats: dict) -> None:
@@ -4606,6 +4681,11 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
             skip_years=nba.SKIP_PLAYOFF_YEARS, min_games=20,
         )
         run_team_hca_analysis(reg_hca_stats, po_hca_stats)
+
+        early_hca_stats = nba.compute_team_hca_stats(nba.START_YEAR, 2001, "Regular Season")
+        late_hca_stats  = nba.compute_team_hca_stats(2002, nba.END_YEAR, "Regular Season")
+        run_franchise_era_comparison(early_hca_stats, late_hca_stats)
+
         run_hca_consistency_analysis(reg_hca_stats, po_hca_stats)
         run_margin_analysis(df)
         run_quantile_margin_analysis(df)
