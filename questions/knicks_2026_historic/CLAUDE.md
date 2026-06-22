@@ -19,7 +19,7 @@ Four pipeline modules plus two report generators, mirroring `home_court`:
 - **`knicks_2026_plots.py`** — all visualization (`plot_*` functions saving `knicks_2026_*.svg`); imports the data module, holds no data logic of its own.
 - **`knicks_2026_analysis.py`** — statistical/comparative analysis; `run()` prints all sections to stdout. The method is percentile/ranking against the historical champion set.
 - **`knicks_2026_historic.py`** — pipeline orchestration only: sequences data → plots → analysis, and captures `analysis.run()`'s stdout into `RESULTS.md` inside a ``` fence. The analysis module is imported inside `main()`.
-- **`generate_report.py`** — assembles `docs/knicks_2026_historic_findings.md` prose + PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated; appendix renders `docs/RESULTS.md` verbatim.
+- **`generate_report.py`** — assembles `docs/knicks_2026_historic_findings.md` prose + PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated. Built with `include_appendix=False`: `RESULTS.md` is **not** inlined as an appendix; it is linked as a standalone companion doc from "Appendix A: Companion Documents" in the findings instead.
 - **`generate_doc_pdf.py`** — general Markdown→PDF renderer for standalone docs (copied unchanged from the sibling; understands code fences, headings, lists, tables, images, and `--appendix`).
 
 Tests: `tests/test_knicks_2026.py` is correctness unit tests for the data/computation layer using synthetic DataFrames (never live API calls). `tests/test_knicks_2026_plots.py` is no-raise smoke tests for plots — no pixel/image comparison (brittle across font and library versions).
@@ -31,6 +31,8 @@ All fetched data is cached as CSVs under `cache/` to avoid re-fetching.
 - `docs/knicks_2026_historic_findings.md` — narrative interpretation in numbered `## N. Title` sections; the single source of truth for report prose and chart placement. Edit by hand when understanding changes; the PDF picks up sections automatically. Image references use `../generated/images/<chart>.svg`.
 - `docs/knicks_2026_historic_summary.md` — standalone one-page summary built around three core charts (adjusted margin ranking, round split, market vs actual) and the main question.
 - `docs/knicks_2026_historic_stats_explainer.md` — hand-edited methods companion; regenerate its PDF with `python3 generate_doc_pdf.py docs/knicks_2026_historic_stats_explainer.md`.
+- `docs/knicks_2026_historic_investigation.md` — companion document treating every objection to the run (weak East, soft bracket, fading opponents, padded margins, scoring-era inflation, opponent injury) in full: why each seemed plausible, what was tested, how much it explains away. Mirrors the "What Does NOT Diminish the Run" section of the findings; update it when that section changes. Regenerate with `python3 generate_doc_pdf.py docs/knicks_2026_historic_investigation.md`.
+- `docs/knicks_2026_historic_findings_outline.md` — condensed section-by-section outline of the findings, cross-referenced to `RESULTS.md`. Keep it in sync with the findings (the `/sync-outline` command does this); regenerate with `python3 generate_doc_pdf.py docs/knicks_2026_historic_findings_outline.md`.
 - `docs/RESULTS.md` — auto-generated analysis output; **never edit manually**, always re-run the pipeline to refresh.
 
 ## Adding a new analysis
@@ -46,5 +48,7 @@ Follow this order (same as the sibling project):
 
 ## Updating docs/knicks_2026_historic_findings.md
 
-- When section order changes, update the order of `run_*` calls in `knicks_2026_analysis.py` to match, so `RESULTS.md` (and the appendix) line up.
+- When section order changes, update the order of `run_*` calls in `knicks_2026_analysis.py` to match, so `RESULTS.md` lines up.
+- When the findings change, update `docs/knicks_2026_historic_findings_outline.md` to match (the `/sync-outline` command does this), then regenerate its PDF.
+- When the "What Does NOT Diminish the Run" section changes, update `docs/knicks_2026_historic_investigation.md` to match.
 

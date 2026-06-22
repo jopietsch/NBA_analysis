@@ -1,5 +1,13 @@
 # Did the 2026 Knicks Have a Historic Playoff Run? The Short Version
 
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
 The 2025–26 New York Knicks went 16-3 in the playoffs. This is the one-page version of a longer report, built around three charts and four questions: **Was the run historic and against real competition? Does it hold up after adjusting for era and schedule? What made the Finals so different from the first three rounds? And how unlikely was a title run from where the Knicks started the playoffs?**
 
 ---

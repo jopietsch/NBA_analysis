@@ -1,5 +1,13 @@
 # Did the 2026 Knicks Have a Historic Playoff Run?
 
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
 ## 1. The Verdict (Up Front)
 
 **Yes: the 2025–26 New York Knicks had a historically dominant playoff run.**
@@ -414,7 +422,26 @@ overperformance does not.)
 
 ---
 
-## 13. Limitations
+## 13. What Does NOT Diminish the Run
+
+A 16-3 record invites deflation: the conference was weak, the bracket was soft, the opponents were hurt, the scoreboard was padded. Each is a fair objection, and each was tested. None of them holds up.
+
+| Objection | Verdict | Where |
+|---|---|---|
+| The East was historically weak | No. The West–East rating gap was +0.39 pts/game (37th percentile of West dominance); the West led by more in 63% of seasons since 1984. | §3 |
+| The bracket was soft | No. Games-weighted opponent rating was +3.67 (49th percentile), the median champion's schedule. | §3–§4 |
+| The early-round teams were fading | A little, at the edges. The 76ers and Cavaliers rated ~1.2–1.5 pts below their season form, but on a handful of games each; the Spurs went the other way and rose +6.2. Adjusting the run for opponents' actual playoff form still leaves it at +9.1, narrowly best on record. | §5 |
+| The margins are garbage-time padding | No. On a wins-only rating that never sees a point margin, the Knicks still rank first of 43. | §11 |
+| The high-scoring era inflated the margin | Mostly no. The scoring is better shooting, not a faster game; per possession both the raw and adjusted margins stay first. Only the harsher scoring-share adjustment drops the raw margin to 3rd. | §14 |
+| An opponent was injured | No. Opponents were 98% healthy on average; the Spurs and Hawks were at 100%. | §9 |
+
+The one thing that genuinely tempers the claim is not on this list. It is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about 9% of the time (§10–§11). The objections people raise for why the run means less all fail; what remains is only that 19 games is too short to settle first place against 43 years of champions.
+
+Each objection is treated in full, with why it seemed plausible and exactly what the data showed, in the companion document *The Investigation* (Appendix A).
+
+---
+
+## 14. Limitations
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range
 on the margin ([+7.4, +22.4]). The comparison set is also only 43 champions.
@@ -457,12 +484,38 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 14. Methodology
+## 15. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS
 (Simple Rating System) is solved as a least-squares linear system
 `(I − A) @ srs = mean_margin` constrained to `sum(srs) = 0`.
 
-See `RESULTS.md` for full numerical output and `knicks_2026_analysis.py` for
-all computation.
+See the Regression Results companion (Appendix A) for full numerical output and
+`knicks_2026_analysis.py` for all computation.
+
+---
+
+## Appendix A: Companion Documents
+
+::: {.content-visible when-format="html"}
+| Document | Description |
+|---|---|
+| [Regression Results](RESULTS.html) | Full numerical output from the analysis pipeline: every ranking, percentile, and adjusted figure behind this report. |
+| [The Investigation](knicks_2026_historic_investigation.html) | Full treatment of every objection to the run: why each seemed plausible, what was tested, and how much it actually explains away. |
+| [One-Page Summary](knicks_2026_historic_summary.html) | Standalone summary built around three charts and four questions. |
+| [Stats Explainer](knicks_2026_historic_stats_explainer.html) | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
+| [Findings Outline](knicks_2026_historic_findings_outline.html) | Condensed section-by-section outline cross-referenced to the regression output. |
+:::
+
+::: {.content-visible when-format="typst"}
+All files are in the same folder as this PDF (`generated/`).
+
+| Document | File | Description |
+|---|---|---|
+| Regression Results | `RESULTS.pdf` | Full numerical output from the analysis pipeline: every ranking, percentile, and adjusted figure behind this report. |
+| The Investigation | `knicks_2026_historic_investigation.pdf` | Full treatment of every objection to the run: why each seemed plausible, what was tested, and how much it actually explains away. |
+| One-Page Summary | `knicks_2026_historic_summary.pdf` | Standalone summary built around three charts and four questions. |
+| Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
+| Findings Outline | `knicks_2026_historic_findings_outline.pdf` | Condensed section-by-section outline cross-referenced to the regression output. |
+:::

@@ -1,5 +1,13 @@
 # Statistical Explainer: `knicks_2026_analysis.py`
 
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
 A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and
 (where a section has one) **why its figure takes the form it does**. Sections appear
