@@ -58,7 +58,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 ## 3. What's Driving the Decline
 
-The same categories that make up home court advantage are the ones narrowing over time.
+The same categories that make up home court advantage are the ones narrowing over time. The biggest driver is not the one most people would name. The three-point revolution gets the attention, but it registers mainly in the shooting line, and shooting is not the largest piece. The two categories doing the most work are rebounding and turnovers, and rebounding barely moves with three-point volume at all.
 
 The Four Factors together account for roughly **96%** of the regular-season decline. Rebounding and turnovers carry the most at roughly **30%** and **27%**, together more than half the drop. Shooting (eFG%), where the three-point shift registers, accounts for about **21%**, and the narrowing whistle for about **18%**. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; that edge has narrowed to under half a free throw. In the playoffs the same four categories capture only about 67% of the decline, with only the foul and rebounding trends standing clearly above the noise; the playoff breakdown is consistent with the regular-season story, not established on its own. (These shares show where the decline registers in the box score, not a claim about ultimate causes.) The sections below trace how each piece works.
 

@@ -74,6 +74,7 @@
 ## Section 3 — What's Driving the Decline
 **Q3: What drove the change?**
 
+- **Framing (intro):** biggest driver is NOT the obvious one. 3PT revolution gets the attention but registers mainly in the shooting line (~21%, not the largest piece); REB+TOV do the most work, and REB barely moves with 3PA volume.
 - **Shot selection changed in two ways (together ~21% of decline, both feeding the shooting line):**
   - **First: shot zone convergence (reg season).** Paint gap **~1.3 → 0.2 pp**. *RESULTS Paint trend −0.041***/yr reg.* Playoffs: narrowed late 2010s then rebounded; NOT statistically established (playoff Paint trend −0.030, ns) → reg-season story.
   - **Second: the three-point revolution.**
