@@ -744,6 +744,46 @@ the ranking.
 
 ---
 
+## 16. Series-Level Win-Probability Model (`run_series_winprob`)
+
+**The data.** The Knicks' regular-season SRS, each opponent's regular-season SRS
+(in round order), and which team hosted each series opener (for home court), all
+read from the cached logs.
+
+**Why a forward model.** §4–§8 are retrospective: they score what happened. This
+asks the complementary forward question — given only the Knicks' regular season,
+how likely was this outcome? — so the gap between forecast and reality is a clean
+measure of playoff overperformance in win-loss terms, parallel to the
+margin-based overperformance in §5.
+
+**The model.** A single game's win probability is `p = Φ((SRS_NYK − SRS_opp ±
+hca)/σ)`, with `σ = 12` (the single-game point-margin SD), `hca = 3` (home
+points), `+hca` at home and `−hca` away. Each round is a best-of-7 with the
+2-2-1-1-1 home pattern; the simulator plays 40,000 full brackets and records the
+title rate, per-series win rates, and the loss distribution. Because all four
+rounds are best-of-7, every title run is exactly 16 wins, so a run's quality
+reduces to its loss count (16-3 ⇒ 3 losses).
+
+**What the results mean.** From their own regular season the Knicks were a Finals
+underdog (P(beat Spurs) ≈ 31%, since the Spurs out-rated them) and only ≈15% to
+win the title. The model expects ≈6.5 losses in a title run; the Knicks lost 3.
+A title as clean as 16-3 occurs in ≈7% of the model's championship runs, and
+≈1% of all simulated seasons. So the run sat far out on the favorable tail of
+what their regular season predicted — the same elevation §5 and §8 found, here in
+win-loss units.
+
+**Assumptions and robustness.** `σ` and `hca` are standard NBA values; varying
+them within reason (σ ∈ [11,13], hca ∈ [2.5,3.5]) moves the percentages by a few
+points but not the conclusion (large overperformance, Finals underdog). The model
+deliberately uses regular-season SRS and is blind to the Knicks' playoff
+elevation — that blindness is the point, since the elevation is exactly what we
+are trying to size.
+
+**Why no new chart.** The story is three or four scalar probabilities and a small
+per-round table, already in the appendix; a chart would not add resolution.
+
+---
+
 ## Recurring Methods: Quick Reference
 
 **`_pct_rank(series, value, ascending=True)`**

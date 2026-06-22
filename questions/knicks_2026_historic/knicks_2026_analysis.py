@@ -70,6 +70,7 @@ from knicks_2026_data import (
     compute_possessions_per_game,
     compute_per100_margin,
     build_possession_table,
+    simulate_title_run,
 )
 
 OUTPUT_DIR   = os.path.join(os.path.dirname(__file__), "generated")
@@ -1223,6 +1224,75 @@ def run_pace_possessions(champions: pd.DataFrame,
               file=out)
 
 
+# ── Section 18: Series-level win-probability model ───────────────────────────
+
+def run_series_winprob(po_2026: pd.DataFrame,
+                       reg_2026: pd.DataFrame,
+                       standings_2026: pd.DataFrame,
+                       out: io.StringIO) -> None:
+    """How likely was a 16-3 title run from the Knicks' regular-season strength?"""
+    print(_hdr("§18 SERIES-LEVEL WIN-PROBABILITY MODEL"), file=out)
+
+    srs = compute_srs(reg_2026)
+    champ_srs = float(srs.get(KNICKS_TEAM_ID, float("nan")))
+
+    # Build the bracket in round order: opponent SRS + Knicks home-court (hosted G1)
+    logs = po_2026.copy()
+    gid_to_opp = {}
+    for gid, grp in logs.groupby("GAME_ID"):
+        for tid in grp["TEAM_ID"].tolist():
+            if tid != KNICKS_TEAM_ID:
+                gid_to_opp[gid] = int(tid)
+    kn = logs[logs["TEAM_ID"] == KNICKS_TEAM_ID].copy()
+    kn["OPP_ID"] = kn["GAME_ID"].map(gid_to_opp)
+    kn = kn.dropna(subset=["OPP_ID"]).sort_values("GAME_DATE")
+
+    name_map = standings_2026.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1).to_dict()
+
+    specs, meta = [], []
+    for opp_id in kn.drop_duplicates("OPP_ID")["OPP_ID"]:
+        grp = kn[kn["OPP_ID"] == opp_id].sort_values("GAME_DATE")
+        opener = grp.iloc[0]
+        knicks_home = " vs." in str(opener["MATCHUP"]) or " vs " in str(opener["MATCHUP"])
+        opp_srs = float(srs.get(int(opp_id), float("nan")))
+        specs.append({"opp_srs": opp_srs, "knicks_home": knicks_home})
+        meta.append((int(opp_id), opp_srs, knicks_home))
+
+    res = simulate_title_run(champ_srs, specs)
+
+    print(
+        "Forward model from regular-season strength only (it does NOT know the\n"
+        "Knicks would elevate in May).  Per game: win prob = Phi((SRS_NYK − SRS_opp\n"
+        "± home edge)/sigma), sigma=12 pts, home edge=3 pts, best-of-7 per round.\n"
+        f"Knicks regular-season SRS: {champ_srs:+.2f}\n",
+        file=out,
+    )
+    round_names = ["R1", "R2", "CF", "Finals"]
+    print(f"  {'Round':<8} {'Opponent':<24} {'Opp SRS':>8} {'NYK home?':>9} "
+          f"{'P(win series)':>14}", file=out)
+    for i, ((oid, osrs, home), p) in enumerate(zip(meta, res["series_winprob"])):
+        rnd = round_names[i] if i < len(round_names) else f"R{i+1}"
+        nm = name_map.get(oid, f"Team {oid}").split()[-1]
+        print(f"  {rnd:<8} {nm:<24} {osrs:>+8.2f} {('yes' if home else 'no'):>9} "
+              f"{p:>13.1%}", file=out)
+
+    print(f"\n  P(Knicks win the title):           {res['p_title']:.1%}", file=out)
+    print(f"  Expected losses in a title run:    {res['exp_losses_given_title']:.1f} "
+          f"(actual: 3)", file=out)
+    print(f"  P(a title run loses ≤3 games):     {res['p_le3_losses_given_title']:.1%} "
+          f"(this is how clean 16-3 is)", file=out)
+    print(f"  P(title AND ≤3 losses), unconditional: {res['p_title_and_le3_losses']:.1%}",
+          file=out)
+    print(
+        "\nThe model made the Knicks a Finals underdog (the Spurs out-rated them in\n"
+        "the regular season), so a 16-3 title was well above the forward forecast:\n"
+        "they beat the bracket their own regular season predicted, echoing the\n"
+        "margin-based overperformance in §5.",
+        file=out,
+    )
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1276,6 +1346,7 @@ def main() -> None:
     run_elo_check(elo_table, champions, reg_2026, po_2026, standings_2026, out)
     run_bt_check(bt_table, champions, out)
     run_pace_possessions(champions, poss_table, out)
+    run_series_winprob(po_2026, reg_2026, standings_2026, out)
 
     body = out.getvalue()
 

@@ -438,6 +438,32 @@ def test_build_alt_rating_adjusted_table_matches_manual(monkeypatch):
     assert row["adj_margin"] == pytest.approx(10.0 - (2.0 + 2.0 + 4.0) / 3)
 
 
+def test_simulate_title_run_strong_favorite():
+    # Champion far stronger than every opponent → near-certain title, few losses.
+    specs = [{"opp_srs": -5.0, "knicks_home": True} for _ in range(4)]
+    res = data.simulate_title_run(15.0, specs, n_sims=5000, seed=1)
+    assert res["p_title"] > 0.9
+    assert res["exp_losses_given_title"] < 3.0
+    assert all(p > 0.8 for p in res["series_winprob"])
+
+
+def test_simulate_title_run_underdog():
+    # Champion weaker than every opponent → low title probability.
+    specs = [{"opp_srs": 8.0, "knicks_home": False} for _ in range(4)]
+    res = data.simulate_title_run(0.0, specs, n_sims=5000, seed=2)
+    assert res["p_title"] < 0.2
+    assert res["series_winprob"][0] < 0.5
+
+
+def test_simulate_title_run_winprob_monotonic():
+    # A tougher opponent lowers the per-series win probability.
+    easy = data.simulate_title_run(5.0, [{"opp_srs": -2.0, "knicks_home": True}],
+                                   n_sims=8000, seed=3)
+    hard = data.simulate_title_run(5.0, [{"opp_srs": 9.0, "knicks_home": True}],
+                                   n_sims=8000, seed=3)
+    assert easy["series_winprob"][0] > hard["series_winprob"][0]
+
+
 def test_hierarchical_rank_subject_clearly_best():
     # Subject far above the field with tiny sampling variance → almost surely #1.
     df = pd.DataFrame([

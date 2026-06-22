@@ -1246,6 +1246,86 @@ def build_alt_rating_adjusted_table(rating_fn,
     return pd.DataFrame(rows)
 
 
+# ── Series-level win-probability model ───────────────────────────────────────
+
+_BO7_HOME_PATTERN = (True, True, False, False, True, False, True)  # 2-2-1-1-1
+
+
+def simulate_title_run(champ_srs: float,
+                       series_specs: list,
+                       sigma: float = 12.0,
+                       hca: float = 3.0,
+                       n_sims: int = 40000,
+                       seed: int = 0) -> dict:
+    """Monte-Carlo a champion's playoff path from regular-season strength.
+
+    A forward model: it knows only each team's regular-season SRS and the venues,
+    NOT that the champion would elevate in the playoffs.  So it answers "what
+    should this bracket have produced?" and lets us measure how far the actual
+    16-3 beat the forecast.
+
+    Per game the champion's win probability is
+        p = Phi( (champ_srs − opp_srs ± hca) / sigma ),
+    with +hca at home and −hca on the road, ``sigma`` the single-game margin SD
+    (~12 pts).  Each round is a best-of-7 with the 2-2-1-1-1 home pattern; the
+    champion holds home court in a series when ``knicks_home`` is True.  Because
+    the bracket is four best-of-7 rounds, every title run is exactly 16 wins, so
+    the run's "cleanliness" is entirely its loss count (16-3 = 3 losses).
+
+    ``series_specs`` is a list of dicts with keys ``opp_srs`` and ``knicks_home``,
+    in round order.  Returns title probability, per-series win probabilities, the
+    expected losses in a title run, and how often a title run is as clean as the
+    actual one.
+    """
+    from scipy.stats import norm
+
+    rng = np.random.default_rng(seed)
+    n_series = len(series_specs)
+    won = np.zeros((n_sims, n_series), dtype=bool)
+    losses = np.zeros((n_sims, n_series), dtype=int)
+    per_series_p = []
+
+    for s, spec in enumerate(series_specs):
+        opp_srs = float(spec["opp_srs"])
+        pattern = _BO7_HOME_PATTERN if spec["knicks_home"] else tuple(
+            not h for h in _BO7_HOME_PATTERN)
+        p_slot = np.array([
+            float(norm.cdf((champ_srs - opp_srs + (hca if home else -hca)) / sigma))
+            for home in pattern
+        ])
+        per_series_p.append(float(np.mean(p_slot)))  # rough series-avg game prob
+
+        u = rng.random((n_sims, 7))
+        w = u < p_slot                       # champion wins that game slot
+        cum_w = np.cumsum(w, axis=1)
+        cum_l = np.cumsum(~w, axis=1)
+        kn_has = cum_w[:, -1] >= 4
+        op_has = cum_l[:, -1] >= 4
+        kn_reach = np.where(kn_has, np.argmax(cum_w >= 4, axis=1), 99)
+        op_reach = np.where(op_has, np.argmax(cum_l >= 4, axis=1), 99)
+        clinch = np.minimum(kn_reach, op_reach)
+        won[:, s] = kn_reach < op_reach
+        losses[:, s] = cum_l[np.arange(n_sims), clinch]
+
+    title = won.all(axis=1)
+    title_losses = losses[title].sum(axis=1) if title.any() else np.array([])
+    p_title = float(title.mean())
+
+    # series-level win probabilities computed marginally (each round independent)
+    series_winprob = [float(won[:, s].mean()) for s in range(n_series)]
+
+    return {
+        "p_title": p_title,
+        "series_winprob": series_winprob,
+        "exp_losses_given_title": float(title_losses.mean()) if title_losses.size else float("nan"),
+        "p_title_and_le3_losses": float((title & (losses.sum(axis=1) <= 3)).mean()),
+        "p_le3_losses_given_title": float((title_losses <= 3).mean()) if title_losses.size else float("nan"),
+        "sigma": sigma,
+        "hca": hca,
+        "n_sims": n_sims,
+    }
+
+
 # ── Hierarchical (partial-pooling) ranking ───────────────────────────────────
 
 def build_adjusted_margin_samples(start_year: int = START_YEAR,

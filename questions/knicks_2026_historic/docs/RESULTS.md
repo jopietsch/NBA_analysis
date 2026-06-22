@@ -456,4 +456,26 @@ Knicks opponent-adjusted margin:+11.23 pts/game
     90–91    raw +11.71  pace 101.1  adj/100 +9.10
     00–01    raw +12.75  pace 93.9  adj/100 +7.73
 
+─── §18 SERIES-LEVEL WIN-PROBABILITY MODEL ─────────────────────────────
+Forward model from regular-season strength only (it does NOT know the
+Knicks would elevate in May).  Per game: win prob = Phi((SRS_NYK − SRS_opp
+± home edge)/sigma), sigma=12 pts, home edge=3 pts, best-of-7 per round.
+Knicks regular-season SRS: +6.05
+
+  Round    Opponent                  Opp SRS NYK home?  P(win series)
+  R1       Hawks                       +2.38       yes         77.2%
+  R2       76ers                       -0.27       yes         88.9%
+  CF       Cavaliers                   +3.77       yes         68.7%
+  Finals   Spurs                       +8.28        no         31.4%
+
+  P(Knicks win the title):           14.7%
+  Expected losses in a title run:    6.5 (actual: 3)
+  P(a title run loses ≤3 games):     6.7% (this is how clean 16-3 is)
+  P(title AND ≤3 losses), unconditional: 1.0%
+
+The model made the Knicks a Finals underdog (the Spurs out-rated them in
+the regular season), so a 16-3 title was well above the forward forecast:
+they beat the bracket their own regular season predicted, echoing the
+margin-based overperformance in §5.
+
 ```

@@ -381,7 +381,33 @@ plausibly the best, but not the unambiguous #1 the single SRS number suggests.
 
 ---
 
-## 12. Limitations
+## 12. How Unlikely Was a 16-3 Run?
+
+One last way to gauge the run: forget what happened and ask what the Knicks'
+regular season predicted. We built a simple forecaster that knows only each
+team's regular-season strength and who had home court, turns every game into a
+win chance, and plays out the four best-of-seven rounds tens of thousands of
+times.
+
+The forecast was not kind. Because the Spurs out-rated the Knicks over the
+regular season, the model made New York a Finals underdog (about a 31% chance to
+win that series) and gave them only about a **15% chance to win the title at
+all**. A run as clean as 16-3, losing just three games across four rounds, was
+rarer still: only about **7% of the model's championship runs were that tidy**,
+and barely **1%** of all simulated seasons produced both a title and three or
+fewer losses.
+
+So almost nothing about the Knicks' regular season predicted this. They were
+"supposed" to lose around six or seven games on the way to a title they were not
+even favored to win; they lost three and were seriously tested only in the
+Finals. That is the §4–§5 margin story in win-loss terms: the Knicks played far
+above their regular-season level when it counted. (The exact percentages shift a
+little under a different assumed game-to-game swing, but the size of the
+overperformance does not.)
+
+---
+
+## 13. Limitations
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range
 on the margin ([+7.4, +22.4]). The comparison set is also only 43 champions.
@@ -422,7 +448,7 @@ margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 13. Methodology
+## 14. Methodology
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS
