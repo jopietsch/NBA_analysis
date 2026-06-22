@@ -708,6 +708,42 @@ moves them to 3rd. This also cleanly rebuts the "padded by blowouts" objection.
 
 ---
 
+## 15. Possessions-Based Pace Adjustment (`run_pace_possessions`)
+
+**The data.** `build_possession_table` estimates regular-season possessions per
+team per game for each season from the box score:
+`poss = FGA − OREB + TOV + 0.44·FTA` (the standard estimator), averaged over all
+team-games. These columns are present in the cache for all 43 seasons.
+
+**Why this supersedes §8's scoring-share adjustment.** §8 scales margins by
+points per game. That conflates two different things: *pace* (how many
+possessions a game has) and *efficiency* (points scored per possession). The
+3-point era raises points per possession without raising possessions, so scaling
+by total scoring over-penalizes a high-efficiency, normal-pace season like
+2025–26. Dividing by estimated possessions isolates pace, which is what an era
+adjustment should neutralize.
+
+**The computation.** For each champion, `margin_per100 = margin · 100 / poss` and
+likewise for the opponent-adjusted margin. This is the pace-neutral (per-100-
+possessions, i.e. net-rating-style) form of the margin, then ranked across the
+43 champions as usual.
+
+**What the results mean (the §8 number was too harsh).** 2025–26 is estimated at
+101.8 possessions/game, only ≈3.8 above the 98.0 historical mean — a ~4% pace
+premium, versus the ~12% scoring premium §8 used. Per 100 possessions the Knicks'
+raw margin (+14.6) and opponent-adjusted margin (+11.0) both rank **1st**, where
+the §8 scoring-share adjustment had dropped the raw margin to 3rd. The honest read
+is that most of 2025–26's scoring surplus is efficiency (threes), not pace, so on
+a true pace-neutral basis the #1 raw-and-adjusted margin survives. §8 is retained
+as the deliberately conservative bound; §15 is the more accurate one.
+
+**Why no new chart.** The finding is a rank correction (3rd → 1st) driven by one
+contrast (4% pace premium vs 12% scoring premium); it is carried fully by those
+two numbers in the appendix, and the existing adjusted-margin bar already shows
+the ranking.
+
+---
+
 ## Recurring Methods: Quick Reference
 
 **`_pct_rank(series, value, ascending=True)`**

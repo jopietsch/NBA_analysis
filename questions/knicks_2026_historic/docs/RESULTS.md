@@ -434,4 +434,26 @@ that the result isn't a margin-inflation artifact.
     86–87    raw +10.83  opp +1.59  adj +9.24
     85–86    raw +10.56  opp +2.31  adj +8.24
 
+─── §17 POSSESSIONS-BASED PACE ADJUSTMENT ──────────────────────────────
+Estimated possessions (FGA − OREB + TOV + 0.44·FTA):
+  2025-26 poss/team/game:     101.8
+  Historical mean (1984–2026): 98.0
+  2025-26 pace is above average by 3.8 poss/game.
+
+Knicks raw margin:              +14.89 pts/game
+  Per-100-possessions:         +14.63  → #1 of 43 (100.0th pct)
+Knicks opponent-adjusted margin:+11.23 pts/game
+  Per-100-possessions:         +11.02  → #1 of 43 (100.0th pct)
+
+  For contrast, the §9 scoring-share adjustment put the raw margin at #3.
+  Possessions isolate pace from the 3-point scoring boom, so 2025-26 is
+  penalized less than the scoring-share number implied.
+
+  Top 5 by opponent-adjusted margin per 100 possessions:
+    25–26    raw +14.89  pace 101.8  adj/100 +11.02  ← Knicks
+    16–17    raw +13.65  pace 98.8  adj/100 +10.36
+    86–87    raw +10.83  pace 104.2  adj/100 +9.13
+    90–91    raw +11.71  pace 101.1  adj/100 +9.10
+    00–01    raw +12.75  pace 93.9  adj/100 +7.73
+
 ```

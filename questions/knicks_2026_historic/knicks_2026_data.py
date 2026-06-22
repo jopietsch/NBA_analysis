@@ -565,6 +565,54 @@ def compute_league_scoring_avg(reg_logs: pd.DataFrame) -> float:
     return float(reg_logs["PTS"].mean())
 
 
+def compute_possessions_per_game(reg_logs: pd.DataFrame) -> float:
+    """Estimated possessions per team per game for a season.
+
+    Uses the standard box-score estimator on each team-game row,
+        poss = FGA − OREB + TOV + 0.44·FTA,
+    and averages over all team-games.  Unlike points-per-game, this isolates PACE
+    (how many possessions) from EFFICIENCY (points per possession), so it is the
+    right denominator for an era adjustment: the 3-point era scores more per
+    possession without necessarily playing faster.
+    """
+    needed = {"FGA", "OREB", "TOV", "FTA"}
+    if not needed.issubset(reg_logs.columns):
+        return float("nan")
+    poss = (reg_logs["FGA"] - reg_logs["OREB"]
+            + reg_logs["TOV"] + 0.44 * reg_logs["FTA"])
+    return float(poss.mean())
+
+
+def compute_per100_margin(raw_margin: float, season_poss_per_game: float) -> float:
+    """Convert a per-game point margin to points per 100 possessions.
+
+    margin_per100 = raw_margin · 100 / poss_per_game.  This is the pace-neutral
+    form of a margin: a +10 per game in a 100-possession era and a +10 in a
+    92-possession era represent different per-possession dominance, and dividing
+    by pace puts them on one scale.
+    """
+    if not season_poss_per_game or np.isnan(season_poss_per_game):
+        return float("nan")
+    return raw_margin * 100.0 / season_poss_per_game
+
+
+def build_possession_table(start_year: int = START_YEAR,
+                           end_year: int = END_YEAR,
+                           cache_dir: str | None = None) -> pd.DataFrame:
+    """Estimated regular-season possessions/team/game for every season.
+
+    Columns: year, poss_per_game.
+    """
+    rows = []
+    for year in range(start_year, end_year + 1):
+        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
+        if not os.path.exists(rs_path):
+            continue
+        rs = pd.read_csv(rs_path)
+        rows.append({"year": year, "poss_per_game": compute_possessions_per_game(rs)})
+    return pd.DataFrame(rows)
+
+
 def compute_pace_adjusted_margin(raw_margin: float,
                                  season_scoring_avg: float,
                                  reference_scoring_avg: float) -> float:

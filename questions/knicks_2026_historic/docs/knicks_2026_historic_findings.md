@@ -9,12 +9,14 @@ and outscored opponents by an average of **+14.9 points per game**, the highest
 raw playoff margin in the dataset. Across the game-to-game swing of a 19-game
 run, that margin could sit anywhere from +7.4 to +22.4: even at the unlucky end,
 the run would still rank above the historical average. Note that 2025–26 is the
-highest-scoring era since 1984; once margins are scaled to a common scoring
-level, the raw margin drops to 3rd all-time (+13.3). After adjusting for opponent
+highest-scoring era since 1984, but that is mostly sharper shooting, not a faster
+game: in actual possessions the season runs only about 4% above average, so on a
+true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-
+scoring version drops it to 3rd). After adjusting for opponent
 strength, the margin of **+11.2 pts/game** ranks first all-time (though once every
 champion's uncertainty is weighed fairly, being the single best is far from
-settled, see §10); after both the opponent and the scoring adjustment,
-it's +10.1, still first, but essentially tied with the 2016–17 Warriors (+10.0). The East was **not** historically weak: the West-East SRS gap in
+settled, see §10); on the same pace-neutral basis the opponent-adjusted margin is
+also first. The East was **not** historically weak: the West-East SRS gap in
 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of
 seasons since 1984, the West was even *more* dominant than this. The Knicks earned
 this, on a real schedule, against real competition.
@@ -393,18 +395,26 @@ performance. For the playoff-adjusted metrics (§5), each opponent's playoff SRS
 is computed from games *excluding* the Knicks series to avoid circularity;
 the Hawks had no such games and are excluded from that adjustment.
 
-**Era / scoring environment:** The 2025–26 season is the highest-scoring era in
-the dataset (115.6 pts/team/game vs. historical mean 103.5). What we call the
-"pace" adjustment scales each era's margins by its scoring level, so it is really
-a share-of-scoring adjustment: a 10-point win is a smaller slice of a 115-point
-game than of a 95-point one. It is not a true possessions-based pace adjustment,
-which would need possession counts we don't pull here. On that scoring-adjusted
-basis the Knicks' raw margin drops from 1st to 3rd (+13.3, behind the 2000–01
-Lakers +13.9 and 2016–17 Warriors +13.4). Apply both the opponent and the
-scoring adjustment and the Knicks stay first at +10.1, essentially tied with the
-2016–17 Warriors (+10.0). The opponent adjustment already absorbs some of the era
-effect, since a champion's margins and its opponents' SRS are measured in the
-same scoring environment, but the raw-margin claim is clearly era-inflated.
+**Era: scoring vs. pace.** The 2025–26 season has the most points per game in the
+dataset (115.6 vs. historical mean 103.5), which looks like a reason to discount
+the Knicks' margin. But high scoring is not the same as a fast game. Two ways to
+adjust for it pull in different directions:
+
+- *Scoring-share* (scale margins by points/game): a deliberately harsh take that
+  treats the whole scoring boom as inflation. On this basis the raw margin drops
+  from 1st to 3rd (+13.3, behind the 2000–01 Lakers and 2016–17 Warriors).
+- *Possessions* (scale by estimated possessions, which isolate pace from
+  shooting): the more correct adjustment. By this measure 2025–26 ran only about
+  4% faster than average (101.8 possessions vs. 98.0), because the extra points
+  come mostly from better three-point shooting, not more trips down the floor.
+  Per 100 possessions the Knicks' raw margin (+14.6) and opponent-adjusted margin
+  (+11.0) both stay **1st**.
+
+So the era objection is weaker than the scoring-share number suggested: most of
+2025–26's scoring is efficiency, not pace, and on a true pace-neutral basis the
+margin claim survives at #1. The opponent adjustment also already absorbs some
+era effect, since a champion's margins and its opponents' ratings are measured in
+the same environment.
 
 **Pre-1997 data:** PLUS_MINUS is null in the older NBA.com data. We derive it
 from PTS (both team rows per game), which is algebraically exact for game

@@ -123,6 +123,26 @@ def test_compute_league_scoring_avg():
     assert avg == pytest.approx(115.0)
 
 
+def test_compute_possessions_per_game():
+    rs = pd.DataFrame([
+        {"FGA": 85, "OREB": 10, "TOV": 14, "FTA": 25},   # 85-10+14+11 = 100
+        {"FGA": 80, "OREB": 12, "TOV": 16, "FTA": 50},   # 80-12+16+22 = 106
+    ])
+    # mean of 100 and 106 = 103
+    assert data.compute_possessions_per_game(rs) == pytest.approx(103.0)
+
+
+def test_compute_possessions_missing_columns():
+    assert np.isnan(data.compute_possessions_per_game(pd.DataFrame({"PTS": [100]})))
+
+
+def test_compute_per100_margin():
+    # +10 per game over 100 possessions stays +10; over 80 possessions scales up
+    assert data.compute_per100_margin(10.0, 100.0) == pytest.approx(10.0)
+    assert data.compute_per100_margin(10.0, 80.0) == pytest.approx(12.5)
+    assert data.compute_per100_margin(10.0, 125.0) == pytest.approx(8.0)
+
+
 def test_compute_pace_adjusted_margin():
     # If season avg equals reference, factor = 1 (no change)
     assert data.compute_pace_adjusted_margin(10.0, 110.0, 110.0) == pytest.approx(10.0)

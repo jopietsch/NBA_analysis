@@ -67,6 +67,9 @@ from knicks_2026_data import (
     compute_elo_ratings,
     compute_bradley_terry_ratings,
     build_alt_rating_adjusted_table,
+    compute_possessions_per_game,
+    compute_per100_margin,
+    build_possession_table,
 )
 
 OUTPUT_DIR   = os.path.join(os.path.dirname(__file__), "generated")
@@ -1150,6 +1153,76 @@ def run_bt_check(bt_table: pd.DataFrame,
     _alt_rating_ranking(bt_table, champions, "Bradley–Terry", out)
 
 
+# ── Section 17: Possessions-based pace adjustment ────────────────────────────
+
+def run_pace_possessions(champions: pd.DataFrame,
+                         poss_table: pd.DataFrame,
+                         out: io.StringIO) -> None:
+    """Re-do the era adjustment using estimated possessions, not points.
+
+    §9 scales margins by points/game, which conflates pace (possessions) with
+    efficiency (points per possession).  In the 3-point era teams score more per
+    possession without playing faster, so the scoring-share adjustment
+    over-penalizes 2025-26.  Dividing by estimated possessions isolates pace.
+    """
+    print(_hdr("§17 POSSESSIONS-BASED PACE ADJUSTMENT"), file=out)
+
+    df = champions.merge(poss_table, on="year").dropna(subset=["poss_per_game"])
+    if df.empty or SUBJECT_YEAR not in set(df["year"]):
+        print("  No possession data available.", file=out)
+        return
+
+    df = df.copy()
+    df["margin_per100"] = df.apply(
+        lambda r: compute_per100_margin(r["avg_margin"], r["poss_per_game"]), axis=1)
+    df["adj_per100"] = df.apply(
+        lambda r: compute_per100_margin(r["adj_margin"], r["poss_per_game"]), axis=1)
+
+    subj = df[df["year"] == SUBJECT_YEAR].iloc[0]
+    poss_2026 = float(subj["poss_per_game"])
+    hist_mean = float(df["poss_per_game"].mean())
+
+    print(f"Estimated possessions (FGA − OREB + TOV + 0.44·FTA):", file=out)
+    print(f"  2025-26 poss/team/game:     {poss_2026:.1f}", file=out)
+    print(f"  Historical mean ({START_YEAR}–{END_YEAR}): {hist_mean:.1f}", file=out)
+    print(f"  2025-26 pace is {'above' if poss_2026 > hist_mean else 'below'} "
+          f"average by {abs(poss_2026-hist_mean):.1f} poss/game.\n", file=out)
+
+    def _rank(col, val):
+        s = df[col].dropna()
+        return int((s > val).sum()) + 1, _pct_rank(s, val, ascending=True), len(s)
+
+    raw_rank, raw_pct, n = _rank("margin_per100", subj["margin_per100"])
+    adj_rank, adj_pct, _ = _rank("adj_per100", subj["adj_per100"])
+
+    print(f"Knicks raw margin:              {subj['avg_margin']:+.2f} pts/game", file=out)
+    print(f"  Per-100-possessions:         {subj['margin_per100']:+.2f}  "
+          f"→ #{raw_rank} of {n} ({raw_pct:.1f}th pct)", file=out)
+    print(f"Knicks opponent-adjusted margin:{subj['adj_margin']:+.2f} pts/game", file=out)
+    print(f"  Per-100-possessions:         {subj['adj_per100']:+.2f}  "
+          f"→ #{adj_rank} of {n} ({adj_pct:.1f}th pct)", file=out)
+
+    # Contrast with the scoring-share adjustment from §9
+    if "pace_adj_margin" in champions.columns:
+        ps = champions["pace_adj_margin"].dropna()
+        ss_subj = float(champions.loc[champions["year"] == SUBJECT_YEAR,
+                                      "pace_adj_margin"].iloc[0])
+        ss_rank = int((ps > ss_subj).sum()) + 1
+        print(f"\n  For contrast, the §9 scoring-share adjustment put the raw margin"
+              f" at #{ss_rank}.", file=out)
+        print(f"  Possessions isolate pace from the 3-point scoring boom, so 2025-26"
+              f" is\n  penalized less than the scoring-share number implied.", file=out)
+
+    top5 = df.nlargest(5, "adj_per100")[
+        ["year", "avg_margin", "poss_per_game", "adj_per100"]]
+    print(f"\n  Top 5 by opponent-adjusted margin per 100 possessions:", file=out)
+    for _, r in top5.iterrows():
+        marker = "  ← Knicks" if int(r["year"]) == SUBJECT_YEAR else ""
+        print(f"    {short_label(int(r['year'])):<8} raw {r['avg_margin']:+.2f}  "
+              f"pace {r['poss_per_game']:.1f}  adj/100 {r['adj_per100']:+.2f}{marker}",
+              file=out)
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1176,6 +1249,9 @@ def main() -> None:
         compute_bradley_terry_ratings, START_YEAR, END_YEAR
     )
 
+    print("Building possession table (all seasons)...")
+    poss_table = build_possession_table(START_YEAR, END_YEAR)
+
     print(f"Ready: {len(champions)} champion seasons, {len(gap_table)} gap seasons\n")
 
     out = io.StringIO()
@@ -1199,6 +1275,7 @@ def main() -> None:
     run_hierarchical(adj_samples, out)
     run_elo_check(elo_table, champions, reg_2026, po_2026, standings_2026, out)
     run_bt_check(bt_table, champions, out)
+    run_pace_possessions(champions, poss_table, out)
 
     body = out.getvalue()
 
