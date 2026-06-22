@@ -770,11 +770,6 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
 
 # ── Section 12: Betting-market expectations ──────────────────────────────────
 
-def _binom_p_value(k: int, n: int, p: float = 0.5) -> float:
-    """P(X >= k) under Binomial(n, p) — one-tailed test."""
-    return binom_sf_ge(k, n, p)
-
-
 def run_betting_market(ats_df: pd.DataFrame,
                        po_2026: pd.DataFrame,
                        standings_2026: pd.DataFrame,
@@ -798,7 +793,7 @@ def run_betting_market(ats_df: pd.DataFrame,
     # Statistical significance of the ATS record
     # Null hypothesis: each game is a fair coin flip at the spread (p=0.50)
     # One-tailed p-value: P(X >= n_covered | Binom(n_total, 0.5))
-    p_val = _binom_p_value(n_covered, n_total, p=0.5)
+    p_val = binom_sf_ge(n_covered, n_total, p=0.5)
     z = (n_covered - n_total * 0.5) / (n_total * 0.5 * 0.5) ** 0.5
     print(_subhdr("Statistical significance of ATS record"), file=out)
     print(f"  Null hypothesis: each game covers at 50% (efficient market)", file=out)
