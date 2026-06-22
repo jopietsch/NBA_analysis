@@ -32,7 +32,7 @@ Four categories account for about **95%** of the entire home advantage: **shooti
 
 Rebounding carries the largest share at roughly **30%** of the decline in the regular season, followed by turnovers at about **27%**. Together they account for more than half the drop. Shooting accounts for about **21%** and the narrowing foul gap for about **18%**. The three-point shift reaches across these: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline. Add those up and the move to the perimeter touches close to half the entire 40-year decline. Rebounding is the part it does not explain: it is the largest single driver, and it barely moves with three-point volume.
 
-The playoff picture is similar in shape, though a larger share of the playoff decline runs through factors not captured by the four box-score categories, consistent with better and lower seeds becoming more evenly matched over time.
+The playoff picture is similar in shape, though a larger share of the playoff decline falls outside the four box-score categories; the playoff samples are too small to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
 
 ---
 
@@ -48,7 +48,7 @@ Referees are calling fairer games. Home teams once attempted roughly **2 more fr
 
 ![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates converging and crossing over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding width=100%}
 
-Rebounding and turnovers together account for more than half the 40-year decline. The home rebounding edge has shrunk steadily for four decades, and it isn't the three-point story in disguise. In games with similar three-point rates, the shooting edge disappears; the rebounding edge barely moves. The cleaner measure is the **offensive** share of available rebounds: the home team's rate fell from about **34% to 26%** while the away team's fell only from **31% to 26%**. The lines converge and cross by 2025–26. Home teams no longer crash the offensive boards more aggressively than visitors.
+**Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding edge has shrunk steadily for four decades, and it isn't the three-point story in disguise. In games with similar three-point rates, the shooting edge disappears; the rebounding edge barely moves. The cleaner measure is the **offensive** share of available rebounds: the home team's rate fell from about **34% to 26%** while the away team's fell only from **31% to 26%**. The lines converge and cross by 2025–26. Home teams no longer crash the offensive boards more aggressively than visitors.
 
 The **turnover** edge faded over the same span. Home teams once committed about **0.4 fewer turnovers per game** than visitors; that gap is now essentially zero. About half of that fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. So rebounding stands almost entirely apart from the three-point story, and turnovers stand half apart. The playoffs show the same fade on both counts.
 
