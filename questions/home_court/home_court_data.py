@@ -1156,7 +1156,7 @@ def compute_referee_bias_stats(
 
 # GET a BBR page (polite pause + 429 backoff) and parse a monthly schedule
 # table. The mechanics live in nbakit.bbr; we pass this project's rate-limit
-# tuning. fetch progress/errors go to stderr so run()'s stdout->RESULTS.md
+# tuning. fetch progress/errors go to stderr so run()'s stdout->home_court_results.md
 # capture stays clean.
 def _bbr_get(url: str):
     return _bbr.get_soup(url, headers=BBR_HEADERS, sleep_sec=BBR_SLEEP_SEC,

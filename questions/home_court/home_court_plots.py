@@ -367,7 +367,7 @@ def plot_rest_altitude(data: dict) -> None:
     season and largely gone in the playoffs.
 
     `data` comes from regression.compute_rest_altitude_plotdata(); same
-    numbers RESULTS.md prints, no new data.
+    numbers home_court_results.md prints, no new data.
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
     fig.suptitle("Rest and altitude help home teams, but neither changed enough to drive the decline",
@@ -507,7 +507,7 @@ def plot_mediation(decomp: dict, boot: dict | None = None) -> None:
     Two-panel decomposition: each box-score channel's share of the home-court
     level (left) and of its 40-year decline (right), regular season vs playoffs.
 
-    Renders the same numbers RESULTS.md prints; the dict comes from
+    Renders the same numbers home_court_results.md prints; the dict comes from
     home_court_analysis.compute_mediation_decomposition(). Bars are
     normalized to 100%; the headline at each bar's end is how much of the
     level/decline the four channels capture.
@@ -1463,7 +1463,7 @@ def plot_team_hca_analysis(
     def _shrunken_hca(stats: dict) -> dict:
         """Empirical-Bayes shrinkage of each franchise's HCA toward the league
         mean — mirrors the regression module's _shrink_hca so the chart ranks
-        franchises the way RESULTS.md does (Denver/Utah on top), instead of
+        franchises the way home_court_results.md does (Denver/Utah on top), instead of
         letting small-sample defunct franchises top the raw list."""
         teams = list(stats)
         hcas = np.array([stats[t]["hca"] for t in teams], dtype=float)

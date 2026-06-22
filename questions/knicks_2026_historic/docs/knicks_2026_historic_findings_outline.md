@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findings prose or RESULTS change.
+Internal analyst reference. Cross-referenced to `knicks_2026_historic_results.md`. Update when findings prose or RESULTS change.
 
 ---
 
@@ -21,7 +21,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - **East strength:** West-East SRS gap +0.39 pts/game = 37th pct of West dominance (below historical mean +0.78). East was not weak.
 - **Health:** All four opponents essentially fully healthy (avg 98%). No injury asterisk.
 - **Spurs:** Final-round opponent elevated from reg-SRS +8.28 to playoff SRS +14.48 — the biggest improvement of any Knicks opponent.
-- RESULTS.md refs: §1 THE RAW CLAIM, §10 VERDICT
+- knicks_2026_historic_results.md refs: §1 THE RAW CLAIM, §10 VERDICT
 
 ## §2. The Raw Numbers
 
@@ -30,7 +30,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - 95% CI on margin (19 games): [+7.4, +22.4]. Even lower bound ranks 63rd pct.
 - Round breakdown: Hawks 4-2 (+17.5), 76ers 4-0 (+22.2), Cavaliers 4-0 (+19.2), Spurs 4-1 (+2.4).
 - Finals: 4 of 5 games decided by 4 pts or fewer.
-- RESULTS.md refs: §1 THE RAW CLAIM
+- knicks_2026_historic_results.md refs: §1 THE RAW CLAIM
 
 ## §3. Was the East Weak?
 
@@ -38,7 +38,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - East inter-conference win rate 0.487 (near parity). 37th pct (100th = worst for East).
 - Top 3 most West-dominant: 2013-14 (+4.08), 2003-04 (+3.73), 2000-01 (+3.11). 2025-26 well below those.
 - Knicks games-weighted opp SRS +3.67 = 49th pct among champions (mean +3.68). Schedule at historical median.
-- RESULTS.md refs: §2 WAS THE EAST WEAK, §3 HOW WEAK IS THE EAST HISTORICALLY, §4 WHO DID THE KNICKS BEAT
+- knicks_2026_historic_results.md refs: §2 WAS THE EAST WEAK, §3 HOW WEAK IS THE EAST HISTORICALLY, §4 WHO DID THE KNICKS BEAT
 
 ## §4. Opponent-Adjusted Dominance
 
@@ -46,7 +46,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - Top 5: 2025-26 +11.23, 2016-17 Warriors +10.23, 1986-87 Lakers +9.52, 1990-91 Bulls +9.20, 1985-86 Celtics +7.72.
 - Playoff overperformance vs. reg-SRS prediction: +12.52 pts/game, 97.7th pct (2nd all-time behind 2000-01 Lakers +14.49).
 - Playoff SRS +17.53 vs. reg-season SRS +6.05 = elevation +11.48, 97.7th pct (2nd all-time, behind 2000-01 +12.58).
-- RESULTS.md refs: §5 OPPONENT-ADJUSTED DOMINANCE
+- knicks_2026_historic_results.md refs: §5 OPPONENT-ADJUSTED DOMINANCE
 
 ## §5. Was the East Weak in the Playoffs?
 
@@ -54,7 +54,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - 76ers: reg SRS -0.27, playoff SRS -1.43 (gap -1.16); Cavaliers: reg +3.77, playoff +2.32 (gap -1.45). Both slight dips but based on few games.
 - Spurs: reg SRS +8.28, playoff SRS +14.48 (gap +6.20) — based on full West bracket, most independent. Biggest improvement of any Knicks opponent.
 - Full-run playoff-SRS-adjusted margin: +9.05 pts/game, 100th pct. Effectively tied with 1986-87 Lakers +8.99.
-- RESULTS.md refs: §6 ROUND-BY-ROUND (playoff SRS table)
+- knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (playoff SRS table)
 
 ## §6. Both Finalists Were the Biggest Risers
 
@@ -63,7 +63,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - OKC led regular season (+11.04) but barely changed (+0.38 elevation).
 - Finals paired the two biggest risers in the field, not the two best regular-season teams.
 - Note: Spurs playoff SRS here (+15.13) includes the Knicks series; the §5 independent measure (+14.48) excludes it.
-- RESULTS.md refs: §6 ROUND-BY-ROUND (field elevation table)
+- knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (field elevation table)
 
 ## §7. Other Context
 
@@ -71,7 +71,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - Home: 9 games, 77.8% win rate, 23rd pct vs. champions (below average at home).
 - Away: 10 games, 90.0% win rate, 97.7th pct (better than all but one champion).
 - The road dominance is the unusual piece; the home number is ordinary.
-- RESULTS.md refs: §7 OTHER DEFLATORS
+- knicks_2026_historic_results.md refs: §7 OTHER DEFLATORS
 
 ## §8. What the Betting Market Said
 
@@ -79,14 +79,14 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - ATS vs. East rounds: 14-0 (R1 6/6 +21.5, R2 4/4 +26.2, CF 4/4 +22.0).
 - Finals ATS: 2-5, avg margin essentially on the spread (+2.4 actual vs. +2.5 spread).
 - Note: ATS margin is not independent of raw margin — it's the same scoreline minus a near-zero spread. Also series correlation reduces effective sample from 19 to ~7.
-- RESULTS.md refs: §12 BETTING-MARKET EXPECTATIONS
+- knicks_2026_historic_results.md refs: §12 BETTING-MARKET EXPECTATIONS
 
 ## §9. Opponent Health (No Injury Asterisk)
 
 - Availability: Hawks 100%, 76ers 96%, Cavaliers 97%, Spurs 100%.
 - Avg 98%; most depleted was 76ers at 96%. Spurs fully intact.
 - Definition: rotation players averaging >=15 min/game across all their 2025-26 playoff appearances.
-- RESULTS.md refs: §11 OPPONENT PLAYER AVAILABILITY
+- knicks_2026_historic_results.md refs: §11 OPPONENT PLAYER AVAILABILITY
 
 ## §10. How Solid Is the #1 Ranking?
 
@@ -96,21 +96,21 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - Hierarchical (partial-pooling) test — every champion treated as uncertain: Knicks posterior mean +4.70 pts/game (90% CI [+1.80, +7.60]). P(true #1) = 9%. P(top 3) = 22.8%. Median rank 9.
 - Streakiness (huge sweeps + tight Finals) makes the run weaker evidence than a steady one — hence the hard pull from +11.2 to ~+4.7 in the hierarchical model.
 - Honest bottom line: clearly elite, very likely top-handful all-time, but data cannot crown them the single best. Chance of being true #1 runs from ~60% (holding history fixed) to ~9% (fairest test).
-- RESULTS.md refs: §13 ROBUSTNESS, §14 HIERARCHICAL
+- knicks_2026_historic_results.md refs: §13 ROBUSTNESS, §14 HIERARCHICAL
 
 ## §11. A Second Opinion: Other Rating Systems
 
 - Bradley-Terry (wins-only, no margins): Knicks adj margin +11.37, rank #1 of 43. Correlation with SRS-adjusted: +0.990. Blowouts are not an artifact — dominance is real.
 - Elo (recency-weighted): opp rating +5.53 (tougher than SRS's +3.67 — opponents played well down the stretch). Elo-adjusted margin +9.36, rank #3 of 43 (behind 2016-17 Warriors and 1990-91 Bulls).
 - All three systems put Knicks in top three. What shifts them off #1 is crediting opponents' recent form (Elo), not stripping out margins (BT).
-- RESULTS.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §17 POSSESSIONS-BASED PACE
+- knicks_2026_historic_results.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §17 POSSESSIONS-BASED PACE
 
 ## §12. How Unlikely Was a 16-3 Run?
 
 - Forward model (reg-season SRS only): Knicks given only 14.7% title probability (Spurs out-rated them in regular season).
 - Expected losses in title run: 6.5 (actual: 3). P(championship run losing <=3 games): 6.7%. P(title AND <=3 losses): 1.0%.
 - Echoes the margin overperformance in §4: the Knicks played far above their regular-season level.
-- RESULTS.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL
+- knicks_2026_historic_results.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL
 
 ## §13. What Does NOT Diminish the Run
 
@@ -118,7 +118,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 - East weak → no (§3, gap +0.39); bracket soft → no (§3–§4, opp SRS +3.67, 49th pct); early-round teams fading → a little at the edges (§5, 76ers/Cavs ~1.2–1.5 below on few games, Spurs +6.2); margins padded → no (§11, wins-only #1); scoring-era inflation → mostly no (§14, per-possession still #1); opponent injured → no (§9, 98% health).
 - The one genuine caveat is not on the list: 19-game small sample → single best only ~9% under the fairest test (§10–§11).
 - Full per-objection treatment lives in the companion doc `knicks_2026_historic_investigation.md`.
-- RESULTS.md refs: none new (points to §3, §4, §5, §9, §11, §13, §14 of RESULTS via the cited findings sections).
+- knicks_2026_historic_results.md refs: none new (points to §3, §4, §5, §9, §11, §13, §14 of RESULTS via the cited findings sections).
 
 ## §14. Limitations
 
@@ -131,7 +131,7 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 
 - Python (pandas, numpy). Data via nba_api (LeagueGameFinder, LeagueStandingsV3).
 - SRS: least-squares system (I − A) @ srs = mean_margin, constrained to sum = 0.
-- Full details in RESULTS.md (linked as a companion doc, not inlined) and knicks_2026_analysis.py.
+- Full details in knicks_2026_historic_results.md (linked as a companion doc, not inlined) and knicks_2026_analysis.py.
 
 ## Appendix A: Companion Documents
 
@@ -142,10 +142,10 @@ Internal analyst reference. Cross-referenced to `RESULTS.md`. Update when findin
 
 ## Key Numbers Registry
 
-Cross-reference table: each row maps a prose claim to its authoritative value in `RESULTS.md`.
+Cross-reference table: each row maps a prose claim to its authoritative value in `knicks_2026_historic_results.md`.
 `update_registry_lines.py` (PostToolUse hook) auto-updates the first line number in "Findings location" whenever `knicks_2026_historic_findings.md` is edited.
 
-| ID  | Findings location | Prose claim | RESULTS.md section | Authoritative value |
+| ID  | Findings location | Prose claim | knicks_2026_historic_results.md section | Authoritative value |
 |-----|------------------|-------------|-------------------|---------------------|
 | K01 | §1 L15  | 16-3, 88th pct win rate | §1 THE RAW CLAIM | win rate 0.842; 88.4th pct; mean 0.752 |
 | K02 | §1 L16  | +14.9 pts/game raw margin, highest ever | §1 THE RAW CLAIM | +14.89 pts/game, 100th pct |

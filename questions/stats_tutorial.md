@@ -1,6 +1,6 @@
 # Statistics Tutorial: Reading the NBA Analyses
 
-A teaching companion to the `RESULTS.md` files in this project. The goal: if
+A teaching companion to the `*_results.md` files in this project. The goal: if
 you've taken one or two statistics courses but wouldn't call yourself an expert,
 this should let you understand *every* number in the results files: what it is,
 why we used it, and how to read it without being fooled.
@@ -18,11 +18,11 @@ It's organized **by method, not by section**, because the same handful of tools
 show up over and over. Learn logistic regression once and you've unlocked ten
 sections of the home-court results. Where it helps, each method is illustrated
 with *actual numbers from this project*; many worked examples reproduce a row of
-`RESULTS.md` exactly so you can check the arithmetic yourself.
+the results doc exactly so you can check the arithmetic yourself.
 
 Companion docs:
 - `home_court/STATS_EXPLAINER.md`: goes section-by-section through the home-court
-  `RESULTS.md` using full statistical vocabulary; explains *why each section's
+  the results doc using full statistical vocabulary; explains *why each section's
   figure takes the form it does*. Read that *after* this once the vocabulary is
   familiar.
 - `knicks_2026_historic/STATS_EXPLAINER.md`: same role for the Knicks analysis.
@@ -36,7 +36,7 @@ Companion docs:
 Each method follows the same template:
 
 > **The question it answers** → **The intuition** → **The mechanics (lightly)** →
-> **A worked example from our data** → **How to read it in `RESULTS.md`** →
+> **A worked example from our data** → **How to read it in the results doc** →
 > **The trap it avoids**
 
 You do not have to read in order, but Part 0 (Foundations) underlies everything
@@ -102,7 +102,7 @@ translate them back to percentage points (see §2.2).
  log-odds       -inf ........ 0 .......... +inf   <- the modeling scale
 ```
 
-When `RESULTS.md` says a coefficient is "+0.065 log-odds per day" of rest and
+When the results doc says a coefficient is "+0.065 log-odds per day" of rest and
 then "~+1.6 pp," it computed the log-odds first and translated to percentage
 points for you. §2.2 shows exactly how.
 
@@ -133,7 +133,7 @@ Every result carries a measure of "could this just be luck?"
 
 - A **confidence interval (CI)** is usually more informative than the p-value. A
   "95% CI" is a range that would contain the true value 95% of the time if we
-  repeated the study. When `RESULTS.md` reports the regular-season decline as
+  repeated the study. When the results doc reports the regular-season decline as
   **-0.244 pp/yr, 95% CI [-0.280, -0.209]**, it's saying: the true slope is
   almost certainly somewhere in that narrow band, and the *whole band is
   negative*, so the decline is real. **A 95% CI that excludes 0 is equivalent to
@@ -149,7 +149,7 @@ one. Same star count, very different findings.
 ## 0.4 Statistical significance vs. practical importance
 
 With 49,107 games, this project can detect effects far too small to matter. The
-travel-distance result (§ Travel in `RESULTS.md`) is the textbook case:
+travel-distance result (§ Travel in the results doc) is the textbook case:
 **p = 0.010** (a `*`), but the effect is **-0.07 pp per 100 miles**, a brutal
 2,500-mile cross-country trip costs the visitor under 2 pp, and the win-rate
 buckets don't even fall in order. The lesson appears repeatedly here: **with huge
@@ -217,7 +217,7 @@ each one-unit step in *x*.
 
 **A worked example.** Take one dot per season, the home win %, and fit a line
 against the year. That's the regular-season decline: a slope of **-0.250 pp per
-year** (the OLS line in `RESULTS.md`'s decline section). The
+year** (the OLS line in the results doc's decline section). The
 `home_court_advantage_season.svg` figure is this line drawn through
 the season dots.
 
@@ -231,7 +231,7 @@ seasons have higher HCA than others, a strong, clean trend. Contrast the
 playoffs: same kind of line, but **R² = 0.20**, because each playoff season is
 only ~80 games, so the dots scatter much more around the trend.
 
-**How to read it in `RESULTS.md`:** look for "Trend/yr" rows and "slope" /
+**How to read it in the results doc:** look for "Trend/yr" rows and "slope" /
 "pp/yr" language. The stars next to a slope test the hypothesis "the true slope
 is zero (flat)."
 
@@ -260,7 +260,7 @@ z = ─────────────────────────�
     sqrt[ p_pool*(1-p_pool)*(1/n1 + 1/n2) ]
 ```
 
-**A worked example: reproducing a `RESULTS.md` row.** The era analysis compares
+**A worked example: reproducing a the results doc row.** The era analysis compares
 the first two regular-season eras: 1984-94 at **64.9%** (n = 11,275) vs. 1995-01
 at **59.9%** (n = 7,777).
 
@@ -268,11 +268,11 @@ at **59.9%** (n = 7,777).
 - SE = sqrt[0.629*0.371*(1/11275 + 1/7777)] = **0.0071**
 - z = (0.649 - 0.599) / 0.0071 = **+7.0**
 
-`RESULTS.md` reports **z = +6.95, p < 0.001 ****** for that boundary (the tiny
+the results doc reports **z = +6.95, p < 0.001 ****** for that boundary (the tiny
 difference is rounding the displayed percentages). A z of ~7 is enormous. This
 -4.9 pp drop at the 1994-95 hand-checking rule change is rock solid.
 
-**How to read it in `RESULTS.md`:** the "Consecutive eras, two-proportion
+**How to read it in the results doc:** the "Consecutive eras, two-proportion
 z-tests" and "format period" blocks. Each line is one boundary.
 
 **The trap it avoids... and the bigger trap it *doesn't*.** The z-test cleanly
@@ -314,7 +314,7 @@ inflates your chance of a false positive (see §3.4). Chi-square asks the single
 honest question "is there *any* difference among these groups?" in one test.
 
 **Its limit:** chi-square tells you a difference exists *somewhere*; it doesn't
-tell you *where* or *which direction*. That's why `RESULTS.md` pairs it with the
+tell you *where* or *which direction*. That's why the results doc pairs it with the
 bucket table (to see the pattern) and, for series games, notes the pattern is
 venue alternation rather than a trend.
 
@@ -409,7 +409,7 @@ against a left-out **reference** era (here 1984-94). So "era: 2023-26 = -0.375
 log-odds (~-9.0 pp)" means: relative to 1984-94, the 2023-26 era sits 9.0 pp
 lower, after the other factors are accounted for.
 
-**How to read it in `RESULTS.md`:** any block with "log-odds" and "~pp" columns.
+**How to read it in the results doc:** any block with "log-odds" and "~pp" columns.
 Read sign -> significance (stars/CI) -> the pp translation for size.
 
 ## 2.2 Turning log-odds into percentage points
@@ -469,7 +469,7 @@ addition, so you can split the home edge into channel-by-channel pieces that sum
 to the exact total. A logistic model's S-curve is nonlinear and *cannot* give you
 that clean sum. (See §4.3, the mediation decomposition, for the payoff.)
 
-**How to read it in `RESULTS.md`:** the mediation section. When you see
+**How to read it in the results doc:** the mediation section. When you see
 contributions that total to "100% of the level" and "95% of the trend," an LPM
 made that exact bookkeeping possible.
 
@@ -482,7 +482,7 @@ made that exact bookkeeping possible.
 regression, so we use **McFadden's pseudo-R² = 1 - (model log-likelihood / empty
 model log-likelihood)**. Critically, **its numbers are nowhere near linear R²**.
 A McFadden R² of **0.05** can represent a strong, important model. In
-`RESULTS.md` you'll see values like **0.0029** or **0.0673**. Those are not
+the results doc you'll see values like **0.0029** or **0.0673**. Those are not
 "the model explains 0.3% of anything" in the everyday sense.
 
 **The rule:** *never* read a McFadden value as an absolute percentage. Only read
@@ -519,7 +519,7 @@ here, one cluster per season-year, and compute uncertainty *between* clusters
 rather than pretending every game is its own island. The point estimate doesn't
 change; the error bars get appropriately wider and the p-values more honest.
 
-**How to read it in `RESULTS.md`:** wherever a game-level model says
+**How to read it in the results doc:** wherever a game-level model says
 "cluster-robust SEs by season" (the mediation, decomposition, travel, 3PA, and
 pace sections). You don't do anything differently: just know the CIs already
 account for the fact that seasons, not games, are the truly independent unit.
@@ -536,7 +536,7 @@ tight.
 year-to-year carryover. The "maxlags = 1" you see means it corrects for
 correlation between a season and the one immediately adjacent.
 
-**How to read it in `RESULTS.md`:** the decline section's "OLS / HAC" line. The
+**How to read it in the results doc:** the decline section's "OLS / HAC" line. The
 slope is the same line you'd draw by eye; the *inference* (its CI and p-value)
 has been made robust to the fact that seasons aren't independent. It's the
 time-series sibling of clustering (§3.2): both stop you from over-trusting
@@ -557,7 +557,7 @@ when you have real effects.
 
 **Why it's the punchline of the referee section, not a footnote.** A raw
 leaderboard of 47 noisy referee means *will* manufacture a "most biased ref"
-headline. BH is what lets `RESULTS.md` say something trustworthy:
+headline. BH is what lets the results doc say something trustworthy:
 **29 of 47 officials are individually significant, and all 29 survive BH
 correction.** That "survives correction" is the signature of a *real, widespread*
 effect rather than a few lucky draws, exactly the universal (not a-few-bad-apples)
@@ -612,7 +612,7 @@ how much each *new* one bumps the (pseudo-)R². The problem: **whoever goes firs
 hogs the shared credit.** Era and altitude both partly track the same teams; if
 era is entered first, it absorbs the overlap and looks bigger than it should.
 
-In `RESULTS.md`, era entered first gets a **57.9%** sequential share.
+In the results doc, era entered first gets a **57.9%** sequential share.
 
 **The fair way (Shapley).** Borrowed from game theory, the **Shapley value** asks:
 average each factor's contribution **over every possible order** of entry (all
@@ -620,7 +620,7 @@ average each factor's contribution **over every possible order** of entry (all
 credit is split evenly. Era's honest **Shapley share drops to 52.6%**, still
 half the story, but the inflation from going first is removed.
 
-**How to read it in `RESULTS.md`:** the decomposition section lists both columns
+**How to read it in the results doc:** the decomposition section lists both columns
 side by side precisely so you can see how much the ordering mattered (here, era
 was modestly inflated; altitude and rest barely moved). When they're close,
 ordering didn't matter and you can trust either; when they diverge, trust Shapley.
@@ -675,7 +675,7 @@ eFG% edge, and that eFG% edge is shrinking at **-0.0151 pp/yr**. Multiply:
 contribution to the decline. Sum all four channels and you recover **96%** of the
 regular-season -0.244 pp/yr slide; only 4% is "unmediated."
 
-**The honesty label you must respect.** `RESULTS.md` calls these channels
+**The honesty label you must respect.** the results doc calls these channels
 **proximate** and the level/trend split an **accounting decomposition, not
 causation**. A 27% "share" tells you *where* the change shows up in the box score,
 not *why* it happened, and on its own it can't tell you whether two channels are
@@ -719,7 +719,7 @@ fade, if anything, is sharper in the playoffs once 3PA is controlled.
 
 **Pinning down the uncertainty: bootstrap confidence intervals on the shares.**
 The point shares (43%, 25%, 14%, 13%) are estimates with sampling uncertainty.
-`RESULTS.md` reports 95% bootstrap CIs built by resampling whole seasons with
+the results doc reports 95% bootstrap CIs built by resampling whole seasons with
 replacement 500 times and recomputing the decomposition each time. Resampling
 whole seasons (rather than individual games) preserves the within-season
 correlation structure. In the regular season the level shares are tight: the
@@ -734,7 +734,7 @@ the playoff trend shares should be treated as directional, not precise.
 **Validating the decomposition: out-of-sample forecasting.** Fitting a model and
 testing it on the same data risks overfitting — the model might have memorized
 historical noise rather than a real mechanism. The out-of-sample forecast in
-`RESULTS.md` guards against this by freezing the four-channel LPM on the training
+the results doc guards against this by freezing the four-channel LPM on the training
 seasons (1984–2013) and asking it to predict each *held-out* season (2014–2026)
 from that season's actual box-score edges. The frozen model reaches 0.95 pp RMSE
 on the 13 held-out regular seasons, beating a naive trend extrapolation (1.45 pp)
@@ -784,7 +784,7 @@ Feed those into the decomposition of the **-9.29 pp** total drop (64.9% ->
 | win-rate (per-situation erosion) | **-8.59 pp** | ~92% |
 | interaction | +0.02 pp | -- |
 
-**How to read it in `RESULTS.md`:** the back-to-backs section's "Shift-share
+**How to read it in the results doc:** the back-to-backs section's "Shift-share
 decomposition" block. The frequency and win-rate lines sum (with the tiny
 interaction) to the total change printed just above them.
 
@@ -851,7 +851,7 @@ blowout losses are both becoming more common. The `home_court_margin.png`
 figure shows this fanning-apart visually.
 
 **The trap it avoids: this is the whole reason the section exists.** The simpler
-margin analysis (§ Win Margin in `RESULTS.md`) split games into "home wins" and
+margin analysis (§ Win Margin in the results doc) split games into "home wins" and
 "home losses" and found both groups' margins growing apart. But that split has a
 **built-in artifact**: as the home win rate falls, games that used to be narrow
 home *wins* flip into narrow home *losses*, which mechanically pushes the two
@@ -864,7 +864,7 @@ confirms the polarization is real, not bookkeeping.
 
 # Part 6: Ranking noisy things fairly
 
-Two methods that always travel together, used anywhere `RESULTS.md` ranks a list
+Two methods that always travel together, used anywhere the results doc ranks a list
 of noisy averages, the 39 franchises and the 47 referees.
 
 ## 6.1 Variance decomposition (method of moments)
@@ -921,10 +921,10 @@ true variance ~4.1^2 = 16.8 and the league mean +20.0 pp:
 - **Kansas City Kings:** raw **+35.4** on just 82 games (sampling SE ~7.2 pp ->
   sampling var ~51.7). Weight = 16.8 / (16.8 + 51.7) = **0.245**, so shrunken
   = 20.0 + 0.245 * (35.4 - 20.0) = **+23.8 pp**, pulled down 11.6 points,
-  because that gaudy raw number rests on almost no data. Matches `RESULTS.md`.
+  because that gaudy raw number rests on almost no data. Matches the results doc.
 - **Denver Nuggets:** raw **+27.9** on 1,730 games (sampling SE ~1.6 -> var ~2.7).
   Weight = 16.8 / (16.8 + 2.7) = **0.86**, so shrunken = 20.0 + 0.86 *
-  (27.9 - 20.0) = **+26.8 pp**, barely moves, and stays #1. Matches `RESULTS.md`.
+  (27.9 - 20.0) = **+26.8 pp**, barely moves, and stays #1. Matches the results doc.
 
 That's the whole idea: shrinkage demotes lucky small samples (Kansas City) while
 leaving well-measured ones (Denver) essentially untouched.
@@ -1004,7 +1004,7 @@ different weaknesses):
 contradicts the parity story. So parity didn't drive the structural decline. But
 the detrended checks (**first-diff r = -0.330, p = 0.033**; **residual
 r = -0.345, p = 0.023**) find a modest *same-year* wobble: in years the league
-gets more equal, HCA dips a little. `RESULTS.md` flags this itself as "interpret
+gets more equal, HCA dips a little. the results doc flags this itself as "interpret
 with caution": it's a small effect on ~43 points, and first differencing
 amplifies measurement noise. The discipline to report it *and* caveat it is the
 model to imitate.
@@ -1016,7 +1016,7 @@ Left: both just drift over the decades. Middle: plot one against the other and
 you get a tight line, r ~-0.9, looks like a strong relationship. Right: strip
 each series' own time trend out first and correlate the *leftovers*, and the link
 collapses toward zero. **The original correlation was the calendar, not a real
-connection.** This is why every "X vs. HCA" correlation in `RESULTS.md` is backed
+connection.** This is why every "X vs. HCA" correlation in the results doc is backed
 up either by detrending or by a within-era control.
 
 **The general lesson:** never trust a correlation between two trending series
@@ -1117,9 +1117,9 @@ single pinpointed season.
 
 Playoffs: the supremum is only 3.23 (at 2006), well below even the 10% threshold.
 No data-implied break; the playoff decline is a smooth drift throughout, consistent
-with what the era analysis (§4 of `RESULTS.md`) found.
+with what the era analysis (§4 of the results doc) found.
 
-**How to read it in `RESULTS.md`.** The "Supremum Chow F = X.XX at year YYYY"
+**How to read it in the results doc.** The "Supremum Chow F = X.XX at year YYYY"
 line is the headline. Compare to Andrews critical values (printed above it). The
 "top 5 candidate break years" table shows where the F was largest: a cluster of
 nearby years all scoring high means the break was real but gradual; one dominant
@@ -1206,7 +1206,7 @@ against slope-only breaks. Read together: the decline bent once, gently, in the
 late 1990s, and is otherwise a stable straight-line drift with no hidden
 instability elsewhere.
 
-**How to read it in `RESULTS.md`.** The CUSUM section's "Exceeds 5% critical band:
+**How to read it in the results doc.** The CUSUM section's "Exceeds 5% critical band:
 no/yes" line, plus the "Peak |CUSUM| … % of the 5% boundary" figure.
 Close-but-inside (like 87%) means "almost, but the trend holds."
 
@@ -1259,7 +1259,7 @@ Only the **foul** channel shows a significant immediate response (level shift
 you'd expect if the hand-checking crackdown was the operative change, since it
 acts directly on fouls.
 
-**How to read it in `RESULTS.md`.** The ITS section reports "Level shift" and
+**How to read it in the results doc.** The ITS section reports "Level shift" and
 "Slope change/yr" with their p-values; the channel event study reuses the same two
 columns, one row per channel.
 
@@ -1297,7 +1297,7 @@ era model (§4.1) is what pins the effect to that specific boundary. In the
 playoffs, no early-1990s boundary is significant at all, reaffirming the
 postseason carries no 1994–95 signature.
 
-**How to read it in `RESULTS.md`.** The placebo section's year-by-year table of
+**How to read it in the results doc.** The placebo section's year-by-year table of
 step coefficients and p-values. Look for *clusters* of significance, not lone
 years; and remember a cluster just before a real break is expected, not a tally
 of separate effects.
@@ -1458,7 +1458,7 @@ two series move contemporaneously, in the *same* season, rather than one leading
 the other by a year.
 
 **What this means for interpretation.** The within-era game-level result (§12 of
-`RESULTS.md`) is still the evidence that 3PA mechanically links to HCA in any given
+the results doc) is still the evidence that 3PA mechanically links to HCA in any given
 game. The Granger null adds a time-series footnote: the *annual adoption rate* of
 threes doesn't run ahead of the annual change in HCA. Both are plausibly downstream
 of the same broad strategic shift (analytics, spacing, officiating culture) that hit
@@ -1549,7 +1549,7 @@ exactly what CUSUM has little power to flag. And the extra pull toward k=2 (a
 secondary kink around 1992–2003) brackets the 1994–95 rule-change adjustment, the
 same boundary the era test (§4.1) and ITS (§7.7) keep landing on.
 
-**How to read it in `RESULTS.md`.** The Bayesian change-point block prints the
+**How to read it in the results doc.** The Bayesian change-point block prints the
 posterior P(k) for k=0/1/2, the Bayes factors, and the top break-year
 probabilities for k=1 (with the MAP year and HPD). Read the posteriors as
 model-selection guidance, not exact truth: with only 43 seasons the BIC marginal
@@ -1600,12 +1600,12 @@ were better than 88% of all champions by win rate.
 
 ![How empirical percentile rank works](generated/images/tutorial_percentile_rank.svg)
 
-The left panel is the ranked bar chart, the same form used in `RESULTS.md`. The
+The left panel is the ranked bar chart, the same form used in the results doc. The
 right panel makes the counting explicit: 38 champions are at or below the Knicks,
 5 are above, so percentile = 38/43 = 88th. There's no statistical magic here;
 the percentile is pure counting.
 
-**How to read it in `RESULTS.md`.** Every "percentile" number in the knicks
+**How to read it in the results doc.** Every "percentile" number in the knicks
 results is this same count. "100th percentile" means best ever in the dataset.
 "53rd percentile" means right at the historical median. No stars, no confidence
 intervals: these are descriptive facts about the 43-champion dataset, not
@@ -1659,7 +1659,7 @@ circular: a team's playoff rating partly reflects games against the Knicks
 themselves. Regular-season SRS measures strength on an independent 82-game
 baseline, before the Knicks were in the picture.
 
-**How to read it in `RESULTS.md`.** Any row labelled "SRS" is this system. A
+**How to read it in the results doc.** Any row labelled "SRS" is this system. A
 team with SRS +5 would be expected to beat a team with SRS -5 by 10 points on a
 neutral floor. The conference-gap section uses *average* SRS per conference
 (East: -0.20, West: +0.20) to quantify how balanced the conferences were.
@@ -1676,7 +1676,7 @@ adj_margin  =  raw_margin  -  avg_opponent_SRS
 ```
 
 For the Knicks: 14.89 - 3.67 = **+11.22 pts/game adjusted** (reported as +11.23
-after rounding in RESULTS.md).
+after rounding in the results doc).
 
 Note: the figure used here, +3.67, is the **games-weighted** average opponent
 SRS: each playoff game counts once, so a 5-game opponent contributes 5 data
@@ -1730,7 +1730,7 @@ compares two observed rates to each other.
 **The mechanics (lightly).** Under the null p = 0.5, the cover count X has mean
 n·p = 9.5 and SD sqrt(n·p·(1−p)) = sqrt(19 × 0.25) = 2.18. The z-score is
 (16 − 9.5) / 2.18 = **+2.98**, and the exact one-tailed binomial probability
-P(X ≥ 16) = **0.0022**, the number `RESULTS.md` reports. Both say the same
+P(X ≥ 16) = **0.0022**, the number the results doc reports. Both say the same
 thing: a 16-3 cover record sits well out in the tail of what an efficient market
 would produce.
 
@@ -1751,7 +1751,7 @@ genuine significance test in an otherwise descriptive analysis.
 
 ## Home-court analysis methods
 
-| You see this in `RESULTS.md` | It's doing this | Read more |
+| You see this in the results doc | It's doing this | Read more |
 |---|---|---|
 | log-odds, ~pp, "bivariate / controlling for" | logistic regression on win/loss | §2.1, §2.2 |
 | binomial GLM | the rigorous trend on season proportions | §2.3 |
@@ -1786,7 +1786,7 @@ genuine significance test in an otherwise descriptive analysis.
 
 ## Knicks historical analysis methods
 
-| You see this in `RESULTS.md` | It's doing this | Read more |
+| You see this in the results doc | It's doing this | Read more |
 |---|---|---|
 | Nth percentile (of 43 champions) | empirical percentile rank, counting, not inference | §8.1 |
 | SRS +X.X | Simple Rating System, point margin adjusted for schedule | §8.2 |

@@ -19,15 +19,15 @@ python3 generate_report.py
 Game logs and shot zone data are cached as CSVs under `cache/`. The first run takes several minutes
 (API calls per season with polite pauses); subsequent runs use the cache and finish almost instantly.
 
-See `home_court_findings.md` for narrative interpretation and `RESULTS.md` for the full regression tables
+See `home_court_findings.md` for narrative interpretation and `home_court_results.md` for the full regression tables
 (auto-generated each run, never edit manually).
 
 ## Output
 
 Running the analysis produces eighteen PNG charts (written to `generated/`) and prints fourteen regression
-analyses to stdout (captured in `RESULTS.md` in the repo root). Running `generate_report.py` assembles
+analyses to stdout (captured in `home_court_results.md` in the repo root). Running `generate_report.py` assembles
 everything into `generated/home_court_report.pdf` — sixteen sections plus an appendix with
-the full regression tables. All generated PNGs and PDFs live under `generated/` (gitignored); `RESULTS.md`
+the full regression tables. All generated PNGs and PDFs live under `generated/` (gitignored); `home_court_results.md`
 is the one generated file kept in the repo root.
 
 ## Updating home_court_findings.md
@@ -41,13 +41,13 @@ Use this prompt with Claude Code:
 ```
 Before updating home_court_findings.md, verify that the analysis outputs are current:
 
-1. Check that RESULTS.md and all chart (SVG) files exist and were modified more recently
+1. Check that home_court_results.md and all chart (SVG) files exist and were modified more recently
    than home_court.py and home_court_analysis.py.
-   Use: stat -f "%m %N" RESULTS.md generated/*.svg home_court.py home_court_analysis.py
+   Use: stat -f "%m %N" home_court_results.md generated/*.svg home_court.py home_court_analysis.py
    If any output is older than the source files, stop and say so — the analysis
    must be re-run first: MPLBACKEND=Agg python3 home_court.py
 
-2. Read RESULTS.md in full to understand the current numbers, significance levels,
+2. Read home_court_results.md in full to understand the current numbers, significance levels,
    and era-by-era breakdowns.
 
 3. Read the current home_court_findings.md.
@@ -57,10 +57,10 @@ Before updating home_court_findings.md, verify that the analysis outputs are cur
      Do not rename or renumber sections without also updating any cross-references.
    - ### subheadings within a section are rendered as sub-headers in the PDF.
    - No specific coefficient values, R² values, or percentage points — those
-     belong in RESULTS.md and go stale. Reference RESULTS.md for specifics.
+     belong in home_court_results.md and go stale. Reference home_court_results.md for specifics.
    - Use qualitative language: "significant", "dominant", "narrowing", "no effect".
    - Describe the direction and relative magnitude of each effect.
-   - If anything in the current RESULTS.md contradicts what home_court_findings.md says,
+   - If anything in the current home_court_results.md contradicts what home_court_findings.md says,
      update the narrative to match.
 
 5. After editing home_court_findings.md, regenerate the PDF:

@@ -501,7 +501,7 @@ See the Regression Results companion (Appendix A) for full numerical output and
 ::: {.content-visible when-format="html"}
 | Document | Description |
 |---|---|
-| [Regression Results](RESULTS.html) | Full numerical output from the analysis pipeline: every ranking, percentile, and adjusted figure behind this report. |
+| [Regression Results](knicks_2026_historic_results.html) | Full numerical output from the analysis pipeline: every ranking, percentile, and adjusted figure behind this report. |
 | [The Investigation](knicks_2026_historic_investigation.html) | Full treatment of every objection to the run: why each seemed plausible, what was tested, and how much it actually explains away. |
 | [One-Page Summary](knicks_2026_historic_summary.html) | Standalone summary built around three charts and four questions. |
 | [Stats Explainer](knicks_2026_historic_stats_explainer.html) | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
@@ -513,7 +513,7 @@ All files are in the same folder as this PDF (`generated/`).
 
 | Document | File | Description |
 |---|---|---|
-| Regression Results | `RESULTS.pdf` | Full numerical output from the analysis pipeline: every ranking, percentile, and adjusted figure behind this report. |
+| Regression Results | `knicks_2026_historic_results.pdf` | Full numerical output from the analysis pipeline: every ranking, percentile, and adjusted figure behind this report. |
 | The Investigation | `knicks_2026_historic_investigation.pdf` | Full treatment of every objection to the run: why each seemed plausible, what was tested, and how much it actually explains away. |
 | One-Page Summary | `knicks_2026_historic_summary.pdf` | Standalone summary built around three charts and four questions. |
 | Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |

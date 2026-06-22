@@ -65,12 +65,12 @@ class TestCheckPrerequisites:
         findings = tmp_path / "FINDINGS.md"
         findings.write_text("no images here\n")
         with pytest.raises(SystemExit):
-            _check_prerequisites(self._cfg(findings, tmp_path / "RESULTS.md"))
+            _check_prerequisites(self._cfg(findings, tmp_path / "home_court_results.md"))
 
     def test_passes_when_all_present(self, tmp_path):
         png = tmp_path / "fig.png"
         png.write_bytes(b"\x89PNG")
-        results = tmp_path / "RESULTS.md"
+        results = tmp_path / "home_court_results.md"
         results.write_text("results")
         findings = tmp_path / "FINDINGS.md"
         findings.write_text(f"![fig]({png})\n")
@@ -93,7 +93,7 @@ def test_build_report_produces_pdf_and_html(tmp_path):
         "## 1. Section One\n\n"
         "Some text.\n\n![A chart](chart.png)\n"  # relative — same dir as FINDINGS.md
     )
-    results = tmp_path / "RESULTS.md"
+    results = tmp_path / "home_court_results.md"
     results.write_text("```\n─── SECTION A ───\ndata line\n```\n")
 
     pdf_path = str(tmp_path / "generated" / "test_report.pdf")

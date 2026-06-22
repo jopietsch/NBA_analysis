@@ -1,16 +1,16 @@
 """
-End-to-end guards that RESULTS.md only changes when expected.
+End-to-end guards that home_court_results.md only changes when expected.
 
 Two layers:
 
-1. test_results_md_headline_numbers — parses the committed RESULTS.md and
+1. test_results_md_headline_numbers — parses the committed home_court_results.md and
    asserts a curated set of headline numbers. Fast, no cache or network, runs
-   anywhere. This is the everyday guard: if a regenerated RESULTS.md shows a
+   anywhere. This is the everyday guard: if a regenerated home_court_results.md shows a
    different headline figure, this fails and points at the exact number.
 
 2. test_results_md_matches_regeneration — regenerates the report body in-memory
-   and asserts it equals the committed RESULTS.md. This catches drift and
-   staleness (code changed but RESULTS.md not re-run). It needs the cache, so it
+   and asserts it equals the committed home_court_results.md. This catches drift and
+   staleness (code changed but home_court_results.md not re-run). It needs the cache, so it
    is skipped when cache/ is absent (e.g. CI). The attendance section is excised
    from both sides: it depends on a live Basketball-Reference fetch and is owned
    by another workstream, so it isn't part of this golden.
@@ -25,14 +25,14 @@ import pytest
 import home_court_analysis as reg
 import home_court_data as nba
 
-RESULTS_PATH = os.path.join(os.path.dirname(__file__), "..", "docs", "RESULTS.md")
-TEST_RESULTS_PATH = os.path.join(os.path.dirname(__file__), "RESULTS.md")
+RESULTS_PATH = os.path.join(os.path.dirname(__file__), "..", "docs", "home_court_results.md")
+TEST_RESULTS_PATH = os.path.join(os.path.dirname(__file__), "home_court_results.md")
 TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 # Canonical shared monorepo cache (nba_analysis/cache), the same dir the
 # regression pipeline reads from — not a stale per-question cache/ directory.
 from home_court_data import CACHE_DIR
 
-# Substrings that must appear verbatim in RESULTS.md. Each pins one headline
+# Substrings that must appear verbatim in home_court_results.md. Each pins one headline
 # result; a shift in any of these numbers fails the test at that line.
 HEADLINE_ANCHORS = [
     "Binomial GLM: -0.244 pp/yr",                 # §1 regular-season decline
@@ -53,7 +53,7 @@ def _fenced_body(markdown: str) -> str:
     """Return the text inside the ``` ``` code fence — i.e. exactly what
     generate_results_text() produces."""
     fences = [i for i, ln in enumerate(markdown.splitlines()) if ln.strip() == "```"]
-    assert len(fences) >= 2, "RESULTS.md should wrap its body in a code fence"
+    assert len(fences) >= 2, "home_court_results.md should wrap its body in a code fence"
     lines = markdown.splitlines()
     return "\n".join(lines[fences[0] + 1 : fences[-1]])
 
@@ -77,16 +77,16 @@ def test_results_md_headline_numbers():
     text = _read_results()
     missing = [a for a in HEADLINE_ANCHORS if a not in text]
     assert not missing, (
-        "RESULTS.md no longer contains expected headline figures — if this is an "
+        "home_court_results.md no longer contains expected headline figures — if this is an "
         "intended change, update HEADLINE_ANCHORS:\n  " + "\n  ".join(missing)
     )
 
 
 def test_results_md_matches_test_data(monkeypatch):
     """Stable end-to-end golden: regenerate from tests/data/ and compare to
-    committed tests/RESULTS.md.  No network, no full cache required.
+    committed tests/home_court_results.md.  No network, no full cache required.
 
-    To regenerate tests/RESULTS.md after an intentional code change:
+    To regenerate tests/home_court_results.md after an intentional code change:
         python3 -m pytest test_results_md.py::test_results_md_matches_test_data --regen
     or run the helper directly:
         python3 -c "
@@ -99,7 +99,7 @@ def test_results_md_matches_test_data(monkeypatch):
         nba.compute_shot_zone_stats = lambda *a, **k: ([], {})
         nba.compute_tracking_rebound_stats = lambda *a, **k: ([], {})
         df = reg.build_game_dataset()
-        open('tests/RESULTS.md', 'w').write(reg.generate_results_text(df))
+        open('tests/home_court_results.md', 'w').write(reg.generate_results_text(df))
         "
     """
     monkeypatch.setattr(nba, "CACHE_DIR", TEST_DATA_DIR)
@@ -118,9 +118,9 @@ def test_results_md_matches_test_data(monkeypatch):
         expected = f.read()
 
     assert regenerated == expected, (
-        "Regenerated output differs from tests/RESULTS.md. "
+        "Regenerated output differs from tests/home_court_results.md. "
         "If the change is intended, re-run the helper in the docstring above "
-        "and commit tests/RESULTS.md."
+        "and commit tests/home_court_results.md."
     )
 
 
@@ -143,7 +143,7 @@ def test_results_md_matches_regeneration(monkeypatch):
     committed = _fenced_body(_read_results())
 
     assert _normalize(regenerated) == _normalize(committed), (
-        "Regenerated regression output differs from committed RESULTS.md. "
+        "Regenerated regression output differs from committed home_court_results.md. "
         "If the change is intended, re-run "
-        "`MPLBACKEND=Agg python3 home_court.py` and commit RESULTS.md."
+        "`MPLBACKEND=Agg python3 home_court.py` and commit home_court_results.md."
     )

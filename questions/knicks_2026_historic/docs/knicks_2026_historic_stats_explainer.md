@@ -8,10 +8,10 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
+A guide to every analysis that produces output in `knicks_2026_historic_results.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and
 (where a section has one) **why its figure takes the form it does**. Sections appear
-in the same order as `RESULTS.md`. The figures themselves are embedded in `knicks_2026_historic_findings.md`;
+in the same order as `knicks_2026_historic_results.md`. The figures themselves are embedded in `knicks_2026_historic_findings.md`;
 here we only explain the reasoning behind each choice. Unlike `knicks_2026_historic_findings.md`, this
 document uses statistical terminology freely; it is the methods companion, not the
 narrative report.
@@ -346,7 +346,7 @@ did.
 (raw +19.7, reg-adj +17.7, po-adj +20.3 across R1–CF), and the Finals were tight
 on every measure (raw +2.4, reg-adj −5.9, po-adj −12.1). Switching from
 regular-season to playoff opponent strength does not erase the dominance: it
-sharpens the same story §6 in `RESULTS.md` tells, that the headline margin was
+sharpens the same story §6 in `knicks_2026_historic_results.md` tells, that the headline margin was
 built before the Finals against opponents who were not collapsing, and the Finals
 were a real contest against a Spurs team peaking.
 

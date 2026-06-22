@@ -4,7 +4,7 @@ knicks_2026_historic.py — pipeline orchestration for the
 "Did the 2026 Knicks have a historic playoff run?" analysis.
 
 Runs the whole thing in order: generate PNGs, then run the analysis which
-writes RESULTS.md. Holds no data, plotting, or stats logic of its own.
+writes knicks_2026_historic_results.md. Holds no data, plotting, or stats logic of its own.
 
     MPLBACKEND=Agg python3 knicks_2026_historic.py
 """

@@ -1,6 +1,6 @@
-Audit the argument structure of one or more reader-facing docs: do the sections agree with the intro, does the summary cover the findings, and is the reasoning internally consistent? This is the structure-and-logic counterpart to `/check-consistency` (numbers vs. RESULTS.md) and `/voice-review` (prose style).
+Audit the argument structure of one or more reader-facing docs: do the sections agree with the intro, does the summary cover the findings, and is the reasoning internally consistent? This is the structure-and-logic counterpart to `/check-consistency` (numbers vs. the results doc) and `/voice-review` (prose style).
 
-This skill does NOT open `docs/RESULTS.md`. It works entirely within the prose documents. If you find a number that looks suspicious, note it for `/check-consistency` to verify — do not chase it here.
+This skill does NOT open `docs/*_results.md`. It works entirely within the prose documents. If you find a number that looks suspicious, note it for `/check-consistency` to verify — do not chase it here.
 
 Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`.
 

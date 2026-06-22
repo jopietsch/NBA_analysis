@@ -5,7 +5,7 @@ Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current p
 Pick the standard by filename (see the audience-tier table in `questions/CLAUDE.md`):
 - `*_findings.md` / `*_summary.md` — general reader: strip statistical jargon to plain language.
 - `*_stats_explainer.md` / `stats_tutorial.md` — stats-literate but rusty: do NOT strip the real terms; instead check they are used correctly and defined/refreshed on first use.
-- `RESULTS.md` — never hand-edit; stat language is correct there. Decline to "fix" it.
+- the results doc — never hand-edit; stat language is correct there. Decline to "fix" it.
 
 Steps:
 1. Read `questions/CLAUDE.md` — the sections "Audience tiers", the plain-language translation table, "No em-dashes", "No drama, no exaggeration", and "Write like a person". That is the rubric; do not invent rules.

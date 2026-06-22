@@ -7,10 +7,10 @@ violate the plain-language rules in questions/CLAUDE.md and suggests a plain
 replacement for each.
 
 Intentionally NOT checked (stat language is correct there by design):
-  - RESULTS.md            — auto-generated statistical output
+  - *_results.md          — auto-generated statistical output
   - *_stats_explainer.md  — teaches the methods to a rusty-but-literate reader
   - stats_tutorial.md     — worked statistical examples
-  - *_findings_outline.md — internal analyst outline cross-referenced to RESULTS
+  - *_findings_outline.md — internal analyst outline cross-referenced to results
 
 High precision by choice: only unambiguous jargon is a hard flag, so the gate
 stays quiet on clean prose. Softer judgment terms (correlation-of-the-moment
@@ -111,7 +111,7 @@ def main() -> None:
     ]
     for term, (ln, fix) in seen.items():
         out.append(f'  • line {ln}: "{term}" -> {fix}')
-    out.append("(RESULTS.md / stats_explainer / stats_tutorial are exempt by design.)")
+    out.append("(*_results.md / stats_explainer / stats_tutorial are exempt by design.)")
     print("\n".join(out), file=sys.stderr)
     sys.exit(2)
 

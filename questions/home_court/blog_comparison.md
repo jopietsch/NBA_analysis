@@ -1,6 +1,6 @@
 # Our Findings vs. the Sparkle Technologies Blog
 
-A point-by-point check of our report (`home_court_findings.md`, backed by `RESULTS.md`) against the external analysis at
+A point-by-point check of our report (`home_court_findings.md`, backed by `home_court_results.md`) against the external analysis at
 <https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage>.
 
 Three questions drove this comparison:
@@ -9,7 +9,7 @@ Three questions drove this comparison:
 2. Are we claiming anything that our own data doesn't support?
 3. Did we find changes the blog missed (and vice versa)?
 
-**Bottom line.** We agree on the big picture and on every number where we share a method. The disagreements are almost all the same shape: the blog leans on raw season-to-season correlations and unconditional splits; we control for the 40-year downward drift and for confounders. The single best external validation is that an independent analyst lands within a tenth of a point of our altitude numbers. We are not inventing results — our most aggressive claims are the ones tied directly to `RESULTS.md`. The blog credited one driver (schedule / back-to-backs) that we have since tested directly — it explains only ~8% of the decline. And we surface three eroding channels the blog never mentions, plus modern player-tracking data that corroborates the rebounding story from the possession level.
+**Bottom line.** We agree on the big picture and on every number where we share a method. The disagreements are almost all the same shape: the blog leans on raw season-to-season correlations and unconditional splits; we control for the 40-year downward drift and for confounders. The single best external validation is that an independent analyst lands within a tenth of a point of our altitude numbers. We are not inventing results — our most aggressive claims are the ones tied directly to `home_court_results.md`. The blog credited one driver (schedule / back-to-backs) that we have since tested directly — it explains only ~8% of the decline. And we surface three eroding channels the blog never mentions, plus modern player-tracking data that corroborates the rebounding story from the possession level.
 
 ---
 
@@ -17,7 +17,7 @@ Three questions drove this comparison:
 
 These are genuine independent corroborations — different analyst, different code, same answer.
 
-| Topic | Blog | Us (`RESULTS.md`) | Verdict |
+| Topic | Blog | Us (`home_court_results.md`) | Verdict |
 |---|---|---|---|
 | Decline is real, ~10 pp | 68% → 55% (≈13 pp, league-wide) | RS 65% → 55.6%; playoffs 68% → 58% | **Agree** (we split RS/playoffs; blog reports a blended figure) |
 | Refs/free throws are a major eroding channel | r = 0.85; home FTA edge +1.91 → +0.59/gm | foul-call edge 1.2 → 0.25/gm (RS), 1.6 → 0.7 (playoffs) | **Agree on direction & shrinkage** |
@@ -59,7 +59,7 @@ A related disagreement on the **free-throw share**: the blog says the FT/referee
 
 ### 2b. The mid-1990s drop — hand-checking vs. the short three-point line
 
-Both reports see a **~2.6 pp one-time drop** in the mid-1990s on top of the drift. We attribute it to the **1994–95 hand-check crackdown** (`RESULTS.md:607`: era 1995–01, −2.6 pp, p=0.010). The blog attributes the *same era's* drop to the **shortened three-point line (1994–97)**, which it uses as a natural experiment for three-point causation (before 61.8% → during 59.2% → after 60.8%).
+Both reports see a **~2.6 pp one-time drop** in the mid-1990s on top of the drift. We attribute it to the **1994–95 hand-check crackdown** (`home_court_results.md:607`: era 1995–01, −2.6 pp, p=0.010). The blog attributes the *same era's* drop to the **shortened three-point line (1994–97)**, which it uses as a natural experiment for three-point causation (before 61.8% → during 59.2% → after 60.8%).
 
 Here's the catch: the shortened line (1994–95 through 1996–97) overlaps the hand-check crackdown almost exactly, and the blog uses a before/during/after three-point rate pattern as causal evidence for the short line. But our channel event study gives us more traction than a season-level split. The foul differential responded immediately and significantly at the 1994-95 boundary (level shift p=0.007); the shooting channel showed no significant immediate response (p=0.327). If the shortened three-point line were the primary driver, you would expect the shooting line to move first. It doesn't. The two changes are not fully separable at the season level, but the channel data points more consistently to hand-checking. Our prose is already measured ("the more likely culprit"); it does not need softening.
 
@@ -86,7 +86,7 @@ The blog reports a **5.2 pp eastward-travel penalty** (visitor going east → 62
 
 **Load management / back-to-backs — now tested; premise confirmed, magnitude overstated.** The blog argues visitor back-to-back frequency fell from ~35% (1980s) to ~21% (today), so fewer games hand the home team a tired opponent, crediting this with **~15–20% of the decline**.
 
-We have now run this directly (new `BACK-TO-BACKS` section in `RESULTS.md`). The premise checks out: visitor B2B frequency fell **35.0% → 18.8%** across our eras — essentially the blog's number. But a shift-share decomposition of the 9.3 pp regular-season decline puts the **schedule/frequency effect at only −0.71 pp, about 8%**; the remaining ~92% is the home edge eroding *within* every rest situation alike. The reason it's small: the home advantage against a tired visitor (64.7%) is only ~6 pp above a normal game (59.1%), so even a 16-point drop in tired-visitor frequency moves the aggregate less than a point. So we **confirm the blog's mechanism exists but is about half its claimed size** (~8%, not 15–20%) — and B2Bs are a regular-season matter; they barely occur in the playoffs.
+We have now run this directly (new `BACK-TO-BACKS` section in `home_court_results.md`). The premise checks out: visitor B2B frequency fell **35.0% → 18.8%** across our eras — essentially the blog's number. But a shift-share decomposition of the 9.3 pp regular-season decline puts the **schedule/frequency effect at only −0.71 pp, about 8%**; the remaining ~92% is the home edge eroding *within* every rest situation alike. The reason it's small: the home advantage against a tired visitor (64.7%) is only ~6 pp above a normal game (59.1%), so even a 16-point drop in tired-visitor frequency moves the aggregate less than a point. So we **confirm the blog's mechanism exists but is about half its claimed size** (~8%, not 15–20%) — and B2Bs are a regular-season matter; they barely occur in the playoffs.
 
 This also vindicates the blog's own caveat: even among fully-rested games HCA fell ~6 pp, a decline scheduling can't explain — consistent with our four-channel on-court story carrying the bulk.
 
@@ -114,9 +114,9 @@ This also vindicates the blog's own caveat: even among fully-rested games HCA fe
 
 ## 5. Are we "making things up"?
 
-No evidence of it. Every number we share with an independent analyst is consistent or favorable, and our boldest claims (rebounding, turnovers, playoff seeding control) are precisely the ones anchored in `RESULTS.md` rather than asserted. Two honesty fixes surfaced by this comparison — **both now addressed:**
+No evidence of it. Every number we share with an independent analyst is consistent or favorable, and our boldest claims (rebounding, turnovers, playoff seeding control) are precisely the ones anchored in `home_court_results.md` rather than asserted. Two honesty fixes surfaced by this comparison — **both now addressed:**
 
 - **The mid-90s drop (§2b):** `home_court_findings.md` now acknowledges the shortened-three-point-line interpretation alongside hand-checking, noting the two are confounded, rather than asserting hand-checking as the sole cause.
-- **Back-to-backs (§3):** now tested directly — a new `BACK-TO-BACKS` section in `RESULTS.md` and a paragraph in `home_court_findings.md` §4 quantify the schedule-shift channel at ~8% of the regular-season decline, replacing the earlier "rest is ruled out" framing.
+- **Back-to-backs (§3):** now tested directly — a new `BACK-TO-BACKS` section in `home_court_results.md` and a paragraph in `home_court_findings.md` §4 quantify the schedule-shift channel at ~8% of the regular-season decline, replacing the earlier "rest is ruled out" framing.
 
 Everywhere else, the comparison strengthens confidence: where we and the blog use the same method we get the same answer, and where we differ we are the ones controlling for the trap (spurious trends, unconditional splits) that the blog falls into.

@@ -14,7 +14,7 @@
 
 A 16-3 playoff run with a +14.9 average margin looks historic on its face. But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the opponents were hurt, or the scoreboard was padded. Each of these is a fair objection, and each is testable rather than something to wave off.
 
-This document records those tests. For every objection we lay out why it seemed plausible, what was measured, what the data showed, and how much of the run it actually explains away. The numerical detail behind each test is in `RESULTS.md`; the charts here are the same ones used in the full analysis pipeline. The honest counterweight, the one thing that genuinely does temper the claim, is in the last section.
+This document records those tests. For every objection we lay out why it seemed plausible, what was measured, what the data showed, and how much of the run it actually explains away. The numerical detail behind each test is in `knicks_2026_historic_results.md`; the charts here are the same ones used in the full analysis pipeline. The honest counterweight, the one thing that genuinely does temper the claim, is in the last section.
 
 ---
 

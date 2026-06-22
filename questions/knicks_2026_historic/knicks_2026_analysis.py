@@ -3,7 +3,7 @@
 knicks_2026_analysis.py — Phase 2 analysis for "Did the 2026 Knicks have a
 historic playoff run?"
 
-Produces RESULTS.md with all numerical findings.  Run this first, then:
+Produces knicks_2026_historic_results.md with all numerical findings.  Run this first, then:
   - knicks_2026_plots.py  (Phase 3 charts)
   - generate_report.py    (Phase 4 PDF)
 
@@ -75,7 +75,7 @@ from knicks_2026_data import (
 )
 
 OUTPUT_DIR   = os.path.join(os.path.dirname(__file__), "generated")
-RESULTS_PATH = os.path.join(os.path.dirname(__file__), "docs", "RESULTS.md")
+RESULTS_PATH = os.path.join(os.path.dirname(__file__), "docs", "knicks_2026_historic_results.md")
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -1341,7 +1341,7 @@ def main() -> None:
         f.write(body)
         f.write("\n```\n")
 
-    print(f"Saved → RESULTS.md")
+    print(f"Saved → knicks_2026_historic_results.md")
     print(body)
 
 

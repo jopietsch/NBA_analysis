@@ -17,7 +17,7 @@ reportlab PDF).
 ```bash
 pip install -r requirements.txt
 
-# Run the full analysis — fetches data, generates PNGs, writes RESULTS.md
+# Run the full analysis — fetches data, generates PNGs, writes knicks_2026_historic_results.md
 MPLBACKEND=Agg python3 knicks_2026_historic.py
 
 # Generate the PDF report (run after the above)
@@ -27,7 +27,7 @@ python3 generate_report.py
 Game logs are cached as CSVs under `cache/`. The first run hits the NBA.com API
 (with polite pauses); subsequent runs use the cache.
 
-See `knicks_2026_historic_findings.md` for narrative interpretation and `RESULTS.md` for the
+See `knicks_2026_historic_findings.md` for narrative interpretation and `knicks_2026_historic_results.md` for the
 auto-generated analysis output (never edit by hand).
 
 ## Tests

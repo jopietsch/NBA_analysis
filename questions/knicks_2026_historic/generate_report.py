@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate the 2026 Knicks historic-playoffs PDF report.
-Run after knicks_2026_historic.py — all PNGs and RESULTS.md must exist.
+Run after knicks_2026_historic.py — all PNGs and knicks_2026_historic_results.md must exist.
 
     python3 generate_report.py
 """
@@ -15,7 +15,7 @@ OUTPUT_DIR = "generated"
 if __name__ == "__main__":
     build_report(ReportConfig(
         findings_path="docs/knicks_2026_historic_findings.md",
-        results_path="docs/RESULTS.md",
+        results_path="docs/knicks_2026_historic_results.md",
         title="Did the 2026 Knicks Have a Historic Playoff Run?",
         subtitle="The 2025–26 New York Knicks in Context",
         data_line="Data: NBA.com via nba_api",

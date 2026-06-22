@@ -1244,8 +1244,8 @@ def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
     """Box-score channel shares of the HCA level and its trend, RS and playoffs.
 
     The numbers run_mediation_analysis prints, returned in a structure the plot
-    layer renders directly — so the chart and RESULTS.md never diverge. Each
-    channel row carries both a table_label (for RESULTS.md) and a chart_label
+    layer renders directly — so the chart and home_court_results.md never diverge. Each
+    channel row carries both a table_label (for home_court_results.md) and a chart_label
     (for the plot). Linear-probability identities; see run_mediation_analysis.
     """
     channels = [
@@ -1364,7 +1364,7 @@ def compute_mediation_bootstrap(df: pd.DataFrame, n_boot: int = 500,
     Resamples whole seasons with replacement (the cluster unit, matching the
     cluster-robust SEs the point decomposition uses) and recomputes each
     channel's % of the level and % of the decline, plus the two headline
-    "channels carry X%" figures. Seeded, so RESULTS.md stays reproducible.
+    "channels carry X%" figures. Seeded, so home_court_results.md stays reproducible.
     """
     rng = np.random.default_rng(seed)
     out: dict = {}
@@ -4559,14 +4559,14 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-_RESULTS_PATH = "docs/RESULTS.md"
+_RESULTS_PATH = "docs/home_court_results.md"
 
 
 def generate_results_text(df: pd.DataFrame | None = None) -> str:
     """Run every analysis and return the captured report body (no file I/O).
 
     Split out of run() so tests can regenerate the results in-memory and
-    compare against the committed RESULTS.md without overwriting it.
+    compare against the committed home_court_results.md without overwriting it.
     """
     buf = io.StringIO()
 

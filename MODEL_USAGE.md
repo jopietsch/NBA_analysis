@@ -7,7 +7,7 @@ execute most of it — concentrate the expensive capability on the items where
 errors are silent and on every FINDINGS rewrite.
 
 These notes reference each analysis by name rather than by section number,
-because `home_court_FINDINGS.md` and `RESULTS.md` get reordered as the report evolves and
+because `home_court_FINDINGS.md` and `home_court_results.md` get reordered as the report evolves and
 fixed numbers go stale.
 
 ## Pricing context (as of June 2026)

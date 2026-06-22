@@ -6,7 +6,7 @@ Thin wrapper around nbakit.mdpdf — all logic lives there.
 
     python3 generate_doc_pdf.py stats_tutorial.md
     python3 generate_doc_pdf.py stats_tutorial.md [output.pdf]
-    python3 generate_doc_pdf.py stats_tutorial.md --appendix RESULTS.md
+    python3 generate_doc_pdf.py stats_tutorial.md --appendix <project>_results.md
 """
 
 import sys
@@ -20,9 +20,9 @@ if __name__ == "__main__":
         try:
             appendix = args[idx + 1]
         except IndexError:
-            sys.exit("usage: --appendix requires a path (e.g. --appendix RESULTS.md)")
+            sys.exit("usage: --appendix requires a path (e.g. --appendix <project>_results.md)")
         del args[idx:idx + 2]
     if not args:
         sys.exit("usage: python3 generate_doc_pdf.py <markdown_file> "
-                 "[output.pdf] [--appendix RESULTS.md]")
+                 "[output.pdf] [--appendix <project>_results.md]")
     build(args[0], args[1] if len(args) > 1 else None, appendix_path=appendix)

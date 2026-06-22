@@ -8,10 +8,10 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-A guide to every analysis that produces output in `RESULTS.md`: the data it uses,
+A guide to every analysis that produces output in `home_court_results.md`: the data it uses,
 the statistical approach, why that approach was chosen, what the results mean, and —
 where a section has one — **why its figure takes the form it does** (a `Why this
-chart` note). Sections appear in the same order as `RESULTS.md`. The figures
+chart` note). Sections appear in the same order as `home_court_results.md`. The figures
 themselves are displayed and captioned in `home_court_findings.md`; here we only explain the
 reasoning behind each chart choice. Unlike `home_court_findings.md`, this document uses
 statistical terminology freely — it is the methods companion, not the narrative
@@ -160,7 +160,7 @@ This resolves the QLR–CUSUM tension without contradicting either. The QLR asks
 
 **The data.** Per-game home-minus-away differentials in seven box-score metrics —
 personal fouls, free throw attempts, FG%, eFG%, 3PA rate, 3P%, FT% — for all
-games in both contexts. The RESULTS.md table reports all seven; the six-panel
+games in both contexts. The home_court_results.md table reports all seven; the six-panel
 chart uses FTA diff as its first panel rather than foul diff, because free throw
 attempts are the scoring consequence of foul-calling asymmetry and are more
 legible to a general audience.

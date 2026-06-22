@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate the NBA home court advantage PDF report.
-Run after home_court.py — all PNGs and RESULTS.md must exist.
+Run after home_court.py — all PNGs and home_court_results.md must exist.
 
     python3 generate_report.py
 """

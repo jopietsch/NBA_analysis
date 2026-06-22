@@ -6,7 +6,7 @@
 
 NBA home court advantage has been falling for 40 years. Several explanations are compelling on their face: the rules changed, travel improved, tired visitors became rarer, bigger crowds made arenas louder, more parity compressed outcomes. Each deserves a direct test rather than an assumption.
 
-This document records those tests. For each hypothesis, we lay out why it seemed plausible, what was measured, what the data showed, and where the intuition went wrong. The statistical detail behind every test is in `RESULTS.md`; the charts here are the same ones used in the full analysis pipeline.
+This document records those tests. For each hypothesis, we lay out why it seemed plausible, what was measured, what the data showed, and where the intuition went wrong. The statistical detail behind every test is in `home_court_results.md`; the charts here are the same ones used in the full analysis pipeline.
 
 ---
 
@@ -22,7 +22,7 @@ This document records those tests. For each hypothesis, we lay out why it seemed
 
 The 1994-95 exception works for a specific reason. Hand-checking affected referee discretion, and referee behavior toward home teams is one of the few things that can shift asymmetrically. When referees were directed to call tighter games, the home-favoring foul bias compressed: not because home teams were less protected by the rule, but because tighter calling narrowed the gap across all calls. Foul calls responded immediately at the 1994-95 boundary (p=0.007). The shooting channel showed no significant immediate response (p=0.327). That asymmetry is the fingerprint of referee behavior, not shot-selection rules.
 
-One complication: the three-point line was also shortened in 1994-95 through 1996-97, and the two changes can't be fully separated at the season level. The channel data points more toward hand-checking, but the shortened line may have contributed. See RESULTS.md for the full event-study output.
+One complication: the three-point line was also shortened in 1994-95 through 1996-97, and the two changes can't be fully separated at the season level. The channel data points more toward hand-checking, but the shortened line may have contributed. See home_court_results.md for the full event-study output.
 
 The practical implication for reading the main chart: the era labels tell you when the rules changed. They do not tell you that those changes bent home court. The shading is a calendar, not a causal map. Only one era boundary corresponds to a detectable break in the trend, and even that one mostly accelerated an erosion that was already underway.
 
