@@ -26,7 +26,7 @@ Throughout, the regular season and the playoffs are tracked separately. They sha
 
 ## 1. The 40-Year Decline
 
-The decline has two layers: slow erosion of about a quarter of a point per year, with two steeper stretches on top. The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%, most likely from the 1994–95 hand-checking crackdown. A brief uptick around 2002–04 followed, visible but resting on only three seasons. The second steepening arrived after 2017, when the share of shots from deep rose from about a quarter to nearly half, pushing the regular-season rate below 56%. The playoffs held near 64% from the mid-1990s through 2017, then joined the slide, falling to 61%, then 58%.
+The decline has two layers: slow erosion of about a quarter of a point per year, with two steeper stretches on top. The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%, most likely from the 1994–95 hand-checking crackdown. A brief uptick around 2002–04 followed, visible but resting on only three seasons. The second steepening arrived after 2017, when the share of shots from deep rose from about a quarter to about 40%, pushing the regular-season rate below 56%. The playoffs held near 64% from the mid-1990s through 2017, then joined the slide, falling to 61%, then 58%.
 
 Smaller than it was does not mean gone. In the most recent regular season, nearly every team still won more at home than on the road, with only one exception. Good teams that win everywhere still win more at home; weak teams pick up most of their wins there.
 
