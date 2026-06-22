@@ -48,7 +48,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **Shot selection.** Historically, home teams have gotten more of their attempts from close range and fewer from mid-range. A paint shot is more efficient than a mid-range jumper, so home teams have started each possession with a small built-in advantage in expected scoring. This edge was clearest in an era when three-point attempts were rare. As three-point shooting took over, it gradually eroded this home advantage, in ways Section 3 covers.
 
-**Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just over a third of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
+**Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just under 0.4 of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
 **It all shows up in the box score.** The Four Factors together account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting (eFG%) is the largest piece, more than 40%, followed by rebounding. How much each factor counts toward winning has held nearly constant decade to decade, so the overall breakdown isn't distorted by lumping different periods together: the game got fairer, not different in how its components combine.
 
@@ -72,7 +72,7 @@ These shares carry uncertainty. The regular-season figures are tight: rebounding
 
 ![Shot zone differentials (home minus road) over time, regular season vs. playoffs. Four panels: paint, mid-range, corner 3, and above-break 3. The paint panel is the key one: the gap has nearly closed, meaning away teams now get close-range attempts at nearly the same rate as home teams. The three-point panels show little differential throughout.](../generated/images/home_court_shot_zones.svg){#fig-shot-zones}
 
-The league's three-point attempt rate and the home win rate have moved in opposite directions for 40 years. When 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%. The timing lines up with the second sharp drop: the three-point share rose from about a quarter to nearly half of all shots in the three seasons after 2017, exactly when that drop began.
+The league's three-point attempt rate and the home win rate have moved in opposite directions for 40 years. When 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%. The timing lines up with the second sharp drop: the three-point share rose from about a quarter to about 40% of all shots in the three seasons after 2017, exactly when that drop began.
 
 That 40-year lockstep looks convincing, but a tighter test exposes its limits. Once you set aside the fact that both lines simply drift over the decades and ask whether they still move together year to year, the link weakens by about half: roughly 40% of that 40-year chart is two trends heading the same direction over time, not one driving the other.
 
