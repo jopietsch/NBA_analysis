@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """PostToolUse hook: keep Key Numbers Registry line numbers fresh.
 
-Fires when home_court_findings.md is edited. For each row in the
-Key Numbers Registry in home_court_findings_outline.md, searches
+Fires when any project's findings.md is edited. For each row in the
+Key Numbers Registry in the matching findings_outline.md, searches
 findings.md for the row's anchor phrase and updates the first L-number
 in "Findings location" to match.
 
@@ -13,9 +13,9 @@ import os
 import re
 import sys
 
-# Maps each registry row ID to an exact substring from findings.md.
-# Update an anchor here only when the corresponding sentence is substantially rewritten.
-ANCHORS = {
+# Per-project anchor dicts: maps registry row ID to an exact substring from findings.md.
+# Update an anchor only when the corresponding sentence is substantially rewritten.
+HOME_COURT_ANCHORS = {
     "N01": "win rate has fallen from about 65% to 55%",
     "N02": "from nearly 68% to 58% in the playoffs",
     "N03": "weaker team in the playoffs playing at home won 65% and 66%",
@@ -80,6 +80,60 @@ ANCHORS = {
     "N62": "altitude piece on its own, from Section 4, accounts for about 8 of those points",
 }
 
+KNICKS_ANCHORS = {
+    "K01": "went 16-3 (88th percentile win rate among all 43 champions",
+    "K02": "an average of **+14.9 points per game**, the highest",
+    "K03": "margin could sit anywhere from +7.4 to +22.4",
+    "K04": "margin of **+11.2 pts/game** ranks first all-time",
+    "K05": "37th percentile of West dominance, and well within",
+    "K06": "seasons since 1984, the West was even",
+    "K07": "regular-season SRS of +8.28 to a playoff SRS of +14.48",
+    "K08": "average availability 98%",
+    "K09": "0.842, vs. mean 0.752, best (2016",
+    "K10": "of the five games were decided by 4 points or fewer",
+    "K11": "most West-dominant seasons on record were 2013",
+    "K12": "opponents was **+3.67** (49th percentile among all 43 champions)",
+    "K13": "Warriors | +13.7 | +3.41 | +10.2",
+    "K14": "+12.5 pts/game of outperformance, 2nd all-time",
+    "K15": "+11.48 above their regular-season SRS, also 2nd all-time",
+    "K16": "gives a margin of +9.1 pts/game,",
+    "K17": "regular-season SRS of +8.28 but +14.5 in the",
+    "K18": "they jumped to +17.53. That rise of **+11.48** was the",
+    "K19": "climbed to +15.13 in the playoffs, a rise of",
+    "K20": "regular-season rating leader, Oklahoma City (+11.04)",
+    "K21": "31.6% of Knicks playoff games were decided by 5 points",
+    "K22": "Home: 9 games, 77.8% win rate (23rd percentile",
+    "K23": "Away: 10 games, 90.0% win rate (98th percentile)",
+    "K24": "average of **+16.9 pts/game**",
+    "K25": "14-0 against the spread",
+    "K26": "Finals exactly dead-on (2-5)",
+    "K27": "Average across all four opponents: **98%**",
+    "K28": "close Finals margin (+2.4 avg) reflects genuine competition",
+    "K29": "Knicks finish #1 in about 60% of those re-runs",
+    "K30": "in the top three in 70%",
+    "K31": "in the top five in 82%",
+    "K32": "anywhere from +5.1 to +17.7",
+    "K33": "margin lands at **+6.5 per game**",
+    "K34": "plausible range of roughly +1.5 to",
+    "K35": "the Knicks come out as the single best only about",
+    "K36": "from +11.2 down to about +4.7",
+    "K37": "on a pure wins-only basis the Knicks",
+    "K38": "Elo-adjusted margin is **+9.4 per game, third-best**",
+    "K39": "only about a **15% chance to win the title at",
+    "K40": "rarer still: only about **7% of the model",
+    "K41": "barely **1%** of all simulated seasons produced both a title",
+    "K42": "actual possessions the season runs only about 4% above average",
+}
+
+# Maps each findings filename suffix to its (outline suffix, anchors dict).
+PROJECTS = {
+    "home_court_findings.md": ("home_court_findings_outline.md", HOME_COURT_ANCHORS),
+    "knicks_2026_historic_findings.md": ("knicks_2026_historic_findings_outline.md", KNICKS_ANCHORS),
+}
+
+# Row-ID pattern: match N## (home_court) or K## (knicks) at the start of a table row.
+ROW_ID_RE = re.compile(r"^\| ([NK]\d+) \|")
+
 
 def find_line(findings_lines: list, anchor: str, hint) -> "int | None":
     """Return 1-based line number where anchor appears.
@@ -94,7 +148,7 @@ def find_line(findings_lines: list, anchor: str, hint) -> "int | None":
     return min(matches, key=lambda n: abs(n - hint))
 
 
-def update_outline(findings_path: str, outline_path: str):
+def update_outline(findings_path: str, outline_path: str, anchors: dict):
     with open(findings_path, encoding="utf-8") as f:
         findings_lines = f.readlines()
     with open(outline_path, encoding="utf-8") as f:
@@ -105,11 +159,11 @@ def update_outline(findings_path: str, outline_path: str):
     new_lines = list(outline_lines)
 
     for i, line in enumerate(outline_lines):
-        m = re.match(r"\| (N\d+) \|", line)
+        m = ROW_ID_RE.match(line)
         if not m:
             continue
         row_id = m.group(1)
-        anchor = ANCHORS.get(row_id)
+        anchor = anchors.get(row_id)
         if not anchor:
             continue
 
@@ -140,14 +194,21 @@ def main() -> None:
         sys.exit(0)
 
     fp = (data.get("tool_input") or {}).get("file_path", "") or ""
-    if not fp.endswith("home_court_findings.md"):
+
+    project = None
+    for suffix, (outline_suffix, anchors) in PROJECTS.items():
+        if fp.endswith(suffix):
+            project = (suffix, outline_suffix, anchors)
+            break
+    if project is None:
         sys.exit(0)
 
-    outline_path = fp.replace("home_court_findings.md", "home_court_findings_outline.md")
+    suffix, outline_suffix, anchors = project
+    outline_path = fp[: -len(suffix)] + outline_suffix
     if not os.path.exists(outline_path):
         sys.exit(0)
 
-    changed, not_found = update_outline(fp, outline_path)
+    changed, not_found = update_outline(fp, outline_path, anchors)
 
     msgs = []
     if changed:
