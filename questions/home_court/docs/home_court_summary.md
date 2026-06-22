@@ -14,7 +14,7 @@ Yes: the home team’s win rate has fallen. Most of that fall is slow, steady er
 
 ---
 
-## 1. Yes, it really changed
+## 1. Yes, It Really Changed
 
 ![Home win % per season, 1983–84 through 2025–26: regular season (top) and playoffs (bottom), with long-run trend fits and rule-change-era shading.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season width=100%}
 
@@ -24,27 +24,27 @@ The decline of home court advantage in the playoffs, lagged behind the decline i
 
 ---
 
-## 2. What home court is made of, and where it changed
+## 2. What Creates Home Court Advantage, and What Changed
 
 ![Box-score category shares. Left: what creates the home advantage (level). Right: what share of the 40-year decline each category carries. Regular season and playoffs.](../generated/images/home_court_mediation.svg){#fig-mediation width=100%}
 
 Four categories account for about **95%** of the entire home advantage: **shooting, rebounding, foul calls, and turnover margin**. Shooting is the single biggest piece at more than **40%**, followed by rebounding at **25%**.
 
-Rebounding carries the largest share at roughly **30%** of the decline in the regular season, followed by turnovers at about **27%**. Together they account for more than half the drop. Shooting accounts for about **21%** and the narrowing foul gap for about **18%**. The three-point shift reaches across these: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline. Add those up and the move to the perimeter touches close to half the entire 40-year decline. Rebounding is the part it does not explain: it is the largest single driver, and it barely moves with three-point volume.
+The decline splits across the same four. Rebounding carries the largest share at roughly **30%** of the decline in the regular season, followed by turnovers at about **27%**: together more than half the drop. Shooting accounts for about **21%** and the narrowing foul gap for about **18%**.
+
+Two of these are the part most people expect. Referees are calling fairer games: home teams once attempted roughly **2 more free throws per game** than visitors, and now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap, and it's the only one that does. The three-point shift reaches across categories too: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline, so the move to the perimeter touches close to half the entire 40-year decline. The two biggest single drivers, rebounding and turnovers, are more surprising: rebounding barely moves with three-point volume at all. They get their own section below.
 
 The playoff picture is similar in shape, though a larger share of the playoff decline falls outside the four box-score categories; the playoff samples are too small to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
 
 ---
 
-## 3. What explains the decline, and what doesn't
+## 3. What Didn't Drive the Change
 
-Referees are calling fairer games. Home teams once attempted roughly **2 more free throws per game** than visitors; now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap, and it's the only one that does. The three-point revolution matters too: as three-point attempts rose, the foul and turnover gaps each shrank by about half. Those are two real drivers. The two biggest are more surprising, and they're the next section.
-
-What did **not** drive it matters just as much, because most readers arrive with a theory and most of those theories don't survive the data. Travel distance, time zones, pace of play, competitive balance, and every rule change except 1994–95 each have effects too small or too inconsistent to bend a 40-year trend. The much-blamed 2014 playoff format change didn't move the playoff decline. Rest matters on a given night (home teams win **63%** when better-rested, **58%** when the visitor has the edge), but that gap hasn't shifted across eras, and fewer back-to-backs for tired visitors explains only about **8%** of the decline. Even crowd size misses: arenas have held near capacity for 25 years, setting records in the very seasons home court hit bottom. A live crowd is still a real ingredient (empty 2020–21 arenas dropped home teams to **51%**, any crowd at all restored **58.5%**), but that makes crowd presence a switch that flips with the doors, not a dial slowly turning down.
+Most readers arrive with a theory, and most of those theories don't survive the data. Travel distance, time zones, pace of play, competitive balance, and every rule change except 1994–95 each have effects too small or too inconsistent to bend a 40-year trend. The much-blamed 2014 playoff format change didn't move the playoff decline. Rest matters on a given night (home teams win **63%** when better-rested, **58%** when the visitor has the edge), but that gap hasn't shifted across eras, and fewer back-to-backs for tired visitors explains only about **8%** of the decline. Even crowd size misses: arenas have held near capacity for 25 years, setting records in the very seasons home court hit bottom. A live crowd is still a real ingredient (empty 2020–21 arenas dropped home teams to **51%**, any crowd at all restored **58.5%**), but that makes crowd presence a switch that flips with the doors, not a dial slowly turning down.
 
 ---
 
-## 4. The biggest surprises
+## 4. The Biggest Surprises
 
 ![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates converging and crossing over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding width=100%}
 
