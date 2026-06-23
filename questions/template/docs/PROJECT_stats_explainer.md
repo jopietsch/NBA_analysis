@@ -1,0 +1,25 @@
+# TODO: Title — Methods
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+## Data
+
+TODO: Describe the data source, date range, and any filtering.
+
+## Metrics
+
+TODO: Define each metric computed in `PROJECT_data.py`.
+
+## Analysis approach
+
+TODO: Describe the statistical method (ranking, regression, bootstrap, etc.) and why it fits the question.
+
+## Limitations
+
+TODO: What the data can and cannot establish.

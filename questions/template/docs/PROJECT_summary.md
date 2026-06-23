@@ -1,0 +1,23 @@
+# TODO: Title — Summary
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+**The question:** TODO
+
+**The answer:** TODO
+
+TODO: One paragraph summary of main finding.
+
+![TODO caption](../generated/images/PROJECT_chart.svg)
+
+TODO: Second chart and brief explanation.
+
+![TODO caption](../generated/images/PROJECT_chart2.svg)
+
+TODO: What the data does and does not establish.

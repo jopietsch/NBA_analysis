@@ -1,0 +1,15 @@
+# TODO: Title — Findings Outline
+
+Auto-synced from `PROJECT_findings.md` by `/sync-outline`. Keep in sync; regenerate PDF with:
+
+    python3 ../generate_doc_pdf.py docs/PROJECT_findings_outline.md
+
+---
+
+## 1. Introduction
+
+- TODO: key claim, source in results.md
+
+## 2. TODO
+
+- TODO: key claim, source in results.md

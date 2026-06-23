@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.coverage
+.pytest_cache/
+cache/
+generated/
+*.pdf
+.DS_Store
+
+/.quarto/
+**/*.quarto_ipynb
