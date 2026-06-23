@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games, nearly the same rate as the stronger team hosting. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does. This is the short version of a report that asks why, built around three charts and three questions: **Has home court really changed? What factors create the advantage? And what's driving the decline?**
+In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games, nearly the same rate as the stronger team hosting. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does. This is the short version of a report that asks why, built around three charts and three questions: **Has home court really changed? What factors create the advantage? And what’s driving the decline, and what isn’t?**
 
 Yes: the home team’s win rate has fallen. Most of that fall is slow, steady erosion, with two steeper stretches layered on top. The structural advantages home teams once relied on have worn away. **Four things account for the decline: fairer officiating, the shift to three-point shooting, the erosion of the home rebounding edge, and the closing turnover gap.**
 
@@ -20,7 +20,7 @@ Yes: the home team’s win rate has fallen. Most of that fall is slow, steady er
 
 40 years ago, home teams used to win about **65%** of regular-season games and nearly **68%** in the playoffs. Today it's about **55%** and **58%**, a drop of roughly 10 percentage points in both. The scoring edge shrank to match: from the 1990s through the mid-2010s, home teams outscored visitors by about **3 points per 100 possessions** in the regular season before falling to about **2** today. Most of the erosion is a slow, steady drift of about a quarter of a percentage point per year, with two steeper stretches on top: one in the mid-1990s and one starting around 2018.
 
-The decline of home court advantage in the playoffs, lagged behind the decline in the regular season. Playoff home win rates held near **64%** through the 2000s and 2010s while the regular season was already sliding, then fell to **58%** over the past few seasons. The per-game edge is still real: Games 1 and 2 go to the home team **69%** and **72%** of the time; Game 5, back at the top seed's building after two road games, reaches **74.5%**; even Game 7 still goes to the home team **64%** of the time. But a best-of-7 series flattens this considerably. A team with home court in the 1980s had about a **55%** chance of winning the series; today that has fallen to just under **52%**, barely better than a coin flip.
+Home court advantage in the playoffs declined later than in the regular season. Playoff home win rates held near **64%** through the 2000s and 2010s while the regular season was already sliding, then fell to **58%** over the past few seasons. The per-game edge is still real: Games 1 and 2 go to the home team **69%** and **72%** of the time; Game 5, back at the top seed's building after two road games, reaches **74.5%**; even Game 7 still goes to the home team **64%** of the time. But a best-of-7 series flattens this considerably. A team with home court in the 1980s had about a **55%** chance of winning the series; today that has fallen to just under **52%**, barely better than a coin flip.
 
 ---
 
@@ -34,7 +34,7 @@ The decline splits across the same four. Rebounding carries the largest share at
 
 Two of these are the part most people expect. Referees are calling fairer games: home teams once attempted roughly **2 more free throws per game** than visitors, and now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap, and it's the only one that does. The three-point shift reaches across categories too: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline, so the move to the perimeter touches close to half the entire 40-year decline. The two biggest single drivers, rebounding and turnovers, are more surprising: rebounding barely moves with three-point volume at all. They get their own section below.
 
-The playoff picture is similar in shape, though a larger share of the playoff decline falls outside the four box-score categories; the playoff samples are too small to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
+The playoff picture is similar in shape, though a larger share of the playoff decline falls outside the four box-score categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
 
 ---
 
