@@ -115,7 +115,7 @@ Each project uses this naming convention:
 
 Standard commands (run from the project root):
 - Main report PDF: `python3 generate_report.py`
-- Any standalone doc PDF: `python3 generate_doc_pdf.py docs/<file>.md`
+- Any standalone doc PDF: `python3 ../generate_doc_pdf.py docs/<file>.md`
 
 Cascade rules: when a file changes, update its dependents before closing the task:
 - `<project>_results.md` changes: update `<project>_stats_explainer.md` so every number and conclusion still matches; regenerate its PDF
@@ -134,15 +134,15 @@ MPLBACKEND=Agg python3 <project>.py
 python3 generate_report.py
 
 # Regenerate any standalone doc PDF + HTML
-python3 generate_doc_pdf.py docs/<project>_findings.md
-python3 generate_doc_pdf.py docs/<project>_summary.md
-python3 generate_doc_pdf.py docs/<project>_stats_explainer.md
+python3 ../generate_doc_pdf.py docs/<project>_findings.md
+python3 ../generate_doc_pdf.py docs/<project>_summary.md
+python3 ../generate_doc_pdf.py docs/<project>_stats_explainer.md
 
 # Run all tests
 python3 -m pytest
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r ../requirements.txt
 ```
 
 Always use `MPLBACKEND=Agg` when running the analysis script to suppress display windows. Chart images land in `generated/images/` (gitignored); PDFs and HTML reports land in `generated/`. `docs/<project>_results.md` is the exception — it is committed. Image references in `docs/` use `../generated/images/<chart>.svg`.
@@ -167,7 +167,7 @@ Each project follows a four-module pipeline plus two report generators:
 - **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/<project>_results.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`.
 - **`<project>.py`** (or `<project>_<name>.py`) — pipeline orchestration only; sequences data → plots → analysis; imports the analysis module inside `main()` to avoid circular imports.
 - **`generate_report.py`** — assembles `docs/<project>_findings.md` prose and PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
-- **`generate_doc_pdf.py`** — general Markdown-to-PDF renderer for standalone docs (headings, lists, tables, code fences, images, `--appendix` flag).
+- **`../generate_doc_pdf.py`** — shared Markdown-to-PDF renderer for standalone docs (headings, lists, tables, code fences, images, `--appendix` flag); lives at `questions/` level, not per-project.
 
 Test pattern:
 - `tests/test_<project>.py` — correctness unit tests for the data/computation layer using synthetic DataFrames; never make live API calls.
