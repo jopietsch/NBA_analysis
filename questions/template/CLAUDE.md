@@ -2,17 +2,8 @@
 
 [One sentence: what question does this project answer?]
 
-## Question
-
-**Primary question:** TODO
-
-**What would confirm the answer:** TODO
-
-**What would refute it:** TODO
-
-**Comparison set:** TODO (e.g., all NBA champions since 1984, all playoff runs since 1980)
-
-**Done criteria:** TODO (e.g., rankings produce a clear answer on all three dimensions)
+See `project_definition.md` for the full question design (hypothesis, comparison set,
+confirmation criteria, objections, done criteria).
 
 ## Commands
 
@@ -46,6 +37,7 @@ pip install -r ../requirements.txt
 
 ## Key files
 
+- `project_definition.md` — question design: hypothesis, comparison set, confirmation/refutation criteria, done checklist. Fill out before coding; update if the question evolves.
 - `docs/PROJECT_findings.md` — narrative interpretation in numbered `## N. Title` sections; drives the PDF report. Edit by hand when understanding changes.
 - `docs/PROJECT_summary.md` — standalone one-page summary.
 - `docs/PROJECT_stats_explainer.md` — hand-edited methods companion to `PROJECT_results.md`.
