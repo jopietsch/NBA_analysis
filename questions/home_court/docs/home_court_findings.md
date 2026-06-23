@@ -57,9 +57,20 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 ## 3. What's Driving the Decline
 
-The same categories that make up home court advantage are the ones narrowing over time. The three-point revolution gets the attention, but it registers mainly in the shooting line, and shooting is not the largest piece. The two categories doing the most work are rebounding and turnovers, and rebounding barely moves with three-point volume at all.
+Two questions hide inside "what's driving the decline," and the rest of this section is easier to follow once they're kept apart. The first: *where* does the decline show up on the stat sheet? That one has clean answers. The four box-score categories below are measured, and they add up. The second: *what changed in the real world* to make those categories narrow? That is the more interesting question, and the honest answer is that the data settles only part of it. Some causes are proven. Others are the best explanation available but stay proposals. The table labels which is which, so you always know what you're reading.
 
-The Four Factors together account for roughly **96%** of the regular-season decline. Rebounding and turnovers carry the most at roughly **30%** and **27%**, together more than half the drop. Shooting (eFG%), where the three-point shift registers, accounts for about **21%**, and the narrowing whistle for about **18%**. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; that edge has narrowed to under half a free throw. In the playoffs the same four categories capture only about 67% of the decline, with only the foul and rebounding trends standing clearly above the noise; the playoff breakdown is consistent with the regular-season story, not established on its own. (These shares show where the decline registers in the box score, not a claim about ultimate causes.) The sections below trace how each piece works.
+Here is the section in one view: each box-score category, how much of the regular-season decline it carries, the real-world change behind it, and whether that change is proven or still a proposal.
+
+| Box-score category | Share of the decline | What changed in the real world | Is that cause proven? |
+|---|---|---|---|
+| **Rebounding** (largest) | ~30% | Home teams stopped crashing the offensive glass harder than visitors | **Proposed.** The data shows the pullback happened; it can't say why |
+| **Turnovers** | ~27% | Half the move to three-point shooting; half better visiting-team preparation | **Mixed.** The three-point half is proven; the preparation half is a proposal |
+| **Shooting** (eFG%) | ~21% | The move to three-point shooting | **Proven** |
+| **Fouls and free throws** | ~18% | Half the move to three-point shooting; half fairer, more uniform officiating | **Proven** (both halves) |
+
+Read top to bottom and the interesting question sharpens. Three-point shooting runs through three of the four rows, which is how it reaches close to half the decline even though its own category, shooting, is only about a fifth. The largest single piece, rebounding, is the one row three-point shooting never touches, and it is also the one the data can measure but not explain. The two proposed causes, the retreat from the offensive glass and better visiting-team preparation, may share a single root: as the tools for shot selection, scouting, and game prep reached all 30 teams at the same pace, the home team's preparation edge had less room to live. The section returns to that idea at its end. It is a plausible explanation, not a finding.
+
+The Four Factors together account for roughly **96%** of the regular-season decline. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; that edge has narrowed to under half a free throw. In the playoffs the same four categories capture only about 67% of the decline, with only the foul and rebounding trends standing clearly above the noise; the playoff breakdown is consistent with the regular-season story, not established on its own. (These shares show where the decline registers in the box score, not a claim about ultimate causes.) The sections below trace how each piece works.
 
 These shares aren't exact. The regular-season figures are tight: rebounding's share of the decline lands between about a quarter and roughly 38%, and the four categories together cover essentially all of it. The playoff shares are loose: the 67% could be anywhere from about 40% to all of the decline, so the playoff breakdown points in the same direction as the regular-season finding, rather than standing as an independent result.
 
@@ -295,3 +306,4 @@ I'm using this project as an exercise to learn Claude Code, statistics, and NBA 
 
 - This is as good as my ability to ask good questions. I'm sure as I learn more I'll get better at asking good questions. I might even find more nuance as I learn better analytical approaches. I doubt anything I've found so far is directionally wrong. 
 
+- I'm trying to come up wth a systematic way to correctly answer these type of questions, it looks to me that LLM AI makes that much easier. it can turn the numbers into a story. I can then make it demonstrate it can make a coherent story that doesn't contradict itself.
