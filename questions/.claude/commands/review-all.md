@@ -12,11 +12,11 @@ This command does NOT restate each review's rules. Each subagent reads the relev
 
 1. **Resolve the target docs.** Use `$ARGUMENTS` if given, else the project's findings + summary. Confirm the paths exist before fanning out.
 
-2. **Fan out — spawn three subagents in parallel** (all three `Agent` calls in a single response). Each is read-only: it finds and flags, it does NOT edit any file. Give each one the resolved doc paths and the matching instruction:
+2. **Fan out — spawn three subagents in parallel** (all three `Agent` calls in a single response). Each is read-only: it finds and flags, it does NOT edit any file. Each gets a model matched to its cognitive load (set the `Agent` `model` parameter). Give each one the resolved doc paths and the matching instruction:
 
-   - **Consistency agent** (`general-purpose`): "Read `questions/.claude/commands/check-consistency.md` and execute its flag phase against these docs: <paths>. Run every step up to and including presenting the findings, but STOP before applying — do not edit any file, do not run regen. Return only your findings list, grouped worst-first exactly as the skill specifies."
-   - **Coherence agent** (`general-purpose`): same wording, pointed at `check-coherence.md`.
-   - **Voice agent** (`general-purpose`): same wording, pointed at `voice-review.md`.
+   - **Coherence agent** (`general-purpose`, `model: opus`): "Read `questions/.claude/commands/check-coherence.md` and execute its flag phase against these docs: <paths>. Run every step up to and including presenting the findings, but STOP before applying — do not edit any file, do not run regen. Return only your findings list, grouped worst-first exactly as the skill specifies." Opus because this is whole-document reasoning (intro-vs-body contradictions, silent body-vs-body conflicts), the hardest of the three.
+   - **Consistency agent** (`general-purpose`, `model: sonnet`): same wording, pointed at `check-consistency.md`. Sonnet because it is mechanical number-matching against the results doc, checklist-driven when a Key Numbers Registry exists. If a pass ever looks doubtful, re-run just this one on `model: opus`.
+   - **Voice agent** (`general-purpose`, `model: sonnet`): same wording, pointed at `voice-review.md`. Sonnet because it is mostly pattern-matching against the translation table; bump to `opus` only if you want sharper calls on the subjective drama / generated-prose checks.
 
    Each subagent returns just its findings list. Only the consistency agent should open `*_results.md`; the other two work from prose alone, per their skill files.
 
