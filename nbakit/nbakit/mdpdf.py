@@ -175,7 +175,11 @@ def build(md_path: str, output_path: str | None = None,
     stem = os.path.splitext(os.path.basename(md_path))[0]
     src_dir = os.path.dirname(os.path.abspath(md_path))
     if output_path is None:
-        out_dir = os.path.join(src_dir, "generated")
+        # A doc inside docs/ lands in its project root's generated/
+        # (foo/docs/x.md -> foo/generated/); a doc elsewhere lands in a
+        # sibling generated/ (./x.md -> generated/).
+        base_dir = os.path.dirname(src_dir) if os.path.basename(src_dir) == "docs" else src_dir
+        out_dir = os.path.join(base_dir, "generated")
         pdf_path = os.path.join(out_dir, stem + ".pdf")
         html_path = os.path.join(out_dir, stem + ".html")
     else:
