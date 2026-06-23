@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-20">
+<meta name="dcterms.date" content="2026-06-22">
 
 <title>NBA Home Court Advantage — Regression Results</title>
 <style>
@@ -2193,7 +2193,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 20, 2026</p>
+      <p class="date">June 22, 2026</p>
     </div>
   </div>
   
@@ -2366,17 +2366,17 @@ All data from cache/ — same source as the plots above.
    those slopes from sampling noise (same idiom as franchise HCA and
    referee bias). Near-zero true spread → the decline is league-wide.
 
-   Panel: 1,223 team-seasons; per-team slopes fit for 35 franchises (≥10 seasons)
+   Panel: 1,223 team-seasons; per-team slopes fit for 31 franchises (≥10 seasons)
 
    League-wide slope (pooled, cluster-robust):  -0.490 pp/yr  (SE 0.026, p = &lt;0.001  ***)
-   Observed SD of per-team slopes:              0.316 pp/yr
+   Observed SD of per-team slopes:              0.213 pp/yr
    Noise-adjusted true between-team SD:         0.000 pp/yr
    Share of observed spread that is noise:      100%
 
    Per-franchise raw slopes (extremes; both within noise of the league rate):
-   Steepest decline:  -1.748 pp/yr  (Washington Bullets)
+   Steepest decline:  -1.160 pp/yr  (New Orleans Pelicans)
    Shallowest/rising: -0.082 pp/yr  (LA Clippers)
-   Franchises with a positive (rising) raw slope: 0/35
+   Franchises with a positive (rising) raw slope: 0/31
    After EB shrinkage every franchise collapses to ≈-0.49 pp/yr.
 
    ► Once sampling noise is removed, franchises barely differ: most of the
@@ -2573,6 +2573,31 @@ All data from cache/ — same source as the plots above.
    ► Note: playoff differentials fold in the seed-quality gap (the
      home team is usually the better team) — see the seeding
      decomposition for that control.
+
+   ─ Bootstrap 95% CIs on the shares (season block resample, B=500) ─
+   Resamples whole seasons with replacement and recomputes the shares;
+   the band is the 2.5–97.5 percentile across resamples. Wide bands
+   (especially in the playoffs) mean the point share is loosely pinned.
+
+   Regular season  (B = 500 resamples)
+   Channel            % level           95% CI   % trend           95% CI
+   ────────────────  ────────  ───────────────  ────────  ───────────────
+   eFG% diff (pp)         43%  [  +40,  +46]%       21%  [  +11,  +28]%
+   Foul diff              14%  [  +13,  +16]%       18%  [  +14,  +22]%
+   TOV diff               13%  [  +10,  +14]%       27%  [  +20,  +34]%
+   REB diff               25%  [  +23,  +27]%       30%  [  +25,  +38]%
+   ────────────────
+   Channels carry 95% of the level (95% CI [91, 97]%) and 96% of the decline (95% CI [87, 107]%).
+
+   Playoffs  (B = 500 resamples)
+   Channel            % level           95% CI   % trend           95% CI
+   ────────────────  ────────  ───────────────  ────────  ───────────────
+   eFG% diff (pp)         33%  [  +27,  +38]%       12%  [  -28,  +38]%
+   Foul diff              17%  [  +14,  +21]%       18%  [   +7,  +41]%
+   TOV diff               22%  [  +17,  +27]%       10%  [  -13,  +39]%
+   REB diff               21%  [  +17,  +25]%       28%  [   +9,  +55]%
+   ────────────────
+   Channels carry 93% of the level (95% CI [86, 102]%) and 67% of the decline (95% CI [38, 107]%).
 
    ─ Are the channel trends downstream of the 3-point shift? ─
    Each differential&#39;s year-trend, before and after controlling for the
@@ -2870,6 +2895,60 @@ All data from cache/ — same source as the plots above.
    ► The home edge is small and flat-to-declining across the tracking era —
      consistent with the offensive-glass advantage having largely collapsed
      before high-resolution tracking even began.
+
+
+─── OUT-OF-SAMPLE FORECAST — DO THE CHANNELS PREDICT THE LATER DECLINE? 
+   Freeze the four-channel win model (eFG%, fouls, turnovers, rebounds)
+   on the training seasons, then predict each later season&#39;s home win %
+   from that season&#39;s box-score edges. A frozen early mapping that tracks
+   the held-out decline means the mechanism is stable, not fitted to
+   hindsight. Baselines: extrapolating the training trend line, and a flat
+   training-mean forecast. Lower RMSE on the held-out seasons is better.
+
+   Regular season  (train 1984–2013, test 2014–2026)
+
+    Season    Actual   Channel pred   Trend pred
+   ───────  ────────  ─────────────  ───────────
+      2014     58.0%          58.4%        58.3%
+      2015     57.5%          58.0%        58.1%
+      2016     58.9%          58.7%        57.8%
+      2017     58.4%          59.9%        57.6%
+      2018     57.9%          57.3%        57.4%
+      2019     59.3%          57.8%        57.1%
+      2020     55.1%          56.7%        56.9%
+      2021     54.4%          53.4%        56.6%
+      2022     54.4%          55.2%        56.4%
+      2023     58.0%          57.3%        56.2%
+      2024     54.3%          55.6%        55.9%
+      2025     54.4%          54.5%        55.7%
+      2026     55.4%          54.9%        55.5%
+
+   Held-out RMSE:  channel = 0.95 pp   trend = 1.45 pp   flat mean = 5.48 pp
+   ► The frozen early channel model reconstructs the 2014–2026 decline
+     it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
+     split, not an artifact of fitting on the full history.
+
+   Playoffs  (train 1984–2013, test 2014–2026)
+
+    Season    Actual   Channel pred   Trend pred
+   ───────  ────────  ─────────────  ───────────
+      2014     56.2%          59.8%        65.5%
+      2015     59.3%          59.2%        65.4%
+      2016     67.4%          71.9%        65.4%
+      2017     57.0%          56.1%        65.3%
+      2018     70.7%          66.5%        65.3%
+      2019     56.1%          60.6%        65.2%
+      2021     56.5%          60.2%        65.1%
+      2022     59.8%          63.2%        65.1%
+      2023     59.5%          63.1%        65.0%
+      2024     58.5%          63.0%        65.0%
+      2025     57.1%          63.8%        64.9%
+      2026     55.3%          57.5%        64.9%
+
+   Held-out RMSE:  channel = 3.87 pp   trend = 7.30 pp   flat mean = 8.11 pp
+   ► The frozen early channel model reconstructs the 2014–2026 decline
+     it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
+     split, not an artifact of fitting on the full history.
 
 
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
@@ -3389,6 +3468,27 @@ All data from cache/ — same source as the plots above.
    ► G7 home win % = 63.8%  (vs. G1 = 69.4%, diff = -5.5 pp)
      G7 n = 188 games (series that went to 7)
 
+─── PLAYOFF HOME WIN % BY ERA — HIGHER SEED vs LOWER SEED AT HOME ──────
+   In 2-2-1-1-1 format: G1,G2,G5,G7 = higher seed at home; G3,G4,G6 = lower seed at home.
+   (Pre-2014 Finals used 2-3-2; Finals ≈ 1/15 of games — minor effect on pooled figures.)
+
+   Era             Higher seed at home (G1,2,5,7)   Lower seed at home (G3,4,6)     Gap
+   ────────────  ────────────────────────────────  ────────────────────────────  ──────
+   1984–94         71.0%  ( 345 games)                  65.4%  ( 260 games)        +5.6 pp
+   1995–01         60.1%  ( 198 games)                  65.8%  ( 158 games)        -5.7 pp
+   2002–04         74.2%  ( 132 games)                  52.3%  ( 109 games)       +21.9 pp
+   2005–17         75.2%  ( 589 games)                  51.5%  ( 501 games)       +23.7 pp
+   2018–22         71.7%  ( 184 games)                  47.4%  ( 152 games)       +24.4 pp
+   2023–26         64.7%  ( 184 games)                  49.0%  ( 151 games)       +15.7 pp
+   ────────────  ────────────────────────────────  ────────────────────────────  ──────
+   All eras        70.8%  (1632 games)                  55.2%  (1331 games)       +15.6 pp
+
+   ► In the early eras (1984–94, 1995–01) the lower-seeded team won ~65–66% at home,
+     nearly matching the higher seed&#39;s own home win rate. Home court was a genuine
+     equalizer. From 2002 onward the lower-seed home win rate collapsed to ~47–52%,
+     while the higher seed&#39;s remained at 65–75%. What eroded is the boost home court
+     gave to the team that needed it most.
+
 ─── PLAYOFF SERIES SIMULATION — DOES THE PER-GAME EDGE SURVIVE A BEST-OF-7? 
    Monte Carlo: 200,000 simulated 2-2-1-1-1 series between two
    otherwise-equal teams, home-court team hosting games 1,2,5,6,7. Input is
@@ -3605,6 +3705,47 @@ All data from cache/ — same source as the plots above.
    Variance decomposition: observed SD = 8.0 pp, sampling noise = 101%, true between-franchise SD ≈ 0.0 pp
    ► Utah Jazz: raw +39.7 pp, shrunken +26.9 pp  (rank #1/32 by shrunken)
    ► Denver Nuggets: raw +30.3 pp, shrunken +26.9 pp  (rank #10/32 by shrunken)
+
+
+─── FRANCHISE HCA — ERA COMPARISON (split at 2001–02) ──────────────────
+   Regular season only. Franchise name changes merged: Bullets→Wizards, LA Clippers→Los Angeles Clippers.
+   Min 400 home games in each era required.
+
+   N = 26 franchises with ≥400 home games in both eras
+   League avg HCA — 1984–2001: 25.6 pp  |  2002–26: 17.0 pp  |  change: -8.6 pp
+
+   Franchise                       1984–2001   2002–26   Change  N early
+   ──────────────────────────────  ─────────  ────────  ───────  ───────
+   Sacramento Kings                    +31.6     +15.2    -16.4      640
+   Phoenix Suns                        +29.5     +14.3    -15.2      722
+   New York Knicks                     +26.7     +13.6    -13.1      722
+   Denver Nuggets                      +35.5     +22.5    -13.0      722
+   Charlotte Hornets                   +21.3      +8.7    -12.6      517
+   Boston Celtics                      +24.9     +13.4    -11.5      722
+   Orlando Magic                       +27.5     +16.5    -11.0      476
+   Detroit Pistons                     +25.3     +15.3    -10.0      722
+   Cleveland Cavaliers                 +28.9     +19.0     -9.9      722
+   Houston Rockets                     +26.0     +16.2     -9.8      722
+   San Antonio Spurs                   +26.6     +17.8     -8.8      722
+   Utah Jazz                           +31.6     +22.9     -8.7      722
+   Chicago Bulls                       +23.8     +15.1     -8.7      722
+   Indiana Pacers                      +28.7     +20.5     -8.2      722
+   Philadelphia 76ers                  +21.3     +13.7     -7.6      722
+   Portland Trail Blazers              +27.3     +19.9     -7.4      722
+   New Jersey Nets                     +26.9     +19.9     -7.0      722
+   Atlanta Hawks                       +27.3     +20.5     -6.8      722
+   Washington Wizards                  +24.4     +17.7     -6.7      722
+   Los Angeles Clippers                +23.3     +17.2     -6.1      681
+   Milwaukee Bucks                     +24.9     +19.4     -5.5      722
+   Minnesota Timberwolves              +19.5     +14.2     -5.3      476
+   Miami Heat                          +21.3     +16.2     -5.1      517
+   Golden State Warriors               +24.1     +19.2     -4.9      722
+   Dallas Mavericks                    +19.4     +15.5     -3.9      722
+   Los Angeles Lakers                  +18.0     +17.2     -0.8      722
+
+   ► Every franchise declined: 26/26 with a negative change.
+   ► Biggest declines: Sacramento Kings (-16.4 pp), Phoenix Suns (-15.2 pp), New York Knicks (-13.1 pp)
+   ► Smallest declines (least negative): Los Angeles Lakers (-0.8 pp), Dallas Mavericks (-3.9 pp), Golden State Warriors (-4.9 pp)
 
 
 ─── FRANCHISE HCA — REGULAR SEASON VS. PLAYOFFS CONSISTENCY ────────────
