@@ -25,7 +25,7 @@ for f in docs/*.md; do
     *_findings.md) continue ;;
   esac
   echo "── Regenerating $f ──"
-  python3 generate_doc_pdf.py "$f"
+  python3 ../generate_doc_pdf.py "$f"
 done
 
 echo "Done."
