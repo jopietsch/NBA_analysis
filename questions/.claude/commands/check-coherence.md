@@ -2,7 +2,7 @@ Audit the argument structure of one or more reader-facing docs: do the sections 
 
 This skill does NOT open `docs/*_results.md`. It works entirely within the prose documents. If you find a number that looks suspicious, note it for `/check-consistency` to verify — do not chase it here.
 
-Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`.
+Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. Also runs on `*_investigation.md`, `*_stats_explainer.md`, and `stats_tutorial.md` when passed explicitly (see the stats-tier note in step 6).
 
 ---
 
@@ -28,7 +28,9 @@ Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current pro
    - Every major finding from the body must either appear in the summary or be explicitly drop-able for a one-pager (secondary detail, not a headline result). Flag genuine gaps — findings that belong in the summary but are missing.
    - If the summary states a direction, magnitude, or conclusion that differs from the body, flag it. These are the most damaging errors because readers of the summary never see the correction.
 
-6. **Check the three core questions** (specific to this project). The home-court findings are organized around three questions: (1) has it changed? (2) what makes it up? (3) what drove the decline? Verify that each question is answered in the intro, developed in at least one body section, and reflected in the summary. If a question goes unanswered or is answered differently in two places, flag it.
+6. **Check the core questions** (specific to this project). The home-court docs are organized around four questions: (1) has it changed? (2) what makes it up? (3) what drove the decline? (4) what did NOT contribute, even though people assume it did? Verify that each question the doc takes on is answered in the intro, developed in at least one body section, and reflected in the summary. If a question goes unanswered or is answered differently in two places, flag it. (If the project's `CLAUDE.md` lists a different question set, use that list — it is the source of truth for how many questions there are.)
+
+   **For stats-tier docs** (`*_investigation.md`, `*_stats_explainer.md`, `stats_tutorial.md`), coherence also means **method consistency across sections**: a method named or described one way in one section must not be described incompatibly in another (e.g. a result called a "trend line / OLS" in one place and a "logistic regression" in another for the same analysis). Flag the conflict; whether either name matches the *code* is method-fidelity and belongs to `/check-consistency`, so note it but don't chase it here.
 
 7. **Check cross-references.** Every `§N` pointer must resolve to a section that exists and says what the pointer claims. Section numbers must be sequential with no gaps or repeats.
 
