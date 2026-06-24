@@ -157,7 +157,7 @@
 
 ## Section 5 — The Playoff Picture
 
-- **Home court shapes playoff outcomes more consistently than any other factor the numbers can isolate, including the quality gap between the two teams.** Strongest predictor of playoff outcome. (Removed prior overclaim "more than anything else.")
+- **Averaged across the four decades, which arena a playoff game is in has mattered more to the outcome than the quality gap between the two teams (among measured factors).** All-era-average claim, not present-tense: the venue edge that once overwhelmed quality has nearly flattened (see seed split below, §5 L178). (Removed prior overclaims "more than anything else" and the unqualified present-tense "more reliably than quality.")
   - *RESULTS by game:* G1 **69.4%**, G2 **71.9%**, G3 **55.0%**, G4 **55.3%**, G5 **74.5%**, G6 **55.5%**, G7 **63.8%**. χ²(6)=84.54, p<0.001.
   - No evidence road teams adapt as series deepens; home-away split explains it entirely.
 
