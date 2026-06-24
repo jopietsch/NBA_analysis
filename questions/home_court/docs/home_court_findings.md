@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-For me, everything interesting starts with questions: **Has home court advantage really changed? What factors create the advantage? What drove the decline? And what did not.** And some specific questions just to make sure we know what we are talking about
+For me, it starts with questions: **Has home court advantage really changed? What factors create the advantage? What drove the decline? And what did not.** And some specific questions just to make sure we know what we are talking about
  -  Was one of the reasons the rise in 3 point attempts? (Yes)
  -  Were some of the reasons better travel, or load management (No, No)
 
@@ -31,7 +31,7 @@ Throughout, the regular season and the playoffs are tracked separately. They sha
 
 The decline is mostly one thing: a steady erosion of about a quarter of a point per year, which over 40 years accounts for nearly the whole drop. Two stretches stand out where the slide briefly sped up, but they are accelerations within that trend, not extra drops added on top of it. The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%. This is the firmer of the two: the 1994–95 hand-checking crackdown registers as a one-time drop of about 2.6 points (Section 4), with the rest of that stretch continued erosion as the adjustment played out through the late 1990s. A brief uptick around 2002–04 followed, visible but resting on only three seasons. The second stretch came after 2017, and it is really the three-point shift showing up on the calendar: the share of shots from deep rose from about a quarter to about 40%, pushing the regular-season rate below 56%. Section 3 covers that mechanism; here it is enough to note when it landed. The playoffs held near 64% from the mid-1990s through 2017, then joined the slide, falling to 61%, then 58%.
 
-Smaller than it was does not mean gone. In the most recent regular season, nearly every team still won more at home than on the road, with only one exception. Good teams that win everywhere still win more at home; weak teams pick up most of their wins there.
+Smaller than it was does not mean gone. In the most recent regular season, nearly every team still won more at home than on the road, with only one exception (the lone red bar in the chart below). Good teams that win everywhere still win more at home; weak teams pick up most of their wins there.
 
 ![Each team's home win% (blue) and road win% (grey) for the most recent regular season, sorted by home win%. The bar between the two dots is the home-court gap; a red bar marks the rare team that won more on the road. Reference lines show the league-average home and road win rates. One season is noisy; this is a snapshot of how widespread home court still is, not a franchise ranking.](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
@@ -53,7 +53,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just under 0.4 of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
-**Why look at the box score?** These four, known as the Four Factors by Dean Oliver, cover essentially every way a possession can end: a made shot, a turnover, a trip to the free-throw line, or a rebounded miss. Examing the four factors, and how they impact homre court advantage shows that they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting (eFG%) is the largest piece, more than 40%, followed by rebounding. How much each factor counts toward winning has held nearly constant decade to decade: the game got fairer, not different in how its components combine.
+**Why look at the box score?** These four, known as the Four Factors by Dean Oliver, cover essentially every way a possession can end: a made shot, a turnover, a trip to the free-throw line, or a rebounded miss. Examining the four factors, and how they impact home court advantage shows that they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting (eFG%) is the largest piece, more than 40%, followed by rebounding. How much each factor counts toward winning has held nearly constant decade to decade: the game got fairer, not different in how its components combine.
 
 ![Box-score category shares of the home-court advantage, regular season vs. playoffs. The headline at each bar's end (with a range showing how much it could shift on the games available) is how much of the home edge the four categories capture together.](../generated/images/home_court_mediation_level.svg){#fig-mediation-level width=50%}
 
@@ -124,7 +124,7 @@ Player-tracking cameras, deployed in 2013–14, confirm the final chapter. The h
 
 ### Officiating got fairer and more uniform
 
-The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; now it's under half a free throw. In the playoffs the foul gap fell from 1.6 to 0.7 fouls per game, and the free throw edge from 2.4 to 1.1 attempts. The advantage referees once gave home teams has fallen about 80% in the regular season and more than half in the playoffs.
+The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; now it's under half a free throw. In the playoffs the foul gap fell from 1.6 to about 0.7 fouls per game, and the free throw edge from 2.4 to 1.1 attempts. The home foul advantage has fallen about 80% in the regular season and more than half in the playoffs.
 
 The playoff referee chart shows the generational shift clearly. Newer referees are not only less biased on average; they are also more uniform in their calling. Per-official records are available from 1995 onward; the 1980s-early 1990s baseline figures above come from the overall foul gap visible in the differentials chart earlier in this section.
 
@@ -165,7 +165,7 @@ The opening chart shades seasons by the NBA's major rule changes. A natural assu
 
 **They mostly don't.** Only 1994–95 registers a real shift in the data: a genuine one-time drop of about 2.6 points, most likely from the hand-checking crackdown (though the simultaneously shortened three-point line adds some ambiguity). Hand-checking registered because it directly affected referee discretion, one of the few things that can shift asymmetrically between home and away teams. **Every other rule change reshaped how the game looks without reshaping who benefits from playing at home**: zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, and the take-foul rule. In the playoffs, even 1994–95 doesn't register; the postseason slide is steady drift throughout.
 
-Most off-court explanations either don't matter or haven't changed enough to explain the decline. Travel distance has a negligible effect in the regular season (about 0.07 points per 100 miles) and none measurable in the playoffs. Time zones are flat in both. Rest creates genuine variation (home teams win 63% when better-rested, 58% when the visitor has the edge) but that gap hasn't changed across eras. Load management cut back-to-back frequency from 35% to under 20%, which is real, but that schedule change accounts for only 8% of the decline; home advantage eroded within every rest situation alike. Pace of play and the home-vs-away three-point differential show no meaningful relationship to the trend. Competitive balance shows none in the raw season-to-season comparison; a faint link appears only when looking at year-to-year changes rather than the long-run trend, and only on a small sample, so it is best treated as a hint, not a finding.
+Most off-court explanations either don't matter or haven't changed enough to explain the decline. Travel distance has a negligible effect in the regular season (about 0.07 points per 100 miles) and none measurable in the playoffs. Time zones are flat in both. Rest makes a difference on any given night (home teams win 63% when better-rested, 58% when the visitor has the edge), but that gap hasn't changed across eras. Load management cut back-to-back frequency from 35% to under 20%, which is real, but that schedule change accounts for only 8% of the decline; home advantage eroded within every rest situation alike. Pace of play and the home-vs-away three-point differential show no meaningful relationship to the trend. Competitive balance shows none in the raw season-to-season comparison; a faint link appears only in the year-to-year wobble, not the 40-year trend, and only on a small sample, so it is best treated as a hint, not a finding.
 
 Crowds have stayed near capacity throughout (record highs in the 2020s, the very years home court hit its lowest), so crowd size is not the dial. Crowd *presence* is different. The 2020-21 pandemic seasons ran an accidental test: with buildings empty, home teams won just 51%; with any crowd at all, about 58%. A crowd is a genuine ingredient of home court, worth about seven points on the night. But it is a switch that flips with the doors, not a 40-year dial slowly turning down. A test combining all these off-court explanations at once confirms it: rest, altitude, time zones, and COVID seasons each have effects, but none of them explain the long-run decline. What's left belongs entirely to which era the game was played in: the decline itself, not any off-court factor. The full treatment of each hypothesis, including why each seemed plausible and exactly what the data showed, is in Part 2 of [The Investigation](home_court_investigation.html).
 
@@ -216,7 +216,7 @@ Additional findings, including individual referee rankings, franchise-level comp
 
 ## 6. Summary
 
-Home court advantage in the NBA has dropped about 10 percentage points over 40 years. The regular season went from 65% to about 55%; the playoffs from nearly 68% to 58%. Measured by net rating (how much the home team outscores its opponent per 100 possessions), the regular-season edge has shrunk by roughly a third; the playoffs compressed more slowly and still sit higher.
+Home court advantage in the NBA has dropped about 10 percentage points over 40 years. The regular season went from 65% to about 55%; the playoffs from nearly 68% to 58%. Measured by net rating (how much the home team outscores its opponent per 100 possessions), the regular-season edge has shrunk by roughly 40%; the playoffs compressed more slowly and still sit higher.
 
 Home court advantage runs through four box-score categories. Shooting (effective field goal percentage) is the largest contributor, accounting for more than 40% of the regular-season edge; rebounding adds about 25%, with foul calls and turnover margin making up most of the rest. Together the four categories capture about 95% of the home advantage. These are also the four categories that have narrowed over 40 years, so the same accounting that describes what home court is made of also describes how it has been lost.
 
@@ -240,9 +240,9 @@ The playoffs have followed the regular season's path but with nearly a two-decad
 
 ## Appendix A: Additional Findings
 
-A few results surfaced along the way that don't bear directly on the three questions but are worth noting.
+A few results surfaced along the way that don't bear directly on the four questions but are worth noting.
 
-**Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit close to a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is the random bounce of how few games some officials worked. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
+**Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team. The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit just over a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte. About 60% of that raw spread is the random bounce of how few games some officials worked. Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests. This measures tendencies, not proof that any one official decides games.
 
 ![Top/bottom 15 referees ranked by home foul differential (≥50 playoff games). Values are adjusted for how few games each official worked: raw differences are pulled toward the league average so that small samples don't dominate the leaderboard.](../generated/images/home_court_referee_rankings.svg){#fig-referee-rankings}
 
@@ -293,7 +293,7 @@ The empty-arena numbers look different for a methodological reason. The blog's "
 |---|---|
 | [Regression Results](home_court_results.html) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
 | [The Investigation](home_court_investigation.html) | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
-| [One-Page Summary](home_court_summary.html) | Standalone summary built around the three core charts and the three questions. |
+| [One-Page Summary](home_court_summary.html) | Standalone summary built around the three core charts and the four questions. |
 | [Stats Explainer](home_court_stats_explainer.html) | Guide to the statistical methods used, written for a general audience. |
 | [Stats Tutorial](../../generated/stats_tutorial.html) | Worked examples reproducing key results from the regression output. |
 :::
@@ -305,10 +305,10 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 |---|---|---|
 | Regression Results | `home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values for every analysis in this report. |
 | The Investigation | `home_court_investigation.pdf` | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
-| One-Page Summary | `home_court_summary.pdf` | Standalone summary built around the three core charts and the three questions. |
+| One-Page Summary | `home_court_summary.pdf` | Standalone summary built around the three core charts and the four questions. |
 | Stats Explainer | `home_court_stats_explainer.pdf` | Guide to the statistical methods used, written for a general audience. |
 | Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
 :::
 
 ## Appendix D: Why is this draft?
-I'm using this project as an exercise to learn statistics, and NBA analytics. I am not a statistician, but I have used statistics before. I did use Claude Code quite a bit throughout. I beleive this is all accurate, because I have done my best to make sure everything makes sense and it clear. I could be wrong, but as far as I know, I am not.
+I'm using this project as an exercise to learn statistics, and NBA analytics. I am not a statistician, but I have used statistics before. I did use Claude Code quite a bit throughout. I believe this is all accurate, because I have done my best to make sure everything makes sense and it clear. I could be wrong, but as far as I know, I am not.
