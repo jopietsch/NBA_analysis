@@ -82,7 +82,9 @@ These shares aren't exact. The regular-season figures are tight: rebounding's sh
 
 ![Home minus away differentials over time: free throw attempts per game (the whistle's practical effect), FG%, eFG%, 3PA rate, 3P%, and FT%. Each panel shows the per-season gap; a trend toward zero means that component of the home-team edge is narrowing. The rebounding and turnover differentials are covered below.](../generated/images/home_court_advantage_differentials.svg){#fig-advantage-differentials}
 
-**Three-point shooting shifted shot selection and narrowed the shooting edge.** The league's move to the perimeter changed shot selection in two visible ways. First, away teams have closed the gap in paint attempts: in the 1990s home teams generated about 1.3 percentage points more of their attempts from close range than road teams; in the most recent seasons that gap has shrunk to 0.2 points. Second, three-point volume itself rose for everyone. In games with similar three-point rates, the home shooting edge shows no decline at all. The paint gap closing works the same way: **it traces entirely to rising three-point volume, not to any separate cause.** In the playoffs the paint gap narrowed in the late 2010s but has since rebounded toward its old level, making this a regular-season story for now.
+### Three-point shooting: one shift across three of the four categories
+
+Three-point shooting shifted shot selection and narrowed the shooting edge. The league's move to the perimeter changed shot selection in two visible ways. First, away teams have closed the gap in paint attempts: in the 1990s home teams generated about 1.3 percentage points more of their attempts from close range than road teams; in the most recent seasons that gap has shrunk to 0.2 points. Second, three-point volume itself rose for everyone. In games with similar three-point rates, the home shooting edge shows no decline at all. The paint gap closing works the same way: **it traces entirely to rising three-point volume, not to any separate cause.** In the playoffs the paint gap narrowed in the late 2010s but has since rebounded toward its old level, making this a regular-season story for now.
 
 ![Shot zone differentials (home minus road) over time, regular season vs. playoffs. Four panels: paint, mid-range, corner 3, and above-break 3. The paint panel is the key one: the gap has nearly closed, meaning away teams now get close-range attempts at nearly the same rate as home teams. The three-point panels show little differential throughout.](../generated/images/home_court_shot_zones.svg){#fig-shot-zones}
 
@@ -96,7 +98,9 @@ The three-point shift registers most directly in the shooting line of the box sc
 
 ![Three panels. Left: dual-axis time series showing the 40-year lockstep between rising three-point volume (right axis) and falling home win % (left axis) in the regular season. Center and right: scatter of one season per point for regular season and playoffs, era-colored, showing the same inverse relationship.](../generated/images/home_court_3pa.svg){#fig-3pa}
 
-**Rebounding, the largest driver, separate from the three-point shift.** The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise. In games with similar three-point rates, the home shooting advantage disappears, while the rebounding advantage barely moves.
+### Rebounding and turnovers: the largest driver
+
+The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise. In games with similar three-point rates, the home shooting advantage disappears, while the rebounding advantage barely moves.
 
 Both sides of the glass show declining home advantages, and the raw numbers are larger than the offensive-rebound story alone suggests. The home advantage on defensive rebounds fell from about +1.6 boards per game in the 1980s to roughly +0.6 today, a drop of about a full board. The home advantage on offensive rebounds fell from about +0.6 to slightly below zero. The defensive side actually fell more in absolute terms.
 
@@ -118,13 +122,17 @@ Player-tracking cameras, deployed in 2013–14, confirm the final chapter. The h
 
 ![The modern player-tracking view of the home rebounding advantage (2013–14 on). Left: the home advantage in converting offensive-rebound chances keeps shrinking, falling from about 1.2 to 1.3 percentage points in the mid-2010s to under 0.2 today. Center: home teams hold no measurable box-out advantage. Right: the second-chance-points advantage shows little change across this window. A short window that corroborates the modern mechanism, not the 40-year decline.](../generated/images/home_court_rebounding_tracking.svg){#fig-rebounding-tracking}
 
-**Referee foul bias has narrowed.** The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; now it's under half a free throw. In the playoffs the foul gap fell from 1.6 to 0.7 fouls per game, and the free throw edge from 2.4 to 1.1 attempts. The advantage referees once gave home teams has fallen about 80% in the regular season and more than half in the playoffs.
+### Officiating got fairer and more uniform
+
+The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction. In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; now it's under half a free throw. In the playoffs the foul gap fell from 1.6 to 0.7 fouls per game, and the free throw edge from 2.4 to 1.1 attempts. The advantage referees once gave home teams has fallen about 80% in the regular season and more than half in the playoffs.
 
 The playoff referee chart shows the generational shift clearly. Newer referees are not only less biased on average; they are also more uniform in their calling. Per-official records are available from 1995 onward; the 1980s-early 1990s baseline figures above come from the overall foul gap visible in the differentials chart earlier in this section.
 
 Three-point shooting played a direct role too. Three-point attempts draw fewer fouls than drives to the basket. As both teams moved toward the perimeter, there were simply fewer foul calls to go around, and the home team's absolute gap shrank with it. About half of the foul decline traces to this mechanical shift in shot selection; the other half reflects genuine change in how referees call the game.
 
 ![Distribution of per-official home foul bias by era, playoffs. The spread has compressed: newer officials are not only less biased on average but more uniform in their calling. Chart covers 1995 onward, the earliest era with sufficient per-official playoff data.](../generated/images/home_court_referee_era.svg){#fig-referee-era}
+
+### Does the box-score story hold up?
 
 Could rebounding and turnovers just be the three-point shift in disguise? No. When games with similar three-point rates are compared directly, the **shooting** decline disappears entirely: the shooting gap closed because of the perimeter shift, not any separate cause. The **rebounding** decline barely moves and stays the surest of the four. Fouls and turnovers each land in between: roughly half of each category's trend is explained by rising three-point volume, leaving the other half separate from the perimeter shift. The categories doing the most work to drag home court down, rebounding and the part of turnovers separate from threes, are doing it for reasons the three-point boom does not explain. (In the playoffs the same comparison is too noisy to read; only the rebounding decline clears the bar. So this is a regular-season verdict.)
 
