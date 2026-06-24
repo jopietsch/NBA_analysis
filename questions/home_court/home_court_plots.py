@@ -446,12 +446,12 @@ def plot_channel_3pa_control(data: dict) -> None:
     order = list(reversed(CATEGORY_ORDER))   # Shooting at the top
     ctxs = [("Regular season", BLUE), ("Playoffs", GREEN)]
     fig, axes = plt.subplots(1, 2, figsize=(15, 5.6), sharex=True, sharey=True)
-    fig.suptitle("Rebounding's decline survives the three-point shift; shooting's is fully absorbed by it",
+    fig.suptitle("The move to threes explains shooting's decline, but not rebounding's",
                  fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
     fig.text(0.5, 0.95,
-             "Each channel's share of the home-court decline, in win % per decade, "
-             "before (○) and after (●) holding three-point volume constant  |  "
-             "a dot pulled to the zero line means the three-point shift accounts for it",
+             "Each category's share of the decline (win % per decade), before (○) and after (●) "
+             "games are compared at the same number of threes  |  a dot pulled to zero, or past it, "
+             "means the move to threes explains that category's drop; a dot that stays out dropped on its own",
              ha="center", fontsize=9, color=GRAY)
 
     for ax, (ctx, color) in zip(axes, ctxs):
