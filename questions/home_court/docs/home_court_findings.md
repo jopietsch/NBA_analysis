@@ -311,15 +311,5 @@ A few results surfaced along the way that don't bear directly on the three quest
 For an away team, three-point heavy shot selection has already largely equalized the shooting category, and the data confirms this. The offensive glass is where the road disadvantage persists most and where no current strategic trend is closing the gap. On rest: when the away team enters better-rested than the home team, home win rate falls about 2.6 percentage points below the baseline, a scheduling-available edge the data supports consistently across every decade.
 
 ## Appendix D: Why is this draft?
-I'm using this project as an exercise to learn Claude Code, statistics, and NBA analytics. I am not a statistician, but I have used statistics before.
+I'm using this project as an exercise to learn statistics, and NBA analytics. I am not a statistician, but I have used statistics before. I did use Claude Code quite a bit throughout. I beleive this is all accurate, because I have done my best to make sure everything makes sense and it clear. I could be wrong, but as far as I know, I am not.
 
-- Every calculation and all data gathering is done by Python. Claude doesn't have a chance to hallucinate data or get a calculation wrong.
-- Claude did come up with what statistics to use, and what they mean.
-    - I did make Claude create a page that goes over every statistic, why, and what it means. I'm still making my way through that.
-    - I also had Claude create a tutorial based on the statics used, I'm still making my way through that.
-- Claude did write almost all the text of this document and others (Except this appendix). I have spent dozens of hours go through and make sure that I understand the text, the graphs, etc. I have forced Claude to make things coherent, corrected logic errors etc. It's like arguing with the dumbest brilliant grad student. It will do what it thinks you want, and sometimes much better than you asked, but it doesn't really understand what it's doing.
-- All the code, and all the results of the statistics in checked into github
-
-- This is as good as my ability to ask good questions. I'm sure as I learn more I'll get better at asking good questions. I might even find more nuance as I learn better analytical approaches. I doubt anything I've found so far is directionally wrong. 
-
-- I'm trying to come up wth a systematic way to correctly answer these type of questions, it looks to me that LLM AI makes that much easier. it can turn the numbers into a story. I can then make it demonstrate it can make a coherent story that doesn't contradict itself.
