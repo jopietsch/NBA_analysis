@@ -22,7 +22,7 @@ The home team's win rate has fallen from about 65% to 55% in the regular season,
 
 **What is NOT** behind it is also interesting: **rule changes (with the single real exception of 1994–95), travel, time zones, pace of play, crowd size, and the playoff format changes, including the much-blamed 2014 change.** Two more nearly make the list. Teams play fewer back-to-backs than they used to, so visitors arrive less tired, but that schedule change accounts for only about 8% of the decline. And competitive balance: in a year when the league's teams bunch closer in quality, home court dips a little, but parity has risen and fallen for 40 years while home court has fallen steadily, so it can't explain the long decline. Each factor is tested; only 1994–95 registers a genuine effect, and it is accounted for above.
 
-Throughout, the regular season and the playoffs are tracked separately. They share a similar shape and pattern, but the playoffs are behind the regular season in this decline. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size. The analysis covers about 52,000 regular-season and playoff games; see Appendix A for companion documents including the full statistical tables, and Appendix C for additional findings.
+Throughout, the regular season and the playoffs are tracked separately. They share a similar shape and pattern, but the playoffs are behind the regular season in this decline. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size. The analysis covers about 52,000 regular-season and playoff games; see Appendix C for companion documents including the full statistical tables, and Appendix A for additional findings.
 
 
 ---
@@ -210,7 +210,7 @@ Two cautions on the simulation. The playoff per-game rate mixes home court with 
 
 ![Two panels translating the per-game home edge into a best-of-7 series edge via simulation. Left: a single-game home win rate (x-axis) maps to a much smaller series win rate (y-axis) for the home-court team, far below the dashed 1:1 line; era dots sit on the curve and drift toward the 50% coin flip over time. Right: the simulated series-level home edge by era for the regular season and the playoffs, both ending just above 50%, with the per-game rates shown muted above for contrast.](../generated/images/home_court_series_simulation.svg){#fig-series-simulation}
 
-Additional findings, including individual referee rankings, franchise-level comparisons, and the blowout-margin trend, are in Appendix C.
+Additional findings, including individual referee rankings, franchise-level comparisons, and the blowout-margin trend, are in Appendix A.
 
 ---
 
@@ -238,51 +238,7 @@ The playoffs have followed the regular season's path but with nearly a two-decad
 
 ---
 
-## Appendix A: Companion Documents
-
-::: {.content-visible when-format="html"}
-| Document | Description |
-|---|---|
-| [Regression Results](home_court_results.html) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
-| [The Investigation](home_court_investigation.html) | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
-| [One-Page Summary](home_court_summary.html) | Standalone summary built around the three core charts and the three questions. |
-| [Stats Explainer](home_court_stats_explainer.html) | Guide to the statistical methods used, written for a general audience. |
-| [Stats Tutorial](../../generated/stats_tutorial.html) | Worked examples reproducing key results from the regression output. |
-:::
-
-::: {.content-visible when-format="typst"}
-All files are in the same folder as this PDF (`generated/`), except the Stats Tutorial which is one level up in `../generated/`.
-
-| Document | File | Description |
-|---|---|---|
-| Regression Results | `home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values for every analysis in this report. |
-| The Investigation | `home_court_investigation.pdf` | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
-| One-Page Summary | `home_court_summary.pdf` | Standalone summary built around the three core charts and the three questions. |
-| Stats Explainer | `home_court_stats_explainer.pdf` | Guide to the statistical methods used, written for a general audience. |
-| Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
-:::
-
----
-
-## Appendix B: Independent Corroboration
-
-Sparkle Technologies published an independent analysis of the same question at [sparkletechnologies.com/blog/nba-disappearing-home-court-advantage](https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage). I checked every number we share in common. Most of them match. The disagreements are instructive.
-
-**Where we agree.** The overall decline, the foul-call story, the irrelevance of travel and pace: all consistent across two independent pipelines. The clearest confirmation that neither analysis is fabricating results: Sparkle's home-court figures for the two altitude teams, Denver and Utah, land within a tenth of a point of mine.
-
-**Where we differ, and why.** The blog names the three-point revolution as the primary cause, drawing on a 40-year near-mirror image: as three-point attempts rose, home win percentage fell. I ran a tighter test and found about 40% of that lockstep is just two trends drifting the same way over time, not one causing the other. The three-point effect is real, showing up within individual seasons too. In the box score it registers most directly as the shooting category, about 21% of the regular-season decline; counting its share of the foul and turnover categories (about half of each), it reaches close to half the decline, still short of the whole story. The category the blog never measures at all, rebounding, is the single largest category and is untouched by the perimeter shift; turnover-edge erosion adds more on top. Part of the gap is just a question of how you count: the three-point shift is the most far-reaching real-world cause (it touches three of the four box-score categories), but no single category it drives is as large as rebounding, which has its own separate cause.
-
-On the mid-1990s drop, the blog attributes it to the shortened three-point line (1994–97); I attribute it to the hand-checking crackdown. Both changes happened in the same seasons, and both pipelines even land on the same 2.6-point drop. We just disagree on the cause. Breaking the decline by category gives some traction: foul calls responded immediately and significantly at the 1994-95 boundary while the shooting category barely moved, pointing more toward hand-checking. The two are not fully separable, but hand-checking is the more consistent explanation with the data.
-
-The empty-arena numbers look different for a methodological reason. The blog's "empty arena" figure (54.4%) is the 2020–21 season average, blending games with zero fans and games with partial crowds. I split those apart: 51.0% with empty buildings, 58.5% with any crowd at all. No real disagreement on the conclusion (crowd presence is a switch, not a dial), but the blog's single number averaged over the whole phenomenon.
-
-**What the blog found that I then tested.** The blog credited the schedule shift, fewer visitors arriving on a back-to-back, with 15–20% of the decline. The premise checks out: back-to-back frequency fell from about 35% to under 20%. The magnitude doesn't hold. Separating the schedule change from the rest puts the schedule effect at roughly 8% of the decline. The other 92% is the home advantage eroding within every rest situation alike, regardless of how tired the visitor is.
-
-**What I found the blog missed.** The rebounding decline is the biggest gap. The blog's box-score account has no rebounding term; I find it is the largest driver, separate from the three-point shift, carrying 30% of the regular-season decline, and it holds up when games have similar three-point rates. Turnover-edge erosion (another 27%) is also unaccounted for. The blog's breakdown points at something real. It just misses where most of the work is happening.
-
----
-
-## Appendix C: Additional Findings
+## Appendix A: Additional Findings
 
 A few results surfaced along the way that don't bear directly on the three questions but are worth noting.
 
@@ -309,6 +265,50 @@ A few results surfaced along the way that don't bear directly on the three quest
 **The box-score breakdown has implications for teams on both sides of a matchup.** For a home team, the rebounding category is the most actionable remaining lever: it carries 30% of the regular-season decline, is almost entirely separate from three-point volume, and has not been equalized by the league-wide strategic shift to the perimeter. Player-tracking data confirms the offensive-rebound conversion edge is still declining rather than structurally fixed, meaning effort and roster decisions can still move it. The turnover category (27% of the decline) has a component separate from three-point volume as well; pressure defense at home, where crowd noise compounds visiting teams' communication problems, targets it directly. On crowd: the pandemic data shows that even a few thousand fans restores nearly the full crowd effect, but larger crowds add little beyond that.
 
 For an away team, three-point heavy shot selection has already largely equalized the shooting category, and the data confirms this. The offensive glass is where the road disadvantage persists most and where no current strategic trend is closing the gap. On rest: when the away team enters better-rested than the home team, home win rate falls about 2.6 percentage points below the baseline, a scheduling-available edge the data supports consistently across every decade.
+
+---
+
+## Appendix B: Independent Corroboration
+
+Sparkle Technologies published an independent analysis of the same question at [sparkletechnologies.com/blog/nba-disappearing-home-court-advantage](https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage). I checked every number we share in common. Most of them match. The disagreements are instructive.
+
+**Where we agree.** The overall decline, the foul-call story, the irrelevance of travel and pace: all consistent across two independent pipelines. The clearest confirmation that neither analysis is fabricating results: Sparkle's home-court figures for the two altitude teams, Denver and Utah, land within a tenth of a point of mine.
+
+**Where we differ, and why.** The blog names the three-point revolution as the primary cause, drawing on a 40-year near-mirror image: as three-point attempts rose, home win percentage fell. I ran a tighter test and found about 40% of that lockstep is just two trends drifting the same way over time, not one causing the other. The three-point effect is real, showing up within individual seasons too. In the box score it registers most directly as the shooting category, about 21% of the regular-season decline; counting its share of the foul and turnover categories (about half of each), it reaches close to half the decline, still short of the whole story. The category the blog never measures at all, rebounding, is the single largest category and is untouched by the perimeter shift; turnover-edge erosion adds more on top. Part of the gap is just a question of how you count: the three-point shift is the most far-reaching real-world cause (it touches three of the four box-score categories), but no single category it drives is as large as rebounding, which has its own separate cause.
+
+On the mid-1990s drop, the blog attributes it to the shortened three-point line (1994–97); I attribute it to the hand-checking crackdown. Both changes happened in the same seasons, and both pipelines even land on the same 2.6-point drop. We just disagree on the cause. Breaking the decline by category gives some traction: foul calls responded immediately and significantly at the 1994-95 boundary while the shooting category barely moved, pointing more toward hand-checking. The two are not fully separable, but hand-checking is the more consistent explanation with the data.
+
+The empty-arena numbers look different for a methodological reason. The blog's "empty arena" figure (54.4%) is the 2020–21 season average, blending games with zero fans and games with partial crowds. I split those apart: 51.0% with empty buildings, 58.5% with any crowd at all. No real disagreement on the conclusion (crowd presence is a switch, not a dial), but the blog's single number averaged over the whole phenomenon.
+
+**What the blog found that I then tested.** The blog credited the schedule shift, fewer visitors arriving on a back-to-back, with 15–20% of the decline. The premise checks out: back-to-back frequency fell from about 35% to under 20%. The magnitude doesn't hold. Separating the schedule change from the rest puts the schedule effect at roughly 8% of the decline. The other 92% is the home advantage eroding within every rest situation alike, regardless of how tired the visitor is.
+
+**What I found the blog missed.** The rebounding decline is the biggest gap. The blog's box-score account has no rebounding term; I find it is the largest driver, separate from the three-point shift, carrying 30% of the regular-season decline, and it holds up when games have similar three-point rates. Turnover-edge erosion (another 27%) is also unaccounted for. The blog's breakdown points at something real. It just misses where most of the work is happening.
+
+---
+
+## Appendix C: Companion Documents
+
+::: {.content-visible when-format="html"}
+| Document | Description |
+|---|---|
+| [Regression Results](home_court_results.html) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
+| [The Investigation](home_court_investigation.html) | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
+| [One-Page Summary](home_court_summary.html) | Standalone summary built around the three core charts and the three questions. |
+| [Stats Explainer](home_court_stats_explainer.html) | Guide to the statistical methods used, written for a general audience. |
+| [Stats Tutorial](../../generated/stats_tutorial.html) | Worked examples reproducing key results from the regression output. |
+:::
+
+::: {.content-visible when-format="typst"}
+All files are in the same folder as this PDF (`generated/`), except the Stats Tutorial which is one level up in `../generated/`.
+
+| Document | File | Description |
+|---|---|---|
+| Regression Results | `home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values for every analysis in this report. |
+| The Investigation | `home_court_investigation.pdf` | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
+| One-Page Summary | `home_court_summary.pdf` | Standalone summary built around the three core charts and the three questions. |
+| Stats Explainer | `home_court_stats_explainer.pdf` | Guide to the statistical methods used, written for a general audience. |
+| Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
+:::
 
 ## Appendix D: Why is this draft?
 I'm using this project as an exercise to learn statistics, and NBA analytics. I am not a statistician, but I have used statistics before. I did use Claude Code quite a bit throughout. I beleive this is all accurate, because I have done my best to make sure everything makes sense and it clear. I could be wrong, but as far as I know, I am not.
