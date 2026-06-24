@@ -98,7 +98,7 @@ The three-point shift registers most directly in the shooting line of the box sc
 
 ### Rebounding and turnovers: the largest driver
 
-The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise. In games with similar three-point rates, the home shooting advantage disappears, while the rebounding advantage barely moves.
+The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise: in games with similar three-point rates, the rebounding edge barely moves.
 
 Both sides of the glass show declining home advantages, and the raw numbers are larger than the offensive-rebound story alone suggests. The home advantage on defensive rebounds fell from about +1.6 boards per game in the 1980s to roughly +0.6 today, a drop of about a full board. The home advantage on offensive rebounds fell from about +0.6 to slightly below zero. The defensive side actually fell more in absolute terms.
 
@@ -112,7 +112,7 @@ The home turnover advantage has eroded too. Home teams once committed about 0.4 
 
 What drove that other half is not something this data can answer. Improved scouting and video preparation are the most plausible contributors: visiting teams are better prepared for unfamiliar defensive schemes than they once were. But that is a hypothesis, not a finding.
 
-The playoffs point the same way on rebounding: the home rebound-share advantage has fallen by roughly three-quarters there too. With a fifteenth as many games, the playoff evidence is consistent with the regular-season story rather than established on its own.
+The playoffs point the same way on rebounding: the home rebound-share advantage has fallen by roughly three-quarters there too, though on a fifteenth as many games it is too thin to stand on its own.
 
 ![Why the home rebounding and turnover edges faded. Left: home and away offensive-rebound rates over time; the lines converge and cross, meaning home teams no longer crash the offensive glass more than visitors. Center-left: raw OREB and DREB differentials (home minus away per game) over time; both declined, with the defensive edge falling more in absolute terms. Center-right: seasons with a larger total home rebounding edge tend to be seasons where home teams win more (association, not causation). Right: the home turnover edge (away minus home turnovers per game) has declined from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding}
 
