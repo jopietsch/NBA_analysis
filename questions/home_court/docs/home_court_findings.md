@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-Home court advantage in the NBA has been shrinking for four decades. **Has it really changed?** **What factors create the advantage?** **And what's driving the decline, and what isn't?**
+Home court advantage in the NBA has been shrinking for four decades. This report asks four questions. **Has it really changed? What factors create the advantage? What drove the decline? And what did not, even though people often assume it did?**
 
 Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two steeper stretches layered on top.** The structural advantages home teams once relied on have worn away. The advantage itself is concrete and lives in the box score: four categories (shooting, rebounding, foul calls, and turnover margin) capture about 95% of it, shooting the largest. Those same four categories all narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting edge (and part of the foul and turnover gaps), home teams' rebounding edge eroded, and the turnover gap closed.**
 
@@ -155,7 +155,7 @@ The opening chart shades seasons by the NBA's major rule changes. A natural assu
 
 Most off-court explanations either don't matter or haven't changed enough to explain the decline. Travel distance has a negligible effect in the regular season (about 0.07 points per 100 miles) and none measurable in the playoffs. Time zones are flat in both. Rest creates genuine variation (home teams win 63% when better-rested, 58% when the visitor has the edge) but that gap hasn't changed across eras. Load management cut back-to-back frequency from 35% to under 20%, which is real, but that schedule change accounts for only 8% of the decline; home advantage eroded within every rest situation alike. Pace of play and the home-vs-away three-point differential show no meaningful relationship to the trend. Competitive balance shows none in the raw season-to-season comparison; a faint link appears only when looking at year-to-year changes rather than the long-run trend, and only on a small sample, so it is best treated as a hint, not a finding.
 
-Crowds have stayed near capacity throughout (record highs in the 2020s, the very years home court hit its lowest), so crowd size is not the dial. Crowd *presence* is different. The 2020-21 pandemic seasons ran an accidental test: with buildings empty, home teams won just 51%; with any crowd at all, about 58%. A crowd is a genuine ingredient of home court, worth about seven points on the night. But it is a switch that flips with the doors, not a 40-year dial slowly turning down. A test combining all these off-court explanations at once confirms it: rest, altitude, time zones, and COVID seasons each have effects, but none of them explain the long-run decline. What's left belongs entirely to which era the game was played in: the decline itself, not any off-court factor. The full treatment of each hypothesis, including why each seemed plausible and exactly what the data showed, is in [The Investigation](home_court_investigation.html).
+Crowds have stayed near capacity throughout (record highs in the 2020s, the very years home court hit its lowest), so crowd size is not the dial. Crowd *presence* is different. The 2020-21 pandemic seasons ran an accidental test: with buildings empty, home teams won just 51%; with any crowd at all, about 58%. A crowd is a genuine ingredient of home court, worth about seven points on the night. But it is a switch that flips with the doors, not a 40-year dial slowly turning down. A test combining all these off-court explanations at once confirms it: rest, altitude, time zones, and COVID seasons each have effects, but none of them explain the long-run decline. What's left belongs entirely to which era the game was played in: the decline itself, not any off-court factor. The full treatment of each hypothesis, including why each seemed plausible and exactly what the data showed, is in Part 2 of [The Investigation](home_court_investigation.html).
 
 ![Left: league average attendance per game vs. regular-season home win %, 2000–2026, with crowds holding near capacity (and lately setting records) while home court keeps falling. Right: 2020–21 home win % by game attendance, where an empty arena erases the advantage that even a small crowd restores.](../generated/images/home_court_attendance.svg){#fig-attendance}
 
@@ -232,7 +232,7 @@ The playoffs have followed the regular season's path but with nearly a two-decad
 | Document | Description |
 |---|---|
 | [Regression Results](home_court_results.html) | Full statistical output from the analysis pipeline: regression tables, significance tests, and coefficient values for every analysis in this report. |
-| [The Investigation](home_court_investigation.html) | Full treatment of every ruled-out hypothesis: why each seemed plausible, what was tested, and what the data showed. |
+| [The Investigation](home_court_investigation.html) | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
 | [One-Page Summary](home_court_summary.html) | Standalone summary built around the three core charts and the three questions. |
 | [Stats Explainer](home_court_stats_explainer.html) | Guide to the statistical methods used, written for a general audience. |
 | [Stats Tutorial](../../generated/stats_tutorial.html) | Worked examples reproducing key results from the regression output. |
@@ -244,7 +244,7 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 | Document | File | Description |
 |---|---|---|
 | Regression Results | `home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values for every analysis in this report. |
-| The Investigation | `home_court_investigation.pdf` | Full treatment of every ruled-out hypothesis: why each seemed plausible, what was tested, and what the data showed. |
+| The Investigation | `home_court_investigation.pdf` | The tests behind the findings, in plain language: Part 1 walks the confirmed drivers (the decline, the four channels, fouls, three-pointers, rebounding, turnovers); Part 2 covers every ruled-out hypothesis. Reports p-values and confidence intervals. |
 | One-Page Summary | `home_court_summary.pdf` | Standalone summary built around the three core charts and the three questions. |
 | Stats Explainer | `home_court_stats_explainer.pdf` | Guide to the statistical methods used, written for a general audience. |
 | Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |

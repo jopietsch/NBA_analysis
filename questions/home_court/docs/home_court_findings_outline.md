@@ -126,7 +126,7 @@
 ---
 
 ## Section 4 — What Didn't Drive the Change
-**Q3 corollary: ruled-out factors**
+**Q4: What did NOT contribute to the decline (though people often assume it did)?**
 
 - **Rule changes:** only the **1994–95 season** left a mark (~**−2.6 pp** discrete step; RESULTS era:1995–01 −0.108 log-odds, p=0.010; LR χ²(5)=20.68, p<0.001). Two changes that season — hand-check crackdown (more consistent with channel data) + shortened 3-pt line (1994–97) — confounded at season level; channel event study shows foul diff responded immediately and significantly (level p=0.007) while shooting did not (p=0.327), pointing toward hand-checking. The step was immediate but the multi-year adjustment continued through the late 1990s. **Break-point test:** formal QLR supremum-Chow test locates the *slope* shift in the **late 1990s** (sup F=10.22, p<5% by Andrews 1993 critical values), slope going from −0.65 pp/yr before to −0.26 pp/yr after — read as the 1994–95 adjustment settling in, though the ~4-yr lag makes the link an inference. Playoffs show no significant break (sup F=3.23, n.s.) — steady drift. All other boundaries passed through; playoffs neither change registers (LR p=0.815).
 - **Travel & time zones:**
