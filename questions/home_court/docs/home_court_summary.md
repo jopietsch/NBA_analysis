@@ -30,7 +30,7 @@ Home court in the playoffs declined later than in the regular season: playoff ho
 
 ![Box-score category shares. Left: what creates the home advantage (level). Right: what share of the 40-year decline each category carries. Regular season and playoffs.](../generated/images/home_court_mediation.svg){#fig-mediation width=100%}
 
-Four categories account for about **95%** of the entire home advantage: shooting, rebounding, foul calls, and turnover margin. Shooting is the single biggest piece, then rebounding.
+Home court lives in four box-score categories: shooting, rebounding, foul calls, and turnover margin. These are the Four Factors, a complete set that covers nearly every way a possession can end, so the question isn't which categories matter but how much each one carries. Together they account for about **95%** of the entire home advantage. Shooting is the single biggest piece, then rebounding.
 
 The decline splits across the same four. In the regular season, rebounding carries the largest share and turnovers the next, together more than half the drop; shooting and the narrowing foul gap make up most of the rest. (The chart at right gives each category's share.)
 
