@@ -9,8 +9,8 @@
 :::
 
 For me, everything interesting starts with questions: **Has home court advantage really changed? What factors create the advantage? What drove the decline? And what did not.** And some specific questions just to make sure we know what we are talking about
--  Was one of the reasons the rise in 3 point attempts? (Yes)
--  Were some of the reasons better travel, or load management (No, No)
+ -  Was one of the reasons the rise in 3 point attempts? (Yes)
+ -  Were some of the reasons better travel, or load management (No, No)
 
 Home court advantage in the NBA has been shrinking for four decades. 
 
@@ -312,4 +312,3 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 
 ## Appendix D: Why is this draft?
 I'm using this project as an exercise to learn statistics, and NBA analytics. I am not a statistician, but I have used statistics before. I did use Claude Code quite a bit throughout. I beleive this is all accurate, because I have done my best to make sure everything makes sense and it clear. I could be wrong, but as far as I know, I am not.
-
