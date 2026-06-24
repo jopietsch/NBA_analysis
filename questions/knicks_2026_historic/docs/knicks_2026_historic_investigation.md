@@ -62,7 +62,7 @@ The 2025–26 Knicks went 16-3 with a +14.9 average margin. The affirmative case
 
 **What the data showed.** The Knicks went 16-3 against the spread, beating it by +16.9 points a game. In the three East rounds they covered 14-0, beating the spread by 21 to 26 points a round. In the Finals the market made them slight underdogs (+2.5), and they won by an average of +2.4, almost exactly the spread.
 
-**Why it holds.** Two cautions keep this from being independent proof. The 19 games are really four series and move together, so the effective sample is closer to seven; and an against-the-spread margin is mostly the same scoreline read from the bookmaker's side, not a separate measurement of strength. But the split is the point: the market, pricing in everything known at the time, saw a team that overwhelmed the East and faced a near-coin-flip in the Finals, the same two-sided run the ratings describe.
+**Why it holds.** Two cautions keep this from being independent proof. The 19 games are really four series and move together, so the effective sample is about 6.7; and an against-the-spread margin is mostly the same scoreline read from the bookmaker's side, not a separate measurement of strength. But the split is the point: the market, pricing in everything known at the time, saw a team that overwhelmed the East and faced a near-coin-flip in the Finals, the same two-sided run the ratings describe.
 
 ![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){width=100%}
 
@@ -82,7 +82,7 @@ The 2025–26 Knicks went 16-3 with a +14.9 average margin. The affirmative case
 
 # Part 2: The Objections That Don't Diminish It
 
-A 16-3 playoff run with a +14.9 average margin looks historic on its face. But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the opponents were hurt, or the scoreboard was padded. Each of these is a fair objection, and each is testable rather than something to wave off. For every objection below we lay out why it seemed plausible, what was measured, what the data showed, and how much of the run it actually explains away.
+A 16-3 playoff run with a +14.9 average margin looks historic on its face. But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the opponents were hurt, or the scoreboard was padded. Each of these is a fair objection, and each is testable rather than something to wave off.
 
 ---
 
@@ -120,7 +120,7 @@ A 16-3 playoff run with a +14.9 average margin looks historic on its face. But a
 
 **The test.** Recompute each opponent's playoff rating from their playoff games *excluding* the Knicks series, an independent read on their form, then re-adjust the Knicks' margins against it. The Hawks played only the Knicks, so there is no independent measure of them.
 
-**The result.** A weak maybe, and only for two opponents. The 76ers and Cavaliers rated about 1.2 and 1.5 points below their regular-season marks in their non-Knicks playoff games. But each of those reads rests on only a handful of games, so a gap that small is about as likely to be the random bounce of a short schedule as a real dip. The Spurs moved the opposite way: from +8.28 in the regular season to +14.48 in their non-Finals playoff games, a +6.2 rise, the largest of any Knicks opponent. Adjusting the whole run for opponents' actual playoff form still leaves the Knicks at +9.1 per game, narrowly the best on record.
+**The result.** A weak maybe, and only for two opponents. The 76ers and Cavaliers rated about 1.2 and 1.5 points below their regular-season marks in their non-Knicks playoff games. But each of those reads rests on only a handful of games, so a gap that small is about as likely to be the random bounce of a short schedule as a real dip. The Spurs moved the opposite way: from +8.28 in the regular season to +14.48 in their non-Finals playoff games, a +6.2 rise, the largest of any Knicks opponent. Adjusting the whole run for opponents' actual playoff form still leaves the Knicks at +9.05 per game, narrowly the best on record (effectively tied with the 1986–87 Lakers at +8.99).
 
 ![Per-round raw vs. opponent-adjusted margins: adjustment using playoff SRS shifts the Finals story](../generated/images/knicks_2026_round_split.svg){width=100%}
 
@@ -148,7 +148,7 @@ A 16-3 playoff run with a +14.9 average margin looks historic on its face. But a
 
 **The test.** Two era adjustments pointing in different directions. A scoring-share version scales each margin by that season's points per game (a deliberately harsh take that treats the whole scoring boom as inflation). A possessions version scales by estimated pace, which separates a fast game from an efficient one.
 
-**The result.** Most of 2025–26's scoring is better shooting, not a faster game: in possessions the season ran only about 4% above average. Per 100 possessions the Knicks' raw margin (+14.6) and opponent-adjusted margin (+11.0) both stay first. Only the harsher scoring-share version moves them, dropping the raw margin to third.
+**The result.** Most of 2025–26's scoring is better shooting, not a faster game: in possessions the season ran only about 4% above average. Per 100 possessions the Knicks' raw margin (+14.63) and opponent-adjusted margin (+11.02) both stay first. Only the harsher scoring-share version moves them, dropping the raw margin to third.
 
 **How much it explains away.** Little, on the more correct measure. On a true pace-neutral basis the #1 claim survives; the opponent adjustment also already absorbs some era effect, since a champion and its opponents are measured in the same environment. (Main report, §14.)
 
@@ -172,6 +172,6 @@ A 16-3 playoff run with a +14.9 average margin looks historic on its face. But a
 
 None of the objections above survives contact with the data, but one genuine caveat does, and it has nothing to do with the opponents. It is the shortness of the run itself.
 
-The "best opponent-adjusted margin of any champion" claim rests on 19 games. That is a small sample, and the other 42 champions are measured with the same kind of uncertainty. When every champion is allowed to be as uncertain as the Knicks, and the field is judged all at once, the Knicks come out as the single best only about 9% of the time. They still land in the top handful of title runs in the great majority of those comparisons, but the data cannot crown them the outright #1 that a single rating suggests.
+The "best opponent-adjusted margin of any champion" claim rests on 19 games. That is a small sample, and the other 42 champions are measured with the same kind of uncertainty. When every champion is allowed to be as uncertain as the Knicks, and the field is judged all at once, the Knicks come out as the single best only about 9% of the time, and in the top five about a third of the time. The run is clearly among the better champions, but the data cannot crown them the outright #1 that a single rating suggests.
 
-So the honest position is not that the run was less dominant than it looked, the objections people raise for that all fail, but that 19 games is too short to settle a first-place tie against 43 years of champions. Clearly elite, plausibly the best, not provably the best. (Main report, §10 and §11.)
+The honest position is not that the run was less dominant than it looked: the deflation objections all fail. It is that 19 games is too short to settle a first-place tie against 43 years of champions. Clearly elite, plausibly the best, not provably the best. (Main report, §10 and §11.)
