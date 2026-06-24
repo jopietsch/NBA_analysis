@@ -12,7 +12,7 @@ A guide to every analysis that produces output in `home_court_results.md`: the d
 the statistical approach, why that approach was chosen, what the results mean, and —
 where a section has one — **why its figure takes the form it does** (a `Why this
 chart` note). Sections appear in the same order as `home_court_results.md`. The figures
-themselves are displayed and captioned in `home_court_findings.md`; here we only explain the
+themselves are displayed and captioned in `home_court_findings.md`; here I only explain the
 reasoning behind each chart choice. Unlike `home_court_findings.md`, this document uses
 statistical terminology freely — it is the methods companion, not the narrative
 report.

@@ -17,7 +17,7 @@ A **p-value** answers one question: if there were truly no effect, how often wou
 | `***` | < 0.001 | extremely unlikely |
 | (none)| ≥ 0.05  | can't rule out chance |
 
-A **confidence interval (CI)** is the more useful of the two, and the one to read first. A "95% CI" is the range the true value is likely to sit in, given the games available. When we report the regular-season decline as -0.24 points per year, 95% CI [-0.28, -0.21], two things matter at once: the whole band is negative, so the decline is real, and the band is narrow, so its size is well pinned down. A "significant" result with a band of [+0.5, +20] is barely detected and wildly uncertain; the same star count with [+8.0, +8.4] is precisely measured. Same stars, very different findings.
+A **confidence interval (CI)** is the more useful of the two, and the one to read first. A "95% CI" is the range the true value is likely to sit in, given the games available. When I report the regular-season decline as -0.24 points per year, 95% CI [-0.28, -0.21], two things matter at once: the whole band is negative, so the decline is real, and the band is narrow, so its size is well pinned down. A "significant" result with a band of [+0.5, +20] is barely detected and wildly uncertain; the same star count with [+8.0, +8.4] is precisely measured. Same stars, very different findings.
 
 One caution recurs throughout, and Part 2 has the clearest example. With about 52,000 games behind these tests, even a trivially small effect can clear the significance bar. A result can be statistically real and practically meaningless at the same time, so always check the size of the effect, not just the stars.
 
@@ -31,7 +31,7 @@ Home court advantage is real, it lives in a few measurable things on the court, 
 
 **The claim.** The home team's win rate has fallen by about 10 percentage points over four decades, in both the regular season and the playoffs.
 
-**The test.** Fit a trend line through the season-by-season home win rate against the calendar year, regular season and playoffs separately. We fit it two ways: a binomial model that weights each season by how many games it holds, and an ordinary trend line with standard errors adjusted for the fact that one season's result is correlated with the next. When two different methods agree, the finding doesn't depend on the modeling choice.
+**The test.** Fit a trend line through the season-by-season home win rate against the calendar year, regular season and playoffs separately. I fit it two ways: a binomial model that weights each season by how many games it holds, and an ordinary trend line with standard errors adjusted for the fact that one season's result is correlated with the next. When two different methods agree, the finding doesn't depend on the modeling choice.
 
 **What the data showed.** Both methods land in the same place. The regular season falls about 0.24 points per year, 95% CI [-0.28, -0.21], p < 0.001, roughly a 10-point drop across 43 seasons. The calendar year alone explains about three-quarters of the season-to-season swing in home court. The playoffs fall at a similar rate (about 0.22 points per year, 95% CI [-0.36, -0.09], p < 0.001, roughly 9.5 points total) but with a much wider band and far more scatter: each playoff season is only about 80 games, so the year explains only about a fifth of the variation.
 
@@ -93,11 +93,11 @@ The four channels above, working together, capture 96% of the regular-season dec
 
 ---
 
-# Part 2: What We Ruled Out
+# Part 2: What I Ruled Out
 
 Several explanations for the decline are compelling on their face: the rules changed, travel improved, tired visitors became rarer, bigger crowds made arenas louder, more parity compressed outcomes. Each deserves a direct test rather than an assumption.
 
-For each hypothesis below, we lay out why it seemed plausible, what was measured, what the data showed, and where the intuition went wrong. The statistical detail behind every test is in `home_court_results.md`; the charts here are the same ones used in the full analysis pipeline.
+For each hypothesis below, I lay out why it seemed plausible, what was measured, what the data showed, and where the intuition went wrong. The statistical detail behind every test is in `home_court_results.md`; the charts here are the same ones used in the full analysis pipeline.
 
 ---
 
@@ -123,7 +123,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **Why it seemed plausible.** Air travel has improved substantially since 1984. Teams now charter private planes, travel with larger staffs, and follow more sophisticated recovery protocols. If away teams in 1984 arrived meaningfully more fatigued, better travel conditions should have gradually closed part of the home-court gap.
 
-**The test.** We regressed game outcomes on great-circle travel distance between the two cities and on time-zone crossings, controlling for era, rest, and altitude.
+**The test.** I regressed game outcomes on great-circle travel distance between the two cities and on time-zone crossings, controlling for era, rest, and altitude.
 
 **The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points of home win rate per 100 miles, 95% CI [-0.13, -0.02]. The band clears zero, but the size is the story, and the effect is so small that its sign barely means anything: it actually runs slightly negative, so if anything more travel goes with the home team winning a touch *less*, not more. Over a coast-to-coast trip (roughly 2,500 miles) it comes to under 2 percentage points either way, and the win-rate buckets don't even fall in order. In the playoffs, travel distance has no measurable effect at all (95% CI runs from -0.23 to +0.27 pp per 100 miles, straddling zero). Time zones are flat in both contexts. This is the textbook case from the "how to read the numbers" box: significant, because tens of thousands of games can detect almost anything, yet far too small to matter.
 
@@ -135,7 +135,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **Why it seemed plausible.** Rest should matter: a well-rested team outperforms a fatigued one, and home teams may systematically enter games fresher. Altitude should matter too: Denver and Utah play at elevation, which visibly taxes visiting teams. If either factor grew more prominent over time, it could explain part of the trend.
 
-**The test.** We categorized each game by which team was better-rested and compared home win rates across categories. We measured altitude's effect by isolating Denver and Utah in a regression that includes era and rest.
+**The test.** I categorized each game by which team was better-rested and compared home win rates across categories. I measured altitude's effect by isolating Denver and Utah in a regression that includes era and rest.
 
 **The result.** Rest creates genuine variation. Home teams win about 63% of regular-season games when they enter better-rested, and 58% when the visitor has the rest edge. That 5-point gap is real. Denver and Utah add about 8 percentage points to their regular-season home win rates, the largest franchise-level effect in the dataset.
 
@@ -189,7 +189,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **Why it seemed plausible.** If the NBA has become more equal, games should be more evenly contested on talent alone. More evenly matched teams should produce more coin-flip outcomes, which would naturally push the home win rate toward 50%. It is a reasonable structural argument.
 
-**The test.** We measured competitive balance as the standard deviation of team win percentages each season and plotted it against home win rate. We then ran a regression after removing the shared long-run trend from both series to avoid spurious correlation.
+**The test.** I measured competitive balance as the standard deviation of team win percentages each season and plotted it against home win rate. I then ran a regression after removing the shared long-run trend from both series to avoid spurious correlation.
 
 **The result.** The raw season-level correlation between parity and home court advantage is near zero. The era breakdown actually contradicts the theory: the most unequal era (1995-01) had already seen HCA fall sharply from its 1980s peak, while the most balanced era (2002-04) saw HCA tick back up briefly. After removing the shared downtrend from both series, a small year-to-year association does emerge, but the effect is modest and nowhere near large enough to explain the 40-year decline.
 
@@ -203,7 +203,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **Why it seemed plausible.** The NBA expanded significantly over this period, adding franchises in smaller markets with younger fan bases. Older arenas in established markets were sometimes loud in ways newer buildings haven't replicated. If average crowd intensity or size fell, the noise advantage should have weakened.
 
-**The test.** We plotted league-average attendance per game against home win percentage across the 27 seasons with reliable gate figures.
+**The test.** I plotted league-average attendance per game against home win percentage across the 27 seasons with reliable gate figures.
 
 **The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s (the very years home win rates hit their lowest). Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court eroded right alongside the regular season.
 
@@ -227,7 +227,7 @@ This has two implications. First, crowd presence is a genuine ingredient of home
 
 ## The Combined Situational Model
 
-To verify that no combination of situational factors can collectively explain the decline, we built a single model stacking all of them at once: rest, altitude, travel, time zones, and the COVID empty-arena indicator.
+To verify that no combination of situational factors can collectively explain the decline, I built a single model stacking all of them at once: rest, altitude, travel, time zones, and the COVID empty-arena indicator.
 
 **The result.** After accounting for all those factors, roughly half the model's explanatory power belongs to the situational variables combined. The other half belongs to which era the game was played in. That era effect is the decline itself, measured directly. Home advantage is about 9 percentage points lower in 2023-26 than in 1984-94 after every situational factor gets its due, 95% CI 7 to 11 points lower, a band that nowhere comes close to zero.
 
