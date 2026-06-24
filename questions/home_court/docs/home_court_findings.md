@@ -98,11 +98,11 @@ That win-level effect lands most directly in one box-score line: shooting. It ac
 
 ### Rebounding and turnovers: the largest driver
 
-The home team's rebounding advantage has shrunk steadily for 40 years. Unlike the shooting advantage, it is not the three-point story in disguise: in games with similar three-point rates, the rebounding edge barely moves.
+The home team's rebounding advantage has shrunk steadily for 40 years, and it is not the three-point story in disguise: in games with the same three-point volume, the rebounding edge barely moves.
 
 Both sides of the glass show declining home advantages, and the raw numbers are larger than the offensive-rebound story alone suggests. The home advantage on defensive rebounds fell from about +1.6 boards per game in the 1980s to roughly +0.6 today, a drop of about a full board. The home advantage on offensive rebounds fell from about +0.6 to slightly below zero. The defensive side actually fell more in absolute terms.
 
-Some of that defensive decline, though, is a consequence of the shooting improvement already captured in the shooting category: if away teams miss fewer shots, there are simply fewer defensive rebounds available for the home team to grab. Offensive rebounding, measured as each team's share of available offensive boards, is the cleaner test of whether home teams are actually crashing the glass more aggressively, because it does not change just because one team shoots better.
+Part of that defensive-rebound drop, though, is arithmetic rather than home teams rebounding worse. As shooting accuracy rose across the league over the decades, fewer shots missed, so fewer defensive rebounds were there for anyone to collect. That shrinks the home team's raw rebound count on its own, and the cause is better shooting, which the shooting category already counts. (This is shooting accuracy, a separate thing from the three-point volume ruled out just above.) The cleaner test is each team's share of the offensive rebounds actually available. That share does not move just because shooting improved, so it shows whether home teams are still crashing the glass harder than visitors.
 
 On that cleaner measure, the asymmetry is clear. In the mid-1980s, home teams converted about 34% of their offensive rebounding chances; away teams converted about 31%. Both rates fell as the league moved away from crashing the glass, but the home rate dropped 8 percentage points while the away rate dropped only 5. The two lines converge and cross by 2025–26. The edge didn't close because away teams became better offensive rebounders. Home teams stopped crashing the offensive glass more aggressively than visitors.
 
