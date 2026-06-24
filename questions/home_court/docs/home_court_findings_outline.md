@@ -26,11 +26,11 @@
 - **Core stat:** Home win rate ~65 → ~55 per 100; ~quarter-point/year.
   - *RESULTS:* Reg season GLM **−0.244 pp/yr** [−0.280, −0.209], p<0.001, total ≈ **−10.3 pp**; OLS −0.250 pp/yr, R²=0.745.
   - *RESULTS:* Playoffs GLM **−0.225 pp/yr** [−0.359, −0.091], p<0.001, total ≈ **−9.5 pp**; OLS −0.216 pp/yr, R²=0.195; peaked ~68% → 58% today (~9 to 10 pt drop, noisier).
-- **Two speeds — gradual drift vs. steeper stretches:**
-  - Slow erosion (~quarter-point/year) underlying everything.
-  - First steeper stretch: mid-to-late 1990s, ~65% → 60%, traces to 1994–95 hand-checking crackdown. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
+- **Mostly one slow erosion; two brief accelerations within it (not extra drops on top):**
+  - Slow erosion (~quarter-point/year) accounts for nearly the whole drop; changepoint test reads it as smooth, not a staircase.
+  - First (firmer) acceleration: mid-to-late 1990s, ~65% → 60%, traces to 1994–95 hand-checking crackdown. *RESULTS era slope 1984–94: −0.522 pp/yr, p<0.001.*
   - Brief uptick ~2002–04: visible but only 3 seasons, not significant (p=0.23).
-  - Second steeper stretch: after 2017, below 56%, coincides with three-point surge.
+  - Second acceleration: after 2017, below 56% — the three-point shift on the calendar; defers to §3 mechanism, not a separate event.
   - Playoffs lagged: steady ~64% through 2017, then joined slide → 61% → 58%.
 - **Still near-universal today (@fig-team-season-hca):** most recent regular season, all but one team won more at home than on the road. Single-season dumbbell (home% blue, road% grey, gap bar; red = the lone team that won more on the road). Noisy snapshot of how widespread HCA still is, not a franchise ranking.
 - **Decline is league-wide, not team-concentrated (@fig-team-decline-slopes):** per-franchise year-slopes of the home-minus-road win gap, fit separately by OLS then split into true spread vs sampling noise (EB / variance-decomposition idiom). *RESULTS: pooled league slope −0.49 pp/yr (p<0.001); observed SD of team slopes 0.213, noise-adjusted true between-team SD ≈ 0.00 (100% of spread is noise); 0/31 franchises with a positive raw slope.* Every franchise faded at one shared league rate; no team stands apart as the cause. Regular season only (per-team playoff samples too small); playoff decline is itself league-wide.
