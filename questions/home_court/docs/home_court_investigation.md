@@ -45,7 +45,7 @@ Home court advantage is real, it lives in a few measurable things on the court, 
 
 **What the data showed.** In the regular season the four channels carry 95% of the +10.1-point home edge, 95% CI [91, 97]%. Shooting is the largest single piece at 43%, then rebounds at 25%, fouls at 14%, and turnovers at 13%; about 5% is left unexplained. The playoffs look much the same: the channels carry 93% of the larger +14.1-point edge, 95% CI [86, 102]%, split across shooting (33%), turnovers (22%), rebounds (21%), and fouls (17%).
 
-**Why it holds.** The four channels rebuild the home edge almost exactly in both contexts, and the regular-season bands are tight. The playoff shares are looser because each playoff season is small, and they fold in the fact that the home team is usually the better seed, but the level split is solid. This is the answer to "what is home court," and the next four sections take each channel that *changed* over time.
+**Why it holds.** The four channels rebuild the home edge almost exactly in both contexts, and the regular-season bands are tight. The playoff shares are looser because each playoff season is small, and they fold in the fact that the home team is usually the better seed, but the level split is solid. The next four sections take each channel that *changed* over time.
 
 ## The Narrowing Whistle
 
@@ -121,11 +121,11 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 ## Travel and Time Zones
 
-**Why it seemed plausible.** Air travel has improved dramatically since 1984. Teams now charter private planes, travel with larger staffs, and follow more sophisticated recovery protocols. If away teams in 1984 arrived meaningfully more fatigued, better travel conditions should have gradually closed part of the home-court gap.
+**Why it seemed plausible.** Air travel has improved substantially since 1984. Teams now charter private planes, travel with larger staffs, and follow more sophisticated recovery protocols. If away teams in 1984 arrived meaningfully more fatigued, better travel conditions should have gradually closed part of the home-court gap.
 
 **The test.** We regressed game outcomes on great-circle travel distance between the two cities and on time-zone crossings, controlling for era, rest, and altitude.
 
-**The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points per 100 miles, 95% CI [0.02, 0.13]. The interval clears zero, but the size is the story: a team flying coast-to-coast (roughly 2,500 miles) faces about the same odds as one driving two hours, a difference of about 1.8 percentage points. In the playoffs, travel distance has no measurable effect at all (95% CI runs from -0.23 to +0.27 pp per 100 miles, straddling zero). Time zones are flat in both contexts. This is the textbook case from the "how to read the numbers" box: significant, because 49,000 games can detect almost anything, yet far too small to matter.
+**The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points of home win rate per 100 miles, 95% CI [-0.13, -0.02]. The band clears zero, but the size is the story, and the effect is so small that its sign barely means anything: it actually runs slightly negative, so if anything more travel goes with the home team winning a touch *less*, not more. Over a coast-to-coast trip (roughly 2,500 miles) it comes to under 2 percentage points either way, and the win-rate buckets don't even fall in order. In the playoffs, travel distance has no measurable effect at all (95% CI runs from -0.23 to +0.27 pp per 100 miles, straddling zero). Time zones are flat in both contexts. This is the textbook case from the "how to read the numbers" box: significant, because tens of thousands of games can detect almost anything, yet far too small to matter.
 
 **Why the intuition failed.** Two reasons. First, home teams travel too. Away teams fly in; home teams flew back from their previous road trip. Better planes benefit both sides, so the relative disadvantage of arriving in a specific building doesn't shrink just because the flight got more comfortable. Second, the raw travel effect was always smaller than intuition suggests. Even a cross-country trip is worth less than 2 percentage points of home court in the model, against a baseline advantage of 7 to 10 points. Travel is a real but minor factor, and it hasn't changed over time in a way that explains the trend.
 
@@ -155,13 +155,13 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 ![Left: visitor back-to-back frequency over time (the premise is correct). Right: shift-share decomposition showing 8% from schedule change, 92% from within-situation erosion.](../generated/images/home_court_back_to_back.svg){#fig-back-to-back}
 
-**Why the intuition overshot.** The home advantage against a tired visitor (about 65%) is only 6 points above the baseline (about 59%). Even a 16-point drop in back-to-back frequency moves the league-wide average by less than a full percentage point. The mechanism is real; the magnitude is just too small to carry the story. And crucially: if tired visitors were the main driver, you would expect the advantage to hold steady in games with rested visitors and only fall in back-to-back games. The data shows it fell equally in both.
+**Why the intuition overshot.** The home advantage against a tired visitor (about 65%) is only 6 points above the baseline (about 59%). Even a 16-point drop in back-to-back frequency moves the league-wide average by less than a full percentage point. The mechanism is real; the magnitude is just too small to carry the story. The decisive test: if tired visitors were the main driver, you would expect the advantage to hold steady in games with rested visitors and only fall in back-to-back games. The data shows it fell equally in both.
 
 ---
 
 ## Pace of Play
 
-**Why it seemed plausible.** The NBA slowed dramatically from the 1980s to the mid-2010s, then sped back up after 2015. Either shift could plausibly affect home court. A slower game means fewer possessions and less opportunity for the crowd to affect repeated moments. A faster game might amplify energy. Either way, the pace swings were large and visible.
+**Why it seemed plausible.** The NBA slowed considerably from the 1980s to the mid-2010s, then sped back up after 2015. Either shift could plausibly affect home court. A slower game means fewer possessions and less opportunity for the crowd to affect repeated moments. A faster game might amplify energy. Either way, the pace swings were large and visible.
 
 **The test.** Season-by-season plots of pace (possessions per game) against home win rate, plus within-era regressions for both regular season and playoffs.
 
@@ -229,7 +229,7 @@ This has two implications. First, crowd presence is a genuine ingredient of home
 
 To verify that no combination of situational factors can collectively explain the decline, we built a single model stacking all of them at once: rest, altitude, travel, time zones, and the COVID empty-arena indicator.
 
-**The result.** After accounting for all those factors, roughly half the model's explanatory power belongs to the situational variables combined. The other half belongs to which era the game was played in. That era effect is the decline itself, measured directly. Home advantage is about 9 percentage points lower in 2023-26 than in 1984-94 after every situational factor gets its due, 95% CI [7.0, 11.0], a band that nowhere comes close to zero.
+**The result.** After accounting for all those factors, roughly half the model's explanatory power belongs to the situational variables combined. The other half belongs to which era the game was played in. That era effect is the decline itself, measured directly. Home advantage is about 9 percentage points lower in 2023-26 than in 1984-94 after every situational factor gets its due, 95% CI 7 to 11 points lower, a band that nowhere comes close to zero.
 
 The cleanest version of the test compares seasons on either side of 2014. The rest and time-zone coefficients are statistically unchanged between the two periods. Altitude's boost weakened somewhat. Yet the baseline home advantage still dropped about 4.7 points. The situational factors held still; the baseline eroded beneath them.
 
