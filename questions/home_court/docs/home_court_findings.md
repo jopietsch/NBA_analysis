@@ -8,9 +8,13 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-Home court advantage in the NBA has been shrinking for four decades. This report asks four questions. **Has it really changed? What factors create the advantage? What drove the decline? And what did not, even though people often assume it did?**
+For me, everything interesting starts with questions: **Has home court advantage really changed? What factors create the advantage? What drove the decline? And what did not.** And some specific questions just to make sure we know what we are talking about
+* Was one of the reasons the rise in 3 point attempts? (Yes)
+* Were some of the reasons better travel, or load management (No, No)
 
-Yes: the home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two steeper stretches layered on top.** The structural advantages home teams once relied on have worn away. The advantage itself is concrete and lives in the box score: four categories (shooting, rebounding, foul calls, and turnover margin) capture about 95% of it, shooting the largest. Those same four categories all narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting edge (and part of the foul and turnover gaps), home teams' rebounding edge eroded, and the turnover gap closed.**
+Home court advantage in the NBA has been shrinking for four decades. 
+
+The home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **Most of that fall is slow, steady erosion, with two steeper stretches layered on top.** The structural advantages home teams once relied on have worn away. The advantage itself is concrete and lives in the box score: four categories (shooting, rebounding, foul calls, and turnover margin) capture about 95% of it, shooting the largest. Those same four categories all narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting edge (and part of the foul and turnover gaps), home teams' rebounding edge eroded, and the turnover gap closed.**
 
 ![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons. Section 4 checks whether each rule change actually bent the trend; only one did.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
