@@ -67,7 +67,7 @@ Internal analyst reference. Cross-referenced to `knicks_2026_historic_results.md
 
 ## §7. Other Context
 
-- Clutch (decided by <=5 pts): 31.6% of games, 83.7th pct (mean 0.256). Finals: 4 of 5 decided by <=4 pts.
+- Clutch (decided by <=5 pts): 31.6% of games, 83.7th pct (mean 0.256).
 - Home: 9 games, 77.8% win rate, 23rd pct vs. champions (below average at home).
 - Away: 10 games, 90.0% win rate, 97.7th pct (better than all but one champion).
 - The road dominance is the unusual piece; the home number is ordinary.
@@ -168,24 +168,24 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K19 | §6 L191 | Spurs climbed to playoff SRS +15.13, rise +6.85 | §6 ROUND-BY-ROUND (field elevation) | Spurs reg +8.28, PO +15.13, elev +6.85 |
 | K20 | §6 L205 | OKC led regular season (+11.04), barely changed (+0.38) | §6 ROUND-BY-ROUND (field elevation) | OKC reg +11.04, PO +11.42, elev +0.38 |
 | K21 | §7 L220 | 31.6% games decided by <=5 pts, 83.7th pct | §7 OTHER DEFLATORS | 0.316; 83.7th pct; mean 0.256 |
-| K22 | §7 L225 | home win rate 77.8%, 23rd pct | §7 OTHER DEFLATORS | home 9G, 0.778, 23.3th pct |
-| K23 | §7 L227 | away win rate 90.0%, 98th pct | §7 OTHER DEFLATORS | away 10G, 0.900, 97.7th pct |
-| K24 | §8 L240 | beat spread by avg +16.9 pts/game | §12 BETTING-MARKET | avg ATS margin +16.9; ATS record 16-3 |
-| K25 | §8 L249 | 14-0 ATS vs. East opponents | §12 BETTING-MARKET (round-by-round ATS) | R1 6/6, R2 4/4, CF 4/4 = 14-0 |
-| K26 | §8 L250 | Finals dead-on: 2-5 ATS | §12 BETTING-MARKET (round-by-round ATS) | Finals 2/5; avg margin +2.4 vs. spread +2.5 |
-| K27 | §9 L291 | avg opponent health 98% | §11 OPPONENT PLAYER AVAILABILITY | avg 98%; Spurs 100% |
-| K28 | §9 L293 | close Finals margin +2.4 reflects real competition | §11 OPPONENT PLAYER AVAILABILITY | Spurs 100% health confirmed |
-| K29 | §10 L307 | #1 in 60% of bootstrap re-runs | §13 ROBUSTNESS (bootstrap rank) | P(rank #1) = 59.6% |
-| K30 | §10 L307 | top 3 in 70% | §13 ROBUSTNESS | P(top 3) = 69.9% |
-| K31 | §10 L308 | top 5 in 82% | §13 ROBUSTNESS | P(top 5) = 82.4% |
-| K32 | §10 L310 | adj margin range [+5.1, +17.7] | §13 ROBUSTNESS | 90% interval [+5.08, +17.71] |
-| K33 | §10 L317 | shrunken margin +6.5/game | §13 ROBUSTNESS (EB shrinkage) | posterior +6.50; 95% CI [+1.53, +11.48] |
-| K34 | §10 L317 | shrinkage range [+1.5, +11.5] | §13 ROBUSTNESS | 95% credible interval [+1.53, +11.48] |
-| K35 | §10 L338 | hierarchical: Knicks true #1 only ~9% | §14 HIERARCHICAL | P(true #1) = 9.0%; posterior mean +4.70 |
-| K36 | §10 L346 | hierarchical pulls from +11.2 down to ~+4.7 | §14 HIERARCHICAL | Knicks posterior +4.70; 90% CI [+1.80, +7.60] |
-| K37 | §11 L372 | wins-only (BT): Knicks #1 of 43 | §16 WINS-ONLY (BRADLEY-TERRY) | BT adj +11.37, rank #1; corr with SRS +0.990 |
-| K38 | §11 L382 | Elo-adjusted margin +9.4/game, 3rd | §15 ELO CROSS-CHECK | Elo adj +9.36, rank #3; opp rating +5.53 |
-| K39 | §12 L407 | model gave Knicks only 15% title probability | §18 SERIES-LEVEL WIN-PROBABILITY | P(title) = 14.7% |
-| K40 | §12 L409 | only 7% of model championship runs that clean | §18 SERIES-LEVEL WIN-PROBABILITY | P(title run <=3 losses) = 6.7% |
-| K41 | §12 L410 | barely 1% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = 1.0% |
+| K22 | §7 L224 | home win rate 77.8%, 23rd pct | §7 OTHER DEFLATORS | home 9G, 0.778, 23.3th pct |
+| K23 | §7 L226 | away win rate 90.0%, 98th pct | §7 OTHER DEFLATORS | away 10G, 0.900, 97.7th pct |
+| K24 | §8 L239 | beat spread by avg +16.9 pts/game | §12 BETTING-MARKET | avg ATS margin +16.9; ATS record 16-3 |
+| K25 | §8 L248 | 14-0 ATS vs. East opponents | §12 BETTING-MARKET (round-by-round ATS) | R1 6/6, R2 4/4, CF 4/4 = 14-0 |
+| K26 | §8 L249 | Finals dead-on: 2-5 ATS | §12 BETTING-MARKET (round-by-round ATS) | Finals 2/5; avg margin +2.4 vs. spread +2.5 |
+| K27 | §9 L290 | avg opponent health 98% | §11 OPPONENT PLAYER AVAILABILITY | avg 98%; Spurs 100% |
+| K28 | §9 L292 | close Finals margin +2.4 reflects real competition | §11 OPPONENT PLAYER AVAILABILITY | Spurs 100% health confirmed |
+| K29 | §10 L306 | #1 in 60% of bootstrap re-runs | §13 ROBUSTNESS (bootstrap rank) | P(rank #1) = 59.6% |
+| K30 | §10 L306 | top 3 in 70% | §13 ROBUSTNESS | P(top 3) = 69.9% |
+| K31 | §10 L307 | top 5 in 82% | §13 ROBUSTNESS | P(top 5) = 82.4% |
+| K32 | §10 L309 | adj margin range [+5.1, +17.7] | §13 ROBUSTNESS | 90% interval [+5.08, +17.71] |
+| K33 | §10 L316 | shrunken margin +6.5/game | §13 ROBUSTNESS (EB shrinkage) | posterior +6.50; 95% CI [+1.53, +11.48] |
+| K34 | §10 L316 | shrinkage range [+1.5, +11.5] | §13 ROBUSTNESS | 95% credible interval [+1.53, +11.48] |
+| K35 | §10 L337 | hierarchical: Knicks true #1 only ~9% | §14 HIERARCHICAL | P(true #1) = 9.0%; posterior mean +4.70 |
+| K36 | §10 L345 | hierarchical pulls from +11.2 down to ~+4.7 | §14 HIERARCHICAL | Knicks posterior +4.70; 90% CI [+1.80, +7.60] |
+| K37 | §11 L371 | wins-only (BT): Knicks #1 of 43 | §16 WINS-ONLY (BRADLEY-TERRY) | BT adj +11.37, rank #1; corr with SRS +0.990 |
+| K38 | §11 L381 | Elo-adjusted margin +9.4/game, 3rd | §15 ELO CROSS-CHECK | Elo adj +9.36, rank #3; opp rating +5.53 |
+| K39 | §12 L406 | model gave Knicks only 15% title probability | §18 SERIES-LEVEL WIN-PROBABILITY | P(title) = 14.7% |
+| K40 | §12 L408 | only 7% of model championship runs that clean | §18 SERIES-LEVEL WIN-PROBABILITY | P(title run <=3 losses) = 6.7% |
+| K41 | §12 L409 | barely 1% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = 1.0% |
 | K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%) |
