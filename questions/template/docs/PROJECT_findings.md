@@ -16,6 +16,9 @@ TODO: State the main finding upfront so readers don't have to reach the end.
 
 TODO
 
+<!-- Image embed pattern: caption describes the finding; {#fig-label} is required for Quarto to emit "Figure N:". Use the chart filename stem as the label. -->
+<!-- ![Finding stated as a sentence.](../generated/images/chart_name.svg){#fig-chart-name} -->
+
 ## Appendix A: Companion Documents
 
 - [Full analysis output](PROJECT_results.md)

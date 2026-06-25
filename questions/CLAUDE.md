@@ -89,6 +89,7 @@ The same engagement and clarity rules that apply to prose apply to charts. When 
 - **Annotate key events on the line.** On time-series charts, mark the moments that drive the story directly on the plot (a labelled vertical rule at a rule change, a band over an inflection) so the chart carries the narrative without prose.
 - **Highlight-and-mute.** When a chart has a "context" series and a "the one that matters" series, color only the series that carries the argument and mute the rest to neutral grey. The eye goes where you point it.
 - **Consistent color semantics across every chart.** Keep colors meaning the same thing report-wide so readers build intuition: regular season = blue, playoffs = green (in any chart showing both); positive / home-favoring = green, negative / visitor-favoring = red; the emphasized series = blue, muted context = grey. Era backgrounds use the shared era palette. Document the convention next to the palette in `<project>_plots.py`.
+- **Every image embed must include a `{#fig-label}` attribute.** Quarto only produces a numbered "Figure N:" caption when the image has a label. Always write `![Caption.](../generated/images/chart.svg){#fig-label}`, never bare `![Caption.](path)`. Labels must be unique within a document; use the chart filename stem (e.g. `{#fig-rank-agreement}`).
 
 ## Draft status
 

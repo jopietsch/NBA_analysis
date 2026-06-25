@@ -48,7 +48,7 @@ Including human rankings as a category lets us compare model-based and reputatio
 
 ## 3. Do the systems agree?
 
-![Agreement between each pair of systems: darker squares mean stronger rank correlation.](../generated/images/rank_agreement_heatmap.svg)
+![Agreement between each pair of systems: darker squares mean stronger rank correlation.](../generated/images/rank_agreement_heatmap.svg){#fig-agreement}
 
 The box-score systems largely agree with each other at the top. PER and Game Score move closely together (Spearman r = 0.83 in 2024-25 among qualified players), and both correlate with BPM at r = 0.49. Win Shares and WS/48 are nearly interchangeable (r = 0.97), but both diverge sharply from PER and Game Score: the Spearman correlation between PER and Win Shares is only 0.01.
 
@@ -64,7 +64,7 @@ Not all systems add independent information. The unique R² analysis (see result
 
 The "system outliers" chart shows the players each system rates most above and below the consensus. This is where methodological differences become visible: a system that captures defensive value heavily will love rim protectors; a system that penalizes inefficient volume scoring will discount high-usage players with middling true shooting.
 
-![Players each system rates most above or below the consensus.](../generated/images/system_outliers.svg)
+![Players each system rates most above or below the consensus.](../generated/images/system_outliers.svg){#fig-outliers}
 
 ## 5. The two uber ratings
 
@@ -74,7 +74,7 @@ Two combined ratings are built from the systems present in the data:
 
 **Wins-predictive rating:** a combination of system z-scores weighted by how well each system (aggregated to team level) predicts actual team wins. The two ratings correlate at Spearman r = 0.98: they agree on who the very best players are. But the wins-predictive rating pushes SGA, Giannis, and Tatum even higher relative to the consensus, because their teams won the most games. Conversely, players on losing teams (Brandon Ingram, Vasilije Micic) rate lower on the wins-predictive scale than on the consensus — their numbers look good in context but their teams still lost.
 
-![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg)
+![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg){#fig-uber}
 
 ## 6. Stars matter more than rank implies
 
@@ -84,11 +84,11 @@ PER is nearly symmetric among 2024-25 qualified players: Gini = 0.16, top-5% hol
 
 Win Shares and VORP are a different story. Win Shares has Gini = 0.74; the top 5% of players hold 32% of total positive Win Shares. VORP shows similar skewness. Both are right-skewed: right-tail skewness = 1.57 for WS, 1.54 for VORP. The cumulative metrics are heavy-tailed because they multiply rate by minutes, and both rate and playing time are above average for the best players.
 
-![Gini coefficients by system: Win Shares and VORP concentrate value at the top far more than rate metrics like PER or Game Score.](../generated/images/gini_by_system.svg)
+![Gini coefficients by system: Win Shares and VORP concentrate value at the top far more than rate metrics like PER or Game Score.](../generated/images/gini_by_system.svg){#fig-gini}
 
-![Rating value versus rank for cumulative and rate metrics: cumulative metrics (Win Shares, VORP) fall steeply among the top players; rate metrics stay flatter across the distribution.](../generated/images/rank_value_distributions.svg)
+![Rating value versus rank for cumulative and rate metrics: cumulative metrics (Win Shares, VORP) fall steeply among the top players; rate metrics stay flatter across the distribution.](../generated/images/rank_value_distributions.svg){#fig-distributions}
 
-![The gap between rank 1 and rank 10 is far larger than rank 10 to rank 50 in value-based systems.](../generated/images/ordinal_vs_value_gap.svg)
+![The gap between rank 1 and rank 10 is far larger than rank 10 to rank 50 in value-based systems.](../generated/images/ordinal_vs_value_gap.svg){#fig-gap}
 
 The visual gap between rank 1 and rank 10 looks like 10 spots on a list. The numerical gap is often several times larger than the gap between rank 10 and rank 50.
 
