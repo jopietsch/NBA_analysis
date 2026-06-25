@@ -127,7 +127,7 @@ null PLUS_MINUS, margins are derived from PTS (both team rows per game).
 
 **Playoff overperformance**, comparing actual margins to what the Knicks' own
 regular-season SRS (+6.05) would predict against those opponents (+2.38 expected
-per game), gives +12.5 pts/game of outperformance, 2nd all-time (97.7th pct)
+per game), gives +12.5 pts/game of outperformance, 2nd all-time (98th pct)
 behind only the 2000–01 Lakers. Their playoff SRS was +17.53, an elevation of
 +11.48 above their regular-season SRS, also 2nd all-time. The Knicks didn't
 just face the right opponents: they played far above their regular-season level.
@@ -218,8 +218,7 @@ clear, though: both finalists rose further than anyone else.
 ## 7. Other Context
 
 **Clutch/close games:** 31.6% of Knicks playoff games were decided by 5 points
-or fewer (84th percentile, more clutch than average champions). The Finals in
-particular were tight: four of five games were decided by 4 points or fewer.
+or fewer (84th percentile, more clutch than average champions).
 
 **Home/away splits:**
 - Home: 9 games, 77.8% win rate (23rd percentile vs. champions, relatively
@@ -301,8 +300,8 @@ opponent. This removes the injury asterisk often attached to dominant runs.
 
 The "best opponent-adjusted margin of any champion" claim rests on a 19-game
 run, and 19 games is a small sample. To see how solid the top spot is, we
-re-played the run 20,000 times by re-drawing its 19 games at random (with
-replacement) and re-ranked the result against the other 42 champions each time.
+re-played the run 20,000 times by re-drawing its 19 games at random and
+re-ranked the result against the other 42 champions each time.
 
 The Knicks finish #1 in about 60% of those re-runs, in the top three in 70%, and
 in the top five in 82%. Their single most likely finish is #1, but across
@@ -333,17 +332,17 @@ played.
 **The fairest test treats every champion as uncertain, and it humbles the #1
 claim.** The checks above froze the other 42 champions at their exact numbers.
 But those numbers are noisy too: a champion that looks like +10 might truly be +7
-or +13. When we shrink every champion toward the typical level by how shaky its
-own number is, and then let all 43 compete while weighing everyone's
+or +13. When we pull every champion's number back toward the historical average
+based on how shaky it is, and then let all 43 compete while weighing everyone's
 uncertainty at once, the Knicks come out as the single best only about **9% of
 the time**. They land in the top three about 23% of the time and the top five
-about 34%; their most likely spot is the middle of the top ten, with a range
+about 34%; their most likely spot is near the bottom of the top ten, with a range
 that runs from 1st to deep in the pack.
 
 Why so much lower than the 60% above? Two reasons. The Knicks' run was streaky:
-huge blowouts in the sweeps next to a +2.4 Finals. A streaky run is weaker
-evidence of a high true level than a steady one, so this test pulls the margin
-back harder than the simple shrink above did: from +11.2 down to about +4.7,
+huge blowouts in the sweeps next to a +2.4 Finals. A run that swings between
+blowouts and close games is harder to trust than a steady one, so this test pulls
+the margin back harder than the simple version above did: from +11.2 down to about +4.7,
 rather than the +6.5 of the second check (which ignored streakiness). And several rivals, the 1990-91 Bulls, the
 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier
 evidence, so once everyone's wobble is in play they overtake the Knicks often.
@@ -383,8 +382,8 @@ so the Knicks' Elo-adjusted margin is **+9.4 per game, third-best**, behind the
 2016-17 Warriors and 1990-91 Bulls.
 
 Put together, the three systems agree more than they disagree (all rank the
-Knicks in the top three, and across champions their adjusted margins move in
-near-lockstep). The one thing that moves the Knicks off #1 is not switching from
+Knicks in the top three, and across champions their adjusted margins move very
+closely together). The one thing that moves the Knicks off #1 is not switching from
 margins to wins, it is crediting opponents for late-season form: on full-season
 opponent quality the Knicks are first, and only when recent form is weighted
 heavily do they slip to third. That is the same lesson as §10: clearly elite,
@@ -410,7 +409,7 @@ rarer still: only about **7% of the model's championship runs were that tidy**,
 and barely **1%** of all simulated seasons produced both a title and three or
 fewer losses.
 
-So almost nothing about the Knicks' regular season predicted this. They were
+Almost nothing about the Knicks' regular season predicted this. They were
 "supposed" to lose around six or seven games on the way to a title they were not
 even favored to win; they lost three and were seriously tested only in the
 Finals. That is the §4–§5 margin story in win-loss terms: the Knicks played far
@@ -447,10 +446,8 @@ Each objection is treated in full, with why it seemed plausible and exactly what
 on the margin ([+7.4, +22.4]). The comparison set is also only 43 champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all
 measure closely related things; treat them as different angles on one story, not
-independent votes. §10 puts numbers on this: with every other champion's number
-left unchanged the #1 rank is roughly a 60/40 call, and under the fairer test that lets every
-champion be as uncertain as the Knicks it falls to about 1-in-11. Not a settled
-fact either way.
+independent votes. §10 puts numbers on how solid the #1 rank is, and that
+uncertainty, not any objection in §13, is what keeps first place from being settled.
 
 **Opponent SRS** for the reg-season-adjusted metrics is from regular-season
 performance. For the playoff-adjusted metrics (§5), each opponent's playoff SRS

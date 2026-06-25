@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-The 2025–26 New York Knicks went 16-3 in the playoffs. This is the one-page version of a longer report, built around three charts and four questions: **Was the run historic and against real competition? Does it hold up after adjusting for era and schedule? What made the Finals so different from the first three rounds? And how unlikely was a title run from where the Knicks started the playoffs?**
+The 2025–26 New York Knicks went 16-3 in the playoffs. This summary answers four questions: **Was the run historic and against real competition? Does it hold up after adjusting for era and schedule? What made the Finals so different from the first three rounds? And how unlikely was a title run from where the Knicks started the playoffs?**
 
 ---
 
@@ -38,7 +38,7 @@ This split is not just a story about opponent quality. The two teams that improv
 
 Forget what happened and ask what the Knicks' regular season predicted. A forecaster that knows only each team's regular-season strength and who had home court made New York a Finals underdog: the Spurs out-rated them over 82 games, so the model gave the Knicks about a 31% chance to win that series and only about a **15% chance to win the title at all**. A run as clean as 16-3 was rarer still. Only about 7% of the model's title runs lost three or fewer games, and barely **1%** of all simulated seasons produced both a championship and three or fewer losses.
 
-So almost nothing about the regular season predicted this. The Knicks were "supposed" to lose six or seven games on the way to a title they were not favored to win. They lost three, and were seriously tested only in the Finals. That is the dominance story told in wins and losses: they played far above their regular-season level when it counted.
+Almost nothing about the regular season predicted this. The Knicks were "supposed" to lose six or seven games on the way to a title they were not favored to win. They lost three, and were seriously tested only in the Finals. That is the dominance story told in wins and losses: they played far above their regular-season level when it counted.
 
 ---
 
