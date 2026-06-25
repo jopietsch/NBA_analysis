@@ -30,7 +30,7 @@ Home court in the playoffs declined later than in the regular season: playoff ho
 
 ![Box-score category shares. Left: what creates the home advantage (level). Right: what share of the 40-year decline each category carries. Regular season and playoffs.](../generated/images/home_court_mediation.svg){#fig-mediation width=100%}
 
-We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The first question is how much of the home edge each one accounts for. Together they capture about **95%** of it. Shooting is the single biggest piece, then rebounding.
+We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The first question is how much of the home edge each one accounts for. Together they capture about **95%** of it. Shooting is the single biggest piece, then rebounding. These four are where the advantage shows up, not why it exists: the real-world causes behind them, a home crowd, familiar rims, referee tendencies, are the next question.
 
 Next, look at what affects the decline. In the regular season, rebounding carries the largest share and turnovers the next, together more than half the drop; shooting and the narrowing foul gap make up most of the rest. (The chart at right gives each category's share.)
 
