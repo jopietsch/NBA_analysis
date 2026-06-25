@@ -14,3 +14,35 @@ format:
     toc: true
     theme: cosmo
     monofont: "DejaVu Sans Mono, monospace"
+    # Opt-in collapsible figures: tag an image `{.collapsible}` and it renders
+    # as a tap-to-expand <details> in HTML only (phone-friendly; lets readers
+    # who don't care about charts scroll past). PDF/Typst ignores the class and
+    # shows the figure inline. Untagged figures are unaffected, so this is inert
+    # for any doc that doesn't opt in.
+    include-after-body:
+      text: |
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          document.querySelectorAll(".collapsible").forEach(function (el) {
+            var fig = el.closest("figure") || el;
+            if (fig.dataset.coDone) return;
+            fig.dataset.coDone = "1";
+            var cap = fig.querySelector("figcaption");
+            var text = cap ? cap.textContent.trim() : "Show chart";
+            var preview = text.length > 90
+              ? text.slice(0, 90).replace(/\s+\S*$/, "") + "…" : text;
+            var details = document.createElement("details");
+            details.className = "collapsible-figure";
+            var summary = document.createElement("summary");
+            summary.textContent = "📊 " + preview;
+            details.appendChild(summary);
+            fig.parentNode.insertBefore(details, fig);
+            details.appendChild(fig);
+          });
+        });
+        </script>
+        <style>
+        details.collapsible-figure > summary { cursor: pointer; color: #2780e3; margin: 0.6em 0; }
+        details.collapsible-figure[open] > summary { color: inherit; }
+        details.collapsible-figure > summary::marker { color: #2780e3; }
+        </style>

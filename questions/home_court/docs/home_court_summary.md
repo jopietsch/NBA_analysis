@@ -28,11 +28,17 @@ Home court in the playoffs declined later than in the regular season: playoff ho
 
 ## 2. What Creates Home Court Advantage, and What Changed
 
-![Box-score category shares. Left: what creates the home advantage (level). Right: what share of the 40-year decline each category carries. Regular season and playoffs.](../generated/images/home_court_mediation.svg){#fig-mediation width=100%}
+We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The table shows how much of the home edge each one accounts for, and how much of the 40-year decline each one carries.
 
-We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The first question is how much of the home edge each one accounts for. Together they capture about **95%** of it. Shooting is the single biggest piece, then rebounding. These four are where the advantage shows up, not why it exists: the real-world causes behind them, a home crowd, familiar rims, referee tendencies, are the next question.
+| Box-score factor | Share of the edge | Share of the decline |
+|---|---:|---:|
+| Shooting (eFG%) | 43% | 21% |
+| Rebounding | 25% | 30% |
+| Foul calls | 14% | 18% |
+| Turnover margin | 13% | 27% |
+| **All four together** | **95%** | **96%** |
 
-Next, look at what affects the decline. In the regular season, rebounding carries the largest share and turnovers the next, together more than half the drop; shooting and the narrowing foul gap make up most of the rest. (The chart at right gives each category's share.)
+Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Two things stand out. Shooting builds the biggest single part of the edge, but rebounding and turnovers together do the most to erase it, more than half the decline. And these four are where the advantage shows up, not why it exists: the real-world causes behind them, a home crowd, familiar rims, referee tendencies, are the next question.
 
 Then we get to the most interesting: why are these changes happening.  Referees are calling fairer games: home teams once attempted roughly 2 more free throws per game than visitors, and now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap, and it's the only one that does. The three-point shift reaches across categories too: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline, so the move to the perimeter touches close to half the entire 40-year decline. Rebounding and turnovers, the two biggest single drivers, are the ones the three-point shift does not explain: rebounding barely moves with three-point volume at all. 
 
@@ -45,8 +51,6 @@ The playoff picture is similar in shape, though a larger share of the playoff de
 ### 2.1 The Biggest Surprises
 
 ---
-
-![Four panels on the home rebounding and turnover edges. Far left: home vs. away offensive-rebound rates converging and crossing over time. Center-left: the raw home-minus-away rebound differentials, both declining. Center-right: seasons with a bigger home rebounding edge tend to be seasons home teams win more (association, not causation). Far right: the home turnover edge fading from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding width=100%}
 
 **Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding edge has shrunk steadily for four decades, and it isn't the three-point story in disguise: in games with similar three-point rates, the shooting edge disappears while the rebounding edge barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell much further than the away rate. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams.
 
