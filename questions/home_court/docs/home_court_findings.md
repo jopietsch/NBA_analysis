@@ -14,7 +14,7 @@ For me, everything interesting starts with questions: **Has home court advantage
 
 Home court advantage in the NBA has been shrinking for four decades. 
 
-The home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **The fall is mostly a slow, steady fade, with two stretches where it briefly sped up.** The structural advantages home teams once relied on have worn away. The advantage itself is concrete and lives in the box score: four categories (shooting, rebounding, foul calls, and turnover margin) capture about 95% of it, shooting the largest. Those same four categories all narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting edge (and part of the foul and turnover gaps), home teams' rebounding edge slipped, and the turnover gap closed.**
+The home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **The fall is mostly a slow, steady fade, with two stretches where it briefly sped up.** We measure the edge through four box-score factors: shooting, rebounding, foul calls, and turnover margin, which together capture about 95% of it. Shooting builds the biggest part of the edge; rebounding did the most to erase it. All four narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting edge (and part of the foul and turnover gaps), home teams' rebounding edge slipped, and the turnover gap closed.**
 
 ![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons. Section 4 checks whether each rule change actually bent the trend; only one did.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
@@ -41,7 +41,9 @@ The drop is not concentrated in a handful of franchises: every team faded at rou
 
 ## 2. What Creates Home Court Advantage
 
-A handful of concrete things have historically given home teams an edge on any given night: referees calling fewer fouls on them, a shooting advantage, favorable shot selection, and an advantage on the glass and in turnover differential. Rest and altitude add to the picture for specific matchups. Basketball analysts call these the Four Factors: effective field goal percentage, free throw rate, turnover margin, and rebounding. This analysis finds all four matter, and they count for about the same in both the regular season and the playoffs.
+We measure the home edge through the Four Factors that decide every possession, the framework Dean Oliver built: shooting (effective field goal percentage), rebounding, free throw rate, and turnover margin. They cover essentially every way a possession can end: a made shot, a turnover, a trip to the free-throw line, or a rebounded miss. Together they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting is the largest piece, more than 40%, followed by rebounding. All four matter, and they count for about the same in both the regular season and the playoffs.
+
+The rest of this section walks through each. Rest and altitude add to the picture for specific matchups, covered later.
 
 **Referee foul calls and free throws.** In every decade and in both regular season and playoffs, referees have called fewer fouls on home teams. In the 1980s and early 1990s, home teams averaged about 1.2 fewer foul calls per game in the regular season, translating to roughly 2 extra free throw attempts per game. In the playoffs the gap was even wider: about 1.6 fewer fouls per game and 2.4 more free throws. With fouls go free throws, and with free throws go points. This is the most consistent component of home court advantage.
 
@@ -53,7 +55,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just under 0.4 of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
-**Why look at the box score?** These four cover essentially every way a possession can end: a made shot, a turnover, a trip to the free-throw line, or a rebounded miss. Examining the four factors, and how they impact home court advantage shows that they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting (eFG%) is the largest piece, more than 40%, followed by rebounding. How much each factor counts toward winning has held nearly constant decade to decade: the game got fairer, not different in how its components combine.
+**The mix held, the size shrank.** How much each factor counts toward winning has held nearly constant decade to decade. The game got fairer, not different in how its components combine.
 
 ![Box-score category shares of the home-court advantage, regular season vs. playoffs. The headline at each bar's end (with a range showing how much it could shift on the games available) is how much of the home edge the four categories capture together.](../generated/images/home_court_mediation_level.svg){#fig-mediation-level width=50%}
 

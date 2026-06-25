@@ -10,7 +10,7 @@
 
 In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games, nearly the same rate as the stronger team hosting. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does.  **Has home court really changed? What factors create the advantage? What drove the decline? And what did not, even though people often assume it did?**
 
-Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady fade, with two stretches where it briefly sped up. The structural advantages home teams once relied on have worn away. **The decline shows up in four box-score categories: shooting, rebounding, foul calls, and turnover margin.** Two real-world changes account for much of it: the shift to three-point shooting, which alone reaches close to half the decline, and fairer officiating. The largest single category, rebounding, is the one neither change explains.
+Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady fade, with two stretches where it briefly sped up. **We measure the edge through four box-score factors: shooting, rebounding, foul calls, and turnover margin. Shooting builds the biggest part of the edge; rebounding did the most to erase it.** Two real-world changes account for much of the decline: the shift to three-point shooting, which alone reaches close to half of it, and fairer officiating. Rebounding, the largest single driver, is the one neither change explains.
 
 Because there are more regular-season games, that analysis is more precise. There are far fewer playoff games, so it shows direction more than precise size.
 
@@ -30,7 +30,7 @@ Home court in the playoffs declined later than in the regular season: playoff ho
 
 ![Box-score category shares. Left: what creates the home advantage (level). Right: what share of the 40-year decline each category carries. Regular season and playoffs.](../generated/images/home_court_mediation.svg){#fig-mediation width=100%}
 
-The place to start our analysis is to understand what creates home court advantage, and how that affects the Four Factors, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. It starts with understanding how much of these factors influence home court advantage. Together they account for about **95%** of the entire home advantage. Shooting is the single biggest piece, then rebounding.
+We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The first question is how much of the home edge each one accounts for. Together they capture about **95%** of it. Shooting is the single biggest piece, then rebounding.
 
 Next, look at what affects the decline. In the regular season, rebounding carries the largest share and turnovers the next, together more than half the drop; shooting and the narrowing foul gap make up most of the rest. (The chart at right gives each category's share.)
 

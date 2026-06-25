@@ -39,7 +39,7 @@ Home court advantage is real, it lives in a few measurable things on the court, 
 
 ## What Home Court Is Made Of: Four Box-Score Channels
 
-**The claim.** Home court is not a vague aura. It shows up in four box-score categories: shooting, rebounding, foul calls, and turnover margin. Together they account for nearly all of it.
+**The claim.** Home court can be measured through four box-score factors: shooting, rebounding, foul calls, and turnover margin. The test isn't whether these categories matter, every possession ends in one of them; it's how much of the home edge each one accounts for, and whether together they capture nearly all of it.
 
 **The test.** A model of who wins each game from four home-minus-away differences: effective field goal percentage, fouls (which carries the free-throw edge), turnovers, and rebounds. The model then splits the home edge into a contribution from each category, with the four contributions summing to the whole. Bootstrap bands (re-running on re-drawn samples) put a range on each share.
 
