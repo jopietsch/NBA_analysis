@@ -396,6 +396,125 @@ def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
     return df
 
 
+# ── Player / team season-stat fetchers (for ratings recompute) ─────────────────
+
+def fetch_player_season_totals(end_year: int,
+                               season_type: str = REGULAR_SEASON,
+                               cache_dir: str | None = None) -> pd.DataFrame:
+    """Season totals for all players via LeagueDashPlayerStats (Totals mode).
+
+    One row per player. Key columns: PLAYER_ID, PLAYER_NAME, TEAM_ID, TEAM_ABBREVIATION,
+    GP, MIN, PTS, REB, AST, STL, BLK, TOV, FGM, FGA, FG3M, FG3A, FTM, FTA,
+    OREB, DREB, PF, PLUS_MINUS.
+    """
+    d = cache_dir or default_cache_dir()
+    slug = season_type.replace(" ", "_")
+    path = os.path.join(d, f"player_totals_{season_str(end_year)}_{slug}.csv")
+    if os.path.exists(path):
+        return pd.read_csv(path)
+    os.makedirs(d, exist_ok=True)
+    from nba_api.stats.endpoints import leaguedashplayerstats
+    df = leaguedashplayerstats.LeagueDashPlayerStats(
+        season=season_str(end_year),
+        season_type_all_star=season_type,
+        per_mode_detailed="Totals",
+        measure_type_detailed_defense="Base",
+        league_id_nullable="00",
+        timeout=60,
+    ).get_data_frames()[0]
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def fetch_player_season_per100(end_year: int,
+                                season_type: str = REGULAR_SEASON,
+                                cache_dir: str | None = None) -> pd.DataFrame:
+    """Per-100-possession rates for all players (for BPM inputs).
+
+    Same endpoint as totals but per_mode_detailed='Per100Possessions'.
+    """
+    d = cache_dir or default_cache_dir()
+    slug = season_type.replace(" ", "_")
+    path = os.path.join(d, f"player_per100_{season_str(end_year)}_{slug}.csv")
+    if os.path.exists(path):
+        return pd.read_csv(path)
+    os.makedirs(d, exist_ok=True)
+    from nba_api.stats.endpoints import leaguedashplayerstats
+    df = leaguedashplayerstats.LeagueDashPlayerStats(
+        season=season_str(end_year),
+        season_type_all_star=season_type,
+        per_mode_detailed="Per100Possessions",
+        measure_type_detailed_defense="Base",
+        league_id_nullable="00",
+        timeout=60,
+    ).get_data_frames()[0]
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def fetch_team_season_totals(end_year: int,
+                              season_type: str = REGULAR_SEASON,
+                              cache_dir: str | None = None) -> pd.DataFrame:
+    """Season totals for all teams via LeagueDashTeamStats (Totals mode).
+
+    One row per team. Key columns: TEAM_ID, TEAM_NAME, GP, W, L, MIN,
+    PTS, REB, AST, STL, BLK, TOV, FGM, FGA, FG3M, FG3A, FTM, FTA, OREB, DREB, PF.
+    """
+    d = cache_dir or default_cache_dir()
+    slug = season_type.replace(" ", "_")
+    path = os.path.join(d, f"team_totals_{season_str(end_year)}_{slug}.csv")
+    if os.path.exists(path):
+        return pd.read_csv(path)
+    os.makedirs(d, exist_ok=True)
+    from nba_api.stats.endpoints import leaguedashteamstats
+    df = leaguedashteamstats.LeagueDashTeamStats(
+        season=season_str(end_year),
+        season_type_all_star=season_type,
+        per_mode_detailed="Totals",
+        measure_type_detailed_defense="Base",
+        league_id_nullable="00",
+        timeout=60,
+    ).get_data_frames()[0]
+    df.to_csv(path, index=False)
+    time.sleep(SLEEP_SEC)
+    return df
+
+
+def fetch_league_averages(end_year: int,
+                           season_type: str = REGULAR_SEASON,
+                           cache_dir: str | None = None) -> dict:
+    """League-average context needed by PER and Win Shares formulas.
+
+    Derived from the team-totals frame so no extra API call is needed.
+    Returns a dict with keys: lg_pts, lg_ast, lg_oreb, lg_dreb, lg_reb,
+    lg_stl, lg_blk, lg_tov, lg_pf, lg_fgm, lg_fga, lg_ftm, lg_fta,
+    lg_fg3m, lg_fg3a, lg_min, lg_pace, lg_orb_pct.
+    """
+    import numpy as np
+    d = cache_dir or default_cache_dir()
+    slug = season_type.replace(" ", "_")
+    path = os.path.join(d, f"league_avg_{season_str(end_year)}_{slug}.csv")
+    if os.path.exists(path):
+        row = pd.read_csv(path).iloc[0].to_dict()
+        return row
+    team_df = fetch_team_season_totals(end_year, season_type, cache_dir)
+    lg: dict = {}
+    for col in ["PTS", "AST", "OREB", "DREB", "REB", "STL", "BLK", "TOV", "PF",
+                "FGM", "FGA", "FTM", "FTA", "FG3M", "FG3A", "MIN"]:
+        lg[f"lg_{col.lower()}"] = float(team_df[col].sum()) if col in team_df.columns else 0.0
+    n_teams = len(team_df)
+    if all(c in team_df.columns for c in ["FGA", "FTA", "OREB", "TOV", "GP"]):
+        team_poss = team_df["FGA"] + 0.44 * team_df["FTA"] - team_df["OREB"] + team_df["TOV"]
+        lg["lg_pace"] = float((team_poss / team_df["GP"]).mean()) if n_teams > 0 else 100.0
+    else:
+        lg["lg_pace"] = 100.0
+    lg["lg_orb_pct"] = (lg["lg_oreb"] / (lg["lg_oreb"] + lg.get("lg_dreb", 1))) if lg.get("lg_dreb", 0) > 0 else 0.25
+    pd.DataFrame([lg]).to_csv(path, index=False)
+    return lg
+
+
 # ── Shot-zone and referee fetchers (generic nba_api endpoint wrappers) ──────────
 
 # LeagueDashTeamShotLocations returns a MultiIndex (zone, stat); flatten the FGA
