@@ -746,11 +746,11 @@ miss those season-to-season moves. The out-of-sample win is the cleanest evidenc
 that the mechanism in the decomposition is real and stable, not a product of
 fitting all 43 seasons simultaneously.
 
-## 4.4 Shift-share decomposition (schedule vs. per-matchup erosion)
+## 4.4 Shift-share decomposition (schedule vs. per-matchup fade)
 
 **The question:** the home win rate fell 9.3 pp from the 1980s to today. Two very
 different stories could produce that: the *schedule* changed (fewer tired visitors
-to beat up on), or the home edge *within each kind of matchup* simply eroded. How
+to beat up on), or the home edge *within each kind of matchup* simply faded. How
 much of the drop is which?
 
 **The intuition.** A shift-share decomposition splits a total change into a
@@ -781,7 +781,7 @@ Feed those into the decomposition of the **-9.29 pp** total drop (64.9% ->
 | component | value | share of the -9.29 pp |
 |---|---|---|
 | frequency (fewer B2Bs) | **-0.71 pp** | ~8% |
-| win-rate (per-situation erosion) | **-8.59 pp** | ~92% |
+| win-rate (per-situation fade) | **-8.59 pp** | ~92% |
 | interaction | +0.02 pp | -- |
 
 **How to read it in the results doc:** the back-to-backs section's "Shift-share
@@ -790,7 +790,7 @@ interaction) to the total change printed just above them.
 
 **The trap it avoids.** A real schedule shift *looks* like a smoking gun until you
 weight it by how much it's worth. Here the schedule did change, but it carries
-only ~8% of the decline; the other ~92% is the home edge eroding inside *every*
+only ~8% of the decline; the other ~92% is the home edge fading inside *every*
 rest situation, not a scheduling story. The decomposition separates "the mix
 changed" from "the thing itself changed" without fitting a model.
 
@@ -1075,7 +1075,7 @@ home-court edge did weaken, the lone situational shift, but it touches only
 two teams and is dwarfed by the level drop.) Home teams kept their rest edge at
 full strength; they simply started winning less for reasons those factors don't
 capture, pointing the search toward the foul-bias and shot-selection channels
-(the eroding mechanisms in the differentials and shot-zone sections). An
+(the fading mechanisms in the differentials and shot-zone sections). An
 interaction test is how you ask "did *this* change?" instead of "does this matter?"
 
 ---
@@ -1764,7 +1764,7 @@ genuine significance test in an otherwise descriptive analysis.
 | McFadden R², delta-R%, Shapley | splitting explained variation across factors | §2.5, §4.2 |
 | level / trend decomposition, LPM | accounting the home edge into channels | §2.4, §4.3 |
 | channel trend, "3PA absorbs %" | is a channel its own driver or downstream of threes? | §4.3 |
-| frequency vs. win-rate (shift-share) | splitting a change into schedule vs. per-matchup erosion | §4.4 |
+| frequency vs. win-rate (shift-share) | splitting a change into schedule vs. per-matchup fade | §4.4 |
 | quantile, Q10...Q90, polarization | how the *distribution shape* changed | §5.1 |
 | variance decomposition, shrunken | ranking noisy franchise/referee means | §6.1, §6.2 |
 | Benjamini-Hochberg, BH-p | keeping many tests honest | §3.4 |

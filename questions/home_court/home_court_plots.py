@@ -728,7 +728,7 @@ def plot_rebound_decomposition(
     ax4.set_xticks(x[::tick_step])
     ax4.set_xticklabels(reg_seasons[::tick_step], rotation=45, ha="right", fontsize=8)
     ax4.set_ylabel("Away minus home turnovers per game", fontsize=10)
-    ax4.set_title("Home turnover edge has eroded\n(positive = home commits fewer TOVs)",
+    ax4.set_title("Home turnover edge has faded\n(positive = home commits fewer TOVs)",
                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=8)
 
     plt.tight_layout()
@@ -875,7 +875,7 @@ def plot_back_to_back(data: dict) -> None:
     which the visitor is on a back-to-back has fallen sharply by era — the
     premise is true. Right: a shift-share split of the regular-season home win %
     decline shows only a small slice comes from that schedule change (fewer tired
-    visitors); the rest is the home edge eroding within every rest situation
+    visitors); the rest is the home edge fading within every rest situation
     alike. Scheduling nudged home court; it didn't drive it down.
 
     `data` comes from regression.compute_back_to_back_plotdata().
@@ -902,7 +902,7 @@ def plot_back_to_back(data: dict) -> None:
                   fontweight="bold", color="#2c2c2a", pad=6)
 
     # ── Panel 2: shift-share of the decline ──────────────────────────────────
-    labels2 = ["Fewer tired\nvisitors\n(schedule)", "Home edge eroding\nin every rest\nsituation"]
+    labels2 = ["Fewer tired\nvisitors\n(schedule)", "Home edge fading\nin every rest\nsituation"]
     vals2 = [data["freq_comp"], data["rate_comp"]]
     # Fold the tiny interaction term into the win-rate share so the two parts
     # read as a clean 100% split (matches the FINDINGS "8% vs the other 92%").
