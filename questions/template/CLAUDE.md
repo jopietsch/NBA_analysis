@@ -18,6 +18,7 @@ python3 generate_report.py
 python3 ../generate_doc_pdf.py docs/PROJECT_findings.md
 python3 ../generate_doc_pdf.py docs/PROJECT_summary.md
 python3 ../generate_doc_pdf.py docs/PROJECT_stats_explainer.md
+python3 ../generate_doc_pdf.py docs/PROJECT_investigation.md
 
 # Run all tests
 python3 -m pytest
@@ -41,6 +42,7 @@ pip install -r ../requirements.txt
 - `docs/PROJECT_findings.md` — narrative interpretation in numbered `## N. Title` sections; drives the PDF report. Edit by hand when understanding changes.
 - `docs/PROJECT_summary.md` — standalone one-page summary.
 - `docs/PROJECT_stats_explainer.md` — hand-edited methods companion to `PROJECT_results.md`.
+- `docs/PROJECT_investigation.md` — reader-facing companion that shows the tests behind the findings, in two parts: Part 1 (what drives the result) and Part 2 (what was ruled out). Middle-tier voice: p-values and CIs are allowed and expected, with a "How to read the numbers" box up top. Update Part 1 when the confirmed-story sections of findings change and Part 2 when the ruled-out sections change.
 - `docs/PROJECT_results.md` — auto-generated analysis output; **never edit manually**, always re-run the pipeline to refresh.
 - `docs/PROJECT_findings_outline.md` — condensed outline cross-referenced to `PROJECT_results.md`; keep in sync with findings (the `/sync-outline` command does this).
 

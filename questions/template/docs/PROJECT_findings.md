@@ -20,3 +20,4 @@ TODO
 
 - [Full analysis output](PROJECT_results.md)
 - [Methods and statistics](PROJECT_stats_explainer.md)
+- [The investigation: the tests behind the findings](PROJECT_investigation.md)
