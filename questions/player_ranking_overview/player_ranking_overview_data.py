@@ -40,7 +40,7 @@ from nbakit.player_crosswalk import (
     crosswalk_coverage_report,
 )
 
-CACHE_DIR = os.path.join(os.path.dirname(__file__), "cache")
+CACHE_DIR = default_cache_dir()
 
 # Minimum minutes to be included in the qualified-player pool for distribution
 # and z-scoring. Players with fewer minutes are kept in the unified table but
