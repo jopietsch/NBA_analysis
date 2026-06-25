@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-Every "top players" list puts names in order. But ordinal rank is a lie of compression: the gap between the best player in the league and the tenth-best is not the same as the gap between the tenth and the twentieth. The numbers beneath the ranks tell a different story than the ranks themselves.
+Every "top players" list puts names in order. But ordinal rank is a compression: the gap between the best player in the league and the tenth-best is not the same as the gap between the tenth and the twentieth. The numbers beneath the ranks tell a different story than the ranks themselves.
 
 This report surveys how NBA players get rated, compares what each system actually measures, and builds two combined ratings designed to answer two different questions: what do all the systems agree on, and which combination of them best explains which teams win?
 
@@ -50,17 +50,17 @@ Including human rankings as a category lets us compare model-based and reputatio
 
 ![Agreement between each pair of systems: darker squares mean stronger rank correlation.](../generated/images/rank_agreement_heatmap.svg){#fig-agreement}
 
-The box-score systems largely agree with each other at the top. PER and Game Score move closely together (Spearman r = 0.83 in 2024-25 among qualified players), and both correlate with BPM at r = 0.49. Win Shares and WS/48 are nearly interchangeable (r = 0.97), but both diverge sharply from PER and Game Score: the Spearman correlation between PER and Win Shares is only 0.01.
+The box-score systems largely agree with each other at the top. PER and Game Score move closely together (0.83 on a 0-to-1 scale, among qualified 2024-25 players); PER also moves with BPM, though less tightly (0.49), and Game Score with BPM (0.47). Win Shares and WS/48 are nearly interchangeable (0.97), but both diverge sharply from PER and Game Score: PER and Win Shares overlap almost not at all (0.01).
 
-That near-zero correlation is the most striking finding in the agreement matrix. It means PER and Win Shares rank players almost independently of each other, despite both claiming to measure overall contribution. Win Shares rewards defensive-minded players on good teams (Ivica Zubac, Walker Kessler) who generate stops without the counting-stat production that PER credits. PER rewards volume scorers at high efficiency.
+That near-zero overlap stands out: PER and Win Shares rank players almost independently of each other, despite both claiming to measure overall contribution. Win Shares rewards defensive-minded players on good teams (Ivica Zubac, Walker Kessler) who generate stops without the counting-stat production that PER credits. PER rewards volume scorers at high efficiency.
 
-MVP votes and All-NBA points agree closely with each other (r = 0.89), less so with the box-score systems. Game Score and MVP share correlate at r = 0.28, which is moderate: voters weight narrative, team success, and season arc, not just nightly production.
+MVP votes and All-NBA points agree closely with each other (0.89), less so with the box-score systems. Game Score and MVP share move in the same direction, but loosely (0.28 out of a possible 1.0): voters weight narrative, team success, and season arc, not just nightly production.
 
 The exact correlation figures are in `docs/player_ranking_overview_results.md`.
 
 ## 4. What each system uniquely sees
 
-Not all systems add independent information. The unique R² analysis (see results) shows which systems explain variance in player quality that the others miss, and which are largely redundant given the others.
+Not all systems add independent information. The analysis of what each system adds beyond what the others already capture (see results) shows which systems see something genuinely different, and which are mostly duplicating one another.
 
 The "system outliers" chart shows the players each system rates most above and below the consensus. This is where methodological differences become visible: a system that captures defensive value heavily will love rim protectors; a system that penalizes inefficient volume scoring will discount high-usage players with middling true shooting.
 
@@ -78,13 +78,11 @@ Two combined ratings are built from the systems present in the data:
 
 ## 6. Stars matter more than rank implies
 
-The distribution analysis reveals something ordinal lists conceal.
-
 ![All ten systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
 
-PER is nearly symmetric among 2024-25 qualified players: Gini = 0.16, top-5% hold 8.5% of total value. The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
+PER spreads relatively evenly among qualified 2024-25 players: the top 5% account for only 8.5% of total value. The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
 
-Win Shares and VORP are a different story. Win Shares has Gini = 0.74; the top 5% of players hold 32% of total positive Win Shares. VORP shows similar skewness. Both are right-skewed: right-tail skewness = 1.57 for WS, 1.54 for VORP. The cumulative metrics are heavy-tailed because they multiply rate by minutes, and both rate and playing time are above average for the best players.
+Win Shares and VORP are a different story. The top 5% of players hold 32% of total positive Win Shares; VORP piles up almost as steeply. Both concentrate at the top because they multiply rate by minutes, and the best players lead in both.
 
 ![Gini coefficients by system: Win Shares and VORP concentrate value at the top far more than rate metrics like PER or Game Score.](../generated/images/gini_by_system.svg){#fig-gini}
 
@@ -94,7 +92,7 @@ Win Shares and VORP are a different story. Win Shares has Gini = 0.74; the top 5
 
 The visual gap between rank 1 and rank 10 looks like 10 spots on a list. The numerical gap is often several times larger than the gap between rank 10 and rank 50.
 
-The data is consistent with the explanation that the value of talent is convex: having the best player is worth more than being one spot ahead of the second-best player, because team success depends on the ceiling of the roster in ways that are not captured by adding up individual rates.
+The data is consistent with the explanation that elite talent is worth more than rank implies: having the best player on the roster matters more to team success than being one spot ahead of the second-best, because team results depend on the ceiling in ways that raw averages don't capture.
 
 ## 7. Who lands in the top 20
 
