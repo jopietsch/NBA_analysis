@@ -1,0 +1,145 @@
+# NBA Player Rating Systems: Inventory
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+This catalog lists every major NBA player rating system, how each is acquired, what seasons it covers, and what kind of availability it has. "Recompute" means we run the formula on public data we fetch ourselves. "Results-only" means we download a published snapshot. "Proprietary" means neither the data nor the methodology is publicly available.
+
+---
+
+## Tag definitions
+
+| Tag | Meaning |
+|---|---|
+| **Recompute** | Formula is public; inputs are fetchable from nba_api or Basketball-Reference; we run the computation ourselves |
+| **Results-only (auto)** | Published values are downloadable as structured files (CSV/JSON/API); no recompute needed |
+| **Results-only (snapshot)** | Values must be scraped or manually captured from a web page; we store the snapshot with date and URL |
+| **Proprietary** | Neither the methodology nor the data is publicly accessible; documented here as a blind spot |
+
+---
+
+## Box-score recompute systems
+
+These use standard box-score totals (points, rebounds, assists, steals, blocks, turnovers, field-goal attempts, free-throw attempts, minutes) plus league and team context, all fetchable from nba_api.
+
+| System | Components | Coverage | Source | Notes |
+|---|---|---|---|---|
+| **Game Score** (Hollinger) | PTS, FGM, FGA, FTA, FTM, OREB, DREB, STL, AST, BLK, TO | 1983–84 to present | nba_api `LeagueDashPlayerStats` | Simple single-game quality measure; per-game average used for season ranking |
+| **PER** (Player Efficiency Rating) | Full box totals + league pace + team possessions | 1951–52 to present (box-score era) | nba_api + league-average context | Hollinger formula; league-average PER is always 15; minutes-weighted |
+| **TS%** (True Shooting Percentage) | PTS, FGA, FTA | 1983–84 to present | nba_api | `PTS / (2 * (FGA + 0.44 * FTA))`; rate stat, no volume |
+| **eFG%** (Effective Field-Goal Percentage) | FGM, 3PM, FGA | 1979–80 to present | nba_api | `(FGM + 0.5 * 3PM) / FGA` |
+| **USG%** (Usage Rate) | FGA, FTA, TO, team totals | 1983–84 to present | nba_api | Approximate using `(FGA + 0.44*FTA + TO) / (team_FGA + 0.44*team_FTA + team_TO) * 5` |
+| **Win Shares** (OWS / DWS / WS / WS/48) | Full box + team + league | 1946–47 to present | nba_api + Basketball-Reference methodology | Separate offensive and defensive components; WS/48 normalizes for playing time |
+| **BPM 2.0** (Box Plus/Minus, OBPM / DBPM) | Per-100-possession box rates + team + role adjustments | 1973–74 to present | nba_api + BBR-published regression coefficients | Estimates on/off impact from box stats; team context adjusts team-quality bias |
+| **VORP** (Value Over Replacement Player) | BPM, minutes, team games | 1973–74 to present | Derived from BPM | `VORP = (BPM - (-2.0)) × (pct_team_minutes) × (team_games / 82)` |
+
+### Data endpoints used for recompute
+
+| Endpoint | Used for | nba_api quirk |
+|---|---|---|
+| `LeagueDashPlayerStats` (Totals, Regular Season) | Per-player box totals | `season=` (not `season_nullable=`); returns one row per player |
+| `LeagueDashPlayerStats` (Per100Possessions) | Per-100 rates for BPM | Same endpoint, `per_mode_detailed="Per100Possessions"` |
+| `LeagueDashTeamStats` | Team totals for USG%, WS, BPM team adjustments | `season=`, `per_mode_detailed="Totals"` |
+| `LeagueStandingsV3` | Team wins/losses for WS allocation | `season=` |
+| `LeagueDashLineups` or derived | League-average pace, eFG, FT-rate | Derived from summing `LeagueDashTeamStats` |
+
+---
+
+## Results-only systems (auto-download)
+
+Published values are available as structured files. We download and cache; no recomputation.
+
+| System | Availability | Coverage | Acquisition | Snapshot date |
+|---|---|---|---|---|
+| **RAPTOR** (FiveThirtyEight) | Results-only (auto) | 2013–14 to 2022–23 (FTE shut down April 2023) | GitHub: `fivethirtyeight/data` → `nba-raptor/` CSVs; one file per season | See source registry below |
+| **DARKO DPM** (Kostya Medvedovsky) | Results-only (snapshot) | 2013–14 to present | `https://darko.basketball` public results page; downloadable CSV or API query | See source registry below |
+
+---
+
+## Results-only systems (snapshot)
+
+Values must be scraped or copied from a web page. We store the snapshot with acquisition date and URL.
+
+| System | Availability | Coverage | Acquisition | Snapshot date |
+|---|---|---|---|---|
+| **EPM** (Estimated Plus/Minus, dunksandthrees.com) | Results-only (snapshot, partly paywalled) | 2012–13 to present | Top-N table visible without subscription; full rankings require subscription. Snapshot available values. | TBD at build time |
+| **LEBRON** (BBall-Index) | Results-only (snapshot, partly paywalled) | ~2015–16 to present | Methodology documented publicly; summary values visible on site; full export requires subscription. Snapshot available values. | TBD at build time |
+| **ESPN RPM** (Real Plus-Minus) | Results-only (snapshot) | 2012–13 to ~2022–23 (ESPN stopped publishing mid-2023) | ESPN player stats page; values were published as a table column. Last archived snapshots available via Wayback Machine. Feasibility: verify at build time. | TBD at build time |
+
+---
+
+## Human / reputation rankings
+
+Awards and media rankings measure perception and reputation, not just on-court production. Included as a distinct category to compare against model-based systems.
+
+| System | Availability | Coverage | Acquisition | Notes |
+|---|---|---|---|---|
+| **MVP vote share** | Results-only (auto) | 1955–56 to present | Basketball-Reference award voting pages (scrapeable) | Vote share = first-place points / max possible |
+| **All-NBA selections** (1st/2nd/3rd team) | Results-only (auto) | 1946–47 to present | Basketball-Reference (scrapeable) | Encode as points: 1st-team = 5, 2nd-team = 3, 3rd-team = 1 |
+| **All-Star selection** | Results-only (auto) | 1950–51 to present | Basketball-Reference (scrapeable) | Binary per season; starter vs. reserve not distinguished in initial pass |
+| **ESPN #NBArank** | Results-only (snapshot) | ~2012 to present | Published annually on ESPN as a ranked list; snapshot the top-100 | TBD at build time; years vary |
+| **The Ringer Top 100** | Results-only (snapshot) | ~2018 to present | Published annually; snapshot the ranked list | TBD at build time; years vary |
+
+---
+
+## Proprietary systems (blind spot)
+
+These are mentioned for completeness. We cannot access the data or methodology. The analysis will note this gap where relevant.
+
+| System | Organization | Why unavailable | Acknowledged blind spot |
+|---|---|---|---|
+| **Second Spectrum tracking models** | Second Spectrum (NBA official provider) | Full player-tracking data and derived metrics are licensed exclusively to teams; not publicly released | Tracking-based defensive metrics and off-ball movement are not captured by any public system |
+| **Team internal models** | Individual NBA franchises | Proprietary; methodologies and outputs are not disclosed | Unknown; likely blends tracking + lineup + matchup data unavailable publicly |
+| **Synergy sports tracking** | Synergy Sports | Subscription product; data not available for recompute | Play-type breakdown (e.g., pick-and-roll ball handler efficiency) only partially visible via public summaries |
+
+---
+
+## Source registry
+
+Exact acquisition paths for each auto-download or snapshot source. Updated as each is pulled.
+
+| Source | URL / path | Acquisition method | Coverage | Last pulled |
+|---|---|---|---|---|
+| RAPTOR (FiveThirtyEight) | `https://github.com/fivethirtyeight/data/tree/master/nba-raptor` | `wget` or `requests.get` on per-season CSV URLs; filenames: `historical_RAPTOR_by_player.csv`, `modern_RAPTOR_by_player.csv` | 2013–14 to 2022–23 | TBD |
+| DARKO DPM | `https://darko.basketball/p/` | CSV export from public results page; or `requests.get` on undocumented JSON endpoint (inspect network tab) | 2013–14 to present | TBD |
+| MVP vote share | `https://www.basketball-reference.com/awards/awards_{year}.html` | BBR scrape via `nbakit.bbr.get_soup()` | 1955–56 to present | TBD |
+| All-NBA / All-Star | `https://www.basketball-reference.com/awards/` | BBR scrape | 1946–47 to present | TBD |
+| EPM (dunksandthrees) | `https://dunksandthrees.com/epm` | Manual snapshot of visible table; paywalled rows excluded | TBD | TBD |
+| LEBRON (BBall-Index) | `https://bball-index.com/lebron/` | Manual snapshot of visible rankings | TBD | TBD |
+| ESPN RPM | Wayback Machine archives of ESPN player stats | Manual or `requests.get` on archived URLs; verify availability | 2012–13 to ~2022–23 | TBD |
+| ESPN #NBArank | ESPN.com annual feature | Manual snapshot | Annual | TBD |
+| The Ringer Top 100 | The Ringer annual feature | Manual snapshot | Annual | TBD |
+
+---
+
+## Coverage summary
+
+The analysis focuses on 2024–25 as the primary test season. Multi-season coverage extends as far back as each source allows. The crosswalk (player identity reconciliation across systems) is keyed on `(player_normalized_name, season, team_abbr)` with a hand-maintained override table for collisions.
+
+| Recompute systems | Active as of 2024–25 | How far back |
+|---|---|---|
+| Game Score, PER, TS%, eFG%, USG% | Yes | 1983–84 (nba_api coverage) |
+| Win Shares | Yes | 1983–84 (nba_api) |
+| BPM 2.0 / VORP | Yes | 1983–84 (nba_api) |
+
+| Results-only systems | Active as of 2024–25 | How far back |
+|---|---|---|
+| RAPTOR | No (FTE defunct) | 2013–14 to 2022–23 |
+| DARKO DPM | Yes | 2013–14 |
+| EPM | Yes (partial) | 2012–13 |
+| LEBRON | Yes (partial) | ~2015–16 |
+| ESPN RPM | Possibly defunct | 2012–13 to ~2022–23 |
+| MVP vote share, All-NBA, All-Star | Yes | Historical |
+| ESPN #NBArank, Ringer Top 100 | Yes (annual) | ~2012 |
+
+---
+
+## Open items
+
+- RAPM (Regularized Adjusted Plus/Minus): requires play-by-play stint-level data + ridge regression. Deferred to Phase 4 — attempt recompute from pbpstats.com data; fall back to public RAPM snapshots (e.g., Krishna Narsu's public RAPM) if play-by-play volume is prohibitive for one season.
+- Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2024–25; adjusted for multi-season pools.
