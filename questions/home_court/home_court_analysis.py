@@ -2397,13 +2397,13 @@ def run_back_to_back_analysis(df: pd.DataFrame) -> None:
           f"{first_lbl} → {last_lbl}:")
     print(f"   Home win %: {hca_f:.1f}% → {hca_l:.1f}%   (total change {total:+.2f} pp)")
     print(f"   {'Frequency component (schedule: fewer B2Bs)':<46}  {freq_comp:>+7.2f} pp  ({share:>4.0f}% of change)")
-    print(f"   {'Win-rate component (per-situation edge eroding)':<46}  {rate_comp:>+7.2f} pp")
+    print(f"   {'Win-rate component (per-situation edge fading)':<46}  {rate_comp:>+7.2f} pp")
     print(f"   {'Interaction':<46}  {inter:>+7.2f} pp")
     print(f"\n   ► Visitor B2Bs have grown much rarer, which does nudge home court")
     print(f"     downward — but the win-rate gap between rested and tired matchups is")
     print(f"     small, so the schedule shift explains only ~{abs(share):.0f}% of the decline.")
     print(f"     The other ~{abs(100-share):.0f}% is the home edge within each rest situation")
-    print(f"     eroding — not a scheduling story.\n")
+    print(f"     fading — not a scheduling story.\n")
 
 
 def run_attendance_analysis(
@@ -2615,7 +2615,7 @@ def run_series_era_split(df: pd.DataFrame) -> None:
     print(f"\n   ► In the early eras (1984–94, 1995–01) the lower-seeded team won ~65–66% at home,")
     print(f"     nearly matching the higher seed's own home win rate. Home court was a genuine")
     print(f"     equalizer. From 2002 onward the lower-seed home win rate collapsed to ~47–52%,")
-    print(f"     while the higher seed's remained at 65–75%. What eroded is the boost home court")
+    print(f"     while the higher seed's remained at 65–75%. What faded is the boost home court")
     print(f"     gave to the team that needed it most.")
 
 

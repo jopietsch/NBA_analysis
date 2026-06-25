@@ -53,7 +53,7 @@ Home court advantage is real, it lives in a few measurable things on the court, 
 
 **The test.** Era-by-era averages and a trend line on the home-minus-away foul differential and free-throw-attempt differential, regular season and playoffs. Then the share of the overall decline that the foul channel carries, from the four-channel split above. Separately, every referee with at least 50 playoff games on record is checked for a home-favoring tilt, with a correction for the fact that testing 47 officials at once will throw up a couple of false positives by luck.
 
-**What the data showed.** The regular-season home foul edge went from 1.23 fewer fouls per game in 1984-94 to 0.25 in 2023-26, a trend of +0.022 per year, p < 0.001, an erosion of about 80%. The free-throw edge fell in step, from +1.97 attempts per game to +0.46. The playoffs moved the same way (1.58 fewer fouls down to 0.68, trend +0.020 per year, p < 0.01) but kept about 2.7 times the residual foul edge of the regular season. The foul channel accounts for 18% of the regular-season decline, 95% CI [14, 22]%, and about 18% of the playoff decline. The tilt is universal, not a few rogue officials: 45 of 47 playoff referees favor the home team, and 29 are individually clear even after the correction for multiple testing.
+**What the data showed.** The regular-season home foul edge went from 1.23 fewer fouls per game in 1984-94 to 0.25 in 2023-26, a trend of +0.022 per year, p < 0.001, a drop of about 80%. The free-throw edge fell in step, from +1.97 attempts per game to +0.46. The playoffs moved the same way (1.58 fewer fouls down to 0.68, trend +0.020 per year, p < 0.01) but kept about 2.7 times the residual foul edge of the regular season. The foul channel accounts for 18% of the regular-season decline, 95% CI [14, 22]%, and about 18% of the playoff decline. The tilt is universal, not a few rogue officials: 45 of 47 playoff referees favor the home team, and 29 are individually clear even after the correction for multiple testing.
 
 **Why it holds.** The trend is significant in both the regular season and the playoffs. And there is a fingerprint: when the 1994-95 hand-checking crackdown took effect, the foul channel jumped immediately (a +0.44 step, p = 0.007) while shooting, turnovers, and rebounds showed no jump at all. A change in officiating is one of the few things that can move the home edge on its own, and this is what it looks like when it does.
 
@@ -119,7 +119,7 @@ The 1994-95 exception works for a specific reason. Hand-checking affected refere
 
 One complication: the three-point line was also shortened in 1994-95 through 1996-97, and the two changes can't be fully separated at the season level. The channel data points more toward hand-checking, but the shortened line may have contributed. See home_court_results.md for the full event-study output.
 
-The practical implication for reading the main chart: the era labels tell you when the rules changed. They do not tell you that those changes bent home court. The shading is a calendar, not a causal map. Only one era boundary corresponds to a detectable break in the trend, and even that one mostly accelerated an erosion that was already underway.
+The practical implication for reading the main chart: the era labels tell you when the rules changed. They do not tell you that those changes bent home court. The shading is a calendar, not a causal map. Only one era boundary corresponds to a detectable break in the trend, and even that one mostly accelerated a slide that was already underway.
 
 ---
 
@@ -145,7 +145,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 ![Left: home win % by rest situation. Right: altitude franchises (Denver and Utah) vs. league average, regular season and playoffs.](../generated/images/home_court_rest_altitude.svg){#fig-rest-altitude}
 
-**Why neither explains the decline.** The rest gap has stayed roughly constant across all eras. It existed in the 1980s and it exists now; it did not shrink as home court eroded. Altitude's effect is confined to two franchises and has actually weakened somewhat in recent years; it can't explain a league-wide trend. In the playoffs, rest is confounded with team quality: extra days between rounds almost always mean you swept the previous series, making you likely the stronger team regardless. Control for team quality and the playoff rest advantage largely disappears. Neither factor moved in the direction or at the scale needed to drive the decline.
+**Why neither explains the decline.** The rest gap has stayed roughly constant across all eras. It existed in the 1980s and it exists now; it did not shrink as home court faded. Altitude's effect is confined to two franchises and has actually weakened somewhat in recent years; it can't explain a league-wide trend. In the playoffs, rest is confounded with team quality: extra days between rounds almost always mean you swept the previous series, making you likely the stronger team regardless. Control for team quality and the playoff rest advantage largely disappears. Neither factor moved in the direction or at the scale needed to drive the decline.
 
 ---
 
@@ -155,9 +155,9 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The test.** A shift-share decomposition: measure how home win rates changed *within* each rest situation (both teams fresh vs. visitor on a back-to-back), then measure how much of the overall trend comes from the *mix* shifting (fewer back-to-backs) versus the rate changing within each bucket.
 
-**The result.** The premise is correct: visitor back-to-back frequency fell from about 35% in the 1980s to under 20% today. But the schedule change accounts for only about 0.7 percentage points of the 9-10 point regular-season decline, roughly 8%. The other 92% comes from home court eroding within every rest situation alike. In games with no back-to-back, home teams win less than they used to. In games with a tired visitor, home teams also win less than they used to. The schedule shift nudged home court; it didn't drive it down.
+**The result.** The premise is correct: visitor back-to-back frequency fell from about 35% in the 1980s to under 20% today. But the schedule change accounts for only about 0.7 percentage points of the 9-10 point regular-season decline, roughly 8%. The other 92% comes from home court shrinking within every rest situation alike. In games with no back-to-back, home teams win less than they used to. In games with a tired visitor, home teams also win less than they used to. The schedule shift nudged home court; it didn't drive it down.
 
-![Left: visitor back-to-back frequency over time (the premise is correct). Right: shift-share decomposition showing 8% from schedule change, 92% from within-situation erosion.](../generated/images/home_court_back_to_back.svg){#fig-back-to-back}
+![Left: visitor back-to-back frequency over time (the premise is correct). Right: shift-share decomposition showing 8% from schedule change, 92% from within-situation decline.](../generated/images/home_court_back_to_back.svg){#fig-back-to-back}
 
 **Why the intuition overshot.** The home advantage against a tired visitor (about 65%) is only 6 points above the baseline (about 59%). Even a 16-point drop in back-to-back frequency moves the league-wide average by less than a full percentage point. The mechanism is real; the magnitude is just too small to carry the story. The decisive test: if tired visitors were the main driver, you would expect the advantage to hold steady in games with rested visitors and only fall in back-to-back games. The data shows it fell equally in both.
 
@@ -209,7 +209,7 @@ The practical implication for reading the main chart: the era labels tell you wh
 
 **The test.** I plotted league-average attendance per game against home win percentage across the 27 seasons with reliable gate figures.
 
-**The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s (the very years home win rates hit their lowest). Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court eroded right alongside the regular season.
+**The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s (the very years home win rates hit their lowest). Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions. In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court fell right alongside the regular season.
 
 ![Left: league average attendance vs. regular-season home win %, 2000–2026. Right: 2020–21 home win % by game attendance.](../generated/images/home_court_attendance.svg){#fig-attendance}
 
@@ -225,7 +225,7 @@ The pandemic provided a natural experiment that separates crowd *presence* from 
 
 This has two implications. First, crowd presence is a genuine ingredient of home court advantage, worth about 7 percentage points when you compare completely empty buildings to any crowd at all. Second, the relationship is a switch, not a dial. The full crowd effect restores with minimal attendance; larger crowds add little beyond what those first fans provide.
 
-**Why this rules out crowds as the 40-year explanation.** Buildings refilled the moment health rules allowed it, and the advantage snapped back immediately. Crowd presence creates home court; since arenas have been full throughout the decline, it is not what has been eroding. The pandemic experiment isolates the crowd component cleanly, and that component is stable. The change is elsewhere.
+**Why this rules out crowds as the 40-year explanation.** Buildings refilled the moment health rules allowed it, and the advantage snapped back immediately. Crowd presence creates home court; since arenas have been full throughout the decline, it is not what has been slipping. The pandemic experiment isolates the crowd component cleanly, and that component is stable. The change is elsewhere.
 
 ---
 
@@ -235,6 +235,6 @@ To verify that no combination of situational factors can collectively explain th
 
 **The result.** After accounting for all those factors, roughly half the model's explanatory power belongs to the situational variables combined. The other half belongs to which era the game was played in. That era effect is the decline itself, measured directly. Home advantage is about 9 percentage points lower in 2023-26 than in 1984-94 after every situational factor gets its due, 95% CI 7 to 11 points lower, a band that nowhere comes close to zero.
 
-The cleanest version of the test compares seasons on either side of 2014. The rest and time-zone coefficients are statistically unchanged between the two periods. Altitude's boost weakened somewhat. Yet the baseline home advantage still dropped about 4.7 points. The situational factors held still; the baseline eroded beneath them.
+The cleanest version of the test compares seasons on either side of 2014. The rest and time-zone coefficients are statistically unchanged between the two periods. Altitude's boost weakened somewhat. Yet the baseline home advantage still dropped about 4.7 points. The situational factors held still; the baseline slipped beneath them.
 
-**What this confirms.** By elimination, the decline lives in what happens between two evenly-situated teams on the court. What remains after accounting for every off-court factor is the Part 1 story: the narrowing whistle, the three-point shift, the rebounding collapse, and the turnover edge erosion.
+**What this confirms.** By elimination, the decline lives in what happens between two evenly-situated teams on the court. What remains after accounting for every off-court factor is the Part 1 story: the narrowing whistle, the three-point shift, the rebounding collapse, and the fading turnover edge.

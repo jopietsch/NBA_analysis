@@ -12,7 +12,7 @@ NBA home court advantage has declined steadily for four decades (regular-season 
 
 ## Four sentences (one per question)
 
-1. **Has it changed?** Yes: the home team's regular-season win rate fell from about 65% to 55% over 40 years, and the playoffs followed the same shape a step behind, from about 68% to 58%, in a slow erosion with two steeper stretches (the mid-1990s and post-2017).
+1. **Has it changed?** Yes: the home team's regular-season win rate fell from about 65% to 55% over 40 years, and the playoffs followed the same shape a step behind, from about 68% to 58%, in a slow fade with two steeper stretches (the mid-1990s and post-2017).
 2. **What makes it up?** Four box-score categories capture about 95% of the advantage in both the regular season and playoffs: shooting (the largest piece), rebounding, foul calls, and turnover margin, with rest and altitude adding to specific matchups.
 3. **What drove the change?** Those same four categories all narrowed: rebounding carries the largest share of the regular-season decline (about 30%, and it is independent of the three-point shift), followed by turnovers (about 27%), shooting (about 21%), and fouls (about 18%), with the three-point shift the most far-reaching single cause because it touches three of the four; the playoffs point the same direction but on far fewer games, so they confirm direction more than size.
 4. **What did NOT contribute?** Travel, time zones, pace of play, crowd size, competitive balance, and every rule change except the 1994–95 hand-checking crackdown were each tested and cleared, and the fewer-back-to-backs schedule change accounts for only about 8% of the decline rather than the larger role it is often given.
