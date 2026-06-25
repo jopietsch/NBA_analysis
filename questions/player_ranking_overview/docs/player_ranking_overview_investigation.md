@@ -91,7 +91,7 @@ We tested the hypothesis that cumulative metrics (Win Shares, VORP) are more rig
 
 The full distribution statistics are in `player_ranking_overview_results.md`. The hypothesis is expected to hold for WS and VORP vs. PER and BPM. The report states whether it held for each metric in the 2024-25 data.
 
-A log-rank plot (`rank_value_distributions.svg`) visualizes the shape differences.
+![Rating value versus rank for cumulative and rate metrics: cumulative metrics fall steeply among the top players; rate metrics stay flatter.](../generated/images/rank_value_distributions.svg)
 
 ---
 
