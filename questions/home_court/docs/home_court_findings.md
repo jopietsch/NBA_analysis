@@ -22,7 +22,7 @@ The home team's win rate has fallen from about 65% to 55% in the regular season,
 
 **What is NOT** behind it is also interesting: **rule changes (with the single real exception of 1994–95), travel, time zones, pace of play, crowd size, and the playoff format changes, including the much-blamed 2014 change.** Two more nearly make the list. Teams play fewer back-to-backs than they used to, so visitors arrive less tired, but that schedule change accounts for only about 8% of the decline. And competitive balance: in a year when the league's teams bunch closer in quality, home court dips a little, but parity has risen and fallen for 40 years while home court has fallen steadily, so it can't explain the long decline. Each factor is tested; only 1994–95 registers a genuine effect, and it is accounted for above.
 
-Throughout, the regular season and the playoffs are tracked separately. They share a similar shape and pattern, but the playoffs are behind the regular season in this decline. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size. The analysis covers about 52,000 regular-season and playoff games; see Appendix C for companion documents including the full statistical tables, and Appendix A for additional findings.
+Throughout, the regular season and the playoffs are tracked separately. They share a similar shape and pattern, but the playoffs are behind the regular season in this decline. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size. The analysis covers about 52,000 regular-season and playoff games; see Appendix D for companion documents including the full statistical tables, and Appendix B for additional findings.
 
 
 ---
@@ -116,7 +116,7 @@ The playoffs point the same way on rebounding: the home rebound-share advantage 
 
 ![Why the home rebounding and turnover edges faded. Left: home and away offensive-rebound rates over time; the lines converge and cross, meaning home teams no longer crash the offensive glass more than visitors. Center-left: raw OREB and DREB differentials (home minus away per game) over time; both declined, with the defensive edge falling more in absolute terms. Center-right: seasons with a larger total home rebounding edge tend to be seasons where home teams win more (association, not causation). Right: the home turnover edge (away minus home turnovers per game) has declined from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding}
 
-Player-tracking cameras, in use since 2013–14, corroborate this for the modern window: the home edge in converting offensive-rebound chances kept shrinking and home teams show no box-out advantage, though by the time the cameras arrived most of the decline had already happened (Appendix A).
+Player-tracking cameras, in use since 2013–14, corroborate this for the modern window: the home edge in converting offensive-rebound chances kept shrinking and home teams show no box-out advantage, though by the time the cameras arrived most of the decline had already happened (Appendix B).
 
 ### Officiating got fairer and more uniform
 
@@ -134,9 +134,7 @@ Could rebounding and turnovers just be the three-point shift in disguise? No. Wh
 
 ![How much of each category's decline turns out to be the move to threes. Each category's pull on the home-court decline is shown in win-percentage-points per decade, before (open dot) and after (filled dot) games are compared at the same number of threes. A filled dot pulled to zero means the move to threes explains that category's whole decline; one that stays put declined for its own reasons. In the regular season (left) shooting drops to zero and crosses to the far side, which still means the move to threes explains all of it, not that shooting now helps the home team; rebounding barely moves, so its decline is its own; fouls and turnovers each pull about halfway. The playoff panel (right) is mostly small-sample noise (greyed, too noisy to read); only rebounding stands out clearly, and its decline holds up there too.](../generated/images/home_court_3pa_control.svg){#fig-3pa-control}
 
-**The box-score story correctly predicts the decline it never saw.** A fair worry about any after-the-fact explanation is that it was fit to the whole history, so of course it lines up. To test that, a model built on the four box-score categories was trained only on seasons through 2013, then used unchanged to predict each later season's home win rate. It tracks the 2014–2026 decline closely: its error on seasons it had never seen is about 1 percentage point in the regular season, against more than 5 for a flat guess. It even catches the 2021 dip that a simple extension of the early trend line misses. The same frozen model also reconstructs the steeper modern playoff decline, which a simple trend line from the early years misses entirely because the early playoff trend was nearly flat. The mechanism holds up on data it was not built from.
-
-![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score edges. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast}
+A further check guards against the worry that this account was simply fit to the whole history. Train the same box-score model on pre-2014 seasons only, freeze it, and let it predict the years it never saw: it tracks the modern decline closely in both the regular season and the playoffs, so the story is not just hindsight (Appendix A).
 
 One plausible explanation is that analytical tools for shot selection, scouting, and preparation have reached every team at roughly the same pace. When all 30 teams land on the same approaches regardless of venue, the home team's preparation edge has nowhere to go but down.
 
@@ -202,7 +200,7 @@ Two cautions on the simulation. The playoff per-game rate mixes home court with 
 
 ![Two panels translating the per-game home edge into a best-of-7 series edge via simulation. Left: a single-game home win rate (x-axis) maps to a much smaller series win rate (y-axis) for the home-court team, far below the dashed 1:1 line; era dots sit on the curve and drift toward the 50% coin flip over time. Right: the simulated series-level home edge by era for the regular season and the playoffs, both ending just above 50%, with the per-game rates shown muted above for contrast.](../generated/images/home_court_series_simulation.svg){#fig-series-simulation}
 
-Additional findings, including individual referee rankings, franchise-level comparisons, and the blowout-margin trend, are in Appendix A.
+Additional findings, including individual referee rankings, franchise-level comparisons, and the blowout-margin trend, are in Appendix B.
 
 ---
 
@@ -230,7 +228,15 @@ The playoffs have followed the regular season's path but with nearly a two-decad
 
 ---
 
-## Appendix A: Additional Findings
+## Appendix A: The Box-Score Model Predicts a Decline It Never Saw
+
+Sections 2 and 3 explain home court advantage through four box-score categories. This appendix checks whether that explanation can stand on its own: does a model built from those four categories actually predict the decline, or does it only describe a history it was handed? A fair worry about any after-the-fact explanation is that it was fit to the whole history, so of course it lines up. To test that, a model built on the four box-score categories was trained only on seasons through 2013, then used unchanged to predict each later season's home win rate. It tracks the 2014–2026 decline closely: its error on seasons it had never seen is about 1 percentage point in the regular season, against more than 5 for a flat guess. It even catches the 2021 dip that a simple extension of the early trend line misses. The same frozen model also reconstructs the steeper modern playoff decline, which a simple trend line from the early years misses entirely because the early playoff trend was nearly flat. The mechanism holds up on data it was not built from.
+
+![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score edges. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast}
+
+---
+
+## Appendix B: Additional Findings
 
 A few results surfaced along the way that don't bear directly on the four questions but are worth noting.
 
@@ -264,7 +270,7 @@ For an away team, three-point heavy shot selection has already largely equalized
 
 ---
 
-## Appendix B: Independent Corroboration
+## Appendix C: Independent Corroboration
 
 Sparkle Technologies published an independent analysis of the same question at [sparkletechnologies.com/blog/nba-disappearing-home-court-advantage](https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage). I checked every number we share in common. Most of them match. The disagreements are instructive.
 
@@ -282,7 +288,7 @@ The empty-arena numbers look different for a methodological reason. The blog's "
 
 ---
 
-## Appendix C: Companion Documents
+## Appendix D: Companion Documents
 
 ::: {.content-visible when-format="html"}
 | Document | Description |
@@ -306,5 +312,5 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 | Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
 :::
 
-## Appendix D: Why is this draft?
+## Appendix E: Why is this draft?
 I'm using this project as an exercise to learn statistics, and NBA analytics. I am not a statistician, but I have used statistics before. I did use Claude Code quite a bit throughout. I believe this is all accurate, because I have done my best to make sure everything makes sense and it clear. I could be wrong, but as far as I know, I am not.
