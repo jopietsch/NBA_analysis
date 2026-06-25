@@ -435,3 +435,154 @@ def plot_gini_by_system(gini_scores: dict[str, float]) -> str:
 
     fig.tight_layout()
     return save_chart("gini_by_system.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart 8: All systems on one normalized distribution line ─────────────────
+
+def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
+                                   top_n: int = 50) -> str:
+    """Normalized rank-value lines for every present system on one chart.
+
+    Each system's values are z-scored (mean 0, std 1) across qualified players,
+    then sorted descending. Plots rank 1–top_n on the x-axis vs z-score on y.
+    Puts all methodologies on a common scale so their shapes can be compared.
+    """
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+
+    fig, ax = plt.subplots(figsize=(11, 6), facecolor=BG)
+    ax.set_facecolor(PANEL)
+
+    plotted = []
+    for sys in systems:
+        if sys not in qual.columns:
+            continue
+        vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
+        if len(vals) < top_n:
+            continue
+        vals = vals.iloc[:top_n]
+        mean, std = vals.mean(), vals.std()
+        if std == 0:
+            continue
+        z = (vals - mean) / std
+        color = SYSTEM_COLORS.get(sys, GRAY)
+        ax.plot(np.arange(1, top_n + 1), z.values,
+                color=color, linewidth=1.5, alpha=0.8,
+                label=SYSTEM_LABELS.get(sys, sys))
+        plotted.append(sys)
+
+    if not plotted:
+        ax.text(0.5, 0.5, "No data", ha="center", va="center",
+                transform=ax.transAxes, color=GRAY)
+        fig.tight_layout()
+        return save_chart("all_systems_distributions.svg", OUTPUT_DIR, fig=fig)
+
+    ax.axhline(0, color=GRAY, linewidth=0.8, linestyle="--", alpha=0.5)
+    ax.set_xlabel(f"Player rank (top {top_n} by each system)", fontsize=9, color=GRAY)
+    ax.set_ylabel("Standard deviations above/below the qualified-player mean",
+                  fontsize=9, color=GRAY)
+    ax.set_title(
+        "Every system's value falls off steeply in the top tier",
+        fontsize=11, color="#222"
+    )
+    ax.legend(fontsize=8, frameon=False, loc="upper right", ncol=2)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    fig.tight_layout()
+    return save_chart("all_systems_distributions.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart 9: Top-20 per system table ─────────────────────────────────────────
+
+def _score_fmt(val: float, sys: str) -> str:
+    """Format a raw score for display in the top-20 table."""
+    if sys in ("MVP_SHARE", "WS48"):
+        return f"{val:.3f}"
+    if sys == "ALL_NBA_PTS":
+        return f"{val:.0f}"
+    return f"{val:.1f}"
+
+
+def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
+    """Grid of mini-tables: top-20 players and their raw score for each system.
+
+    Laid out as ceil(n/5) rows × 5 columns. Highlights rank 1 and rank 20 so
+    the gap between them is immediately visible.
+    """
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+    present = [s for s in systems if s in qual.columns and qual[s].notna().sum() >= 20]
+
+    if not present:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
+        return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
+
+    ncols = min(5, len(present))
+    nrows = (len(present) + ncols - 1) // ncols
+    fig, axes = plt.subplots(nrows, ncols,
+                             figsize=(ncols * 3.2, nrows * 5.8),
+                             facecolor=BG)
+    # Flatten axes to a list regardless of shape
+    if nrows == 1 and ncols == 1:
+        axes_flat = [axes]
+    elif nrows == 1:
+        axes_flat = list(axes)
+    else:
+        axes_flat = [ax for row in axes for ax in row]
+
+    RANK1_COLOR = "#d4e8fb"   # light blue highlight for rank 1
+    RANK20_COLOR = "#fdecea"  # light red highlight for rank 20
+    HEADER_BG = BLUE
+    HEADER_FG = "white"
+
+    for i, sys in enumerate(present):
+        ax = axes_flat[i]
+        ax.axis("off")
+
+        top20 = (qual[["PLAYER_NAME", sys]]
+                 .dropna()
+                 .nlargest(20, sys)
+                 .reset_index(drop=True))
+
+        col_label = SYSTEM_LABELS.get(sys, sys)
+        cell_text = [
+            [str(idx + 1),
+             row["PLAYER_NAME"].split()[-1],
+             _score_fmt(row[sys], sys)]
+            for idx, row in top20.iterrows()
+        ]
+
+        table = ax.table(
+            cellText=cell_text,
+            colLabels=["#", "Player", col_label],
+            loc="center",
+            cellLoc="left",
+        )
+        table.auto_set_font_size(False)
+        table.set_fontsize(7.5)
+        table.scale(1.0, 1.15)
+
+        # Header row styling
+        for col in range(3):
+            cell = table[(0, col)]
+            cell.set_facecolor(HEADER_BG)
+            cell.set_text_props(color=HEADER_FG, fontweight="bold")
+
+        # Rank 1 highlight (table row 1 = data row 0)
+        for col in range(3):
+            table[(1, col)].set_facecolor(RANK1_COLOR)
+
+        # Rank 20 highlight (table row 20 = data row 19)
+        if len(cell_text) >= 20:
+            for col in range(3):
+                table[(20, col)].set_facecolor(RANK20_COLOR)
+
+    # Hide any unused subplot axes
+    for ax in axes_flat[len(present):]:
+        ax.axis("off")
+
+    fig.suptitle("Top 20 players by each rating system — 2024-25",
+                 fontsize=12, color="#222", y=1.01)
+    fig.tight_layout()
+    return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)

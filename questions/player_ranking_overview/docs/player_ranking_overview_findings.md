@@ -80,6 +80,8 @@ Two combined ratings are built from the systems present in the data:
 
 The distribution analysis reveals something ordinal lists conceal.
 
+![All ten systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
+
 PER is nearly symmetric among 2024-25 qualified players: Gini = 0.16, top-5% hold 8.5% of total value. The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
 
 Win Shares and VORP are a different story. Win Shares has Gini = 0.74; the top 5% of players hold 32% of total positive Win Shares. VORP shows similar skewness. Both are right-skewed: right-tail skewness = 1.57 for WS, 1.54 for VORP. The cumulative metrics are heavy-tailed because they multiply rate by minutes, and both rate and playing time are above average for the best players.
@@ -94,7 +96,13 @@ The visual gap between rank 1 and rank 10 looks like 10 spots on a list. The num
 
 The data is consistent with the explanation that the value of talent is convex: having the best player is worth more than being one spot ahead of the second-best player, because team success depends on the ceiling of the roster in ways that are not captured by adding up individual rates.
 
-## 7. A note on the recomputed formulas
+## 7. Who lands in the top 20
+
+The table below shows the top 20 players under each system and their raw score. The gap between rank 1 and rank 20 is the most direct read on how concentrated value is: a large gap means the top player is in a different tier from the rest; a small gap means the list is relatively flat.
+
+![Top 20 players and their raw scores under each of the ten rating systems. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
+
+## 8. A note on the recomputed formulas
 
 The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations. The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the high 20s). The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures. The relative rankings within each system are directionally correct.
 

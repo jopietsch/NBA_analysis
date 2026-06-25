@@ -37,6 +37,8 @@ def main() -> None:
         plot_rank_value_distributions,
         plot_ordinal_vs_value_gap,
         plot_gini_by_system,
+        plot_all_systems_distributions,
+        plot_top20_table,
     )
     from player_ranking_overview_analysis import (
         ALL_SYSTEMS,
@@ -62,6 +64,8 @@ def main() -> None:
         if len(vals) >= 10:
             gini_scores[s] = _gini(vals)
     plot_gini_by_system(gini_scores)
+    plot_all_systems_distributions(qual, present)
+    plot_top20_table(qual, present)
 
     # Uber ratings for comparison chart
     qual["CONSENSUS"] = _build_consensus(qual, present)
