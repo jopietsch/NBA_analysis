@@ -518,10 +518,10 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
         ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
         return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
 
-    ncols = min(5, len(present))
+    ncols = min(4, len(present))
     nrows = (len(present) + ncols - 1) // ncols
     fig, axes = plt.subplots(nrows, ncols,
-                             figsize=(ncols * 3.2, nrows * 5.8),
+                             figsize=(ncols * 3.5, nrows * 6.5),
                              facecolor=BG)
     # Flatten axes to a list regardless of shape
     if nrows == 1 and ncols == 1:
@@ -546,36 +546,48 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
                  .reset_index(drop=True))
 
         col_label = SYSTEM_LABELS.get(sys, sys)
-        cell_text = [
-            [str(idx + 1),
-             row["PLAYER_NAME"].split()[-1],
-             _score_fmt(row[sys], sys)]
-            for idx, row in top20.iterrows()
-        ]
+        show_rank = (i % ncols == 0)  # only leftmost table in each row shows #
+        if show_rank:
+            cell_text = [
+                [str(idx + 1),
+                 row["PLAYER_NAME"].split()[-1],
+                 _score_fmt(row[sys], sys)]
+                for idx, row in top20.iterrows()
+            ]
+            col_labels = ["#", "Player", col_label]
+            ncell = 3
+        else:
+            cell_text = [
+                [row["PLAYER_NAME"].split()[-1],
+                 _score_fmt(row[sys], sys)]
+                for idx, row in top20.iterrows()
+            ]
+            col_labels = ["Player", col_label]
+            ncell = 2
 
         table = ax.table(
             cellText=cell_text,
-            colLabels=["#", "Player", col_label],
+            colLabels=col_labels,
             loc="center",
             cellLoc="left",
         )
         table.auto_set_font_size(False)
-        table.set_fontsize(7.5)
-        table.scale(1.0, 1.15)
+        table.set_fontsize(9)
+        table.scale(1.0, 1.2)
 
         # Header row styling
-        for col in range(3):
+        for col in range(ncell):
             cell = table[(0, col)]
             cell.set_facecolor(HEADER_BG)
             cell.set_text_props(color=HEADER_FG, fontweight="bold")
 
         # Rank 1 highlight (table row 1 = data row 0)
-        for col in range(3):
+        for col in range(ncell):
             table[(1, col)].set_facecolor(RANK1_COLOR)
 
         # Rank 20 highlight (table row 20 = data row 19)
         if len(cell_text) >= 20:
-            for col in range(3):
+            for col in range(ncell):
                 table[(20, col)].set_facecolor(RANK20_COLOR)
 
     # Hide any unused subplot axes
