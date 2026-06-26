@@ -102,7 +102,7 @@ Win Shares and VORP are a different story. The top 5% of players hold 32% of tot
 
 The Gini coefficient measures how unequally a metric's value is distributed across players, on a scale from 0 (everyone rated the same) to 1 (one player holds all the value). A high Gini means the metric is top-heavy: the gap between the best player and an average one is large relative to the spread across the rest of the league. A low Gini means the metric treats most qualified players as roughly comparable, with only a small premium at the top. For this report the Gini chart makes a specific point: a metric's Gini tells you how much it will disagree with ordinal rank. Rate metrics like PER and Game Score have low Ginis, so ranks 10 through 50 are bunched close together in value. Cumulative metrics like Win Shares and VORP have high Ginis, so the top handful of players are far ahead of everyone else in actual value — a gap that a ranked list, by construction, cannot show.
 
-![Rating value versus rank for cumulative and rate metrics: cumulative metrics (Win Shares, VORP) fall steeply among the top players; rate metrics stay flatter across the distribution.](../generated/images/rank_value_distributions.svg){#fig-distributions}
+![Each line shows a system's value as a percentage of its rank-1 player. Win Shares and VORP fall steeply; PER and BPM stay much flatter.](../generated/images/rank_value_distributions.svg){#fig-distributions}
 
 ![The gap between rank 1 and rank 10 is far larger than rank 10 to rank 50 in value-based systems.](../generated/images/ordinal_vs_value_gap.svg){#fig-gap}
 

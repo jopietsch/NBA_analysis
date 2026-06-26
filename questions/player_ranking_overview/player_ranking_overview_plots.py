@@ -192,58 +192,63 @@ def plot_system_outliers(df: pd.DataFrame,
 # ── Chart 3: Distribution shapes (log-scale rank-value) ──────────────────────
 
 def plot_rank_value_distributions(df: pd.DataFrame,
-                                   systems: list[str]) -> str:
-    """Rank-value (log rank vs. value) plot for cumulative-value metrics.
+                                   systems: list[str],
+                                   top_n: int = 50) -> str:
+    """Value-vs-rank drop-off chart, normalized to % of the rank-1 player's value.
 
-    Shows whether the value distribution has a heavy right tail.
-    Title: 'Cumulative metrics have a heavy tail; rate metrics do not.'
+    All systems start at 100% (rank 1) and the y-axis shows how quickly value
+    falls as rank increases. Cumulative metrics (WS, VORP) plunge steeply;
+    rate metrics (PER, Game Score, BPM) stay much flatter. Single panel so
+    all curves are directly comparable on the same scale.
     """
     qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
 
-    # Separate rate metrics from cumulative-value metrics
-    rate_systems = [s for s in systems if s in ("PER", "BPM", "OBPM", "DBPM",
-                                                  "RAPTOR", "DARKO_DPM", "EPM",
-                                                  "LEBRON", "ESPN_RPM", "GAME_SCORE")]
-    cum_systems = [s for s in systems if s in ("WS", "VORP", "RAPTOR_WAR")]
-
-    groups = [
-        ("Cumulative value metrics", cum_systems),
-        ("Rate metrics (per 100 possessions or per game)", rate_systems),
+    # Distinct colors for this chart — override the category palette so individual
+    # systems are distinguishable. Ordered to alternate between cumulative and rate.
+    _per_system_colors = [
+        "#2196F3",  # blue
+        "#F44336",  # red
+        "#4CAF50",  # green
+        "#FF9800",  # orange
+        "#9C27B0",  # purple
+        "#00BCD4",  # cyan
+        "#795548",  # brown
+        "#607D8B",  # blue-grey
     ]
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5), facecolor=BG)
+    fig, ax = plt.subplots(figsize=(10, 6), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
 
-    for ax, (title, sys_list) in zip(axes, groups):
-        ax.set_facecolor(PANEL)
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        plotted = 0
-        for sys in sys_list:
-            if sys not in qual.columns:
-                continue
-            vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
-            if len(vals) < 10:
-                continue
-            ranks = np.arange(1, len(vals) + 1)
-            color = SYSTEM_COLORS.get(sys, GRAY)
-            ax.plot(np.log10(ranks), vals.values,
-                    color=color, linewidth=1.5, alpha=0.75,
-                    label=SYSTEM_LABELS.get(sys, sys))
-            plotted += 1
+    color_idx = 0
+    for sys in systems:
+        if sys not in qual.columns:
+            continue
+        vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
+        if len(vals) < top_n or vals.iloc[0] <= 0:
+            continue
+        pct = (vals.iloc[:top_n] / vals.iloc[0] * 100).values
+        color = _per_system_colors[color_idx % len(_per_system_colors)]
+        ax.plot(np.arange(1, top_n + 1), pct,
+                color=color, linewidth=1.8, alpha=0.85,
+                label=SYSTEM_LABELS.get(sys, sys))
+        color_idx += 1
 
-        if plotted == 0:
-            ax.text(0.5, 0.5, "No data", ha="center", va="center",
-                    transform=ax.transAxes, color=GRAY)
-        else:
-            ax.legend(fontsize=8, frameon=False)
+    if color_idx == 0:
+        ax.text(0.5, 0.5, "No data", ha="center", va="center",
+                transform=ax.transAxes, color=GRAY)
+    else:
+        ax.legend(fontsize=8, frameon=False, loc="upper right", ncol=2)
 
-        ax.set_xlabel("Log₁₀ rank", fontsize=9, color=GRAY)
-        ax.set_ylabel("Rating value", fontsize=9, color=GRAY)
-        ax.set_title(title, fontsize=10, color="#333")
-        ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
-
-    fig.suptitle("Cumulative metrics have a heavy tail; rate metrics do not",
-                 fontsize=12, y=1.01, color="#222")
+    ax.set_xlabel(f"Player rank (1 = best, up to {top_n})", fontsize=9, color=GRAY)
+    ax.set_ylabel("Value as % of rank-1 player", fontsize=9, color=GRAY)
+    ax.yaxis.set_major_formatter(mticker.PercentFormatter())
+    ax.set_title(
+        "Cumulative metrics (Win Shares, VORP) plunge steeply;\nrate metrics stay much flatter",
+        fontsize=11, color="#222"
+    )
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
     fig.tight_layout()
     return save_chart("rank_value_distributions.svg", OUTPUT_DIR, fig=fig)
 
