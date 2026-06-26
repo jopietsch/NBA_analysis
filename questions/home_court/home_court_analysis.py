@@ -2237,6 +2237,10 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
         if "Q10" in slopes and "Q90" in slopes:
             spread_chg = slopes["Q90"] - slopes["Q10"]
             q50 = slopes.get("Q50", 0.0)
+            # Fact for the prose (Appendix B): the win/loss-margin spread widens
+            # by this many points per year (matches the margin chart).
+            FACTS.set(f"margin.spread_{'po' if is_po else 'reg'}", spread_chg, "{:.1f}",
+                      note=f"{ctx_label}: win-margin spread widening (Q90−Q10 slope, pts/yr)")
             print(f"\n   IQR change rate (Q90 − Q10 slope diff): {spread_chg:+.3f} pts/yr")
             if spread_chg > 0.02:
                 print(f"   ► Q90 rises / Q10 falls — genuine variance widening (polarization confirmed).")

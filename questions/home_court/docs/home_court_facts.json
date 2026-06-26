@@ -90,6 +90,20 @@
     "unit": null,
     "value": 26
   },
+  "margin.spread_po": {
+    "display": "0.3",
+    "fmt": "{:.1f}",
+    "note": "Playoffs: win-margin spread widening (Q90\u2212Q10 slope, pts/yr)",
+    "unit": null,
+    "value": 0.32643354858215246
+  },
+  "margin.spread_reg": {
+    "display": "0.2",
+    "fmt": "{:.1f}",
+    "note": "Regular season: win-margin spread widening (Q90\u2212Q10 slope, pts/yr)",
+    "unit": null,
+    "value": 0.21666673867586694
+  },
   "net.reg_mid2010s": {
     "display": "3",
     "fmt": "{:.0f}",
