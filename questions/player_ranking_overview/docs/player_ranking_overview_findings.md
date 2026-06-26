@@ -80,11 +80,13 @@ The "system outliers" chart shows the players each system rates most above and b
 
 ## 5. The two uber ratings
 
-Two combined ratings are built from the systems present in the data:
+Two combined ratings are built from the systems present in the data.
+
+Each system uses a different scale — PER is centered around 15, BPM around 0, Win Shares in the single digits — so you cannot average them directly. A z-score converts each system to the same scale by asking: how many typical-player gaps above or below average is this player? A z-score of 0 means exactly average; +2 means two standard deviations above average (well into star territory); −1 means a step below average. Once every system is on this common scale, they can be combined.
 
 **Consensus rating:** the average z-score across all systems. This measures what the crowd of methodologies agrees on, not what is best-supported by any one theory. The 2024-25 consensus top five: Shai Gilgeous-Alexander, Giannis Antetokounmpo, Jayson Tatum, Nikola Jokić, Donovan Mitchell.
 
-**Wins-predictive rating:** a combination of system z-scores weighted by how well each system (aggregated to team level) predicts actual team wins. The two ratings correlate at Spearman r = 0.98: they agree on who the very best players are. But the wins-predictive rating pushes SGA, Giannis, and Tatum even higher relative to the consensus, because their teams won the most games. Conversely, players on losing teams (Brandon Ingram, Vasilije Micic) rate lower on the wins-predictive scale than on the consensus — their numbers look good in context but their teams still lost.
+**Wins-predictive rating:** a combination of those scores weighted by how well each system (aggregated to team level) predicts actual team wins. The two ratings correlate at Spearman r = 0.98: they agree on who the very best players are. But the wins-predictive rating pushes SGA, Giannis, and Tatum even higher relative to the consensus, because their teams won the most games. Conversely, players on losing teams (Brandon Ingram, Vasilije Micic) rate lower on the wins-predictive scale than on the consensus — their numbers look good in context but their teams still lost.
 
 ![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg){#fig-uber}
 
