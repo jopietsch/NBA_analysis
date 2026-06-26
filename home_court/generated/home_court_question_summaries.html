@@ -2638,6 +2638,7 @@ vertical-align: -.125em;
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".collapsible").forEach(function (el) {
+    if (el.parentElement && el.parentElement.closest(".collapsible")) return;
     var fig = el.closest("figure") || el;
     if (fig.dataset.coDone) return;
     fig.dataset.coDone = "1";
