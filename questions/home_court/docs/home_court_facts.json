@@ -258,6 +258,48 @@
     "unit": null,
     "value": 64.27981820170103
   },
+  "po.slope": {
+    "display": "-0.23",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: decline slope (binomial GLM, pp/yr)",
+    "unit": null,
+    "value": -0.22532822507784087
+  },
+  "po.slope_ci_hi": {
+    "display": "-0.09",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: decline slope 95% CI high",
+    "unit": null,
+    "value": -0.09138970205059202
+  },
+  "po.slope_ci_lo": {
+    "display": "-0.36",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: decline slope 95% CI low",
+    "unit": null,
+    "value": -0.35926674810508974
+  },
+  "po.slope_mag": {
+    "display": "0.23",
+    "fmt": "{:.2f}",
+    "note": "Playoffs: decline slope magnitude (pp/yr)",
+    "unit": null,
+    "value": 0.22532822507784087
+  },
+  "po.slope_p": {
+    "display": "< 0.001",
+    "fmt": null,
+    "note": "Playoffs: decline slope p-value (display)",
+    "unit": null,
+    "value": "< 0.001"
+  },
+  "po.slope_r2_plain": {
+    "display": "a fifth",
+    "fmt": null,
+    "note": "prose phrasing of playoff R\u00b2 (0.195)",
+    "unit": null,
+    "value": "a fifth"
+  },
   "pq.weaker_hosts": {
     "display": "51.5%",
     "fmt": "{:.1f}%",
@@ -461,12 +503,54 @@
     "unit": null,
     "value": 60.05338174892422
   },
+  "reg.slope": {
+    "display": "-0.24",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: decline slope (binomial GLM, pp/yr)",
+    "unit": null,
+    "value": -0.24416057568154861
+  },
+  "reg.slope_ci_hi": {
+    "display": "-0.21",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: decline slope 95% CI high",
+    "unit": null,
+    "value": -0.20856185286945084
+  },
+  "reg.slope_ci_lo": {
+    "display": "-0.28",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: decline slope 95% CI low",
+    "unit": null,
+    "value": -0.27975929849364634
+  },
+  "reg.slope_mag": {
+    "display": "0.24",
+    "fmt": "{:.2f}",
+    "note": "Regular season: decline slope magnitude (pp/yr)",
+    "unit": null,
+    "value": 0.24416057568154861
+  },
+  "reg.slope_p": {
+    "display": "< 0.001",
+    "fmt": null,
+    "note": "Regular season: decline slope p-value (display)",
+    "unit": null,
+    "value": "< 0.001"
+  },
   "reg.slope_plain": {
     "display": "a quarter of a point",
     "fmt": null,
     "note": "prose phrasing of the reg-season slope (-0.244 pp/yr)",
     "unit": null,
     "value": "a quarter of a point"
+  },
+  "reg.slope_r2_plain": {
+    "display": "three-quarters",
+    "fmt": null,
+    "note": "prose phrasing of reg R\u00b2 (0.745)",
+    "unit": null,
+    "value": "three-quarters"
   },
   "rest.away_vs_baseline": {
     "display": "2.6",

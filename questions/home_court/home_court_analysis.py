@@ -376,15 +376,32 @@ def run_decline_trend(df: pd.DataFrame) -> None:
                   note="prose rounding of hw_first")
         FACTS.set(f"{ctx}.hw_last_plain", "58%" if is_po else "55%",
                   note="prose rounding of hw_last")
+
+        # Statistical detail for investigation.md (binomial GLM slope, CI, p).
+        FACTS.set(f"{ctx}.slope", glm_pp, "{:+.2f}",
+                  note=f"{ctx_label}: decline slope (binomial GLM, pp/yr)")
+        FACTS.set(f"{ctx}.slope_mag", abs(glm_pp), "{:.2f}",
+                  note=f"{ctx_label}: decline slope magnitude (pp/yr)")
+        FACTS.set(f"{ctx}.slope_ci_lo", glm_ci_lo, "{:+.2f}",
+                  note=f"{ctx_label}: decline slope 95% CI low")
+        FACTS.set(f"{ctx}.slope_ci_hi", glm_ci_hi, "{:+.2f}",
+                  note=f"{ctx_label}: decline slope 95% CI high")
+        FACTS.set(f"{ctx}.slope_p", "< 0.001" if glm_p < 0.001 else f"= {glm_p:.3f}",
+                  note=f"{ctx_label}: decline slope p-value (display)")
+
         if not is_po:
             FACTS.set("decline_both_plain", "10 percentage points",
                       note="both regular season and playoffs fell ~10 pp")
             FACTS.set("reg.slope_plain", "a quarter of a point",
                       note=f"prose phrasing of the reg-season slope ({glm_pp:+.3f} pp/yr)")
+            FACTS.set("reg.slope_r2_plain", "three-quarters",
+                      note=f"prose phrasing of reg R² ({ols_base.rsquared:.3f})")
             FACTS.set("reg.hw_mid90s",
                       float(agg[(agg["year"] >= 1995) & (agg["year"] <= 2001)]["pct"].mean()),
                       "{:.0f}%", note="Reg. season home-win %, 1995–2001 (the mid-90s level)")
         else:
+            FACTS.set("po.slope_r2_plain", "a fifth",
+                      note=f"prose phrasing of playoff R² ({ols_base.rsquared:.3f})")
             _plateau = agg[(agg["year"] >= 2005) & (agg["year"] <= 2017)]["pct"].mean()
             FACTS.set("po.hw_plateau", float(_plateau), "{:.0f}%",
                       note="Playoffs: home-win% plateau across 2005–2017")
