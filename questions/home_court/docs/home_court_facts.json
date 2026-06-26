@@ -1,10 +1,59 @@
 {
+  "b2b.freq_share": {
+    "display": "8%",
+    "fmt": "{:.0f}%",
+    "note": "Fewer visitor back-to-backs: share of the regular-season decline",
+    "unit": null,
+    "value": 7.654455342304992
+  },
+  "crowd.empty": {
+    "display": "51%",
+    "fmt": "{:.0f}%",
+    "note": "2020-21 home win % with empty arenas",
+    "unit": null,
+    "value": 50.959860383944154
+  },
+  "crowd.fans": {
+    "display": "59%",
+    "fmt": "{:.0f}%",
+    "note": "2020-21 home win % with fans present",
+    "unit": null,
+    "value": 58.544839255499156
+  },
+  "crowd.fans_plain": {
+    "display": "58%",
+    "fmt": null,
+    "note": "prose rounding of crowd.fans (58.5%)",
+    "unit": null,
+    "value": "58%"
+  },
   "decline_both_plain": {
     "display": "10 percentage points",
     "fmt": null,
     "note": "both regular season and playoffs fell ~10 pp",
     "unit": null,
     "value": "10 percentage points"
+  },
+  "net.reg_mid2010s": {
+    "display": "3",
+    "fmt": "{:.0f}",
+    "note": "Reg. season net rating 2005\u201317 (pts/100)",
+    "unit": null,
+    "value": 3.1337455192640915
+  },
+  "net.reg_today": {
+    "display": "2",
+    "fmt": "{:.0f}",
+    "note": "Reg. season net rating 2023\u201326 (pts/100)",
+    "unit": null,
+    "value": 1.9697754215633498
+  },
+  "oos.train_end": {
+    "display": "2013",
+    "fmt": "{:d}",
+    "note": "Out-of-sample forecast: last training season",
+    "unit": null,
+    "value": 2013
   },
   "po.decline_total": {
     "display": "-9.5 pp",
@@ -41,6 +90,13 @@
     "unit": null,
     "value": "58%"
   },
+  "po.hw_plateau": {
+    "display": "64%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: home-win% plateau across 2005\u20132017",
+    "unit": null,
+    "value": 64.27981820170103
+  },
   "reg.decline_total": {
     "display": "-10.3 pp",
     "fmt": "{:+.1f} pp",
@@ -75,6 +131,41 @@
     "note": "prose rounding of hw_last",
     "unit": null,
     "value": "55%"
+  },
+  "seed.stronger_early_plain": {
+    "display": "70\u201375%",
+    "fmt": null,
+    "note": "higher-seed home win % across the earlier eras (range)",
+    "unit": null,
+    "value": "70\u201375%"
+  },
+  "seed.stronger_today": {
+    "display": "65%",
+    "fmt": "{:.0f}%",
+    "note": "2023\u201326: higher-seed (stronger team) home win %",
+    "unit": null,
+    "value": 64.67391304347827
+  },
+  "seed.weaker_early_plain": {
+    "display": "65\u201366%",
+    "fmt": null,
+    "note": "1984\u201394 / 1995\u201301 lower-seed home win % (range)",
+    "unit": null,
+    "value": "65\u201366%"
+  },
+  "seed.weaker_today": {
+    "display": "49%",
+    "fmt": "{:.0f}%",
+    "note": "2023\u201326: lower-seed (weaker team) home win %",
+    "unit": null,
+    "value": 49.00662251655629
+  },
+  "series.rs_early": {
+    "display": "55%",
+    "fmt": "{:.0f}%",
+    "note": "Regular-season-input series home win %, earliest era",
+    "unit": null,
+    "value": 54.874
   },
   "share.fouls.adv": {
     "display": "14%",
@@ -145,5 +236,12 @@
     "note": "Reg. season: TOV diff share of the decline",
     "unit": null,
     "value": 26.66280294372501
+  },
+  "tpa.recent_share": {
+    "display": "40%",
+    "fmt": "{:.0f}%",
+    "note": "Regular-season 3PA share of FGA, most recent era",
+    "unit": null,
+    "value": 40.49458384563221
   }
 }

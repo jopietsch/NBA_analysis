@@ -379,6 +379,10 @@ def run_decline_trend(df: pd.DataFrame) -> None:
         if not is_po:
             FACTS.set("decline_both_plain", "10 percentage points",
                       note="both regular season and playoffs fell ~10 pp")
+        else:
+            _plateau = agg[(agg["year"] >= 2005) & (agg["year"] <= 2017)]["pct"].mean()
+            FACTS.set("po.hw_plateau", float(_plateau), "{:.0f}%",
+                      note="Playoffs: home-win% plateau across 2005–2017")
 
         print(f"   {'Era':<12}  {'N':>4}  {'GLM pp/yr':>10}  {'GLM p':>8}  "
               f"{'OLS pp/yr':>10}  {'HAC p':>8}  {'':3}")
@@ -1793,6 +1797,9 @@ def run_oos_forecast(df: pd.DataFrame) -> None:
             continue
         tr0, tr1 = d["train_years"]
         te0, te1 = d["test_years"]
+        if key == "reg":
+            FACTS.set("oos.train_end", tr1, "{:d}",
+                      note="Out-of-sample forecast: last training season")
         print(f"   {ctx_label}  (train {tr0}–{tr1}, test {te0}–{te1})\n")
         print(f"   {'Season':>7}  {'Actual':>8}  {'Channel pred':>13}  {'Trend pred':>11}")
         print(f"   {'─'*7}  {'─'*8}  {'─'*13}  {'─'*11}")
@@ -2174,13 +2181,24 @@ def run_net_rating_analysis(df: pd.DataFrame) -> None:
         print(header)
         print(divider)
 
+        nr_by_era = []
         for era_label, y1, y2, _ in nba.ERA_DEFS:
             era_rows = valid[(valid["year"] >= y1) & (valid["year"] <= y2)]
             if len(era_rows) < 10:
                 print(f"   {era_label:<12}{'—':>{COL_W}}")
+                nr_by_era.append(None)
             else:
                 nr = era_rows["net_rating"].mean()
                 print(f"   {era_label:<12}{nr:>+{COL_W}.2f}")
+                nr_by_era.append(nr)
+
+        # Facts for the prose (§1): regular-season net rating, mid-2010s vs today.
+        # ERA_DEFS order: [..., 3]=2005–17 (mid-2010s), [5]=2023–26 (today).
+        if season_label == "Regular season":
+            FACTS.set("net.reg_mid2010s", nr_by_era[3], "{:.0f}",
+                      note="Reg. season net rating 2005–17 (pts/100)")
+            FACTS.set("net.reg_today", nr_by_era[5], "{:.0f}",
+                      note="Reg. season net rating 2023–26 (pts/100)")
 
         print(divider)
         if len(valid) >= 10:
@@ -2431,6 +2449,10 @@ def run_back_to_back_analysis(df: pd.DataFrame) -> None:
     rate_comp = float((cf["freq"] * (cl["mean"] - cf["mean"])).sum()) * 100
     inter = total - freq_comp - rate_comp
     share = 100 * freq_comp / total if total else float("nan")
+    # Fact for the prose (§3): fewer visitor back-to-backs explain only this
+    # share of the regular-season decline.
+    FACTS.set("b2b.freq_share", abs(share), "{:.0f}%",
+              note="Fewer visitor back-to-backs: share of the regular-season decline")
 
     print(f"\n   Shift-share decomposition of the home win % change, "
           f"{first_lbl} → {last_lbl}:")
@@ -2514,6 +2536,13 @@ def run_attendance_analysis(
     empty = dose_df[dose_df["attendance"] == 0]
     crowd = dose_df[dose_df["attendance"] > 0]
     p_bar = float(dose_df["home_win"].mean())
+    # Facts for the prose (§2.1/§3): empty 2020-21 arenas dropped home teams to
+    # ~51%; any crowd at all restored ~58%.
+    FACTS.set("crowd.empty", 100 * float(empty["home_win"].mean()), "{:.0f}%",
+              note="2020-21 home win % with empty arenas")
+    FACTS.set("crowd.fans", 100 * float(crowd["home_win"].mean()), "{:.0f}%",
+              note="2020-21 home win % with fans present")
+    FACTS.set("crowd.fans_plain", "58%", note="prose rounding of crowd.fans (58.5%)")
     print(f"   2020-21 home win %:  empty arena {100*empty['home_win'].mean():.1f}% "
           f"(n={len(empty)})  vs.  fans present {100*crowd['home_win'].mean():.1f}% "
           f"(n={len(crowd)})")
@@ -2630,6 +2659,7 @@ def run_series_era_split(df: pd.DataFrame) -> None:
     print(f"   {'Era':<12}  {'Higher seed at home (G1,2,5,7)':>32}  {'Lower seed at home (G3,4,6)':>28}  {'Gap':>6}")
     print(f"   {'─'*12}  {'─'*32}  {'─'*28}  {'─'*6}")
 
+    seed_rows: dict[str, tuple[float, float]] = {}
     for era_label, y1, y2, _ in nba.ERA_DEFS:
         era_sub = po[po["era"] == era_label]
         h = era_sub[era_sub["home_type"] == "higher_seed"]
@@ -2638,9 +2668,24 @@ def run_series_era_split(df: pd.DataFrame) -> None:
             continue
         h_pct = 100.0 * h["home_win"].sum() / len(h)
         l_pct = 100.0 * l["home_win"].sum() / len(l)
+        seed_rows[era_label] = (h_pct, l_pct)
         gap   = h_pct - l_pct
         print(f"   {era_label:<12}  {h_pct:>6.1f}%  ({len(h):>4} games){'':<14}  "
               f"{l_pct:>6.1f}%  ({len(l):>4} games){'':<5}  {gap:>+5.1f} pp")
+
+    # Facts for the prose: the weaker team (lower seed) at home used to win
+    # ~65–66%, nearly matching the stronger team; today it is far lower. The
+    # early ranges are authored here next to the per-era figures above.
+    _last = nba.ERA_DEFS[-1][0]
+    if _last in seed_rows:
+        FACTS.set("seed.stronger_today", seed_rows[_last][0], "{:.0f}%",
+                  note=f"{_last}: higher-seed (stronger team) home win %")
+        FACTS.set("seed.weaker_today", seed_rows[_last][1], "{:.0f}%",
+                  note=f"{_last}: lower-seed (weaker team) home win %")
+    FACTS.set("seed.weaker_early_plain", "65–66%",
+              note="1984–94 / 1995–01 lower-seed home win % (range)")
+    FACTS.set("seed.stronger_early_plain", "70–75%",
+              note="higher-seed home win % across the earlier eras (range)")
 
     # Overall
     h_all = po[po["home_type"] == "higher_seed"]
@@ -2691,6 +2736,10 @@ def run_series_simulation(data: dict) -> None:
     rs = _span("reg_pgame", "reg_series")
     if rs is not None:
         dpg, ds, last = rs
+        # Fact for the prose (§1): a home-court team that took the series ~55% of
+        # the time in the earliest era is now barely better than a coin flip.
+        FACTS.set("series.rs_early", data["reg_series"][0], "{:.0f}%",
+                  note="Regular-season-input series home win %, earliest era")
         print(f"   ► Regular season: per-game home edge fell {dpg:.1f} pp across eras,")
         print(f"     but the series edge fell only {ds:.1f} pp (now {last:.1f}%).")
     po = _span("po_pgame", "po_series")
@@ -3014,6 +3063,7 @@ def _run_league_metric_analysis(
                   f"{'n seasons':>{COL_W}}")
         print(f"\n{header}")
         print(f"   {'-'*10} {'-'*COL_W} {'-'*COL_W} {'-'*COL_W}")
+        last_m_val = None
         for era_label, y1, y2, _ in nba.ERA_DEFS:
             era_years = [y for y in by_year["year"] if y1 <= y <= y2]
             era_rows = by_year[by_year["year"].isin(era_years)]
@@ -3021,8 +3071,14 @@ def _run_league_metric_analysis(
                 continue
             m_val = era_rows[agg_name].mean()
             m_pct = era_rows["home_pct"].mean()
+            last_m_val = m_val
             print(f"   {era_label:<10} {m_val:>{COL_W}.1f}{metric_sep}{m_pct:>{COL_W}.1f}% "
                   f"{len(era_rows):>{COL_W}}")
+
+        # Fact for the prose (§2.1/§3): three-point attempts are now ~40% of shots.
+        if ctx_label == "Regular season" and "3PA" in metric_header and last_m_val is not None:
+            FACTS.set("tpa.recent_share", last_m_val, "{:.0f}%",
+                      note="Regular-season 3PA share of FGA, most recent era")
 
         p_bar = sub["home_win"].mean()
         try:
@@ -4605,6 +4661,7 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
 
 _RESULTS_PATH = "docs/home_court_results.md"
 _FACTS_PATH = "docs/home_court_facts.json"
+_GUARDS_PATH = "docs/home_court_guards.json"
 
 
 def generate_results_text(df: pd.DataFrame | None = None) -> str:
@@ -4757,3 +4814,12 @@ def run(df: pd.DataFrame | None = None) -> None:
 
     FACTS.dump(_FACTS_PATH)
     sys.stdout.write(f"Saved → {_FACTS_PATH}  ({len(FACTS)} facts)\n")
+
+    FACTS.dump_guards(_GUARDS_PATH)
+    failed = FACTS.failed_guards()
+    if failed:
+        sys.stdout.write(f"\n⚠ {len(failed)} prose claim(s) no longer hold — update the docs:\n")
+        for g in failed:
+            sys.stdout.write(f"    {g['name']}: \"{g['claim']}\"  (now: {g['value']})\n")
+    else:
+        sys.stdout.write(f"Saved → {_GUARDS_PATH}  (all prose claims hold)\n")
