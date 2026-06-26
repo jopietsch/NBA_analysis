@@ -2053,6 +2053,21 @@ def run_shot_zone_analysis(
     print("   Positive = home team takes a higher share of FGA from that zone.")
     print("   Trend = slope of trend line (change per season year). Data from 1996–97 onward.\n")
 
+    # Facts for the prose (§3): the home paint-attempt-share gap, then vs now.
+    _zyears = [nba.label_to_year(s) for s in reg_seasons]
+
+    def _paint_era(era):
+        idx = [i for i, y in enumerate(_zyears) if era[1] <= y <= era[2]]
+        vals = [reg_stats["paint"][i] for i in idx if not np.isnan(reg_stats["paint"][i])]
+        return float(np.mean(vals)) if vals else float("nan")
+
+    if reg_seasons:
+        _first_era = next((e for e in nba.ERA_DEFS if not np.isnan(_paint_era(e))), nba.ERA_DEFS[0])
+        FACTS.set("zone.paint_early", _paint_era(_first_era), "{:.1f}",
+                  note="Reg. paint FGA-share gap (home minus away), earliest era with data")
+        FACTS.set("zone.paint_today", _paint_era(nba.ERA_DEFS[-1]), "{:.1f}",
+                  note="Reg. paint FGA-share gap (home minus away), recent era")
+
     for season_label, seasons, stats in [
         ("Regular season", reg_seasons, reg_stats),
         ("Playoffs",       po_seasons,  po_stats),
