@@ -3606,6 +3606,25 @@ def run_franchise_era_comparison(
           + ", ".join(f"{t} ({chg:+.1f} pp)" for t, _, _, chg in smallest))
     print()
 
+    # Facts for the prose (Appendix B): named-franchise era-to-era HCA drops, and
+    # a guard on which two fell the most.
+    _chg = {t: chg for t, _, _, chg in rows}
+
+    def _drop(substr):
+        return next((abs(c) for t, c in _chg.items() if substr in t), None)
+
+    for _name, _key in [("Sacramento", "sacramento"), ("Phoenix", "phoenix"),
+                        ("New York", "knicks"), ("Denver", "denver"), ("Utah", "utah")]:
+        _d = _drop(_name)
+        if _d is not None:
+            FACTS.set(f"franchise.drop_{_key}", _d, "{:.0f}",
+                      note=f"{_name} HCA drop, early to recent era (pp)")
+    _top2 = {rows[0][0], rows[1][0]}
+    FACTS.guard("sacramento_phoenix_fell_most",
+                any("Sacramento" in t for t in _top2) and any("Phoenix" in t for t in _top2),
+                claim="Sacramento and Phoenix fell the most",
+                value=", ".join(f"{t} ({c:+.0f})" for t, _, _, c in rows[:2]))
+
 
 # ── Analysis: Franchise HCA consistency (regular season vs. playoffs) ─────────
 

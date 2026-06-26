@@ -9,6 +9,11 @@
     "ok": true,
     "value": "largest is rebounding (30%)"
   },
+  "sacramento_phoenix_fell_most": {
+    "claim": "Sacramento and Phoenix fell the most",
+    "ok": true,
+    "value": "Sacramento Kings (-16), Phoenix Suns (-15)"
+  },
   "series_coin_flip": {
     "claim": "barely better than a coin flip",
     "ok": true,

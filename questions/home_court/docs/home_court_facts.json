@@ -97,6 +97,41 @@
     "unit": null,
     "value": 6.826930310031698
   },
+  "franchise.drop_denver": {
+    "display": "13",
+    "fmt": "{:.0f}",
+    "note": "Denver HCA drop, early to recent era (pp)",
+    "unit": null,
+    "value": 13.0
+  },
+  "franchise.drop_knicks": {
+    "display": "13",
+    "fmt": "{:.0f}",
+    "note": "New York HCA drop, early to recent era (pp)",
+    "unit": null,
+    "value": 13.1
+  },
+  "franchise.drop_phoenix": {
+    "display": "15",
+    "fmt": "{:.0f}",
+    "note": "Phoenix HCA drop, early to recent era (pp)",
+    "unit": null,
+    "value": 15.2
+  },
+  "franchise.drop_sacramento": {
+    "display": "16",
+    "fmt": "{:.0f}",
+    "note": "Sacramento HCA drop, early to recent era (pp)",
+    "unit": null,
+    "value": 16.400000000000002
+  },
+  "franchise.drop_utah": {
+    "display": "9",
+    "fmt": "{:.0f}",
+    "note": "Utah HCA drop, early to recent era (pp)",
+    "unit": null,
+    "value": 8.700000000000003
+  },
   "franchise.league_early": {
     "display": "25.6",
     "fmt": "{:.1f}",
