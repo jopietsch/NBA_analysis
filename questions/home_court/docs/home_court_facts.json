@@ -1,4 +1,18 @@
 {
+  "b2b.freq_early": {
+    "display": "35%",
+    "fmt": "{:.0f}%",
+    "note": "Visitor back-to-back frequency, earliest era",
+    "unit": null,
+    "value": 35.01753124157152
+  },
+  "b2b.freq_late_plain": {
+    "display": "under 20%",
+    "fmt": null,
+    "note": "Visitor B2B frequency today (~19%)",
+    "unit": null,
+    "value": "under 20%"
+  },
   "b2b.freq_share": {
     "display": "8%",
     "fmt": "{:.0f}%",

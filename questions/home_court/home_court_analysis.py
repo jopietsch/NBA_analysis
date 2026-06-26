@@ -2509,10 +2509,16 @@ def run_back_to_back_analysis(df: pd.DataFrame) -> None:
     rate_comp = float((cf["freq"] * (cl["mean"] - cf["mean"])).sum()) * 100
     inter = total - freq_comp - rate_comp
     share = 100 * freq_comp / total if total else float("nan")
-    # Fact for the prose (§3): fewer visitor back-to-backs explain only this
-    # share of the regular-season decline.
+    # Facts for the prose (§4/§6/App C): visitor back-to-backs grew rarer, but
+    # that schedule change explains only a small share of the decline.
     FACTS.set("b2b.freq_share", abs(share), "{:.0f}%",
               note="Fewer visitor back-to-backs: share of the regular-season decline")
+    _e0b, _eNb = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
+    FACTS.set("b2b.freq_early",
+              100 * rs[(rs["year"] >= _e0b[1]) & (rs["year"] <= _e0b[2])]["away_b2b"].mean(),
+              "{:.0f}%", note="Visitor back-to-back frequency, earliest era")
+    FACTS.set("b2b.freq_late_plain", "under 20%",
+              note=f"Visitor B2B frequency today (~{100 * rs[(rs['year'] >= _eNb[1]) & (rs['year'] <= _eNb[2])]['away_b2b'].mean():.0f}%)")
 
     print(f"\n   Shift-share decomposition of the home win % change, "
           f"{first_lbl} → {last_lbl}:")
