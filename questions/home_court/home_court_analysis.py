@@ -1068,6 +1068,10 @@ def run_factor_summary(df: pd.DataFrame) -> None:
     n_seasons = int(df["year"].nunique())
 
     rest, alt, tz = res["rest_diff"], res["altitude_home"], res["tz_diff"]
+    # Statistical detail: the altitude franchises' home-win boost (DEN/UTA), the
+    # "8 of those points" / "about 8 percentage points" figure.
+    FACTS.set("altitude.effect_pp", alt["pp_re"], "{:.0f}",
+              note="Reg. home-win % boost for the altitude franchises (DEN/UTA)")
 
     # Rest verdict — driven by the computed p-values
     rest_re_sig, rest_po_sig = rest["p_re"] < 0.05, rest["p_po"] < 0.05
@@ -4357,6 +4361,12 @@ def compute_bayesian_changepoint(df: pd.DataFrame) -> dict:
         if cumprob >= 0.95:
             break
     hpd_k1 = (min(hpd_taus), max(hpd_taus))
+
+    # Statistical detail for investigation.md: the single-bend year and its range.
+    FACTS.set("changepoint.map_year", map_year_k1, "{:d}",
+              note="Bayesian change-point: most likely single-bend year")
+    FACTS.set("changepoint.hpd_lo", hpd_k1[0], "{:d}", note="Change-point 95% HPD interval low")
+    FACTS.set("changepoint.hpd_hi", hpd_k1[1], "{:d}", note="Change-point 95% HPD interval high")
 
     # Posterior-weighted pre/post slopes for k=1
     pre_sl  = np.array([slopes1[tau][0] for tau in cands1])

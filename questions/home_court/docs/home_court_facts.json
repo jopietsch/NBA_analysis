@@ -6,6 +6,13 @@
     "unit": null,
     "value": 27.9
   },
+  "altitude.effect_pp": {
+    "display": "8",
+    "fmt": "{:.0f}",
+    "note": "Reg. home-win % boost for the altitude franchises (DEN/UTA)",
+    "unit": null,
+    "value": 7.893922463348484
+  },
   "altitude.league_mean": {
     "display": "20",
     "fmt": "{:.0f}",
@@ -68,6 +75,27 @@
     "note": "Home win % with only the visitor on a back-to-back",
     "unit": null,
     "value": 64.6696116326155
+  },
+  "changepoint.hpd_hi": {
+    "display": "2003",
+    "fmt": "{:d}",
+    "note": "Change-point 95% HPD interval high",
+    "unit": null,
+    "value": 2003
+  },
+  "changepoint.hpd_lo": {
+    "display": "1992",
+    "fmt": "{:d}",
+    "note": "Change-point 95% HPD interval low",
+    "unit": null,
+    "value": 1992
+  },
+  "changepoint.map_year": {
+    "display": "1999",
+    "fmt": "{:d}",
+    "note": "Bayesian change-point: most likely single-bend year",
+    "unit": null,
+    "value": 1999
   },
   "crowd.empty": {
     "display": "51%",
