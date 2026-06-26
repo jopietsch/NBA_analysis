@@ -1780,6 +1780,13 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                         40 <= _foul_abs <= 65 and 40 <= _tov_abs <= 65,
                         claim="the three-point shift explains about half of both the foul and turnover declines",
                         value=f"foul {_foul_abs:.0f}% / turnover {_tov_abs:.0f}% absorbed by 3PA")
+            # Statistical detail for investigation.md: 3PA absorbs little of the
+            # rebounding trend, which stays significant.
+            _reb_abs, _reb_ap = absorbed_by["reb_diff"]
+            FACTS.set("reb.absorbed_by_3pa", _reb_abs, "{:.0f}%",
+                      note="Reg: share of the rebounding trend absorbed by the 3PA control")
+            FACTS.set("reb.controlled_3pa_p", "< 0.001" if _reb_ap < 0.001 else f"= {_reb_ap:.3f}",
+                      note="Reg: rebounding trend p-value after the 3PA control (display)")
 
         reb_p = absorbed_by["reb_diff"][1]
         tov_p = absorbed_by["tov_diff"][1]
@@ -2066,6 +2073,8 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
                 .mean().dropna())
     if len(season) >= 3:
         r, p = pearsonr(season["league_oreb_rate"], season["reb_share_edge"])
+        FACTS.set("reb.league_oreb_corr", r, "{:+.2f}",
+                  note="Reg: season-level correlation of rebound share-edge with the league OREB rate")
         first, last = season.iloc[0], season.iloc[-1]
         print("   Does the home edge track the league's retreat from the offensive glass?")
         print(f"   Season-level Pearson r (share edge vs league OREB rate) = "
@@ -2632,10 +2641,19 @@ def run_back_to_back_analysis(df: pd.DataFrame) -> None:
     labels = {"neither_b2b": "Neither on B2B", "vis_b2b_only": "Visitor B2B only",
               "home_b2b_only": "Home B2B only", "both_b2b": "Both on B2B"}
     order = ["neither_b2b", "vis_b2b_only", "home_b2b_only", "both_b2b"]
+    _situ_pct = {}
     for s in order:
         b = rs[rs["situ"] == s]
         if not b.empty:
+            _situ_pct[s] = 100 * b["home_win"].mean()
             print(f"   {labels[s]:<16}  {len(b):>8,}  {100*b['home_win'].mean():>10.1f}%")
+    # Statistical detail for investigation.md: tired-visitor vs baseline home win %.
+    if "neither_b2b" in _situ_pct:
+        FACTS.set("b2b.baseline", _situ_pct["neither_b2b"], "{:.0f}%",
+                  note="Home win % with neither team on a back-to-back")
+    if "vis_b2b_only" in _situ_pct:
+        FACTS.set("b2b.tired_visitor", _situ_pct["vis_b2b_only"], "{:.0f}%",
+                  note="Home win % with only the visitor on a back-to-back")
 
     # ── Shift-share: first era vs last era ─────────────────────────────────────
     first_lbl, fy1, fy2, _ = nba.ERA_DEFS[0]
@@ -2659,6 +2677,8 @@ def run_back_to_back_analysis(df: pd.DataFrame) -> None:
     # that schedule change explains only a small share of the decline.
     FACTS.set("b2b.freq_share", abs(share), "{:.0f}%",
               note="Fewer visitor back-to-backs: share of the regular-season decline")
+    FACTS.set("b2b.freq_pp", abs(freq_comp), "{:.1f}",
+              note="Fewer visitor back-to-backs: absolute pp of the decline they explain")
     _e0b, _eNb = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
     FACTS.set("b2b.freq_early",
               100 * rs[(rs["year"] >= _e0b[1]) & (rs["year"] <= _e0b[2])]["away_b2b"].mean(),
@@ -3249,10 +3269,16 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
                       f"(≈{pp_per_100mi:+.2f} pp per 100 mi,  "
                       f"95% CI [{ci_lo*100:+.2f}, {ci_hi*100:+.2f}]),  "
                       f"p = {pval_s}  {_stars(pval).strip()}")
+                _tvc = "po" if context_label == "Playoffs" else "reg"
                 if context_label == "Regular season":
                     # Fact for the prose (§4): travel's negligible regular-season effect.
                     FACTS.set("travel.per_100mi", abs(pp_per_100mi), "{:.2f}",
                               note="Reg. home win % effect per 100 miles of visitor travel (pp)")
+                # Statistical detail for investigation.md: the travel-effect 95% CI.
+                FACTS.set(f"travel.{_tvc}_ci_lo", ci_lo * 100, "{:+.2f}",
+                          note=f"{context_label}: travel effect 95% CI low (pp/100mi)")
+                FACTS.set(f"travel.{_tvc}_ci_hi", ci_hi * 100, "{:+.2f}",
+                          note=f"{context_label}: travel effect 95% CI high (pp/100mi)")
             except Exception:
                 pass
         print()
@@ -3867,6 +3893,8 @@ def run_referee_analysis(bias_stats: list) -> None:
     FACTS.set("ref.n_biased", n_negative, "{:d}",
               note="Playoff officials (≥50 games) with a home-favoring foul gap")
     FACTS.set("ref.n_total", n_total, "{:d}", note="Playoff officials with ≥50 games on record")
+    FACTS.set("ref.n_significant", n_sig_bh, "{:d}",
+              note="Playoff officials individually clear after Benjamini-Hochberg correction")
     print(f"   Individually significant (p<0.05, real t-test):    {n_sig_raw}/{n_total}")
     print(f"   Survive Benjamini-Hochberg correction (FDR 5%):    {n_sig_bh}/{n_total}")
     print(f"   League mean foul_diff across officials: {league_mean:+.3f} fouls/game")

@@ -27,6 +27,13 @@
     "unit": null,
     "value": 26.6
   },
+  "b2b.baseline": {
+    "display": "59%",
+    "fmt": "{:.0f}%",
+    "note": "Home win % with neither team on a back-to-back",
+    "unit": null,
+    "value": 59.11413392887355
+  },
   "b2b.freq_early": {
     "display": "35%",
     "fmt": "{:.0f}%",
@@ -41,12 +48,26 @@
     "unit": null,
     "value": "under 20%"
   },
+  "b2b.freq_pp": {
+    "display": "0.7",
+    "fmt": "{:.1f}",
+    "note": "Fewer visitor back-to-backs: absolute pp of the decline they explain",
+    "unit": null,
+    "value": 0.7109849622902363
+  },
   "b2b.freq_share": {
     "display": "8%",
     "fmt": "{:.0f}%",
     "note": "Fewer visitor back-to-backs: share of the regular-season decline",
     "unit": null,
     "value": 7.654455342304992
+  },
+  "b2b.tired_visitor": {
+    "display": "65%",
+    "fmt": "{:.0f}%",
+    "note": "Home win % with only the visitor on a back-to-back",
+    "unit": null,
+    "value": 64.6696116326155
   },
   "crowd.empty": {
     "display": "51%",
@@ -377,6 +398,20 @@
     "unit": null,
     "value": 51.511487303506655
   },
+  "reb.absorbed_by_3pa": {
+    "display": "8%",
+    "fmt": "{:.0f}%",
+    "note": "Reg: share of the rebounding trend absorbed by the 3PA control",
+    "unit": null,
+    "value": 7.879128904491428
+  },
+  "reb.controlled_3pa_p": {
+    "display": "< 0.001",
+    "fmt": null,
+    "note": "Reg: rebounding trend p-value after the 3PA control (display)",
+    "unit": null,
+    "value": "< 0.001"
+  },
   "reb.dreb_early": {
     "display": "+1.6",
     "fmt": "{:+.1f}",
@@ -390,6 +425,13 @@
     "note": "Reg. DREB diff (home minus away), recent era",
     "unit": null,
     "value": 0.5928716904276986
+  },
+  "reb.league_oreb_corr": {
+    "display": "+0.82",
+    "fmt": "{:+.2f}",
+    "note": "Reg: season-level correlation of rebound share-edge with the league OREB rate",
+    "unit": null,
+    "value": 0.8237607482547843
   },
   "reb.oreb_away_drop": {
     "display": "5",
@@ -446,6 +488,13 @@
     "note": "Playoff officials (\u226550 games) with a home-favoring foul gap",
     "unit": null,
     "value": 45
+  },
+  "ref.n_significant": {
+    "display": "29",
+    "fmt": "{:d}",
+    "note": "Playoff officials individually clear after Benjamini-Hochberg correction",
+    "unit": null,
+    "value": 29
   },
   "ref.n_total": {
     "display": "47",
@@ -1153,6 +1202,34 @@
     "note": "Reg. home win % effect per 100 miles of visitor travel (pp)",
     "unit": null,
     "value": 0.0749702165960717
+  },
+  "travel.po_ci_hi": {
+    "display": "+0.27",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: travel effect 95% CI high (pp/100mi)",
+    "unit": null,
+    "value": 0.2711537679872639
+  },
+  "travel.po_ci_lo": {
+    "display": "-0.23",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: travel effect 95% CI low (pp/100mi)",
+    "unit": null,
+    "value": -0.23467989789710442
+  },
+  "travel.reg_ci_hi": {
+    "display": "-0.02",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: travel effect 95% CI high (pp/100mi)",
+    "unit": null,
+    "value": -0.01776802716803354
+  },
+  "travel.reg_ci_lo": {
+    "display": "-0.13",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: travel effect 95% CI low (pp/100mi)",
+    "unit": null,
+    "value": -0.13217240602410987
   },
   "trend.fouls": {
     "display": "+0.022",
