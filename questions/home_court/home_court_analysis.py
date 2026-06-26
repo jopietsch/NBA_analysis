@@ -1643,6 +1643,8 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                         value=f"largest is {_largest} ({_decline_shares[_largest]:.0f}%)")
 
         if label == "Playoffs":
+            FACTS.set("share.fourfactors_po.decline", ctx["pct_trend"], "{:.0f}%",
+                      note="Playoffs: all four channels' share of the decline")
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
             print("     home team is usually the better team) — see the seeding")
             print("     decomposition for that control.")
@@ -2828,6 +2830,11 @@ def run_series_era_split(df: pd.DataFrame) -> None:
               note="1984–94 / 1995–01 lower-seed home win % (range)")
     FACTS.set("seed.stronger_early_plain", "70–75%",
               note="higher-seed home win % across the earlier eras (range)")
+    for _i, _ky in [(0, "1984"), (1, "1995")]:
+        _lbl = nba.ERA_DEFS[_i][0]
+        if _lbl in seed_rows:
+            FACTS.set(f"seed.weaker_{_ky}", seed_rows[_lbl][1], "{:.0f}%",
+                      note=f"{_lbl}: lower-seed (weaker team) home win %")
     _early = [(e[0], seed_rows[e[0]]) for e in nba.ERA_DEFS[:2] if e[0] in seed_rows]
     FACTS.guard("weaker_matched_stronger",
                 any(l >= h for _, (h, l) in _early),

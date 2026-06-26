@@ -503,6 +503,20 @@
     "unit": null,
     "value": 64.67391304347827
   },
+  "seed.weaker_1984": {
+    "display": "65%",
+    "fmt": "{:.0f}%",
+    "note": "1984\u201394: lower-seed (weaker team) home win %",
+    "unit": null,
+    "value": 65.38461538461539
+  },
+  "seed.weaker_1995": {
+    "display": "66%",
+    "fmt": "{:.0f}%",
+    "note": "1995\u201301: lower-seed (weaker team) home win %",
+    "unit": null,
+    "value": 65.82278481012658
+  },
   "seed.weaker_early_plain": {
     "display": "65\u201366%",
     "fmt": null,
@@ -558,6 +572,13 @@
     "note": "Reg. season: all four channels' share of the decline",
     "unit": null,
     "value": 96.00921912883905
+  },
+  "share.fourfactors_po.decline": {
+    "display": "67%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: all four channels' share of the decline",
+    "unit": null,
+    "value": 67.35431929672353
   },
   "share.rebounding.adv": {
     "display": "25%",
