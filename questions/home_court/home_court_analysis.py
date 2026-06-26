@@ -1599,6 +1599,12 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             continue
 
         level = ctx["level_pp"]
+        # Statistical detail for investigation.md: the HCA level above a coin flip.
+        _mctx = "po" if label == "Playoffs" else "reg"
+        FACTS.set(f"{_mctx}.level_pp", level, "{:+.1f}",
+                  note=f"{label}: HCA level above coin flip (pp)")
+        FACTS.set(f"{_mctx}.level_unexplained_pct", ctx["level_unexplained"]["pct"], "{:.0f}%",
+                  note=f"{label}: share of the HCA level left unexplained by the four channels")
         print(f"   {label}  (N = {ctx['n']:,} games, home win % = {ctx['home_win_pct']:.1f}, "
               f"level above coin flip = {level:+.1f} pp)")
         print(f"   Channel-model R² = {ctx['chan_r2']:.3f} — share of game-outcome "
@@ -1662,6 +1668,13 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
         if label == "Playoffs":
             FACTS.set("share.fourfactors_po.decline", ctx["pct_trend"], "{:.0f}%",
                       note="Playoffs: all four channels' share of the decline")
+            _shortp = {"efg_pct_diff": "shooting", "foul_diff": "fouls",
+                       "tov_diff": "turnovers", "reb_diff": "rebounding"}
+            for r in ctx["level"]:
+                FACTS.set(f"share_po.{_shortp[r['key']]}.adv", r["pct"], "{:.0f}%",
+                          note=f"Playoffs: {r['table_label']} share of the HCA level")
+            FACTS.set("share.fourfactors_po.adv", ctx["pct_level"], "{:.0f}%",
+                      note="Playoffs: all four channels' share of the HCA level")
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
             print("     home team is usually the better team) — see the seeding")
             print("     decomposition for that control.")
@@ -1689,6 +1702,12 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             print(f"   {tl:<16}  {lvl_pt[k]:>7.0f}%  [{ll:>+5.0f},{lh:>+5.0f}]%  "
                   f"{trd_pt[k]:>7.0f}%  [{tlo:>+5.0f},{thi:>+5.0f}]%")
         pl, pt = b["pct_level_ci"], b["pct_trend_ci"]
+        # Statistical detail for investigation.md: 95% CIs on the four-factor shares.
+        _ff = "share.fourfactors_po" if label == "Playoffs" else "share.fourfactors"
+        FACTS.set(f"{_ff}.adv_ci_lo", pl[0], "{:.0f}", note=f"{label}: four-factor level share 95% CI low")
+        FACTS.set(f"{_ff}.adv_ci_hi", pl[1], "{:.0f}", note=f"{label}: four-factor level share 95% CI high")
+        FACTS.set(f"{_ff}.decline_ci_lo", pt[0], "{:.0f}", note=f"{label}: four-factor decline share 95% CI low")
+        FACTS.set(f"{_ff}.decline_ci_hi", pt[1], "{:.0f}", note=f"{label}: four-factor decline share 95% CI high")
         print(f"   {'─'*16}")
         print(f"   Channels carry {ctx['pct_level']:.0f}% of the level "
               f"(95% CI [{pl[0]:.0f}, {pl[1]:.0f}]%) and {ctx['pct_trend']:.0f}% of the "

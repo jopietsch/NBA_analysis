@@ -258,6 +258,20 @@
     "unit": null,
     "value": 64.27981820170103
   },
+  "po.level_pp": {
+    "display": "+14.1",
+    "fmt": "{:+.1f}",
+    "note": "Playoffs: HCA level above coin flip (pp)",
+    "unit": null,
+    "value": 14.09477521263669
+  },
+  "po.level_unexplained_pct": {
+    "display": "7%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: share of the HCA level left unexplained by the four channels",
+    "unit": null,
+    "value": 6.576035001300451
+  },
   "po.slope": {
     "display": "-0.23",
     "fmt": "{:+.2f}",
@@ -503,6 +517,20 @@
     "unit": null,
     "value": 60.05338174892422
   },
+  "reg.level_pp": {
+    "display": "+10.1",
+    "fmt": "{:+.1f}",
+    "note": "Regular season: HCA level above coin flip (pp)",
+    "unit": null,
+    "value": 10.139703486477678
+  },
+  "reg.level_unexplained_pct": {
+    "display": "5%",
+    "fmt": "{:.0f}%",
+    "note": "Regular season: share of the HCA level left unexplained by the four channels",
+    "unit": null,
+    "value": 5.3838266253717855
+  },
   "reg.slope": {
     "display": "-0.24",
     "fmt": "{:+.2f}",
@@ -650,6 +678,20 @@
     "unit": null,
     "value": 94.61617337462822
   },
+  "share.fourfactors.adv_ci_hi": {
+    "display": "97",
+    "fmt": "{:.0f}",
+    "note": "Regular season: four-factor level share 95% CI high",
+    "unit": null,
+    "value": 97.45351851794932
+  },
+  "share.fourfactors.adv_ci_lo": {
+    "display": "91",
+    "fmt": "{:.0f}",
+    "note": "Regular season: four-factor level share 95% CI low",
+    "unit": null,
+    "value": 91.42041985846006
+  },
   "share.fourfactors.decline": {
     "display": "96%",
     "fmt": "{:.0f}%",
@@ -657,12 +699,61 @@
     "unit": null,
     "value": 96.00921912883905
   },
+  "share.fourfactors.decline_ci_hi": {
+    "display": "107",
+    "fmt": "{:.0f}",
+    "note": "Regular season: four-factor decline share 95% CI high",
+    "unit": null,
+    "value": 106.72230473189616
+  },
+  "share.fourfactors.decline_ci_lo": {
+    "display": "87",
+    "fmt": "{:.0f}",
+    "note": "Regular season: four-factor decline share 95% CI low",
+    "unit": null,
+    "value": 87.39888839951985
+  },
+  "share.fourfactors_po.adv": {
+    "display": "93%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: all four channels' share of the HCA level",
+    "unit": null,
+    "value": 93.42396499869955
+  },
+  "share.fourfactors_po.adv_ci_hi": {
+    "display": "102",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: four-factor level share 95% CI high",
+    "unit": null,
+    "value": 101.76071858514509
+  },
+  "share.fourfactors_po.adv_ci_lo": {
+    "display": "86",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: four-factor level share 95% CI low",
+    "unit": null,
+    "value": 86.39776172000275
+  },
   "share.fourfactors_po.decline": {
     "display": "67%",
     "fmt": "{:.0f}%",
     "note": "Playoffs: all four channels' share of the decline",
     "unit": null,
     "value": 67.35431929672353
+  },
+  "share.fourfactors_po.decline_ci_hi": {
+    "display": "107",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: four-factor decline share 95% CI high",
+    "unit": null,
+    "value": 106.5111958955806
+  },
+  "share.fourfactors_po.decline_ci_lo": {
+    "display": "38",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: four-factor decline share 95% CI low",
+    "unit": null,
+    "value": 37.934408735882215
   },
   "share.rebounding.adv": {
     "display": "25%",
@@ -705,6 +796,34 @@
     "note": "Reg. season: TOV diff share of the decline",
     "unit": null,
     "value": 26.66280294372501
+  },
+  "share_po.fouls.adv": {
+    "display": "17%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: Foul diff share of the HCA level",
+    "unit": null,
+    "value": 17.30881515145754
+  },
+  "share_po.rebounding.adv": {
+    "display": "21%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: REB diff share of the HCA level",
+    "unit": null,
+    "value": 21.297121155329403
+  },
+  "share_po.shooting.adv": {
+    "display": "33%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: eFG% diff (pp) share of the HCA level",
+    "unit": null,
+    "value": 32.9604432030446
+  },
+  "share_po.turnovers.adv": {
+    "display": "22%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: TOV diff share of the HCA level",
+    "unit": null,
+    "value": 21.85758548886814
   },
   "tpa.detrend_loss": {
     "display": "42%",
