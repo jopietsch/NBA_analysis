@@ -1,0 +1,149 @@
+{
+  "decline_both_plain": {
+    "display": "10 percentage points",
+    "fmt": null,
+    "note": "both regular season and playoffs fell ~10 pp",
+    "unit": null,
+    "value": "10 percentage points"
+  },
+  "po.decline_total": {
+    "display": "-9.5 pp",
+    "fmt": "{:+.1f} pp",
+    "note": "Playoffs: modeled total decline (binomial GLM)",
+    "unit": null,
+    "value": -9.463785453269317
+  },
+  "po.hw_first": {
+    "display": "68.6%",
+    "fmt": "{:.1f}%",
+    "note": "Playoffs: trend-fit home-win% at the start (1984)",
+    "unit": null,
+    "value": 68.6158773666343
+  },
+  "po.hw_first_plain": {
+    "display": "68%",
+    "fmt": null,
+    "note": "prose rounding of hw_first",
+    "unit": null,
+    "value": "68%"
+  },
+  "po.hw_last": {
+    "display": "58.1%",
+    "fmt": "{:.1f}%",
+    "note": "Playoffs: home-win% averaged over the last 5 seasons",
+    "unit": null,
+    "value": 58.05349692442157
+  },
+  "po.hw_last_plain": {
+    "display": "58%",
+    "fmt": null,
+    "note": "prose rounding of hw_last",
+    "unit": null,
+    "value": "58%"
+  },
+  "reg.decline_total": {
+    "display": "-10.3 pp",
+    "fmt": "{:+.1f} pp",
+    "note": "Regular season: modeled total decline (binomial GLM)",
+    "unit": null,
+    "value": -10.25474417862504
+  },
+  "reg.hw_first": {
+    "display": "65.6%",
+    "fmt": "{:.1f}%",
+    "note": "Regular season: trend-fit home-win% at the start (1984)",
+    "unit": null,
+    "value": 65.59220075704708
+  },
+  "reg.hw_first_plain": {
+    "display": "65%",
+    "fmt": null,
+    "note": "prose rounding of hw_first",
+    "unit": null,
+    "value": "65%"
+  },
+  "reg.hw_last": {
+    "display": "55.3%",
+    "fmt": "{:.1f}%",
+    "note": "Regular season: home-win% averaged over the last 5 seasons",
+    "unit": null,
+    "value": 55.3251037000166
+  },
+  "reg.hw_last_plain": {
+    "display": "55%",
+    "fmt": null,
+    "note": "prose rounding of hw_last",
+    "unit": null,
+    "value": "55%"
+  },
+  "share.fouls.adv": {
+    "display": "14%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: Foul diff share of the HCA level",
+    "unit": null,
+    "value": 14.208135646765683
+  },
+  "share.fouls.decline": {
+    "display": "18%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: Foul diff share of the decline",
+    "unit": null,
+    "value": 17.955426175859028
+  },
+  "share.fourfactors.adv": {
+    "display": "95%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: all four channels' share of the HCA level",
+    "unit": null,
+    "value": 94.61617337462822
+  },
+  "share.fourfactors.decline": {
+    "display": "96%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: all four channels' share of the decline",
+    "unit": null,
+    "value": 96.00921912883905
+  },
+  "share.rebounding.adv": {
+    "display": "25%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: REB diff share of the HCA level",
+    "unit": null,
+    "value": 24.960307780417185
+  },
+  "share.rebounding.decline": {
+    "display": "30%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: REB diff share of the decline",
+    "unit": null,
+    "value": 30.235121507076116
+  },
+  "share.shooting.adv": {
+    "display": "43%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: eFG% diff (pp) share of the HCA level",
+    "unit": null,
+    "value": 42.903242970178496
+  },
+  "share.shooting.decline": {
+    "display": "21%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: eFG% diff (pp) share of the decline",
+    "unit": null,
+    "value": 21.1558685021789
+  },
+  "share.turnovers.adv": {
+    "display": "13%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: TOV diff share of the HCA level",
+    "unit": null,
+    "value": 12.544486977267148
+  },
+  "share.turnovers.decline": {
+    "display": "27%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season: TOV diff share of the decline",
+    "unit": null,
+    "value": 26.66280294372501
+  }
+}

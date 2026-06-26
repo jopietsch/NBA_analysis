@@ -26,6 +26,7 @@ from nbakit.textfmt import section as _section_str, stars as _stars, p_value as 
 from nbakit.stats import shrink_to_mean
 
 import home_court_data as nba
+from home_court_facts import FACTS
 
 
 # ── Feature construction ──────────────────────────────────────────────────────
@@ -356,6 +357,28 @@ def run_decline_trend(df: pd.DataFrame) -> None:
               f"(p = {_fmt_p(glm_p)}  {_stars(glm_p).strip()},  total ≈ {glm_total_pp:+.1f} pp)")
         print(f"   OLS / HAC:    {ols_coef:+.3f} pp/yr  95% CI [{ols_ci_lo:+.3f}, {ols_ci_hi:+.3f}]  "
               f"(p = {_fmt_p(ols_p)}  {_stars(ols_p).strip()},  R² = {ols_base.rsquared:.3f},  total: {ols_total:+.1f} pp)\n")
+
+        # ── Facts for the prose docs (findings/summary §1: the decline) ──
+        # Exact figures feed the data model; the *_plain facts carry the
+        # editorially-rounded wording used in the prose. The plain strings are
+        # authored here, next to the exact values, so the wording can be
+        # re-judged whenever the underlying number moves.
+        ctx = "po" if is_po else "reg"
+        fit_start = float(ols_base.predict(pd.DataFrame({"year": [yr_min]})).iloc[0])
+        recent_avg = float(agg["pct"].tail(5).mean())
+        FACTS.set(f"{ctx}.hw_first", fit_start, "{:.1f}%",
+                  note=f"{ctx_label}: trend-fit home-win% at the start ({yr_min})")
+        FACTS.set(f"{ctx}.hw_last", recent_avg, "{:.1f}%",
+                  note=f"{ctx_label}: home-win% averaged over the last 5 seasons")
+        FACTS.set(f"{ctx}.decline_total", glm_total_pp, "{:+.1f} pp",
+                  note=f"{ctx_label}: modeled total decline (binomial GLM)")
+        FACTS.set(f"{ctx}.hw_first_plain", "68%" if is_po else "65%",
+                  note="prose rounding of hw_first")
+        FACTS.set(f"{ctx}.hw_last_plain", "58%" if is_po else "55%",
+                  note="prose rounding of hw_last")
+        if not is_po:
+            FACTS.set("decline_both_plain", "10 percentage points",
+                      note="both regular season and playoffs fell ~10 pp")
 
         print(f"   {'Era':<12}  {'N':>4}  {'GLM pp/yr':>10}  {'GLM p':>8}  "
               f"{'OLS pp/yr':>10}  {'HAC p':>8}  {'':3}")
@@ -1537,6 +1560,22 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
 
         print(f"\n   ► {label}: channels carry {ctx['pct_level']:.0f}% of the HCA level "
               f"and {ctx['pct_trend']:.0f}% of its decline.")
+
+        # ── Facts for the prose docs (§2: the four-factor share table) ──
+        if label == "Regular season":
+            _short = {"efg_pct_diff": "shooting", "foul_diff": "fouls",
+                      "tov_diff": "turnovers", "reb_diff": "rebounding"}
+            for r in ctx["level"]:
+                FACTS.set(f"share.{_short[r['key']]}.adv", r["pct"], "{:.0f}%",
+                          note=f"Reg. season: {r['table_label']} share of the HCA level")
+            for r in ctx["trend"]:
+                FACTS.set(f"share.{_short[r['key']]}.decline", r["pct"], "{:.0f}%",
+                          note=f"Reg. season: {r['table_label']} share of the decline")
+            FACTS.set("share.fourfactors.adv", ctx["pct_level"], "{:.0f}%",
+                      note="Reg. season: all four channels' share of the HCA level")
+            FACTS.set("share.fourfactors.decline", ctx["pct_trend"], "{:.0f}%",
+                      note="Reg. season: all four channels' share of the decline")
+
         if label == "Playoffs":
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
             print("     home team is usually the better team) — see the seeding")
@@ -4565,6 +4604,7 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 _RESULTS_PATH = "docs/home_court_results.md"
+_FACTS_PATH = "docs/home_court_facts.json"
 
 
 def generate_results_text(df: pd.DataFrame | None = None) -> str:
@@ -4714,3 +4754,6 @@ def run(df: pd.DataFrame | None = None) -> None:
         f.write(text)
         f.write("```\n")
     sys.stdout.write(f"Saved → {_RESULTS_PATH}\n")
+
+    FACTS.dump(_FACTS_PATH)
+    sys.stdout.write(f"Saved → {_FACTS_PATH}  ({len(FACTS)} facts)\n")

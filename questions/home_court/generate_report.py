@@ -8,6 +8,13 @@ Run after home_court.py — all PNGs and home_court_results.md must exist.
 
 import os
 
+# Use this worktree's nbakit, not a global install (see conftest.py).
+import sys as _sys
+_d = os.path.dirname(os.path.abspath(__file__))
+while os.path.dirname(_d) != _d and not os.path.isdir(os.path.join(_d, "nbakit", "nbakit")):
+    _d = os.path.dirname(_d)
+_sys.path.insert(0, os.path.join(_d, "nbakit"))
+
 import home_court_data as nba
 from nbakit.report import ReportConfig, build_report
 
@@ -26,6 +33,12 @@ def _count_regular_season_games() -> int:
 
 
 if __name__ == "__main__":
+    # Fill prose templates (docs/*.md.j2) from the facts data model before the
+    # PDF/HTML build, so every number in the rendered docs comes from the pipeline.
+    from render_docs import render_all
+    for rendered in render_all():
+        print(f"rendered {rendered}")
+
     build_report(ReportConfig(
         findings_path="docs/home_court_findings.md",
         title="NBA Home Court Advantage",
