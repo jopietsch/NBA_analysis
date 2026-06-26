@@ -10,23 +10,29 @@ because the docs use Quarto/Pandoc brace attributes (``{#fig-x}``, ``{.collapsib
 ``{=typst}``) that would collide with Jinja's ``{{``/``{%``/``{#`` syntax.
 """
 import glob
+import json
 import os
 
 import jinja2
-
-from home_court_facts import load_displays
 
 DOCS_DIR = "docs"
 FACTS_JSON = "docs/home_court_facts.json"
 
 
 def _make_env(facts_path: str = FACTS_JSON) -> jinja2.Environment:
-    displays = load_displays(facts_path)
+    with open(facts_path) as fh:
+        records = json.load(fh)
 
-    def f(name: str) -> str:
-        if name not in displays:
+    def f(name: str, fmt: str | None = None) -> str:
+        """Display string for a fact. Pass `fmt` (e.g. "{:.2f}") to re-format the
+        raw numeric value at a different precision than the fact's default, so a
+        denser doc can reuse a fact at higher precision without a duplicate."""
+        if name not in records:
             raise KeyError(f"unknown fact {name!r} referenced in template")
-        return displays[name]
+        rec = records[name]
+        if fmt is not None and isinstance(rec["value"], (int, float)):
+            return fmt.format(rec["value"])
+        return rec["display"]
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(DOCS_DIR),
