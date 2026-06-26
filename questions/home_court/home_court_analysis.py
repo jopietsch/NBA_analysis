@@ -582,6 +582,13 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
         counts[label] = (wins, n)
         print(f"   {label:<10}  {n:>8,}  {100.0 * wins / n:>10.1f}%")
 
+    # Fact for the prose (§5): the raw playoff home-win drop across the 2014
+    # format change (2003-13 period vs 2014-26 period).
+    if {"2003–13", "2014–26"} <= counts.keys():
+        (w3, n3), (w4, n4) = counts["2003–13"], counts["2014–26"]
+        FACTS.set("format.drop_2014", 100.0 * (w3 / n3 - w4 / n4), "{:.0f}",
+                  note="Playoff home win % drop, 2003–13 to 2014–26 format period (pp)")
+
     print(f"\n   Consecutive periods — two-proportion z-tests:")
     avail = [lbl for lbl, *_ in nba.PLAYOFF_FORMAT_PERIODS if lbl in counts]
     default_ref = nba.PLAYOFF_FORMAT_PERIODS[2][0]   # "2003–13"
@@ -3113,6 +3120,10 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
                       f"(≈{pp_per_100mi:+.2f} pp per 100 mi,  "
                       f"95% CI [{ci_lo*100:+.2f}, {ci_hi*100:+.2f}]),  "
                       f"p = {pval_s}  {_stars(pval).strip()}")
+                if context_label == "Regular season":
+                    # Fact for the prose (§4): travel's negligible regular-season effect.
+                    FACTS.set("travel.per_100mi", abs(pp_per_100mi), "{:.2f}",
+                              note="Reg. home win % effect per 100 miles of visitor travel (pp)")
             except Exception:
                 pass
         print()
@@ -3160,7 +3171,7 @@ def _run_league_metric_analysis(
                   f"{'n seasons':>{COL_W}}")
         print(f"\n{header}")
         print(f"   {'-'*10} {'-'*COL_W} {'-'*COL_W} {'-'*COL_W}")
-        last_m_val = None
+        first_m_val = last_m_val = None
         for era_label, y1, y2, _ in nba.ERA_DEFS:
             era_years = [y for y in by_year["year"] if y1 <= y <= y2]
             era_rows = by_year[by_year["year"].isin(era_years)]
@@ -3168,12 +3179,17 @@ def _run_league_metric_analysis(
                 continue
             m_val = era_rows[agg_name].mean()
             m_pct = era_rows["home_pct"].mean()
+            if first_m_val is None:
+                first_m_val = m_val
             last_m_val = m_val
             print(f"   {era_label:<10} {m_val:>{COL_W}.1f}{metric_sep}{m_pct:>{COL_W}.1f}% "
                   f"{len(era_rows):>{COL_W}}")
 
-        # Fact for the prose (§2.1/§3): three-point attempts are now ~40% of shots.
+        # Facts for the prose (§2.1/§3): three-point attempts went from ~7% of
+        # shots in the 1980s to ~40% today.
         if ctx_label == "Regular season" and "3PA" in metric_header and last_m_val is not None:
+            FACTS.set("tpa.early_share", first_m_val, "{:.0f}%",
+                      note="Regular-season 3PA share of FGA, earliest era")
             FACTS.set("tpa.recent_share", last_m_val, "{:.0f}%",
                       note="Regular-season 3PA share of FGA, most recent era")
 

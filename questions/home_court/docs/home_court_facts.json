@@ -62,6 +62,13 @@
     "unit": null,
     "value": "10 percentage points"
   },
+  "format.drop_2014": {
+    "display": "7",
+    "fmt": "{:.0f}",
+    "note": "Playoff home win % drop, 2003\u201313 to 2014\u201326 format period (pp)",
+    "unit": null,
+    "value": 6.826930310031698
+  },
   "net.reg_mid2010s": {
     "display": "3",
     "fmt": "{:.0f}",
@@ -447,11 +454,25 @@
     "unit": null,
     "value": 26.66280294372501
   },
+  "tpa.early_share": {
+    "display": "7%",
+    "fmt": "{:.0f}%",
+    "note": "Regular-season 3PA share of FGA, earliest era",
+    "unit": null,
+    "value": 6.8148977106913975
+  },
   "tpa.recent_share": {
     "display": "40%",
     "fmt": "{:.0f}%",
     "note": "Regular-season 3PA share of FGA, most recent era",
     "unit": null,
     "value": 40.49458384563221
+  },
+  "travel.per_100mi": {
+    "display": "0.07",
+    "fmt": "{:.2f}",
+    "note": "Reg. home win % effect per 100 miles of visitor travel (pp)",
+    "unit": null,
+    "value": 0.0749702165960717
   }
 }
