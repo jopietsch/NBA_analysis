@@ -18,11 +18,27 @@ chart and prose can't diverge.
 ## Status (done)
 
 - `findings.md` + `summary.md`: fully converted, render byte-identical, committed.
-- 95 facts, 7 guards (all holding). `results.md` is the auto-generated source (never
-  hand-edited). `facts.json` + `guards.json` are committed.
+- **Phase 1 complete:** registered investigation.md's statistical detail end to end
+  (decline slope/CI/p/R², mediation level + four-factor CIs + per-channel decline CIs,
+  channel trends, 3PA bivariate/within-era effects + CIs, the 1994-95 fingerprint
+  (era p + event-study jumps), travel CIs, back-to-back detail, referee BH count,
+  rebounding 3PA-absorption + p + league-OREB corr, altitude effect, change-point year +
+  HPD). Every value spot-checked against the doc. **190 facts, 7 guards (all holding).**
+- `f("name", "{:.2f}")` precision override added so denser docs reuse a fact's raw value
+  at higher precision without duplicates.
+- `results.md` is the auto-generated source (never hand-edited). `facts.json` +
+  `guards.json` are committed.
 - Worktree `nbakit` shim in place (`conftest.py` per project + entry-script shims), so
   each git worktree imports its own `nbakit` — this is what makes worktree-per-doc
   parallelism safe.
+
+## Known Phase-2 reconciliations (facts now correct; docs to update on templating)
+
+- `po.slope` renders -0.23 (the -0.225 GLM value); investigation.md currently says 0.22.
+- p-value display: some facts render `= 0.004` where the doc wrote `< 0.01`; pick one
+  convention when templating.
+- altitude `27/26` already corrected to `28/27` and detrend `40% -> 42%` in findings
+  (the system catching stale figures); investigation may have parallel figures to refresh.
 
 ## Tooling to build (DON'T FORGET) — do before/with Phase 1
 
@@ -49,14 +65,14 @@ already converted:
 
 ## Phasing
 
-- **Phase 1 (serial):** register the statistical-detail facts (95% CIs, p-values, R²,
-  coefficients, level pp) next to their existing prints in `analysis.py`. Shared file +
-  shared `facts.json`, so this is one serial pass, committed before Phase 2. ~30-50
-  facts, all already computed and printed to `results.md`.
-- **Phase 2 (parallel):** template each doc independently. A doc only edits its own
-  `*.md.j2` and renders + byte-identical-diffs against its own committed `.md` — no
+- **Phase 1 (serial): DONE.** Registered the statistical-detail facts (95% CIs,
+  p-values, R², coefficients, level pp) next to their existing prints in `analysis.py`,
+  driven by investigation.md (the densest stats doc). Committed.
+- **Phase 2 (parallel): READY.** Template each doc independently. A doc only edits its
+  own `*.md.j2` and renders + byte-identical-diffs against its own committed `.md` — no
   shared-file edits, so near-zero conflict. Run as one agent per doc, or one worktree
-  per doc (the shim makes this safe). **Phase 2 cannot start until Phase 1 facts exist.**
+  per doc (the shim makes this safe). Start with `investigation.md` (its facts are all
+  registered); explainer/tutorial reuse most of them and add a few of their own.
 
 ## Intentionally left literal (claims policy)
 
