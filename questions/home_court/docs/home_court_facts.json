@@ -587,6 +587,13 @@
     "unit": null,
     "value": 26.66280294372501
   },
+  "tpa.detrend_loss": {
+    "display": "42%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. 3PA-HCA correlation strength lost after removing the shared year trend",
+    "unit": null,
+    "value": 41.62557657641268
+  },
   "tpa.early_share": {
     "display": "7%",
     "fmt": "{:.0f}%",

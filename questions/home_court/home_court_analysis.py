@@ -3337,6 +3337,10 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
     print(f"   Raw Pearson r (season level):        r = {r_raw:+.3f}")
     print(f"   Partial r (year-detrended residuals): r = {r_resid:+.3f}  p = {_fmt_p(p_resid)}  {_stars(p_resid)}")
     shrinkage = (abs(r_raw) - abs(r_resid)) / abs(r_raw) * 100 if r_raw != 0 else 0
+    # Fact for the prose (§3/App C): how much of the 3PA-HCA correlation is just
+    # the shared long-run drift (lost when the year trend is removed).
+    FACTS.set("tpa.detrend_loss", shrinkage, "{:.0f}%",
+              note="Reg. 3PA-HCA correlation strength lost after removing the shared year trend")
     if abs(r_resid) < 0.20:
         print(f"   ► Residual r collapsed to ~0 (raw: {r_raw:+.3f} → partial: {r_resid:+.3f}) —")
         print(f"     the raw correlation is entirely driven by the shared secular trend.\n")
