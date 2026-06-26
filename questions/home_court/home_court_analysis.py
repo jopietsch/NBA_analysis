@@ -721,6 +721,11 @@ def run_era_analysis(df: pd.DataFrame) -> None:
                      .replace("year", "year trend (per yr)"))
             print(f"   {label:<28}  {coef:+8.3f}  {_pp(coef, p_bar):+6.1f}  "
                   f"{_fmt_p(pval):>8}  {_stars(pval)}")
+            # Fact for the prose (§1/§4/App C): the one-time 1994-95 drop is the
+            # regular-season 1995–01 era level shift in this model.
+            if is_po == 0 and "1995–01" in name:
+                FACTS.set("era.drop_1995", abs(_pp(coef, p_bar)), "{:.1f}",
+                          note="Rule-change era model: 1994-95 (hand-checking) reg-season level shift (pp)")
 
         lr    = 2.0 * (m_era.llf - m_year.llf)
         dfree = int(m_era.df_model - m_year.df_model)
@@ -2037,6 +2042,14 @@ def run_tracking_rebound_analysis(seasons: list, stats: dict) -> None:
         coef, pval = m.params["year"], m.pvalues["year"]
         print(f"   {label:<{label_w}}{len(xy):>11}{xy['v'].mean():>+10.3f}"
               f"{coef:>+9.3f}{_stars(pval)}{_fmt_p(pval):>9}")
+
+    # Guard for the prose (§3/Appendix B): the tracking offensive-rebound
+    # conversion edge started above a point in the mid-2010s and is under 0.2 today.
+    _oce = [v for v in stats.get("oreb_chance_pct_edge", []) if v == v]
+    if len(_oce) >= 2:
+        FACTS.guard("tracking_oreb_shrank", _oce[0] >= 1.0 and _oce[-1] < 0.3,
+                    claim="the tracking offensive-rebound edge fell from ~1.2-1.3 in the mid-2010s to under 0.2 today",
+                    value=f"{_oce[0]:.1f} -> {_oce[-1]:.1f}")
 
     print()
     print("   ► The home edge is small and flat-to-declining across the tracking era —")

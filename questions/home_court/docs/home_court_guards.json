@@ -24,6 +24,11 @@
     "ok": true,
     "value": "foul 51% / turnover 54% absorbed by 3PA"
   },
+  "tracking_oreb_shrank": {
+    "claim": "the tracking offensive-rebound edge fell from ~1.2-1.3 in the mid-2010s to under 0.2 today",
+    "ok": true,
+    "value": "1.5 -> -0.5"
+  },
   "weaker_matched_stronger": {
     "claim": "the weaker team at home matched or exceeded the stronger team's home win rate",
     "ok": true,

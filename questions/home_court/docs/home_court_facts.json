@@ -90,6 +90,13 @@
     "unit": null,
     "value": "10 percentage points"
   },
+  "era.drop_1995": {
+    "display": "2.6",
+    "fmt": "{:.1f}",
+    "note": "Rule-change era model: 1994-95 (hand-checking) reg-season level shift (pp)",
+    "unit": null,
+    "value": 2.595444885560284
+  },
   "format.drop_2014": {
     "display": "7",
     "fmt": "{:.0f}",
