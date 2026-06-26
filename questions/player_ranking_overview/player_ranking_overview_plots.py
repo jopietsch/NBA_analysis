@@ -513,6 +513,8 @@ def _score_fmt(val: float, sys: str) -> str:
         return f"{val:.3f}"
     if sys == "ALL_NBA_PTS":
         return f"{val:.0f}"
+    if sys in ("CONSENSUS", "WINS_PRED"):
+        return f"{val:.2f}"
     return f"{val:.1f}"
 
 
@@ -533,10 +535,11 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
         return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
 
     GROUPS = [
-        ("Rate / Efficiency", ["GAME_SCORE", "PER", "WS48"],  "#2176ae"),
-        ("Accumulated Value", ["WS", "BPM", "VORP"],          "#2e9e6e"),
-        ("Directional",       ["OBPM", "DBPM"],               "#8c5e99"),
-        ("Reputation",        ["MVP_SHARE", "ALL_NBA_PTS"],   "#c0392b"),
+        ("Rate / Efficiency", ["GAME_SCORE", "PER", "WS48"],       "#2176ae"),
+        ("Accumulated Value", ["WS", "BPM", "VORP"],               "#2e9e6e"),
+        ("Directional",       ["OBPM", "DBPM"],                    "#8c5e99"),
+        ("Reputation",        ["MVP_SHARE", "ALL_NBA_PTS"],        "#c0392b"),
+        ("Uber Ratings",      ["CONSENSUS", "WINS_PRED"],          "#5d6d7e"),
     ]
 
     # Keep only groups that have at least one present system; add ungrouped at end

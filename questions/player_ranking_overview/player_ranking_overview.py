@@ -66,12 +66,15 @@ def main() -> None:
     plot_gini_by_system(gini_scores)
     model_systems = [s for s in present if s not in ("MVP_SHARE", "ALL_NBA_PTS")]
     plot_all_systems_distributions(qual, model_systems)
-    plot_top20_table(qual, present)
 
-    # Uber ratings for comparison chart
+    # Compute uber ratings before top-20 table so they appear as a row there
     qual["CONSENSUS"] = _build_consensus(qual, present)
     qual["WINS_PRED"] = _build_wins_predictive(qual, present)
-    if qual["CONSENSUS"].notna().sum() > 0 and qual["WINS_PRED"].notna().sum() > 0:
+    uber_present = [s for s in ("CONSENSUS", "WINS_PRED")
+                    if qual[s].notna().sum() >= 20]
+    plot_top20_table(qual, present + uber_present)
+
+    if uber_present:
         from player_ranking_overview_plots import plot_uber_rating_comparison
         plot_uber_rating_comparison(qual)
 
