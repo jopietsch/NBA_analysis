@@ -1232,15 +1232,31 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
     print("   Positive fta_diff = home team attempted more free throws.")
     print("   Trend = slope of trend line (change per season year); pp = percentage points.\n")
 
-    # Facts for the prose (§2): the regular-season home free-throw-attempt gap,
-    # earliest era vs most recent.
-    _reg = df[df["is_playoff"] == 0]
-    _fta_early = _reg[(_reg["year"] >= nba.ERA_DEFS[0][1]) & (_reg["year"] <= nba.ERA_DEFS[0][2])]["fta_diff"].mean()
-    _fta_today = _reg[(_reg["year"] >= nba.ERA_DEFS[-1][1]) & (_reg["year"] <= nba.ERA_DEFS[-1][2])]["fta_diff"].mean()
-    FACTS.set("ref.fta_early", float(_fta_early), "{:.0f}",
-              note="Reg. season FTA gap (home minus away), earliest era")
-    FACTS.set("ref.fta_today", float(_fta_today), "{:.1f}",
-              note="Reg. season FTA gap (home minus away), most recent era")
+    # Facts for the prose (§2/§3): the home foul and free-throw-attempt gaps,
+    # earliest era vs most recent, regular season and playoffs.
+    _e0, _eN = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
+
+    def _era_mean(_s, col, era):
+        return float(_s[(_s["year"] >= era[1]) & (_s["year"] <= era[2])][col].mean())
+
+    for _ctx, _sub in [("reg", df[df["is_playoff"] == 0]), ("po", df[df["is_playoff"] == 1])]:
+        _foul_e = abs(_era_mean(_sub, "foul_diff", _e0))   # fouls the home team avoids
+        _foul_t = abs(_era_mean(_sub, "foul_diff", _eN))
+        FACTS.set(f"ref.{_ctx}_foul_early", _foul_e, "{:.1f}", note=f"{_ctx}: home foul gap, earliest era")
+        FACTS.set(f"ref.{_ctx}_foul_today", _foul_t, "{:.1f}", note=f"{_ctx}: home foul gap, recent era")
+        FACTS.set(f"ref.{_ctx}_foul_reduction", 100 * (1 - _foul_t / _foul_e), "{:.0f}%",
+                  note=f"{_ctx}: home foul gap reduction")
+        FACTS.set(f"ref.{_ctx}_fta_early", _era_mean(_sub, "fta_diff", _e0), "{:.1f}",
+                  note=f"{_ctx}: home FTA gap, earliest era")
+        FACTS.set(f"ref.{_ctx}_fta_today", _era_mean(_sub, "fta_diff", _eN), "{:.1f}",
+                  note=f"{_ctx}: home FTA gap, recent era")
+    # The summary cites the regular-season FTA gap with coarser rounding; keep those names.
+    FACTS.set("ref.fta_early", _era_mean(df[df["is_playoff"] == 0], "fta_diff", _e0), "{:.0f}",
+              note="Reg. FTA gap, earliest era (rounded to whole)")
+    FACTS.set("ref.fta_today", _era_mean(df[df["is_playoff"] == 0], "fta_diff", _eN), "{:.1f}",
+              note="Reg. FTA gap, recent era")
+    FACTS.set("ref.reg_foul_today_plain", "a quarter of a foul",
+              note="prose phrasing of the reg-season foul gap today (~0.25)")
 
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
@@ -3596,6 +3612,11 @@ def run_referee_analysis(bias_stats: list) -> None:
 
     print(f"   {n_total} officials with ≥50 playoff games")
     print(f"   {n_negative}/{n_total} ({100*n_negative/n_total:.0f}%) show negative mean foul diff (home-favoring)")
+    # Facts for the prose (§2/§6/Appendix B): N of M playoff officials call fewer
+    # fouls on the home team.
+    FACTS.set("ref.n_biased", n_negative, "{:d}",
+              note="Playoff officials (≥50 games) with a home-favoring foul gap")
+    FACTS.set("ref.n_total", n_total, "{:d}", note="Playoff officials with ≥50 games on record")
     print(f"   Individually significant (p<0.05, real t-test):    {n_sig_raw}/{n_total}")
     print(f"   Survive Benjamini-Hochberg correction (FDR 5%):    {n_sig_bh}/{n_total}")
     print(f"   League mean foul_diff across officials: {league_mean:+.3f} fouls/game")

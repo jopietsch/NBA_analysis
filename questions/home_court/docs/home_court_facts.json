@@ -100,14 +100,105 @@
   "ref.fta_early": {
     "display": "2",
     "fmt": "{:.0f}",
-    "note": "Reg. season FTA gap (home minus away), earliest era",
+    "note": "Reg. FTA gap, earliest era (rounded to whole)",
     "unit": null,
     "value": 1.9678935698447892
   },
   "ref.fta_today": {
     "display": "0.5",
     "fmt": "{:.1f}",
-    "note": "Reg. season FTA gap (home minus away), most recent era",
+    "note": "Reg. FTA gap, recent era",
+    "unit": null,
+    "value": 0.4623217922606925
+  },
+  "ref.n_biased": {
+    "display": "45",
+    "fmt": "{:d}",
+    "note": "Playoff officials (\u226550 games) with a home-favoring foul gap",
+    "unit": null,
+    "value": 45
+  },
+  "ref.n_total": {
+    "display": "47",
+    "fmt": "{:d}",
+    "note": "Playoff officials with \u226550 games on record",
+    "unit": null,
+    "value": 47
+  },
+  "ref.po_foul_early": {
+    "display": "1.6",
+    "fmt": "{:.1f}",
+    "note": "po: home foul gap, earliest era",
+    "unit": null,
+    "value": 1.5755667506297228
+  },
+  "ref.po_foul_reduction": {
+    "display": "57%",
+    "fmt": "{:.0f}%",
+    "note": "po: home foul gap reduction",
+    "unit": null,
+    "value": 56.80303518379326
+  },
+  "ref.po_foul_today": {
+    "display": "0.7",
+    "fmt": "{:.1f}",
+    "note": "po: home foul gap, recent era",
+    "unit": null,
+    "value": 0.6805970149253732
+  },
+  "ref.po_fta_early": {
+    "display": "2.4",
+    "fmt": "{:.1f}",
+    "note": "po: home FTA gap, earliest era",
+    "unit": null,
+    "value": 2.353904282115869
+  },
+  "ref.po_fta_today": {
+    "display": "1.1",
+    "fmt": "{:.1f}",
+    "note": "po: home FTA gap, recent era",
+    "unit": null,
+    "value": 1.0865671641791044
+  },
+  "ref.reg_foul_early": {
+    "display": "1.2",
+    "fmt": "{:.1f}",
+    "note": "reg: home foul gap, earliest era",
+    "unit": null,
+    "value": 1.2289135254988914
+  },
+  "ref.reg_foul_reduction": {
+    "display": "80%",
+    "fmt": "{:.0f}%",
+    "note": "reg: home foul gap reduction",
+    "unit": null,
+    "value": 80.02971647860096
+  },
+  "ref.reg_foul_today": {
+    "display": "0.2",
+    "fmt": "{:.1f}",
+    "note": "reg: home foul gap, recent era",
+    "unit": null,
+    "value": 0.2454175152749491
+  },
+  "ref.reg_foul_today_plain": {
+    "display": "a quarter of a foul",
+    "fmt": null,
+    "note": "prose phrasing of the reg-season foul gap today (~0.25)",
+    "unit": null,
+    "value": "a quarter of a foul"
+  },
+  "ref.reg_fta_early": {
+    "display": "2.0",
+    "fmt": "{:.1f}",
+    "note": "reg: home FTA gap, earliest era",
+    "unit": null,
+    "value": 1.9678935698447892
+  },
+  "ref.reg_fta_today": {
+    "display": "0.5",
+    "fmt": "{:.1f}",
+    "note": "reg: home FTA gap, recent era",
     "unit": null,
     "value": 0.4623217922606925
   },
