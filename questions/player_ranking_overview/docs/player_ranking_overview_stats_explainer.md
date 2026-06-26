@@ -143,6 +143,63 @@ A standard measure of asymmetry. Positive skewness means the right tail (high va
 
 ---
 
+## Bayesian foundations of impact metrics
+
+### Prior, likelihood, and posterior
+
+All RAPM-based metrics share a structure that is Bayesian in form. Define the three components:
+
+- **Prior:** the box-score estimate of a player's value per 100 possessions, built from statistics that stabilize quickly over a season (true shooting percentage, assist rate, usage, rebound rates, steals, blocks). This is what EPM calls the Statistical Plus/Minus (SPM) prior; what LEBRON inherits from PIPM coefficients; and what BPM 2.0 itself is when used as a prior inside another system.
+- **Likelihood:** the on/off stint data. Each stint is a window of possessions during which a specific lineup was on the floor, producing an observed point differential. Across a full season these stints are the evidence that updates the prior.
+- **Posterior:** the RAPM estimate that blends prior and likelihood, weighted by how much evidence exists. Heavy-minute players in stable lineups get posteriors that move substantially toward what the data shows. Bench players with few possessions get posteriors that remain close to the prior.
+
+### Ridge regression as MAP estimation
+
+Ridge regression is RAPM's estimator. It minimizes:
+
+```
+Σ (observed_diff − X β)² + λ Σ βᵢ²
+```
+
+where X is the design matrix of stint-level player indicators (one column per player, one row per stint), β is the vector of player values, and λ is the regularization penalty. This is identical to maximum a posteriori (MAP) estimation under a Bayesian model with two assumptions: (1) observed point differentials are Gaussian around the true lineup value, and (2) each player's true value βᵢ is drawn from a zero-mean Gaussian with variance σ²/λ.
+
+The prior here is zero-mean — in the absence of data, every player is assumed to be average. EPM improves on this by using a non-zero prior (the SPM estimate), making the prior informative rather than diffuse. Larger λ means stronger shrinkage toward the prior; smaller λ means more trust in the data. Calibrating λ well — so that bench players with few possessions are not estimated wildly from noise — is where most of the engineering work in these systems lives.
+
+### Sequential updating: the Kalman filter
+
+DARKO and DRIP weight recent games more heavily than early-season games. The principled structure for this is a Kalman filter, the optimal Bayesian sequential estimator for linear-Gaussian systems.
+
+At each time step (game played), the filter runs two steps:
+
+1. **Predict:** project the current estimate forward using a process model that allows for some change in true talent since the last game. This is where the decay parameter lives — how fast the filter forgets old games.
+2. **Update:** incorporate the new game's lineup data, weighting the new observation by the ratio of process noise (how much talent changes between games) to observation noise (how noisy a single game's lineup data is).
+
+The filter maintains both a posterior mean (best current estimate of talent) and a posterior variance (uncertainty around that estimate). The daily-updated ratings that DARKO and DRIP publish are these posterior means. Because the filter is explicitly sequential, a hot streak or injury mid-season shifts the estimate in proportion to how informative the recent games are relative to the accumulated prior.
+
+### What is missing: posterior uncertainty intervals
+
+Every published metric reports a posterior mean without a posterior variance. This gap matters in practice.
+
+For a Bayesian ridge regression, the posterior variance over player values has a closed-form expression:
+
+```
+Var(β) = σ² (XᵀX + λI)⁻¹
+```
+
+where X is the stint design matrix, σ² is the residual variance of the regression, and λ is the regularization penalty. Players who appear in many stints (large contribution to XᵀX) get narrower uncertainty intervals. A bench player with 400 possessions might have an interval of ±3 points per 100; a starter with 3,000 possessions in stable lineups might be ±1.
+
+Bootstrap resampling provides an alternative: draw the season's stints with replacement and re-run the ridge regression many times; the spread of estimates is the empirical uncertainty due to sampling variance. This does not assume Gaussianity and is valid for non-linear extensions, but is much more expensive computationally.
+
+Both methods would show that most apparent disagreements between systems about mid-tier player rankings fall within the single-system uncertainty bands. The metrics agree more than the published rankings suggest, because the rankings do not show how wide the error bars are.
+
+### Bayesian model averaging for the consensus
+
+The consensus rating in this project uses equal-weighted z-scores. A Bayesian alternative is Bayesian model averaging (BMA): treat each system as a model of the latent true player value, assign each model a weight proportional to its evidence (how well it explains the data), and compute the posterior over player value as the weighted average of the per-model posteriors.
+
+Without published posterior variances from the third-party systems, a tractable proxy weights each system inversely by its disagreement with the others. The unique R² values computed in the cross-system comparison — how much of each system's variance is not explained by the other systems — approximate this disagreement. A system with low unique R² is either very consistent with the others (high reliability) or measuring the same thing (redundant). Distinguishing those two interpretations requires a retrodiction test: a system that is consistent with the others AND predicts game outcomes well is reliable; a system that is merely consistent but does not predict is just echoing shared biases.
+
+---
+
 ## Data pipeline
 
 All recomputed ratings are computed in `nbakit/ratings.py` from totals fetched via `nbakit/data.py` (nba_api endpoints: `LeagueDashPlayerStats`, `LeagueDashTeamStats`, `LeagueStandingsV3`). Third-party results are loaded from cached CSVs and joined via the player crosswalk in `nbakit/player_crosswalk.py`. The unified table is assembled in `player_ranking_overview_data.py` and cached to `cache/unified_ratings_{season}.csv`.
