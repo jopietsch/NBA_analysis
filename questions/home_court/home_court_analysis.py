@@ -1655,6 +1655,8 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             for r in ctx["trend"]:
                 FACTS.set(f"share.{_short[r['key']]}.decline", r["pct"], "{:.0f}%",
                           note=f"Reg. season: {r['table_label']} share of the decline")
+                FACTS.set(f"trend.{_short[r['key']]}", r["gamma"], "{:+.3f}",
+                          note=f"Reg: {r['table_label']} home-minus-away trend per year")
             FACTS.set("share.fourfactors.adv", ctx["pct_level"], "{:.0f}%",
                       note="Reg. season: all four channels' share of the HCA level")
             FACTS.set("share.fourfactors.decline", ctx["pct_trend"], "{:.0f}%",
@@ -1673,6 +1675,11 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
             for r in ctx["level"]:
                 FACTS.set(f"share_po.{_shortp[r['key']]}.adv", r["pct"], "{:.0f}%",
                           note=f"Playoffs: {r['table_label']} share of the HCA level")
+            for r in ctx["trend"]:
+                FACTS.set(f"share_po.{_shortp[r['key']]}.decline", r["pct"], "{:.0f}%",
+                          note=f"Playoffs: {r['table_label']} share of the decline")
+                FACTS.set(f"trend_po.{_shortp[r['key']]}", r["gamma"], "{:+.3f}",
+                          note=f"Playoffs: {r['table_label']} home-minus-away trend per year")
             FACTS.set("share.fourfactors_po.adv", ctx["pct_level"], "{:.0f}%",
                       note="Playoffs: all four channels' share of the HCA level")
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
@@ -1995,6 +2002,26 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
         FACTS.set("reb.oreb_away_early", _a[0], "{:.0f}%", note="Away OREB conversion rate, first season")
         FACTS.set("reb.oreb_home_drop", _h[0] - _h[-1], "{:.0f}", note="Home OREB rate drop, first to last season (pp)")
         FACTS.set("reb.oreb_away_drop", _a[0] - _a[-1], "{:.0f}", note="Away OREB rate drop, first to last season (pp)")
+
+    # Statistical detail for investigation.md: the pace-free share-edge trend + p,
+    # and the early/recent share-edge level, regular season and playoffs.
+    for _rc, _rsub in [("reg", df[df["is_playoff"] == 0]), ("po", df[df["is_playoff"] == 1])]:
+        _se = _rsub[["year", "reb_share_edge"]].dropna()
+        if len(_se) >= 10:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                _sm = smf.ols("reb_share_edge ~ year", data=_se).fit()
+            FACTS.set(f"{_rc}.reb_share_trend", _sm.params["year"], "{:+.3f}",
+                      note=f"{_rc}: pace-free rebound share-edge trend per year")
+            _sp = _sm.pvalues["year"]
+            FACTS.set(f"{_rc}.reb_share_p", "< 0.001" if _sp < 0.001 else f"= {_sp:.3f}",
+                      note=f"{_rc}: rebound share-edge trend p-value (display)")
+        _e0r, _eNr = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
+        _em = lambda era: float(_rsub[(_rsub["year"] >= era[1]) & (_rsub["year"] <= era[2])]["reb_share_edge"].mean())
+        FACTS.set(f"{_rc}.reb_share_early", _em(_e0r), "{:+.2f}",
+                  note=f"{_rc}: rebound share-edge, earliest era")
+        FACTS.set(f"{_rc}.reb_share_today", _em(_eNr), "{:+.2f}",
+                  note=f"{_rc}: rebound share-edge, recent era")
 
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),

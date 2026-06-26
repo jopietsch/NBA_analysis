@@ -272,6 +272,34 @@
     "unit": null,
     "value": 6.576035001300451
   },
+  "po.reb_share_early": {
+    "display": "+2.74",
+    "fmt": "{:+.2f}",
+    "note": "po: rebound share-edge, earliest era",
+    "unit": null,
+    "value": 2.7360522524410613
+  },
+  "po.reb_share_p": {
+    "display": "= 0.004",
+    "fmt": null,
+    "note": "po: rebound share-edge trend p-value (display)",
+    "unit": null,
+    "value": "= 0.004"
+  },
+  "po.reb_share_today": {
+    "display": "+0.70",
+    "fmt": "{:+.2f}",
+    "note": "po: rebound share-edge, recent era",
+    "unit": null,
+    "value": 0.7029073091184841
+  },
+  "po.reb_share_trend": {
+    "display": "-0.046",
+    "fmt": "{:+.3f}",
+    "note": "po: pace-free rebound share-edge trend per year",
+    "unit": null,
+    "value": -0.04557033740844524
+  },
   "po.slope": {
     "display": "-0.23",
     "fmt": "{:+.2f}",
@@ -530,6 +558,34 @@
     "note": "Regular season: share of the HCA level left unexplained by the four channels",
     "unit": null,
     "value": 5.3838266253717855
+  },
+  "reg.reb_share_early": {
+    "display": "+2.14",
+    "fmt": "{:+.2f}",
+    "note": "reg: rebound share-edge, earliest era",
+    "unit": null,
+    "value": 2.1434279164004386
+  },
+  "reg.reb_share_p": {
+    "display": "< 0.001",
+    "fmt": null,
+    "note": "reg: rebound share-edge trend p-value (display)",
+    "unit": null,
+    "value": "< 0.001"
+  },
+  "reg.reb_share_today": {
+    "display": "+0.21",
+    "fmt": "{:+.2f}",
+    "note": "reg: rebound share-edge, recent era",
+    "unit": null,
+    "value": 0.21045918229847987
+  },
+  "reg.reb_share_trend": {
+    "display": "-0.052",
+    "fmt": "{:+.3f}",
+    "note": "reg: pace-free rebound share-edge trend per year",
+    "unit": null,
+    "value": -0.05210638134451215
   },
   "reg.slope": {
     "display": "-0.24",
@@ -860,6 +916,13 @@
     "unit": null,
     "value": 17.30881515145754
   },
+  "share_po.fouls.decline": {
+    "display": "18%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: Foul diff share of the decline",
+    "unit": null,
+    "value": 17.626994195241664
+  },
   "share_po.fouls.decline_ci_hi": {
     "display": "41",
     "fmt": "{:.0f}",
@@ -880,6 +943,13 @@
     "note": "Playoffs: REB diff share of the HCA level",
     "unit": null,
     "value": 21.297121155329403
+  },
+  "share_po.rebounding.decline": {
+    "display": "28%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: REB diff share of the decline",
+    "unit": null,
+    "value": 27.676180257778544
   },
   "share_po.rebounding.decline_ci_hi": {
     "display": "55",
@@ -902,6 +972,13 @@
     "unit": null,
     "value": 32.9604432030446
   },
+  "share_po.shooting.decline": {
+    "display": "12%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: eFG% diff (pp) share of the decline",
+    "unit": null,
+    "value": 12.347131761380513
+  },
   "share_po.shooting.decline_ci_hi": {
     "display": "38",
     "fmt": "{:.0f}",
@@ -922,6 +999,13 @@
     "note": "Playoffs: TOV diff share of the HCA level",
     "unit": null,
     "value": 21.85758548886814
+  },
+  "share_po.turnovers.decline": {
+    "display": "10%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: TOV diff share of the decline",
+    "unit": null,
+    "value": 9.704013082322806
   },
   "share_po.turnovers.decline_ci_hi": {
     "display": "39",
@@ -964,6 +1048,62 @@
     "note": "Reg. home win % effect per 100 miles of visitor travel (pp)",
     "unit": null,
     "value": 0.0749702165960717
+  },
+  "trend.fouls": {
+    "display": "+0.022",
+    "fmt": "{:+.3f}",
+    "note": "Reg: Foul diff home-minus-away trend per year",
+    "unit": null,
+    "value": 0.02215040038961857
+  },
+  "trend.rebounding": {
+    "display": "-0.044",
+    "fmt": "{:+.3f}",
+    "note": "Reg: REB diff home-minus-away trend per year",
+    "unit": null,
+    "value": -0.04433661639181967
+  },
+  "trend.shooting": {
+    "display": "-0.015",
+    "fmt": "{:+.3f}",
+    "note": "Reg: eFG% diff (pp) home-minus-away trend per year",
+    "unit": null,
+    "value": -0.015091174670611307
+  },
+  "trend.turnovers": {
+    "display": "+0.019",
+    "fmt": "{:+.3f}",
+    "note": "Reg: TOV diff home-minus-away trend per year",
+    "unit": null,
+    "value": 0.01926122664520689
+  },
+  "trend_po.fouls": {
+    "display": "+0.020",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: Foul diff home-minus-away trend per year",
+    "unit": null,
+    "value": 0.020412996941935012
+  },
+  "trend_po.rebounding": {
+    "display": "-0.037",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: REB diff home-minus-away trend per year",
+    "unit": null,
+    "value": -0.0374065719909799
+  },
+  "trend_po.shooting": {
+    "display": "-0.009",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: eFG% diff (pp) home-minus-away trend per year",
+    "unit": null,
+    "value": -0.008722495886194585
+  },
+  "trend_po.turnovers": {
+    "display": "+0.007",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: TOV diff home-minus-away trend per year",
+    "unit": null,
+    "value": 0.006560634217434065
   },
   "zone.paint_early": {
     "display": "1.3",
