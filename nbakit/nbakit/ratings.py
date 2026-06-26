@@ -219,42 +219,44 @@ def win_shares(player_df: pd.DataFrame, team_df: pd.DataFrame,
         min_list.append(mp)
 
         # ── Offensive Win Shares ──────────────────────────────────────────────
-        # Points produced
-        q_ast = (row["AST"] / row["FGM"]) if row["FGM"] > 0 else 0
-        team_ast_rate = (tval(tid, "AST") / tval(tid, "FGM", 1))
-        pts_prod = (
-            2 * (row["FGM"] + 0.5 * row["FG3M"])
-            * (1 - 0.5 * (q_ast / 2 if q_ast > 0 else team_ast_rate))
-        )
-        pts_prod += 0.5 * (row["FTM"] * (2 - (1 / 3) * (q_ast if q_ast > 0 else team_ast_rate)))
-        pts_prod += 2 * row["OREB"] * vop * (1 - (lg_oreb / (lg_fga - lg_oreb + lg_tov + 0.44 * lg_fta)))
+        # qAST is the fraction of the player's FGMs that were assisted by a teammate.
+        # We use the team assist rate as a proxy (team_AST / team_FGM), which is
+        # better than AST/FGM: the latter measures the player's own playmaking, not
+        # how many of their shots were set up by someone else.
+        team_ast_rate = tval(tid, "AST") / max(tval(tid, "FGM"), 1)
 
-        # Missed FG credit deducted
-        # Scoring possessions
-        scoring_poss = (
-            row["FGM"] * (1 - 0.5 * (q_ast / 2 if q_ast > 0 else team_ast_rate))
-            + 0.5 * row["FTM"] * (2 - (1 / 3) * (q_ast if q_ast > 0 else team_ast_rate))
-        )
-        # Plays = scoring_poss + FG missed * (1-ORB%) + FT_possessions + TO
+        # PProd_FG: scoring credit from own FGs. Assisted makes give half-credit to
+        # the assister, so the scorer retains (1 - 0.5*qAST) of the value.
+        pprod_fg = 2 * (row["FGM"] + 0.5 * row["FG3M"]) * (1 - 0.5 * team_ast_rate)
+
+        # PProd_AST: assist credit — assister earns half the point value per basket.
+        avg_pts_per_fgm = (2 * tval(tid, "FGM") + tval(tid, "FG3M")) / max(tval(tid, "FGM"), 1)
+        pprod_ast = row["AST"] * avg_pts_per_fgm * 0.5
+
+        # PProd_ORB: credit for offensive rebounds
+        orb_factor = 1 - (lg_oreb / (lg_fga - lg_oreb + lg_tov + 0.44 * lg_fta))
+        pprod_orb = 2 * row["OREB"] * vop * orb_factor
+
+        # PProd_FT: made free throws are worth 1 point each
+        pprod_ft = row["FTM"]
+
+        pts_prod = pprod_fg + pprod_ast + pprod_orb + pprod_ft
+
+        # Scoring possessions — FG plays only; FTs are accounted for separately via ft_poss.
+        scoring_poss = row["FGM"] * (1 - 0.5 * team_ast_rate)
+
+        # Plays = FG scoring possessions + missed FGs lost to opponent + FT trips + turnovers
         fg_missed = row["FGA"] - row["FGM"]
         team_orb_pct = tval(tid, "OREB") / max(tval(tid, "OREB") + tval(tid, "DREB"), 1)
-        ft_poss = row["FTA"] * 0.4  # approximately 40% of FTA result in missed both FTs
+        ft_poss = 0.44 * row["FTA"]  # BBR standard: 0.44 * FTA
         plays = scoring_poss + fg_missed * (1 - team_orb_pct) + ft_poss + row["TOV"]
 
         # Marginal offense
         team_poss = tval(tid, "FGA") + 0.44 * tval(tid, "FTA") - tval(tid, "OREB") + tval(tid, "TOV")
         team_games = max(tval(tid, "GP"), 1)
         team_pts = tval(tid, "PTS")
-        orb_weight = 1.07 * (1 - team_orb_pct) if team_orb_pct < 1 else 1.0
-        lg_ft_pts = lg_pts / (lg_fga - lg_oreb + lg_tov + 0.44 * lg_fta) * lg_fta * 0.44
-        pts_per_scoring_poss = team_pts / max(scoring_poss if scoring_poss > 0 else team_pts / vop, 1)
-
         marg_off_pts = pts_prod - vop * plays
-        team_marg_off = team_pts - vop * team_poss if team_poss > 0 else 0
-        # Marginal points per win: roughly 30.1 (PPW = 2 * leagueAvgPts per team per game * 0.32?)
-        # BBR uses PPW = 2 * (league_pts / team_games) * 0.32  ≈ 30.2 empirically
-        lg_pts_per_game = lg_pts / (30 * max(team_games, 1)) if team_games > 0 else 100.0
-        ppw = 0.32 * 2 * (team_pts / team_games if team_games > 0 else lg_pts_per_game)
+        ppw = 0.32 * 2 * (team_pts / team_games if team_games > 0 else lg_pts / 30)
         if ppw <= 0:
             ppw = 30.2
 
