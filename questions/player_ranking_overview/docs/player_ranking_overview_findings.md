@@ -90,7 +90,7 @@ Two combined ratings are built from the systems present in the data:
 
 ## 6. Stars matter more than rank implies
 
-![All ten systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
+![Rating systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
 
 PER spreads relatively evenly among qualified 2024-25 players: the top 5% account for only 8.5% of total value. The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
 

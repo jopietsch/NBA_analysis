@@ -64,7 +64,8 @@ def main() -> None:
         if len(vals) >= 10:
             gini_scores[s] = _gini(vals)
     plot_gini_by_system(gini_scores)
-    plot_all_systems_distributions(qual, present)
+    model_systems = [s for s in present if s not in ("MVP_SHARE", "ALL_NBA_PTS")]
+    plot_all_systems_distributions(qual, model_systems)
     plot_top20_table(qual, present)
 
     # Uber ratings for comparison chart
