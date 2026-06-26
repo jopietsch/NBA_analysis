@@ -188,12 +188,40 @@
     "unit": null,
     "value": 0.5928716904276986
   },
+  "reb.oreb_away_drop": {
+    "display": "5",
+    "fmt": "{:.0f}",
+    "note": "Away OREB rate drop, first to last season (pp)",
+    "unit": null,
+    "value": 5.369348695936221
+  },
+  "reb.oreb_away_early": {
+    "display": "31%",
+    "fmt": "{:.0f}%",
+    "note": "Away OREB conversion rate, first season",
+    "unit": null,
+    "value": 31.369175930028405
+  },
   "reb.oreb_early": {
     "display": "+0.6",
     "fmt": "{:+.1f}",
     "note": "Reg. OREB diff (home minus away), earliest era",
     "unit": null,
     "value": 0.6063697657913414
+  },
+  "reb.oreb_home_drop": {
+    "display": "8",
+    "fmt": "{:.0f}",
+    "note": "Home OREB rate drop, first to last season (pp)",
+    "unit": null,
+    "value": 8.449186856477851
+  },
+  "reb.oreb_home_early": {
+    "display": "34%",
+    "fmt": "{:.0f}%",
+    "note": "Home OREB conversion rate, first season",
+    "unit": null,
+    "value": 34.10822302519503
   },
   "ref.fta_early": {
     "display": "2",

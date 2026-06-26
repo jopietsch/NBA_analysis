@@ -1928,6 +1928,17 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
     FACTS.set("reb.oreb_early", _reb_mean("oreb_diff", _e0), "{:+.1f}",
               note="Reg. OREB diff (home minus away), earliest era")
 
+    # Facts for the prose (§3): home vs away offensive-rebound conversion rates,
+    # the converging lines in the rebounding chart (same compute as the plot).
+    _rseasons, _rstats = nba.compute_rebound_stats(nba.START_YEAR, nba.END_YEAR, "Regular Season")
+    _h = [v for v in _rstats["oreb_rate_home"] if v == v]
+    _a = [v for v in _rstats["oreb_rate_away"] if v == v]
+    if _h and _a:
+        FACTS.set("reb.oreb_home_early", _h[0], "{:.0f}%", note="Home OREB conversion rate, first season")
+        FACTS.set("reb.oreb_away_early", _a[0], "{:.0f}%", note="Away OREB conversion rate, first season")
+        FACTS.set("reb.oreb_home_drop", _h[0] - _h[-1], "{:.0f}", note="Home OREB rate drop, first to last season (pp)")
+        FACTS.set("reb.oreb_away_drop", _a[0] - _a[-1], "{:.0f}", note="Away OREB rate drop, first to last season (pp)")
+
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
         ("Playoffs",       df[df["is_playoff"] == 1]),
