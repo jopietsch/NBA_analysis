@@ -2624,6 +2624,11 @@ def run_attendance_analysis(
     FACTS.set("crowd.fans", 100 * float(crowd["home_win"].mean()), "{:.0f}%",
               note="2020-21 home win % with fans present")
     FACTS.set("crowd.fans_plain", "58%", note="prose rounding of crowd.fans (58.5%)")
+    # Appendix C compares against the blog using one-decimal precision.
+    FACTS.set("crowd.empty_precise", 100 * float(empty["home_win"].mean()), "{:.1f}%",
+              note="2020-21 empty-arena home win % (one decimal)")
+    FACTS.set("crowd.fans_precise", 100 * float(crowd["home_win"].mean()), "{:.1f}%",
+              note="2020-21 fans-present home win % (one decimal)")
     print(f"   2020-21 home win %:  empty arena {100*empty['home_win'].mean():.1f}% "
           f"(n={len(empty)})  vs.  fans present {100*crowd['home_win'].mean():.1f}% "
           f"(n={len(crowd)})")
@@ -2968,6 +2973,8 @@ def run_playoff_quality_decomposition(df: pd.DataFrame) -> None:
     g34_neg = g34[g34["quality_diff"] < 0]
     if not g34_neg.empty:
         hw_g34 = g34_neg["home_win"].mean() * 100
+        FACTS.set("pq.weaker_hosts", hw_g34, "{:.1f}%",
+                  note="Playoff home win % when the objectively weaker team hosts (G3/G4)")
         print(f"\n   Lower-seed-at-home check (G3+G4 where quality_diff < 0):")
         print(f"   N = {len(g34_neg):,} games  Home win % = {hw_g34:.1f}%")
         print(f"   ► Even when the objectively weaker team is at home, they win {hw_g34:.0f}% — pure venue effect.")

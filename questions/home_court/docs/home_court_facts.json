@@ -27,6 +27,13 @@
     "unit": null,
     "value": 50.959860383944154
   },
+  "crowd.empty_precise": {
+    "display": "51.0%",
+    "fmt": "{:.1f}%",
+    "note": "2020-21 empty-arena home win % (one decimal)",
+    "unit": null,
+    "value": 50.959860383944154
+  },
   "crowd.fans": {
     "display": "59%",
     "fmt": "{:.0f}%",
@@ -40,6 +47,13 @@
     "note": "prose rounding of crowd.fans (58.5%)",
     "unit": null,
     "value": "58%"
+  },
+  "crowd.fans_precise": {
+    "display": "58.5%",
+    "fmt": "{:.1f}%",
+    "note": "2020-21 fans-present home win % (one decimal)",
+    "unit": null,
+    "value": 58.544839255499156
   },
   "decline_both_plain": {
     "display": "10 percentage points",
@@ -124,6 +138,13 @@
     "note": "Playoffs: home-win% plateau across 2005\u20132017",
     "unit": null,
     "value": 64.27981820170103
+  },
+  "pq.weaker_hosts": {
+    "display": "51.5%",
+    "fmt": "{:.1f}%",
+    "note": "Playoff home win % when the objectively weaker team hosts (G3/G4)",
+    "unit": null,
+    "value": 51.511487303506655
   },
   "reb.dreb_early": {
     "display": "+1.6",
