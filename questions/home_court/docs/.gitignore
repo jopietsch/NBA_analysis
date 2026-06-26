@@ -1,3 +1,5 @@
 /.quarto/
 **/*.quarto_ipynb
 _*generated*
+# Annotate-mode review artifacts (render_docs.py --annotate)
+*.annotated.md
