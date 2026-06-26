@@ -448,14 +448,18 @@ def plot_gini_by_system(gini_scores: dict[str, float]) -> str:
 # ── Chart 8: All systems on one normalized distribution line ─────────────────
 
 def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
-                                   top_n: int = 50) -> str:
+                                   top_n: int = 50,
+                                   highlight: list[str] | None = None) -> str:
     """Normalized rank-value lines for every present system on one chart.
 
     Each system's values are z-scored (mean 0, std 1) across qualified players,
     then sorted descending. Plots rank 1–top_n on the x-axis vs z-score on y.
     Puts all methodologies on a common scale so their shapes can be compared.
+    Systems in `highlight` are drawn last with heavier styling so they read as
+    summaries on top of the individual system lines.
     """
     qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+    highlight = set(highlight or [])
 
     fig, ax = plt.subplots(figsize=(11, 6), facecolor=BG)
     ax.set_facecolor(PANEL)
@@ -464,23 +468,40 @@ def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
         "#2196F3", "#F44336", "#4CAF50", "#FF9800",
         "#9C27B0", "#00BCD4", "#795548", "#607D8B",
     ]
+    # Fixed colors for uber ratings so they never collide with the cycle
+    _highlight_colors = {"CONSENSUS": "#111111", "WINS_PRED": "#E67E22"}
+
     plotted = []
-    for sys in systems:
+
+    def _plot_system(sys: str) -> None:
         if sys not in qual.columns:
-            continue
+            return
         vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
         if len(vals) < top_n:
-            continue
+            return
         vals = vals.iloc[:top_n]
         mean, std = vals.mean(), vals.std()
         if std == 0:
-            continue
+            return
         z = (vals - mean) / std
-        color = _colors[len(plotted) % len(_colors)]
+        if sys in highlight:
+            color = _highlight_colors.get(sys, "#333333")
+            lw, alpha, zorder = 2.5, 1.0, 3
+        else:
+            color = _colors[sum(1 for s in plotted if s not in highlight) % len(_colors)]
+            lw, alpha, zorder = 1.5, 0.65, 2
         ax.plot(np.arange(1, top_n + 1), z.values,
-                color=color, linewidth=1.5, alpha=0.8,
+                color=color, linewidth=lw, alpha=alpha, zorder=zorder,
                 label=SYSTEM_LABELS.get(sys, sys))
         plotted.append(sys)
+
+    # Draw regular systems first, then highlighted (so they land on top)
+    for sys in systems:
+        if sys not in highlight:
+            _plot_system(sys)
+    for sys in systems:
+        if sys in highlight:
+            _plot_system(sys)
 
     if not plotted:
         ax.text(0.5, 0.5, "No data", ha="center", va="center",

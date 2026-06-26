@@ -64,14 +64,15 @@ def main() -> None:
         if len(vals) >= 10:
             gini_scores[s] = _gini(vals)
     plot_gini_by_system(gini_scores)
-    model_systems = [s for s in present if s not in ("MVP_SHARE", "ALL_NBA_PTS")]
-    plot_all_systems_distributions(qual, model_systems)
-
-    # Compute uber ratings before top-20 table so they appear as a row there
+    # Compute uber ratings before distribution chart so they can be highlighted there
     qual["CONSENSUS"] = _build_consensus(qual, present)
     qual["WINS_PRED"] = _build_wins_predictive(qual, present)
     uber_present = [s for s in ("CONSENSUS", "WINS_PRED")
                     if qual[s].notna().sum() >= 20]
+
+    model_systems = [s for s in present if s not in ("MVP_SHARE", "ALL_NBA_PTS")]
+    plot_all_systems_distributions(qual, model_systems + uber_present,
+                                   highlight=uber_present)
     plot_top20_table(qual, present + uber_present)
 
     if uber_present:
