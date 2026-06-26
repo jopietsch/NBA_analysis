@@ -1230,6 +1230,16 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
     print("   Positive fta_diff = home team attempted more free throws.")
     print("   Trend = slope of trend line (change per season year); pp = percentage points.\n")
 
+    # Facts for the prose (§2): the regular-season home free-throw-attempt gap,
+    # earliest era vs most recent.
+    _reg = df[df["is_playoff"] == 0]
+    _fta_early = _reg[(_reg["year"] >= nba.ERA_DEFS[0][1]) & (_reg["year"] <= nba.ERA_DEFS[0][2])]["fta_diff"].mean()
+    _fta_today = _reg[(_reg["year"] >= nba.ERA_DEFS[-1][1]) & (_reg["year"] <= nba.ERA_DEFS[-1][2])]["fta_diff"].mean()
+    FACTS.set("ref.fta_early", float(_fta_early), "{:.0f}",
+              note="Reg. season FTA gap (home minus away), earliest era")
+    FACTS.set("ref.fta_today", float(_fta_today), "{:.1f}",
+              note="Reg. season FTA gap (home minus away), most recent era")
+
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
         ("Playoffs",       df[df["is_playoff"] == 1]),
@@ -1579,6 +1589,11 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                       note="Reg. season: all four channels' share of the HCA level")
             FACTS.set("share.fourfactors.decline", ctx["pct_trend"], "{:.0f}%",
                       note="Reg. season: all four channels' share of the decline")
+            _decline_shares = {_short[r["key"]]: r["pct"] for r in ctx["trend"]}
+            _largest = max(_decline_shares, key=_decline_shares.get)
+            FACTS.guard("rebounding_largest_driver", _largest == "rebounding",
+                        claim="rebounding is the largest single driver of the decline",
+                        value=f"largest is {_largest} ({_decline_shares[_largest]:.0f}%)")
 
         if label == "Playoffs":
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
@@ -1655,6 +1670,14 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                 absorbed_by[k] = (absorbed, m_ctrl.pvalues["year"])
                 print(f"   {lbl:<16}  {g_raw:>+9.4f}{s_raw:<2}  {g_ctrl:>+14.4f}{s_ctrl:<2}  "
                       f"{absorbed:>8.0f}%")
+
+        if label == "Regular season":
+            _foul_abs = absorbed_by["foul_diff"][0]
+            _tov_abs = absorbed_by["tov_diff"][0]
+            FACTS.guard("threept_half_foul_tov",
+                        40 <= _foul_abs <= 65 and 40 <= _tov_abs <= 65,
+                        claim="the three-point shift explains about half of both the foul and turnover declines",
+                        value=f"foul {_foul_abs:.0f}% / turnover {_tov_abs:.0f}% absorbed by 3PA")
 
         reb_p = absorbed_by["reb_diff"][1]
         tov_p = absorbed_by["tov_diff"][1]
@@ -1800,6 +1823,10 @@ def run_oos_forecast(df: pd.DataFrame) -> None:
         if key == "reg":
             FACTS.set("oos.train_end", tr1, "{:d}",
                       note="Out-of-sample forecast: last training season")
+            _miss = max(abs(a - pc) for _, a, pc, _ in d["rows"])
+            FACTS.guard("oos_within_a_point", _miss <= 1.6,
+                        claim="predicts each later season's home win rate to within about a point",
+                        value=f"largest held-out miss {_miss:.1f} pp")
         print(f"   {ctx_label}  (train {tr0}–{tr1}, test {te0}–{te1})\n")
         print(f"   {'Season':>7}  {'Actual':>8}  {'Channel pred':>13}  {'Trend pred':>11}")
         print(f"   {'─'*7}  {'─'*8}  {'─'*13}  {'─'*11}")
@@ -2686,6 +2713,11 @@ def run_series_era_split(df: pd.DataFrame) -> None:
               note="1984–94 / 1995–01 lower-seed home win % (range)")
     FACTS.set("seed.stronger_early_plain", "70–75%",
               note="higher-seed home win % across the earlier eras (range)")
+    _early = [(e[0], seed_rows[e[0]]) for e in nba.ERA_DEFS[:2] if e[0] in seed_rows]
+    FACTS.guard("weaker_matched_stronger",
+                any(l >= h for _, (h, l) in _early),
+                claim="the weaker team at home matched or exceeded the stronger team's home win rate",
+                value="; ".join(f"{lbl}: weaker {l:.0f}% vs stronger {h:.0f}%" for lbl, (h, l) in _early))
 
     # Overall
     h_all = po[po["home_type"] == "higher_seed"]
@@ -2740,6 +2772,10 @@ def run_series_simulation(data: dict) -> None:
         # the time in the earliest era is now barely better than a coin flip.
         FACTS.set("series.rs_early", data["reg_series"][0], "{:.0f}%",
                   note="Regular-season-input series home win %, earliest era")
+        FACTS.set("series.rs_now", last, "{:.0f}%",
+                  note="Regular-season-input series home win %, latest era")
+        FACTS.guard("series_coin_flip", 50.0 <= last <= 53.5,
+                    claim="barely better than a coin flip", value=f"{last:.1f}%")
         print(f"   ► Regular season: per-game home edge fell {dpg:.1f} pp across eras,")
         print(f"     but the series edge fell only {ds:.1f} pp (now {last:.1f}%).")
     po = _span("po_pgame", "po_series")

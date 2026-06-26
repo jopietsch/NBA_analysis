@@ -97,6 +97,20 @@
     "unit": null,
     "value": 64.27981820170103
   },
+  "ref.fta_early": {
+    "display": "2",
+    "fmt": "{:.0f}",
+    "note": "Reg. season FTA gap (home minus away), earliest era",
+    "unit": null,
+    "value": 1.9678935698447892
+  },
+  "ref.fta_today": {
+    "display": "0.5",
+    "fmt": "{:.1f}",
+    "note": "Reg. season FTA gap (home minus away), most recent era",
+    "unit": null,
+    "value": 0.4623217922606925
+  },
   "reg.decline_total": {
     "display": "-10.3 pp",
     "fmt": "{:+.1f} pp",
@@ -166,6 +180,13 @@
     "note": "Regular-season-input series home win %, earliest era",
     "unit": null,
     "value": 54.874
+  },
+  "series.rs_now": {
+    "display": "52%",
+    "fmt": "{:.0f}%",
+    "note": "Regular-season-input series home win %, latest era",
+    "unit": null,
+    "value": 51.863499999999995
   },
   "share.fouls.adv": {
     "display": "14%",

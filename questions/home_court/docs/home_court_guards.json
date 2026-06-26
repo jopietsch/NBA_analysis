@@ -1,0 +1,27 @@
+{
+  "oos_within_a_point": {
+    "claim": "predicts each later season's home win rate to within about a point",
+    "ok": true,
+    "value": "largest held-out miss 1.6 pp"
+  },
+  "rebounding_largest_driver": {
+    "claim": "rebounding is the largest single driver of the decline",
+    "ok": true,
+    "value": "largest is rebounding (30%)"
+  },
+  "series_coin_flip": {
+    "claim": "barely better than a coin flip",
+    "ok": true,
+    "value": "51.9%"
+  },
+  "threept_half_foul_tov": {
+    "claim": "the three-point shift explains about half of both the foul and turnover declines",
+    "ok": true,
+    "value": "foul 51% / turnover 54% absorbed by 3PA"
+  },
+  "weaker_matched_stronger": {
+    "claim": "the weaker team at home matched or exceeded the stronger team's home win rate",
+    "ok": true,
+    "value": "1984\u201394: weaker 65% vs stronger 71%; 1995\u201301: weaker 66% vs stronger 60%"
+  }
+}
