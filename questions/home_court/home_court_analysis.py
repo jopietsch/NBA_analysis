@@ -3505,7 +3505,6 @@ def run_team_hca_analysis(reg_stats: dict, po_stats: dict) -> None:
 
         # Facts for the prose (Appendix B): the altitude franchises' HCA, the
         # league average, and the genuine (non-noise) share of franchise spread.
-        # The prose refers to 27.9 pp as "the 27-point figure", i.e. truncated.
         if ctx_label == "Regular season":
             FACTS.set("altitude.league_mean", league_mean, "{:.0f}",
                       note="League-average regular-season HCA (pp)")
@@ -3514,8 +3513,8 @@ def run_team_hca_analysis(reg_stats: dict, po_stats: dict) -> None:
             for at in altitude:
                 _short = ("denver" if "Denver" in at else
                           "utah" if "Utah" in at else at.lower().replace(" ", "_"))
-                FACTS.set(f"altitude.{_short}_hca", int(stats[at]["hca"]), "{:d}",
-                          note=f"{at} full home-minus-road gap (truncated to match prose)")
+                FACTS.set(f"altitude.{_short}_hca", stats[at]["hca"], "{:.0f}",
+                          note=f"{at} full home-minus-road gap (pp, rounded)")
         print()
 
 
