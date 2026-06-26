@@ -34,11 +34,23 @@ The oldest and most available systems work entirely from the standard box score:
 
 Box-score systems share a blind spot: they do not directly measure whether a player made their team better or worse. A prolific scorer who forces bad shots and plays poor defense can rate well on PER and WS. Lineup-based "impact" metrics try to fix this by measuring how the team's scoring margin changes when a player is on the floor versus off it, with various forms of regularization to handle the noise.
 
-**RAPTOR** (FiveThirtyEight, 2013-14 through 2022-23) combined on/off lineup data with player tracking data. FiveThirtyEight shut down its sports coverage in April 2023, so RAPTOR has no 2024-25 values.
+All of the major impact metrics share the same technical backbone: Regularized Adjusted Plus/Minus (RAPM), a ridge regression that estimates each player's per-100-possession contribution to scoring margin after stripping out the effects of teammates and opponents. Raw RAPM is noisy with one season of data, so every system adds a "prior" — a box-score estimate of what a player should be worth — to pull uncertain estimates toward something stable. The systems mostly differ in how that prior is built and what data feeds it.
 
-**DARKO DPM**, **EPM** (dunksandthrees), **LEBRON** (BBall-Index), and **ESPN RPM** are the main active impact metrics. Each uses some variant of regularized adjusted plus/minus, sometimes blended with box-score priors.
+**RAPTOR** (FiveThirtyEight, 2013-14 through 2022-23) combined on/off lineup data with player-tracking data (speed, distance, shot quality). FiveThirtyEight shut down its sports coverage in April 2023, so RAPTOR has no 2024-25 values. Historical data is downloadable from their GitHub.
 
-The core limitation is sample size: a player's on/off data in one season is much noisier than their box-score totals. These systems use regularization to pull noisy estimates toward a prior, but that makes them sensitive to how the prior is set.
+**EPM** (dunksandthrees) uses a RAPM calculation with a Bayesian prior built from a highly optimized Statistical Plus/Minus model that incorporates player-tracking data. EPM is the only public metric that directly optimizes the weighting of each underlying stat by how quickly it stabilizes, which is one reason it tends to perform well in retrodiction tests.
+
+**LEBRON** (BBall-Index) also uses a luck-adjusted RAPM with a box-score prior. "Luck adjustment" means the on/off data removes variance attributable to shot-making volatility rather than player skill. The prior coefficients come from PIPM (Player Impact Plus/Minus), an earlier metric by Jacob Goldstein that is no longer updated.
+
+**DARKO DPM** is best thought of as a projection system rather than a season average. Like baseball projection systems (PECOTA, Steamer), DARKO weights recent games more heavily and updates daily, so it answers "what is this player's current true talent?" more than "how did this player perform this season?" That distinction matters when comparing across systems.
+
+**DRIP** (Daily Updated Rating of Individual Performance, Opta Analyst) is similar to DARKO in structure: it now-casts current player talent by weighting recent performance more heavily, rather than averaging over the full season.
+
+**ESPN RPM** used RAPM with a box-score prior from Jeremias Engelmann, who also created the foundational RAPM dataset that most other systems calibrate against. ESPN stopped publishing RPM publicly around 2023.
+
+The core limitation across all these systems is sample size: a player's on/off data in one season is much noisier than their box-score totals. Regularization pulls noisy estimates toward a prior, which means the prior's assumptions matter a great deal, especially for players with limited minutes.
+
+**Which metrics do practitioners trust?** A HoopsHype survey of 29 NBA front-office executives (2021) found DARKO DPM was the most preferred catch-all metric (8 respondents), followed by EPM and LEBRON. A retrodiction study by Dunks & Threes, comparing how well each metric predicts future game outcomes, put EPM first, followed by RPM, RAPTOR, and BPM 2.0 in that order. EPM and RPM were the only two metrics using RAPM directly with a Bayesian prior at the time of that study, which appears to be the structural feature that drives their edge over box-score-only approaches.
 
 ### Human rankings
 
