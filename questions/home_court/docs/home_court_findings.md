@@ -8,13 +8,13 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-For me, everything interesting starts with questions: **Has home court advantage really changed? What factors create the advantage? What drove the decline? And what did not.** Some specific questions just to make sure we know what we are talking about
+For me, everything interesting starts with questions: **Has home court advantage really changed? What factors create the advantage? What drove the decline? And what did not.** A couple of the specific things people assume, settled up front:
  -  Was one of the reasons the rise in 3 point attempts? (Yes)
  -  Were some of the reasons better travel, or load management (No, only a little)
 
 Home court advantage in the NBA has been shrinking for four decades. 
 
-The home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **The fall is mostly a slow, steady fade, with two stretches where it briefly sped up.** Home teams have historically shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees, and those four differences account for about 95% of the advantage. Two real-world changes drove most of the decline: the shift to three-point shooting, which alone reaches close to half, and fairer officiating. The largest single driver is a rebounding shift that neither change explains. All four narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting advantage (and part of the foul and turnover gaps), home teams' rebounding advantage slipped, and the turnover gap closed.**
+The home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs. **The fall is mostly a slow, steady fade, with two stretches where it briefly sped up.** Home teams have historically shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees, and those four differences account for about 95% of the advantage. Two real-world changes drove most of the decline: the shift to three-point shooting, which alone reaches close to half, and fairer officiating. The largest single box-score category, rebounding, is a shift that neither change explains. All four narrowed: **fairer officiating shrank the foul gap, the shift to three-point shooting flattened the shooting advantage (and part of the foul and turnover gaps), home teams' rebounding advantage slipped, and the turnover gap closed.**
 
 ![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons. Section 4 checks whether each rule change actually bent the trend; only one did.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
@@ -57,7 +57,7 @@ The playoff referee data shows how universal this is: 45 of 47 officials with at
 
 **Rebounding and turnover differential.** Home teams have historically pulled down more rebounds and committed fewer turnovers: about one and a half extra boards and just under 0.4 of a turnover per game. Neither is dramatic on its own, but both hand the home team extra possessions. Together they rival the shooting advantage in size. As Section 3 will show, this pair turns out to be the single largest driver of the decline.
 
-**The mix held, the size shrank.** How much each factor counts toward winning has held nearly constant decade to decade. The game got fairer, not different in how its components combine.
+**The mix held, the size shrank.** How much each factor counts toward winning has held nearly constant decade to decade. The game got fairer, not different in how its components combine. These shares describe what home court is made of today; Section 3 asks which of those pieces shrank, and the ranking flips: shooting is the largest piece of the advantage, but rebounding is the largest driver of its decline.
 
 ![Box-score category shares of the home-court advantage, regular season vs. playoffs. The headline at each bar's end (with a range showing how much it could shift on the games available) is how much of the home advantage the four categories capture together.](../generated/images/home_court_mediation_level.svg){#fig-mediation-level width=50%}
 

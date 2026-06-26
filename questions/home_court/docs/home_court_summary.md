@@ -10,7 +10,7 @@
 
 In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games; by the 1990s that rate actually matched or exceeded the stronger team's home win rate. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does.  **Has home court really changed? What factors create the advantage? What drove the decline? And what did not, even though people often assume it did?**
 
-Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady fade, with two stretches where it briefly sped up. **Home teams have historically shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees, and those four differences account for about 95% of the advantage.** Two real-world changes drove much of the decline: the shift to three-point shooting, which alone reaches close to half, and fairer officiating. The largest single driver is a rebounding shift that neither change explains.
+Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady fade, with two stretches where it briefly sped up. **Home teams have historically shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees, and those four differences account for about 95% of the advantage.** Two real-world changes drove most of the decline: the shift to three-point shooting, which alone reaches close to half, and fairer officiating. The largest single box-score category, rebounding, is a shift that neither change explains.
 
 Because there are more regular-season games, that analysis is more precise. There are far fewer playoff games, so it shows direction more than precise size.
 
@@ -44,7 +44,7 @@ What changed in the real world to move those numbers? Two things account for mos
 
 A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later season's home win rate to within about a point, catching the post-2017 slide it was never shown and the steeper modern playoff drop too.
 
-The playoff picture runs similar in shape, though a larger share of the playoff decline falls outside the four categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
+The playoff picture runs similar in shape, though a larger share of the playoff decline falls outside the four categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by higher and lower seeds becoming more evenly matched.
 
 ---
 
