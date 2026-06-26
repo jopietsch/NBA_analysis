@@ -235,7 +235,7 @@ def fetch_standings(end_year: int,
     os.makedirs(d, exist_ok=True)
     from nba_api.stats.endpoints import leaguestandingsv3
     df = leaguestandingsv3.LeagueStandingsV3(
-        league_id="00",
+        league_id_nullable="00",
         season=season_str(end_year),
         season_type="Regular Season",
     ).get_data_frames()[0]
@@ -504,6 +504,8 @@ def fetch_league_averages(end_year: int,
     for col in ["PTS", "AST", "OREB", "DREB", "REB", "STL", "BLK", "TOV", "PF",
                 "FGM", "FGA", "FTM", "FTA", "FG3M", "FG3A", "MIN"]:
         lg[f"lg_{col.lower()}"] = float(team_df[col].sum()) if col in team_df.columns else 0.0
+    # Pace: total possessions per 48 minutes per team, simplified as pts-based estimate
+    # Use FGA + 0.44*FTA - OREB + TOV as possession estimate per team
     n_teams = len(team_df)
     if all(c in team_df.columns for c in ["FGA", "FTA", "OREB", "TOV", "GP"]):
         team_poss = team_df["FGA"] + 0.44 * team_df["FTA"] - team_df["OREB"] + team_df["TOV"]
