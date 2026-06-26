@@ -169,7 +169,7 @@ These posts surface where the metrics break down or disagree with each other.
 **What it covers:** The introduction of DRIP (2021), Opta's daily-updated all-in-one player metric. Like DARKO, DRIP "now-casts" current player talent rather than averaging over a full season: it uses box score, play-by-play, and lineup data to project each player's contribution to team offensive and defensive ratings, weighting recent games more heavily. The introduction covers how DRIP differs from static seasonal metrics and why daily updating matters for in-season evaluation.
 
 ### Medium — "NBA Player Value Models: Calculating RAPM" (John Chen)
-**URL:** https://medium.com/@johnchenmbb/calculating-rapm-steps-1-and-2-of-my-summer-plan-1a78e1476b1f  
+**URL:** <https://medium.com/@johnchenmbb/calculating-rapm-steps-1-and-2-of-my-summer-plan-1a78e1476b1f>  
 **Author:** John Chen  
 **What it covers:** A hands-on walkthrough of actually computing RAPM from play-by-play stint data. Covers data acquisition, the ridge regression setup, and how to validate results against published benchmarks. One of the most practical "how to build this yourself" posts in the public NBA analytics literature. A companion post covers building XGB-PM, a gradient-boosted model that predicts RAPM from box stats.
 
