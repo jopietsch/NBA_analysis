@@ -507,92 +507,113 @@ def _score_fmt(val: float, sys: str) -> str:
 def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
     """Grid of mini-tables: top-20 players and their raw score for each system.
 
-    Laid out as ceil(n/5) rows × 5 columns. Highlights rank 1 and rank 20 so
-    the gap between them is immediately visible.
+    One row per category group; systems within the group fill columns left to right.
+    Groups: Rate/Efficiency · Accumulated Value · Directional · Reputation.
+    Highlights rank 1 (blue) and rank 20 (red). The # column appears only in
+    the leftmost table of each row.
     """
     qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
-    present = [s for s in systems if s in qual.columns and qual[s].notna().sum() >= 20]
+    present_set = {s for s in systems if s in qual.columns and qual[s].notna().sum() >= 20}
 
-    if not present:
+    if not present_set:
         fig, ax = new_fig()
         ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
         return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
 
-    ncols = min(4, len(present))
-    nrows = (len(present) + ncols - 1) // ncols
-    fig, axes = plt.subplots(nrows, ncols,
-                             figsize=(ncols * 3.5, nrows * 6.5),
-                             facecolor=BG)
-    # Flatten axes to a list regardless of shape
-    if nrows == 1 and ncols == 1:
-        axes_flat = [axes]
-    elif nrows == 1:
-        axes_flat = list(axes)
-    else:
-        axes_flat = [ax for row in axes for ax in row]
+    GROUPS = [
+        ("Rate / Efficiency", ["GAME_SCORE", "PER", "WS48"],  "#2176ae"),
+        ("Accumulated Value", ["WS", "BPM", "VORP"],          "#2e9e6e"),
+        ("Directional",       ["OBPM", "DBPM"],               "#8c5e99"),
+        ("Reputation",        ["MVP_SHARE", "ALL_NBA_PTS"],   "#c0392b"),
+    ]
 
-    RANK1_COLOR = "#d4e8fb"   # light blue highlight for rank 1
-    RANK20_COLOR = "#fdecea"  # light red highlight for rank 20
-    HEADER_BG = BLUE
+    # Keep only groups that have at least one present system; add ungrouped at end
+    grouped = set()
+    active_groups = []
+    for gname, gsystems, gcolor in GROUPS:
+        members = [s for s in gsystems if s in present_set]
+        if members:
+            active_groups.append((gname, members, gcolor))
+            grouped.update(members)
+    leftover = [s for s in systems if s in present_set and s not in grouped]
+    if leftover:
+        active_groups.append(("Other", leftover, BLUE))
+
+    nrows = len(active_groups)
+    ncols = max(len(g[1]) for g in active_groups)
+
+    fig, axes = plt.subplots(nrows, ncols,
+                             figsize=(ncols * 4.0, nrows * 5.5),
+                             facecolor=BG)
+    # Normalize axes to 2-D array shape [nrows][ncols]
+    if nrows == 1 and ncols == 1:
+        axes = [[axes]]
+    elif nrows == 1:
+        axes = [list(axes)]
+    elif ncols == 1:
+        axes = [[ax] for ax in axes]
+    else:
+        axes = [list(row) for row in axes]
+
+    RANK1_COLOR = "#d4e8fb"
+    RANK20_COLOR = "#fdecea"
     HEADER_FG = "white"
 
-    for i, sys in enumerate(present):
-        ax = axes_flat[i]
-        ax.axis("off")
+    for row_idx, (gname, gsystems, gcolor) in enumerate(active_groups):
+        for col_idx in range(ncols):
+            ax = axes[row_idx][col_idx]
+            ax.axis("off")
+            if col_idx >= len(gsystems):
+                continue
 
-        top20 = (qual[["PLAYER_NAME", sys]]
-                 .dropna()
-                 .nlargest(20, sys)
-                 .reset_index(drop=True))
+            sys = gsystems[col_idx]
+            top20 = (qual[["PLAYER_NAME", sys]]
+                     .dropna()
+                     .nlargest(20, sys)
+                     .reset_index(drop=True))
 
-        col_label = SYSTEM_LABELS.get(sys, sys)
-        show_rank = (i % ncols == 0)  # only leftmost table in each row shows #
-        if show_rank:
-            cell_text = [
-                [str(idx + 1),
-                 row["PLAYER_NAME"].split()[-1],
-                 _score_fmt(row[sys], sys)]
-                for idx, row in top20.iterrows()
-            ]
-            col_labels = ["#", "Player", col_label]
-            ncell = 3
-        else:
-            cell_text = [
-                [row["PLAYER_NAME"].split()[-1],
-                 _score_fmt(row[sys], sys)]
-                for idx, row in top20.iterrows()
-            ]
-            col_labels = ["Player", col_label]
-            ncell = 2
+            col_label = SYSTEM_LABELS.get(sys, sys)
+            show_rank = (col_idx == 0)
+            if show_rank:
+                cell_text = [
+                    [str(idx + 1), row["PLAYER_NAME"].split()[-1], _score_fmt(row[sys], sys)]
+                    for idx, row in top20.iterrows()
+                ]
+                col_labels = ["#", "Player", col_label]
+                ncell = 3
+            else:
+                cell_text = [
+                    [row["PLAYER_NAME"].split()[-1], _score_fmt(row[sys], sys)]
+                    for idx, row in top20.iterrows()
+                ]
+                col_labels = ["Player", col_label]
+                ncell = 2
 
-        table = ax.table(
-            cellText=cell_text,
-            colLabels=col_labels,
-            loc="center",
-            cellLoc="left",
-        )
-        table.auto_set_font_size(False)
-        table.set_fontsize(9)
-        table.scale(1.0, 1.2)
+            table = ax.table(
+                cellText=cell_text,
+                colLabels=col_labels,
+                loc="center",
+                cellLoc="left",
+            )
+            table.auto_set_font_size(False)
+            table.set_fontsize(9)
+            table.scale(1.0, 1.2)
 
-        # Header row styling
-        for col in range(ncell):
-            cell = table[(0, col)]
-            cell.set_facecolor(HEADER_BG)
-            cell.set_text_props(color=HEADER_FG, fontweight="bold")
-
-        # Rank 1 highlight (table row 1 = data row 0)
-        for col in range(ncell):
-            table[(1, col)].set_facecolor(RANK1_COLOR)
-
-        # Rank 20 highlight (table row 20 = data row 19)
-        if len(cell_text) >= 20:
             for col in range(ncell):
-                table[(20, col)].set_facecolor(RANK20_COLOR)
+                cell = table[(0, col)]
+                cell.set_facecolor(gcolor)
+                cell.set_text_props(color=HEADER_FG, fontweight="bold")
 
-    # Hide any unused subplot axes
-    for ax in axes_flat[len(present):]:
-        ax.axis("off")
+            for col in range(ncell):
+                table[(1, col)].set_facecolor(RANK1_COLOR)
+            if len(cell_text) >= 20:
+                for col in range(ncell):
+                    table[(20, col)].set_facecolor(RANK20_COLOR)
+
+            # Group label above the first table in each row
+            if col_idx == 0:
+                ax.set_title(gname, fontsize=10, color=gcolor, fontweight="bold",
+                             pad=6, loc="left")
 
     fig.suptitle("Top 20 players by each rating system — 2024-25",
                  fontsize=12, color="#222", y=1.01)
