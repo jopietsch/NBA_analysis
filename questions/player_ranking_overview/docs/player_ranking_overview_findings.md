@@ -70,7 +70,19 @@ MVP votes and All-NBA points agree closely with each other (0.89), less so with 
 
 The exact correlation figures are in `docs/player_ranking_overview_results.md`.
 
-## 4. What each system uniquely sees
+## 4. What the field has learned about evaluating these metrics
+
+Not all player rating systems are equally trusted, and the analytics community has developed two main ways to test whether a metric is actually measuring what it claims to measure.
+
+**Retrodiction** uses the first half of a season's games to predict game outcomes in the second half. A metric that genuinely captures player impact should let you predict which team wins when you know each team's lineup. This is the test used in the Dunks & Threes comparison study, which found EPM and RPM at the top, followed by RAPTOR and BPM 2.0. The structural feature that separated the top metrics from the rest: both used RAPM with a box-score prior, while lower-ranked metrics either skipped the prior or used only box-score data without the RAPM step.
+
+**Team wins prediction** aggregates player ratings to the team level and asks how well the total predicts actual wins. This is what the HoopsHype executive survey used to rank metrics by RMSE, and it is also the logic behind the wins-predictive rating built in this report.
+
+Both tests reward the same thing: a RAPM backbone stabilized by a well-calibrated box-score prior. That combination handles the two main failure modes — pure box-score metrics miss what a player does off the ball, and pure RAPM is too noisy with one season of data.
+
+One important result from the academic literature runs against the intuition that more sophisticated is better: peer-reviewed research has found that complex metrics do not reliably outperform simpler ones when used as variables in salary or wins regressions. That is not a flaw in the metrics themselves. They are built to estimate player impact per possession, not to serve as inputs in every downstream analysis. The lesson is that a metric's predictive accuracy in a retrodiction test is not the same as its usefulness for a specific application, and the right tool depends on the question being asked.
+
+## 5. What each system uniquely sees
 
 Not all systems add independent information. The analysis of what each system adds beyond what the others already capture (see results) shows which systems see something genuinely different, and which are mostly duplicating one another.
 
@@ -78,7 +90,7 @@ The "system outliers" chart shows the players each system rates most above and b
 
 ![Players each system rates most above or below the consensus.](../generated/images/system_outliers.svg){#fig-outliers}
 
-## 5. The two uber ratings
+## 6. The two uber ratings
 
 Two combined ratings are built from the systems present in the data.
 
@@ -90,7 +102,7 @@ Each system uses a different scale — PER is centered around 15, BPM around 0, 
 
 ![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg){#fig-uber}
 
-## 6. Stars matter more than rank implies
+## 7. Stars matter more than rank implies
 
 ![Rating systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
 
@@ -110,13 +122,13 @@ The visual gap between rank 1 and rank 10 looks like 10 spots on a list. The num
 
 The data is consistent with the explanation that elite talent is worth more than rank implies: having the best player on the roster matters more to team success than being one spot ahead of the second-best, because team results depend on the ceiling in ways that raw averages don't capture.
 
-## 7. Who lands in the top 20
+## 8. Who lands in the top 20
 
 The table below shows the top 20 players under each system and their raw score. The gap between rank 1 and rank 20 is the most direct read on how concentrated value is: a large gap means the top player is in a different tier from the rest; a small gap means the list is relatively flat.
 
 ![Top 20 players and their raw scores under each of the ten rating systems. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
 
-## 8. A note on the recomputed formulas
+## 9. A note on the recomputed formulas
 
 The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations. The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the high 20s). The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures. The relative rankings within each system are directionally correct.
 
@@ -124,7 +136,7 @@ A Phase 3 planned improvement is to spot-check the recomputed values against BBR
 
 One consequence is visible in the data: Dyson Daniels ranks 2nd in VORP in this dataset, just behind Shai Gilgeous-Alexander. On Basketball-Reference's published figures, Daniels ranks well outside the top 10. The difference traces to steals: Daniels led the league in steals in 2024-25, and the DBPM formula credits steals heavily. Our approximation amplifies that credit further because it uses player-possession denominators rather than team-possession denominators, inflating per-100 steal rates. His PER of 16.4 and Win Shares near zero tell a more representative story of a strong defensive specialist whose overall value does not place him among the top two players in the league.
 
-## 9. Limitations
+## 10. Limitations
 
 The 2024-25 testbed is a single season. Stability analysis (do the same players rate highly across multiple seasons?) requires multi-season data and is a natural extension.
 
