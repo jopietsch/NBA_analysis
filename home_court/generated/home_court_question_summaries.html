@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-24">
+<meta name="dcterms.date" content="2026-06-25">
 
 <title>Home Court Advantage: Layered Summaries</title>
 <style>
@@ -2201,7 +2201,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 24, 2026</p>
+      <p class="date">June 25, 2026</p>
     </div>
   </div>
   
@@ -2635,6 +2635,31 @@ vertical-align: -.125em;
   });
   </script>
 </div> <!-- /content -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".collapsible").forEach(function (el) {
+    var fig = el.closest("figure") || el;
+    if (fig.dataset.coDone) return;
+    fig.dataset.coDone = "1";
+    var cap = fig.querySelector("figcaption");
+    var text = cap ? cap.textContent.trim() : "Show chart";
+    var preview = text.length > 90
+      ? text.slice(0, 90).replace(/\s+\S*$/, "") + "…" : text;
+    var details = document.createElement("details");
+    details.className = "collapsible-figure";
+    var summary = document.createElement("summary");
+    summary.textContent = "📊 " + preview;
+    details.appendChild(summary);
+    fig.parentNode.insertBefore(details, fig);
+    details.appendChild(fig);
+  });
+});
+</script>
+<style>
+details.collapsible-figure > summary { cursor: pointer; color: #2780e3; margin: 0.6em 0; }
+details.collapsible-figure[open] > summary { color: inherit; }
+details.collapsible-figure > summary::marker { color: #2780e3; }
+</style>
 
 
 
