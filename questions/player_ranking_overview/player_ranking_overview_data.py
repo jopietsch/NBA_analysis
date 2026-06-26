@@ -197,16 +197,53 @@ def _load_darko(end_year: int) -> pd.DataFrame | None:
 
 
 def _load_epm(end_year: int) -> pd.DataFrame | None:
-    """Load EPM snapshot from cache/epm_{season}.csv (manual snapshot)."""
+    """Load EPM from dunksandthrees.com API, caching result.
+
+    Requires DUNKS_API_KEY env var. On cache hit, skips the network call.
+    Season parameter: end_year (e.g. 2025 for 2024-25).
+    """
     path = _cache(f"epm_{season_str(end_year)}.csv")
-    if not os.path.exists(path):
-        print(f"  EPM snapshot not found at {path} — skipping")
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+            return df if not df.empty else None
+        except pd.errors.EmptyDataError:
+            return None
+
+    api_key = os.environ.get("DUNKS_API_KEY")
+    if not api_key:
+        print("  EPM: DUNKS_API_KEY not set — skipping (register at dunksandthrees.com)")
         return None
+
+    url = "https://www.dunksandthrees.com/api/v1/season-epm"
     try:
-        df = pd.read_csv(path)
-        return df if not df.empty else None
-    except pd.errors.EmptyDataError:
+        print(f"  Downloading EPM from dunksandthrees.com for {season_str(end_year)}...")
+        r = requests.get(
+            url,
+            params={"season": end_year, "seasontype": 2},
+            headers={"Authorization": api_key},
+            timeout=30,
+        )
+        if r.status_code == 401:
+            print("  EPM: DUNKS_API_KEY invalid or expired — skipping")
+            return None
+        r.raise_for_status()
+        data = r.json()
+    except Exception as e:
+        print(f"  WARN: Could not download EPM: {e}")
         return None
+
+    if not data:
+        pd.DataFrame().to_csv(path, index=False)
+        return None
+
+    df = pd.DataFrame(data)
+    rename = {"tot": "epm", "off": "epm_off", "def": "epm_def"}
+    df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
+    keep = [c for c in ["player_name", "epm", "epm_off", "epm_def"] if c in df.columns]
+    df = df[keep]
+    df.to_csv(path, index=False)
+    return df if not df.empty else None
 
 
 def _load_lebron(end_year: int) -> pd.DataFrame | None:
@@ -385,7 +422,7 @@ def load_unified_ratings(end_year: int, *,
         "epm": (
             _load_epm(end_year),
             "player_name",
-            {"epm": "EPM"},
+            {"epm": "EPM", "epm_off": "EPM_O", "epm_def": "EPM_D"},
         ),
         "lebron": (
             _load_lebron(end_year),
