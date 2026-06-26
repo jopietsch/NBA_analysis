@@ -122,6 +122,8 @@ The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the publi
 
 A Phase 3 planned improvement is to spot-check the recomputed values against BBR for 5-10 known players, and to tighten the BPM per-100-possession rate computation (currently using player-possession-based denominators rather than the team-possession-based denominators BBR uses). For comparison purposes (which system ranks whom higher or lower), the current implementation is sufficient. For absolute values, treat the recomputed BPM/VORP as approximations.
 
+One consequence is visible in the data: Dyson Daniels ranks 2nd in VORP in this dataset, just behind Shai Gilgeous-Alexander. On Basketball-Reference's published figures, Daniels ranks well outside the top 10. The difference traces to steals: Daniels led the league in steals in 2024-25, and the DBPM formula credits steals heavily. Our approximation amplifies that credit further because it uses player-possession denominators rather than team-possession denominators, inflating per-100 steal rates. His PER of 16.4 and Win Shares near zero tell a more representative story of a strong defensive specialist whose overall value does not place him among the top two players in the league.
+
 ## 9. Limitations
 
 The 2024-25 testbed is a single season. Stability analysis (do the same players rate highly across multiple seasons?) requires multi-season data and is a natural extension.

@@ -278,16 +278,19 @@ def plot_ordinal_vs_value_gap(df: pd.DataFrame,
     fig, ax = plt.subplots(figsize=(10, 5), facecolor=BG)
     ax.set_facecolor(PANEL)
 
-    # Color: top-5 highlighted, rest muted
-    colors = [BLUE if r <= 5 else GRAY for r in ranks]
-    bars = ax.bar(ranks, vals, color=colors, alpha=0.85, width=0.8, zorder=3)
+    # Continuous color gradient: map bar value to blue intensity so the
+    # visual emphasis tracks the actual value, not an arbitrary rank cutoff.
+    norm_vals = (vals - vals.min()) / (vals.max() - vals.min() + 1e-9)
+    cmap = plt.get_cmap("Blues")
+    colors = [cmap(0.35 + 0.55 * v) for v in norm_vals]
+    bars = ax.bar(ranks, vals, color=colors, alpha=0.9, width=0.8, zorder=3)
 
-    # Label the top 5 player names
-    for i, (bar, name) in enumerate(zip(bars[:5], names[:5])):
+    # Label all bars with the player's last name
+    for bar, name in zip(bars, names):
         ax.text(bar.get_x() + bar.get_width() / 2,
                 bar.get_height() + max(vals) * 0.01,
                 name.split()[-1], ha="center", va="bottom",
-                fontsize=7.5, color=BLUE)
+                fontsize=7, color="#333", rotation=45)
 
     ax.set_xlabel("Player rank", fontsize=9, color=GRAY)
     ax.set_ylabel(SYSTEM_LABELS.get(metric, metric), fontsize=9, color=GRAY)
