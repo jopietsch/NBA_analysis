@@ -457,6 +457,10 @@ def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
     fig, ax = plt.subplots(figsize=(11, 6), facecolor=BG)
     ax.set_facecolor(PANEL)
 
+    _colors = [
+        "#2196F3", "#F44336", "#4CAF50", "#FF9800",
+        "#9C27B0", "#00BCD4", "#795548", "#607D8B",
+    ]
     plotted = []
     for sys in systems:
         if sys not in qual.columns:
@@ -469,7 +473,7 @@ def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
         if std == 0:
             continue
         z = (vals - mean) / std
-        color = SYSTEM_COLORS.get(sys, GRAY)
+        color = _colors[len(plotted) % len(_colors)]
         ax.plot(np.arange(1, top_n + 1), z.values,
                 color=color, linewidth=1.5, alpha=0.8,
                 label=SYSTEM_LABELS.get(sys, sys))
