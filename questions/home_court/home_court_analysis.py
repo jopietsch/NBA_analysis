@@ -3553,6 +3553,15 @@ def run_franchise_era_comparison(
     print(f"   League avg HCA — {early_label}: {league_early:.1f} pp  |  "
           f"{late_label}: {league_late:.1f} pp  |  change: {league_late - league_early:+.1f} pp\n")
 
+    # Facts for the prose (Appendix B): league-average HCA fell across the
+    # two-era split, and every qualifying franchise declined.
+    FACTS.set("franchise.league_early", league_early, "{:.1f}",
+              note=f"League-average HCA, {early_label}")
+    FACTS.set("franchise.league_late", league_late, "{:.0f}",
+              note=f"League-average HCA, {late_label}")
+    FACTS.set("franchise.n", len(rows), "{:d}",
+              note=f"Franchises with >={min_games} home games in both eras")
+
     print(f"   {'Franchise':<30}  {early_label:>9}  {late_label:>8}  {'Change':>7}  {'N early':>7}")
     print(f"   {'─' * 30}  {'─' * 9}  {'─' * 8}  {'─' * 7}  {'─' * 7}")
     for t, e, l, chg in rows:

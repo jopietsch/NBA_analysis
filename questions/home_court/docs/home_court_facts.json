@@ -69,6 +69,27 @@
     "unit": null,
     "value": 6.826930310031698
   },
+  "franchise.league_early": {
+    "display": "25.6",
+    "fmt": "{:.1f}",
+    "note": "League-average HCA, 1984\u20132001",
+    "unit": null,
+    "value": 25.6
+  },
+  "franchise.league_late": {
+    "display": "17",
+    "fmt": "{:.0f}",
+    "note": "League-average HCA, 2002\u201326",
+    "unit": null,
+    "value": 16.984615384615385
+  },
+  "franchise.n": {
+    "display": "26",
+    "fmt": "{:d}",
+    "note": "Franchises with >=400 home games in both eras",
+    "unit": null,
+    "value": 26
+  },
   "net.reg_mid2010s": {
     "display": "3",
     "fmt": "{:.0f}",
