@@ -749,6 +749,8 @@ def run_era_analysis(df: pd.DataFrame) -> None:
             if is_po == 0 and "1995–01" in name:
                 FACTS.set("era.drop_1995", abs(_pp(coef, p_bar)), "{:.1f}",
                           note="Rule-change era model: 1994-95 (hand-checking) reg-season level shift (pp)")
+                FACTS.set("era.drop_1995_p", "< 0.001" if pval < 0.001 else f"= {pval:.3f}",
+                          note="1994-95 era level-shift p-value (display)")
 
         lr    = 2.0 * (m_era.llf - m_year.llf)
         dfree = int(m_era.df_model - m_year.df_model)
@@ -4726,6 +4728,16 @@ def run_channel_event_study(df: pd.DataFrame) -> None:
                 print(f"   {label:<18}  {pre_slope:>+13.3f}  {level_shift:>+12.3f}  "
                       f"{slope_chg:>+13.3f}  {_fmt_p(p_level):>8}  {_fmt_p(p_slope):>8}  "
                       f"{_stars(p_level).strip()}/{_stars(p_slope).strip()}")
+                # Statistical detail for investigation.md: the 1994-95 fingerprint
+                # is an immediate foul jump while shooting shows none.
+                if is_po == 0 and key == "foul_diff":
+                    FACTS.set("event.foul_jump", level_shift, "{:+.2f}",
+                              note="1994-95 immediate foul-diff level shift (pp)")
+                    FACTS.set("event.foul_jump_p", "< 0.001" if p_level < 0.001 else f"= {p_level:.3f}",
+                              note="1994-95 foul jump p-value (display)")
+                if is_po == 0 and key == "efg_pct_diff":
+                    FACTS.set("event.shooting_jump_p", "< 0.001" if p_level < 0.001 else f"= {p_level:.3f}",
+                              note="1994-95 shooting jump p-value (display)")
             except Exception as e:
                 print(f"   {label:<18}  (failed: {e})")
         print()

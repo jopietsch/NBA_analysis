@@ -97,6 +97,34 @@
     "unit": null,
     "value": 2.595444885560284
   },
+  "era.drop_1995_p": {
+    "display": "= 0.010",
+    "fmt": null,
+    "note": "1994-95 era level-shift p-value (display)",
+    "unit": null,
+    "value": "= 0.010"
+  },
+  "event.foul_jump": {
+    "display": "+0.44",
+    "fmt": "{:+.2f}",
+    "note": "1994-95 immediate foul-diff level shift (pp)",
+    "unit": null,
+    "value": 0.4363237850962154
+  },
+  "event.foul_jump_p": {
+    "display": "= 0.007",
+    "fmt": null,
+    "note": "1994-95 foul jump p-value (display)",
+    "unit": null,
+    "value": "= 0.007"
+  },
+  "event.shooting_jump_p": {
+    "display": "= 0.327",
+    "fmt": null,
+    "note": "1994-95 shooting jump p-value (display)",
+    "unit": null,
+    "value": "= 0.327"
+  },
   "format.drop_2014": {
     "display": "7",
     "fmt": "{:.0f}",
