@@ -70,8 +70,7 @@ def main() -> None:
     uber_present = [s for s in ("CONSENSUS", "WINS_PRED")
                     if qual[s].notna().sum() >= 20]
 
-    model_systems = [s for s in present if s not in ("MVP_SHARE", "ALL_NBA_PTS")]
-    plot_all_systems_distributions(qual, model_systems + uber_present,
+    plot_all_systems_distributions(qual, present + uber_present,
                                    highlight=uber_present)
     plot_top20_table(qual, present + uber_present)
 

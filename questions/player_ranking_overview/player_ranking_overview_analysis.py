@@ -17,7 +17,6 @@ ALL_SYSTEMS = [
     "GAME_SCORE", "PER", "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP",
     "RAPTOR", "RAPTOR_WAR", "RAPTOR_O", "RAPTOR_D",
     "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
-    "MVP_SHARE", "ALL_NBA_PTS",
 ]
 
 SYSTEM_LABELS = {

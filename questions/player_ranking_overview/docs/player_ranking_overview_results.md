@@ -8,7 +8,7 @@ Season: 2024–25
 Season: 2024–25
 Total players in unified table: 569
 Qualified players (>= 500 min): 375
-Rating systems present: 10
+Rating systems present: 8
   Game Score: 375 players with data
   PER: 375 players with data
   Win Shares: 375 players with data
@@ -17,8 +17,6 @@ Rating systems present: 10
   OBPM: 375 players with data
   DBPM: 375 players with data
   VORP: 375 players with data
-  MVP Vote Share: 375 players with data
-  All-NBA Points: 375 players with data
 
 ─── BASIC DISTRIBUTION STATS ────────────────────────────────────
 
@@ -33,14 +31,14 @@ PER (n=375):
   Gini: 0.159  Top-5% share: 8.5%
 
 Win Shares (n=375):
-  Mean: -0.19  Median: -0.11  Std: 2.24
-  Min: -11.13  Max: 7.05
-  Gini: 0.743  Top-5% share: 32.1%
+  Mean: 3.30  Median: 2.79  Std: 2.28
+  Min: 0.02  Max: 14.91
+  Gini: 0.363  Top-5% share: 14.8%
 
 WS/48 (n=375):
-  Mean: -0.00  Median: -0.00  Std: 0.07
-  Min: -0.19  Max: 0.19
-  Gini: 0.730  Top-5% share: 28.4%
+  Mean: 0.11  Median: 0.09  Std: 0.05
+  Min: 0.00  Max: 0.28
+  Gini: 0.265  Top-5% share: 11.5%
 
 BPM (n=375):
   Mean: -1.51  Median: -2.19  Std: 9.83
@@ -62,139 +60,110 @@ VORP (n=375):
   Min: -95.85  Max: 316.67
   Gini: 0.749  Top-5% share: 31.9%
 
-MVP Vote Share (n=375):
-  Mean: 0.00  Median: 0.00  Std: 0.06
-  Min: 0.00  Max: 0.91
-  Gini: 0.993  Top-5% share: 100.0%
-
-All-NBA Points (n=375):
-  Mean: 0.11  Median: 0.00  Std: 0.62
-  Min: 0.00  Max: 5.00
-  Gini: 0.974  Top-5% share: 100.0%
-
 ─── RANK AGREEMENT (SPEARMAN CORRELATIONS) ──────────────────────
   Game Score vs PER: r=0.831
-  Game Score vs Win Shares: r=-0.250
-  Game Score vs WS/48: r=-0.255
+  Game Score vs Win Shares: r=0.699
+  Game Score vs WS/48: r=0.308
   Game Score vs BPM: r=0.469
   Game Score vs OBPM: r=0.869
   Game Score vs DBPM: r=-0.448
   Game Score vs VORP: r=0.505
-  Game Score vs MVP Vote Share: r=0.277
-  Game Score vs All-NBA Points: r=0.312
-  PER vs Win Shares: r=0.013
-  PER vs WS/48: r=0.043
+  PER vs Win Shares: r=0.759
+  PER vs WS/48: r=0.611
   PER vs BPM: r=0.489
   PER vs OBPM: r=0.722
   PER vs DBPM: r=-0.271
   PER vs VORP: r=0.526
-  PER vs MVP Vote Share: r=0.274
-  PER vs All-NBA Points: r=0.309
-  Win Shares vs WS/48: r=0.970
-  Win Shares vs BPM: r=-0.035
-  Win Shares vs OBPM: r=-0.298
-  Win Shares vs DBPM: r=0.419
-  Win Shares vs VORP: r=-0.075
-  Win Shares vs MVP Vote Share: r=-0.224
-  Win Shares vs All-NBA Points: r=-0.217
-  WS/48 vs BPM: r=0.018
-  WS/48 vs OBPM: r=-0.280
-  WS/48 vs DBPM: r=0.439
-  WS/48 vs VORP: r=-0.030
-  WS/48 vs MVP Vote Share: r=-0.197
-  WS/48 vs All-NBA Points: r=-0.191
+  Win Shares vs WS/48: r=0.695
+  Win Shares vs BPM: r=0.640
+  Win Shares vs OBPM: r=0.761
+  Win Shares vs DBPM: r=-0.094
+  Win Shares vs VORP: r=0.653
+  WS/48 vs BPM: r=0.371
+  WS/48 vs OBPM: r=0.200
+  WS/48 vs DBPM: r=0.183
+  WS/48 vs VORP: r=0.394
   BPM vs OBPM: r=0.560
   BPM vs DBPM: r=0.347
   BPM vs VORP: r=0.972
-  BPM vs MVP Vote Share: r=0.260
-  BPM vs All-NBA Points: r=0.294
   OBPM vs DBPM: r=-0.464
   OBPM vs VORP: r=0.572
-  OBPM vs MVP Vote Share: r=0.283
-  OBPM vs All-NBA Points: r=0.315
   DBPM vs VORP: r=0.308
-  DBPM vs MVP Vote Share: r=-0.186
-  DBPM vs All-NBA Points: r=-0.182
-  VORP vs MVP Vote Share: r=0.272
-  VORP vs All-NBA Points: r=0.307
-  MVP Vote Share vs All-NBA Points: r=0.889
 
 ─── WHAT EACH SYSTEM UNIQUELY CAPTURES ──────────────────────────
   BPM: unique R² = 1.000
   OBPM: unique R² = 1.000
   DBPM: unique R² = 1.000
-  Game Score: unique R² = 0.906
-  WS/48: unique R² = 0.889
-  Win Shares: unique R² = 0.877
-  VORP: unique R² = 0.876
-  PER: unique R² = 0.858
-  All-NBA Points: unique R² = 0.541
-  MVP Vote Share: unique R² = 0.468
+  PER: unique R² = 0.892
+  Game Score: unique R² = 0.888
+  VORP: unique R² = 0.871
+  Win Shares: unique R² = 0.864
+  WS/48: unique R² = 0.837
 
 ─── CONSENSUS RATING — TOP 20 ───────────────────────────────────
-   1. Shai Gilgeous-Alexander         Consensus z = 3.90
-   2. Giannis Antetokounmpo           Consensus z = 2.88
-   3. Jayson Tatum                    Consensus z = 2.04
-   4. Nikola Jokić                    Consensus z = 1.70
-   5. Donovan Mitchell                Consensus z = 1.43
-   6. Anthony Edwards                 Consensus z = 1.37
-   7. Evan Mobley                     Consensus z = 1.30
-   8. Karl-Anthony Towns              Consensus z = 1.18
-   9. Walker Kessler                  Consensus z = 1.18
-  10. Dyson Daniels                   Consensus z = 1.17
-  11. LeBron James                    Consensus z = 1.15
-  12. Ivica Zubac                     Consensus z = 1.13
-  13. Jarrett Allen                   Consensus z = 1.04
-  14. Rudy Gobert                     Consensus z = 1.01
-  15. Stephen Curry                   Consensus z = 1.01
-  16. Jalen Duren                     Consensus z = 0.99
-  17. Luke Kornet                     Consensus z = 0.89
-  18. Keon Ellis                      Consensus z = 0.88
-  19. Goga Bitadze                    Consensus z = 0.87
-  20. Amen Thompson                   Consensus z = 0.81
+   1. Nikola Jokić                    Consensus z = 3.13
+   2. Shai Gilgeous-Alexander         Consensus z = 2.72
+   3. Giannis Antetokounmpo           Consensus z = 2.29
+   4. James Harden                    Consensus z = 1.84
+   5. Trae Young                      Consensus z = 1.70
+   6. Tyrese Haliburton               Consensus z = 1.67
+   7. LeBron James                    Consensus z = 1.57
+   8. Dyson Daniels                   Consensus z = 1.57
+   9. Domantas Sabonis                Consensus z = 1.54
+  10. Anthony Edwards                 Consensus z = 1.51
+  11. Karl-Anthony Towns              Consensus z = 1.50
+  12. Alperen Sengun                  Consensus z = 1.49
+  13. Cade Cunningham                 Consensus z = 1.49
+  14. Ivica Zubac                     Consensus z = 1.47
+  15. Devin Booker                    Consensus z = 1.45
+  16. Jalen Duren                     Consensus z = 1.43
+  17. Jayson Tatum                    Consensus z = 1.42
+  18. Walker Kessler                  Consensus z = 1.39
+  19. Jarrett Allen                   Consensus z = 1.34
+  20. Josh Hart                       Consensus z = 1.32
 
 ─── WINS-PREDICTIVE RATING — TOP 20 ─────────────────────────────
-   1. Shai Gilgeous-Alexander         Wins-predictive z = 6.79
-   2. Giannis Antetokounmpo           Wins-predictive z = 5.61
-   3. Jayson Tatum                    Wins-predictive z = 4.50
-   4. Donovan Mitchell                Wins-predictive z = 3.82
-   5. Anthony Edwards                 Wins-predictive z = 3.13
-   6. Evan Mobley                     Wins-predictive z = 2.92
-   7. LeBron James                    Wins-predictive z = 2.78
-   8. Stephen Curry                   Wins-predictive z = 2.55
-   9. Nikola Jokić                    Wins-predictive z = 2.36
-  10. Jalen Brunson                   Wins-predictive z = 2.23
-  11. Karl-Anthony Towns              Wins-predictive z = 1.94
-  12. Luke Kornet                     Wins-predictive z = 1.72
-  13. Walker Kessler                  Wins-predictive z = 1.71
-  14. Dyson Daniels                   Wins-predictive z = 1.71
-  15. Goga Bitadze                    Wins-predictive z = 1.66
-  16. James Harden                    Wins-predictive z = 1.65
-  17. Dwight Powell                   Wins-predictive z = 1.62
-  18. Daniel Gafford                  Wins-predictive z = 1.58
-  19. Tyrese Haliburton               Wins-predictive z = 1.51
-  20. Keon Ellis                      Wins-predictive z = 1.50
+   1. Nikola Jokić                    Wins-predictive z = 3.90
+   2. Shai Gilgeous-Alexander         Wins-predictive z = 3.87
+   3. Giannis Antetokounmpo           Wins-predictive z = 3.30
+   4. James Harden                    Wins-predictive z = 2.15
+   5. Dyson Daniels                   Wins-predictive z = 2.05
+   6. Anthony Edwards                 Wins-predictive z = 1.98
+   7. Karl-Anthony Towns              Wins-predictive z = 1.97
+   8. LeBron James                    Wins-predictive z = 1.96
+   9. Daniel Gafford                  Wins-predictive z = 1.93
+  10. Anthony Davis                   Wins-predictive z = 1.92
+  11. Goga Bitadze                    Wins-predictive z = 1.89
+  12. Tyrese Haliburton               Wins-predictive z = 1.88
+  13. Jayson Tatum                    Wins-predictive z = 1.88
+  14. Jalen Duren                     Wins-predictive z = 1.87
+  15. Jarrett Allen                   Wins-predictive z = 1.86
+  16. Cade Cunningham                 Wins-predictive z = 1.83
+  17. Victor Wembanyama               Wins-predictive z = 1.79
+  18. Luke Kornet                     Wins-predictive z = 1.78
+  19. Walker Kessler                  Wins-predictive z = 1.78
+  20. Alperen Sengun                  Wins-predictive z = 1.74
 
 ─── COMPARISON: CONSENSUS vs. WINS-PREDICTIVE ───────────────────
-  Spearman correlation between consensus and wins-predictive: 0.982 (p=0.000)
+  Spearman correlation between consensus and wins-predictive: 0.978 (p=0.000)
   Players rated much higher by wins-predictive than consensus:
-    Shai Gilgeous-Alexander         diff = +2.88
-    Giannis Antetokounmpo           diff = +2.73
-    Jayson Tatum                    diff = +2.46
-    Donovan Mitchell                diff = +2.39
-    Anthony Edwards                 diff = +1.76
+    Shai Gilgeous-Alexander         diff = +1.14
+    Giannis Antetokounmpo           diff = +1.00
+    Daniel Gafford                  diff = +0.92
+    Victor Wembanyama               diff = +0.82
+    Alex Caruso                     diff = +0.80
   Players rated much lower by wins-predictive than consensus:
-    AJ Johnson                      diff = -1.13
-    Vasilije Micic                  diff = -1.13
-    Brandon Ingram                  diff = -1.01
-    Malcolm Brogdon                 diff = -0.96
-    Cam Thomas                      diff = -0.91
+    Vasilije Micic                  diff = -0.99
+    AJ Johnson                      diff = -0.97
+    Cody Williams                   diff = -0.90
+    Jett Howard                     diff = -0.75
+    Nick Smith Jr.                  diff = -0.69
 
 ─── POWER-LAW / TAIL ANALYSIS ───────────────────────────────────
 
 Cumulative-value metrics:
-  Win Shares: Gini=0.743, top-5% hold 32.1% of value
-    Skewness: 1.57 (right-skewed)
+  Win Shares: Gini=0.363, top-5% hold 14.8% of value
+    Skewness: 1.45 (right-skewed)
   VORP: Gini=0.749, top-5% hold 31.9% of value
     Skewness: 1.54 (right-skewed)
 
@@ -207,75 +176,75 @@ Rate metrics:
 ─── WHO EACH SYSTEM LOVES vs. CONSENSUS ─────────────────────────
 
 Game Score loves (vs. consensus):
-  +2.52  Nikola Jokić
-  +2.27  Luka Dončić
-  +2.20  Joel Embiid
+  +1.92  Joel Embiid
+  +1.82  Cam Thomas
+  +1.78  Brandon Ingram
 Game Score discounts (vs. consensus):
-  -1.95  Dwight Powell
-  -1.75  John Konchar
-  -1.51  Cam Reddish
+  -2.06  Dwight Powell
+  -1.68  John Konchar
+  -1.41  Luke Kornet
 
 PER loves (vs. consensus):
-  +2.42  Nikola Jokić
-  +2.30  Zion Williamson
-  +1.93  Luka Dončić
+  +1.85  Zion Williamson
+  +1.55  Giannis Antetokounmpo
+  +1.43  Kristaps Porziņģis
 PER discounts (vs. consensus):
-  -2.02  Cam Reddish
-  -1.62  Gary Harris
-  -1.47  John Konchar
+  -1.78  Cam Reddish
+  -1.40  John Konchar
+  -1.37  Delon Wright
 
 Win Shares loves (vs. consensus):
-  +2.10  Ivica Zubac
-  +1.83  Walker Kessler
-  +1.78  Yves Missi
+  +2.51  Domantas Sabonis
+  +1.98  Ivica Zubac
+  +1.96  Nikola Jokić
 Win Shares discounts (vs. consensus):
-  -5.66  Shai Gilgeous-Alexander
-  -5.18  James Harden
-  -5.04  Trae Young
+  -1.32  John Konchar
+  -1.24  Dwight Powell
+  -1.22  Cam Reddish
 
 WS/48 loves (vs. consensus):
-  +2.62  Steven Adams
-  +1.97  Jock Landale
-  +1.97  Moussa Diabaté
+  +3.13  Steven Adams
+  +2.49  Richaun Holmes
+  +2.45  Day'Ron Sharpe
 WS/48 discounts (vs. consensus):
-  -5.04  Shai Gilgeous-Alexander
-  -3.54  Giannis Antetokounmpo
-  -3.30  Jayson Tatum
+  -2.04  Anthony Edwards
+  -1.67  Dyson Daniels
+  -1.57  Jaren Jackson Jr.
 
 BPM loves (vs. consensus):
-  +2.21  Dwight Powell
-  +2.19  John Konchar
-  +2.05  Cam Reddish
+  +2.29  Cam Reddish
+  +2.26  John Konchar
+  +2.10  Dwight Powell
 BPM discounts (vs. consensus):
-  -1.45  Jared McCain
-  -1.29  Malcolm Brogdon
-  -1.28  Jamison Battle
+  -1.48  Joel Embiid
+  -1.35  Malcolm Brogdon
+  -1.22  Cam Thomas
 
 OBPM loves (vs. consensus):
-  +2.78  Trae Young
-  +2.42  Devin Booker
-  +2.37  James Harden
+  +1.73  Anthony Edwards
+  +1.73  Jalen Green
+  +1.47  Devin Booker
 OBPM discounts (vs. consensus):
-  -1.85  John Konchar
-  -1.76  Cam Reddish
-  -1.48  Mouhamed Gueye
+  -1.78  John Konchar
+  -1.51  Cam Reddish
+  -1.42  Alex Caruso
 
 DBPM loves (vs. consensus):
-  +3.95  Cam Reddish
-  +3.88  John Konchar
-  +2.90  Dwight Powell
+  +4.20  Cam Reddish
+  +3.95  John Konchar
+  +2.86  Zeke Nnaji
 DBPM discounts (vs. consensus):
-  -4.46  Shai Gilgeous-Alexander
-  -3.95  Giannis Antetokounmpo
-  -3.08  Jayson Tatum
+  -3.66  Nikola Jokić
+  -3.37  Giannis Antetokounmpo
+  -3.28  Shai Gilgeous-Alexander
 
 VORP loves (vs. consensus):
-  +3.33  James Harden
-  +3.21  Dyson Daniels
-  +2.77  Trae Young
+  +2.81  Dyson Daniels
+  +2.34  Anthony Edwards
+  +2.11  James Harden
 VORP discounts (vs. consensus):
-  -1.03  Jabari Smith Jr.
-  -1.01  Dalton Knecht
-  -0.97  Deandre Ayton
+  -1.18  Zion Williamson
+  -1.11  Mark Williams
+  -1.00  Aaron Gordon
 
 ```
