@@ -1,4 +1,32 @@
 {
+  "altitude.denver_hca": {
+    "display": "27",
+    "fmt": "{:d}",
+    "note": "Denver Nuggets full home-minus-road gap (truncated to match prose)",
+    "unit": null,
+    "value": 27
+  },
+  "altitude.league_mean": {
+    "display": "20",
+    "fmt": "{:.0f}",
+    "note": "League-average regular-season HCA (pp)",
+    "unit": null,
+    "value": 20.00769230769231
+  },
+  "altitude.signal_pct": {
+    "display": "70%",
+    "fmt": "{:.0f}%",
+    "note": "Share of franchise HCA variation that is genuine, not sampling noise",
+    "unit": null,
+    "value": 70.14452666761886
+  },
+  "altitude.utah_hca": {
+    "display": "26",
+    "fmt": "{:d}",
+    "note": "Utah Jazz full home-minus-road gap (truncated to match prose)",
+    "unit": null,
+    "value": 26
+  },
   "b2b.freq_early": {
     "display": "35%",
     "fmt": "{:.0f}%",
