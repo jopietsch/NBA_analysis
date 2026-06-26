@@ -3335,6 +3335,14 @@ def _run_league_metric_analysis(
             print(f"   ≈ {pp_per_10:+.2f} pp per {scale_desc}  "
                   f"95% CI [{ci_lo*10:+.2f}, {ci_hi*10:+.2f}]")
             print(f"   p = {pval_s}  {_stars(pval).strip()}")
+            if "3PA" in metric_header:
+                _tctx = "po" if ctx_label == "Playoffs" else "reg"
+                FACTS.set(f"tpa.effect_{_tctx}", pp_per_10, "{:+.2f}",
+                          note=f"{ctx_label}: bivariate HCA effect per 10pp of 3PA rate")
+                FACTS.set(f"tpa.effect_{_tctx}_ci_lo", ci_lo * 10, "{:+.2f}",
+                          note=f"{ctx_label}: 3PA effect 95% CI low")
+                FACTS.set(f"tpa.effect_{_tctx}_ci_hi", ci_hi * 10, "{:+.2f}",
+                          note=f"{ctx_label}: 3PA effect 95% CI high")
         except Exception:
             pass
 
@@ -3349,6 +3357,13 @@ def _run_league_metric_analysis(
             print(f"\n   Controlling for era (within-era game-level effect):")
             print(f"   coef = {coef_e:+.4f}  (≈ {pp_era:+.2f} pp {era_coef_desc})  "
                   f"p = {pval_e_s}  {_stars(pval_e).strip()}")
+            if "3PA" in metric_header:
+                _tctx = "po" if ctx_label == "Playoffs" else "reg"
+                FACTS.set(f"tpa.within_{_tctx}", pp_era, "{:+.2f}",
+                          note=f"{ctx_label}: within-era HCA effect per 10pp of 3PA rate")
+                FACTS.set(f"tpa.within_{_tctx}_p",
+                          "< 0.001" if pval_e < 0.001 else f"= {pval_e:.3f}",
+                          note=f"{ctx_label}: within-era 3PA effect p-value (display)")
             if note_lines:
                 for line in note_lines:
                     print(line)
@@ -3423,6 +3438,8 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
     shrinkage = (abs(r_raw) - abs(r_resid)) / abs(r_raw) * 100 if r_raw != 0 else 0
     # Fact for the prose (§3/App C): how much of the 3PA-HCA correlation is just
     # the shared long-run drift (lost when the year trend is removed).
+    FACTS.set("tpa.raw_corr", r_raw, "{:.2f}",
+              note="Reg. raw season-level 3PA-vs-HCA Pearson correlation")
     FACTS.set("tpa.detrend_loss", shrinkage, "{:.0f}%",
               note="Reg. 3PA-HCA correlation strength lost after removing the shared year trend")
     if abs(r_resid) < 0.20:

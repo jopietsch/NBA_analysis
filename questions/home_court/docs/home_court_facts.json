@@ -1035,12 +1035,89 @@
     "unit": null,
     "value": 6.8148977106913975
   },
+  "tpa.effect_po": {
+    "display": "-2.84",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: bivariate HCA effect per 10pp of 3PA rate",
+    "unit": null,
+    "value": -2.839148988799148
+  },
+  "tpa.effect_po_ci_hi": {
+    "display": "-1.66",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: 3PA effect 95% CI high",
+    "unit": null,
+    "value": -1.664836347521323
+  },
+  "tpa.effect_po_ci_lo": {
+    "display": "-4.01",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: 3PA effect 95% CI low",
+    "unit": null,
+    "value": -4.013461630076975
+  },
+  "tpa.effect_reg": {
+    "display": "-2.64",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: bivariate HCA effect per 10pp of 3PA rate",
+    "unit": null,
+    "value": -2.6384061872758213
+  },
+  "tpa.effect_reg_ci_hi": {
+    "display": "-2.20",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: 3PA effect 95% CI high",
+    "unit": null,
+    "value": -2.2019566999263143
+  },
+  "tpa.effect_reg_ci_lo": {
+    "display": "-3.07",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: 3PA effect 95% CI low",
+    "unit": null,
+    "value": -3.0748556746253284
+  },
+  "tpa.raw_corr": {
+    "display": "-0.90",
+    "fmt": "{:.2f}",
+    "note": "Reg. raw season-level 3PA-vs-HCA Pearson correlation",
+    "unit": null,
+    "value": -0.9016638107219593
+  },
   "tpa.recent_share": {
     "display": "40%",
     "fmt": "{:.0f}%",
     "note": "Regular-season 3PA share of FGA, most recent era",
     "unit": null,
     "value": 40.49458384563221
+  },
+  "tpa.within_po": {
+    "display": "-3.12",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: within-era HCA effect per 10pp of 3PA rate",
+    "unit": null,
+    "value": -3.120508135146302
+  },
+  "tpa.within_po_p": {
+    "display": "= 0.027",
+    "fmt": null,
+    "note": "Playoffs: within-era 3PA effect p-value (display)",
+    "unit": null,
+    "value": "= 0.027"
+  },
+  "tpa.within_reg": {
+    "display": "-2.27",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: within-era HCA effect per 10pp of 3PA rate",
+    "unit": null,
+    "value": -2.266491684226839
+  },
+  "tpa.within_reg_p": {
+    "display": "< 0.001",
+    "fmt": null,
+    "note": "Regular season: within-era 3PA effect p-value (display)",
+    "unit": null,
+    "value": "< 0.001"
   },
   "travel.per_100mi": {
     "display": "0.07",
