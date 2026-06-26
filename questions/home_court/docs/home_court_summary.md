@@ -10,7 +10,7 @@
 
 In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games; by the 1990s that rate actually matched or exceeded the stronger team's home win rate. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does.  **Has home court really changed? What factors create the advantage? What drove the decline? And what did not, even though people often assume it did?**
 
-Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady fade, with two stretches where it briefly sped up. **We measure the edge through four box-score factors: shooting, rebounding, foul calls, and turnover margin. Shooting builds the biggest part of the edge; rebounding did the most to erase it.** Two real-world changes account for much of the decline: the shift to three-point shooting, which alone reaches close to half of it, and fairer officiating. Rebounding, the largest single driver, is the one neither change explains.
+Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady fade, with two stretches where it briefly sped up. **We measure the advantage through four box-score factors: shooting, rebounding, foul calls, and turnover margin. Shooting builds the biggest part of the advantage; rebounding did the most to erase it.** Two real-world changes account for much of the decline: the shift to three-point shooting, which alone reaches close to half of it, and fairer officiating. Rebounding, the largest single driver, is the one neither change explains.
 
 Because there are more regular-season games, that analysis is more precise. There are far fewer playoff games, so it shows direction more than precise size.
 
@@ -20,17 +20,17 @@ Because there are more regular-season games, that analysis is more precise. Ther
 
 ![Home win % per season, 1983–84 through 2025–26: regular season (top) and playoffs (bottom), with long-run trend fits and rule-change-era shading.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season width=100%}
 
-Forty years ago, home teams won about 65% of regular-season games and nearly 68% in the playoffs. Today it's about 55% and 58%, **a drop of roughly 10 percentage points in both**. The scoring edge shrank to match: home teams outscored visitors by about 3 points per 100 possessions in the regular season through the mid-2010s, and about 2 today. The drop is mostly one continuous fade that accounts for nearly the whole decline, with two stretches where it briefly sped up: one in the mid-1990s and one starting around 2018. Both are accelerations within the trend, not extra drops on top of it.
+Forty years ago, home teams won about 65% of regular-season games and nearly 68% in the playoffs. Today it's about 55% and 58%, **a drop of roughly 10 percentage points in both**. The scoring advantage shrank to match: home teams outscored visitors by about 3 points per 100 possessions in the regular season through the mid-2010s, and about 2 today. The drop is mostly one continuous fade that accounts for nearly the whole decline, with two stretches where it briefly sped up: one in the mid-1990s and one starting around 2018. Both are accelerations within the trend, not extra drops on top of it.
 
-Home court in the playoffs declined later than in the regular season: playoff home win rates held near 64% through the 2000s and 2010s while the regular season was already sliding, then fell to about 58% in the past few seasons. The per-game edge is still real, the home team takes the early games at the top seed's arena comfortably and even wins most Game 7s, but a best-of-7 series flattens it. A home-court team that would have won the series about 55% of the time in the 1980s is now barely better than a coin flip.
+Home court in the playoffs declined later than in the regular season: playoff home win rates held near 64% through the 2000s and 2010s while the regular season was already sliding, then fell to about 58% in the past few seasons. The per-game advantage is still real, the home team takes the early games at the top seed's arena comfortably and even wins most Game 7s, but a best-of-7 series flattens it. A home-court team that would have won the series about 55% of the time in the 1980s is now barely better than a coin flip.
 
 ---
 
 ## 2. What Creates Home Court Advantage, and What Changed
 
-We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The table shows how much of the home edge each one accounts for, and how much of the 40-year decline each one carries.
+We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The table shows how much of the home advantage each one accounts for, and how much of the 40-year decline each one carries.
 
-| Box-score factor | Share of the edge | Share of the decline |
+| Box-score factor | Share of the advantage | Share of the decline |
 |---|---:|---:|
 | Shooting (eFG%) | 43% | 21% |
 | Rebounding | 25% | 30% |
@@ -38,7 +38,7 @@ We measure home court through the Four Factors that decide possessions, develope
 | Turnover margin | 13% | 27% |
 | **All four together** | **95%** | **96%** |
 
-Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Two things stand out. Shooting builds the biggest single part of the edge, but rebounding and turnovers together do the most to erase it, more than half the decline. And these four are where the advantage shows up, not why it exists: the real-world causes behind them, a home crowd, familiar rims, referee tendencies, are the next question.
+Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Two things stand out. Shooting builds the biggest single part of the advantage, but rebounding and turnovers together do the most to erase it, more than half the decline. And these four are where the advantage shows up, not why it exists: the real-world causes behind them, a home crowd, familiar rims, referee tendencies, are the next question.
 
 Then we get to the most interesting: why are these changes happening.  Referees are calling fairer games: home teams once attempted roughly 2 more free throws per game than visitors, and now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap, and it's the only one that does. The three-point shift reaches across categories too: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline, so the move to the perimeter touches close to half the entire 40-year decline. Rebounding and turnovers, the two biggest single drivers, are the ones the three-point shift does not explain: rebounding barely moves with three-point volume at all. 
 
@@ -52,9 +52,9 @@ The playoff picture is similar in shape, though a larger share of the playoff de
 
 ---
 
-**Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding edge has shrunk steadily for four decades, and it isn't the three-point story in disguise: in games with similar three-point rates, the shooting edge disappears while the rebounding edge barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell much further than the away rate. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams.
+**Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding advantage has shrunk steadily for four decades, and it isn't the three-point story in disguise: in games with similar three-point rates, the shooting advantage disappears while the rebounding advantage barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell much further than the away rate. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams.
 
-The turnover edge faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of the fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. So rebounding stands almost entirely apart from the three-point story, and turnovers stand half apart. The playoffs show the same fade on both counts, though with far fewer games it reads as direction rather than precise size.
+The turnover advantage faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of the fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. So rebounding stands almost entirely apart from the three-point story, and turnovers stand half apart. The playoffs show the same fade on both counts, though with far fewer games it reads as direction rather than precise size.
 
 How far can these trends continue? Both are near their practical limits. Three-point attempts already make up about 40% of all shots, and the offensive-rebound rate is close to a floor. If both are leveling off, the pace of decline should slow. The empty-arena result offers a guide to where the long-run trend settles: near 51%.
 

@@ -33,7 +33,7 @@ playoffs, assembled from the cached game logs. Each row carries:
 - `tz_diff` — absolute time-zone difference between the two franchises
 - box-score differentials (home minus away): fouls, FG%, eFG%, 3PA rate, 3P%, FT%
 - `tov_diff`, `reb_diff` — home-minus-away turnovers and total rebounds (the extra channels used by the mediation decomposition)
-- `oreb_diff`, `dreb_diff`, `reb_share_edge`, `league_oreb_rate` — offensive/defensive rebound splits, the pace-free rebound-share edge, and the league offensive-rebound rate (the rebounding decomposition, Section 12)
+- `oreb_diff`, `dreb_diff`, `reb_share_edge`, `league_oreb_rate` — offensive/defensive rebound splits, the pace-free rebound-share advantage, and the league offensive-rebound rate (the rebounding decomposition, Section 12)
 - `margin` — home point differential
 - `game_in_series` — for playoff games, the game number (parsed from the game ID)
 - `distance_miles` — haversine distance from the away team's home arena to the game arena
@@ -179,15 +179,15 @@ which mechanisms are fading, which is the heart of research question 3.
 - **Foul/FTA bias** collapsed: the regular-season home foul advantage went from
   −1.23 fouls/game (1984–94) to −0.25 (2023–26), trend +0.022/yr, p < 0.001 —
   an ~80% reduction. The chart's first panel shows the same story via FTA: the
-  home free-throw-attempt edge fell from +1.97/game (1984–94) to +0.46 (2023–26),
+  home free-throw-attempt advantage fell from +1.97/game (1984–94) to +0.46 (2023–26),
   trend −0.036/yr, p < 0.001. The playoffs show the same direction for fouls
   (−1.58 → −0.68, trend +0.020/yr, p < 0.01) and FTA (+2.35 → +1.09, trend
   −0.021/yr, not significant), retaining about 2.7× the residual foul bias
   relative to the regular season.
-- **The shooting edge** is shrinking in the regular season: FG% diff trend
+- **The shooting advantage** is shrinking in the regular season: FG% diff trend
   −0.021 pp/yr and eFG% −0.015 pp/yr (both p < 0.001), from ~+1.6 pp to
   ~+0.7–1.0 pp. Playoff shooting trends point the same way but aren't
-  significant — the playoff shooting edge has held up better.
+  significant — the playoff shooting advantage has held up better.
 - **3PA rate diff** trends positive (home teams historically took *fewer*
   threes than visitors; that gap is closing), consistent with league-wide
   shot-selection convergence. 3P% and FT% diffs show no significant trend —
@@ -279,13 +279,13 @@ regular season: +1.28 pp of FGA share in 1995–01 down to +0.24 in 2023–26
 image (+0.025/yr, p < 0.001). Visiting teams now generate paint shots nearly as
 well as home teams — analytics-driven offense doesn't care where it's played.
 The playoff trends point the same direction (paint −0.032/yr) but are not
-significant on only 23 seasons of noisier data; the 2023–26 playoff paint edge
+significant on only 23 seasons of noisier data; the 2023–26 playoff paint advantage
 (+1.35) remains near its historical level, so the convergence is only firmly
 established for the regular season.
 
 **Why this chart.** Four panels, one per shot zone, each a home-minus-road share
 line over time with a zero reference — the same small-multiple logic as Section 4.
-The eye tracks the paint edge sliding toward zero and the mid-range deficit closing
+The eye tracks the paint advantage sliding toward zero and the mid-range deficit closing
 in mirror image across the panels. Lines rather than bars because the claim is a
 multi-decade convergence trend, not a level comparison.
 
@@ -303,7 +303,7 @@ four differentials — with cluster-robust SEs by season, used to drive two exac
 accounting identities:
 
 1. **Level identity:** mean win % = intercept + Σ (coef × mean diff). This splits
-   the home edge (the amount above a coin flip) into a contribution from each
+   the home advantage (the amount above a coin flip) into a contribution from each
    channel.
 2. **Trend identity:** total pp/yr = unmediated pp/yr + Σ (coef × channel
    trend/yr). This splits the *decline* into per-channel contributions, using
@@ -331,7 +331,7 @@ the 3PA-control diagnostic is what adds a causal-ordering question on top.
 **What the results mean.** The four channels capture nearly all of HCA's level in
 both contexts and nearly all of its regular-season decline:
 
-- **Regular-season level:** channels carry 95% of the +10.1 pp home edge.
+- **Regular-season level:** channels carry 95% of the +10.1 pp home advantage.
   Shooting (eFG%) is the largest single channel at 43% (+4.4 pp), then rebounds
   25% (+2.5 pp), fouls 14% (+1.4 pp), turnovers 13% (+1.3 pp); 5% unexplained.
 - **Regular-season trend:** channels carry 96% of the −0.244 pp/yr decline,
@@ -345,13 +345,13 @@ turnovers real drivers or just downstream of the perimeter shift? The answers
 differ by channel:
 
 - **Shooting** is fully downstream: controlling for 3PA, the home eFG% trend
-  vanishes (absorbed ≈ 210%). The fading home shooting edge *is* the three-point
+  vanishes (absorbed ≈ 210%). The fading home shooting advantage *is* the three-point
   story. The point estimate even flips sign, but 3PA rate is a *mediator* of the
   same strategic shift, and conditioning on a mediator is exactly where a
   coefficient can flip as an artifact — so read this as "fully absorbed," not as
-  a genuine reversal of the shooting edge.
+  a genuine reversal of the shooting advantage.
 - **Rebounding** is independent: only ≈8% of its year-trend is absorbed and it
-  stays highly significant (p < 0.001). The home team's rebounding edge has slid
+  stays highly significant (p < 0.001). The home team's rebounding advantage has slid
   for reasons the perimeter shift does not explain — a genuine fourth strand of
   the decline, now reflected in `home_court_findings.md` §3 and §7 (Summary). In the playoffs the
   rebounding fade is, if anything, sharper net of 3PA.
@@ -394,7 +394,7 @@ a season are intact in every resample.
 
 **Why this chart.** Stacked horizontal bars, normalized to 100% — one stack for the
 level, one for the decline, regular season vs. playoffs. The whole point of a
-decomposition is *composition*: how the edge splits into parts that sum to a whole.
+decomposition is *composition*: how the advantage splits into parts that sum to a whole.
 A stacked bar is the one chart form that shows shares adding to 100% at a glance; a
 line or grouped bars would hide the very accounting identity the LPM exists to
 deliver. The grey residual segment is deliberate too — it shows the unexplained
@@ -462,7 +462,7 @@ could have contributed to the HCA decline?
 
 **What the results mean.** Rest matters: regular-season home win % runs from
 57.6% (away more rested) to 62.8% (home more rested), χ² p < 0.001, roughly
-+1–3 pp per day of rest edge in every era. The playoff buckets are more extreme
++1–3 pp per day of rest advantage in every era. The playoff buckets are more extreme
 (75.0% when home has more rest) but tiny (144 games) — and confounded, see
 Section 9. The key result is the interaction test: p = 0.474 (RS) and 0.727
 (playoffs) — **no evidence the rest effect changed across eras**. Rest is a
@@ -498,7 +498,7 @@ rest coefficient absorbs team quality.
 - **Altitude:** Denver/Utah home games run +7.9 pp above baseline in the regular
   season (p < 0.001) but −1.6 pp, n.s., in the playoffs. The playoff null is
   partly confound (good Denver/Utah teams face good opponents) and partly small
-  samples, but there is no detectable playoff altitude edge.
+  samples, but there is no detectable playoff altitude advantage.
 - **Time zones:** null in both contexts (−0.4 pp/zone RS, p = 0.086; +1.0
   playoffs, p = 0.330). Only 107 coast-to-coast playoff games exist in 43
   seasons, so the playoff test has little power — but the regular-season test
@@ -531,7 +531,7 @@ years, so a raw correlation between them is guaranteed and proves nothing
 ("ice cream sales and drownings"). The within-era model asks: *among games in
 the same era*, do higher-3PA games show lower home win rates? If yes, the
 relationship survives removal of the shared time trend and is much more likely
-to be mechanistic (more threes → more variance → weaker edge for the slightly
+to be mechanistic (more threes → more variance → weaker advantage for the slightly
 better side, which at home is usually the home team).
 
 **What the results mean.** The season-level correlation is enormous (r = −0.90
@@ -587,7 +587,7 @@ This is informative even though it's a null result: it means the 3PA–HCA assoc
 ## 12. Rebounding Decomposition (`run_rebounding_decomposition`)
 
 **Why this section exists.** Section 7 establishes that rebounding carries the
-single largest share of the decline but cannot say *why* the home rebounding edge
+single largest share of the decline but cannot say *why* the home rebounding advantage
 faded. This section answers that, using only the cached box scores.
 
 **The data.** The same game-level dataset, now carrying four rebounding columns
@@ -613,39 +613,39 @@ the four columns, separately for regular season and playoffs — identical in fo
 to the differential analysis (Section 4). Then a season-level **Pearson
 correlation** between the mean `reb_share_edge` and the league-wide
 offensive-rebound rate (`league_oreb_rate` = both teams' OREB ÷ all rebounds),
-testing whether the home edge tracks the league's strategic retreat from the
+testing whether the home advantage tracks the league's strategic retreat from the
 offensive glass.
 
 **Reading the output.**
-- The edge **died on the offensive glass**: regular-season `oreb_diff` falls from
+- The advantage **died on the offensive glass**: regular-season `oreb_diff` falls from
   +0.61 to −0.05 (home teams no longer out-offensive-rebound visitors at all),
   while `dreb_diff` only softens (+1.64 → +0.59). All trends negative and highly
   significant (OREB −0.018, DREB −0.027, REB −0.044 per year, all p < 0.001).
 - It is **not a pace artifact**: `reb_share_edge` still collapses ~10×, +2.14 pp →
   +0.21 pp (trend −0.052 pp/yr, p < 0.001).
 - It is **league-driven**: the season-level correlation between the home share
-  edge and the league offensive-rebound rate is **r = +0.82 (p < 0.001, N = 43)**;
+  advantage and the league offensive-rebound rate is **r = +0.82 (p < 0.001, N = 43)**;
   the league rate fell 33% → 26% over the same span. As teams abandoned offensive
-  rebounding for transition defense, the effort-driven boards where a home edge
+  rebounding for transition defense, the effort-driven boards where a home advantage
   could form disappeared. However, the **cointegration check** shows both series
   are I(1) (nonstationary) but **not cointegrated** — the r = +0.82 is likely
   spurious correlation from parallel trends rather than a genuine long-run
   relationship. The section-level 3PA-control from Section 7's mediation
   (rebounding survives with only ~8% absorbed) is the stronger evidence that the
   rebounding fade is a real, independent trend.
-- The playoffs show the same shape (share edge +2.74 → +0.70 pp, trend −0.046
+- The playoffs show the same shape (share advantage +2.74 → +0.70 pp, trend −0.046
   pp/yr, p < 0.01), on a smaller sample.
 
 **A note on the share identity.** Because available offensive rebounds for one
 team are the same boards the other team can defensively rebound, the home team's
-offensive-share edge equals its defensive-share edge exactly — there is one
-"control of the glass" number, reported here as the offensive-rebound share edge.
+offensive-share advantage equals its defensive-share advantage exactly — there is one
+"control of the glass" number, reported here as the offensive-rebound share advantage.
 
 **Player-tracking footnote.** A separate set of helpers
 (`compute_tracking_rebound_stats` and `run_tracking_rebound_analysis`) pulls NBA
 player-tracking and hustle data (offensive-rebound conversion, box-outs,
 second-chance points) split Home/Road via `location_nullable`. It corroborates the
-mechanism — no measurable home box-out edge today, offensive-rebound conversion
+mechanism — no measurable home box-out advantage today, offensive-rebound conversion
 still shrinking — but only covers the tracking era (~2014 on), too short to carry
 the 40-year story, so it is summarized in one sentence in `home_court_findings.md` §3 rather
 than reported as its own section here. The code is retained but unwired from the
@@ -659,11 +659,11 @@ identity explicit: DREB rate = 100 − opponent OREB rate, so a single asymmetri
 retreat from the offensive glass produces matching collapses on both sides
 simultaneously — one panel rather than two. Panel 2 shows the raw OREB and DREB
 differentials (home minus away per game), which are pace-sensitive but make the
-absolute magnitudes visible; the DREB edge fell more in absolute terms because it
+absolute magnitudes visible; the DREB advantage fell more in absolute terms because it
 starts from a higher base. Panel 3 is a scatter of the total rebound differential
 against each season's home win rate — the claim is an association, and a scatter
 with a fitted line shows that more honestly than a time-series overlay. Panel 4
-shows the turnover edge (away minus home turnovers per game), placed here because
+shows the turnover advantage (away minus home turnovers per game), placed here because
 the mediation analysis (Section 7) links both categories: they declined over the
 same span, and pairing them lets the eye compare their shape and timing.
 
@@ -671,15 +671,15 @@ same span, and pairing them lets the eye compare their shape and timing.
 
 ## 13. Player-Tracking Rebounding Mechanism (`run_tracking_rebound_analysis`)
 
-**Why this section exists.** The rebounding decomposition (Section 12) shows the home edge died on the offensive glass, using box scores back to the 1980s. This section corroborates *how* that edge expresses itself up close, using the NBA's player-tracking and hustle data — a much shorter window, but one that can see box-outs and second chances the box score cannot.
+**Why this section exists.** The rebounding decomposition (Section 12) shows the home advantage died on the offensive glass, using box scores back to the 1980s. This section corroborates *how* that advantage expresses itself up close, using the NBA's player-tracking and hustle data — a much shorter window, but one that can see box-outs and second chances the box score cannot.
 
 **The data.** Home-minus-road differentials in three tracking metrics, split Home/Road via `location_nullable`: offensive-rebound conversion (share of one's own missed shots recovered), box-outs per game, and second-chance points per game. Coverage is the tracking era only — ~2013–14 on (13 seasons), ~2016 on for box-outs (11 seasons).
 
 **The approach.** Identical in form to the box-score sections: a season-level mean and an OLS year-trend (`stat ~ year`) per metric, with significance stars. With at most 13 seasons, power is limited — this is a corroborating check, not a primary test.
 
-**What the results mean.** The modern home edge is small and flat-to-declining on every metric. Offensive-rebound conversion is the only one with a significant trend (mean +0.71 pp, −0.086 pp/yr, p = 0.024) — still shrinking even within the tracking era. The box-out edge sits at essentially zero throughout (−0.000, p = 0.78) and the second-chance-points edge fades without reaching significance (+0.29, −0.016/yr, p = 0.30). The reading is that the offensive-glass advantage had **largely collapsed before high-resolution tracking even began**: by the time the cameras switched on, little edge was left to measure. The window is too short to carry the 40-year story — Section 12 does that — so this section only confirms the modern mechanism.
+**What the results mean.** The modern home advantage is small and flat-to-declining on every metric. Offensive-rebound conversion is the only one with a significant trend (mean +0.71 pp, −0.086 pp/yr, p = 0.024) — still shrinking even within the tracking era. The box-out advantage sits at essentially zero throughout (−0.000, p = 0.78) and the second-chance-points advantage fades without reaching significance (+0.29, −0.016/yr, p = 0.30). The reading is that the offensive-glass advantage had **largely collapsed before high-resolution tracking even began**: by the time the cameras switched on, little advantage was left to measure. The window is too short to carry the 40-year story — Section 12 does that — so this section only confirms the modern mechanism.
 
-**Why this chart.** Three small-multiple panels, one per tracking metric, each a home-minus-road line over the tracking era with a zero reference. The shared layout mirrors the box-score differential charts (Sections 4 and 12) so the eye reads them the same way, and the flat-to-declining lines hugging zero are the visual point: the edge is already gone where the cameras can see it.
+**Why this chart.** Three small-multiple panels, one per tracking metric, each a home-minus-road line over the tracking era with a zero reference. The shared layout mirrors the box-score differential charts (Sections 4 and 12) so the eye reads them the same way, and the flat-to-declining lines hugging zero are the visual point: the advantage is already gone where the cameras can see it.
 
 ---
 
@@ -753,7 +753,7 @@ where `post95` = 1 from 1994–95 on (an immediate **level shift**) and the inte
 
 **The data.** The four mediation channels (Section 7) as season-level home-minus-away differentials: fouls, eFG%, turnovers, rebounds.
 
-**The approach.** The same interrupted-time-series model as Section 15, run **per channel**: `diff ~ year + post95 + (year − 1994)·post95`. The **level shift** (`post95`) is the immediate response at 1995; a mechanism that changed the instant the rules did should show a significant level term. (Sign note: foul_diff = PF_home − PF_away is negative when the home team is favored, so a *positive* level shift means the home foul edge **shrank** immediately.)
+**The approach.** The same interrupted-time-series model as Section 15, run **per channel**: `diff ~ year + post95 + (year − 1994)·post95`. The **level shift** (`post95`) is the immediate response at 1995; a mechanism that changed the instant the rules did should show a significant level term. (Sign note: foul_diff = PF_home − PF_away is negative when the home team is favored, so a *positive* level shift means the home foul advantage **shrank** immediately.)
 
 **What the results mean.** Only the foul channel shows a significant immediate response. In the regular season the foul-diff level shift is **+0.44, p = 0.007** — the home foul advantage contracted the moment the hand-checking rules took effect — while eFG% (p = 0.33), turnovers (p = 0.18), and rebounds (p = 0.85) show no significant jump. That is exactly the signature expected if the **hand-checking crackdown** was the operative change: it acts directly on fouls and defense, while the other box-score edges drifted on their own slower schedules. The playoffs show no significant channel shift (small samples, and no 1994–95 break to begin with). This is the closest the data comes to naming a *mechanism* for the one rule change that mattered.
 
@@ -786,20 +786,20 @@ HCA's existence or its decline.
 
 ## 19. Back-to-Backs (`run_b2b_analysis`)
 
-**The question.** One popular theory for the HCA decline is "load management": NBA schedules now include fewer back-to-back games (zero days of rest), so visiting teams are less often exhausted. Fewer tired visitors → a smaller scheduling edge for the home team → lower home win rates. This section tests whether that story holds up quantitatively.
+**The question.** One popular theory for the HCA decline is "load management": NBA schedules now include fewer back-to-back games (zero days of rest), so visiting teams are less often exhausted. Fewer tired visitors → a smaller scheduling advantage for the home team → lower home win rates. This section tests whether that story holds up quantitatively.
 
 **The data.** Regular-season games with a computable prior-game date for both teams (48,424 games; back-to-backs are rare enough in the playoffs to be ignored).
 
 **The approach.** Two layers:
 
 1. **Era-frequency table** of visitor and home B2B rates, alongside the era home win %, to see whether the schedule shift and the HCA decline move together.
-2. **Shift-share decomposition** of the 1984–94 → 2023–26 home-win change (−9.29 pp) into two components: (a) the *frequency component* — how much of the change is explained by the shift in B2B scheduling, holding per-situation win rates fixed at their 1984–94 values; and (b) the *win-rate component* — how much is explained by the home edge within each rest situation fading, holding scheduling fixed.
+2. **Shift-share decomposition** of the 1984–94 → 2023–26 home-win change (−9.29 pp) into two components: (a) the *frequency component* — how much of the change is explained by the shift in B2B scheduling, holding per-situation win rates fixed at their 1984–94 values; and (b) the *win-rate component* — how much is explained by the home advantage within each rest situation fading, holding scheduling fixed.
 
 The shift-share identity is exact: frequency + win-rate + interaction = total change.
 
 **Why.** A pure frequency story would show the frequency component absorbing most of the −9.29 pp, with win rates within each situation roughly stable. A frequency component near zero would rule the story out. The decomposition separates those two possibilities cleanly without a regression.
 
-**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **8%**. The remaining 92% is the win-rate component: the home edge within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
+**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **8%**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
 
 **Why this chart.** This section adds no figure of its own. The era-level B2B frequency and home win % are captured in the era table, and the shift-share is an exact arithmetic decomposition — two numbers that sum to the total. A chart would add no information the table doesn't already carry.
 
@@ -1003,10 +1003,10 @@ means the decline operates *through some other channel*.
 
 **What the results mean.** That is largely the pattern. The rest and time-zone
 interactions are not significant (rest p = 0.142, tz p = 0.917); the altitude
-interaction is (p = 0.026), with Denver/Utah's home edge roughly halving after
+interaction is (p = 0.026), with Denver/Utah's home advantage roughly halving after
 2014. But the headline is the post-2014 level shift, which is large and
 unambiguous (−4.7 pp, p < 0.001) and dwarfs any factor-specific change. Home
-teams kept their rest edge at full strength and most of their altitude edge; they
+teams kept their rest advantage at full strength and most of their altitude advantage; they
 simply started winning less for reasons those factors don't capture — pointing to
 the foul-bias and shot-selection channels in Sections 4 and 6. (Altitude's
 −4.3 pp interaction is the one situational effect that has measurably weakened
@@ -1220,7 +1220,7 @@ home wins only, home losses only.
 simple **OLS trend of margin on year** per column, with significance stars.
 
 **Why.** Win % is a coarse summary; margins show *how* games are changing. The
-all-games column tracks the average home edge in points. The conditional columns
+all-games column tracks the average home advantage in points. The conditional columns
 (wins-only, losses-only) test the "polarization" idea — are home wins getting
 bigger even as home wins get rarer?
 
@@ -1235,8 +1235,8 @@ conditional means apart. Section 32 exists to test whether the divergence is
 real or just that artifact.
 
 **Why this chart.** Win percentage is a coarse 1/0 summary, so the margin figure
-plots the *size* of the home edge instead: mean margin per season (how big the
-average edge is), a win-only vs. loss-only panel, and era bars. Lines are the right
+plots the *size* of the home advantage instead: mean margin per season (how big the
+average advantage is), a win-only vs. loss-only panel, and era bars. Lines are the right
 form because the question is direction-over-time, and the two diverging win/loss
 lines make the polarization claim visible to the eye before Section 32 tests it
 formally.
@@ -1303,13 +1303,13 @@ declining: from roughly +3.2 pts/100 in the late 1990s and 2005–17 era to abou
 same direction (trend −0.036 pts/100/yr) but does not reach significance on the
 noisier 80-game playoff seasons, consistent with the playoff decline being harder
 to detect in any single metric. The net rating picture agrees with the win-rate
-and margin stories: a real, persistent home edge that has been narrowing for
+and margin stories: a real, persistent home advantage that has been narrowing for
 decades.
 
 **Why this chart.** Net rating is displayed as the fourth panel of the margin
 analysis figure (a 2×2 layout alongside overall margin, wins-only margin, and
 losses-only margin), rather than as a standalone figure. The margin panels are
-the simplest evidence that the home edge is narrowing in points; net rating adds
+the simplest evidence that the home advantage is narrowing in points; net rating adds
 the pace-normalized view. Grouping them together lets a reader see that the
 pace-adjustment barely changes the story — the absolute margin and the
 possessions-adjusted margin track together.
@@ -1322,10 +1322,10 @@ possessions-adjusted margin track together.
 
 **The approach.** **Benjamini–Hochberg (BH) FDR correction** at q = 0.05. The procedure: (1) rank the 14 p-values from smallest to largest; (2) the BH threshold for rank i is (i/14) × 0.05; (3) find the largest rank where p ≤ threshold; (4) all tests at or below that rank "survive." BH controls the *false discovery rate* — the expected fraction of surviving tests that are false positives — at q = 5%. It is less conservative than Bonferroni (which controls FWER, the probability of any false positive) and is the standard choice when a small number of false positives is acceptable.
 
-**The 14 tests** cover: the two overall HCA trends (RS and PO binomial GLMs); rest differential (RS and PO); altitude (RS); time zone (RS); 3PA within-era (RS and PO); pace LOO within-era (RS); travel distance (RS); parity first-differenced (RS); OREB rate vs. rebound share edge (RS); era dummies LR test beyond year trend (RS and PO).
+**The 14 tests** cover: the two overall HCA trends (RS and PO binomial GLMs); rest differential (RS and PO); altitude (RS); time zone (RS); 3PA within-era (RS and PO); pace LOO within-era (RS); travel distance (RS); parity first-differenced (RS); OREB rate vs. rebound share advantage (RS); era dummies LR test beyond year trend (RS and PO).
 
 **What the results mean.** 11 of 14 tests survive BH correction:
-- **Survive:** both HCA trends, rest effect RS and PO, altitude RS, 3PA RS and PO, RS era dummies LR test (p = 0.002), travel RS, parity first-diff RS, OREB rate vs. rebound edge RS.
+- **Survive:** both HCA trends, rest effect RS and PO, altitude RS, 3PA RS and PO, RS era dummies LR test (p = 0.002), travel RS, parity first-diff RS, OREB rate vs. rebound advantage RS.
 - **Do not survive:** time zone effect (p ≈ 0.05, marginal), pace LOO within-era (p ≈ 0.06), PO era dummies LR test (p ≈ 0.64).
 
 The "ruled-out" findings remain correct descriptions of the data — the time zone and pace effects exist — but they are too small and marginal to be called reliable when multiple comparisons are accounted for. The core findings (structural decline, rest, altitude, three-point shooting) survive comfortably. Travel (p = 0.010) also survives, though the effect size is trivially small (Section 18).
