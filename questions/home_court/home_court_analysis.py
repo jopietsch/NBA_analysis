@@ -1696,9 +1696,17 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
         print(f"   {'Channel':<16}  {'% level':>8}  {'95% CI':>15}  "
               f"{'% trend':>8}  {'95% CI':>15}")
         print(f"   {'─'*16}  {'─'*8}  {'─'*15}  {'─'*8}  {'─'*15}")
+        _shortb = {"efg_pct_diff": "shooting", "foul_diff": "fouls",
+                   "tov_diff": "turnovers", "reb_diff": "rebounding"}
+        _pfx = "share_po" if label == "Playoffs" else "share"
         for k, tl, _ in decomp["channels"]:
             ll, lh = b["level_ci"][k]
             tlo, thi = b["trend_ci"][k]
+            # Statistical detail for investigation.md: per-channel decline-share CIs.
+            FACTS.set(f"{_pfx}.{_shortb[k]}.decline_ci_lo", tlo, "{:.0f}",
+                      note=f"{label}: {tl} decline-share 95% CI low")
+            FACTS.set(f"{_pfx}.{_shortb[k]}.decline_ci_hi", thi, "{:.0f}",
+                      note=f"{label}: {tl} decline-share 95% CI high")
             print(f"   {tl:<16}  {lvl_pt[k]:>7.0f}%  [{ll:>+5.0f},{lh:>+5.0f}]%  "
                   f"{trd_pt[k]:>7.0f}%  [{tlo:>+5.0f},{thi:>+5.0f}]%")
         pl, pt = b["pct_level_ci"], b["pct_trend_ci"]

@@ -671,6 +671,20 @@
     "unit": null,
     "value": 17.955426175859028
   },
+  "share.fouls.decline_ci_hi": {
+    "display": "22",
+    "fmt": "{:.0f}",
+    "note": "Regular season: Foul diff decline-share 95% CI high",
+    "unit": null,
+    "value": 21.61782104514417
+  },
+  "share.fouls.decline_ci_lo": {
+    "display": "14",
+    "fmt": "{:.0f}",
+    "note": "Regular season: Foul diff decline-share 95% CI low",
+    "unit": null,
+    "value": 14.040150100666049
+  },
   "share.fourfactors.adv": {
     "display": "95%",
     "fmt": "{:.0f}%",
@@ -769,6 +783,20 @@
     "unit": null,
     "value": 30.235121507076116
   },
+  "share.rebounding.decline_ci_hi": {
+    "display": "38",
+    "fmt": "{:.0f}",
+    "note": "Regular season: REB diff decline-share 95% CI high",
+    "unit": null,
+    "value": 37.850066854761835
+  },
+  "share.rebounding.decline_ci_lo": {
+    "display": "25",
+    "fmt": "{:.0f}",
+    "note": "Regular season: REB diff decline-share 95% CI low",
+    "unit": null,
+    "value": 24.973793949766563
+  },
   "share.shooting.adv": {
     "display": "43%",
     "fmt": "{:.0f}%",
@@ -782,6 +810,20 @@
     "note": "Reg. season: eFG% diff (pp) share of the decline",
     "unit": null,
     "value": 21.1558685021789
+  },
+  "share.shooting.decline_ci_hi": {
+    "display": "28",
+    "fmt": "{:.0f}",
+    "note": "Regular season: eFG% diff (pp) decline-share 95% CI high",
+    "unit": null,
+    "value": 28.186439742980674
+  },
+  "share.shooting.decline_ci_lo": {
+    "display": "11",
+    "fmt": "{:.0f}",
+    "note": "Regular season: eFG% diff (pp) decline-share 95% CI low",
+    "unit": null,
+    "value": 11.437118407927073
   },
   "share.turnovers.adv": {
     "display": "13%",
@@ -797,12 +839,40 @@
     "unit": null,
     "value": 26.66280294372501
   },
+  "share.turnovers.decline_ci_hi": {
+    "display": "34",
+    "fmt": "{:.0f}",
+    "note": "Regular season: TOV diff decline-share 95% CI high",
+    "unit": null,
+    "value": 33.6764677020798
+  },
+  "share.turnovers.decline_ci_lo": {
+    "display": "20",
+    "fmt": "{:.0f}",
+    "note": "Regular season: TOV diff decline-share 95% CI low",
+    "unit": null,
+    "value": 20.16830623307257
+  },
   "share_po.fouls.adv": {
     "display": "17%",
     "fmt": "{:.0f}%",
     "note": "Playoffs: Foul diff share of the HCA level",
     "unit": null,
     "value": 17.30881515145754
+  },
+  "share_po.fouls.decline_ci_hi": {
+    "display": "41",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: Foul diff decline-share 95% CI high",
+    "unit": null,
+    "value": 41.34016938923297
+  },
+  "share_po.fouls.decline_ci_lo": {
+    "display": "7",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: Foul diff decline-share 95% CI low",
+    "unit": null,
+    "value": 6.894193125027519
   },
   "share_po.rebounding.adv": {
     "display": "21%",
@@ -811,6 +881,20 @@
     "unit": null,
     "value": 21.297121155329403
   },
+  "share_po.rebounding.decline_ci_hi": {
+    "display": "55",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: REB diff decline-share 95% CI high",
+    "unit": null,
+    "value": 54.84695046944166
+  },
+  "share_po.rebounding.decline_ci_lo": {
+    "display": "9",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: REB diff decline-share 95% CI low",
+    "unit": null,
+    "value": 9.385013462781753
+  },
   "share_po.shooting.adv": {
     "display": "33%",
     "fmt": "{:.0f}%",
@@ -818,12 +902,40 @@
     "unit": null,
     "value": 32.9604432030446
   },
+  "share_po.shooting.decline_ci_hi": {
+    "display": "38",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: eFG% diff (pp) decline-share 95% CI high",
+    "unit": null,
+    "value": 37.73447496627822
+  },
+  "share_po.shooting.decline_ci_lo": {
+    "display": "-28",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: eFG% diff (pp) decline-share 95% CI low",
+    "unit": null,
+    "value": -27.866459770545283
+  },
   "share_po.turnovers.adv": {
     "display": "22%",
     "fmt": "{:.0f}%",
     "note": "Playoffs: TOV diff share of the HCA level",
     "unit": null,
     "value": 21.85758548886814
+  },
+  "share_po.turnovers.decline_ci_hi": {
+    "display": "39",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: TOV diff decline-share 95% CI high",
+    "unit": null,
+    "value": 38.87085584013035
+  },
+  "share_po.turnovers.decline_ci_lo": {
+    "display": "-13",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: TOV diff decline-share 95% CI low",
+    "unit": null,
+    "value": -13.395441796578105
   },
   "tpa.detrend_loss": {
     "display": "42%",
