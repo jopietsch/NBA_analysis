@@ -844,14 +844,14 @@ All data from cache/ — same source as the plots above.
    Shift-share decomposition of the home win % change, 1984–94 → 2023–26:
    Home win %: 66.2% → 55.7%   (total change -10.51 pp)
    Frequency component (schedule: fewer B2Bs)        -0.66 pp  (   6% of change)
-   Win-rate component (per-situation edge eroding)    -9.59 pp
+   Win-rate component (per-situation edge fading)    -9.59 pp
    Interaction                                       -0.25 pp
 
    ► Visitor B2Bs have grown much rarer, which does nudge home court
      downward — but the win-rate gap between rested and tired matchups is
      small, so the schedule shift explains only ~6% of the decline.
      The other ~94% is the home edge within each rest situation
-     eroding — not a scheduling story.
+     fading — not a scheduling story.
 
 
 ─── PACE AND HOME COURT ADVANTAGE ──────────────────────────────────────
@@ -1076,7 +1076,7 @@ All data from cache/ — same source as the plots above.
    ► In the early eras (1984–94, 1995–01) the lower-seeded team won ~65–66% at home,
      nearly matching the higher seed's own home win rate. Home court was a genuine
      equalizer. From 2002 onward the lower-seed home win rate collapsed to ~47–52%,
-     while the higher seed's remained at 65–75%. What eroded is the boost home court
+     while the higher seed's remained at 65–75%. What faded is the boost home court
      gave to the team that needed it most.
 
 ─── PLAYOFF SERIES SIMULATION — DOES THE PER-GAME EDGE SURVIVE A BEST-OF-7? 
