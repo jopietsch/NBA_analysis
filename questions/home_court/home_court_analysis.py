@@ -1891,6 +1891,21 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
     print("   (percentage points) — a pace- and volume-free measure of the edge.")
     print("   Trend = slope of trend line (change per season year).\n")
 
+    # Facts for the prose (§3): the home offensive- and defensive-rebound gaps,
+    # earliest era vs most recent (regular season).
+    _reg_reb = df[df["is_playoff"] == 0]
+    _e0, _eN = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
+
+    def _reb_mean(col, era):
+        return float(_reg_reb[(_reg_reb["year"] >= era[1]) & (_reg_reb["year"] <= era[2])][col].mean())
+
+    FACTS.set("reb.dreb_early", _reb_mean("dreb_diff", _e0), "{:+.1f}",
+              note="Reg. DREB diff (home minus away), earliest era")
+    FACTS.set("reb.dreb_today", _reb_mean("dreb_diff", _eN), "{:+.1f}",
+              note="Reg. DREB diff (home minus away), recent era")
+    FACTS.set("reb.oreb_early", _reb_mean("oreb_diff", _e0), "{:+.1f}",
+              note="Reg. OREB diff (home minus away), earliest era")
+
     for season_label, sub in [
         ("Regular season", df[df["is_playoff"] == 0]),
         ("Playoffs",       df[df["is_playoff"] == 1]),

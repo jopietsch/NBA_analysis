@@ -97,6 +97,27 @@
     "unit": null,
     "value": 64.27981820170103
   },
+  "reb.dreb_early": {
+    "display": "+1.6",
+    "fmt": "{:+.1f}",
+    "note": "Reg. DREB diff (home minus away), earliest era",
+    "unit": null,
+    "value": 1.637597586941093
+  },
+  "reb.dreb_today": {
+    "display": "+0.6",
+    "fmt": "{:+.1f}",
+    "note": "Reg. DREB diff (home minus away), recent era",
+    "unit": null,
+    "value": 0.5928716904276986
+  },
+  "reb.oreb_early": {
+    "display": "+0.6",
+    "fmt": "{:+.1f}",
+    "note": "Reg. OREB diff (home minus away), earliest era",
+    "unit": null,
+    "value": 0.6063697657913414
+  },
   "ref.fta_early": {
     "display": "2",
     "fmt": "{:.0f}",
