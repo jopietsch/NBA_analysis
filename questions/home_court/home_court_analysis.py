@@ -381,10 +381,16 @@ def run_decline_trend(df: pd.DataFrame) -> None:
                       note="both regular season and playoffs fell ~10 pp")
             FACTS.set("reg.slope_plain", "a quarter of a point",
                       note=f"prose phrasing of the reg-season slope ({glm_pp:+.3f} pp/yr)")
+            FACTS.set("reg.hw_mid90s",
+                      float(agg[(agg["year"] >= 1995) & (agg["year"] <= 2001)]["pct"].mean()),
+                      "{:.0f}%", note="Reg. season home-win %, 1995–2001 (the mid-90s level)")
         else:
             _plateau = agg[(agg["year"] >= 2005) & (agg["year"] <= 2017)]["pct"].mean()
             FACTS.set("po.hw_plateau", float(_plateau), "{:.0f}%",
                       note="Playoffs: home-win% plateau across 2005–2017")
+            FACTS.set("po.hw_2018",
+                      float(agg[(agg["year"] >= 2018) & (agg["year"] <= 2022)]["pct"].mean()),
+                      "{:.0f}%", note="Playoffs: home-win %, 2018–2022")
 
         print(f"   {'Era':<12}  {'N':>4}  {'GLM pp/yr':>10}  {'GLM p':>8}  "
               f"{'OLS pp/yr':>10}  {'HAC p':>8}  {'':3}")

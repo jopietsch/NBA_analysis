@@ -216,6 +216,13 @@
     "unit": null,
     "value": -9.463785453269317
   },
+  "po.hw_2018": {
+    "display": "61%",
+    "fmt": "{:.0f}%",
+    "note": "Playoffs: home-win %, 2018\u20132022",
+    "unit": null,
+    "value": 60.76749286762645
+  },
   "po.hw_first": {
     "display": "68.6%",
     "fmt": "{:.1f}%",
@@ -446,6 +453,13 @@
     "note": "prose rounding of hw_last",
     "unit": null,
     "value": "55%"
+  },
+  "reg.hw_mid90s": {
+    "display": "60%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. season home-win %, 1995\u20132001 (the mid-90s level)",
+    "unit": null,
+    "value": 60.05338174892422
   },
   "reg.slope_plain": {
     "display": "a quarter of a point",
