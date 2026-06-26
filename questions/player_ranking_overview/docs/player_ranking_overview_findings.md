@@ -102,6 +102,8 @@ Each system uses a different scale — PER is centered around 15, BPM around 0, 
 
 ![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg){#fig-uber}
 
+Aggregating across systems is not unique to this report. HoopsHype publishes periodic "Analytics MVP" posts that combine EPM, LEBRON, DARKO, RAPTOR, and BPM into a single ranking, typically using a simple equal-weighted average. ESPN's #NBArank is a different kind of aggregate: journalists vote rather than models, making it closer to the human-reputation category than to a model combination. Some metrics do the aggregation internally: LEBRON, for example, blends a box-score prior with luck-adjusted on/off data as part of its own formula rather than publishing both separately and combining them downstream. What distinguishes the wins-predictive rating here is that the system weights are estimated from data (how well each system actually predicted team wins) rather than assigned by hand. The practical difference is small — the two ratings correlate at 0.98 — but the weights tell you which systems carried the most predictive signal for 2024-25, which is worth knowing.
+
 ## 7. Stars matter more than rank implies
 
 ![Rating systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
@@ -142,7 +144,7 @@ The 2024-25 testbed is a single season. Stability analysis (do the same players 
 
 The crosswalk matching rate for each third-party source is reported in `docs/player_ranking_overview_results.md`. Players who could not be matched are listed there; they are excluded from the cross-system comparison but retained in the unified table.
 
-RAPM (regularized adjusted plus/minus from play-by-play stints) is not recomputed here. It requires play-by-play data at a volume that pushes beyond what this project tackles; a public RAPM snapshot can be dropped into the cache schema when available.
+RAPM (regularized adjusted plus/minus) is the technical backbone of every serious modern impact metric — EPM, LEBRON, DARKO, RAPTOR, and RPM all build on it — but it is not recomputed here. Computing RAPM requires play-by-play data broken into stints (which lineup was on the floor for each possession), then a simultaneous ridge regression over all players. That data volume and the regression setup push beyond what this project tackles in its current form. The practical consequence: the only impact signal in our system comes through BPM, which estimates what RAPM would say using box-score inputs. BPM is a reasonable proxy but known to miss things that only appear in the lineup data, particularly for players whose impact on team defense does not show up in personal stats. A public RAPM snapshot can be dropped into the cache schema when one is available.
 
 The tracking-based and team-internal systems (Second Spectrum, franchise models, Synergy) are documented in the inventory but not accessible. The blind spot is acknowledged.
 
