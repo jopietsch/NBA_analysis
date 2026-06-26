@@ -62,6 +62,20 @@
     "unit": null,
     "value": 1.9697754215633498
   },
+  "oos.rmse_channel": {
+    "display": "1",
+    "fmt": "{:.0f}",
+    "note": "Reg. held-out RMSE of the frozen channel model (pp)",
+    "unit": null,
+    "value": 0.9526330989535617
+  },
+  "oos.rmse_naive": {
+    "display": "5",
+    "fmt": "{:.0f}",
+    "note": "Reg. held-out RMSE of a flat training-mean guess (pp)",
+    "unit": null,
+    "value": 5.479227713165135
+  },
   "oos.train_end": {
     "display": "2013",
     "fmt": "{:d}",
@@ -278,6 +292,27 @@
     "note": "prose phrasing of the reg-season slope (-0.244 pp/yr)",
     "unit": null,
     "value": "a quarter of a point"
+  },
+  "rest.away_vs_baseline": {
+    "display": "2.6",
+    "fmt": "{:.1f}",
+    "note": "Reg. home win % drop when the visitor is better-rested, vs baseline",
+    "unit": null,
+    "value": 2.564947890096576
+  },
+  "rest.home_rested": {
+    "display": "63%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. home win % when the home team is better-rested",
+    "unit": null,
+    "value": 62.78410840776101
+  },
+  "rest.visitor_rested": {
+    "display": "58%",
+    "fmt": "{:.0f}%",
+    "note": "Reg. home win % when the visitor is better-rested",
+    "unit": null,
+    "value": 57.56639194139194
   },
   "seed.stronger_early_plain": {
     "display": "70\u201375%",

@@ -1164,14 +1164,25 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
         print(f"   {'─'*16}  {'─'*8}  {'─'*11}  {'─'*13}")
 
         table = []
+        pct_by_bucket = {}
         for label, cond in buckets:
             b = sub[cond(sub["rest_diff"])]
             if b.empty:
                 continue
             wins, n = int(b["home_win"].sum()), len(b)
             pct = 100.0 * wins / n
+            pct_by_bucket[label] = pct
             table.append([wins, n - wins])
             print(f"   {label:<16}  {n:>8,}  {pct:>10.1f}%  {pct - p_bar:>+12.1f} pp")
+
+        # Facts for the prose (§4): home win % when each side is better-rested.
+        if is_po == 0 and {"Home more rest", "Away more rest"} <= pct_by_bucket.keys():
+            FACTS.set("rest.home_rested", pct_by_bucket["Home more rest"], "{:.0f}%",
+                      note="Reg. home win % when the home team is better-rested")
+            FACTS.set("rest.visitor_rested", pct_by_bucket["Away more rest"], "{:.0f}%",
+                      note="Reg. home win % when the visitor is better-rested")
+            FACTS.set("rest.away_vs_baseline", abs(pct_by_bucket["Away more rest"] - p_bar), "{:.1f}",
+                      note="Reg. home win % drop when the visitor is better-rested, vs baseline")
 
         if len(table) >= 2:
             stat, p_chi, dof, _ = chi2_contingency(table)
@@ -1845,6 +1856,10 @@ def run_oos_forecast(df: pd.DataFrame) -> None:
             FACTS.guard("oos_within_a_point", _miss <= 1.6,
                         claim="predicts each later season's home win rate to within about a point",
                         value=f"largest held-out miss {_miss:.1f} pp")
+            FACTS.set("oos.rmse_channel", d["rmse_channel"], "{:.0f}",
+                      note="Reg. held-out RMSE of the frozen channel model (pp)")
+            FACTS.set("oos.rmse_naive", d["rmse_naive"], "{:.0f}",
+                      note="Reg. held-out RMSE of a flat training-mean guess (pp)")
         print(f"   {ctx_label}  (train {tr0}–{tr1}, test {te0}–{te1})\n")
         print(f"   {'Season':>7}  {'Actual':>8}  {'Channel pred':>13}  {'Trend pred':>11}")
         print(f"   {'─'*7}  {'─'*8}  {'─'*13}  {'─'*11}")
