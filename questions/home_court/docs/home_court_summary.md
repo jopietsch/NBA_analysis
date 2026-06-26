@@ -28,9 +28,9 @@ Home court in the playoffs declined later than in the regular season: playoff ho
 
 ## 2. What Creates Home Court Advantage, and What Changed
 
-We measure home court through the Four Factors that decide possessions, developed by Dean Oliver: shooting, rebounding, foul calls, and turnover margin. The table shows how much of the home advantage each one accounts for, and how much of the 40-year decline each one carries.
+The table below answers two questions at once: how much of the home-court advantage each category accounts for today, and how much of the 40-year decline it explains.
 
-| Box-score factor | Share of the advantage | Share of the decline |
+| Box-score category | Share of the advantage | Share of the decline |
 |---|---:|---:|
 | Shooting (eFG%) | 43% | 21% |
 | Rebounding | 25% | 30% |
@@ -38,13 +38,13 @@ We measure home court through the Four Factors that decide possessions, develope
 | Turnover margin | 13% | 27% |
 | **All four together** | **95%** | **96%** |
 
-Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Two things stand out. Shooting builds the biggest single part of the advantage, but rebounding and turnovers together do the most to erase it, more than half the decline. And these four are where the advantage shows up, not why it exists: the real-world causes behind them, a home crowd, familiar rims, referee tendencies, are the next question.
+Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Shooting dominates the current advantage, but rebounding and turnovers drove most of the decline: together more than half of it.
 
-Then we get to the most interesting: why are these changes happening.  Referees are calling fairer games: home teams once attempted roughly 2 more free throws per game than visitors, and now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap, and it's the only one that does. The three-point shift reaches across categories too: it is the whole of the shooting decline, and about half of both the foul decline and the turnover decline, so the move to the perimeter touches close to half the entire 40-year decline. Rebounding and turnovers, the two biggest single drivers, are the ones the three-point shift does not explain: rebounding barely moves with three-point volume at all. 
+What changed in the real world to move those numbers? Two things account for most of it. Referees are calling fairer games: home teams once attempted roughly 2 more free throws per game than visitors, and now it's under half a free throw. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. The three-point shift reaches further: it explains the entire shooting decline and about half of both the foul and turnover declines, so the move to the perimeter touches close to half the 40-year total. Rebounding is the exception: it barely moves when games have similar three-point rates, yet it is the largest single driver. The data shows the home rebounding advantage shrank; it cannot say why.
 
-This account is not just fit to the past. A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later season's home win rate to within about a point, catching the post-2017 slide it was never shown and the steeper modern playoff drop too.
+A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later season's home win rate to within about a point, catching the post-2017 slide it was never shown and the steeper modern playoff drop too.
 
-The playoff picture is similar in shape, though a larger share of the playoff decline falls outside the four box-score categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
+The playoff picture runs similar in shape, though a larger share of the playoff decline falls outside the four categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by better and lower seeds becoming more evenly matched.
 
 ---
 
