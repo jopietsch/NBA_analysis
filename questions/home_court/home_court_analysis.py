@@ -379,6 +379,8 @@ def run_decline_trend(df: pd.DataFrame) -> None:
         if not is_po:
             FACTS.set("decline_both_plain", "10 percentage points",
                       note="both regular season and playoffs fell ~10 pp")
+            FACTS.set("reg.slope_plain", "a quarter of a point",
+                      note=f"prose phrasing of the reg-season slope ({glm_pp:+.3f} pp/yr)")
         else:
             _plateau = agg[(agg["year"] >= 2005) & (agg["year"] <= 2017)]["pct"].mean()
             FACTS.set("po.hw_plateau", float(_plateau), "{:.0f}%",

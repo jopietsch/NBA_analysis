@@ -146,6 +146,13 @@
     "unit": null,
     "value": "55%"
   },
+  "reg.slope_plain": {
+    "display": "a quarter of a point",
+    "fmt": null,
+    "note": "prose phrasing of the reg-season slope (-0.244 pp/yr)",
+    "unit": null,
+    "value": "a quarter of a point"
+  },
   "seed.stronger_early_plain": {
     "display": "70\u201375%",
     "fmt": null,
