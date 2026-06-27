@@ -537,10 +537,10 @@ better side, which at home is usually the home team).
 **What the results mean.** The season-level correlation is enormous (r = −0.90
 regular season) but, per the above, that alone is just the two trends. The
 decisive result is that the within-era effect barely budges from the bivariate
-one: −2.27 pp per 10 pp of 3PA rate (p < 0.001) vs. −2.64 unadjusted. The
+one: −2.27 pp per 10 pp of 3PA rate (p << f("tpa.within_reg_p") >>) vs. −2.64 unadjusted. The
 3PA–HCA link is *not* merely the shared trend — it holds game-by-game within
 eras. The playoffs show an even stronger coefficient (−3.12 pp per 10 pp within era)
-at p = 0.027 on 3,292 games — directionally identical and now clearly
+at p << f("tpa.within_po_p") >> on 3,292 games — directionally identical and now clearly
 significant. This is the strongest mechanistic candidate the data offers for
 the decline.
 
@@ -621,20 +621,20 @@ offensive glass.
   +0.61 to −0.05 (home teams no longer out-offensive-rebound visitors at all),
   while `dreb_diff` only softens (+1.64 → +0.59). All trends negative and highly
   significant (OREB −0.018, DREB −0.027, REB −0.044 per year, all p < 0.001).
-- It is **not a pace artifact**: `reb_share_edge` still collapses ~10×, +2.14 pp →
-  +0.21 pp (trend −0.052 pp/yr, p < 0.001).
+- It is **not a pace artifact**: `reb_share_edge` still collapses ~10×, << f("reg.reb_share_early") >> pp →
+  << f("reg.reb_share_today") >> pp (trend −0.052 pp/yr, p << f("reg.reb_share_p") >>).
 - It is **league-driven**: the season-level correlation between the home share
-  advantage and the league offensive-rebound rate is **r = +0.82 (p < 0.001, N = 43)**;
+  advantage and the league offensive-rebound rate is **r = << f("reb.league_oreb_corr") >> (p < 0.001, N = 43)**;
   the league rate fell 33% → 26% over the same span. As teams abandoned offensive
   rebounding for transition defense, the effort-driven boards where a home advantage
   could form disappeared. However, the **cointegration check** shows both series
-  are I(1) (nonstationary) but **not cointegrated** — the r = +0.82 is likely
+  are I(1) (nonstationary) but **not cointegrated** — the r = << f("reb.league_oreb_corr") >> is likely
   spurious correlation from parallel trends rather than a genuine long-run
   relationship. The section-level 3PA-control from Section 7's mediation
-  (rebounding survives with only ~8% absorbed) is the stronger evidence that the
+  (rebounding survives with only ~<< f("reb.absorbed_by_3pa") >> absorbed) is the stronger evidence that the
   rebounding fade is a real, independent trend.
-- The playoffs show the same shape (share advantage +2.74 → +0.70 pp, trend −0.046
-  pp/yr, p < 0.01), on a smaller sample.
+- The playoffs show the same shape (share advantage << f("po.reb_share_early") >> → << f("po.reb_share_today") >> pp, trend −0.046
+  pp/yr, p << f("po.reb_share_p") >>), on a smaller sample.
 
 **A note on the share identity.** Because available offensive rebounds for one
 team are the same boards the other team can defensively rebound, the home team's

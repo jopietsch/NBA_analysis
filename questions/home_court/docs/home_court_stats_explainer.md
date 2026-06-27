@@ -634,7 +634,7 @@ offensive glass.
   (rebounding survives with only ~8% absorbed) is the stronger evidence that the
   rebounding fade is a real, independent trend.
 - The playoffs show the same shape (share advantage +2.74 → +0.70 pp, trend −0.046
-  pp/yr, p < 0.01), on a smaller sample.
+  pp/yr, p = 0.004), on a smaller sample.
 
 **A note on the share identity.** Because available offensive rebounds for one
 team are the same boards the other team can defensively rebound, the home team's
