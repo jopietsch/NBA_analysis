@@ -148,11 +148,11 @@ The BIC score per configuration is n·log(weighted RSS/n) + p·log(n), with p = 
 
 **Why BIC-based marginal likelihoods.** Exact Bayesian computation requires specifying priors on slope and intercept parameters. BIC approximates the marginal likelihood up to a constant that cancels in model-probability ratios (Bayes factors). With N=43, this is an approximation; the results are read as model-selection guidance, not exact posterior probabilities. A uniform prior is placed over k and over valid break locations within each k.
 
-**What the results mean.** The single linear trend is effectively ruled out: the model strongly favors at least one slope change, with BF(k=1 vs k=0)=14.2 (strong on the Jeffreys scale). Past that, the evidence splits. The posterior allocates 40.5% to k=2 (best-fit breaks: 1992 and 2020), 38.8% to k=3 (best-fit breaks: 1988, 1998, 2020), and 19.3% to k=1 (best-fit break: 1999, 95% HPD 1992–2003). The k=2 and k=3 models are essentially tied: BF(k=3 vs k=2)=1.0, meaning the data offer no reason to prefer three breaks over two. All three multi-break structures place a break in the late 1980s to mid-1990s window, consistent with the hand-checking period. The 2020 break appearing in both k=2 and k=3 likely reflects the COVID disruption and the accelerating modern decline; the underlying slope change began post-2017, but the Bayesian model locates the break closer to 2020 than to 2017. Break years are not precisely datable: the single best-fitting break carries a bootstrap range of roughly a decade. For k=1, the posterior-weighted slopes are −0.577 pp/yr before the break and −0.255 pp/yr after.
+**What the results mean.** The single linear trend is effectively ruled out: the model strongly favors at least one slope change, with BF(k=1 vs k=0)=14.2 (strong on the Jeffreys scale). Past that, the evidence splits. The posterior allocates 40.5% to k=2 (best-fit breaks: 1992 and 2020), 38.8% to k=3 (best-fit breaks: 1988, 1998, 2020), and 19.3% to k=1 (best-fit break: << f("changepoint.map_year") >>, 95% HPD << f("changepoint.hpd_lo") >>–<< f("changepoint.hpd_hi") >>). The k=2 and k=3 models are essentially tied: BF(k=3 vs k=2)=1.0, meaning the data offer no reason to prefer three breaks over two. All three multi-break structures place a break in the late 1980s to mid-1990s window, consistent with the hand-checking period. The 2020 break appearing in both k=2 and k=3 likely reflects the COVID disruption and the accelerating modern decline; the underlying slope change began post-2017, but the Bayesian model locates the break closer to 2020 than to 2017. Break years are not precisely datable: the single best-fitting break carries a bootstrap range of roughly a decade. For k=1, the posterior-weighted slopes are −0.577 pp/yr before the break and −0.255 pp/yr after.
 
-This resolves the QLR–CUSUM tension without contradicting either. The QLR asks "if there is exactly one break, where does it best fit?" and answers 1999. The CUSUM asks "does the trend wander outside what a single straight line can absorb?" and says no, because each break is a slope moderation, not a level jump. The Bayesian model asks "how many breaks, integrating over all locations?" and answers "at least one, with the evidence split between two and three, location uncertain."
+This resolves the QLR–CUSUM tension without contradicting either. The QLR asks "if there is exactly one break, where does it best fit?" and answers << f("changepoint.map_year") >>. The CUSUM asks "does the trend wander outside what a single straight line can absorb?" and says no, because each break is a slope moderation, not a level jump. The Bayesian model asks "how many breaks, integrating over all locations?" and answers "at least one, with the evidence split between two and three, location uncertain."
 
-**Why this chart.** Two panels for two purposes. The left panel overlays the k=0 (grey dashed), k=1 best-fit (blue solid), k=2 best-fit (red dash-dot), and k=3 best-fit (green dotted) fitted lines on the season-level time series: putting all four models together makes the structural comparison immediate and shows where each model's kinks fall. The right panel is a bar chart of the posterior distribution over break year for k=1, with the 95% HPD highlighted: it shows both *where* the model places the break and *how concentrated* the posterior is — the dominant mass at 1999 with the HPD spanning 1992–2003 carries more information than a single best-fit year would.
+**Why this chart.** Two panels for two purposes. The left panel overlays the k=0 (grey dashed), k=1 best-fit (blue solid), k=2 best-fit (red dash-dot), and k=3 best-fit (green dotted) fitted lines on the season-level time series: putting all four models together makes the structural comparison immediate and shows where each model's kinks fall. The right panel is a bar chart of the posterior distribution over break year for k=1, with the 95% HPD highlighted: it shows both *where* the model places the break and *how concentrated* the posterior is — the dominant mass at << f("changepoint.map_year") >> with the HPD spanning << f("changepoint.hpd_lo") >>–<< f("changepoint.hpd_hi") >> carries more information than a single best-fit year would.
 
 ---
 
@@ -274,7 +274,7 @@ historically also shot from *better places*. Zone shares isolate shot selection
 from shot making.
 
 **What the results mean.** The home paint advantage is evaporating in the
-regular season: +1.28 pp of FGA share in 1995–01 down to +0.24 in 2023–26
+regular season: << f("zone.paint_early", "{:+.2f}") >> pp of FGA share in 1995–01 down to << f("zone.paint_today", "{:+.2f}") >> in 2023–26
 (trend −0.041/yr, p < 0.001), with the mid-range deficit shrinking in mirror
 image (+0.025/yr, p < 0.001). Visiting teams now generate paint shots nearly as
 well as home teams — analytics-driven offense doesn't care where it's played.
@@ -461,7 +461,7 @@ the whole project: did the *rest effect itself* strengthen or weaken, which
 could have contributed to the HCA decline?
 
 **What the results mean.** Rest matters: regular-season home win % runs from
-57.6% (away more rested) to 62.8% (home more rested), χ² p < 0.001, roughly
+<< f("rest.visitor_rested", "{:.1f}%") >> (away more rested) to << f("rest.home_rested", "{:.1f}%") >> (home more rested), χ² p < 0.001, roughly
 +1–3 pp per day of rest advantage in every era. The playoff buckets are more extreme
 (75.0% when home has more rest) but tiny (144 games) — and confounded, see
 Section 9. The key result is the interaction test: p = 0.474 (RS) and 0.727
@@ -495,7 +495,7 @@ rest coefficient absorbs team quality.
   is overwhelming (+112 pp per unit, p < 0.001 — an extrapolated marginal effect
   over a full 0-to-1 win-% gap, so it exceeds the 100 pp a probability could
   literally move). Playoff "rest advantage" is mostly just being the better team.
-- **Altitude:** Denver/Utah home games run +7.9 pp above baseline in the regular
+- **Altitude:** Denver/Utah home games run << f("altitude.effect_pp", "{:+.1f}") >> pp above baseline in the regular
   season (p < 0.001) but −1.6 pp, n.s., in the playoffs. The playoff null is
   partly confound (good Denver/Utah teams face good opponents) and partly small
   samples, but there is no detectable playoff altitude advantage.
