@@ -195,6 +195,104 @@
     "unit": null,
     "value": "10 percentage points"
   },
+  "diff.po_efg_trend": {
+    "display": "-0.009",
+    "fmt": "{:+.3f}",
+    "note": "po: efg_pct_diff year trend (pp/yr)",
+    "unit": null,
+    "value": -0.008722495886194585
+  },
+  "diff.po_fg_trend": {
+    "display": "-0.015",
+    "fmt": "{:+.3f}",
+    "note": "po: fg_pct_diff year trend (pp/yr)",
+    "unit": null,
+    "value": -0.014797737649315856
+  },
+  "diff.po_foul_early": {
+    "display": "-1.58",
+    "fmt": "{:+.2f}",
+    "note": "po: foul diff, earliest era",
+    "unit": null,
+    "value": -1.5755667506297228
+  },
+  "diff.po_foul_late": {
+    "display": "-0.68",
+    "fmt": "{:+.2f}",
+    "note": "po: foul diff, recent era",
+    "unit": null,
+    "value": -0.6805970149253732
+  },
+  "diff.po_fta_early": {
+    "display": "+2.35",
+    "fmt": "{:+.2f}",
+    "note": "po: FTA diff, earliest era",
+    "unit": null,
+    "value": 2.353904282115869
+  },
+  "diff.po_fta_late": {
+    "display": "+1.09",
+    "fmt": "{:+.2f}",
+    "note": "po: FTA diff, recent era",
+    "unit": null,
+    "value": 1.0865671641791044
+  },
+  "diff.po_fta_trend": {
+    "display": "-0.021",
+    "fmt": "{:+.3f}",
+    "note": "po: fta_diff year trend (pp/yr)",
+    "unit": null,
+    "value": -0.021268240473350665
+  },
+  "diff.reg_efg_trend": {
+    "display": "-0.015",
+    "fmt": "{:+.3f}",
+    "note": "reg: efg_pct_diff year trend (pp/yr)",
+    "unit": null,
+    "value": -0.01500416017122721
+  },
+  "diff.reg_fg_trend": {
+    "display": "-0.021",
+    "fmt": "{:+.3f}",
+    "note": "reg: fg_pct_diff year trend (pp/yr)",
+    "unit": null,
+    "value": -0.020977794505372686
+  },
+  "diff.reg_foul_early": {
+    "display": "-1.23",
+    "fmt": "{:+.2f}",
+    "note": "reg: foul diff, earliest era",
+    "unit": null,
+    "value": -1.2289135254988914
+  },
+  "diff.reg_foul_late": {
+    "display": "-0.25",
+    "fmt": "{:+.2f}",
+    "note": "reg: foul diff, recent era",
+    "unit": null,
+    "value": -0.2454175152749491
+  },
+  "diff.reg_fta_early": {
+    "display": "+1.97",
+    "fmt": "{:+.2f}",
+    "note": "reg: FTA diff, earliest era",
+    "unit": null,
+    "value": 1.9678935698447892
+  },
+  "diff.reg_fta_late": {
+    "display": "+0.46",
+    "fmt": "{:+.2f}",
+    "note": "reg: FTA diff, recent era",
+    "unit": null,
+    "value": 0.4623217922606925
+  },
+  "diff.reg_fta_trend": {
+    "display": "-0.036",
+    "fmt": "{:+.3f}",
+    "note": "reg: fta_diff year trend (pp/yr)",
+    "unit": null,
+    "value": -0.036138664344946926
+  },
   "era.drop_1995": {
     "display": "2.6",
     "fmt": "{:.1f}",

@@ -177,15 +177,15 @@ which mechanisms are fading, which is the heart of research question 3.
 **What the results mean.** Two mechanisms are clearly fading and one is not:
 
 - **Foul/FTA bias** collapsed: the regular-season home foul advantage went from
-  −1.23 fouls/game (1984–94) to −0.25 (2023–26), trend << f("trend.fouls") >>/yr, p < 0.001 —
+  << f("diff.reg_foul_early")|tm >> fouls/game (1984–94) to << f("diff.reg_foul_late")|tm >> (2023–26), trend << f("trend.fouls") >>/yr, p < 0.001 —
   an ~<< f("ref.reg_foul_reduction") >> reduction. The chart's first panel shows the same story via FTA: the
-  home free-throw-attempt advantage fell from +1.97/game (1984–94) to +0.46 (2023–26),
-  trend −0.036/yr, p < 0.001. The playoffs show the same direction for fouls
-  (−1.58 → −0.68, trend << f("trend_po.fouls") >>/yr, p < 0.01) and FTA (+2.35 → +1.09, trend
-  −0.021/yr, not significant), retaining about 2.7× the residual foul bias
+  home free-throw-attempt advantage fell from << f("diff.reg_fta_early") >>/game (1984–94) to << f("diff.reg_fta_late") >> (2023–26),
+  trend << f("diff.reg_fta_trend")|tm >>/yr, p < 0.001. The playoffs show the same direction for fouls
+  (<< f("diff.po_foul_early")|tm >> → << f("diff.po_foul_late")|tm >>, trend << f("trend_po.fouls") >>/yr, p < 0.01) and FTA (<< f("diff.po_fta_early") >> → << f("diff.po_fta_late") >>, trend
+  << f("diff.po_fta_trend")|tm >>/yr, not significant), retaining about 2.7× the residual foul bias
   relative to the regular season.
 - **The shooting advantage** is shrinking in the regular season: FG% diff trend
-  −0.021 pp/yr and eFG% −0.015 pp/yr (both p < 0.001), from ~+1.6 pp to
+  << f("diff.reg_fg_trend")|tm >> pp/yr and eFG% << f("diff.reg_efg_trend")|tm >> pp/yr (both p < 0.001), from ~+1.6 pp to
   ~+0.7–1.0 pp. Playoff shooting trends point the same way but aren't
   significant — the playoff shooting advantage has held up better.
 - **3PA rate diff** trends positive (home teams historically took *fewer*

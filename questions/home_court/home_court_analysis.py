@@ -1304,6 +1304,15 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
                   note=f"{_ctx}: home FTA gap, earliest era")
         FACTS.set(f"ref.{_ctx}_fta_today", _era_mean(_sub, "fta_diff", _eN), "{:.1f}",
                   note=f"{_ctx}: home FTA gap, recent era")
+        # Signed, 2-decimal era values cited in stats_explainer.md §4.
+        FACTS.set(f"diff.{_ctx}_foul_early", _era_mean(_sub, "foul_diff", _e0), "{:+.2f}",
+                  note=f"{_ctx}: foul diff, earliest era")
+        FACTS.set(f"diff.{_ctx}_foul_late", _era_mean(_sub, "foul_diff", _eN), "{:+.2f}",
+                  note=f"{_ctx}: foul diff, recent era")
+        FACTS.set(f"diff.{_ctx}_fta_early", _era_mean(_sub, "fta_diff", _e0), "{:+.2f}",
+                  note=f"{_ctx}: FTA diff, earliest era")
+        FACTS.set(f"diff.{_ctx}_fta_late", _era_mean(_sub, "fta_diff", _eN), "{:+.2f}",
+                  note=f"{_ctx}: FTA diff, recent era")
     # The summary cites the regular-season FTA gap with coarser rounding; keep those names.
     FACTS.set("ref.fta_early", _era_mean(df[df["is_playoff"] == 0], "fta_diff", _e0), "{:.0f}",
               note="Reg. FTA gap, earliest era (rounded to whole)")
@@ -1345,6 +1354,12 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
             pval = m.pvalues["year"]
             cell = f"{coef:>+{COL_W - 3}.3f}{_stars(pval)}"
             trend_row += cell
+            # Year-trend facts cited in stats_explainer.md §4.
+            _short = {"fta_diff": "fta", "fg_pct_diff": "fg", "efg_pct_diff": "efg"}
+            if key in _short:
+                _tc = "reg" if season_label.startswith("Regular") else "po"
+                FACTS.set(f"diff.{_tc}_{_short[key]}_trend", coef, "{:+.3f}",
+                          note=f"{_tc}: {key} year trend (pp/yr)")
         print(trend_row)
         print()
 
