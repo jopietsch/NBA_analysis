@@ -702,7 +702,7 @@ most natural suspect, yet only one left a mark.
 
 **What the results mean.** In the regular season, two boundaries show raw
 significant drops: 1994→95 (−4.9 pp) and 2017→18 (−3.2 pp). After controlling
-for the year trend, only the 1995–01 dummy survives (−2.6 pp, p = 0.010), and
+for the year trend, only the 1995–01 dummy survives (−2.6 pp, p << f("era.drop_1995_p") >>), and
 the era dummies are jointly significant (LR p < 0.001). So the regular-season
 decline is mostly smooth drift *plus one genuine discrete drop* at the 1994–95
 hand-checking rules. In the playoffs, nothing survives: no z-test is significant
@@ -755,7 +755,7 @@ where `post95` = 1 from 1994–95 on (an immediate **level shift**) and the inte
 
 **The approach.** The same interrupted-time-series model as Section 15, run **per channel**: `diff ~ year + post95 + (year − 1994)·post95`. The **level shift** (`post95`) is the immediate response at 1995; a mechanism that changed the instant the rules did should show a significant level term. (Sign note: foul_diff = PF_home − PF_away is negative when the home team is favored, so a *positive* level shift means the home foul advantage **shrank** immediately.)
 
-**What the results mean.** Only the foul channel shows a significant immediate response. In the regular season the foul-diff level shift is **+0.44, p = 0.007** — the home foul advantage contracted the moment the hand-checking rules took effect — while eFG% (p = 0.33), turnovers (p = 0.18), and rebounds (p = 0.85) show no significant jump. That is exactly the signature expected if the **hand-checking crackdown** was the operative change: it acts directly on fouls and defense, while the other box-score edges drifted on their own slower schedules. The playoffs show no significant channel shift (small samples, and no 1994–95 break to begin with). This is the closest the data comes to naming a *mechanism* for the one rule change that mattered.
+**What the results mean.** Only the foul channel shows a significant immediate response. In the regular season the foul-diff level shift is **<< f("event.foul_jump") >>, p << f("event.foul_jump_p") >>** — the home foul advantage contracted the moment the hand-checking rules took effect — while eFG% (p = 0.33), turnovers (p = 0.18), and rebounds (p = 0.85) show no significant jump. That is exactly the signature expected if the **hand-checking crackdown** was the operative change: it acts directly on fouls and defense, while the other box-score edges drifted on their own slower schedules. The playoffs show no significant channel shift (small samples, and no 1994–95 break to begin with). This is the closest the data comes to naming a *mechanism* for the one rule change that mattered.
 
 ---
 
@@ -799,7 +799,7 @@ The shift-share identity is exact: frequency + win-rate + interaction = total ch
 
 **Why.** A pure frequency story would show the frequency component absorbing most of the −9.29 pp, with win rates within each situation roughly stable. A frequency component near zero would rule the story out. The decomposition separates those two possibilities cleanly without a regression.
 
-**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **8%**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
+**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **<< f("b2b.freq_share") >>**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
 
 **Why this chart.** This section adds no figure of its own. The era-level B2B frequency and home win % are captured in the era table, and the shift-share is an exact arithmetic decomposition — two numbers that sum to the total. A chart would add no information the table doesn't already carry.
 
@@ -933,8 +933,8 @@ r = +0.33, p = 0.09). The lone significant number, Spearman ρ = −0.49
 (p = 0.009), runs *against* the crowd-size story — attendance climbed to record
 highs in the 2020s exactly as HCA bottomed out, so by rank the two move
 opposite. Crowd size is not behind the decline. Part B is where the crowd shows
-up: with the arena empty, home teams won just 51.0% (n = 573); with any fans
-present, 58.5% (n = 591). The per-1,000-fans logistic slope is small and not
+up: with the arena empty, home teams won just << f("crowd.empty_precise") >> (n = 573); with any fans
+present, << f("crowd.fans_precise") >> (n = 591). The per-1,000-fans logistic slope is small and not
 significant (+0.51 pp, p = 0.18), which is the point — the effect rides on the
 *presence* of a crowd, not its exact size, and it vanished the moment arenas
 refilled in 2021–22. A real ingredient of home court, but a switch, not the
