@@ -41,10 +41,19 @@ Ran four parallel worktree subagents. Results:
 - **stats_tutorial.md: DONE** (committed) + wired into `render_all()` (it lives in the
   parent dir but renders from these facts). Byte-identical.
 - **Review tooling: DONE** (committed) — `render_docs.py --watch | --reference | --annotate`.
-- **stats_explainer.md: OUTSTANDING.** The subagent registered 8 prep facts (`*_mag`
-  unsigned variants, `ols_r2`, `partial_r` — salvaged and committed) but never created the
-  template. The 1386-line / ~390-number conversion is unstarted.
-- 208 facts now, 7 guards, full suite green.
+- **stats_explainer.md: DONE where shared facts exist** (75 substitutions). A retry
+  subagent (committing incrementally) + a manual finish templated every number that maps
+  to an existing fact. The remaining numbers are **method-specific statistics** cited only
+  here (structural-break F, CUSUM, ITS coefficients, Granger, pace, parity, win-margin,
+  net-rating eras, shrunken franchise HCA, multiple-comparisons) — never registered as
+  facts. Those stay literal and are covered by the updated `/check-consistency` (literal
+  check) + the cross-check test. Fully single-sourcing them would mean ~150 single-use
+  facts across ~20 functions — deferred as low-value.
+- **All five reader-facing docs now render byte-identical from facts.** 208 facts, 7
+  guards, 250 tests pass. Review tooling, the dual-write cross-check test
+  (`tests/test_facts_match_results.py`), and the updated `/check-consistency` skill are in.
+- `results.md`-from-facts (#3) was **declined** — render + cross-check already cover the
+  high-stakes cases; the ~80-edit retrofit wasn't worth it for the small-int edge.
 
 Lessons for the explainer redo: (1) the byte-identical render gate does NOT catch
 *under*-templating (a literal number trivially matches itself) — drive completeness with a
