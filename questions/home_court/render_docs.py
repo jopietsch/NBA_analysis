@@ -82,6 +82,19 @@ def render_all(facts_path: str = FACTS_JSON, annotate: bool = False) -> list[str
         with open(out_path, "w") as fh:
             fh.write(template.render())
         written.append(out_path)
+
+    # The stats tutorial lives one level above the project (questions/) but draws
+    # on the same facts, so it isn't in DOCS_DIR. Render it too if present.
+    tut_j2 = os.path.join("..", "stats_tutorial.md.j2")
+    if os.path.exists(tut_j2):
+        out_path = os.path.join(
+            "..", "stats_tutorial.annotated.md" if annotate else "stats_tutorial.md"
+        )
+        with open(tut_j2) as fh:
+            tut = env.from_string(fh.read())
+        with open(out_path, "w") as fh:
+            fh.write(tut.render())
+        written.append(out_path)
     return written
 
 

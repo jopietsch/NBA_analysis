@@ -388,6 +388,8 @@ def run_decline_trend(df: pd.DataFrame) -> None:
                   note=f"{ctx_label}: decline slope 95% CI high")
         FACTS.set(f"{ctx}.slope_p", "< 0.001" if glm_p < 0.001 else f"= {glm_p:.3f}",
                   note=f"{ctx_label}: decline slope p-value (display)")
+        FACTS.set(f"{ctx}.ols_r2", ols_base.rsquared, "{:.2f}",
+                  note=f"{ctx_label}: OLS R² of season home-win% on year")
 
         if not is_po:
             FACTS.set("decline_both_plain", "10 percentage points",
@@ -1663,6 +1665,8 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                           note=f"Reg. season: {r['table_label']} share of the decline")
                 FACTS.set(f"trend.{_short[r['key']]}", r["gamma"], "{:+.3f}",
                           note=f"Reg: {r['table_label']} home-minus-away trend per year")
+                FACTS.set(f"trend.{_short[r['key']]}_mag", abs(r["gamma"]), "{:.3f}",
+                          note=f"Reg: {r['table_label']} trend magnitude per year")
             FACTS.set("share.fourfactors.adv", ctx["pct_level"], "{:.0f}%",
                       note="Reg. season: all four channels' share of the HCA level")
             FACTS.set("share.fourfactors.decline", ctx["pct_trend"], "{:.0f}%",
@@ -1686,6 +1690,8 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                           note=f"Playoffs: {r['table_label']} share of the decline")
                 FACTS.set(f"trend_po.{_shortp[r['key']]}", r["gamma"], "{:+.3f}",
                           note=f"Playoffs: {r['table_label']} home-minus-away trend per year")
+                FACTS.set(f"trend_po.{_shortp[r['key']]}_mag", abs(r["gamma"]), "{:.3f}",
+                          note=f"Playoffs: {r['table_label']} trend magnitude per year")
             FACTS.set("share.fourfactors_po.adv", ctx["pct_level"], "{:.0f}%",
                       note="Playoffs: all four channels' share of the HCA level")
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
@@ -2026,6 +2032,8 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
                 _sm = smf.ols("reb_share_edge ~ year", data=_se).fit()
             FACTS.set(f"{_rc}.reb_share_trend", _sm.params["year"], "{:+.3f}",
                       note=f"{_rc}: pace-free rebound share-edge trend per year")
+            FACTS.set(f"{_rc}.reb_share_trend_mag", abs(_sm.params["year"]), "{:.3f}",
+                      note=f"{_rc}: rebound share-edge trend magnitude per year")
             _sp = _sm.pvalues["year"]
             FACTS.set(f"{_rc}.reb_share_p", "< 0.001" if _sp < 0.001 else f"= {_sp:.3f}",
                       note=f"{_rc}: rebound share-edge trend p-value (display)")
@@ -3371,6 +3379,8 @@ def _run_league_metric_analysis(
                 _tctx = "po" if ctx_label == "Playoffs" else "reg"
                 FACTS.set(f"tpa.effect_{_tctx}", pp_per_10, "{:+.2f}",
                           note=f"{ctx_label}: bivariate HCA effect per 10pp of 3PA rate")
+                FACTS.set(f"tpa.effect_{_tctx}_mag", abs(pp_per_10), "{:.2f}",
+                          note=f"{ctx_label}: bivariate 3PA effect magnitude per 10pp")
                 FACTS.set(f"tpa.effect_{_tctx}_ci_lo", ci_lo * 10, "{:+.2f}",
                           note=f"{ctx_label}: 3PA effect 95% CI low")
                 FACTS.set(f"tpa.effect_{_tctx}_ci_hi", ci_hi * 10, "{:+.2f}",
@@ -3393,6 +3403,8 @@ def _run_league_metric_analysis(
                 _tctx = "po" if ctx_label == "Playoffs" else "reg"
                 FACTS.set(f"tpa.within_{_tctx}", pp_era, "{:+.2f}",
                           note=f"{ctx_label}: within-era HCA effect per 10pp of 3PA rate")
+                FACTS.set(f"tpa.within_{_tctx}_mag", abs(pp_era), "{:.2f}",
+                          note=f"{ctx_label}: within-era 3PA effect magnitude per 10pp")
                 FACTS.set(f"tpa.within_{_tctx}_p",
                           "< 0.001" if pval_e < 0.001 else f"= {pval_e:.3f}",
                           note=f"{ctx_label}: within-era 3PA effect p-value (display)")
@@ -3472,6 +3484,10 @@ def run_3pa_analysis(df: pd.DataFrame) -> None:
     # the shared long-run drift (lost when the year trend is removed).
     FACTS.set("tpa.raw_corr", r_raw, "{:.2f}",
               note="Reg. raw season-level 3PA-vs-HCA Pearson correlation")
+    FACTS.set("tpa.raw_corr_mag", abs(r_raw), "{:.3f}",
+              note="Reg. raw 3PA-vs-HCA Pearson correlation magnitude")
+    FACTS.set("tpa.partial_r_mag", abs(r_resid), "{:.3f}",
+              note="Reg. year-detrended 3PA-vs-HCA partial correlation magnitude")
     FACTS.set("tpa.detrend_loss", shrinkage, "{:.0f}%",
               note="Reg. 3PA-HCA correlation strength lost after removing the shared year trend")
     if abs(r_resid) < 0.20:
