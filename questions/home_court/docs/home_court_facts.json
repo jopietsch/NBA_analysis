@@ -552,6 +552,20 @@
     "unit": null,
     "value": 2013
   },
+  "placebo.step_1995": {
+    "display": "-2.00",
+    "fmt": "{:+.2f}",
+    "note": "Reg: placebo step coefficient at 1994-95",
+    "unit": null,
+    "value": -2.0033404738428935
+  },
+  "placebo.step_1995_p": {
+    "display": "0.043",
+    "fmt": "{:.3f}",
+    "note": "Reg: placebo step p at 1994-95",
+    "unit": null,
+    "value": 0.04266618270915663
+  },
   "po.decline_total": {
     "display": "-9.5 pp",
     "fmt": "{:+.1f} pp",

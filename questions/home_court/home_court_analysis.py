@@ -3227,6 +3227,10 @@ def run_placebo_tests(df: pd.DataFrame) -> None:
                 marker = "***" if pval < 0.001 else "** " if pval < 0.01 else "*  " if pval < 0.05 else "   "
                 hi = " ← 1994-95" if t == 1995 else ""
                 print(f"   {t:>6}  {coef:>+14.2f}  {_fmt_p(pval):>10}  {marker}{hi}")
+                if t == 1995 and is_po == 0:
+                    # Facts for stats_explainer.md §16 (placebo step at 1994-95).
+                    FACTS.set("placebo.step_1995", coef, "{:+.2f}", note="Reg: placebo step coefficient at 1994-95")
+                    FACTS.set("placebo.step_1995_p", pval, "{:.3f}", note="Reg: placebo step p at 1994-95")
                 if pval < 0.05:
                     (sig_neg if coef < 0 else sig_pos).append(t)
             except Exception:
