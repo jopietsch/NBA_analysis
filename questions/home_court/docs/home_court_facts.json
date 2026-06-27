@@ -391,6 +391,118 @@
     "unit": null,
     "value": 26
   },
+  "its.po_level": {
+    "display": "-2.31",
+    "fmt": "{:+.2f}",
+    "note": "po: ITS 1994-95 level shift",
+    "unit": null,
+    "value": -2.3083639752727763
+  },
+  "its.po_level_p": {
+    "display": "0.551",
+    "fmt": "{:.3f}",
+    "note": "po: ITS level-shift p",
+    "unit": null,
+    "value": 0.550959550400691
+  },
+  "its.po_post_trend": {
+    "display": "-0.24",
+    "fmt": "{:+.2f}",
+    "note": "po: ITS post-break trend/yr",
+    "unit": null,
+    "value": -0.23542671074558955
+  },
+  "its.po_pre_p": {
+    "display": "0.651",
+    "fmt": "{:.3f}",
+    "note": "po: ITS pre-break trend p",
+    "unit": null,
+    "value": 0.6508344085151258
+  },
+  "its.po_pre_trend": {
+    "display": "+0.25",
+    "fmt": "{:+.2f}",
+    "note": "po: ITS pre-break trend/yr",
+    "unit": null,
+    "value": 0.24921538031638438
+  },
+  "its.po_r2": {
+    "display": "0.23",
+    "fmt": "{:.2f}",
+    "note": "po: ITS R\u00b2",
+    "unit": null,
+    "value": 0.2251166579705678
+  },
+  "its.po_slope_chg": {
+    "display": "-0.48",
+    "fmt": "{:+.2f}",
+    "note": "po: ITS slope change/yr",
+    "unit": null,
+    "value": -0.4846420910619739
+  },
+  "its.po_slope_chg_p": {
+    "display": "0.390",
+    "fmt": "{:.3f}",
+    "note": "po: ITS slope-change p",
+    "unit": null,
+    "value": 0.38972408403839987
+  },
+  "its.reg_level": {
+    "display": "-0.62",
+    "fmt": "{:+.2f}",
+    "note": "reg: ITS 1994-95 level shift",
+    "unit": null,
+    "value": -0.6220874549842298
+  },
+  "its.reg_level_p": {
+    "display": "0.597",
+    "fmt": "{:.3f}",
+    "note": "reg: ITS level-shift p",
+    "unit": null,
+    "value": 0.5974391615740839
+  },
+  "its.reg_post_trend": {
+    "display": "-0.18",
+    "fmt": "{:+.2f}",
+    "note": "reg: ITS post-break trend/yr",
+    "unit": null,
+    "value": -0.18105227356919712
+  },
+  "its.reg_pre_p": {
+    "display": "0.004",
+    "fmt": "{:.3f}",
+    "note": "reg: ITS pre-break trend p",
+    "unit": null,
+    "value": 0.004475575140007813
+  },
+  "its.reg_pre_trend": {
+    "display": "-0.52",
+    "fmt": "{:+.2f}",
+    "note": "reg: ITS pre-break trend/yr",
+    "unit": null,
+    "value": -0.5220254288507139
+  },
+  "its.reg_r2": {
+    "display": "0.78",
+    "fmt": "{:.2f}",
+    "note": "reg: ITS R\u00b2",
+    "unit": null,
+    "value": 0.7793101046351232
+  },
+  "its.reg_slope_chg": {
+    "display": "+0.34",
+    "fmt": "{:+.2f}",
+    "note": "reg: ITS slope change/yr",
+    "unit": null,
+    "value": 0.3409731552815168
+  },
+  "its.reg_slope_chg_p": {
+    "display": "0.060",
+    "fmt": "{:.3f}",
+    "note": "reg: ITS slope-change p",
+    "unit": null,
+    "value": 0.06001411610816602
+  },
   "margin.spread_po": {
     "display": "0.3",
     "fmt": "{:.1f}",

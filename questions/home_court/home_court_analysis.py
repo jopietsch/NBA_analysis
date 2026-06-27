@@ -4603,6 +4603,16 @@ def run_its_test(df: pd.DataFrame) -> None:
         print()
         print(f"   Implied slopes: pre-break = {pre_slope_total:+.3f} pp/yr, "
               f"post-break = {post_slope_total:+.3f} pp/yr")
+        # Facts for stats_explainer.md §15 (ITS at 1994-95).
+        _ic = "po" if "Playoff" in ctx_label else "reg"
+        FACTS.set(f"its.{_ic}_r2", r2, "{:.2f}", note=f"{_ic}: ITS R²")
+        FACTS.set(f"its.{_ic}_pre_trend", b_yr, "{:+.2f}", note=f"{_ic}: ITS pre-break trend/yr")
+        FACTS.set(f"its.{_ic}_pre_p", p_yr, "{:.3f}", note=f"{_ic}: ITS pre-break trend p")
+        FACTS.set(f"its.{_ic}_level", b_lev, "{:+.2f}", note=f"{_ic}: ITS 1994-95 level shift")
+        FACTS.set(f"its.{_ic}_level_p", p_lev, "{:.3f}", note=f"{_ic}: ITS level-shift p")
+        FACTS.set(f"its.{_ic}_slope_chg", b_slp, "{:+.2f}", note=f"{_ic}: ITS slope change/yr")
+        FACTS.set(f"its.{_ic}_slope_chg_p", p_slp, "{:.3f}", note=f"{_ic}: ITS slope-change p")
+        FACTS.set(f"its.{_ic}_post_trend", post_slope_total, "{:+.2f}", note=f"{_ic}: ITS post-break trend/yr")
 
         if p_lev < 0.05 and p_slp >= 0.10:
             print(f"   ► Significant LEVEL shift only — HCA dropped sharply at 1994-95,")
