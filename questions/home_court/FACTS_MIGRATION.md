@@ -32,6 +32,24 @@ chart and prose can't diverge.
   each git worktree imports its own `nbakit` — this is what makes worktree-per-doc
   parallelism safe.
 
+## Phase 2 status (parallel, in progress)
+
+Ran four parallel worktree subagents. Results:
+- **investigation.md: DONE** (committed). 111 substitutions; byte-identical except two
+  intended reconciliations (po.slope 0.22->0.23, a playoff p `<0.01`->`=0.004`). It is now
+  the best **stats-tier** worked example to copy.
+- **stats_tutorial.md: DONE** (committed) + wired into `render_all()` (it lives in the
+  parent dir but renders from these facts). Byte-identical.
+- **Review tooling: DONE** (committed) — `render_docs.py --watch | --reference | --annotate`.
+- **stats_explainer.md: OUTSTANDING.** The subagent registered 8 prep facts (`*_mag`
+  unsigned variants, `ols_r2`, `partial_r` — salvaged and committed) but never created the
+  template. The 1386-line / ~390-number conversion is unstarted.
+- 208 facts now, 7 guards, full suite green.
+
+Lessons for the explainer redo: (1) the byte-identical render gate does NOT catch
+*under*-templating (a literal number trivially matches itself) — drive completeness with a
+literal-token grep and `--annotate`. (2) Commit incrementally so a stall doesn't lose work.
+
 ## Known Phase-2 reconciliations (facts now correct; docs to update on templating)
 
 - `po.slope` renders -0.23 (the -0.225 GLM value); investigation.md currently says 0.22.
