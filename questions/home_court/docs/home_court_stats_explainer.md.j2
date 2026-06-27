@@ -534,24 +534,24 @@ relationship survives removal of the shared time trend and is much more likely
 to be mechanistic (more threes → more variance → weaker advantage for the slightly
 better side, which at home is usually the home team).
 
-**What the results mean.** The season-level correlation is enormous (r = −0.90
+**What the results mean.** The season-level correlation is enormous (r = << f("tpa.raw_corr")|tm >>
 regular season) but, per the above, that alone is just the two trends. The
 decisive result is that the within-era effect barely budges from the bivariate
-one: −2.27 pp per 10 pp of 3PA rate (p << f("tpa.within_reg_p") >>) vs. −2.64 unadjusted. The
+one: << f("tpa.within_reg")|tm >> pp per 10 pp of 3PA rate (p << f("tpa.within_reg_p") >>) vs. << f("tpa.effect_reg")|tm >> unadjusted. The
 3PA–HCA link is *not* merely the shared trend — it holds game-by-game within
-eras. The playoffs show an even stronger coefficient (−3.12 pp per 10 pp within era)
+eras. The playoffs show an even stronger coefficient (<< f("tpa.within_po")|tm >> pp per 10 pp within era)
 at p << f("tpa.within_po_p") >> on 3,292 games — directionally identical and now clearly
 significant. This is the strongest mechanistic candidate the data offers for
 the decline.
 
-**Cointegration and detrending.** Two checks confirm that the raw r = −0.90 is
+**Cointegration and detrending.** Two checks confirm that the raw r = << f("tpa.raw_corr")|tm >> is
 mostly, but not entirely, the shared trend. First, an **Engle-Granger
 cointegration test**: both 3PA rate and home win % are I(1) (nonstationary
 trending series, per ADF unit-root tests), but they are **not cointegrated**, so
 they have no genuine long-run equilibrium relationship and a large part of the raw
 correlation is just two series drifting in opposite directions for 43 years.
 Second, the **partial correlation** quantifies how much: detrending both series
-against year drops the season-level r from −0.902 to −0.526 (still p < 0.001), so
+against year drops the season-level r from −<< f("tpa.raw_corr_mag") >> to −<< f("tpa.partial_r_mag") >> (still p < 0.001), so
 roughly 40% of the raw correlation is the shared trend and a real year-to-year
 association remains. (The rolling 10-season r swings from −0.87 to −0.19 with no
 sign flips — moderate instability consistent with a relationship that is partly
@@ -775,7 +775,7 @@ folk theories, and distance is cleanly measurable. Buckets show the shape;
 the logistic puts a per-mile number and CI on it.
 
 **What the results mean.** Nearly nothing. The regular-season coefficient is
-statistically significant (p = 0.010) but practically trivial: −0.07 pp per 100
+statistically significant (p = 0.010) but practically trivial: −<< f("travel.per_100mi") >> pp per 100
 miles, so a 2,500-mile cross-country trip costs the visitor under 2 pp — and the
 buckets don't even decline monotonically (500–1000 miles has the *highest* home
 win rate). With N = 49,107, significance is cheap; the effect size is the story.
@@ -799,7 +799,7 @@ The shift-share identity is exact: frequency + win-rate + interaction = total ch
 
 **Why.** A pure frequency story would show the frequency component absorbing most of the −9.29 pp, with win rates within each situation roughly stable. A frequency component near zero would rule the story out. The decomposition separates those two possibilities cleanly without a regression.
 
-**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **<< f("b2b.freq_share") >>**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
+**What the results mean.** The schedule shift is real — visitor B2Bs fell from << f("b2b.freq_early","{:.1f}%") >> of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins << f("b2b.tired_visitor","{:.1f}%") >> vs. << f("b2b.baseline","{:.1f}%") >> when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−<< f("b2b.freq_pp","{:.2f}") >> pp** of the −9.29 pp total decline — about **<< f("b2b.freq_share") >>**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
 
 **Why this chart.** This section adds no figure of its own. The era-level B2B frequency and home win % are captured in the era table, and the shift-share is an exact arithmetic decomposition — two numbers that sum to the total. A chart would add no information the table doesn't already carry.
 
