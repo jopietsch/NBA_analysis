@@ -4229,6 +4229,12 @@ def run_cusum_test(df: pd.DataFrame, results: dict | None = None) -> None:
             else:
                 pct = 100 * abs(max_val) / bound_at_peak if bound_at_peak > 0 else 0
                 print(f"   Peak is {pct:.0f}% of the 5% boundary.")
+                # Facts for stats_explainer.md §3 (CUSUM).
+                _cc = "po" if is_po else "reg"
+                FACTS.set(f"cusum.{_cc}_peak", abs(max_val), "{:.1f}", note=f"{ctx_label}: peak |CUSUM|")
+                FACTS.set(f"cusum.{_cc}_peak_year", max_yr, "{:d}", note=f"{ctx_label}: year of peak CUSUM")
+                FACTS.set(f"cusum.{_cc}_bound", bound_at_peak, "{:.1f}", note=f"{ctx_label}: 5% CUSUM bound at peak")
+                FACTS.set(f"cusum.{_cc}_pct", pct, "{:.0f}", note=f"{ctx_label}: peak as % of 5% boundary")
                 if is_po == 0:
                     br = (results or {}).get("break_rs", {})
                     break_yr = br.get("year", "late 1990s")

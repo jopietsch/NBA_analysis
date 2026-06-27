@@ -132,6 +132,62 @@
     "unit": null,
     "value": 58.544839255499156
   },
+  "cusum.po_bound": {
+    "display": "18.0",
+    "fmt": "{:.1f}",
+    "note": "Playoffs: 5% CUSUM bound at peak",
+    "unit": null,
+    "value": 17.98703533103774
+  },
+  "cusum.po_pct": {
+    "display": "32",
+    "fmt": "{:.0f}",
+    "note": "Playoffs: peak as % of 5% boundary",
+    "unit": null,
+    "value": 32.35550778589995
+  },
+  "cusum.po_peak": {
+    "display": "5.8",
+    "fmt": "{:.1f}",
+    "note": "Playoffs: peak |CUSUM|",
+    "unit": null,
+    "value": 5.819796616986492
+  },
+  "cusum.po_peak_year": {
+    "display": "2026",
+    "fmt": "{:d}",
+    "note": "Playoffs: year of peak CUSUM",
+    "unit": null,
+    "value": 2026
+  },
+  "cusum.reg_bound": {
+    "display": "16.1",
+    "fmt": "{:.1f}",
+    "note": "Regular season: 5% CUSUM bound at peak",
+    "unit": null,
+    "value": 16.0859287092788
+  },
+  "cusum.reg_pct": {
+    "display": "87",
+    "fmt": "{:.0f}",
+    "note": "Regular season: peak as % of 5% boundary",
+    "unit": null,
+    "value": 87.02959498547062
+  },
+  "cusum.reg_peak": {
+    "display": "14.0",
+    "fmt": "{:.1f}",
+    "note": "Regular season: peak |CUSUM|",
+    "unit": null,
+    "value": 13.999518605336883
+  },
+  "cusum.reg_peak_year": {
+    "display": "2019",
+    "fmt": "{:d}",
+    "note": "Regular season: year of peak CUSUM",
+    "unit": null,
+    "value": 2019
+  },
   "decline_both_plain": {
     "display": "10 percentage points",
     "fmt": null,
