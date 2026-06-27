@@ -4,6 +4,12 @@ Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current pro
 
 The source of truth is the project's results doc, `docs/*_results.md` (one per project, e.g. `home_court_results.md`; auto-generated; never edit by hand). Every figure in prose must trace back to it.
 
+**Facts/template docs change what this skill checks.** Some docs are now generated: a `docs/<doc>.md.j2` template fills each cited number from `docs/home_court_facts.json` (the data model) via `<< f("name") >>`, rendered by `render_docs.py`. For such a doc (a sibling `.md.j2` exists; `stats_tutorial.md.j2` lives at `questions/`):
+- A `<< f("name") >>` number **cannot drift** from the data model — the render fills it — and `facts.json` itself is cross-checked against `results.md` by `tests/test_facts_match_results.py` (run it; if green, the templated numbers are guaranteed and need no hand-verification).
+- So the manual number-check covers only the **literal numbers still in the `.md.j2`** (bare numbers *not* inside `<< f(...) >>`): ranges, plain-language roundings, p-value threshold *definitions*, Unicode-minus negatives, and worked-arithmetic steps. These are the residual hand-typed surface, and it shrinks as conversion completes.
+- The non-number checks below — **method fidelity, overclaim, same-quantity/two-values, direction** — still apply to the whole rendered doc. Qualitative claims are separately guarded by `tests/test_prose_claims.py` (run it too).
+- Read the `.md.j2`, not the rendered `.md`, so you can tell templated from literal. If no `.md.j2` exists for a doc, do the full check on its `.md` as before.
+
 **The depth of the check is tier-dependent** (route by filename, see the audience-tier table in `questions/CLAUDE.md`):
 - `*_findings.md` / `*_summary.md` — point estimates only; these docs mostly avoid p-values and CIs.
 - `*_investigation.md` — point estimates **plus CI bounds plus p-values / significance stars**. This tier reports the full evidence, so a CI cited as `[+11, +28]%` or a `p = 0.007` must match the results row exactly, and a claim's direction (negative/positive, "significant"/"not") must match.
@@ -24,9 +30,11 @@ If no registry exists, do the full free scan only (steps below).
 
 1. Read `docs/*_results.md` in full. Treat every number in it as correct. If any target is `*_stats_explainer.md` or `stats_tutorial.md`, also read `*_analysis.py` (the analysis code is the source of truth for *which method* was run, which the results doc only shows the output of).
 
-2. Read each target doc in full.
+   For facts/template docs, first run the automated guards: `python3 -m pytest tests/test_facts_match_results.py tests/test_prose_claims.py -q`. Green means the templated numbers match the data model and the qualitative claims hold — you do not re-verify those by hand.
 
-3. For every number in the prose — percentage, count, ranking, margin, rate, coefficient — locate the matching row or cell in the results doc and compare. Flag every discrepancy, grouped worst-first:
+2. Read each target doc in full. For a facts/template doc, read its `docs/<doc>.md.j2` (so templated `<< f(...) >>` numbers are visibly distinct from literals).
+
+3. For every **literal** number in the prose — percentage, count, ranking, margin, rate, coefficient — that is *not* inside `<< f(...) >>` (for a non-templated doc, every number), locate the matching row or cell in the results doc and compare. Flag every discrepancy, grouped worst-first:
 
    - **Wrong or stale number**: prose value does not match the results doc. Quote the prose value with its line number, quote the results-doc value and its section header.
    - **Same quantity, different values in two places**: the same metric cited with two different numbers in different sections without an explanation (e.g. two definitions, two eras). Either reconcile to one number or add a one-line note explaining the difference.
@@ -41,5 +49,7 @@ If no registry exists, do the full free scan only (steps below).
 5. Present the review grouped worst-first. State explicitly what you verified as correct. Do NOT edit yet.
 
 6. Ask whether to apply. On confirmation, apply the edits, then run `/regen` (or `bash /Users/justin/code/nba_analysis/questions/regen_docs.sh`) from the project root. Before regenerating, double-check each changed number against the results doc one more time.
+
+   For a facts/template doc, edits to a **literal** number go in the `.md.j2` (then `python3 render_docs.py` refills the `.md`). If the flagged literal is really a data-model value that drifted, the better fix is to convert it to `<< f("name") >>` (registering a fact in `*_analysis.py` if one doesn't exist) rather than hand-correcting the literal — that retires the drift permanently.
 
 **Note:** this skill does not change the results doc. If prose is correct and the results doc looks wrong, the fix is in the analysis code — re-run the pipeline.
