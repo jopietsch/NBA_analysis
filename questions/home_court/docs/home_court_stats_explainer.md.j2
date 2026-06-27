@@ -72,10 +72,10 @@ picture, with autocorrelation-robust inference. When both agree, the finding
 doesn't depend on modeling choices.
 
 **What the results mean.** They agree almost exactly: the regular season declines
-about −0.25 pp/year (≈ −10 pp over 43 seasons, p < 0.001 in both, OLS R² = 0.74 —
+about −0.25 pp/year (≈ −10 pp over 43 seasons, p < 0.001 in both, OLS R² = << f("reg.ols_r2") >> —
 year alone explains nearly three-quarters of season-to-season variation in HCA).
 The playoffs decline at a similar rate (−0.22 pp/yr, total ≈ −9.5 pp) but with
-much wider confidence intervals and a far lower R² (0.19), because each playoff
+much wider confidence intervals and a far lower R² (<< f("po.ols_r2") >>), because each playoff
 season is only ~80 games of data. The per-era table shows the decline was not
 uniform: in the regular season the steepest significant declines were in
 1984–94 (−0.52 pp/yr) and 2018–22 (−1.18 pp/yr); the 2023–26 slope (−0.77 pp/yr)
@@ -88,7 +88,7 @@ No individual playoff era reaches significance — single playoff eras are just
 the simplest thing that can carry it: one dot per season for the home win rate,
 regular season and playoffs on the same axes, each with a fitted line. A line lets
 a reader eyeball the slope *and* the scatter at once — the tight regular-season
-cloud (R² = 0.74) against the noisy playoff one (R² = 0.19). The era shading and
+cloud (R² = << f("reg.ols_r2") >>) against the noisy playoff one (R² = << f("po.ols_r2") >>). The era shading and
 the companion era-bar panel do what a single line can't: they expose that the drift
 isn't perfectly smooth, which sets up the discrete-drop question Section 14 tests.
 
@@ -177,11 +177,11 @@ which mechanisms are fading, which is the heart of research question 3.
 **What the results mean.** Two mechanisms are clearly fading and one is not:
 
 - **Foul/FTA bias** collapsed: the regular-season home foul advantage went from
-  −1.23 fouls/game (1984–94) to −0.25 (2023–26), trend +0.022/yr, p < 0.001 —
-  an ~80% reduction. The chart's first panel shows the same story via FTA: the
+  −1.23 fouls/game (1984–94) to −0.25 (2023–26), trend << f("trend.fouls") >>/yr, p < 0.001 —
+  an ~<< f("ref.reg_foul_reduction") >> reduction. The chart's first panel shows the same story via FTA: the
   home free-throw-attempt advantage fell from +1.97/game (1984–94) to +0.46 (2023–26),
   trend −0.036/yr, p < 0.001. The playoffs show the same direction for fouls
-  (−1.58 → −0.68, trend +0.020/yr, p < 0.01) and FTA (+2.35 → +1.09, trend
+  (−1.58 → −0.68, trend << f("trend_po.fouls") >>/yr, p < 0.01) and FTA (+2.35 → +1.09, trend
   −0.021/yr, not significant), retaining about 2.7× the residual foul bias
   relative to the regular season.
 - **The shooting advantage** is shrinking in the regular season: FG% diff trend
@@ -211,7 +211,7 @@ matters — "toward zero" *is* the finding, so it has to be on the axis.
 ## 5. Referee Crew Home Foul Bias — Playoffs (`run_referee_analysis`)
 
 **The data.** Per-official playoff records built from box-score officials data:
-for each of the 47 officials with ≥50 playoff games, the mean and SD of
+for each of the << f("ref.n_total") >> officials with ≥50 playoff games, the mean and SD of
 `foul_diff = PF_home − PF_away` across their games (negative = home-favoring),
 plus the same stats within each era.
 
@@ -221,8 +221,8 @@ plus the same stats within each era.
    testing whether their mean foul_diff differs from zero. (An earlier version
    used a degenerate zero-variance test that made every official "significant";
    this is the corrected test.)
-2. **Benjamini–Hochberg FDR correction** across all 47 simultaneous tests — with
-   47 officials, ~2 would clear p < 0.05 by luck alone; BH controls the expected
+2. **Benjamini–Hochberg FDR correction** across all << f("ref.n_total") >> simultaneous tests — with
+   << f("ref.n_total") >> officials, ~2 would clear p < 0.05 by luck alone; BH controls the expected
    false-discovery rate at 5%.
 3. **Method-of-moments variance decomposition** of the career means: how much of
    the spread *between* officials is real vs. sampling noise.
@@ -231,14 +231,14 @@ plus the same stats within each era.
    whether the spread of officials has compressed over time.
 
 **Why all the machinery.** Referee-bias rankings are the most misuse-prone output
-in the project — a raw leaderboard of 47 noisy means will always produce
+in the project — a raw leaderboard of << f("ref.n_total") >> noisy means will always produce
 dramatic-looking "most biased ref" headlines. The t-tests establish whether
 individual effects are real, BH keeps the count of significant officials honest,
 and shrinkage keeps the ranking from rewarding small samples.
 
-**What the results mean.** The bias is universal, not a few bad apples: 45 of 47
-officials show home-favoring means, 29 of 47 are individually significant *and
-all 29 survive BH correction* — that combination is the signature of a real,
+**What the results mean.** The bias is universal, not a few bad apples: << f("ref.n_biased") >> of << f("ref.n_total") >>
+officials show home-favoring means, << f("ref.n_significant") >> of << f("ref.n_total") >> are individually significant *and
+all << f("ref.n_significant") >> survive BH correction* — that combination is the signature of a real,
 widespread effect. The league mean is −1.10 fouls/game in favor of the home team.
 Between-official differences are mostly noise (60% of observed spread; true
 between-official SD ≈ 0.41 fouls/game), so even shrunken rankings should be read
@@ -331,13 +331,13 @@ the 3PA-control diagnostic is what adds a causal-ordering question on top.
 **What the results mean.** The four channels capture nearly all of HCA's level in
 both contexts and nearly all of its regular-season decline:
 
-- **Regular-season level:** channels carry 95% of the +10.1 pp home advantage.
-  Shooting (eFG%) is the largest single channel at 43% (+4.4 pp), then rebounds
-  25% (+2.5 pp), fouls 14% (+1.4 pp), turnovers 13% (+1.3 pp); 5% unexplained.
-- **Regular-season trend:** channels carry 96% of the −0.244 pp/yr decline,
-  spread fairly evenly across rebounds (30%), turnovers (27%), shooting (21%),
-  and fouls (18%); only 4% is unmediated.
-- **Playoffs:** channels carry 93% of the level but only 67% of the decline —
+- **Regular-season level:** channels carry << f("share.fourfactors.adv") >> of the << f("reg.level_pp") >> pp home advantage.
+  Shooting (eFG%) is the largest single channel at << f("share.shooting.adv") >> (+4.4 pp), then rebounds
+  << f("share.rebounding.adv") >> (+2.5 pp), fouls << f("share.fouls.adv") >> (+1.4 pp), turnovers << f("share.turnovers.adv") >> (+1.3 pp); << f("reg.level_unexplained_pct") >> unexplained.
+- **Regular-season trend:** channels carry << f("share.fourfactors.decline") >> of the −0.244 pp/yr decline,
+  spread fairly evenly across rebounds (<< f("share.rebounding.decline") >>), turnovers (<< f("share.turnovers.decline") >>), shooting (<< f("share.shooting.decline") >>),
+  and fouls (<< f("share.fouls.decline") >>); only 4% is unmediated.
+- **Playoffs:** channels carry << f("share.fourfactors_po.adv") >> of the level but only << f("share.fourfactors_po.decline") >> of the decline —
   33% of the playoff decline runs outside the measured box-score channels.
 
 The 3PA-control diagnostic then resolves the obvious follow-up — are rebounds and
@@ -350,8 +350,8 @@ differ by channel:
   same strategic shift, and conditioning on a mediator is exactly where a
   coefficient can flip as an artifact — so read this as "fully absorbed," not as
   a genuine reversal of the shooting advantage.
-- **Rebounding** is independent: only ≈8% of its year-trend is absorbed and it
-  stays highly significant (p < 0.001). The home team's rebounding advantage has slid
+- **Rebounding** is independent: only ≈<< f("reb.absorbed_by_3pa") >> of its year-trend is absorbed and it
+  stays highly significant (p << f("reb.controlled_3pa_p") >>). The home team's rebounding advantage has slid
   for reasons the perimeter shift does not explain — a genuine fourth strand of
   the decline, now reflected in `home_court_findings.md` §3 and §7 (Summary). In the playoffs the
   rebounding fade is, if anything, sharper net of 3PA.
@@ -381,13 +381,13 @@ different regimes.
 A fifth block puts bootstrap 95% confidence intervals on every share percentage
 by resampling whole seasons with replacement (B = 500) and recomputing the
 decomposition each time. The band is the 2.5–97.5 percentile across resamples.
-In the regular season the shares are tightly pinned: level [91, 97]% total
-mediated, trend [87, 107]%; individual channel trend bands are 10–15 pp wide
-(e.g. eFG% trend: [11, 28]%, REB trend: [25, 38]%). In the playoffs the bands
+In the regular season the shares are tightly pinned: level [<< f("share.fourfactors.adv_ci_lo") >>, << f("share.fourfactors.adv_ci_hi") >>]% total
+mediated, trend [<< f("share.fourfactors.decline_ci_lo") >>, << f("share.fourfactors.decline_ci_hi") >>]%; individual channel trend bands are 10–15 pp wide
+(e.g. eFG% trend: [<< f("share.shooting.decline_ci_lo") >>, << f("share.shooting.decline_ci_hi") >>]%, REB trend: [<< f("share.rebounding.decline_ci_lo") >>, << f("share.rebounding.decline_ci_hi") >>]%). In the playoffs the bands
 are far wider because each playoff season carries only ~80 games; the eFG% and
 turnover trend shares have CIs spanning ±40 pp, meaning those individual playoff
-shares are loosely determined. The playoff headline (67% of the decline mediated)
-has a bootstrap band of [38, 107]%. Read the regular-season shares as reliable;
+shares are loosely determined. The playoff headline (<< f("share.fourfactors_po.decline") >> of the decline mediated)
+has a bootstrap band of [<< f("share.fourfactors_po.decline_ci_lo") >>, << f("share.fourfactors_po.decline_ci_hi") >>]%. Read the regular-season shares as reliable;
 read the playoff trend shares as directional. Resampling seasons rather than
 individual games preserves the block structure of the data — correlations within
 a season are intact in every resample.
@@ -405,7 +405,7 @@ remainder rather than quietly dropping it.
 ## 7a. Out-of-Sample Forecast (`run_out_of_sample_forecast`)
 
 **Why this section exists.** The mediation decomposition (Section 7) fits the
-four-channel model on all 43 seasons and reports that channels explain 96% of the
+four-channel model on all 43 seasons and reports that channels explain << f("share.fourfactors.decline") >> of the
 decline. Fitting and testing on the same data risks overfitting: the model has four
 predictors and 43 data points, so it might be capturing historical noise as
 structure. This section answers the harder question: does the channel mapping
@@ -537,10 +537,10 @@ better side, which at home is usually the home team).
 **What the results mean.** The season-level correlation is enormous (r = −0.90
 regular season) but, per the above, that alone is just the two trends. The
 decisive result is that the within-era effect barely budges from the bivariate
-one: −2.27 pp per 10 pp of 3PA rate (p < 0.001) vs. −2.64 unadjusted. The
+one: −2.27 pp per 10 pp of 3PA rate (p << f("tpa.within_reg_p") >>) vs. −2.64 unadjusted. The
 3PA–HCA link is *not* merely the shared trend — it holds game-by-game within
 eras. The playoffs show an even stronger coefficient (−3.12 pp per 10 pp within era)
-at p = 0.027 on 3,292 games — directionally identical and now clearly
+at p << f("tpa.within_po_p") >> on 3,292 games — directionally identical and now clearly
 significant. This is the strongest mechanistic candidate the data offers for
 the decline.
 
@@ -621,20 +621,20 @@ offensive glass.
   +0.61 to −0.05 (home teams no longer out-offensive-rebound visitors at all),
   while `dreb_diff` only softens (+1.64 → +0.59). All trends negative and highly
   significant (OREB −0.018, DREB −0.027, REB −0.044 per year, all p < 0.001).
-- It is **not a pace artifact**: `reb_share_edge` still collapses ~10×, +2.14 pp →
-  +0.21 pp (trend −0.052 pp/yr, p < 0.001).
+- It is **not a pace artifact**: `reb_share_edge` still collapses ~10×, << f("reg.reb_share_early") >> pp →
+  << f("reg.reb_share_today") >> pp (trend −0.052 pp/yr, p << f("reg.reb_share_p") >>).
 - It is **league-driven**: the season-level correlation between the home share
-  advantage and the league offensive-rebound rate is **r = +0.82 (p < 0.001, N = 43)**;
+  advantage and the league offensive-rebound rate is **r = << f("reb.league_oreb_corr") >> (p < 0.001, N = 43)**;
   the league rate fell 33% → 26% over the same span. As teams abandoned offensive
   rebounding for transition defense, the effort-driven boards where a home advantage
   could form disappeared. However, the **cointegration check** shows both series
-  are I(1) (nonstationary) but **not cointegrated** — the r = +0.82 is likely
+  are I(1) (nonstationary) but **not cointegrated** — the r = << f("reb.league_oreb_corr") >> is likely
   spurious correlation from parallel trends rather than a genuine long-run
   relationship. The section-level 3PA-control from Section 7's mediation
-  (rebounding survives with only ~8% absorbed) is the stronger evidence that the
+  (rebounding survives with only ~<< f("reb.absorbed_by_3pa") >> absorbed) is the stronger evidence that the
   rebounding fade is a real, independent trend.
-- The playoffs show the same shape (share advantage +2.74 → +0.70 pp, trend −0.046
-  pp/yr, p = 0.004), on a smaller sample.
+- The playoffs show the same shape (share advantage << f("po.reb_share_early") >> → << f("po.reb_share_today") >> pp, trend −0.046
+  pp/yr, p << f("po.reb_share_p") >>), on a smaller sample.
 
 **A note on the share identity.** Because available offensive rebounds for one
 team are the same boards the other team can defensively rebound, the home team's
@@ -702,7 +702,7 @@ most natural suspect, yet only one left a mark.
 
 **What the results mean.** In the regular season, two boundaries show raw
 significant drops: 1994→95 (−4.9 pp) and 2017→18 (−3.2 pp). After controlling
-for the year trend, only the 1995–01 dummy survives (−2.6 pp, p = 0.010), and
+for the year trend, only the 1995–01 dummy survives (−2.6 pp, p << f("era.drop_1995_p") >>), and
 the era dummies are jointly significant (LR p < 0.001). So the regular-season
 decline is mostly smooth drift *plus one genuine discrete drop* at the 1994–95
 hand-checking rules. In the playoffs, nothing survives: no z-test is significant
@@ -755,7 +755,7 @@ where `post95` = 1 from 1994–95 on (an immediate **level shift**) and the inte
 
 **The approach.** The same interrupted-time-series model as Section 15, run **per channel**: `diff ~ year + post95 + (year − 1994)·post95`. The **level shift** (`post95`) is the immediate response at 1995; a mechanism that changed the instant the rules did should show a significant level term. (Sign note: foul_diff = PF_home − PF_away is negative when the home team is favored, so a *positive* level shift means the home foul advantage **shrank** immediately.)
 
-**What the results mean.** Only the foul channel shows a significant immediate response. In the regular season the foul-diff level shift is **+0.44, p = 0.007** — the home foul advantage contracted the moment the hand-checking rules took effect — while eFG% (p = 0.33), turnovers (p = 0.18), and rebounds (p = 0.85) show no significant jump. That is exactly the signature expected if the **hand-checking crackdown** was the operative change: it acts directly on fouls and defense, while the other box-score edges drifted on their own slower schedules. The playoffs show no significant channel shift (small samples, and no 1994–95 break to begin with). This is the closest the data comes to naming a *mechanism* for the one rule change that mattered.
+**What the results mean.** Only the foul channel shows a significant immediate response. In the regular season the foul-diff level shift is **<< f("event.foul_jump") >>, p << f("event.foul_jump_p") >>** — the home foul advantage contracted the moment the hand-checking rules took effect — while eFG% (p = 0.33), turnovers (p = 0.18), and rebounds (p = 0.85) show no significant jump. That is exactly the signature expected if the **hand-checking crackdown** was the operative change: it acts directly on fouls and defense, while the other box-score edges drifted on their own slower schedules. The playoffs show no significant channel shift (small samples, and no 1994–95 break to begin with). This is the closest the data comes to naming a *mechanism* for the one rule change that mattered.
 
 ---
 
@@ -799,7 +799,7 @@ The shift-share identity is exact: frequency + win-rate + interaction = total ch
 
 **Why.** A pure frequency story would show the frequency component absorbing most of the −9.29 pp, with win rates within each situation roughly stable. A frequency component near zero would rule the story out. The decomposition separates those two possibilities cleanly without a regression.
 
-**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **8%**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
+**What the results mean.** The schedule shift is real — visitor B2Bs fell from 35.0% of games in 1984–94 to 18.8% in 2023–26 — but its effect on the overall decline is trivial. When a visitor is on a B2B, the home team wins 64.7% vs. 59.1% when neither team is on one, a +5.6 pp lift. But that lift is modest and the frequency shift is partial, so the frequency component accounts for only **−0.71 pp** of the −9.29 pp total decline — about **<< f("b2b.freq_share") >>**. The remaining 92% is the win-rate component: the home advantage within every rest-situation category has simply faded, independent of scheduling. Load management did not drive the decline.
 
 **Why this chart.** This section adds no figure of its own. The era-level B2B frequency and home win % are captured in the era table, and the shift-share is an exact arithmetic decomposition — two numbers that sum to the total. A chart would add no information the table doesn't already carry.
 
@@ -933,8 +933,8 @@ r = +0.33, p = 0.09). The lone significant number, Spearman ρ = −0.49
 (p = 0.009), runs *against* the crowd-size story — attendance climbed to record
 highs in the 2020s exactly as HCA bottomed out, so by rank the two move
 opposite. Crowd size is not behind the decline. Part B is where the crowd shows
-up: with the arena empty, home teams won just 51.0% (n = 573); with any fans
-present, 58.5% (n = 591). The per-1,000-fans logistic slope is small and not
+up: with the arena empty, home teams won just << f("crowd.empty_precise") >> (n = 573); with any fans
+present, << f("crowd.fans_precise") >> (n = 591). The per-1,000-fans logistic slope is small and not
 significant (+0.51 pp, p = 0.18), which is the point — the effect rides on the
 *presence* of a crowd, not its exact size, and it vanished the moment arenas
 refilled in 2021–22. A real ingredient of home court, but a switch, not the
@@ -1075,8 +1075,8 @@ itself is a massive predictor of any single game (+112 pp per unit of win-% gap,
 p < 0.001). The seed-quality gap *has* trended down slightly (−0.00026/yr,
 p < 0.001), but that drift doesn't account for the home-win decline. The clincher
 is the lower-seed-at-home check: when the objectively weaker team hosts G3/G4, it
-still wins 51.5% — a pure venue effect with quality stripped out. This dovetails
-with Section 7 (playoff channels carry only 67% of the decline) and Section 9
+still wins << f("pq.weaker_hosts") >> — a pure venue effect with quality stripped out. This dovetails
+with Section 7 (playoff channels carry only << f("share.fourfactors_po.decline") >> of the decline) and Section 9
 (playoff rest is confounded with quality, but the decline is not).
 
 ---
