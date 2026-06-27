@@ -4095,6 +4095,12 @@ def run_structural_break_test(df: pd.DataFrame, results: dict | None = None) -> 
         print(f"   Supremum Chow F = {best['F']:.2f}  at year {best['year']}  [{qlr_sig}]")
         print(f"   Subperiod slopes:  before {best['year']}: {best['sl_pre']:+.3f} pp/yr  |  "
               f"after {best['year']}: {best['sl_post']:+.3f} pp/yr")
+        # Facts for stats_explainer.md §2 (structural break).
+        _sbc = "po" if "Playoff" in ctx_label else "reg"
+        FACTS.set(f"sb.{_sbc}_f", best["F"], "{:.2f}", note=f"{ctx_label}: QLR supremum Chow F")
+        FACTS.set(f"sb.{_sbc}_break", int(best["year"]), "{:d}", note=f"{ctx_label}: data-implied break year")
+        FACTS.set(f"sb.{_sbc}_slope_before", best["sl_pre"], "{:+.2f}", note=f"{ctx_label}: slope before the break (pp/yr)")
+        FACTS.set(f"sb.{_sbc}_slope_after", best["sl_post"], "{:+.2f}", note=f"{ctx_label}: slope after the break (pp/yr)")
 
         print(f"\n   Top candidate break years:")
         print(f"   {'Year':>6}  {'Chow F':>8}  {'Cond. p':>10}  {'Slope before':>13}  {'Slope after':>12}")

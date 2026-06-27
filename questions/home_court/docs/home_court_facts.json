@@ -790,6 +790,62 @@
     "unit": null,
     "value": 57.56639194139194
   },
+  "sb.po_break": {
+    "display": "2006",
+    "fmt": "{:d}",
+    "note": "Playoffs: data-implied break year",
+    "unit": null,
+    "value": 2006
+  },
+  "sb.po_f": {
+    "display": "3.23",
+    "fmt": "{:.2f}",
+    "note": "Playoffs: QLR supremum Chow F",
+    "unit": null,
+    "value": 3.228092638372344
+  },
+  "sb.po_slope_after": {
+    "display": "-0.65",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: slope after the break (pp/yr)",
+    "unit": null,
+    "value": -0.6508263800074499
+  },
+  "sb.po_slope_before": {
+    "display": "-0.29",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: slope before the break (pp/yr)",
+    "unit": null,
+    "value": -0.2871384920640404
+  },
+  "sb.reg_break": {
+    "display": "1999",
+    "fmt": "{:d}",
+    "note": "Regular season: data-implied break year",
+    "unit": null,
+    "value": 1999
+  },
+  "sb.reg_f": {
+    "display": "10.22",
+    "fmt": "{:.2f}",
+    "note": "Regular season: QLR supremum Chow F",
+    "unit": null,
+    "value": 10.22283713823236
+  },
+  "sb.reg_slope_after": {
+    "display": "-0.25",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: slope after the break (pp/yr)",
+    "unit": null,
+    "value": -0.2549053619548089
+  },
+  "sb.reg_slope_before": {
+    "display": "-0.65",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: slope before the break (pp/yr)",
+    "unit": null,
+    "value": -0.6518013157571702
+  },
   "seed.stronger_early_plain": {
     "display": "70\u201375%",
     "fmt": null,

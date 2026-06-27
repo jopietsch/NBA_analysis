@@ -61,6 +61,9 @@ def _make_env(facts_path: str = FACTS_JSON, annotate: bool = False) -> jinja2.En
         comment_end_string="#>",
     )
     env.globals["f"] = f
+    # `tm` rewrites an ASCII hyphen-minus to a typographic minus (U+2212), for
+    # docs (e.g. stats_explainer) that use − in negative numbers: << f(...)|tm >>.
+    env.filters["tm"] = lambda s: s.replace("-", "−")
     return env
 
 

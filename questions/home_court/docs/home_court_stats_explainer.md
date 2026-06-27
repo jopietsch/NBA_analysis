@@ -117,7 +117,7 @@ Because we take the max over ~33 candidates, the standard F-distribution p-value
 **Why not just use the rule-change years.** Section 14 tests those. This test is the data-driven complement — it finds where the decline most abruptly changed pace, which may or may not align with a rule change. When the two methods converge, confidence increases; when they diverge, there's something to investigate.
 
 **What the results mean.**
-- **Regular season:** The strongest data-implied break falls at **1999 (supremum Chow F = 10.22)**, clearing the 5% Andrews threshold. Before 1999, the regular-season HCA was declining steeply (−0.65 pp/yr); after 1999 the decline slowed markedly (−0.26 pp/yr). The top-5 candidates all cluster in 1992–2003, bracketing the anti-hand-checking era (1995–01). The data-implied break is near but not identical to the rule-change boundary — 1999 falls at the *end* of the aggressive-enforcement window, not its start.
+- **Regular season:** The strongest data-implied break falls at **1999 (supremum Chow F = 10.22)**, clearing the 5% Andrews threshold. Before 1999, the regular-season HCA was declining steeply (−0.65 pp/yr); after 1999 the decline slowed markedly (−0.25 pp/yr). The top-5 candidates all cluster in 1992–2003, bracketing the anti-hand-checking era (1995–01). The data-implied break is near but not identical to the rule-change boundary — 1999 falls at the *end* of the aggressive-enforcement window, not its start.
 - **Playoffs:** The supremum is only 3.23 (at 2006), well below even the 10% threshold. The playoff decline shows no single data-implied break — consistent with Section 14's finding that playoff HCA is a smooth drift.
 
 ---
