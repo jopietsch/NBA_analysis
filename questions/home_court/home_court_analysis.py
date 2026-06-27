@@ -3351,6 +3351,10 @@ def _run_league_metric_analysis(
 
         print(f"   {ctx_label}  (n = {len(by_year)} seasons)")
         print(f"   Season-level Pearson r  = {r_p:+.3f}  (p = {p_p_s}  {_stars(p_p).strip()})")
+        if metric_header == "Mean pace":
+            _pc = "po" if "Playoff" in ctx_label else "reg"
+            FACTS.set(f"pace.{_pc}_r", r_p, "{:+.2f}", note=f"{_pc}: season-level pace-HCA Pearson r")
+            FACTS.set(f"pace.{_pc}_r_p", p_p, "{:.2f}", note=f"{_pc}: pace-HCA Pearson p")
         print(f"   Season-level Spearman ρ = {r_s:+.3f}  (p = {p_s_s}  {_stars(p_s).strip()})")
 
         header = (f"   {'Era':<10} {metric_header:>{COL_W}} {'Home win%':>{COL_W}} "
@@ -3394,6 +3398,12 @@ def _run_league_metric_analysis(
             print(f"   ≈ {pp_per_10:+.2f} pp per {scale_desc}  "
                   f"95% CI [{ci_lo*10:+.2f}, {ci_hi*10:+.2f}]")
             print(f"   p = {pval_s}  {_stars(pval).strip()}")
+            if metric_header == "Mean pace" and ctx_label == "Regular season":
+                FACTS.set("pace.bivariate", pp_per_10, "{:+.1f}",
+                          note="Reg: pace bivariate HCA effect per 10 poss")
+                FACTS.set("pace.realized_p",
+                          "< 0.001" if pval < 0.001 else f"= {pval:.3f}",
+                          note="Reg: realized-pace bivariate p-value (display)")
             if "3PA" in metric_header:
                 _tctx = "po" if ctx_label == "Playoffs" else "reg"
                 FACTS.set(f"tpa.effect_{_tctx}", pp_per_10, "{:+.2f}",
@@ -3581,6 +3591,10 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
                 print(f"   Bivariate: coef = {c_ep:+.4f}  "
                       f"(≈ {_pp(c_ep, p_bar_ep) * 10:+.2f} pp per 10 poss)  "
                       f"p = {_fmt_p(p_ep)}  {_stars(p_ep).strip()}")
+                if is_po == 0:  # facts for stats_explainer.md §20 (expected pace)
+                    FACTS.set("pace.expected_biv", _pp(c_ep, p_bar_ep) * 10, "{:+.1f}",
+                              note="Reg: expected-pace bivariate HCA effect per 10 poss")
+                    FACTS.set("pace.expected_p", p_ep, "{:.3f}", note="Reg: expected-pace bivariate p")
             except Exception:
                 pass
             try:
@@ -3597,6 +3611,10 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
                 print(f"   Within-era: coef = {c_era_ep:+.4f}  "
                       f"(≈ {pp_era_ep:+.2f} pp per 10 poss)  "
                       f"p = {_fmt_p(p_era_ep)}  {_stars(p_era_ep).strip()}")
+                if is_po == 0:
+                    FACTS.set("pace.expected_era_p",
+                              "< 0.001" if p_era_ep < 0.001 else f"= {p_era_ep:.3f}",
+                              note="Reg: within-era expected-pace bivariate p (display)")
             except Exception:
                 pass
 

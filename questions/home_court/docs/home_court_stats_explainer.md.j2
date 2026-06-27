@@ -823,12 +823,12 @@ games — breaks that loop.
 
 **What the results mean.** Pace is a clean rule-out, and a nice demonstration of
 why the LOO version was needed. Season-level correlations are weak and
-non-significant in both contexts (RS r = +0.24, p = 0.12; playoffs r = −0.14,
-p = 0.37) — and note pace is *U-shaped* over time (fast 80s, slow 90s–00s, fast
+non-significant in both contexts (RS r = << f("pace.reg_r") >>, p = << f("pace.reg_r_p") >>; playoffs r = << f("pace.po_r")|tm >>,
+p = << f("pace.po_r_p") >>) — and note pace is *U-shaped* over time (fast 80s, slow 90s–00s, fast
 again now) while HCA fell monotonically, so the two can't share a trend.
-Realized pace shows a significant positive game-level effect (+2.3 pp per 10
-possessions, p < 0.001), but switching to expected pace cuts it to +1.5 and
-kills significance (p = 0.227; within-era p = 0.063) — confirming the realized
+Realized pace shows a significant positive game-level effect (<< f("pace.bivariate") >> pp per 10
+possessions, p << f("pace.realized_p") >>), but switching to expected pace cuts it to << f("pace.expected_biv") >> and
+kills significance (p = << f("pace.expected_p") >>; within-era p << f("pace.expected_era_p") >>) — confirming the realized
 effect was substantially outcome-driven endogeneity. Playoffs: null everywhere.
 Pace did not drive the decline.
 
