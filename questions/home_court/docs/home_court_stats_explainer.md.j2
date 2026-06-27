@@ -72,10 +72,10 @@ picture, with autocorrelation-robust inference. When both agree, the finding
 doesn't depend on modeling choices.
 
 **What the results mean.** They agree almost exactly: the regular season declines
-about −0.25 pp/year (≈ −10 pp over 43 seasons, p < 0.001 in both, OLS R² = 0.74 —
+about −0.25 pp/year (≈ −10 pp over 43 seasons, p < 0.001 in both, OLS R² = << f("reg.ols_r2") >> —
 year alone explains nearly three-quarters of season-to-season variation in HCA).
 The playoffs decline at a similar rate (−0.22 pp/yr, total ≈ −9.5 pp) but with
-much wider confidence intervals and a far lower R² (0.19), because each playoff
+much wider confidence intervals and a far lower R² (<< f("po.ols_r2") >>), because each playoff
 season is only ~80 games of data. The per-era table shows the decline was not
 uniform: in the regular season the steepest significant declines were in
 1984–94 (−0.52 pp/yr) and 2018–22 (−1.18 pp/yr); the 2023–26 slope (−0.77 pp/yr)
@@ -88,7 +88,7 @@ No individual playoff era reaches significance — single playoff eras are just
 the simplest thing that can carry it: one dot per season for the home win rate,
 regular season and playoffs on the same axes, each with a fitted line. A line lets
 a reader eyeball the slope *and* the scatter at once — the tight regular-season
-cloud (R² = 0.74) against the noisy playoff one (R² = 0.19). The era shading and
+cloud (R² = << f("reg.ols_r2") >>) against the noisy playoff one (R² = << f("po.ols_r2") >>). The era shading and
 the companion era-bar panel do what a single line can't: they expose that the drift
 isn't perfectly smooth, which sets up the discrete-drop question Section 14 tests.
 
