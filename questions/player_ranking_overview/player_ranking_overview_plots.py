@@ -526,6 +526,75 @@ def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
     return save_chart("all_systems_distributions.svg", OUTPUT_DIR, fig=fig)
 
 
+# ── Chart 8b: Power-law check (log-log value vs rank) ─────────────────────────
+
+def plot_powerlaw_fits(df: pd.DataFrame, systems: list[str],
+                       top_n: int = 50) -> str:
+    """Log-log value-vs-rank for each system, with a straight power-law fit.
+
+    A power law (value proportional to rank^-alpha) is a straight line on
+    log-log axes. Systems whose fit clears POWERLAW_R2_THRESHOLD are drawn in
+    color with their fitted line; the rest are muted grey, since their curve
+    bends rather than holding a constant slope.
+    """
+    from player_ranking_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
+
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+
+    _colors = [
+        "#2196F3", "#F44336", "#4CAF50", "#FF9800",
+        "#9C27B0", "#00BCD4", "#795548", "#607D8B",
+    ]
+
+    fig, ax = plt.subplots(figsize=(11, 6), facecolor=BG)
+    ax.set_facecolor(PANEL)
+
+    color_idx = 0
+    n_power = 0
+    for sys in systems:
+        if sys not in qual.columns:
+            continue
+        vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
+        fit = powerlaw_fit(vals.values, top_n=top_n)
+        if fit is None:
+            continue
+        rank = np.arange(1, fit["n_points"] + 1)
+        obs = vals.iloc[:fit["n_points"]].values
+        is_power = fit["r2"] >= POWERLAW_R2_THRESHOLD
+        label = (f"{SYSTEM_LABELS.get(sys, sys)} "
+                 f"(α={fit['alpha']:.2f}, R²={fit['r2']:.2f})")
+        if is_power:
+            color = _colors[color_idx % len(_colors)]
+            color_idx += 1
+            n_power += 1
+            ax.plot(rank, obs, "o", color=color, markersize=4, alpha=0.85,
+                    zorder=3, label=label)
+            fit_line = np.exp(fit["log_c"]) * rank ** (-fit["alpha"])
+            ax.plot(rank, fit_line, "-", color=color, linewidth=1.3,
+                    alpha=0.9, zorder=2)
+        else:
+            ax.plot(rank, obs, "o", color=GRAY, markersize=3, alpha=0.4,
+                    zorder=1, label=label)
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlabel(f"Player rank, log scale (top {top_n} by each system)",
+                  fontsize=9, color=GRAY)
+    ax.set_ylabel("Value, log scale", fontsize=9, color=GRAY)
+    ax.set_title(
+        "On log-log axes, a power law is a straight line:\n"
+        f"{n_power} of the box-score systems qualify, the rest bend",
+        fontsize=11, color="#222"
+    )
+    ax.legend(fontsize=7.5, frameon=False, loc="lower left", ncol=2)
+    ax.grid(True, which="both", color="#e0dfd8", linewidth=0.6, zorder=0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    fig.tight_layout()
+    return save_chart("powerlaw_fits.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── Chart 9: Top-20 per system table ─────────────────────────────────────────
 
 def _score_fmt(val: float, sys: str) -> str:

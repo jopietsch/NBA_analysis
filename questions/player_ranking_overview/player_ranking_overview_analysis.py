@@ -9,7 +9,12 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from player_ranking_overview_data import load_unified_ratings, MIN_MINUTES_QUALIFIER
+from player_ranking_overview_data import (
+    load_unified_ratings,
+    MIN_MINUTES_QUALIFIER,
+    powerlaw_fit,
+    POWERLAW_R2_THRESHOLD,
+)
 from player_ranking_overview_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
 
 # Rating systems included in the cross-system comparison
@@ -246,6 +251,39 @@ def run(end_year: int = 2025) -> None:
         _per_top5 = _top_share(qual["PER"].dropna().values, 0.05)
         FACTS.guard("vorp_more_concentrated_than_per", _vorp_top5 > _per_top5,
                     "VORP top-5% share far exceeds PER", _vorp_top5)
+
+    header("POWER-LAW FIT (VALUE VS RANK, LOG-LOG)")
+    print(f"A system's top-{50} value-vs-rank curve is a power law when the")
+    print(f"log-log fit clears R^2 >= {POWERLAW_R2_THRESHOLD:.2f} (a straight line on log-log axes).")
+    power_law_systems = []
+    for s in present:
+        vals = qual[s].dropna().sort_values(ascending=False).values
+        fit = powerlaw_fit(vals, top_n=50)
+        if fit is None:
+            continue
+        is_power = fit["r2"] >= POWERLAW_R2_THRESHOLD
+        verdict = "power law" if is_power else "not a power law (bends)"
+        print(f"\n{SYSTEM_LABELS.get(s, s)} (n={fit['n_points']} positive ranks):")
+        print(f"  exponent alpha={fit['alpha']:.2f}  R^2={fit['r2']:.3f}  -> {verdict}")
+        FACTS.set(f"powerlaw.{s}.alpha", fit["alpha"], "{:.2f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} power-law exponent (value ~ rank^-alpha)")
+        FACTS.set(f"powerlaw.{s}.r2", fit["r2"], "{:.2f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} log-log power-law fit R^2")
+        if is_power:
+            power_law_systems.append(s)
+    non_power = [s for s in present
+                 if powerlaw_fit(qual[s].dropna().sort_values(ascending=False).values, top_n=50)
+                 is not None and s not in power_law_systems]
+    label_list = ", ".join(SYSTEM_LABELS.get(s, s) for s in power_law_systems) or "none"
+    non_list = ", ".join(SYSTEM_LABELS.get(s, s) for s in non_power) or "none"
+    print(f"\nPower-law systems (R^2 >= {POWERLAW_R2_THRESHOLD:.2f}): {label_list}")
+    print(f"Bend instead of a straight line: {non_list}")
+    FACTS.set("powerlaw.n_systems", len(power_law_systems), "{:d}",
+              note="systems whose value-vs-rank curve fits a power law")
+    FACTS.set("powerlaw.systems", label_list,
+              note="names of systems whose value-vs-rank curve fits a power law")
+    FACTS.set("powerlaw.non_systems", non_list,
+              note="names of systems whose value-vs-rank curve bends (not a power law)")
 
     header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
     if len(present) >= 2:

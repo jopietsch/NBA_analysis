@@ -48,6 +48,48 @@ CACHE_DIR = default_cache_dir()
 MIN_MINUTES_QUALIFIER = 500
 
 
+# ── Power-law fit ─────────────────────────────────────────────────────────────
+
+# A system's value-vs-rank curve is called a power law here when the log-log fit
+# explains at least this much of the variance. Below it, the drop-off is steeper
+# or flatter than a straight power law (it bends on log-log axes).
+POWERLAW_R2_THRESHOLD = 0.95
+
+
+def powerlaw_fit(values, top_n: int = 50) -> dict | None:
+    """Fit value(rank) = C * rank^(-alpha) to a system's top-N values.
+
+    Sorts `values` descending, keeps the leading positive run within the top N
+    (a power law is only defined on positive values), and runs an ordinary
+    least-squares line on log(value) vs log(rank). Returns the exponent
+    (`alpha`), the fit's R-squared, the number of ranks used, and the fitted
+    log-intercept (`log_c`) so a plotter can draw the line. Returns None when
+    there are too few positive points to fit.
+    """
+    v = np.sort(np.asarray(values, dtype=float))[::-1]
+    v = v[:top_n]
+    # Keep the leading run of strictly positive values (log is undefined at <=0).
+    positive = np.where(v <= 0)[0]
+    cutoff = positive[0] if len(positive) else len(v)
+    v = v[:cutoff]
+    if len(v) < 5:
+        return None
+    rank = np.arange(1, len(v) + 1)
+    log_r = np.log(rank)
+    log_v = np.log(v)
+    slope, intercept = np.polyfit(log_r, log_v, 1)
+    pred = slope * log_r + intercept
+    ss_res = float(np.sum((log_v - pred) ** 2))
+    ss_tot = float(np.sum((log_v - log_v.mean()) ** 2))
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else 0.0
+    return {
+        "alpha": float(-slope),
+        "log_c": float(intercept),
+        "r2": float(r2),
+        "n_points": int(len(v)),
+    }
+
+
 # ── Cache path helpers ────────────────────────────────────────────────────────
 
 def _cache(filename: str) -> str:

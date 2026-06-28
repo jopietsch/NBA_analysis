@@ -288,3 +288,31 @@ def test_apply_crosswalk_matches_name_season():
     assert result.iloc[1]["player_id"] == 2
     assert pd.isna(result.iloc[2]["player_id"])
     assert result.iloc[2]["matched_on"] == "unmatched"
+
+
+# ── Power-law fit ──────────────────────────────────────────────────────────────
+
+def test_powerlaw_fit_perfect_power_law():
+    from player_ranking_overview_data import powerlaw_fit
+    # value = 100 * rank^-0.5 is an exact power law: R^2 ~ 1, alpha ~ 0.5
+    rank = np.arange(1, 51)
+    vals = 100.0 * rank ** (-0.5)
+    fit = powerlaw_fit(vals, top_n=50)
+    assert fit is not None
+    assert abs(fit["alpha"] - 0.5) < 1e-6
+    assert fit["r2"] > 0.999
+    assert fit["n_points"] == 50
+
+
+def test_powerlaw_fit_drops_nonpositive_tail():
+    from player_ranking_overview_data import powerlaw_fit
+    # Only the leading positive run is fit; values <= 0 truncate the series.
+    vals = np.array([5.0, 4.0, 3.0, 2.0, 1.0, 0.0, -1.0, -2.0])
+    fit = powerlaw_fit(vals, top_n=50)
+    assert fit is not None
+    assert fit["n_points"] == 5
+
+
+def test_powerlaw_fit_too_few_points_returns_none():
+    from player_ranking_overview_data import powerlaw_fit
+    assert powerlaw_fit(np.array([3.0, 2.0, -1.0]), top_n=50) is None
