@@ -2263,6 +2263,37 @@ VORP (n=375):
   Min: -95.85  Max: 316.67
   Gini: 0.749  Top-5% share: 31.9%
 
+─── POWER-LAW FIT (VALUE VS RANK, LOG-LOG) ──────────────────────
+A system&#39;s top-50 value-vs-rank curve is a power law when the
+log-log fit clears R^2 &gt;= 0.95 (a straight line on log-log axes).
+
+Game Score (n=50 positive ranks):
+  exponent alpha=0.15  R^2=0.971  -&gt; power law
+
+PER (n=50 positive ranks):
+  exponent alpha=0.13  R^2=0.959  -&gt; power law
+
+Win Shares (n=50 positive ranks):
+  exponent alpha=0.23  R^2=0.978  -&gt; power law
+
+WS/48 (n=50 positive ranks):
+  exponent alpha=0.17  R^2=0.918  -&gt; not a power law (bends)
+
+BPM (n=50 positive ranks):
+  exponent alpha=0.34  R^2=0.935  -&gt; not a power law (bends)
+
+OBPM (n=50 positive ranks):
+  exponent alpha=0.52  R^2=0.878  -&gt; not a power law (bends)
+
+DBPM (n=50 positive ranks):
+  exponent alpha=0.31  R^2=0.957  -&gt; power law
+
+VORP (n=50 positive ranks):
+  exponent alpha=0.36  R^2=0.973  -&gt; power law
+
+Power-law systems (R^2 &gt;= 0.95): Game Score, PER, Win Shares, DBPM, VORP
+Bend instead of a straight line: WS/48, BPM, OBPM
+
 ─── RANK AGREEMENT (SPEARMAN CORRELATIONS) ──────────────────────
   Game Score vs PER: r=0.831
   Game Score vs Win Shares: r=0.699
@@ -2362,6 +2393,15 @@ VORP (n=375):
     Jett Howard                     diff = -0.75
     Nick Smith Jr.                  diff = -0.69
 
+─── UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS) ─
+Gini clips negatives to zero, so it inflates 0-centered metrics (the uber
+ratings and the BPM family). The power-law exponent alpha does not depend on
+where zero sits, so it is the fair cross-system concentration read.
+
+Consensus: Gini=0.763 (inflated), top-5% share=30.9%, alpha=0.31
+
+Wins-Predictive: Gini=0.743 (inflated), top-5% share=28.1%, alpha=0.28
+
 ─── POWER-LAW / TAIL ANALYSIS ───────────────────────────────────
 
 Cumulative-value metrics:
@@ -2449,6 +2489,7 @@ VORP discounts (vs. consensus):
   -1.18  Zion Williamson
   -1.11  Mark Williams
   -1.00  Aaron Gordon
+Saved → docs/player_ranking_overview_facts_reference.md
 </code></pre>
 
 </main>

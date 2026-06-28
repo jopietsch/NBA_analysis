@@ -2391,13 +2391,6 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="results-only-systems-auto-download">Results-only systems (auto-download)</h2>
 <p>Published values are available as structured files. We download and cache; no recomputation.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>System</th>
@@ -2419,14 +2412,14 @@ vertical-align: -.125em;
 <td><strong>DARKO DPM</strong> (Kostya Medvedovsky)</td>
 <td>Results-only (snapshot)</td>
 <td>2013–14 to present</td>
-<td><code>https://darko.basketball</code> public results page; downloadable CSV or API query</td>
+<td><a href="https://darko.basketball" class="uri">https://darko.basketball</a> public results page; downloadable CSV or API query</td>
 <td>Projection system (like PECOTA/Steamer), not a season average: weights recent games more heavily, updates daily. Compare with caution against season-average metrics.</td>
 </tr>
 <tr class="odd">
 <td><strong>DRIP</strong> (Opta Analyst)</td>
 <td>Results-only (auto)</td>
 <td>2021–22 to present</td>
-<td><code>https://theanalyst.com</code> — DRIP player ratings page; structured download available</td>
+<td><a href="https://theanalyst.com" class="uri">https://theanalyst.com</a> — DRIP player ratings page; structured download available</td>
 <td>Daily-updated like DARKO: now-casts current true talent rather than averaging the full season. Offensive and defensive components.</td>
 </tr>
 </tbody>
@@ -2615,13 +2608,6 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="source-registry">Source registry</h2>
 <p>Exact acquisition paths for each auto-download or snapshot source. Updated as each is pulled.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-<col style="width: 20%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Source</th>
@@ -2634,21 +2620,21 @@ vertical-align: -.125em;
 <tbody>
 <tr class="odd">
 <td>RAPTOR (FiveThirtyEight)</td>
-<td><code>https://github.com/fivethirtyeight/data/tree/master/nba-raptor</code></td>
+<td><a href="https://github.com/fivethirtyeight/data/tree/master/nba-raptor" class="uri">https://github.com/fivethirtyeight/data/tree/master/nba-raptor</a></td>
 <td><code>wget</code> or <code>requests.get</code> on per-season CSV URLs; filenames: <code>historical_RAPTOR_by_player.csv</code>, <code>modern_RAPTOR_by_player.csv</code></td>
 <td>2013–14 to 2022–23</td>
 <td>TBD</td>
 </tr>
 <tr class="even">
 <td>DARKO DPM</td>
-<td><code>https://darko.basketball/p/</code></td>
+<td><a href="https://darko.basketball/p/" class="uri">https://darko.basketball/p/</a></td>
 <td>CSV export from public results page; or <code>requests.get</code> on undocumented JSON endpoint (inspect network tab)</td>
 <td>2013–14 to present</td>
 <td>TBD</td>
 </tr>
 <tr class="odd">
 <td>DRIP (Opta Analyst)</td>
-<td><code>https://theanalyst.com/articles/nba-drip-daily-updated-rating-of-individual-performance</code></td>
+<td><a href="https://theanalyst.com/articles/nba-drip-daily-updated-rating-of-individual-performance" class="uri">https://theanalyst.com/articles/nba-drip-daily-updated-rating-of-individual-performance</a></td>
 <td>Download link on the DRIP page; inspect for structured CSV/JSON endpoint</td>
 <td>2021–22 to present</td>
 <td>TBD</td>
@@ -2662,21 +2648,21 @@ vertical-align: -.125em;
 </tr>
 <tr class="odd">
 <td>All-NBA / All-Star</td>
-<td><code>https://www.basketball-reference.com/awards/</code></td>
+<td><a href="https://www.basketball-reference.com/awards/" class="uri">https://www.basketball-reference.com/awards/</a></td>
 <td>BBR scrape</td>
 <td>1946–47 to present</td>
 <td>TBD</td>
 </tr>
 <tr class="even">
 <td>EPM (dunksandthrees)</td>
-<td><code>https://dunksandthrees.com/epm</code></td>
+<td><a href="https://dunksandthrees.com/epm" class="uri">https://dunksandthrees.com/epm</a></td>
 <td>Manual snapshot of visible table; paywalled rows excluded</td>
 <td>TBD</td>
 <td>TBD</td>
 </tr>
 <tr class="odd">
 <td>LEBRON (BBall-Index)</td>
-<td><code>https://bball-index.com/lebron/</code></td>
+<td><a href="https://bball-index.com/lebron/" class="uri">https://bball-index.com/lebron/</a></td>
 <td>Manual snapshot of visible rankings</td>
 <td>TBD</td>
 <td>TBD</td>

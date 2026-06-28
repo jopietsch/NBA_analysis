@@ -2258,7 +2258,7 @@ vertical-align: -.125em;
 <p>PER is a per-minute efficiency rating normalized so that the minutes-weighted league average is always 15. The unadjusted PER (uPER) is a weighted sum of per-minute box-score contributions. The formula accounts for: - Scoring efficiency: credit for made baskets, adjusted for the fraction assisted (assisted baskets are credited partly to the passer) - Rebounding: offensive rebounds credited more than defensive rebounds because of their marginal value over team average - Turnovers and missed shots: debited at the Value of a Possession (VOP) rate - Free throws: credited for makes, debited for misses that were self-generated - Steals, blocks, and assists: credited at approximately VOP rates</p>
 <p>After computing uPER, it is adjusted for team pace (faster-paced teams have more opportunities, so per-minute uPER is lower) and then normalized by dividing by the minutes-weighted league uPER and multiplying by 15.</p>
 <p>VOP (Value of a Possession) = <code>lg_pts / (lg_FGA - lg_OREB + lg_TOV + 0.44 * lg_FTA)</code>.</p>
-<p>Reference: John Hollinger, “Pro Basketball Forecast.” Basketball-Reference write-up: https://www.basketball-reference.com/about/per.html</p>
+<p>Reference: John Hollinger, “Pro Basketball Forecast.” Basketball-Reference write-up: <a href="https://www.basketball-reference.com/about/per.html" class="uri">https://www.basketball-reference.com/about/per.html</a></p>
 </section>
 <section id="win-shares" class="level3">
 <h3 class="anchored" data-anchor-id="win-shares">Win Shares</h3>
@@ -2266,7 +2266,7 @@ vertical-align: -.125em;
 <p><strong>Offensive Win Shares (OWS):</strong> 1. Compute the player’s “points produced” — a credit for directly scored points plus credits for assists at league-average efficiency, offensive rebounds, and marginal scoring. 2. Compute “scoring possessions” used. 3. Marginal offensive points = points produced minus VOP × possessions used. 4. Divide by the marginal points per win (PPW ≈ 0.32 × 2 × team points per game).</p>
 <p><strong>Defensive Win Shares (DWS):</strong> Built from a “stops” estimate (steals, blocked shots credited at the fraction that become turnovers, defensive rebounds above the floor). The current implementation uses a simplified stops formula. The full BBR methodology also accounts for defensive ratings and team defensive context with additional adjustments.</p>
 <p><strong>WS/48:</strong> WS / minutes × 48. Rate stat.</p>
-<p>Reference: Basketball-Reference methodology at https://www.basketball-reference.com/about/ws.html</p>
+<p>Reference: Basketball-Reference methodology at <a href="https://www.basketball-reference.com/about/ws.html" class="uri">https://www.basketball-reference.com/about/ws.html</a></p>
 </section>
 <section id="box-plusminus-bpm-2.0" class="level3">
 <h3 class="anchored" data-anchor-id="box-plusminus-bpm-2.0">Box Plus/Minus (BPM 2.0)</h3>
@@ -2278,7 +2278,7 @@ vertical-align: -.125em;
 <p><strong>Defensive BPM (DBPM):</strong></p>
 <pre><code>DBPM = 0.7837*DRB%*10 + 1.7432*STL%*100 + 0.9371*BLK%*100 + role_coefficient</code></pre>
 <p>Coefficients are published by Daniel Myers at Basketball-Reference. The role coefficient adjusts for the fact that low-usage players face lower average competition. After computing raw OBPM and DBPM, both are normalized so that the minutes-weighted league average BPM = 0.</p>
-<p>Reference: https://www.basketball-reference.com/about/bpm2.html</p>
+<p>Reference: <a href="https://www.basketball-reference.com/about/bpm2.html" class="uri">https://www.basketball-reference.com/about/bpm2.html</a></p>
 </section>
 <section id="vorp-value-over-replacement-player" class="level3">
 <h3 class="anchored" data-anchor-id="vorp-value-over-replacement-player">VORP (Value Over Replacement Player)</h3>
