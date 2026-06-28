@@ -10,7 +10,7 @@
 
 In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games, about as often as the stronger team won at its home. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does.  **Has home court really changed? What factors create the advantage? What drove the decline? And what did not?**
 
-Yes: the home team’s win rate has fallen. The decline is mostly slow and steady, with two stretches where it briefly sped up. Home teams have historically ***shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees***, and those four differences account for about 95% of the advantage. Two real-world changes stand out: the **shift to three-point shooting, which alone reaches close to half, and fairer officiating. The largest single box-score category, rebounding**, declined for reasons neither change explains.
+Yes: the home team’s win rate has fallen. The decline is mostly slow and steady, with two stretches where it briefly sped up. Home teams have historically ***shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees***, and those four differences account for about 95% of the advantage. Two real-world changes stand out: **the shift to three-point shooting** (which alone reaches close to half) **and fairer officiating**. The largest single category in the decline, **rebounding**, declined for reasons neither change explains.
 
 Because there are more regular-season games, the analysis is more precise; the playoff figures show direction more than precise size.
 
