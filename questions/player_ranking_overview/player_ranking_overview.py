@@ -61,18 +61,20 @@ def main() -> None:
     plot_powerlaw_fits(qual, present)
     plot_powerlaw_small_multiples(qual, present)
 
-    # Gini scores
-    gini_scores = {}
-    for s in present:
-        vals = qual[s].dropna().values
-        if len(vals) >= 10:
-            gini_scores[s] = _gini(vals)
-    plot_gini_by_system(gini_scores)
-    # Compute uber ratings before distribution chart so they can be highlighted there
+    # Compute uber ratings first so they can be included in the Gini and
+    # distribution charts (highlighted, since they are the combined ratings).
     qual["CONSENSUS"] = _build_consensus(qual, present)
     qual["WINS_PRED"] = _build_wins_predictive(qual, present)
     uber_present = [s for s in ("CONSENSUS", "WINS_PRED")
                     if qual[s].notna().sum() >= 20]
+
+    # Gini scores (box-score systems plus the two uber ratings)
+    gini_scores = {}
+    for s in present + uber_present:
+        vals = qual[s].dropna().values
+        if len(vals) >= 10:
+            gini_scores[s] = _gini(vals)
+    plot_gini_by_system(gini_scores, highlight=uber_present)
 
     plot_all_systems_distributions(qual, present + uber_present,
                                    highlight=uber_present)

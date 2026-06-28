@@ -818,6 +818,20 @@
     "unit": "%",
     "value": 32.242770153757085
   },
+  "dist.CONSENSUS.gini": {
+    "display": "0.763",
+    "fmt": "{:.3f}",
+    "note": "Consensus Gini coefficient (inflated by centering)",
+    "unit": null,
+    "value": 0.7634544585477996
+  },
+  "dist.CONSENSUS.top5pct": {
+    "display": "30.9 %",
+    "fmt": "{:.1f}",
+    "note": "Consensus top-5% share of positive value",
+    "unit": "%",
+    "value": 30.911011877539114
+  },
   "dist.DBPM.gini": {
     "display": "0.599",
     "fmt": "{:.3f}",
@@ -1062,6 +1076,20 @@
     "note": "VORP top-5% share of total value",
     "unit": "%",
     "value": 31.8888777831208
+  },
+  "dist.WINS_PRED.gini": {
+    "display": "0.743",
+    "fmt": "{:.3f}",
+    "note": "Wins-Predictive Gini coefficient (inflated by centering)",
+    "unit": null,
+    "value": 0.743165127116185
+  },
+  "dist.WINS_PRED.top5pct": {
+    "display": "28.1 %",
+    "fmt": "{:.1f}",
+    "note": "Wins-Predictive top-5% share of positive value",
+    "unit": "%",
+    "value": 28.077210858208417
   },
   "dist.WS.gini": {
     "display": "0.363",
@@ -1511,6 +1539,13 @@
     "unit": null,
     "value": 0.9352417644624148
   },
+  "powerlaw.CONSENSUS.alpha": {
+    "display": "0.31",
+    "fmt": "{:.2f}",
+    "note": "Consensus power-law exponent (center-robust steepness)",
+    "unit": null,
+    "value": 0.31456499970627394
+  },
   "powerlaw.DBPM.alpha": {
     "display": "0.31",
     "fmt": "{:.2f}",
@@ -1580,6 +1615,13 @@
     "note": "VORP log-log power-law fit R^2",
     "unit": null,
     "value": 0.9733716364857783
+  },
+  "powerlaw.WINS_PRED.alpha": {
+    "display": "0.28",
+    "fmt": "{:.2f}",
+    "note": "Wins-Predictive power-law exponent (center-robust steepness)",
+    "unit": null,
+    "value": 0.27788869465638355
   },
   "powerlaw.WS.alpha": {
     "display": "0.23",

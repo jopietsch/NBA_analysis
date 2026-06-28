@@ -406,17 +406,22 @@ def plot_unique_signal(unique_r2: dict[str, float]) -> str:
 
 # ── Chart 7: Gini coefficients (inequality of player value) ──────────────────
 
-def plot_gini_by_system(gini_scores: dict[str, float]) -> str:
+def plot_gini_by_system(gini_scores: dict[str, float],
+                        highlight: list[str] | None = None) -> str:
     """Bar chart of Gini coefficients across systems.
 
-    A high Gini means value is concentrated at the top (heavy tail).
-    Title: 'Cumulative metrics show more concentrated star value than rate metrics.'
+    A high Gini means value is concentrated at the top, but only for metrics that
+    accumulate a non-negative quantity. Gini clips negatives to zero, which
+    inflates 0-centered metrics (the BPM family and the uber ratings); the
+    subtitle and the findings text flag this. Systems in `highlight` (the uber
+    ratings) are drawn with a dark edge so they read as the combined ratings.
     """
     if not gini_scores:
         fig, ax = new_fig()
         ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
         return save_chart("gini_by_system.svg", OUTPUT_DIR, fig=fig)
 
+    highlight = set(highlight or [])
     systems = list(gini_scores.keys())
     vals = [gini_scores[s] for s in systems]
     colors = [SYSTEM_COLORS.get(s, GRAY) for s in systems]
@@ -426,17 +431,24 @@ def plot_gini_by_system(gini_scores: dict[str, float]) -> str:
     fig, ax = plt.subplots(figsize=(max(6, len(systems) * 0.9), 5), facecolor=BG)
     ax.set_facecolor(PANEL)
 
+    edgecolors = ["#111111" if systems[i] in highlight else "none" for i in order]
+    linewidths = [1.6 if systems[i] in highlight else 0 for i in order]
     ax.bar(range(len(systems)),
            [vals[i] for i in order],
            color=[colors[i] for i in order],
+           edgecolor=edgecolors, linewidth=linewidths,
            alpha=0.85)
     ax.set_xticks(range(len(systems)))
     ax.set_xticklabels([labels[i] for i in order], rotation=40, ha="right", fontsize=9)
     ax.set_ylabel("Gini coefficient", fontsize=9, color=GRAY)
     ax.set_title(
-        "Cumulative metrics show more concentrated star value than rate metrics",
-        fontsize=11, color="#222"
+        "Where each system concentrates value, by Gini",
+        fontsize=11, color="#222", pad=26
     )
+    ax.text(0.5, 1.015,
+            "Gini over-states 0-centered metrics (BPM family and combined ratings, outlined); "
+            "see the steepness read in the text",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)

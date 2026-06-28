@@ -387,6 +387,37 @@ def run(end_year: int = 2025) -> None:
                 FACTS.set(f"cmp.lower.{idx}.diff", float(row["_diff"]), "{:.2f}",
                           note=f"rank {idx} wins-predictive minus consensus diff (negative)")
 
+    header("UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS)")
+    print("Gini clips negatives to zero, so it inflates 0-centered metrics (the uber")
+    print("ratings and the BPM family). The power-law exponent alpha does not depend on")
+    print("where zero sits, so it is the fair cross-system concentration read.")
+    for s in ("CONSENSUS", "WINS_PRED"):
+        if s not in qual.columns or qual[s].notna().sum() < 20:
+            continue
+        vals = qual[s].dropna().values
+        g = _gini(vals)
+        t5 = _top_share(vals) * 100
+        fit = powerlaw_fit(np.sort(vals)[::-1], top_n=50)
+        a = fit["alpha"] if fit else float("nan")
+        print(f"\n{SYSTEM_LABELS.get(s, s)}: Gini={g:.3f} (inflated), "
+              f"top-5% share={t5:.1f}%, alpha={a:.2f}")
+        FACTS.set(f"dist.{s}.gini", float(g), "{:.3f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} Gini coefficient (inflated by centering)")
+        FACTS.set(f"dist.{s}.top5pct", float(t5), "{:.1f}", unit="%",
+                  note=f"{SYSTEM_LABELS.get(s, s)} top-5% share of positive value")
+        if fit:
+            FACTS.set(f"powerlaw.{s}.alpha", float(a), "{:.2f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} power-law exponent (center-robust steepness)")
+    # Guard: on the center-robust measure the combined ratings sit between the
+    # flattest rate metric (PER) and the steepest cumulative metric (VORP).
+    _cons = powerlaw_fit(np.sort(qual["CONSENSUS"].dropna().values)[::-1], top_n=50) \
+        if "CONSENSUS" in qual.columns and qual["CONSENSUS"].notna().sum() >= 20 else None
+    if _cons and _alpha.get("PER") and _alpha.get("VORP"):
+        FACTS.guard("uber_concentration_between_rate_and_cumulative",
+                    _alpha["PER"]["alpha"] < _cons["alpha"] < _alpha["VORP"]["alpha"],
+                    "by center-robust steepness the consensus rating sits between PER and VORP",
+                    _cons["alpha"])
+
     header("POWER-LAW / TAIL ANALYSIS")
     cumulative_metrics = [s for s in present if s in ("WS", "VORP", "RAPTOR_WAR")]
     rate_metrics = [s for s in present if s in ("PER", "BPM", "RAPTOR", "DARKO_DPM", "EPM")]

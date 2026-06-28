@@ -34,6 +34,11 @@
     "ok": true,
     "value": 0.9778914552281261
   },
+  "uber_concentration_between_rate_and_cumulative": {
+    "claim": "by center-robust steepness the consensus rating sits between PER and VORP",
+    "ok": true,
+    "value": 0.31456499970627394
+  },
   "vorp_more_concentrated_than_per": {
     "claim": "VORP top-5% share far exceeds PER",
     "ok": true,

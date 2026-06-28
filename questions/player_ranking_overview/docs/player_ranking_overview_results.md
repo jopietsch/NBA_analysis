@@ -190,6 +190,15 @@ Bend instead of a straight line: WS/48, BPM, OBPM
     Jett Howard                     diff = -0.75
     Nick Smith Jr.                  diff = -0.69
 
+─── UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS) ─
+Gini clips negatives to zero, so it inflates 0-centered metrics (the uber
+ratings and the BPM family). The power-law exponent alpha does not depend on
+where zero sits, so it is the fair cross-system concentration read.
+
+Consensus: Gini=0.763 (inflated), top-5% share=30.9%, alpha=0.31
+
+Wins-Predictive: Gini=0.743 (inflated), top-5% share=28.1%, alpha=0.28
+
 ─── POWER-LAW / TAIL ANALYSIS ───────────────────────────────────
 
 Cumulative-value metrics:
