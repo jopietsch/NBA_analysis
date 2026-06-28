@@ -2,6 +2,10 @@ Regenerate all PDFs and HTML for the current project's docs, in the correct casc
 
 This works for any project under `questions/` (home_court, knicks_2026_historic, ...). It runs the project's `generate_report.py` to build the main report from `<project>_findings.md`, then renders every other `docs/*.md` (results, summary, stats_explainer, outline, ...) to a standalone PDF + HTML. The findings file itself is skipped because the report already includes it.
 
+`generate_report.py` renders all `docs/*.md.j2` templates into `docs/*.md` from `facts.json` as its first step, so editing a `.j2` and running this command is enough; you do not need to run `render_docs.py` separately first.
+
+It does **not** run the analysis pipeline (`<project>.py`), which regenerates charts, `*_results.md`, and `facts.json`. Run that separately when the underlying data or analysis changes.
+
 Run from the project root (the directory that holds `generate_report.py`):
 
 ```bash
