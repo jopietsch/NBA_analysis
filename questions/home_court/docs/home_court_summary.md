@@ -46,7 +46,7 @@ The real surprise is rebounding. It is the largest single driver of the decline,
 
 Turnovers faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of that fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. The playoffs show the same fade on both counts, with far fewer games to pin down the size.
 
-How far can these trends continue? Both rebounding and turnovers are near their practical limits. Three-point attempts already make up about 40% of all shots, and the offensive-rebound rate is close to a floor. If both are leveling off, the pace of decline should slow. The empty-arena result offers a guide to where the long-run trend settles: near 51%.
+Both rebounding and turnovers are near their practical limits: three-point attempts already make up about 40% of all shots and the offensive-rebound rate is close to a floor, so the pace of decline should ease from here.
 
 A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later regular-season home win rate to within about a point, and still catches the steeper modern playoff drop it was never shown.
 
