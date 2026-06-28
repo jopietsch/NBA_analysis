@@ -44,7 +44,7 @@ Reference: John Hollinger, "Pro Basketball Forecast." Basketball-Reference write
 Win Shares allocates team wins to individual players using an offensive and defensive accounting framework.
 
 **Offensive Win Shares (OWS):**
-1. Compute the player's "points produced" — a credit for directly scored points plus credits for assists at league-average efficiency, offensive rebounds, and marginal scoring.
+1. Compute the player's "points produced": a credit for directly scored points plus credits for assists at league-average efficiency, offensive rebounds, and marginal scoring.
 2. Compute "scoring possessions" used.
 3. Marginal offensive points = points produced minus VOP × possessions used.
 4. Divide by the marginal points per win (PPW ≈ 0.32 × 2 × team points per game).
@@ -92,13 +92,13 @@ The replacement level is −2.0 BPM (a marginal roster player available from the
 
 ### Spearman rank correlation
 
-Spearman rank correlation measures the monotone association between two rankings. For each pair of systems, players are assigned percentile ranks within each system, then the Pearson correlation of those ranks is computed. Unlike Pearson correlation, Spearman does not assume linearity — it only requires that the two systems agree on ordering.
+Spearman rank correlation measures the monotone association between two rankings. For each pair of systems, players are assigned percentile ranks within each system, then the Pearson correlation of those ranks is computed. Unlike Pearson correlation, Spearman does not assume linearity; it only requires that the two systems agree on ordering.
 
 Values range from -1 (perfect disagreement) to +1 (perfect agreement). A value of 0.7 or above among NBA players typically means the two systems identify largely the same group of players as above-average.
 
 ### Unique variance (unique R²)
 
-For each system S, we regress S on all other present systems using ordinary least squares (OLS). The model's R² measures how much of S can be explained by the others. The unique R² is defined here as the residual variance fraction: `1 − R²`. A system with unique R² of 0.40 means 40% of its variation cannot be reconstructed from the other systems — it is carrying independent signal.
+For each system S, we regress S on all other present systems using ordinary least squares (OLS). The model's R² measures how much of S can be explained by the others. The unique R² is defined here as the residual variance fraction: `1 − R²`. A system with unique R² of 0.40 means 40% of its variation cannot be reconstructed from the other systems; it is carrying independent signal.
 
 ### Consensus rating (z-score average)
 
@@ -123,6 +123,18 @@ With only 30 teams per season, the wins-predictive weights are estimated on thin
 
 ## Distribution analysis
 
+How concentrated is value at the top of a system? Two measures answer this, and they disagree for a reason worth understanding. The power-law exponent is the one to trust across systems; the Gini coefficient is kept as a cross-check because it is distorted by metrics centered on zero.
+
+### Power-law fit (log-log OLS)
+
+A distribution follows a power law when value falls by a roughly constant percentage with each step down the ranks: value(rank) ≈ C · rank^(−α). The exponent α is the steepness. A larger α means value drops off faster, so the top is heavier relative to the rest.
+
+The fit (`powerlaw_fit` in `player_ranking_overview_data.py`) takes a system's top 50 qualified values, sorts them descending, and keeps the leading run of strictly positive values (the logarithm is undefined at zero or below, which is why the BPM-family metrics, full of negative values, contribute only their positive top). It then runs an ordinary least-squares line of log(value) on log(rank). The slope of that line is −α, and the fit's R² measures how straight the points are on log-log axes. A system is labeled a power law when R² ≥ 0.95 (`POWERLAW_R2_THRESHOLD`): a straight line on log-log axes is the signature of a power law. Curves that fall below the threshold "bend," meaning the top player sits below where a straight extrapolation would place them, so there is a natural ceiling rather than a runaway leader.
+
+The 0.95 cutoff is a convention, not a hypothesis test. Systems sitting right at the line (DBPM just clears it, BPM just misses) are effectively the same shape. The reliable read is the grouping and the order of α across systems, not the label on any single borderline case.
+
+α is the fair cross-system concentration measure because it does not depend on where zero sits: shifting every value by a constant leaves the slope on log-log axes unchanged once the curve is rescaled. That property is exactly what the Gini coefficient lacks.
+
 ### Gini coefficient
 
 The Gini coefficient measures inequality in a distribution. For player ratings, a Gini of 0 means every player has the same rating (perfect equality); a Gini of 1 means one player has all the rating value and the rest have zero. Computed as:
@@ -133,13 +145,15 @@ Gini = (2 * Σ(rank_i * value_i) / (n * Σ(value_i))) − (n+1)/n
 
 where players are sorted ascending by value and rank_i runs from 1 to n.
 
+Gini is reliable only for metrics that accumulate a quantity that cannot drop below zero (Win Shares, VORP). The implementation here clips negative values to zero, so for metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) every below-average player is counted as a flat zero. That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.76, above Win Shares near 0.36, an ordering that the power-law exponents reverse and that is not real. Gini is therefore reported only as a cross-check; the power-law exponent is the measure to trust when comparing systems.
+
 ### Top-5% share
 
 The fraction of total positive rating value held by the top 5% of qualified players by that metric. If the top 5% hold 30% of the total value, player value is moderately concentrated; if they hold 60%, the distribution is heavily right-skewed.
 
 ### Skewness
 
-A standard measure of asymmetry. Positive skewness means the right tail (high values) extends further than the left. Values above 0.5 are conventionally "right-skewed"; above 1.0 is "heavily skewed." Rate metrics among qualified players typically show skewness near 0 (they are selected to be above a usage/minutes threshold, which truncates the left tail and creates a near-symmetric distribution). Cumulative value metrics show positive skewness because high-value players are both highly efficient and play many minutes — both conditions amplify total value.
+A standard measure of asymmetry. Positive skewness means the right tail (high values) extends further than the left. Values above 0.5 are conventionally "right-skewed"; above 1.0 is "heavily skewed." Rate metrics among qualified players typically show skewness near 0 (they are selected to be above a usage/minutes threshold, which truncates the left tail and creates a near-symmetric distribution). Cumulative value metrics show positive skewness because high-value players are both highly efficient and play many minutes, and both conditions amplify total value.
 
 ---
 
@@ -163,7 +177,7 @@ Ridge regression is RAPM's estimator. It minimizes:
 
 where X is the design matrix of stint-level player indicators (one column per player, one row per stint), β is the vector of player values, and λ is the regularization penalty. This is identical to maximum a posteriori (MAP) estimation under a Bayesian model with two assumptions: (1) observed point differentials are Gaussian around the true lineup value, and (2) each player's true value βᵢ is drawn from a zero-mean Gaussian with variance σ²/λ.
 
-The prior here is zero-mean — in the absence of data, every player is assumed to be average. EPM improves on this by using a non-zero prior (the SPM estimate), making the prior informative rather than diffuse. Larger λ means stronger shrinkage toward the prior; smaller λ means more trust in the data. Calibrating λ well — so that bench players with few possessions are not estimated wildly from noise — is where most of the engineering work in these systems lives.
+The prior here is zero-mean: in the absence of data, every player is assumed to be average. EPM improves on this by using a non-zero prior (the SPM estimate), making the prior informative rather than diffuse. Larger λ means stronger shrinkage toward the prior; smaller λ means more trust in the data. Calibrating λ well, so that bench players with few possessions are not estimated wildly from noise, is where most of the engineering work in these systems lives.
 
 ### Sequential updating: the Kalman filter
 
@@ -171,7 +185,7 @@ DARKO and DRIP weight recent games more heavily than early-season games. The pri
 
 At each time step (game played), the filter runs two steps:
 
-1. **Predict:** project the current estimate forward using a process model that allows for some change in true talent since the last game. This is where the decay parameter lives — how fast the filter forgets old games.
+1. **Predict:** project the current estimate forward using a process model that allows for some change in true talent since the last game. This is where the decay parameter lives: how fast the filter forgets old games.
 2. **Update:** incorporate the new game's lineup data, weighting the new observation by the ratio of process noise (how much talent changes between games) to observation noise (how noisy a single game's lineup data is).
 
 The filter maintains both a posterior mean (best current estimate of talent) and a posterior variance (uncertainty around that estimate). The daily-updated ratings that DARKO and DRIP publish are these posterior means. Because the filter is explicitly sequential, a hot streak or injury mid-season shifts the estimate in proportion to how informative the recent games are relative to the accumulated prior.
@@ -196,7 +210,7 @@ Both methods would show that most apparent disagreements between systems about m
 
 The consensus rating in this project uses equal-weighted z-scores. A Bayesian alternative is Bayesian model averaging (BMA): treat each system as a model of the latent true player value, assign each model a weight proportional to its evidence (how well it explains the data), and compute the posterior over player value as the weighted average of the per-model posteriors.
 
-Without published posterior variances from the third-party systems, a tractable proxy weights each system inversely by its disagreement with the others. The unique R² values computed in the cross-system comparison — how much of each system's variance is not explained by the other systems — approximate this disagreement. A system with low unique R² is either very consistent with the others (high reliability) or measuring the same thing (redundant). Distinguishing those two interpretations requires a retrodiction test: a system that is consistent with the others AND predicts game outcomes well is reliable; a system that is merely consistent but does not predict is just echoing shared biases.
+Without published posterior variances from the third-party systems, a tractable proxy weights each system inversely by its disagreement with the others. The unique R² values computed in the cross-system comparison, how much of each system's variance is not explained by the other systems, approximate this disagreement. A system with low unique R² is either very consistent with the others (high reliability) or measuring the same thing (redundant). Distinguishing those two interpretations requires a retrodiction test: a system that is consistent with the others AND predicts game outcomes well is reliable; a system that is merely consistent but does not predict is just echoing shared biases.
 
 ---
 
