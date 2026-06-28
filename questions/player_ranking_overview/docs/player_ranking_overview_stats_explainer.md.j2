@@ -37,7 +37,7 @@ After computing uPER, it is adjusted for team pace (faster-paced teams have more
 
 VOP (Value of a Possession) = `lg_pts / (lg_FGA - lg_OREB + lg_TOV + 0.44 * lg_FTA)`.
 
-Reference: John Hollinger, "Pro Basketball Forecast." Basketball-Reference write-up: https://www.basketball-reference.com/about/per.html
+Reference: John Hollinger, "Pro Basketball Forecast." Basketball-Reference write-up: <https://www.basketball-reference.com/about/per.html>
 
 ### Win Shares
 
@@ -54,7 +54,7 @@ Built from a "stops" estimate (steals, blocked shots credited at the fraction th
 
 **WS/48:** WS / minutes × 48. Rate stat.
 
-Reference: Basketball-Reference methodology at https://www.basketball-reference.com/about/ws.html
+Reference: Basketball-Reference methodology at <https://www.basketball-reference.com/about/ws.html>
 
 ### Box Plus/Minus (BPM 2.0)
 
@@ -74,7 +74,7 @@ DBPM = 0.7837*DRB%*10 + 1.7432*STL%*100 + 0.9371*BLK%*100 + role_coefficient
 
 Coefficients are published by Daniel Myers at Basketball-Reference. The role coefficient adjusts for the fact that low-usage players face lower average competition. After computing raw OBPM and DBPM, both are normalized so that the minutes-weighted league average BPM = 0.
 
-Reference: https://www.basketball-reference.com/about/bpm2.html
+Reference: <https://www.basketball-reference.com/about/bpm2.html>
 
 ### VORP (Value Over Replacement Player)
 
