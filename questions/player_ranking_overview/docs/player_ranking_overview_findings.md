@@ -26,7 +26,7 @@ The oldest and most available systems work entirely from the standard box score:
 
 **Win Shares (WS)** takes a different angle. Rather than measuring efficiency per minute, it allocates the team's actual wins back to individual players based on their offensive production and a defensive credit. The cumulative version (total Win Shares) grows with playing time; WS/48 normalizes it back to a per-minute rate.
 
-**Box Plus/Minus (BPM)** tries to estimate what a player's presence adds per 100 possessions compared to an average player, derived from box-score rates and adjusted for team quality. It splits into Offensive BPM and Defensive BPM. VORP extends it into a cumulative value by multiplying by playing time and comparing to a replacement-level player rather than an average one.
+**Box Plus/Minus (BPM)** tries to estimate what a player's presence adds per 100 possessions compared to an average player, derived from box-score rates and adjusted for team quality. It splits into Offensive BPM and Defensive BPM. VORP extends it into a cumulative value by multiplying by playing time and comparing to a replacement-level player rather than an average one. BPM exists in two versions; this report uses the current one, BPM 2.0 (see Appendix B).
 
 **Game Score** (also Hollinger) is a simpler per-game summary that weights each box-score category by its approximate value. It is not normalized.
 
@@ -194,3 +194,11 @@ Two things a more complete Bayesian treatment would add:
 - [System inventory and acquisition paths](player_ranking_overview_inventory.md)
 - [Methods and statistics](player_ranking_overview_stats_explainer.md)
 - [Source bibliography for the third-party metrics and studies](player_rating_resources.md)
+
+## Appendix B: The two versions of Box Plus/Minus
+
+Box Plus/Minus comes in two versions, both built by Daniel Myers for Basketball-Reference. The original, BPM 1.0, was published in 2014 and was the first widely available attempt to estimate a player's plus/minus impact from the box score alone. Basketball-Reference later replaced it with a revised version, BPM 2.0, and recomputed every season in its database with the new formula. The "BPM" throughout this report is BPM 2.0, the version in current use.
+
+The two differ in method, not just in tuning. BPM 1.0 first guessed each player's position (point guard through center) and offensive role from their stats, then applied weights that shifted with that position and role. BPM 2.0 reworked how it infers role and recalibrated its weights against a larger set of lineup plus/minus data, a revision meant to improve accuracy, particularly for players whose value comes from defense or from a role the box score describes poorly. Because 2.0 is the version Basketball-Reference now publishes, and the one its BPM and VORP figures reflect, it is the one this report recomputes.
+
+We looked at adding BPM 1.0 alongside it, to show how much a single system's verdicts move when only the formula changes, but did not. Basketball-Reference retired the original and no longer publishes its values, so there is nothing to import. And the position-and-role part of the formula is not cleanly documented in public sources: the reconstructions that circulate drop it, which collapses the metric into something close to a minutes-played ranking rather than a measure of skill. A faithful recompute would need the original full specification. If that becomes available, BPM 1.0 versus 2.0 is a natural addition.
