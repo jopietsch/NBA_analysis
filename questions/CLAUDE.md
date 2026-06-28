@@ -174,16 +174,20 @@ Always use `MPLBACKEND=Agg` when running the analysis script to suppress display
 <project>/
 ├── docs/          — prose files (FINDINGS, SUMMARY, STATS_EXPLAINER, <project>_results.md)
 ├── tests/         — test files; test fixture CSVs go in tests/data/
-├── cache/         — fetched data CSVs (gitignored)
 └── generated/     — PDFs and HTML reports (gitignored)
     └── images/    — all chart SVGs/PNGs (gitignored)
 ```
+
+Fetched data CSVs are **not** cached per project. They live in the shared
+monorepo cache at the repo root (`nba_analysis/cache/`, gitignored), resolved via
+`nbakit.default_cache_dir()` and overridable with the `NBA_CACHE_DIR` env var, so
+every project reuses the same fetched data.
 
 ## Standard architecture
 
 Each project follows a four-module pipeline plus two report generators plus the facts system:
 
-- **`<project>_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. All fetched data is cached as CSVs under `cache/`. This is the only module that calls external APIs.
+- **`<project>_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. All fetched data is cached as CSVs in the shared monorepo cache (`nba_analysis/cache/` at the repo root, resolved via `nbakit.default_cache_dir()`; override with `NBA_CACHE_DIR`), not in a per-project directory. This is the only module that calls external APIs.
 - **`<project>_plots.py`** — all visualization; imports the data module and holds no data logic of its own. Each `plot_*` function saves an SVG to `generated/images/`.
 - **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/<project>_results.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`. Register named facts with `FACTS.set()` next to each `print()` call that emits a cited number. Register qualitative claims with `FACTS.guard()`. At the end of `run()`, call `FACTS.dump(_FACTS_PATH)` and `FACTS.dump_guards(_GUARDS_PATH)`.
 - **`<project>_facts.py`** — a thin shim over `nbakit.facts`: re-exports the shared `Fact`/`Facts`/`load_displays`/`load_guards` model, instantiates the project's `FACTS` singleton, and pins the `_FACTS_PATH`/`_GUARDS_PATH` constants. The `Fact`/`Facts` class itself lives in `nbakit/nbakit/facts.py` (one copy, shared across projects); `Fact.display` renders a number with `fmt`+`unit` or passes a plain-language string through unchanged.
