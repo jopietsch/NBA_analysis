@@ -2441,6 +2441,12 @@ def run_net_rating_analysis(df: pd.DataFrame) -> None:
                       note="Reg. season net rating 2005–17 (pts/100)")
             FACTS.set("net.reg_today", nr_by_era[5], "{:.0f}",
                       note="Reg. season net rating 2023–26 (pts/100)")
+            # Guard the prose magnitude (§6 / summary): the mid-2010s→today net
+            # rating drop is "more than a third" (3.13 → 1.97 ≈ 37%).
+            _nr_drop = (nr_by_era[3] - nr_by_era[5]) / nr_by_era[3] if nr_by_era[3] else float("nan")
+            FACTS.guard("net_reg_drop_over_third", _nr_drop > 1 / 3,
+                        claim="the regular-season net-rating advantage shrank by more than a third",
+                        value=f"{nr_by_era[3]:.2f} → {nr_by_era[5]:.2f} = {_nr_drop * 100:.0f}% drop")
 
         print(divider)
         if len(valid) >= 10:

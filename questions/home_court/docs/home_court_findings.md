@@ -210,7 +210,7 @@ Additional findings, including individual referee rankings, franchise-level comp
 
 ## 6. Summary
 
-Home court advantage in the NBA has dropped about 10 percentage points over 40 years. The regular season went from 65% to about 55%; the playoffs from nearly 68% to 58%. Measured by net rating (how much the home team outscores its opponent per 100 possessions), the regular-season advantage has shrunk by roughly 40%; the playoffs compressed more slowly and still sit higher.
+Home court advantage in the NBA has dropped about 10 percentage points over 40 years. The regular season went from 65% to about 55%; the playoffs from nearly 68% to 58%. Measured by net rating (how much the home team outscores its opponent per 100 possessions), the regular-season advantage has shrunk by more than a third, from about 3 points per 100 in the mid-2010s to about 2 today; the playoffs compressed more slowly and still sit higher.
 
 Home court advantage runs through four box-score categories. Shooting (effective field goal percentage) is the largest contributor, at more than 40% of the regular-season advantage; rebounding adds about 25%, with foul calls and turnover margin making up most of the rest. Together the four categories capture about 95% of the home advantage. These are also the four categories that have narrowed over 40 years, so the same accounting that describes what home court is made of also describes how it has been lost.
 

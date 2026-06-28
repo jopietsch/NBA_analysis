@@ -1,4 +1,9 @@
 {
+  "net_reg_drop_over_third": {
+    "claim": "the regular-season net-rating advantage shrank by more than a third",
+    "ok": true,
+    "value": "3.13 \u2192 1.97 = 37% drop"
+  },
   "oos_within_a_point": {
     "claim": "predicts each later season's home win rate to within about a point",
     "ok": true,
