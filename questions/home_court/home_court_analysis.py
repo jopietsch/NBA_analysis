@@ -2436,7 +2436,9 @@ def run_net_rating_analysis(df: pd.DataFrame) -> None:
 
         # Facts for the prose (§1): regular-season net rating, mid-2010s vs today.
         # ERA_DEFS order: [..., 3]=2005–17 (mid-2010s), [5]=2023–26 (today).
-        if season_label == "Regular season":
+        # Skip when either era is too sparse to have a value (None), as on the
+        # test fixture; the full dataset always populates both.
+        if season_label == "Regular season" and nr_by_era[3] is not None and nr_by_era[5] is not None:
             FACTS.set("net.reg_mid2010s", nr_by_era[3], "{:.0f}",
                       note="Reg. season net rating 2005–17 (pts/100)")
             FACTS.set("net.reg_today", nr_by_era[5], "{:.0f}",
