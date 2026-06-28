@@ -17,12 +17,14 @@ fi
 echo "── Regenerating main report ──"
 python3 generate_report.py
 
-# Standalone docs: every docs/*.md except the findings file, which
-# generate_report.py already renders into the main report.
+# Standalone docs: every docs/*.md except the findings file (which
+# generate_report.py already renders into the main report) and the
+# facts reference table (a developer lookup, not a reader-facing doc).
 shopt -s nullglob
 for f in docs/*.md; do
   case "$(basename "$f")" in
     *_findings.md) continue ;;
+    *_facts_reference.md) continue ;;
   esac
   echo "── Regenerating $f ──"
   python3 ../generate_doc_pdf.py "$f"
