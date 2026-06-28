@@ -10,6 +10,7 @@ import pandas as pd
 from scipy import stats
 
 from player_ranking_overview_data import load_unified_ratings, MIN_MINUTES_QUALIFIER
+from player_ranking_overview_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
 
 # Rating systems included in the cross-system comparison
 # (all systems that may be present; silently skipped if absent in the data)
@@ -209,6 +210,9 @@ def run(end_year: int = 2025) -> None:
     print(f"Total players in unified table: {len(df_full)}")
     print(f"Qualified players (>= {MIN_MINUTES_QUALIFIER} min): {len(qual)}")
     print(f"Rating systems present: {len(present)}")
+    FACTS.set("cov.n_total", len(df_full), "{:d}", note="total players in unified table")
+    FACTS.set("cov.n_qualified", len(qual), "{:d}", note=f"qualified players (>= {MIN_MINUTES_QUALIFIER} min)")
+    FACTS.set("cov.n_systems", len(present), "{:d}", note="rating systems present in data")
     for s in present:
         n_valid = qual[s].notna().sum()
         print(f"  {SYSTEM_LABELS.get(s, s)}: {n_valid} players with data")
@@ -223,12 +227,40 @@ def run(end_year: int = 2025) -> None:
               f"Std: {vals.std():.2f}")
         print(f"  Min: {vals.min():.2f}  Max: {vals.max():.2f}")
         print(f"  Gini: {_gini(vals):.3f}  Top-5% share: {_top_share(vals)*100:.1f}%")
+        FACTS.set(f"dist.{s}.mean", float(vals.mean()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} mean")
+        FACTS.set(f"dist.{s}.median", float(np.median(vals)), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} median")
+        FACTS.set(f"dist.{s}.std", float(vals.std()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} std dev")
+        FACTS.set(f"dist.{s}.min", float(vals.min()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} min")
+        FACTS.set(f"dist.{s}.max", float(vals.max()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} max")
+        FACTS.set(f"dist.{s}.gini", float(_gini(vals)), "{:.3f}", note=f"{SYSTEM_LABELS.get(s, s)} Gini coefficient")
+        FACTS.set(f"dist.{s}.top5pct", float(_top_share(vals) * 100), "{:.1f}", unit="%",
+                  note=f"{SYSTEM_LABELS.get(s, s)} top-5% share of total value")
+    # Guard: VORP concentrates value more steeply than Win Shares and PER
+    if "VORP" in qual.columns and "WS" in qual.columns:
+        _vorp_top5 = _top_share(qual["VORP"].dropna().values, 0.05)
+        _ws_top5 = _top_share(qual["WS"].dropna().values, 0.05)
+        FACTS.guard("vorp_more_concentrated_than_ws", _vorp_top5 > _ws_top5,
+                    "VORP concentrates value more steeply than Win Shares", _vorp_top5)
+    if "VORP" in qual.columns and "PER" in qual.columns:
+        _vorp_top5 = _top_share(qual["VORP"].dropna().values, 0.05)
+        _per_top5 = _top_share(qual["PER"].dropna().values, 0.05)
+        FACTS.guard("vorp_more_concentrated_than_per", _vorp_top5 > _per_top5,
+                    "VORP top-5% share far exceeds PER", _vorp_top5)
 
     header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
     if len(present) >= 2:
         ranks = qual[present].rank(pct=True)
         corr = ranks.corr(method="spearman")
-        # Print upper triangle only
+        # Guards for key pairs cited in prose
+        if "BPM" in corr.index and "VORP" in corr.index:
+            bpm_vorp_r = float(corr.loc["BPM", "VORP"])
+            FACTS.guard("bpm_vorp_tight", bpm_vorp_r > 0.95,
+                        "BPM and VORP are tightly linked (r > 0.95)", bpm_vorp_r)
+        if "GAME_SCORE" in corr.index and "PER" in corr.index:
+            gs_per_r = float(corr.loc["GAME_SCORE", "PER"])
+            FACTS.guard("per_gamescore_close", gs_per_r > 0.75,
+                        "PER and Game Score track closely (r > 0.75)", gs_per_r)
+        # Print upper triangle and register all correlation facts
         for i, si in enumerate(present):
             for j, sj in enumerate(present):
                 if j > i:
@@ -236,11 +268,15 @@ def run(end_year: int = 2025) -> None:
                     label_i = SYSTEM_LABELS.get(si, si)
                     label_j = SYSTEM_LABELS.get(sj, sj)
                     print(f"  {label_i} vs {label_j}: r={r:.3f}")
+                    FACTS.set(f"corr.{si}_{sj}", float(r), "{:.3f}",
+                              note=f"Spearman rank corr: {label_i} vs {label_j}")
 
     header("WHAT EACH SYSTEM UNIQUELY CAPTURES")
     uniq = _unique_r2(qual, present)
     for s, r2 in sorted(uniq.items(), key=lambda x: -x[1]):
         print(f"  {SYSTEM_LABELS.get(s, s)}: unique R² = {r2:.3f}")
+        FACTS.set(f"uniq.{s}.r2", float(r2), "{:.3f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} unique R²: variance beyond what other systems explain")
 
     header("CONSENSUS RATING — TOP 20")
     qual["CONSENSUS"] = _build_consensus(qual, present)
@@ -249,6 +285,14 @@ def run(end_year: int = 2025) -> None:
         for rank, (_, row) in enumerate(top.iterrows(), 1):
             name = row.get("PLAYER_NAME", "Unknown")
             print(f"  {rank:>2}. {name:<30}  Consensus z = {row['CONSENSUS']:.2f}")
+            if rank <= 5:
+                FACTS.set(f"consensus.top.{rank}.name", str(name),
+                          note=f"consensus rank {rank} player name")
+                FACTS.set(f"consensus.top.{rank}.z", float(row["CONSENSUS"]), "{:.2f}",
+                          note=f"consensus rank {rank} z-score")
+        top_name = top.iloc[0].get("PLAYER_NAME", "") if len(top) > 0 else ""
+        FACTS.guard("jokic_tops_consensus", top_name == "Nikola Jokić",
+                    "Nikola Jokić tops the consensus rating", top_name)
 
     header("WINS-PREDICTIVE RATING — TOP 20")
     qual["WINS_PRED"] = _build_wins_predictive(qual, present)
@@ -258,6 +302,11 @@ def run(end_year: int = 2025) -> None:
         for rank, (_, row) in enumerate(top.iterrows(), 1):
             name = row.get("PLAYER_NAME", "Unknown")
             print(f"  {rank:>2}. {name:<30}  Wins-predictive z = {row['WINS_PRED']:.2f}")
+            if rank <= 5:
+                FACTS.set(f"wins_pred.top.{rank}.name", str(name),
+                          note=f"wins-predictive rank {rank} player name")
+                FACTS.set(f"wins_pred.top.{rank}.z", float(row["WINS_PRED"]), "{:.2f}",
+                          note=f"wins-predictive rank {rank} z-score")
 
     header("COMPARISON: CONSENSUS vs. WINS-PREDICTIVE")
     if qual["CONSENSUS"].notna().sum() > 0 and qual["WINS_PRED"].notna().sum() > 0:
@@ -265,13 +314,25 @@ def run(end_year: int = 2025) -> None:
         if len(both) >= 10:
             r, p = stats.spearmanr(both["CONSENSUS"], both["WINS_PRED"])
             print(f"  Spearman correlation between consensus and wins-predictive: {r:.3f} (p={p:.3f})")
+            FACTS.set("cmp.spearman", float(r), "{:.3f}",
+                      note="Spearman rank corr between consensus and wins-predictive ratings")
+            FACTS.guard("strong_consensus_wins_corr", float(r) > 0.95,
+                        "the two ratings agree very closely (r > 0.95)", float(r))
             both["_diff"] = both["WINS_PRED"] - both["CONSENSUS"]
             print("  Players rated much higher by wins-predictive than consensus:")
-            for _, row in both.nlargest(5, "_diff").iterrows():
+            for idx, (_, row) in enumerate(both.nlargest(5, "_diff").iterrows(), 1):
                 print(f"    {row['PLAYER_NAME']:<30}  diff = +{row['_diff']:.2f}")
+                FACTS.set(f"cmp.higher.{idx}.name", str(row["PLAYER_NAME"]),
+                          note=f"rank {idx} player rated higher by wins-predictive than consensus")
+                FACTS.set(f"cmp.higher.{idx}.diff", float(row["_diff"]), "{:.2f}",
+                          note=f"rank {idx} wins-predictive minus consensus diff (positive)")
             print("  Players rated much lower by wins-predictive than consensus:")
-            for _, row in both.nsmallest(5, "_diff").iterrows():
+            for idx, (_, row) in enumerate(both.nsmallest(5, "_diff").iterrows(), 1):
                 print(f"    {row['PLAYER_NAME']:<30}  diff = {row['_diff']:.2f}")
+                FACTS.set(f"cmp.lower.{idx}.name", str(row["PLAYER_NAME"]),
+                          note=f"rank {idx} player rated lower by wins-predictive than consensus")
+                FACTS.set(f"cmp.lower.{idx}.diff", float(row["_diff"]), "{:.2f}",
+                          note=f"rank {idx} wins-predictive minus consensus diff (negative)")
 
     header("POWER-LAW / TAIL ANALYSIS")
     cumulative_metrics = [s for s in present if s in ("WS", "VORP", "RAPTOR_WAR")]
@@ -292,6 +353,8 @@ def run(end_year: int = 2025) -> None:
                 # Skewness
                 skew = float(stats.skew(pos_vals))
                 print(f"    Skewness: {skew:.2f} ({'right-skewed' if skew > 0.5 else 'near-symmetric'})")
+                FACTS.set(f"tail.{s}.skew", skew, "{:.2f}",
+                          note=f"{SYSTEM_LABELS.get(s, s)} skewness (positive values only)")
 
     header("WHO EACH SYSTEM LOVES vs. CONSENSUS")
     qual["CONSENSUS"] = _build_consensus(qual, present)
@@ -301,8 +364,20 @@ def run(end_year: int = 2025) -> None:
         top3 = qual.assign(_res=residual).nlargest(3, "_res")
         bot3 = qual.assign(_res=residual).nsmallest(3, "_res")
         print(f"\n{SYSTEM_LABELS.get(s, s)} loves (vs. consensus):")
-        for _, row in top3.iterrows():
+        for rank, (_, row) in enumerate(top3.iterrows(), 1):
             print(f"  +{row.get('_res', 0):.2f}  {row.get('PLAYER_NAME', '?')}")
+            FACTS.set(f"loves.{s}.{rank}.name", str(row.get("PLAYER_NAME", "?")),
+                      note=f"{SYSTEM_LABELS.get(s, s)} loves rank {rank} player vs consensus")
+            FACTS.set(f"loves.{s}.{rank}.diff", float(row.get("_res", 0)), "{:.2f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} loves rank {rank} residual vs consensus (positive)")
         print(f"{SYSTEM_LABELS.get(s, s)} discounts (vs. consensus):")
-        for _, row in bot3.iterrows():
+        for rank, (_, row) in enumerate(bot3.iterrows(), 1):
             print(f"  {row.get('_res', 0):.2f}  {row.get('PLAYER_NAME', '?')}")
+            FACTS.set(f"discounts.{s}.{rank}.name", str(row.get("PLAYER_NAME", "?")),
+                      note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} player vs consensus")
+            FACTS.set(f"discounts.{s}.{rank}.diff", float(row.get("_res", 0)), "{:.2f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} residual vs consensus (negative)")
+
+    # Dump all facts and guards to docs/
+    FACTS.dump(_FACTS_PATH)
+    FACTS.dump_guards(_GUARDS_PATH)

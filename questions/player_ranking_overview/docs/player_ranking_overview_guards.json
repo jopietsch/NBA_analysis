@@ -1,0 +1,32 @@
+{
+  "bpm_vorp_tight": {
+    "claim": "BPM and VORP are tightly linked (r > 0.95)",
+    "ok": true,
+    "value": 0.9719977244282626
+  },
+  "jokic_tops_consensus": {
+    "claim": "Nikola Joki\u0107 tops the consensus rating",
+    "ok": true,
+    "value": "Nikola Joki\u0107"
+  },
+  "per_gamescore_close": {
+    "claim": "PER and Game Score track closely (r > 0.75)",
+    "ok": true,
+    "value": 0.8314650130845375
+  },
+  "strong_consensus_wins_corr": {
+    "claim": "the two ratings agree very closely (r > 0.95)",
+    "ok": true,
+    "value": 0.9778914552281261
+  },
+  "vorp_more_concentrated_than_per": {
+    "claim": "VORP top-5% share far exceeds PER",
+    "ok": true,
+    "value": 0.318888777831208
+  },
+  "vorp_more_concentrated_than_ws": {
+    "claim": "VORP concentrates value more steeply than Win Shares",
+    "ok": true,
+    "value": 0.318888777831208
+  }
+}

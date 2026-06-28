@@ -9,10 +9,12 @@ Run after player_ranking_overview.py — all charts and _results.md must exist.
 import os
 
 from nbakit.report import ReportConfig, build_report
+from render_docs import render_all
 
 OUTPUT_DIR = "generated"
 
 if __name__ == "__main__":
+    render_all()
     build_report(ReportConfig(
         findings_path="docs/player_ranking_overview_findings.md",
         results_path="docs/player_ranking_overview_results.md",
