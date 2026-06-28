@@ -48,7 +48,8 @@ else, so start there.
   p-values, confidence intervals, and significance stars; statistical vs.
   practical significance; frequentist vs. Bayesian inference.
 - **Part 1, Describing and comparing groups:** fitting a trend line (OLS);
-  two-proportion z-test; chi-square test; Pearson vs. Spearman correlation.
+  two-proportion z-test; chi-square test; Pearson vs. Spearman correlation;
+  state-space forecasting.
 - **Part 2, Modeling a yes/no outcome:** logistic regression; turning log-odds
   into percentage points; binomial GLM; the linear probability model; McFadden
   pseudo-R².
@@ -57,7 +58,8 @@ else, so start there.
   Benjamini-Hochberg.
 - **Part 4, Comparing models and splitting up credit:** the likelihood-ratio
   test; sequential delta-R² vs. Shapley; the mediation accounting identities; the
-  shift-share decomposition.
+  shift-share decomposition; a non-parametric (gradient boosting + SHAP)
+  cross-check; sensitivity to an unmeasured confounder.
 - **Part 5, Looking beyond the average:** quantile regression and polarization.
 - **Part 6, Ranking noisy things fairly:** variance decomposition and
   empirical-Bayes shrinkage.
@@ -354,6 +356,52 @@ cream sales and drownings both rise in summer). The r = -0.90 for threes is
 40-year drift while a genuine year-to-year link survives. Separating the two is
 exactly what §7.2 (detrending) and the within-era logit in §2.1 are for.
 Correlation alone is never the end of the story in this project.
+
+## 1.5 State-space forecasting: a trend line whose slope can drift
+
+**The question:** if the current rate of decline simply continues, where is home
+court likely to sit a few seasons from now, and how sure can we be?
+
+**Why OLS (§1.1) is the wrong tool here.** A single straight line fits *one* slope
+to all 43 seasons. But the decline bent in the late 1990s (§7.5, §7.12): the early
+years fell fast, the later years gently. Project that one averaged slope forward
+and you overstate today's rate, and a plain OLS forecast band either holds a
+constant width or ignores how fast confidence decays the farther out you reach.
+
+**The intuition.** A **state-space model**, here the **local-linear-trend** form,
+treats the true home win % as a hidden **level** you never see directly; the season
+figure you record is that level plus measurement noise. The level drifts each year
+by a **slope**, and the slope itself is allowed to wander. The model estimates both
+from the data with the **Kalman filter** (a forward sweep that updates its best
+guess of the hidden level as each new season lands) and the **Kalman smoother** (a
+backward sweep that refines those guesses with hindsight). To forecast, it lets the
+latest level and slope drift forward; because every future step adds fresh noise,
+the prediction interval (the "fan") widens with the horizon.
+
+**The mechanics (lightly).** Two equations: an *observation* equation
+(`observed % = level + noise`) and a *state* equation (`next level = level + slope
++ noise`, `next slope = slope + noise`). Fit by maximum likelihood; forecast by
+iterating the state equation forward.
+
+**A worked example.** Regular season: the smoothed current level is
+**54.9%** (a denoised read of where the series sits now, not the raw last
+season), sliding about -0.3 pp/yr. Projected to 2031, the central path is
+**53.5%**, 95% interval **[48.4%, 58.6%]**. Playoffs start higher
+(smoothed level **58.8%**) but the fan is far wider: by 2031 the central
+path is **57.1%** with a 95% interval of **[44.9%, 69.3%]**,
+because each postseason rests on only ~80 games.
+
+**How to read it in the results doc.** The state-space forecast block ("Where is
+home court heading?"): the "current smoothed level" line, then a forecast and 95%
+interval per future season. Read the fan, not the central line; the widening band
+is the honest part.
+
+**The trap it avoids.** A naive "extend the trend line" forecast hides two errors:
+it uses a slope averaged over the steep early decline (too pessimistic about
+*today's* rate), and it under-reports uncertainty. The state-space fan fixes both.
+One caveat the model can't escape: it is a what-if on the *current* slope, not a
+prediction about future rule changes. Its value is narrow but real: even the upper
+edge of the regular-season fan stays below where home court sat in the mid-1980s.
 
 ---
 
@@ -793,6 +841,95 @@ weight it by how much it's worth. Here the schedule did change, but it carries
 only ~8% of the decline; the other ~92% is the home edge fading inside *every*
 rest situation, not a scheduling story. The decomposition separates "the mix
 changed" from "the thing itself changed" without fitting a model.
+
+## 4.5 A non-parametric cross-check: gradient boosting and SHAP
+
+**The question:** the mediation in §4.3 split the home edge into four channels with
+a *linear* model (the LPM). Does that split hold up if we drop the straight-line
+assumption and let the channels bend and interact?
+
+**The intuition.** A **gradient-boosted tree model** predicts home wins from the
+four box-score edges (eFG%, fouls, turnovers, rebounds) by stacking hundreds of
+small decision trees, each one correcting the errors of the trees before it. It
+assumes no straight lines and captures interactions a linear model can't (a
+rebounding edge might count for more on a night the shooting is even). The price is
+that the result is a black box: there is no coefficient to read off. **SHAP
+values** (SHapley Additive exPlanations) open it up. For each game, SHAP divides
+the model's predicted win probability into one additive piece per channel, and
+those pieces sum exactly to the prediction. Average the per-game pieces within an
+era and they sum to that era's gap from the league-wide home win rate; take the
+early-minus-late difference per channel and you have each channel's contribution to
+the decline, the same quantity §4.3 computed linearly, now with no linearity
+assumed.
+
+**SHAP is not Shapley (§4.2): keep them straight.** Both descend from the
+game-theory Shapley value, fair credit averaged over every order of entry. But
+§4.2's **Shapley** splits a model's *R²* across *blocks of predictors*; **SHAP**
+applies the same fairness idea *one game at a time* to split a tree model's
+*prediction* across *features*. Same lineage, different target.
+
+**A worked example.** Regular season, model accuracy **0.93**. The SHAP
+decline decomposition (early 1984–94 minus late 2023–26) gives shooting
+**+3.3 pp** (35%, the top channel), rebounding **+2.6 pp** (28%), turnovers
+**+2.2 pp** (23%), and fouls the smallest at **+1.4 pp** (14%). The four sum to
+**9.4 pp**, essentially the actual 9.3 pp decline. That is the same ranking the
+linear mediation found: shooting, rebounding, and turnovers large, fouls smallest.
+Because the two methods share no assumptions, their agreement says the breakdown is
+a feature of the games, not of the straight-line form. (The playoffs split the same
+way: shooting and rebounding largest, fouls and turnovers smaller.)
+
+**How to read it in the results doc.** The non-parametric channel decomposition
+block (gradient boosting + SHAP): per-channel "Contribution" and "% of decline"
+columns, and the closing line that checks the SHAP total against the actual
+decline.
+
+**The trap it avoids.** An exact linear decomposition is seductive precisely
+because it balances to the penny, but that tidiness could be an artifact of forcing
+straight lines onto a curved reality. Re-deriving the same split from a flexible
+model that was free to bend is what rules that out.
+
+## 4.6 Sensitivity to an unmeasured confounder: the robustness value
+
+**The question:** §4.3 is careful to call its channel shares an *accounting* split,
+not proof of cause. The worry it names is a hidden confounder: something the box
+score never recorded that drives both a channel and winning, inflating that
+channel's apparent role. How strong would such a hidden cause have to be to
+overturn a channel's link to winning?
+
+**The intuition.** You cannot measure what you never recorded, but you *can* ask
+how strong an omitted cause would need to be to matter. The **robustness value
+(RV)** (Cinelli & Hazlett, 2020) is that threshold: the minimum share of the
+leftover (residual) variation in *both* the channel *and* home wins that a single
+unmeasured confounder would have to explain to drag the channel's coefficient all
+the way to zero. A high RV means you would need an implausibly strong hidden cause,
+so the link is hard to explain away. This is the formal partner to §7.1: there you
+*add* a confounder you measured (quality_diff) and check whether the effect
+survives; here you *bound* the damage a confounder you never measured could do.
+
+**The mechanics (lightly).** Each channel's **partial R²** with home_win, how much
+of the outcome's residual variation that channel alone accounts for, feeds a
+closed-form expression for the RV. The partial R² doubles as the benchmark: to zero
+a channel out, a confounder must explain *more* of both sides than the channel
+itself does.
+
+**A worked example.** Regular season. Shooting has a partial R² of
+**48.1%** and an RV of **60.5%**: a confounder would have to explain at
+least 60.5% of the residual variation in *both* eFG% and home wins to erase
+shooting's link, well above shooting's own 48% share. Even the most fragile channel
+clears a high bar: fouls have a partial R² of **10.5%** and an RV of
+**28.9%**, so a confounder must still explain ~29% of both. (Turnovers sit at
+40.7%, rebounding at 36.8%; the playoff values are nearly identical.) Those are
+demanding thresholds, so the shooting and foul strands in particular are hard to
+wish away with one omitted variable.
+
+**How to read it in the results doc.** The mediation robustness block (sensitivity
+to unmeasured confounding): a partial R² and a robustness value per channel, with a
+one-line interpretation. Higher RV = more robust.
+
+**The trap it avoids.** The lazy moves are to treat an observational decomposition
+as obviously causal, or to dismiss it because "there could always be a confounder."
+The RV replaces the hand-wave with a number you can judge. Its honest limit: a high
+RV bounds how robust a link is; it does not prove the channel *causes* home wins.
 
 ---
 
@@ -1756,6 +1893,7 @@ genuine significance test in an otherwise descriptive analysis.
 | log-odds, ~pp, "bivariate / controlling for" | logistic regression on win/loss | §2.1, §2.2 |
 | binomial GLM | the rigorous trend on season proportions | §2.3 |
 | OLS / HAC, "Trend/yr", R² | a straight-line trend (+ autocorrelation-robust errors) | §1.1, §3.3 |
+| state-space forecast, smoothed level, 95% fan | projecting the season trend forward with widening intervals | §1.5 |
 | z = ..., two-proportion | gap between two win rates | §1.2 |
 | chi-sq(k) = ... | are several groups' rates all equal? | §1.3 |
 | Pearson r, Spearman rho | do two quantities move together (linear / rank) | §1.4 |
@@ -1764,6 +1902,8 @@ genuine significance test in an otherwise descriptive analysis.
 | McFadden R², delta-R%, Shapley | splitting explained variation across factors | §2.5, §4.2 |
 | level / trend decomposition, LPM | accounting the home edge into channels | §2.4, §4.3 |
 | channel trend, "3PA absorbs %" | is a channel its own driver or downstream of threes? | §4.3 |
+| gradient boosting + SHAP | non-parametric cross-check on the channel split (no linearity) | §4.5 |
+| partial R², robustness value (RV) | how strong a hidden confounder must be to erase a channel | §4.6 |
 | frequency vs. win-rate (shift-share) | splitting a change into schedule vs. per-matchup fade | §4.4 |
 | quantile, Q10...Q90, polarization | how the *distribution shape* changed | §5.1 |
 | variance decomposition, shrunken | ranking noisy franchise/referee means | §6.1, §6.2 |
