@@ -9,7 +9,12 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from player_ranking_overview_data import load_unified_ratings, MIN_MINUTES_QUALIFIER
+from player_ranking_overview_data import (
+    load_unified_ratings,
+    MIN_MINUTES_QUALIFIER,
+    powerlaw_fit,
+    POWERLAW_R2_THRESHOLD,
+)
 from player_ranking_overview_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
 
 # Rating systems included in the cross-system comparison
@@ -247,6 +252,54 @@ def run(end_year: int = 2025) -> None:
         FACTS.guard("vorp_more_concentrated_than_per", _vorp_top5 > _per_top5,
                     "VORP top-5% share far exceeds PER", _vorp_top5)
 
+    header("POWER-LAW FIT (VALUE VS RANK, LOG-LOG)")
+    print(f"A system's top-{50} value-vs-rank curve is a power law when the")
+    print(f"log-log fit clears R^2 >= {POWERLAW_R2_THRESHOLD:.2f} (a straight line on log-log axes).")
+    power_law_systems = []
+    for s in present:
+        vals = qual[s].dropna().sort_values(ascending=False).values
+        fit = powerlaw_fit(vals, top_n=50)
+        if fit is None:
+            continue
+        is_power = fit["r2"] >= POWERLAW_R2_THRESHOLD
+        verdict = "power law" if is_power else "not a power law (bends)"
+        print(f"\n{SYSTEM_LABELS.get(s, s)} (n={fit['n_points']} positive ranks):")
+        print(f"  exponent alpha={fit['alpha']:.2f}  R^2={fit['r2']:.3f}  -> {verdict}")
+        FACTS.set(f"powerlaw.{s}.alpha", fit["alpha"], "{:.2f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} power-law exponent (value ~ rank^-alpha)")
+        FACTS.set(f"powerlaw.{s}.r2", fit["r2"], "{:.2f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} log-log power-law fit R^2")
+        if is_power:
+            power_law_systems.append(s)
+    non_power = [s for s in present
+                 if powerlaw_fit(qual[s].dropna().sort_values(ascending=False).values, top_n=50)
+                 is not None and s not in power_law_systems]
+    label_list = ", ".join(SYSTEM_LABELS.get(s, s) for s in power_law_systems) or "none"
+    non_list = ", ".join(SYSTEM_LABELS.get(s, s) for s in non_power) or "none"
+    print(f"\nPower-law systems (R^2 >= {POWERLAW_R2_THRESHOLD:.2f}): {label_list}")
+    print(f"Bend instead of a straight line: {non_list}")
+    FACTS.set("powerlaw.n_systems", len(power_law_systems), "{:d}",
+              note="systems whose value-vs-rank curve fits a power law")
+    FACTS.set("powerlaw.systems", label_list,
+              note="names of systems whose value-vs-rank curve fits a power law")
+    FACTS.set("powerlaw.non_systems", non_list,
+              note="names of systems whose value-vs-rank curve bends (not a power law)")
+    # Guards protecting the findings discussion of which cluster is which.
+    _alpha = {s: powerlaw_fit(qual[s].dropna().sort_values(ascending=False).values, top_n=50)
+              for s in present}
+    if _alpha.get("VORP") and _alpha.get("PER"):
+        FACTS.guard("cumulative_steeper_than_rate",
+                    _alpha["VORP"]["alpha"] > _alpha["PER"]["alpha"],
+                    "cumulative VORP falls off more steeply than rate-metric PER",
+                    _alpha["VORP"]["alpha"] - _alpha["PER"]["alpha"])
+    if "WS" in power_law_systems and "VORP" in power_law_systems:
+        FACTS.guard("cumulative_are_power_laws", True,
+                    "the cumulative metrics (Win Shares, VORP) are power laws", non_list)
+    if _alpha.get("OBPM"):
+        FACTS.guard("obpm_bends", "OBPM" not in power_law_systems,
+                    "Offensive BPM bends rather than holding a straight power law",
+                    _alpha["OBPM"]["r2"])
+
     header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
     if len(present) >= 2:
         ranks = qual[present].rank(pct=True)
@@ -333,6 +386,37 @@ def run(end_year: int = 2025) -> None:
                           note=f"rank {idx} player rated lower by wins-predictive than consensus")
                 FACTS.set(f"cmp.lower.{idx}.diff", float(row["_diff"]), "{:.2f}",
                           note=f"rank {idx} wins-predictive minus consensus diff (negative)")
+
+    header("UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS)")
+    print("Gini clips negatives to zero, so it inflates 0-centered metrics (the uber")
+    print("ratings and the BPM family). The power-law exponent alpha does not depend on")
+    print("where zero sits, so it is the fair cross-system concentration read.")
+    for s in ("CONSENSUS", "WINS_PRED"):
+        if s not in qual.columns or qual[s].notna().sum() < 20:
+            continue
+        vals = qual[s].dropna().values
+        g = _gini(vals)
+        t5 = _top_share(vals) * 100
+        fit = powerlaw_fit(np.sort(vals)[::-1], top_n=50)
+        a = fit["alpha"] if fit else float("nan")
+        print(f"\n{SYSTEM_LABELS.get(s, s)}: Gini={g:.3f} (inflated), "
+              f"top-5% share={t5:.1f}%, alpha={a:.2f}")
+        FACTS.set(f"dist.{s}.gini", float(g), "{:.3f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} Gini coefficient (inflated by centering)")
+        FACTS.set(f"dist.{s}.top5pct", float(t5), "{:.1f}", unit="%",
+                  note=f"{SYSTEM_LABELS.get(s, s)} top-5% share of positive value")
+        if fit:
+            FACTS.set(f"powerlaw.{s}.alpha", float(a), "{:.2f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} power-law exponent (center-robust steepness)")
+    # Guard: on the center-robust measure the combined ratings sit between the
+    # flattest rate metric (PER) and the steepest cumulative metric (VORP).
+    _cons = powerlaw_fit(np.sort(qual["CONSENSUS"].dropna().values)[::-1], top_n=50) \
+        if "CONSENSUS" in qual.columns and qual["CONSENSUS"].notna().sum() >= 20 else None
+    if _cons and _alpha.get("PER") and _alpha.get("VORP"):
+        FACTS.guard("uber_concentration_between_rate_and_cumulative",
+                    _alpha["PER"]["alpha"] < _cons["alpha"] < _alpha["VORP"]["alpha"],
+                    "by center-robust steepness the consensus rating sits between PER and VORP",
+                    _cons["alpha"])
 
     header("POWER-LAW / TAIL ANALYSIS")
     cumulative_metrics = [s for s in present if s in ("WS", "VORP", "RAPTOR_WAR")]

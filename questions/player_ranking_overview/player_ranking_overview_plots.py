@@ -406,17 +406,22 @@ def plot_unique_signal(unique_r2: dict[str, float]) -> str:
 
 # ── Chart 7: Gini coefficients (inequality of player value) ──────────────────
 
-def plot_gini_by_system(gini_scores: dict[str, float]) -> str:
+def plot_gini_by_system(gini_scores: dict[str, float],
+                        highlight: list[str] | None = None) -> str:
     """Bar chart of Gini coefficients across systems.
 
-    A high Gini means value is concentrated at the top (heavy tail).
-    Title: 'Cumulative metrics show more concentrated star value than rate metrics.'
+    A high Gini means value is concentrated at the top, but only for metrics that
+    accumulate a non-negative quantity. Gini clips negatives to zero, which
+    inflates 0-centered metrics (the BPM family and the uber ratings); the
+    subtitle and the findings text flag this. Systems in `highlight` (the uber
+    ratings) are drawn with a dark edge so they read as the combined ratings.
     """
     if not gini_scores:
         fig, ax = new_fig()
         ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
         return save_chart("gini_by_system.svg", OUTPUT_DIR, fig=fig)
 
+    highlight = set(highlight or [])
     systems = list(gini_scores.keys())
     vals = [gini_scores[s] for s in systems]
     colors = [SYSTEM_COLORS.get(s, GRAY) for s in systems]
@@ -426,17 +431,24 @@ def plot_gini_by_system(gini_scores: dict[str, float]) -> str:
     fig, ax = plt.subplots(figsize=(max(6, len(systems) * 0.9), 5), facecolor=BG)
     ax.set_facecolor(PANEL)
 
+    edgecolors = ["#111111" if systems[i] in highlight else "none" for i in order]
+    linewidths = [1.6 if systems[i] in highlight else 0 for i in order]
     ax.bar(range(len(systems)),
            [vals[i] for i in order],
            color=[colors[i] for i in order],
+           edgecolor=edgecolors, linewidth=linewidths,
            alpha=0.85)
     ax.set_xticks(range(len(systems)))
     ax.set_xticklabels([labels[i] for i in order], rotation=40, ha="right", fontsize=9)
     ax.set_ylabel("Gini coefficient", fontsize=9, color=GRAY)
     ax.set_title(
-        "Cumulative metrics show more concentrated star value than rate metrics",
-        fontsize=11, color="#222"
+        "Where each system concentrates value, by Gini",
+        fontsize=11, color="#222", pad=26
     )
+    ax.text(0.5, 1.015,
+            "Gini over-states 0-centered metrics (BPM family and combined ratings, outlined); "
+            "see the steepness read in the text",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
     ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
@@ -524,6 +536,146 @@ def plot_all_systems_distributions(df: pd.DataFrame, systems: list[str],
 
     fig.tight_layout()
     return save_chart("all_systems_distributions.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart 8b: Power-law check (log-log value vs rank) ─────────────────────────
+
+def plot_powerlaw_fits(df: pd.DataFrame, systems: list[str],
+                       top_n: int = 50) -> str:
+    """Log-log value-vs-rank for each system, with a straight power-law fit.
+
+    A power law (value proportional to rank^-alpha) is a straight line on
+    log-log axes. Systems whose fit clears POWERLAW_R2_THRESHOLD are drawn in
+    color with their fitted line; the rest are muted grey, since their curve
+    bends rather than holding a constant slope.
+    """
+    from player_ranking_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
+
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+
+    _colors = [
+        "#2196F3", "#F44336", "#4CAF50", "#FF9800",
+        "#9C27B0", "#00BCD4", "#795548", "#607D8B",
+    ]
+
+    fig, ax = plt.subplots(figsize=(11, 6), facecolor=BG)
+    ax.set_facecolor(PANEL)
+
+    color_idx = 0
+    n_power = 0
+    for sys in systems:
+        if sys not in qual.columns:
+            continue
+        vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
+        fit = powerlaw_fit(vals.values, top_n=top_n)
+        if fit is None:
+            continue
+        rank = np.arange(1, fit["n_points"] + 1)
+        obs = vals.iloc[:fit["n_points"]].values
+        is_power = fit["r2"] >= POWERLAW_R2_THRESHOLD
+        label = (f"{SYSTEM_LABELS.get(sys, sys)} "
+                 f"(α={fit['alpha']:.2f}, R²={fit['r2']:.2f})")
+        if is_power:
+            color = _colors[color_idx % len(_colors)]
+            color_idx += 1
+            n_power += 1
+            ax.plot(rank, obs, "o", color=color, markersize=4, alpha=0.85,
+                    zorder=3, label=label)
+            fit_line = np.exp(fit["log_c"]) * rank ** (-fit["alpha"])
+            ax.plot(rank, fit_line, "-", color=color, linewidth=1.3,
+                    alpha=0.9, zorder=2)
+        else:
+            ax.plot(rank, obs, "o", color=GRAY, markersize=3, alpha=0.4,
+                    zorder=1, label=label)
+
+    ax.set_xscale("log")
+    ax.set_yscale("log")
+    ax.set_xlabel(f"Player rank, log scale (top {top_n} by each system)",
+                  fontsize=9, color=GRAY)
+    ax.set_ylabel("Value, log scale", fontsize=9, color=GRAY)
+    ax.set_title(
+        "On log-log axes, a power law is a straight line:\n"
+        f"{n_power} of the box-score systems qualify, the rest bend",
+        fontsize=11, color="#222"
+    )
+    ax.legend(fontsize=7.5, frameon=False, loc="lower left", ncol=2)
+    ax.grid(True, which="both", color="#e0dfd8", linewidth=0.6, zorder=0)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+
+    fig.tight_layout()
+    return save_chart("powerlaw_fits.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart 8c: Power-law small multiples (one panel per system) ────────────────
+
+def plot_powerlaw_small_multiples(df: pd.DataFrame, systems: list[str],
+                                  top_n: int = 50) -> str:
+    """One small log-log panel per system so straight vs bent is obvious.
+
+    Each panel plots a system's top-N value-vs-rank (dots) against its fitted
+    power law (line) on log-log axes. Power-law systems (fit clears
+    POWERLAW_R2_THRESHOLD) are blue; the benders are grey. Panels are ordered by
+    exponent, steepest first, so the concentration ordering reads left to right.
+    """
+    from player_ranking_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
+
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+
+    # Fit every present system, keep those with a fit, order by steepness.
+    fits = []
+    for sys in systems:
+        if sys not in qual.columns:
+            continue
+        vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
+        fit = powerlaw_fit(vals.values, top_n=top_n)
+        if fit is not None:
+            fits.append((sys, vals, fit))
+    fits.sort(key=lambda t: t[2]["alpha"], reverse=True)
+
+    n = len(fits)
+    if n == 0:
+        fig, ax = plt.subplots(figsize=(6, 4), facecolor=BG)
+        ax.text(0.5, 0.5, "No data", ha="center", va="center",
+                transform=ax.transAxes, color=GRAY)
+        return save_chart("powerlaw_small_multiples.svg", OUTPUT_DIR, fig=fig)
+
+    ncols = 4
+    nrows = (n + ncols - 1) // ncols
+    fig, axes = plt.subplots(nrows, ncols, figsize=(11, 3.0 * nrows),
+                             facecolor=BG, squeeze=False)
+
+    for idx, (sys, vals, fit) in enumerate(fits):
+        ax = axes[idx // ncols][idx % ncols]
+        ax.set_facecolor(PANEL)
+        rank = np.arange(1, fit["n_points"] + 1)
+        obs = vals.iloc[:fit["n_points"]].values
+        is_power = fit["r2"] >= POWERLAW_R2_THRESHOLD
+        color = BLUE if is_power else GRAY
+        ax.plot(rank, obs, "o", color=color, markersize=3.5, alpha=0.85, zorder=3)
+        fit_line = np.exp(fit["log_c"]) * rank ** (-fit["alpha"])
+        ax.plot(rank, fit_line, "-", color=color, linewidth=1.3, alpha=0.9, zorder=2)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        verdict = "power law" if is_power else "bends"
+        ax.set_title(f"{SYSTEM_LABELS.get(sys, sys)}: {verdict}\n"
+                     f"α={fit['alpha']:.2f}, straight-line fit {fit['r2']:.2f}",
+                     fontsize=9, color="#222")
+        ax.grid(True, which="both", color="#e0dfd8", linewidth=0.5, zorder=0)
+        ax.tick_params(labelsize=7, colors=GRAY)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    # Blank any unused panels in the grid.
+    for idx in range(n, nrows * ncols):
+        axes[idx // ncols][idx % ncols].axis("off")
+
+    fig.suptitle("A power law is a straight line; a bent line has a natural size to its top tier",
+                 fontsize=11, color="#222", y=1.0)
+    fig.supxlabel("Player rank, log scale", fontsize=9, color=GRAY)
+    fig.supylabel("Value, log scale", fontsize=9, color=GRAY)
+    fig.tight_layout()
+    return save_chart("powerlaw_small_multiples.svg", OUTPUT_DIR, fig=fig)
 
 
 # ── Chart 9: Top-20 per system table ─────────────────────────────────────────

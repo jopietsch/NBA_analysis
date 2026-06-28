@@ -818,6 +818,20 @@
     "unit": "%",
     "value": 32.242770153757085
   },
+  "dist.CONSENSUS.gini": {
+    "display": "0.763",
+    "fmt": "{:.3f}",
+    "note": "Consensus Gini coefficient (inflated by centering)",
+    "unit": null,
+    "value": 0.7634544585477996
+  },
+  "dist.CONSENSUS.top5pct": {
+    "display": "30.9 %",
+    "fmt": "{:.1f}",
+    "note": "Consensus top-5% share of positive value",
+    "unit": "%",
+    "value": 30.911011877539114
+  },
   "dist.DBPM.gini": {
     "display": "0.599",
     "fmt": "{:.3f}",
@@ -1062,6 +1076,20 @@
     "note": "VORP top-5% share of total value",
     "unit": "%",
     "value": 31.8888777831208
+  },
+  "dist.WINS_PRED.gini": {
+    "display": "0.743",
+    "fmt": "{:.3f}",
+    "note": "Wins-Predictive Gini coefficient (inflated by centering)",
+    "unit": null,
+    "value": 0.743165127116185
+  },
+  "dist.WINS_PRED.top5pct": {
+    "display": "28.1 %",
+    "fmt": "{:.1f}",
+    "note": "Wins-Predictive top-5% share of positive value",
+    "unit": "%",
+    "value": 28.077210858208417
   },
   "dist.WS.gini": {
     "display": "0.363",
@@ -1496,6 +1524,153 @@
     "note": "WS/48 loves rank 3 player vs consensus",
     "unit": null,
     "value": "Day'Ron Sharpe"
+  },
+  "powerlaw.BPM.alpha": {
+    "display": "0.34",
+    "fmt": "{:.2f}",
+    "note": "BPM power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.3392386754107455
+  },
+  "powerlaw.BPM.r2": {
+    "display": "0.94",
+    "fmt": "{:.2f}",
+    "note": "BPM log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.9352417644624148
+  },
+  "powerlaw.CONSENSUS.alpha": {
+    "display": "0.31",
+    "fmt": "{:.2f}",
+    "note": "Consensus power-law exponent (center-robust steepness)",
+    "unit": null,
+    "value": 0.31456499970627394
+  },
+  "powerlaw.DBPM.alpha": {
+    "display": "0.31",
+    "fmt": "{:.2f}",
+    "note": "DBPM power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.3061140355463749
+  },
+  "powerlaw.DBPM.r2": {
+    "display": "0.96",
+    "fmt": "{:.2f}",
+    "note": "DBPM log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.9572635044528888
+  },
+  "powerlaw.GAME_SCORE.alpha": {
+    "display": "0.15",
+    "fmt": "{:.2f}",
+    "note": "Game Score power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.15267012138962954
+  },
+  "powerlaw.GAME_SCORE.r2": {
+    "display": "0.97",
+    "fmt": "{:.2f}",
+    "note": "Game Score log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.9708725267714183
+  },
+  "powerlaw.OBPM.alpha": {
+    "display": "0.52",
+    "fmt": "{:.2f}",
+    "note": "OBPM power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.5208439517269774
+  },
+  "powerlaw.OBPM.r2": {
+    "display": "0.88",
+    "fmt": "{:.2f}",
+    "note": "OBPM log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.8781540096676645
+  },
+  "powerlaw.PER.alpha": {
+    "display": "0.13",
+    "fmt": "{:.2f}",
+    "note": "PER power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.12512830483580292
+  },
+  "powerlaw.PER.r2": {
+    "display": "0.96",
+    "fmt": "{:.2f}",
+    "note": "PER log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.9592371645567462
+  },
+  "powerlaw.VORP.alpha": {
+    "display": "0.36",
+    "fmt": "{:.2f}",
+    "note": "VORP power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.3595551029492432
+  },
+  "powerlaw.VORP.r2": {
+    "display": "0.97",
+    "fmt": "{:.2f}",
+    "note": "VORP log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.9733716364857783
+  },
+  "powerlaw.WINS_PRED.alpha": {
+    "display": "0.28",
+    "fmt": "{:.2f}",
+    "note": "Wins-Predictive power-law exponent (center-robust steepness)",
+    "unit": null,
+    "value": 0.27788869465638355
+  },
+  "powerlaw.WS.alpha": {
+    "display": "0.23",
+    "fmt": "{:.2f}",
+    "note": "Win Shares power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.23441219823515588
+  },
+  "powerlaw.WS.r2": {
+    "display": "0.98",
+    "fmt": "{:.2f}",
+    "note": "Win Shares log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.978017975233786
+  },
+  "powerlaw.WS48.alpha": {
+    "display": "0.17",
+    "fmt": "{:.2f}",
+    "note": "WS/48 power-law exponent (value ~ rank^-alpha)",
+    "unit": null,
+    "value": 0.16646329039702445
+  },
+  "powerlaw.WS48.r2": {
+    "display": "0.92",
+    "fmt": "{:.2f}",
+    "note": "WS/48 log-log power-law fit R^2",
+    "unit": null,
+    "value": 0.9183987525391936
+  },
+  "powerlaw.n_systems": {
+    "display": "5",
+    "fmt": "{:d}",
+    "note": "systems whose value-vs-rank curve fits a power law",
+    "unit": null,
+    "value": 5
+  },
+  "powerlaw.non_systems": {
+    "display": "WS/48, BPM, OBPM",
+    "fmt": null,
+    "note": "names of systems whose value-vs-rank curve bends (not a power law)",
+    "unit": null,
+    "value": "WS/48, BPM, OBPM"
+  },
+  "powerlaw.systems": {
+    "display": "Game Score, PER, Win Shares, DBPM, VORP",
+    "fmt": null,
+    "note": "names of systems whose value-vs-rank curve fits a power law",
+    "unit": null,
+    "value": "Game Score, PER, Win Shares, DBPM, VORP"
   },
   "tail.BPM.skew": {
     "display": "1.05",

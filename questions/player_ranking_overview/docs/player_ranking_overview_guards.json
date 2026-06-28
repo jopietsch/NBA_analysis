@@ -4,10 +4,25 @@
     "ok": true,
     "value": 0.9719977244282626
   },
+  "cumulative_are_power_laws": {
+    "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
+    "ok": true,
+    "value": "WS/48, BPM, OBPM"
+  },
+  "cumulative_steeper_than_rate": {
+    "claim": "cumulative VORP falls off more steeply than rate-metric PER",
+    "ok": true,
+    "value": 0.23442679811344028
+  },
   "jokic_tops_consensus": {
     "claim": "Nikola Joki\u0107 tops the consensus rating",
     "ok": true,
     "value": "Nikola Joki\u0107"
+  },
+  "obpm_bends": {
+    "claim": "Offensive BPM bends rather than holding a straight power law",
+    "ok": true,
+    "value": 0.8781540096676645
   },
   "per_gamescore_close": {
     "claim": "PER and Game Score track closely (r > 0.75)",
@@ -18,6 +33,11 @@
     "claim": "the two ratings agree very closely (r > 0.95)",
     "ok": true,
     "value": 0.9778914552281261
+  },
+  "uber_concentration_between_rate_and_cumulative": {
+    "claim": "by center-robust steepness the consensus rating sits between PER and VORP",
+    "ok": true,
+    "value": 0.31456499970627394
   },
   "vorp_more_concentrated_than_per": {
     "claim": "VORP top-5% share far exceeds PER",

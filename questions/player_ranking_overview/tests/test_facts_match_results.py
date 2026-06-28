@@ -25,8 +25,11 @@ _RESULTS = os.path.join(_DOCS, "player_ranking_overview_results.md")
 # cov.n_systems = 8 (integer 8): the single digit "8" is filtered by _candidates
 # because len("8") == 1 and "8".isdigit(); "8.0" and "8.00" don't appear verbatim
 # in results.md's "Rating systems present: 8" line.
+# powerlaw.n_systems: same single-digit-integer case (5 of 8 systems fit a power
+# law); the count is reported in words in the section, not as a decimal.
 ALLOW_ABSENT: set[str] = {
     "cov.n_systems",
+    "powerlaw.n_systems",
 }
 
 

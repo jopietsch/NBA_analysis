@@ -26,13 +26,13 @@ The oldest and most available systems work entirely from the standard box score:
 
 **Win Shares (WS)** takes a different angle. Rather than measuring efficiency per minute, it allocates the team's actual wins back to individual players based on their offensive production and a defensive credit. The cumulative version (total Win Shares) grows with playing time; WS/48 normalizes it back to a per-minute rate.
 
-**Box Plus/Minus (BPM)** tries to estimate what a player's presence adds per 100 possessions compared to an average player, derived from box-score rates and adjusted for team quality. It splits into Offensive BPM and Defensive BPM. VORP extends it into a cumulative value by multiplying by playing time and comparing to a replacement-level player rather than an average one.
+**Box Plus/Minus (BPM)** tries to estimate what a player's presence adds per 100 possessions compared to an average player, derived from box-score rates and adjusted for team quality. It splits into Offensive BPM and Defensive BPM. VORP extends it into a cumulative value by multiplying by playing time and comparing to a replacement-level player rather than an average one. BPM exists in two versions; this report uses the current one, BPM 2.0 (see Appendix B).
 
 **Game Score** (also Hollinger) is a simpler per-game summary that weights each box-score category by its approximate value. It is not normalized.
 
 ### Impact metrics
 
-Box-score systems share a blind spot: they do not directly measure whether a player made their team better or worse. A prolific scorer who forces bad shots and plays poor defense can rate well on PER and WS. Lineup-based "impact" metrics try to fix this by measuring how the team's scoring margin changes when a player is on the floor versus off it, with various forms of regularization to handle the noise.
+Box-score systems share a blind spot: they do not directly measure whether a player made their team better or worse. A prolific scorer who forces bad shots and plays poor defense can rate well on PER and WS. Lineup-based "impact" metrics try to fix this by measuring how the team's scoring margin changes when a player is on the floor versus off it, with various forms of smoothing to handle the noise.
 
 All of the major impact metrics share the same technical backbone: Regularized Adjusted Plus/Minus (RAPM). The basic idea is to ignore individual stats entirely and look only at the scoreboard. Every time a lineup is on the floor, track whether the team outscores or gets outscored. Do that for every lineup combination across an entire season, then use a statistical model to work backward and assign each player their share of credit or blame, adjusting for the quality of teammates and opponents. The result is a per-possession estimate of how much the scoring margin changes when a player is on the floor versus an average player.
 
@@ -44,7 +44,7 @@ The catch is noise. One season of lineup data is not enough to reliably separate
 
 **EPM** (dunksandthrees) uses a RAPM calculation with a Bayesian prior built from a highly optimized Statistical Plus/Minus model that incorporates player-tracking data. EPM is the only public metric that directly optimizes the weighting of each underlying stat by how quickly it stabilizes, which is one reason it tends to perform well in retrodiction tests.
 
-**LEBRON** (BBall-Index) also uses a luck-adjusted RAPM with a box-score prior. "Luck adjustment" means the on/off data strips out the swing from whether shots happened to fall, rather than crediting the player for it. The prior coefficients come from PIPM (Player Impact Plus/Minus), an earlier metric by Jacob Goldstein that is no longer updated.
+**LEBRON** (BBall-Index) also uses a luck-adjusted RAPM with a box-score prior. "Luck adjustment" means the on/off data strips out the swing from whether shots happened to fall, rather than crediting the player for it. The prior weights come from PIPM (Player Impact Plus/Minus), an earlier metric by Jacob Goldstein that is no longer updated.
 
 **DARKO DPM** is best thought of as a projection system rather than a season average. Like baseball projection systems (PECOTA, Steamer), DARKO weights recent games more heavily and updates daily, so it answers "what is this player's current true talent?" more than "how did this player perform this season?" That distinction matters when comparing across systems.
 
@@ -52,7 +52,7 @@ The catch is noise. One season of lineup data is not enough to reliably separate
 
 **ESPN RPM** used RAPM with a box-score prior from Jeremias Engelmann, who also created the foundational RAPM dataset that most other systems calibrate against. ESPN stopped publishing RPM publicly around 2023.
 
-The core limitation across all these systems is sample size: a player's on/off data in one season is much noisier than their box-score totals. Regularization pulls noisy estimates toward a prior, which means the prior's assumptions matter a great deal, especially for players with limited minutes.
+The core limitation across all these systems is sample size: a player's on/off data in one season is much noisier than their box-score totals. That smoothing pulls noisy estimates toward the box-score baseline, which means the baseline's assumptions matter a great deal, especially for players with limited minutes.
 
 The prior-plus-RAPM structure is a form of Bayesian reasoning applied to a noisy measurement problem. The box-score prior is a starting belief about a player's value before seeing the lineup data. The on/off data is the evidence that updates that belief. The final estimate blends the two, with the weight on the data side growing as the sample of lineup possessions grows. A player with 3,000 possessions of lineup data gets pulled strongly toward what the data shows; a bench player with 400 possessions barely moves from the prior. This is why the best-performing metrics in retrodiction tests outperform simpler ones: the improvement comes not from more variables in the box-score formula, but from more carefully balancing how much to trust the prior versus the data.
 
@@ -74,15 +74,15 @@ The box-score systems mostly move in the same direction, but how tightly varies 
 
 Even the pairs that agree overall still hand out value differently player by player. Win Shares, which divides a team's actual wins among its players, favors efficient bigs on good teams: Domantas Sabonis and Ivica Zubac both rate well above their consensus rank in it. PER, a per-minute efficiency score, leans toward high-usage scorers, with Zion Williamson and Kristaps Porziņģis among its biggest risers. Two systems can land near each other in the overall order while still disagreeing about which individual players to credit.
 
-The exact correlation figures are in `docs/player_ranking_overview_results.md`.
+The exact figures are in `docs/player_ranking_overview_results.md`.
 
 ## 4. What the field has learned about evaluating these metrics
 
 Not all player rating systems are equally trusted, and the analytics community has developed two main ways to test whether a metric is actually measuring what it claims to measure.
 
-**Retrodiction** uses the first half of a season's games to predict game outcomes in the second half. A metric that genuinely captures player impact should let you predict which team wins when you know each team's lineup. This is the test used in the Dunks & Threes comparison study, which found EPM and RPM at the top, followed by RAPTOR and BPM 2.0. The structural feature that separated the top metrics from the rest: both used RAPM with a box-score prior, while lower-ranked metrics either skipped the prior or used only box-score data without the RAPM step.
+**Retrodiction** uses the first half of a season's games to predict game outcomes in the second half. A metric that genuinely captures player impact should let you predict which team wins when you know each team's lineup. This is the test used in the Dunks & Threes comparison study, which found EPM and RPM at the top, followed by RAPTOR and BPM 2.0. The top metrics shared a structural feature the others lacked: both used RAPM with a box-score prior, while lower-ranked metrics either skipped the prior or used only box-score data without the RAPM step.
 
-**Team wins prediction** aggregates player ratings to the team level and asks how well the total predicts actual wins. This is what the HoopsHype executive survey used to rank metrics by how closely each predicted actual team wins, and it is also the logic behind the wins-predictive rating built in this report.
+**Team wins prediction** aggregates player ratings to the team level and asks how well the total predicts actual wins. This is the logic behind the wins-predictive rating built in this report.
 
 Both tests reward the same thing: a RAPM backbone stabilized by a well-calibrated box-score prior. That combination handles the two main failure modes: pure box-score metrics miss what a player does off the ball, and pure RAPM is too noisy with one season of data.
 
@@ -90,7 +90,7 @@ One important result from the academic literature runs against the intuition tha
 
 ## 5. What each system uniquely sees
 
-Not all systems add independent information. The analysis of what each system adds beyond what the others already capture (see results) shows which systems see something genuinely different, and which are mostly duplicating one another.
+Not all systems add independent information. Measuring what each one adds beyond the others shows the eight box-score systems overlap heavily: most of what any single system says can be rebuilt from the rest. Offensive and Defensive BPM are the clearest case, since regular BPM is just their sum, so once you have two of the three the third tells you nothing new. Win Shares and WS/48 hold the most signal of their own, but even they share the large majority of their ranking with the field. The eight are closer to several views of one underlying thing than to eight independent opinions (see results for the full breakdown).
 
 The "system outliers" chart shows the players each system rates most above and below the consensus. This is where methodological differences become visible: a system that captures defensive value heavily will love rim protectors; a system that penalizes inefficient volume scoring will discount high-usage players with middling true shooting.
 
@@ -104,7 +104,7 @@ Each system uses a different scale (PER is centered around 15, BPM around 0, Win
 
 **Consensus rating:** the average normalized score across all systems. This measures what the crowd of methodologies agrees on, not what is best-supported by any one theory. The 2024-25 consensus top five: Nikola Jokić, Shai Gilgeous-Alexander, Giannis Antetokounmpo, James Harden, and Trae Young.
 
-**Wins-predictive rating:** a combination of those scores weighted by how well each system (aggregated to team level) predicts actual team wins. The two ratings agree very closely (0.98 on a 0-to-1 scale): they reach the same conclusions about the very best players. The wins-predictive rating pushes the stars on winning teams higher still. Shai Gilgeous-Alexander and Giannis Antetokounmpo rise the most, along with role players on strong teams like Daniel Gafford, Victor Wembanyama, and Alex Caruso. Players on losing teams slide the other way: Vasilije Micic and other deep-rotation players on poor teams rate lower on the wins-predictive scale than on the consensus, because their on-court production did not translate into team wins.
+**Wins-predictive rating:** a combination of those scores weighted by how well each system (aggregated to team level) predicts actual team wins. The two ratings agree very closely (0.98 on a 0-to-1 scale): they reach the same conclusions about the very best players. The wins-predictive rating pushes the stars on winning teams higher still. Shai Gilgeous-Alexander rises the most, with Giannis Antetokounmpo close behind, and Daniel Gafford, Victor Wembanyama, and Alex Caruso also move up. Players on losing teams slide the other way: Vasilije Micic and other deep-rotation players on poor teams rate lower on the wins-predictive scale than on the consensus, because their on-court production did not translate into team wins.
 
 ![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg){#fig-uber}
 
@@ -120,9 +120,25 @@ PER spreads relatively evenly among qualified 2024-25 players: the top 5% accoun
 
 Win Shares and VORP tell a different story. The top 5% of players hold about 15% of total Win Shares, and VORP concentrates far more steeply still: its top 5% hold about 32% of all positive value. Both lean toward the top because they multiply a rate by minutes played, and the best players lead in both.
 
-![Gini coefficients by system: Win Shares and VORP concentrate value at the top far more than rate metrics like PER or Game Score.](../generated/images/gini_by_system.svg){#fig-gini}
+These drop-offs are sometimes called power laws. The term has a precise meaning: value falls by a roughly constant percentage with each step down the ranks, so the drop from rank 1 to rank 2 is proportionally the same as from rank 10 to rank 20. When that holds there is no natural place to split "stars" from everyone else; the order just keeps shrinking at the same rate. The test is simple. Stretch both axes onto a log scale, and a power law turns into a straight line.
 
-The Gini coefficient measures how unequally a metric's value is distributed across players, on a scale from 0 (everyone rated the same) to 1 (one player holds all the value). A high Gini means the metric is top-heavy: the gap between the best player and an average one is large relative to the spread across the rest of the league. A low Gini means the metric treats most qualified players as roughly comparable, with only a small premium at the top. For this report the Gini chart makes a specific point: a metric's Gini tells you how much it will disagree with ordinal rank. Rate metrics like PER and Game Score have low Ginis, so ranks 10 through 50 are bunched close together in value. Cumulative metrics like Win Shares and especially VORP have higher Ginis, so the top handful of players are far ahead of everyone else in actual value, a gap that a ranked list, by construction, cannot show.
+By that test the systems fall into two groups, and the split lines up with the cumulative-versus-rate divide already described. Holding close to a straight line: Game Score, PER, Win Shares, DBPM, VORP. Bending instead: WS/48, BPM, OBPM.
+
+Win Shares and VORP are the steep power laws. Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down. PER and Game Score are power laws too, but so shallow that the line is nearly flat, which is the same reason their top 50 sit bunched close together in value.
+
+The benders are the plus/minus rate metrics: WS/48, BPM, OBPM. These measure how far above average a player is per possession, a quantity that is roughly even on both sides of the middle and has a natural size to it. Their best player is not a runaway: the top of the curve sits below where a straight power law would put it, and OBPM bends the most.
+
+So the shape tells you what the metric measures. A metric that piles up accumulated value tilts toward a few players at the top; a metric that scores distance from average has a built-in size and does not run away. The small panels below make the difference visible: the blue curves hold a straight line, the grey ones bow.
+
+![One small panel per system: blue curves are power laws (a straight line on a log scale), grey curves bend. Ordered by how steeply value falls, steepest first.](../generated/images/powerlaw_small_multiples.svg){#fig-powerlaw-sm}
+
+Two cautions. The cutoff between "power law" and "bends" is a convention, and the systems sitting right at it (DBPM just clears the line, BPM just misses) are really the same shape. And this is a description of 50 players in one season, not a formal test: it shows which curves are straight and which bend, not a proven law. The reliable read is the two groups and their order, not the label on any single borderline system.
+
+![Every system on one log-log chart, with each fitted power law drawn through it. Useful for comparing the slopes directly.](../generated/images/powerlaw_fits.svg){#fig-powerlaw .collapsible}
+
+An older, more familiar way to put a single number on concentration is the Gini coefficient (0 means everyone is rated the same, 1 means one player holds all the value). It is kept here only as a cross-check, because it has a real limit: it works for metrics that pile up a quantity that cannot drop below zero, like Win Shares or VORP, but not for the 0-centered metrics. On those (the BPM family and the two combined ratings) it counts every below-average player as a zero and inflates the score, which is why Consensus shows a Gini of 0.763, above Win Shares at 0.363, an ordering that is not real. The steepness read above is the one to trust. By it the combined ratings land in the middle of the pack: Consensus at 0.31 and Wins-Predictive at 0.28, steeper than PER at 0.13 but flatter than VORP at 0.36.
+
+![Gini coefficient by system, kept as a cross-check. It ranks the 0-centered metrics (the BPM family and the two combined ratings, outlined) near the top, but that is an artifact of how Gini handles below-average players, not real top-heaviness.](../generated/images/gini_by_system.svg){#fig-gini .collapsible}
 
 ![Each line shows a system's value as a percentage of its rank-1 player. Win Shares and VORP fall steeply; PER and BPM stay much flatter.](../generated/images/rank_value_distributions.svg){#fig-distributions}
 
@@ -140,7 +156,7 @@ The table below shows the top 20 players under each system and their raw score. 
 
 ## 9. A note on the recomputed formulas
 
-The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations. The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the high 20s). The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures. The relative rankings within each system are directionally correct.
+The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations. The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the low 30s). The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures. The relative rankings within each system are directionally correct.
 
 A Phase 3 planned improvement is to spot-check the recomputed values against BBR for 5-10 known players, and to tighten the BPM per-100-possession rate computation (currently using player-possession-based denominators rather than the team-possession-based denominators BBR uses). For comparison purposes (which system ranks whom higher or lower), the current implementation is sufficient. For absolute values, treat the recomputed BPM/VORP as approximations.
 
@@ -166,9 +182,9 @@ The impact metrics already apply Bayesian reasoning in one place. The box-score 
 
 Two things a more complete Bayesian treatment would add:
 
-**Uncertainty ranges.** Every metric publishes a single number (EPM: +8.2 per 100 possessions), with no range, no width. With one season of lineup data, the true uncertainty band around any RAPM-based estimate is roughly 2-3 points per 100 possessions. Publishing that range would make visible what the single number hides: the apparent disagreements between metrics about who ranks 8th versus 12th are often smaller than the uncertainty around any individual estimate. This does not mean the metrics are unreliable. It means the precision they imply is a display choice, not a statistical one, and that a lot of the apparent debate about player ranking is really shared uncertainty, not genuine disagreement.
+**Uncertainty ranges.** Every metric publishes a single number (EPM: +8.2 per 100 possessions), with no range, no width. With one season of lineup data, the true uncertainty band around any RAPM-based estimate is roughly 2-3 points per 100 possessions. Publishing that range would make visible what the single number hides: the apparent disagreements between metrics about who ranks 8th versus 12th are often smaller than the uncertainty around any individual estimate. This does not mean the metrics are unreliable. It means the precision they imply is a display choice, not a statistical one.
 
-**Playoff versus regular season.** The most useful Bayesian application is also the most practical. Box-score rate metrics (BPM, PER, true shooting percentage) can be computed separately for regular season and playoffs from standard box-score data and compared directly. The difference shows whether a player's production rose or fell when the stakes went up. For RAPM-based metrics the right approach is different: treat the full-season estimate as the prior and update it with playoff lineup data. The posterior barely shifts for a player who exits in the first round (roughly 6 games of new evidence), and moves more for a player who reaches the Finals (20-24 games). The shift (in which direction and by how much) is the honest answer to "did this player hold up in the playoffs?" without pretending there is more data than there is. A player whose posterior barely moves showed results consistent with the regular-season picture. A player whose posterior shifts meaningfully showed something different.
+**Playoff versus regular season.** The most useful Bayesian application is also the most practical. Box-score rate metrics (BPM, PER, true shooting percentage) can be computed separately for regular season and playoffs from standard box-score data and compared directly. The difference shows whether a player's production rose or fell when the stakes went up. For RAPM-based metrics the right approach is different: treat the full-season estimate as the prior and update it with playoff lineup data. The updated estimate barely shifts for a player who exits in the first round (roughly 6 games of new evidence), and moves more for a player who reaches the Finals (20-24 games). The shift (in which direction and by how much) is the honest answer to "did this player hold up in the playoffs?" without pretending there is more data than there is. A player whose updated estimate barely moves showed results consistent with the regular-season picture. A player whose updated estimate shifts meaningfully showed something different.
 
 **Better consensus weighting.** The wins-predictive rating in this report is a step toward what is sometimes called model averaging: instead of treating all systems as equally reliable, weight them by how well they predicted team wins. A more fully Bayesian version would estimate those weights from retrodiction performance across multiple seasons and update them as new data arrives. The practical difference at the top of the rankings is small, because the systems that predict team wins best already carry the most weight. But the principled foundation matters when choosing which metrics to trust for a specific question, particularly for players at the margins of the top tier.
 
@@ -178,3 +194,11 @@ Two things a more complete Bayesian treatment would add:
 - [System inventory and acquisition paths](player_ranking_overview_inventory.md)
 - [Methods and statistics](player_ranking_overview_stats_explainer.md)
 - [Source bibliography for the third-party metrics and studies](player_rating_resources.md)
+
+## Appendix B: The two versions of Box Plus/Minus
+
+Box Plus/Minus comes in two versions, both built by Daniel Myers for Basketball-Reference. The original, BPM 1.0, was published in 2014 and was the first widely available attempt to estimate a player's plus/minus impact from the box score alone. Basketball-Reference later replaced it with a revised version, BPM 2.0, and recomputed every season in its database with the new formula. The "BPM" throughout this report is BPM 2.0, the version in current use.
+
+The two differ in method, not just in tuning. BPM 1.0 first guessed each player's position (point guard through center) and offensive role from their stats, then applied weights that shifted with that position and role. BPM 2.0 reworked how it infers role and recalibrated its weights against a larger set of lineup plus/minus data, a revision meant to improve accuracy, particularly for players whose value comes from defense or from a role the box score describes poorly. Because 2.0 is the version Basketball-Reference now publishes, and the one its BPM and VORP figures reflect, it is the one this report recomputes.
+
+We looked at adding BPM 1.0 alongside it, to show how much a single system's verdicts move when only the formula changes, but did not. Basketball-Reference retired the original and no longer publishes its values, so there is nothing to import. And the position-and-role part of the formula is not cleanly documented in public sources: the reconstructions that circulate drop it, which collapses the metric into something close to a minutes-played ranking rather than a measure of skill. A faithful recompute would need the original full specification. If that becomes available, BPM 1.0 versus 2.0 is a natural addition.

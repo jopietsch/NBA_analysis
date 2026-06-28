@@ -13,6 +13,7 @@ Run after the analysis pipeline (which writes facts.json) and before
 import sys
 
 from nbakit.docs import render_all as _render_all
+from nbakit.docs import write_reference as _write_reference
 from nbakit.docs import main as _main
 
 FACTS_JSON = "docs/knicks_2026_historic_facts.json"
@@ -23,6 +24,12 @@ REFERENCE_TITLE = "Knicks 2026 historic facts reference"
 def render_all(facts_path: str = FACTS_JSON, annotate: bool = False) -> list[str]:
     """Render every ``docs/*.md.j2`` template (used by generate_report.py)."""
     return _render_all(facts_path, annotate=annotate)
+
+
+def write_reference(facts_path: str = FACTS_JSON, out_path: str = REFERENCE_MD,
+                    title: str = REFERENCE_TITLE) -> str:
+    """Write the facts reference table (used by the analysis pipeline)."""
+    return _write_reference(facts_path, out_path, title)
 
 
 if __name__ == "__main__":

@@ -57,8 +57,8 @@ Published values are available as structured files. We download and cache; no re
 | System | Availability | Coverage | Acquisition | Snapshot date |
 |---|---|---|---|---|
 | **RAPTOR** (FiveThirtyEight) | Results-only (auto) | 2013–14 to 2022–23 (FTE shut down April 2023) | GitHub: `fivethirtyeight/data` → `nba-raptor/` CSVs; one file per season | See source registry below |
-| **DARKO DPM** (Kostya Medvedovsky) | Results-only (snapshot) | 2013–14 to present | `https://darko.basketball` public results page; downloadable CSV or API query | Projection system (like PECOTA/Steamer), not a season average: weights recent games more heavily, updates daily. Compare with caution against season-average metrics. |
-| **DRIP** (Opta Analyst) | Results-only (auto) | 2021–22 to present | `https://theanalyst.com` — DRIP player ratings page; structured download available | Daily-updated like DARKO: now-casts current true talent rather than averaging the full season. Offensive and defensive components. |
+| **DARKO DPM** (Kostya Medvedovsky) | Results-only (snapshot) | 2013–14 to present | <https://darko.basketball> public results page; downloadable CSV or API query | Projection system (like PECOTA/Steamer), not a season average: weights recent games more heavily, updates daily. Compare with caution against season-average metrics. |
+| **DRIP** (Opta Analyst) | Results-only (auto) | 2021–22 to present | <https://theanalyst.com> — DRIP player ratings page; structured download available | Daily-updated like DARKO: now-casts current true talent rather than averaging the full season. Offensive and defensive components. |
 
 ---
 
@@ -117,13 +117,13 @@ Exact acquisition paths for each auto-download or snapshot source. Updated as ea
 
 | Source | URL / path | Acquisition method | Coverage | Last pulled |
 |---|---|---|---|---|
-| RAPTOR (FiveThirtyEight) | `https://github.com/fivethirtyeight/data/tree/master/nba-raptor` | `wget` or `requests.get` on per-season CSV URLs; filenames: `historical_RAPTOR_by_player.csv`, `modern_RAPTOR_by_player.csv` | 2013–14 to 2022–23 | TBD |
-| DARKO DPM | `https://darko.basketball/p/` | CSV export from public results page; or `requests.get` on undocumented JSON endpoint (inspect network tab) | 2013–14 to present | TBD |
-| DRIP (Opta Analyst) | `https://theanalyst.com/articles/nba-drip-daily-updated-rating-of-individual-performance` | Download link on the DRIP page; inspect for structured CSV/JSON endpoint | 2021–22 to present | TBD |
+| RAPTOR (FiveThirtyEight) | <https://github.com/fivethirtyeight/data/tree/master/nba-raptor> | `wget` or `requests.get` on per-season CSV URLs; filenames: `historical_RAPTOR_by_player.csv`, `modern_RAPTOR_by_player.csv` | 2013–14 to 2022–23 | TBD |
+| DARKO DPM | <https://darko.basketball/p/> | CSV export from public results page; or `requests.get` on undocumented JSON endpoint (inspect network tab) | 2013–14 to present | TBD |
+| DRIP (Opta Analyst) | <https://theanalyst.com/articles/nba-drip-daily-updated-rating-of-individual-performance> | Download link on the DRIP page; inspect for structured CSV/JSON endpoint | 2021–22 to present | TBD |
 | MVP vote share | `https://www.basketball-reference.com/awards/awards_{year}.html` | BBR scrape via `nbakit.bbr.get_soup()` | 1955–56 to present | TBD |
-| All-NBA / All-Star | `https://www.basketball-reference.com/awards/` | BBR scrape | 1946–47 to present | TBD |
-| EPM (dunksandthrees) | `https://dunksandthrees.com/epm` | Manual snapshot of visible table; paywalled rows excluded | TBD | TBD |
-| LEBRON (BBall-Index) | `https://bball-index.com/lebron/` | Manual snapshot of visible rankings | TBD | TBD |
+| All-NBA / All-Star | <https://www.basketball-reference.com/awards/> | BBR scrape | 1946–47 to present | TBD |
+| EPM (dunksandthrees) | <https://dunksandthrees.com/epm> | Manual snapshot of visible table; paywalled rows excluded | TBD | TBD |
+| LEBRON (BBall-Index) | <https://bball-index.com/lebron/> | Manual snapshot of visible rankings | TBD | TBD |
 | ESPN RPM | Wayback Machine archives of ESPN player stats | Manual or `requests.get` on archived URLs; verify availability | 2012–13 to ~2022–23 | TBD |
 | ESPN #NBArank | ESPN.com annual feature | Manual snapshot | Annual | TBD |
 | The Ringer Top 100 | The Ringer annual feature | Manual snapshot | Annual | TBD |
