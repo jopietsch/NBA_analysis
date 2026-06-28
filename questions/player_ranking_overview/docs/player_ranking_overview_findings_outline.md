@@ -9,59 +9,75 @@
 :::
 
 Internal outline. Cross-referenced to player_ranking_overview_results.md.
-Technical shorthand fine here.
+Technical shorthand fine here. Reflects the current 8-box-score-system pipeline
+(human rankings removed; impact metrics surveyed but not recomputed).
 
 ---
 
-## Structure
+## Structure (matches the 11 sections in the findings)
 
 ### § 1. Introduction
-- Hook: every NBA list ranks players in order, but ordinal rank hides how much bigger the gap is between #1 and #10 than between #10 and #20
-- Thesis: the systems agree on who the stars are, disagree on how much the rest of the roster matters; combining them reveals what each uniquely sees
+- Hook: ordinal rank compresses; the gap between #1 and #10 is not the gap between #10 and #20.
+- Thesis: two combined ratings answer two questions, what the systems agree on vs. which combination best predicts team wins.
+- Testbed: 2024-25; 8 box-score systems recomputed; impact metrics and human rankings surveyed but not included.
 
-### § 2. The landscape: what we're measuring and what we can't
-- Box-score recompute systems (PER, WS, BPM, VORP, Game Score) — what they measure, how they differ conceptually
-- Impact metrics (RAPTOR, DARKO, EPM, LEBRON, ESPN RPM) — what "+/-" lineups-based systems try to capture that box stats miss
-- Human rankings (MVP votes, All-NBA, media top-100) — reputation vs. production
-- Blind spot: tracking-based and proprietary models
+### § 2. The landscape of player rating
+- Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.
+- Impact metrics (surveyed, not recomputed): RAPTOR, EPM, LEBRON, DARKO, DRIP, ESPN RPM. RAPM backbone + box-score prior; noise/regularization.
+- Human rankings (surveyed, not included): MVP votes, All-NBA, media top-100.
+- Practitioner trust (external, cited in resources bibliography): HoopsHype survey of 29 execs, DARKO top at 8 votes; Dunks & Threes retrodiction order EPM > RPM > RAPTOR > BPM 2.0.
 
 ### § 3. Do the systems agree?
-- Spearman correlation matrix → they agree on the top 10-15 stars, diverge on the 50th-100th percentile
-- Key finding from results: [pull r-values from results.md]
-- "Agreement heatmap" chart reference
+- Spearman matrix. Tight: PER-Game Score 0.831, BPM-VORP 0.972. Moderate: PER-WS 0.759, WS-WS/48 0.695. Loose: PER-BPM 0.489, Game Score-BPM 0.469.
+- Player-level divergence even where overall correlation is high: WS favors efficient bigs (Sabonis +2.51, Zubac +1.98 vs. consensus); PER favors high-usage scorers (Zion +1.85, Porziņģis +1.43).
+- Chart: rank-agreement heatmap.
 
-### § 4. What each system uniquely sees
-- Unique R² table: which systems add independent signal vs. which are near-redundant
-- System outliers chart: players each system loves vs. consensus — likely a defender/playmaker split for box vs. impact models
-- Key finding: [pull from results.md — likely BPM/RAPTOR see defenders better than PER does]
+### § 4. What the field has learned about evaluating metrics
+- Two tests: retrodiction (first half predicts second half) and team-wins prediction.
+- Both reward RAPM backbone + calibrated box-score prior.
+- Academic caveat: complex metrics do not reliably beat simple ones as inputs to downstream salary/wins models.
 
-### § 5. The two uber ratings
-- Consensus (z-score average): what the crowd of systems agrees on
-- Wins-predictive: which combination of systems actually explains team wins
-- Comparison: where do they differ? (likely: wins-predictive rewards efficiency less, raw counting less, and team-context adjustment more)
-- Chart: scatter of the two
+### § 5. What each system uniquely sees
+- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.892; Game Score 0.888; VORP 0.871; WS 0.864; WS/48 0.837.
+- System-outliers chart: who each system rates above/below consensus (e.g. DBPM discounts the offensive stars: Jokić -3.66, Giannis -3.37, SGA -3.28).
 
-### § 6. The power of star players (distribution section)
-- Key result: cumulative metrics (WS, VORP, RAPTOR WAR) are right-skewed; rate metrics (PER, BPM) are near-normal among qualified players
-- Gini + top-5% share: stars hold outsized fraction of total value in cumulative systems
-- The rank-value chart: what ordinal flattening looks like visually
-- Plain-language explanation: why the #1 player is worth much more than being one spot above #2 implies
+### § 6. The two uber ratings
+- Consensus (average normalized score). Top 5: Jokić 3.13, SGA 2.72, Giannis 2.29, Harden 1.84, Young 1.70.
+- Wins-predictive (weighted by team-wins prediction). Top 5: Jokić 3.90, SGA 3.87, Giannis 3.30, Harden 2.15, Daniels 2.05.
+- Consensus vs. wins-predictive Spearman 0.978. Risers: SGA +1.14, Giannis +1.00, Gafford +0.92, Wembanyama +0.82, Caruso +0.80. Fallers: Micic -0.99, AJ Johnson -0.97, Cody Williams -0.90.
+- Illustration: Jokić tops both; SGA close second and the largest riser into wins-predictive.
 
-### § 7. Limitations and open questions
-- Crosswalk coverage for each third-party source
-- RAPM deferred
-- Single season testbed: multi-season needed to assess stability
-- Proprietary blind spot acknowledged
+### § 7. Stars matter more than rank implies (distribution section)
+- Rate metrics spread evenly: PER top-5% share 8.5% (Gini 0.159). Cumulative metrics top-heavy: WS top-5% 14.8% (Gini 0.363), VORP 31.9% (Gini 0.749); BPM also high (32.2%, Gini 0.767).
+- Charts: all-systems distributions, Gini by system, rank-value curves, ordinal-vs-value gap.
+- Point: cumulative metrics' high Gini is how much they disagree with ordinal rank.
+
+### § 8. Who lands in the top 20
+- Top-20-by-system table across the 8 systems; rank-1-to-rank-20 gap as a concentration read.
+
+### § 9. A note on the recomputed formulas
+- PER cleanest (mean ~15, Jokić high 20s). WS/BPM/VORP are approximations; absolute values differ from BBR.
+- VORP inflation for high-steal defenders: VORP rates Daniels further above consensus than any player (+2.81); per-100 denominator uses player-possessions not team-possessions. Also Ellis, Wallace, Dunn.
+
+### § 10. Limitations
+- Single-season testbed; multi-season needed for stability.
+- RAPM not recomputed; only impact signal is BPM as a box-score proxy.
+- Proprietary/tracking blind spot (Second Spectrum, Synergy, franchise models).
+- Playoff small-sample limit for RAPM-based metrics.
+
+### § 11. What a Bayesian lens would add
+- Uncertainty ranges: single-number metrics hide a ~2-3 pts/100 band; apparent 8th-vs-12th disputes often within it.
+- Playoff vs. regular season: update the full-season prior with playoff lineup data; posterior barely shifts on 6 games, more on a Finals run.
+- Better consensus weighting: estimate system weights from multi-season retrodiction.
 
 ---
 
-## Key numbers to pull from results.md (fill after pipeline runs)
+## Key numbers (from results.md)
 
-- N qualified players
-- Which systems are present
-- Spearman r between PER and BPM, PER and RAPTOR, BPM and RAPTOR
-- Top-5 consensus players
-- Top-5 wins-predictive players (compare to consensus)
-- Biggest consensus/wins-predictive divergences
-- Gini for WS, VORP vs. PER, BPM
-- Top-5% share for at least one cumulative and one rate metric
+- Players: 569 total, 375 qualified (>= 500 min). Systems present: 8.
+- Correlations: PER-Game Score 0.831, PER-WS 0.759, WS-WS/48 0.695, PER-BPM 0.489, Game Score-BPM 0.469, BPM-VORP 0.972.
+- Consensus top 5: Jokić 3.13, SGA 2.72, Giannis 2.29, Harden 1.84, Young 1.70.
+- Wins-predictive top 5: Jokić 3.90, SGA 3.87, Giannis 3.30, Harden 2.15, Daniels 2.05.
+- Consensus vs. wins-predictive Spearman: 0.978. Top riser SGA +1.14; top faller Micic -0.99.
+- Concentration (top-5% share / Gini): PER 8.5% / 0.159, WS 14.8% / 0.363, VORP 31.9% / 0.749, BPM 32.2% / 0.767.
+- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.892; Game Score 0.888; VORP 0.871; WS 0.864; WS/48 0.837.

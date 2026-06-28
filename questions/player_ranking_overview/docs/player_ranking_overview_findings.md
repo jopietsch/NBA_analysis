@@ -58,7 +58,7 @@ The prior-plus-RAPM structure is a form of Bayesian reasoning applied to a noisy
 
 The one thing this framework does not yet deliver is uncertainty. Every metric publishes a single number ("EPM: +8.2 per 100"), with no range around it. A fully Bayesian treatment would produce something like "+8.2, likely between +6.8 and +9.6, with the range reflecting how much one season of lineup data can vary by chance." That range would make visible what is currently hidden: the apparent disagreements between systems about who ranks 8th versus 12th are often smaller than the uncertainty band of any single metric. The rankings are noisier than they look.
 
-**Which metrics do practitioners trust?** A HoopsHype survey of 29 NBA front-office executives (2021) found DARKO DPM was the most preferred catch-all metric (8 respondents), followed by EPM and LEBRON. A retrodiction study by Dunks & Threes, comparing how well each metric predicts future game outcomes, put EPM first, followed by RPM, RAPTOR, and BPM 2.0 in that order. EPM and RPM were the only two metrics using RAPM directly with a Bayesian prior at the time of that study, which appears to be the structural feature that drives their edge over box-score-only approaches.
+**Which metrics do practitioners trust?** A HoopsHype survey of 29 NBA front-office executives (2021) found DARKO DPM was the most preferred catch-all metric (8 respondents), followed by EPM and LEBRON. A retrodiction study by Dunks & Threes, comparing how well each metric predicts future game outcomes, put EPM first, followed by RPM, RAPTOR, and BPM 2.0 in that order. EPM and RPM were the only two metrics using RAPM directly with a Bayesian prior at the time of that study, which appears to be the structural feature behind their edge over box-score-only approaches. (Both the survey and the retrodiction study are external published work, not recomputed here; full citations are in the [resources bibliography](player_rating_resources.md).)
 
 ### Human rankings
 
@@ -177,3 +177,4 @@ Two things a more complete Bayesian treatment would add:
 - [Full analysis output](player_ranking_overview_results.md)
 - [System inventory and acquisition paths](player_ranking_overview_inventory.md)
 - [Methods and statistics](player_ranking_overview_stats_explainer.md)
+- [Source bibliography for the third-party metrics and studies](player_rating_resources.md)
