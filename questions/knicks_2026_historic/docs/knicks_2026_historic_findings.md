@@ -41,7 +41,7 @@ themselves; see §6). Winning that series 4-1, even narrowly (+2.4 avg
 margin), was the hardest test of the run.
 
 All four opponents were essentially fully healthy when they played the Knicks
-(average availability 98%; the Spurs were at 100%), so injuries are not an
+(average availability 98%; the Spurs and Hawks were at 100%), so injuries are not an
 explanation for any of it.
 
 ![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
@@ -129,7 +129,8 @@ null PLUS_MINUS, margins are derived from PTS (both team rows per game).
 regular-season SRS (+6.05) would predict against those opponents (+2.38 expected
 per game), gives +12.5 pts/game of outperformance, 2nd all-time (98th pct)
 behind only the 2000–01 Lakers. Their playoff SRS was +17.53, an elevation of
-+11.48 above their regular-season SRS, also 2nd all-time. The Knicks didn't
++11.48 above their regular-season SRS, also 2nd all-time among champions (and the
+biggest jump in the 2026 field; see §6). The Knicks didn't
 just face the right opponents: they played far above their regular-season level.
 
 ![Strength of schedule, avg opponent SRS per champion](../generated/images/knicks_2026_opponent_srs_ranking.svg){width=100%}
@@ -172,7 +173,7 @@ The Knicks beat a team playing well above its own regular-season level.
 performance (excluding the Knicks series) gives a margin of +9.1 pts/game,
 narrowly the best on record (the 1986–87 Lakers are +9.0, so the top spot here
 is effectively a tie). The Knicks beat East opponents who were at or a bit below
-their season-long form, then beat the best playoff-performing team in the field.
+their season-long form, then beat the best-performing team they faced.
 
 ![Per-round raw vs. opponent-adjusted margins: adjustment using playoff SRS shifts the Finals story](../generated/images/knicks_2026_round_split.svg){width=100%}
 
@@ -183,7 +184,8 @@ their season-long form, then beat the best playoff-performing team in the field.
 The Knicks did not reach the Finals as a polished regular-season team that simply
 held form. By team rating (SRS, quality adjusted for schedule), they were only
 the fifth-strongest team in the playoff field during the regular season, at
-+6.05. In the playoffs they jumped to +17.53. That rise of **+11.48** was the
++6.05 (the table below lists notable risers, not the full regular-season order).
+In the playoffs they jumped to +17.53. That rise of **+11.48** was the
 largest of any team in the 2026 playoffs.
 
 The team they beat in the Finals made the second-biggest jump. The Spurs were a
@@ -248,7 +250,7 @@ mostly the same scoreline told from the bookmaker's side. The signal comes
 entirely from the first three rounds: 14-0 against the spread vs. East
 opponents, with the Finals exactly dead-on (covered 2 of 5).
 
-**But the two halves look nothing alike:**
+**The two halves are very different:**
 
 | Round | Opponent | Avg Spread | Avg Actual | ATS Margin | Cover |
 |-------|----------|-----------|------------|------------|-------|
@@ -322,15 +324,15 @@ other champion frozen at its exact career number.
 
 We also checked whether not knowing the opponents' exact strength matters: the
 opponent ratings come from full regular seasons, and re-running the re-draws
-while jostling each opponent's rating by its own margin of error barely moves
+while jostling each opponent's rating by roughly how uncertain it is barely moves
 the result (the #1 chance stays at about 60%). The wobble in this ranking is
 almost entirely the shortness of a 19-game run, not doubt about who the Knicks
 played.
 
 ![How often the 2025-26 run still ranks #1 when its games are re-drawn](../generated/images/knicks_2026_bootstrap_margin.svg){width=100%}
 
-**The fairest test treats every champion as uncertain, and it humbles the #1
-claim.** The checks above froze the other 42 champions at their exact numbers.
+**The fairest test treats every champion as uncertain, and it pulls the #1
+claim down.** The checks above froze the other 42 champions at their exact numbers.
 But those numbers are noisy too: a champion that looks like +10 might truly be +7
 or +13. When we pull every champion's number back toward the historical average
 based on how shaky it is, and then let all 43 compete while weighing everyone's
@@ -339,7 +341,7 @@ the time**. They land in the top three about 23% of the time and the top five
 about 34%; their most likely spot is near the bottom of the top ten, with a range
 that runs from 1st to deep in the pack.
 
-Why so much lower than the 60% above? Two reasons. The Knicks' run was streaky:
+The gap between 60% and 9% comes from two factors. The Knicks' run was streaky:
 huge blowouts in the sweeps next to a +2.4 Finals. A run that swings between
 blowouts and close games is harder to trust than a steady one, so this test pulls
 the margin back harder than the simple version above did: from +11.2 down to about +4.7,
@@ -365,7 +367,7 @@ their season-long scoring margins. If the Knicks' #1 hinges on that single
 choice, it is shaky. So we re-ran the whole opponent adjustment with two very
 different ratings and checked whether the answer held.
 
-**Wins-only (Bradley-Terry).** This system is fit from nothing but who beat whom;
+**Wins-only rating.** This system is fit from nothing but who beat whom;
 it never sees a single point margin. That makes it the cleanest test of one
 worry, that the Knicks' record margins are padded by garbage-time blowouts.
 They are not: on a pure wins-only basis the Knicks' opponent-adjusted dominance
@@ -386,8 +388,7 @@ Knicks in the top three, and across champions their adjusted margins move very
 closely together). The one thing that moves the Knicks off #1 is not switching from
 margins to wins, it is crediting opponents for late-season form: on full-season
 opponent quality the Knicks are first, and only when recent form is weighted
-heavily do they slip to third. That is the same lesson as §10: clearly elite,
-plausibly the best, but not the unambiguous #1 the single SRS number suggests.
+heavily do they slip to third.
 
 ![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){width=100%}
 
@@ -412,8 +413,7 @@ fewer losses.
 Almost nothing about the Knicks' regular season predicted this. They were
 "supposed" to lose around six or seven games on the way to a title they were not
 even favored to win; they lost three and were seriously tested only in the
-Finals. That is the §4–§5 margin story in win-loss terms: the Knicks played far
-above their regular-season level when it counted. (The exact percentages shift a
+Finals. (The exact percentages shift a
 little under a different assumed game-to-game swing, but the size of the
 overperformance does not.)
 
@@ -423,7 +423,7 @@ overperformance does not.)
 
 ## 13. What Does NOT Diminish the Run
 
-A 16-3 record invites deflation: the conference was weak, the bracket was soft, the opponents were hurt, the scoreboard was padded. Each is a fair objection, and each was tested. None of them holds up.
+A 16-3 record raises familiar objections: the conference was weak, the bracket was soft, the opponents were hurt, the scoreboard was padded. Each was tested; the data does not support any of them.
 
 | Objection | Verdict | Where |
 |---|---|---|
@@ -434,7 +434,7 @@ A 16-3 record invites deflation: the conference was weak, the bracket was soft, 
 | The high-scoring era inflated the margin | Mostly no. The scoring is better shooting, not a faster game; per possession both the raw and adjusted margins stay first. Only the harsher scoring-share adjustment drops the raw margin to 3rd. | §14 |
 | An opponent was injured | No. Opponents were 98% healthy on average; the Spurs and Hawks were at 100%. | §9 |
 
-The one thing that genuinely tempers the claim is not on this list. It is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about 9% of the time (§10–§11). The objections people raise for why the run means less all fail; what remains is only that 19 games is too short to settle first place against 43 years of champions.
+The one thing that genuinely tempers the claim is not on this list. It is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about 9% of the time (§10–§11).
 
 Each objection is treated in full, with why it seemed plausible and exactly what the data showed, in the companion document *The Investigation* (Appendix A).
 
@@ -485,8 +485,9 @@ margins but may differ if box-score point totals differ from game records.
 
 All analysis uses Python (pandas, numpy). Data from NBA.com via nba_api
 (LeagueGameFinder for game logs, LeagueStandingsV3 for standings). SRS
-(Simple Rating System) is solved as a least-squares linear system
-`(I − A) @ srs = mean_margin` constrained to `sum(srs) = 0`.
+(Simple Rating System) gives each team a single strength number by fitting the
+expected margins between teams to the actual game results across the full season,
+then scaling so all teams average to zero.
 
 See the Regression Results companion (Appendix A) for full numerical output and
 `knicks_2026_analysis.py` for all computation.
