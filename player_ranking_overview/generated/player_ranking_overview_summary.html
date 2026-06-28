@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-25">
+<meta name="dcterms.date" content="2026-06-27">
 
 <title>NBA Player Rating Systems: Summary</title>
 <style>
@@ -2193,7 +2193,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 25, 2026</p>
+      <p class="date">June 27, 2026</p>
     </div>
   </div>
   
@@ -2209,12 +2209,12 @@ vertical-align: -.125em;
 <em>Draft</em>
 </p>
 <p>There are more ways to rate an NBA player than most fans realize. Box-score systems like PER and Win Shares work from the standard statistics and can be computed back to the 1980s. Lineup-based impact metrics like RAPTOR, EPM, and DARKO try to capture what box stats miss, particularly defensive contribution. Human rankings from MVP voting and All-NBA selections measure reputation and narrative.</p>
-<p>This project tests all of these on the 2024-25 season. The core findings:</p>
-<p><strong>The systems mostly agree on the stars.</strong> At the very top of the distribution, the box-score systems and human rankings converge. The same players who lead in PER and Win Shares tend to lead in BPM and VORP, and to receive MVP votes.</p>
-<p><strong>They disagree in the middle.</strong> Defensive specialists who show up poorly in the box score but anchor lineups can rank 60th in PER and 20th in an impact metric. High-usage players on bad teams can rank 15th in Win Shares and 50th in an impact model that accounts for team quality. The systems genuinely see different things in the 20th-through-80th percentile range.</p>
-<p><strong>Cumulative metrics have a heavy tail.</strong> Rate stats like PER are nearly symmetric among qualified players. Cumulative metrics (Win Shares, VORP) concentrate almost all their value at the top: a small number of elite players hold a disproportionate share of total positive value. The player ranked first is not marginally better than the player ranked tenth; on a cumulative basis, the gap is often several times larger than the distance from tenth to fiftieth. Ordinal rankings hide this.</p>
-<p><strong>A consensus rating and a wins-predictive rating diverge on team context.</strong> When systems are combined into a single number, the two most natural approaches (average of normalized scores vs. weighted to predict team wins) agree strongly at the top but diverge based on team wins: the wins-predictive rating lifts players on winning teams and discounts players on losing teams, regardless of individual numbers.</p>
-<p>Full analysis, crosswalk coverage, and exact figures are in <code>player_ranking_overview_results.md</code>. Methods are in <code>player_ranking_overview_stats_explainer.md</code>.</p>
+<p>This project recomputes the box-score systems for the 2024-25 season and compares them; the impact metrics and human rankings are surveyed but not yet folded into the comparison. The core findings:</p>
+<p><strong>The systems mostly agree on the stars.</strong> At the very top, the box-score systems converge. The same handful of players (Nikola Jokić, Shai Gilgeous-Alexander, Giannis Antetokounmpo) rise to the top of nearly every system and of both combined ratings.</p>
+<p><strong>They disagree in the middle.</strong> Win Shares favors efficient big men on good teams (Domantas Sabonis, Ivica Zubac), while PER rewards high-usage scorers (Zion Williamson, Kristaps Porziņģis), so the same player can sit many spots apart in the two. The plus/minus systems, sensitive to steals, can rate a high-steal defender near the top while the rate metrics place him mid-pack. The systems genuinely see different things outside the very top tier.</p>
+<p><strong>Cumulative metrics concentrate value at the top.</strong> Rate stats like PER are spread fairly evenly among qualified players. Cumulative metrics (Win Shares, and especially VORP) pile much more of their value onto a small number of elite players. The player ranked first is not marginally better than the player ranked tenth; on a cumulative basis, the gap is often several times larger than the distance from tenth to fiftieth. Ordinal rankings hide this.</p>
+<p><strong>A consensus rating and a wins-predictive rating diverge on team context.</strong> When systems are combined into a single number, the two most natural approaches (a straight average of the systems vs. a version weighted to predict team wins) agree strongly at the top but diverge on team context: the wins-predictive rating lifts players on winning teams and discounts players on losing teams, regardless of individual numbers.</p>
+<p>Full analysis and exact figures are in <code>player_ranking_overview_results.md</code>. Methods are in <code>player_ranking_overview_stats_explainer.md</code>.</p>
 
 </main>
 <!-- /main column -->
