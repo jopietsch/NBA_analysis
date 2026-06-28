@@ -1,0 +1,191 @@
+# Knicks 2026 Historic Run — Findings Outline
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+Internal analyst reference. Cross-referenced to `knicks_2026_historic_results.md`. Update when findings prose or RESULTS change.
+
+---
+
+## §1. The Verdict (Up Front)
+
+- **Record:** << f("raw.wins") >>-<< f("raw.losses") >>, win rate << f("raw.win_rate") >>, << f("raw.win_rate_pct", "{:.0f}") >>th pct among << f("raw.n_champions") >> champions (1983-84 through 2025-26).
+- **Raw margin:** << f("raw.margin") >> pts/game, << f("raw.margin_pct", "{:.0f}") >>th pct (best in dataset).
+- **Adj margin (reg-SRS):** << f("adj.margin", "{:+.1f}") >> pts/game, << f("adj.margin_pct", "{:.0f}") >>th pct (best in dataset). Opp SRS weighted by games played per series.
+- **Pace caveat:** 2025-26 is highest-scoring era (<< f("scoring.2026") >> pts/team/game); but possessions only ~4% above average — efficiency, not pace. Per-100-poss margin stays #1.
+- **East strength:** West-East SRS gap << f("gap.west_east") >> pts/game = << f("gap.pct", "{:.0f}") >>th pct of West dominance (below historical mean << f("gap.mean") >>). East was not weak.
+- **Health:** All four opponents essentially fully healthy (avg << f("health.avg") >>%). No injury asterisk.
+- **Spurs:** Final-round opponent elevated from reg-SRS << f("round.finals.opp_reg_srs") >> to playoff SRS << f("round.finals.opp_po_srs") >> — the biggest improvement of any Knicks opponent.
+- knicks_2026_historic_results.md refs: §1 THE RAW CLAIM, §10 VERDICT
+
+## §2. The Raw Numbers
+
+- << f("raw.wins") >>-<< f("raw.losses") >> record; win rate << f("raw.win_rate") >> vs. champion mean << f("raw.win_rate_mean") >>; best (2016-17 Warriors) << f("raw.win_rate_best") >>.
+- << f("raw.margin") >> pts/game margin, << f("raw.margin_pct", "{:.0f}") >>th pct; mean among champions << f("raw.margin_mean") >> pts/game.
+- 95% CI on margin (<< f("ats.n_total") >> games): [<< f("raw.margin_ci.lo") >>, << f("raw.margin_ci.hi") >>]. Even lower bound ranks << f("raw.ci_lo_pct") >>rd pct.
+- Round breakdown: Hawks 4-2 (<< f("round.r1.raw") >>), 76ers 4-0 (<< f("round.r2.raw") >>), Cavaliers 4-0 (<< f("round.cf.raw") >>), Spurs 4-1 (<< f("round.finals.raw") >>).
+- Finals: << f("finals.close_by4") >> of << f("finals.total_games") >> games decided by 4 pts or fewer.
+- knicks_2026_historic_results.md refs: §1 THE RAW CLAIM
+
+## §3. Was the East Weak?
+
+- West-East SRS gap << f("gap.west_east") >> pts/game = << f("gap.pct", "{:.0f}") >>th pct. Historical mean << f("gap.mean") >>, std << f("gap.std") >>. Well within normal variation (z = << f("gap.z_score") >>).
+- East inter-conference win rate << f("gap.east_h2h") >> (near parity). << f("gap.east_h2h_pct", "{:.0f}") >>th pct (100th = worst for East).
+- Top 3 most West-dominant: 2013-14 (<< f("gap.top1.srs") >>), 2003-04 (<< f("gap.top2.srs") >>), 2000-01 (<< f("gap.top3.srs") >>). 2025-26 well below those.
+- Knicks games-weighted opp SRS << f("opp.srs_weighted") >> = << f("opp.srs_pct", "{:.0f}") >>th pct among champions (mean << f("opp.srs_mean") >>). Schedule at historical median.
+- knicks_2026_historic_results.md refs: §2 WAS THE EAST WEAK, §3 HOW WEAK IS THE EAST HISTORICALLY, §4 WHO DID THE KNICKS BEAT
+
+## §4. Opponent-Adjusted Dominance
+
+- Adj margin << f("adj.margin") >> pts/game (raw << f("adj.raw_margin") >> minus games-wtd opp SRS << f("adj.opp_srs") >>) = << f("adj.margin_pct", "{:.0f}") >>th pct.
+- Top 5: 2025-26 << f("adj.top1.margin") >>, 2016-17 Warriors << f("adj.top2.margin") >>, 1986-87 Lakers << f("adj.top3.margin") >>, 1990-91 Bulls << f("adj.top4.margin") >>, 1985-86 Celtics << f("adj.top5.margin") >>.
+- Playoff overperformance vs. reg-SRS prediction: << f("overperf.margin") >> pts/game, << f("overperf.pct") >>th pct (2nd all-time behind 2000-01 Lakers << f("overperf.best") >>).
+- Playoff SRS << f("elev.knicks.po_srs") >> vs. reg-season SRS << f("elev.knicks.reg_srs") >> = elevation << f("elev.knicks.elevation") >>, << f("elev.pct") >>th pct (2nd all-time, behind 2000-01 << f("elev.best") >>).
+- knicks_2026_historic_results.md refs: §5 OPPONENT-ADJUSTED DOMINANCE
+
+## §5. Was the East Weak in the Playoffs?
+
+- Each opponent's playoff SRS computed excluding Knicks series (independent read). Hawks excluded (no other playoff games).
+- 76ers: reg SRS << f("round.r2.opp_reg_srs") >>, playoff SRS << f("round.r2.opp_po_srs") >> (gap -1.16); Cavaliers: reg << f("round.cf.opp_reg_srs") >>, playoff << f("round.cf.opp_po_srs") >> (gap -1.45). Both slight dips but based on few games.
+- Spurs: reg SRS << f("round.finals.opp_reg_srs") >>, playoff SRS << f("round.finals.opp_po_srs") >> (gap +6.20) — based on full West bracket, most independent. Biggest improvement of any Knicks opponent.
+- Full-run playoff-SRS-adjusted margin: << f("adj_po.margin") >> pts/game, << f("adj_po.margin_pct", "{:.0f}") >>th pct. Effectively tied with 1986-87 Lakers +8.99.
+- knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (playoff SRS table)
+
+## §6. Both Finalists Were the Biggest Risers
+
+- Knicks: reg SRS << f("field.knicks.reg_srs") >> → playoff SRS << f("field.knicks.po_srs") >>, elevation << f("field.knicks.elevation") >> — largest of any 2026 playoff team.
+- Spurs: reg SRS << f("field.spurs.reg_srs") >> → playoff SRS << f("field.spurs.po_srs") >>, elevation << f("field.spurs.elevation") >> — second largest.
+- OKC led regular season (<< f("field.thunder.reg_srs") >>) but barely changed (<< f("field.thunder.elevation") >> elevation).
+- Finals paired the two biggest risers in the field, not the two best regular-season teams.
+- Note: Spurs playoff SRS here (<< f("field.spurs.po_srs") >>) includes the Knicks series; the §5 independent measure (<< f("round.finals.opp_po_srs") >>) excludes it.
+- knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (field elevation table)
+
+## §7. Other Context
+
+- Clutch (decided by <=5 pts): << f("clutch.rate", "{:.1%}") >> of games, << f("clutch.pct") >>th pct (mean << f("clutch.mean") >>).
+- Home: << f("home.games") >> games, << f("home.wr", "{:.1%}") >> win rate, << f("home.wr_pct", "{:.0f}") >>rd pct vs. champions (below average at home).
+- Away: << f("away.games") >> games, << f("away.wr", "{:.1%}") >> win rate, << f("away.wr_pct") >>th pct (better than all but one champion).
+- The road dominance is the unusual piece; the home number is ordinary.
+- knicks_2026_historic_results.md refs: §7 OTHER DEFLATORS
+
+## §8. What the Betting Market Said
+
+- << f("ats.n_covered") >>-<< f("raw.losses") >> ATS; avg beat spread by << f("ats.avg_margin") >> pts/game across << f("ats.n_total") >> games.
+- ATS vs. East rounds: << f("east.games") >>-0 (R1 << f("ats.r1.covers") >> << f("ats.r1.ats") >>, R2 << f("ats.r2.covers") >> << f("ats.r2.ats") >>, CF << f("ats.cf.covers") >> << f("ats.cf.ats") >>).
+- Finals ATS: 2-5, avg margin essentially on the spread (<< f("ats.finals.actual") >> actual vs. << f("ats.finals.spread") >> spread).
+- Note: ATS margin is not independent of raw margin — it's the same scoreline minus a near-zero spread. Also series correlation reduces effective sample from << f("ats.n_total") >> to ~<< f("ats.n_eff", "{:.0f}") >>.
+- knicks_2026_historic_results.md refs: §12 BETTING-MARKET EXPECTATIONS
+
+## §9. Opponent Health (No Injury Asterisk)
+
+- Availability: Hawks << f("health.hawks") >>%, 76ers << f("health.76ers") >>%, Cavaliers << f("health.cavs") >>%, Spurs << f("health.spurs") >>%.
+- Avg << f("health.avg") >>%; most depleted was 76ers at << f("health.76ers") >>%. Spurs fully intact.
+- Definition: rotation players averaging >=15 min/game across all their 2025-26 playoff appearances.
+- knicks_2026_historic_results.md refs: §11 OPPONENT PLAYER AVAILABILITY
+
+## §10. How Solid Is the #1 Ranking?
+
+- Bootstrap (20,000 re-draws): #1 in << f("boot.p_rank1") >>% of re-runs; top 3 in << f("boot.p_top3") >>%; top 5 in << f("boot.p_top5") >>%. 90% interval on adj margin: [<< f("boot.ci.lo") >>, << f("boot.ci.hi") >>].
+- Empirical-Bayes shrinkage: << f("ats.n_total") >> games pin down only << f("shrink.weight_data") >>% of estimate; shrunken margin << f("shrink.post_mean") >> pts/game (95% CI [<< f("shrink.ci.lo") >>, << f("shrink.ci.hi") >>]), still beats << f("shrink.pct_above") >>% of champions.
+- Adding opponent-SRS uncertainty barely moves result: #1 chance stays ~<< f("se_boot.p_rank1") >>%. Game variance dominates.
+- Hierarchical (partial-pooling) test — every champion treated as uncertain: Knicks posterior mean << f("hier.post_mean") >> pts/game (90% CI [<< f("hier.ci.lo") >>, << f("hier.ci.hi") >>]). P(true #1) = << f("hier.p_rank1", "{:.0f}") >>%. P(top 3) = << f("hier.p_top3") >>%. Median rank << f("hier.rank_median") >>.
+- Streakiness (huge sweeps + tight Finals) makes the run weaker evidence than a steady one — hence the hard pull from << f("adj.margin", "{:+.1f}") >> to ~<< f("hier.post_mean", "{:+.1f}") >> in the hierarchical model.
+- Honest bottom line: clearly elite, very likely top-handful all-time, but data cannot crown them the single best. Chance of being true #1 runs from ~<< f("boot.p_rank1", "{:.0f}") >>% (holding history fixed) to ~<< f("hier.p_rank1", "{:.0f}") >>% (fairest test).
+- knicks_2026_historic_results.md refs: §13 ROBUSTNESS, §14 HIERARCHICAL
+
+## §11. A Second Opinion: Other Rating Systems
+
+- Bradley-Terry (wins-only, no margins): Knicks adj margin << f("bt.adj_margin") >>, rank #<< f("bt.rank") >> of << f("raw.n_champions") >>. Correlation with SRS-adjusted: << f("bt.corr_srs") >>. Blowouts are not an artifact — dominance is real.
+- Elo (recency-weighted): opp rating << f("elo.opp_rating") >> (tougher than SRS's << f("opp.srs_weighted") >> — opponents played well down the stretch). Elo-adjusted margin << f("elo.adj_margin") >>, rank #<< f("elo.rank") >> of << f("raw.n_champions") >> (behind 2016-17 Warriors and 1990-91 Bulls).
+- All three systems put Knicks in top three. What shifts them off #1 is crediting opponents' recent form (Elo), not stripping out margins (BT).
+- knicks_2026_historic_results.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §17 POSSESSIONS-BASED PACE
+
+## §12. How Unlikely Was a 16-3 Run?
+
+- Forward model (reg-season SRS only): Knicks given only << f("winprob.p_title") >>% title probability (Spurs out-rated them in regular season).
+- Expected losses in title run: << f("winprob.exp_losses") >> (actual: << f("raw.losses") >>). P(championship run losing <=3 games): << f("winprob.p_le3_given_title") >>%. P(title AND <=3 losses): << f("winprob.p_title_and_le3") >>%.
+- Echoes the margin overperformance in §4: the Knicks played far above their regular-season level.
+- knicks_2026_historic_results.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL
+
+## §13. What Does NOT Diminish the Run
+
+- Synthesis section (prose only, no new RESULTS analysis): scorecard of the six deflationary objections, each with a verdict and a pointer to the section that tests it.
+- East weak → no (§3, gap << f("gap.west_east") >>); bracket soft → no (§3–§4, opp SRS << f("opp.srs_weighted") >>, << f("opp.srs_pct", "{:.0f}") >>th pct); early-round teams fading → a little at the edges (§5, 76ers/Cavs ~1.2–1.5 below on few games, Spurs +6.2); margins padded → no (§11, wins-only #1); scoring-era inflation → mostly no (§14, per-possession still #1); opponent injured → no (§9, << f("health.avg") >>% health).
+- The one genuine caveat is not on the list: 19-game small sample → single best only ~<< f("hier.p_rank1", "{:.0f}") >>% under the fairest test (§10–§11).
+- Full per-objection treatment lives in the companion doc `knicks_2026_historic_investigation.md`.
+- knicks_2026_historic_results.md refs: none new (points to §3, §4, §5, §9, §11, §13, §14 of RESULTS via the cited findings sections).
+
+## §14. Limitations
+
+- << f("ats.n_total") >> games: wide CI. Comparison set only << f("raw.n_champions") >> champions.
+- Pre-1997: PLUS_MINUS null; derived from PTS (algebraically exact for game margins).
+- Era scoring: 2025-26 at << f("scoring.2026") >> pts/team/game (historical mean << f("scoring.mean") >>). Scoring-share adjustment drops raw margin from #1 to #3; possessions-based (correct) keeps it #1.
+- Playoff-SRS adjustment for §5 (opponent independent form) excludes Hawks (no independent data). Hawks series reads as raw only.
+
+## §15. Methodology
+
+- Python (pandas, numpy). Data via nba_api (LeagueGameFinder, LeagueStandingsV3).
+- SRS: least-squares system (I − A) @ srs = mean_margin, constrained to sum = 0.
+- Full details in knicks_2026_historic_results.md (linked as a companion doc, not inlined) and knicks_2026_analysis.py.
+
+## Appendix A: Companion Documents
+
+- Findings now end with "Appendix A: Companion Documents" linking the standalone Regression Results (RESULTS), The Investigation, the one-page Summary, the Stats Explainer, and this Outline.
+- The report is built with `include_appendix=False`: RESULTS is no longer inlined as a report appendix; it is a linked companion doc.
+
+---
+
+## Key Numbers Registry
+
+Cross-reference table: each row maps a prose claim to its authoritative value in `knicks_2026_historic_results.md`.
+`update_registry_lines.py` (PostToolUse hook) auto-updates the first line number in "Findings location" whenever `knicks_2026_historic_findings.md` is edited.
+
+| ID  | Findings location | Prose claim | knicks_2026_historic_results.md section | Authoritative value |
+|-----|------------------|-------------|-------------------|---------------------|
+| K01 | §1 L15  | << f("raw.wins") >>-<< f("raw.losses") >>, << f("raw.win_rate_pct", "{:.0f}") >>th pct win rate | §1 THE RAW CLAIM | win rate << f("raw.win_rate") >>; << f("raw.win_rate_pct") >>th pct; mean << f("raw.win_rate_mean") >> |
+| K02 | §1 L16  | << f("raw.margin") >> pts/game raw margin, highest ever | §1 THE RAW CLAIM | << f("adj.raw_margin") >> pts/game, << f("raw.margin_pct", "{:.0f}") >>th pct |
+| K03 | §1 L18 | CI [<< f("raw.margin_ci.lo") >>, << f("raw.margin_ci.hi") >>] | §1 THE RAW CLAIM | 95% CI [<< f("raw.margin_ci.lo") >>, << f("raw.margin_ci.hi") >>] (t-interval, << f("ats.n_total") >> games) |
+| K04 | §1 L24 | adj margin << f("adj.margin", "{:+.1f}") >> pts/game, first all-time | §5 OPPONENT-ADJUSTED | adj margin << f("adj.margin") >>, << f("adj.margin_pct", "{:.0f}") >>th pct |
+| K05 | §3 L84 | West-East SRS gap << f("gap.west_east") >>, << f("gap.pct", "{:.0f}") >>th pct | §3 HOW WEAK IS THE EAST | gap << f("gap.west_east") >>, << f("gap.pct") >>th pct; mean << f("gap.mean") >> |
+| K06 | §1 L29 | << f("gap.pct_more_dominant") >> of seasons West more dominant | §3 HOW WEAK IS THE EAST | << f("gap.pct") >>th pct West dominance → 62.8% more dominant |
+| K07 | §1 L38 | Spurs SRS << f("field.spurs.reg_srs") >> reg → << f("field.spurs.po_srs") >> playoff | §6 ROUND-BY-ROUND (field elevation table) | Spurs reg << f("field.spurs.reg_srs") >>, playoff SRS << f("field.spurs.po_srs") >> (incl. Knicks series), elev << f("field.spurs.elevation") >> |
+| K08 | §1 L44 | avg opponent availability << f("health.avg") >>% | §11 OPPONENT PLAYER AVAILABILITY | avg health << f("health.avg") >>% |
+| K09 | §2 L56 | win rate << f("raw.win_rate") >> vs. mean << f("raw.win_rate_mean") >> | §1 THE RAW CLAIM | mean << f("raw.win_rate_mean") >>; best << f("raw.win_rate_best") >> |
+| K10 | §2 L71 | << f("finals.close_by4") >> of << f("finals.total_games") >> Finals games decided by 4 pts or fewer | §7 OTHER DEFLATORS | not directly; << f("clutch.rate", "{:.1%}") >> games <=5 pts |
+| K11 | §3 L89 | most West-dominant: 2013-14 << f("gap.top1.srs") >> | §3 HOW WEAK IS THE EAST | top 3: 13-14 << f("gap.top1.srs") >>, 03-04 << f("gap.top2.srs") >>, 00-01 << f("gap.top3.srs") >> |
+| K12 | §3 L94 | opp SRS << f("opp.srs_weighted") >>, << f("opp.srs_pct", "{:.0f}") >>th pct | §4 WHO DID THE KNICKS BEAT | games-wtd opp SRS << f("opp.srs_weighted") >>, << f("opp.srs_pct") >>th pct |
+| K13 | §4 L120 | Warriors adj << f("adj.top2.margin", "{:+.1f}") >> (2nd) | §5 OPPONENT-ADJUSTED (top 5) | 16-17: adj << f("adj.top2.margin") >> |
+| K14 | §4 L130 | overperformance << f("overperf.margin", "{:+.1f}") >> pts/game, 2nd all-time | §5 OPPONENT-ADJUSTED (overperf) | << f("overperf.margin") >> pts/game, << f("overperf.pct") >>th pct |
+| K15 | §4 L132 | elevation << f("elev.knicks.elevation") >>, 2nd all-time | §8 PLAYOFF SRS AND ELEVATION | elev << f("elev.knicks.elevation") >>, << f("elev.pct") >>th pct; best 2000-01 << f("elev.best") >> |
+| K16 | §5 L172 | playoff-SRS-adj margin << f("adj_po.margin", "{:+.1f}") >> pts/game, best | §6 ROUND-BY-ROUND (full-run po-SRS adj) | << f("adj_po.margin") >> pts/game, << f("adj_po.margin_pct", "{:.0f}") >>th pct; 86-87 +8.99 |
+| K17 | §5 L166 | Spurs reg << f("round.finals.opp_reg_srs") >>, playoff << f("round.finals.opp_po_srs", "{:+.1f}") >>, +6.2 jump | §6 ROUND-BY-ROUND (opp SRS table) | Spurs PO SRS << f("round.finals.opp_po_srs") >>, gap +6.20 |
+| K18 | §6 L186 | Knicks elevation << f("field.knicks.elevation") >>, largest in 2026 field | §6 ROUND-BY-ROUND (field elevation) | Knicks << f("field.knicks.elevation") >>, Spurs << f("field.spurs.elevation") >>, Blazers << f("field.blazers.elevation") >> |
+| K19 | §6 L191 | Spurs climbed to playoff SRS << f("field.spurs.po_srs") >>, rise << f("field.spurs.elevation") >> | §6 ROUND-BY-ROUND (field elevation) | Spurs reg << f("field.spurs.reg_srs") >>, PO << f("field.spurs.po_srs") >>, elev << f("field.spurs.elevation") >> |
+| K20 | §6 L205 | OKC led regular season (<< f("field.thunder.reg_srs") >>), barely changed (<< f("field.thunder.elevation") >>) | §6 ROUND-BY-ROUND (field elevation) | OKC reg << f("field.thunder.reg_srs") >>, PO << f("field.thunder.po_srs") >>, elev << f("field.thunder.elevation") >> |
+| K21 | §7 L220 | << f("clutch.rate", "{:.1%}") >> games decided by <=5 pts, << f("clutch.pct") >>th pct | §7 OTHER DEFLATORS | << f("clutch.rate") >>; << f("clutch.pct") >>th pct; mean << f("clutch.mean") >> |
+| K22 | §7 L224 | home win rate << f("home.wr", "{:.1%}") >>, << f("home.wr_pct", "{:.0f}") >>rd pct | §7 OTHER DEFLATORS | home << f("home.games") >>G, << f("home.wr") >>, << f("home.wr_pct") >>th pct |
+| K23 | §7 L226 | away win rate << f("away.wr", "{:.1%}") >>, << f("away.wr_pct", "{:.0f}") >>th pct | §7 OTHER DEFLATORS | away << f("away.games") >>G, << f("away.wr") >>, << f("away.wr_pct") >>th pct |
+| K24 | §8 L239 | beat spread by avg << f("ats.avg_margin") >> pts/game | §12 BETTING-MARKET | avg ATS margin << f("ats.avg_margin") >>; ATS record << f("ats.n_covered") >>-<< f("raw.losses") >> |
+| K25 | §8 L248 | << f("east.games") >>-0 ATS vs. East opponents | §12 BETTING-MARKET (round-by-round ATS) | R1 << f("ats.r1.covers") >>, R2 << f("ats.r2.covers") >>, CF << f("ats.cf.covers") >> = << f("east.games") >>-0 |
+| K26 | §8 L249 | Finals dead-on: 2-5 ATS | §12 BETTING-MARKET (round-by-round ATS) | Finals << f("ats.finals.covers") >>; avg margin << f("ats.finals.actual") >> vs. spread << f("ats.finals.spread") >> |
+| K27 | §9 L290 | avg opponent health << f("health.avg") >>% | §11 OPPONENT PLAYER AVAILABILITY | avg << f("health.avg") >>%; Spurs << f("health.spurs") >>% |
+| K28 | §9 L292 | close Finals margin << f("finals.raw") >> reflects real competition | §11 OPPONENT PLAYER AVAILABILITY | Spurs << f("health.spurs") >>% health confirmed |
+| K29 | §10 L306 | #1 in << f("boot.p_rank1", "{:.0f}") >>% of bootstrap re-runs | §13 ROBUSTNESS (bootstrap rank) | P(rank #1) = << f("boot.p_rank1") >>% |
+| K30 | §10 L306 | top 3 in << f("boot.p_top3", "{:.0f}") >>% | §13 ROBUSTNESS | P(top 3) = << f("boot.p_top3") >>% |
+| K31 | §10 L307 | top 5 in << f("boot.p_top5", "{:.0f}") >>% | §13 ROBUSTNESS | P(top 5) = << f("boot.p_top5") >>% |
+| K32 | §10 L309 | adj margin range [<< f("boot.ci.lo", "{:+.1f}") >>, << f("boot.ci.hi", "{:+.1f}") >>] | §13 ROBUSTNESS | 90% interval [<< f("boot.ci.lo") >>, << f("boot.ci.hi") >>] |
+| K33 | §10 L316 | shrunken margin << f("shrink.post_mean", "{:+.1f}") >>/game | §13 ROBUSTNESS (EB shrinkage) | posterior << f("shrink.post_mean") >>; 95% CI [<< f("shrink.ci.lo") >>, << f("shrink.ci.hi") >>] |
+| K34 | §10 L316 | shrinkage range [<< f("shrink.ci.lo", "{:+.1f}") >>, << f("shrink.ci.hi", "{:+.1f}") >>] | §13 ROBUSTNESS | 95% credible interval [<< f("shrink.ci.lo") >>, << f("shrink.ci.hi") >>] |
+| K35 | §10 L337 | hierarchical: Knicks true #1 only ~<< f("hier.p_rank1", "{:.0f}") >>% | §14 HIERARCHICAL | P(true #1) = << f("hier.p_rank1") >>%; posterior mean << f("hier.post_mean") >> |
+| K36 | §10 L345 | hierarchical pulls from << f("adj.margin", "{:+.1f}") >> down to ~<< f("hier.post_mean", "{:+.1f}") >> | §14 HIERARCHICAL | Knicks posterior << f("hier.post_mean") >>; 90% CI [<< f("hier.ci.lo") >>, << f("hier.ci.hi") >>] |
+| K37 | §11 L371 | wins-only (BT): Knicks #<< f("bt.rank") >> of << f("raw.n_champions") >> | §16 WINS-ONLY (BRADLEY-TERRY) | BT adj << f("bt.adj_margin") >>, rank #<< f("bt.rank") >>; corr with SRS << f("bt.corr_srs") >> |
+| K38 | §11 L381 | Elo-adjusted margin << f("elo.adj_margin", "{:+.1f}") >>/game, << f("elo.rank") >>rd | §15 ELO CROSS-CHECK | Elo adj << f("elo.adj_margin") >>, rank #<< f("elo.rank") >>; opp rating << f("elo.opp_rating") >> |
+| K39 | §12 L406 | model gave Knicks only << f("winprob.p_title", "{:.0f}") >>% title probability | §18 SERIES-LEVEL WIN-PROBABILITY | P(title) = << f("winprob.p_title") >>% |
+| K40 | §12 L408 | only << f("winprob.p_le3_given_title", "{:.0f}") >>% of model championship runs that clean | §18 SERIES-LEVEL WIN-PROBABILITY | P(title run <=3 losses) = << f("winprob.p_le3_given_title") >>% |
+| K41 | §12 L409 | barely << f("winprob.p_title_and_le3", "{:.0f}") >>% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = << f("winprob.p_title_and_le3") >>% |
+| K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace << f("pace.poss_2026") >> vs. mean << f("pace.poss_mean") >> = << f("pace.poss_diff") >>/game (~4%) |
