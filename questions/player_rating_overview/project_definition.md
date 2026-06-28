@@ -1,4 +1,4 @@
-# Project Definition: player_ranking_overview
+# Project Definition: player_rating_overview
 
 ---
 
@@ -66,7 +66,7 @@
 - [ ] nbakit fetchers: `fetch_player_season_totals`, `fetch_team_season_totals`, `fetch_league_averages` pass unit tests with synthetic data
 - [ ] nbakit ratings: recomputed PER/WS/BPM/VORP spot-check within rounding of BBR for 5+ known players in 2024-25
 - [ ] Crosswalk: RAPTOR (where available) matches at >90%; unmatched players listed
-- [ ] Pipeline runs: `MPLBACKEND=Agg python3 player_ranking_overview.py` generates charts + results.md
+- [ ] Pipeline runs: `MPLBACKEND=Agg python3 player_rating_overview.py` generates charts + results.md
 - [ ] All 7 plot_ functions produce no-raise smoke tests green
 - [ ] Cross-system correlation matrix in results.md
 - [ ] Top-20 lists for consensus and wins-predictive in results.md

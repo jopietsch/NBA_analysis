@@ -1,7 +1,7 @@
 """Guard the dual-write: every numeric fact's value must appear in results.md.
 
-``docs/player_ranking_overview_facts.json`` and ``docs/player_ranking_overview_results.md``
-are both produced by ``player_ranking_overview_analysis.py``, but via separate code paths
+``docs/player_rating_overview_facts.json`` and ``docs/player_rating_overview_results.md``
+are both produced by ``player_rating_overview_analysis.py``, but via separate code paths
 (``FACTS.set`` vs ``print``). They share the computed variable today, so they
 can't drift — but a future edit could change a print without its fact (or vice
 versa). This test asserts each numeric fact's value is present in the committed
@@ -15,8 +15,8 @@ import json
 import os
 
 _DOCS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs")
-_FACTS = os.path.join(_DOCS, "player_ranking_overview_facts.json")
-_RESULTS = os.path.join(_DOCS, "player_ranking_overview_results.md")
+_FACTS = os.path.join(_DOCS, "player_rating_overview_facts.json")
+_RESULTS = os.path.join(_DOCS, "player_rating_overview_results.md")
 
 # Curated after a first run: facts whose value is derived/reformatted and so does
 # not appear verbatim in results.md. Keep minimal; each entry is a deliberate

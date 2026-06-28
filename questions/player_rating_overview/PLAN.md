@@ -1,4 +1,4 @@
-# Plan: `player_ranking_overview` — survey, recreate, compare, and combine NBA player rating systems
+# Plan: `player_rating_overview` — survey, recreate, compare, and combine NBA player rating systems
 
 > Status: **draft plan for review.** No code written yet. Execution happens after sign-off.
 
@@ -80,13 +80,13 @@ Audience-tier docs and SVG-chart rules from `questions/CLAUDE.md` apply.
   + season + team match with a hand-maintained override table for collisions. **This is the
   single biggest hidden cost; called out so it gets budgeted.**
 
-### Project code in `questions/player_ranking_overview/`
-- `player_ranking_overview_data.py` — thin: assemble the unified per-season ratings table by
+### Project code in `questions/player_rating_overview/`
+- `player_rating_overview_data.py` — thin: assemble the unified per-season ratings table by
   calling nbakit engines + loaders + crosswalk; cache the merged table under `cache/`.
-- `player_ranking_overview_plots.py` — all `plot_*` (SVG; consistent color semantics).
-- `player_ranking_overview_analysis.py` — `run()` prints sections captured to
-  `docs/player_ranking_overview_results.md`.
-- `player_ranking_overview.py` — orchestrator.
+- `player_rating_overview_plots.py` — all `plot_*` (SVG; consistent color semantics).
+- `player_rating_overview_analysis.py` — `run()` prints sections captured to
+  `docs/player_rating_overview_results.md`.
+- `player_rating_overview.py` — orchestrator.
 - `generate_report.py` — copy/adapt from `home_court/`.
 - `project_definition.md` — fill from the `template/`.
 
@@ -118,15 +118,15 @@ Audience-tier docs and SVG-chart rules from `questions/CLAUDE.md` apply.
    they sit one line apart on a list. Use the convex value metrics to make it concrete.
 
 ## Documents (audience tiers per `questions/CLAUDE.md`)
-- `docs/player_ranking_overview_inventory.md` — the finalized system catalog + availability tags.
-- `docs/player_ranking_overview_findings.md` — main narrative (plain language; voice hook applies).
-- `docs/player_ranking_overview_summary.md` — one-page summary.
-- `docs/player_ranking_overview_investigation.md` — middle tier (p-values/CIs allowed) for the
+- `docs/player_rating_overview_inventory.md` — the finalized system catalog + availability tags.
+- `docs/player_rating_overview_findings.md` — main narrative (plain language; voice hook applies).
+- `docs/player_rating_overview_summary.md` — one-page summary.
+- `docs/player_rating_overview_investigation.md` — middle tier (p-values/CIs allowed) for the
   comparison/combination evidence.
-- `docs/player_ranking_overview_stats_explainer.md` — methods companion (real method names matched
+- `docs/player_rating_overview_stats_explainer.md` — methods companion (real method names matched
   to the code: PER/WS/BPM formulas, ridge, PCA, power-law fitting).
-- `docs/player_ranking_overview_results.md` — auto-generated; never hand-edited.
-- `docs/player_ranking_overview_findings_outline.md` — internal outline.
+- `docs/player_rating_overview_results.md` — auto-generated; never hand-edited.
+- `docs/player_rating_overview_findings_outline.md` — internal outline.
 - A dedicated power-law explainer section for sports readers (in findings, or its own doc).
 - All new docs start with the Draft block (CLAUDE.md "Draft status").
 
@@ -138,14 +138,14 @@ Audience-tier docs and SVG-chart rules from `questions/CLAUDE.md` apply.
 4. **Crosswalk + third-party/human loaders + snapshots** → verify: merged table has high join
    coverage; unmatched players reported, not silently dropped.
 5. **Unified table + plots + analysis** → verify: pipeline runs `MPLBACKEND=Agg python3
-   player_ranking_overview.py`, writes `_results.md`, all `plot_*` smoke-test green.
+   player_rating_overview.py`, writes `_results.md`, all `plot_*` smoke-test green.
 6. **Combination (both lenses) + power-law** → verify: numbers in results doc; out-of-sample
    wins fit reported with honest error.
 7. **Prose docs + PDFs** → verify: `generate_report.py` builds; voice hook passes; numbers in
    prose match `_results.md`.
 
 ## Verification (end to end)
-- `MPLBACKEND=Agg python3 player_ranking_overview.py` regenerates charts + `_results.md`.
+- `MPLBACKEND=Agg python3 player_rating_overview.py` regenerates charts + `_results.md`.
 - `python3 -m pytest` (correctness tests for engines/crosswalk; no-raise smoke tests for plots;
   **no live API calls in tests** — synthetic frames + recorded fixtures).
 - Recomputed metrics spot-checked against Basketball-Reference published values.

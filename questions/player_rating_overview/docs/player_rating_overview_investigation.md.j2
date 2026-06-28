@@ -28,7 +28,7 @@ For each pair of rating systems with at least 20 players in common, Spearman ran
 
 ### Results
 
-Full correlation matrix: see `player_ranking_overview_results.md`.
+Full correlation matrix: see `player_rating_overview_results.md`.
 
 Box-score systems (PER, WS, BPM) show high mutual correlations: PER and Win Shares typically correlate above r = 0.75 because they share inputs. PER and BPM share the same box-score inputs but process them through different formulas, so their correlation is usually 0.65-0.80.
 
@@ -56,7 +56,7 @@ One caveat: low unique R² does not mean a system is useless. It means it does n
 
 Expected pattern: BPM and RAPTOR will show higher unique R² than PER and Win Shares, because the impact metrics incorporate on/off lineup data that box stats do not. VORP will have low unique R² because it is derived directly from BPM. Game Score will have low unique R² because it is a linear combination of box-score inputs that the other box systems also use.
 
-Exact figures: `player_ranking_overview_results.md`.
+Exact figures: `player_rating_overview_results.md`.
 
 ---
 
@@ -72,7 +72,7 @@ Because we have only 30 teams per season, the wins-predictive regression is esti
 
 ### Results
 
-The correlation between the consensus rating and the wins-predictive rating is in `player_ranking_overview_results.md`, along with the five players most divergently ranked by the two approaches.
+The correlation between the consensus rating and the wins-predictive rating is in `player_rating_overview_results.md`, along with the five players most divergently ranked by the two approaches.
 
 ---
 
@@ -89,7 +89,7 @@ We tested the hypothesis that cumulative metrics (Win Shares, VORP) are more rig
 
 ### Results
 
-The full distribution statistics are in `player_ranking_overview_results.md`. The hypothesis is expected to hold for WS and VORP vs. PER and BPM. The report states whether it held for each metric in the 2024-25 data.
+The full distribution statistics are in `player_rating_overview_results.md`. The hypothesis is expected to hold for WS and VORP vs. PER and BPM. The report states whether it held for each metric in the 2024-25 data.
 
 ![Rating value versus rank for cumulative and rate metrics: cumulative metrics fall steeply among the top players; rate metrics stay flatter.](../generated/images/rank_value_distributions.svg){#fig-distributions}
 
@@ -97,6 +97,6 @@ The full distribution statistics are in `player_ranking_overview_results.md`. Th
 
 ## 5. Crosswalk coverage
 
-Third-party sources are joined to the nba_api player list by normalized name + season. The match rates for each source are reported in `player_ranking_overview_results.md`. Unmatched players are listed.
+Third-party sources are joined to the nba_api player list by normalized name + season. The match rates for each source are reported in `player_rating_overview_results.md`. Unmatched players are listed.
 
 Match rates below 90% indicate a name-normalization issue in the source data (common with accented names and suffixes) or a player whose normalized name is shared by another player in the same season (an ambiguous collision). The crosswalk handles accents and suffixes automatically; collisions require a hand entry in the OVERRIDES table.

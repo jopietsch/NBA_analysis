@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Generate the player_ranking_overview PDF report.
-Run after player_ranking_overview.py — all charts and _results.md must exist.
+Generate the player_rating_overview PDF report.
+Run after player_rating_overview.py — all charts and _results.md must exist.
 
     python3 generate_report.py
 """
@@ -16,8 +16,8 @@ OUTPUT_DIR = "generated"
 if __name__ == "__main__":
     render_all()
     build_report(ReportConfig(
-        findings_path="docs/player_ranking_overview_findings.md",
-        results_path="docs/player_ranking_overview_results.md",
+        findings_path="docs/player_rating_overview_findings.md",
+        results_path="docs/player_rating_overview_results.md",
         title="NBA Player Rating Systems: Survey, Comparison, and Combination",
         subtitle="2024–25 season testbed",
         data_line="Data: NBA.com via nba_api; Basketball-Reference; FiveThirtyEight (RAPTOR)",
@@ -25,7 +25,7 @@ if __name__ == "__main__":
             "Data: NBA.com via nba_api, Basketball-Reference, FiveThirtyEight (RAPTOR). "
             "See Appendix A for companion documents."
         ),
-        output_path=os.path.join(OUTPUT_DIR, "player_ranking_overview_report.pdf"),
-        pipeline_cmd="MPLBACKEND=Agg python3 player_ranking_overview.py",
+        output_path=os.path.join(OUTPUT_DIR, "player_rating_overview_report.pdf"),
+        pipeline_cmd="MPLBACKEND=Agg python3 player_rating_overview.py",
         include_appendix=False,
     ))

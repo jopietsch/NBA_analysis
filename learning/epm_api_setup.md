@@ -21,7 +21,7 @@ Add it to your shell profile (`~/.zshrc` or `~/.bash_profile`) to avoid setting 
 
 ```bash
 export DUNKS_API_KEY=your_key_here
-MPLBACKEND=Agg python3 player_ranking_overview.py
+MPLBACKEND=Agg python3 player_rating_overview.py
 ```
 
 On the first run for a season, the pipeline fetches EPM from the API and writes:

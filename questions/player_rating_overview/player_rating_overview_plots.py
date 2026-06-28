@@ -1,8 +1,8 @@
 """
-player_ranking_overview_plots.py — all visualizations for the player ranking overview.
+player_rating_overview_plots.py — all visualizations for the player rating overview.
 
 Each plot_* function saves an SVG to generated/images/ and returns the path.
-No data logic lives here; all computation is done by player_ranking_overview_data.py.
+No data logic lives here; all computation is done by player_rating_overview_data.py.
 
 Color semantics (consistent across all charts in this project):
   - Recomputed systems (box-score): BLUE (#378add)
@@ -549,7 +549,7 @@ def plot_powerlaw_fits(df: pd.DataFrame, systems: list[str],
     color with their fitted line; the rest are muted grey, since their curve
     bends rather than holding a constant slope.
     """
-    from player_ranking_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
+    from player_rating_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
 
     qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
 
@@ -618,7 +618,7 @@ def plot_powerlaw_small_multiples(df: pd.DataFrame, systems: list[str],
     POWERLAW_R2_THRESHOLD) are blue; the benders are grey. Panels are ordered by
     exponent, steepest first, so the concentration ordering reads left to right.
     """
-    from player_ranking_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
+    from player_rating_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
 
     qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
 

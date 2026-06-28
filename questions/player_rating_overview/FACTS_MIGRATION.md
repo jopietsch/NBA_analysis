@@ -5,11 +5,11 @@ Internal dev note (not a report doc; not picked up by `generate_report.py`).
 ## The model
 
 The analysis registers every cited number as a named **fact**
-(`player_ranking_overview_facts.py`, `FACTS.set`) and every qualitative claim as a
+(`player_rating_overview_facts.py`, `FACTS.set`) and every qualitative claim as a
 **guard** (`FACTS.guard`), both inside `run()` in
-`player_ranking_overview_analysis.py`, next to the `print(...)` that emits the same
+`player_rating_overview_analysis.py`, next to the `print(...)` that emits the same
 value. `FACTS.dump` / `FACTS.dump_guards` run at the end of `run()`, writing
-`docs/player_ranking_overview_facts.json` and `docs/player_ranking_overview_guards.json`
+`docs/player_rating_overview_facts.json` and `docs/player_rating_overview_guards.json`
 (both committed).
 
 Reader-facing docs are Jinja templates (`docs/*.md.j2`) using `<< f("name") >>`
@@ -68,6 +68,6 @@ value drift automatically; stale magnitude words need a human `/review-all` pass
 
 ## Tests
 
-`tests/test_player_ranking_overview_facts.py`, `tests/test_render_docs.py`,
+`tests/test_player_rating_overview_facts.py`, `tests/test_render_docs.py`,
 `tests/test_facts_match_results.py`, `tests/test_prose_claims.py`. Full `pytest`: 36
 passing.

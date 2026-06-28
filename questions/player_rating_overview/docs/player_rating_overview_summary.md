@@ -20,4 +20,4 @@ This project recomputes the box-score systems for the 2024-25 season and compare
 
 **A consensus rating and a wins-predictive rating diverge on team context.** When systems are combined into a single number, the two most natural approaches (a straight average of the systems vs. a version weighted to predict team wins) agree strongly at the top but diverge on team context: the wins-predictive rating lifts players on winning teams and discounts players on losing teams, regardless of individual numbers.
 
-Full analysis and exact figures are in `player_ranking_overview_results.md`. Methods are in `player_ranking_overview_stats_explainer.md`.
+Full analysis and exact figures are in `player_rating_overview_results.md`. Methods are in `player_rating_overview_stats_explainer.md`.

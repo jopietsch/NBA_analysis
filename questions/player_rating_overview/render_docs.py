@@ -16,9 +16,9 @@ from nbakit.docs import render_all as _render_all
 from nbakit.docs import write_reference as _write_reference
 from nbakit.docs import main as _main
 
-FACTS_JSON = "docs/player_ranking_overview_facts.json"
-REFERENCE_MD = "docs/player_ranking_overview_facts_reference.md"
-REFERENCE_TITLE = "Player ranking overview facts reference"
+FACTS_JSON = "docs/player_rating_overview_facts.json"
+REFERENCE_MD = "docs/player_rating_overview_facts_reference.md"
+REFERENCE_TITLE = "Player rating overview facts reference"
 
 
 def render_all(facts_path: str = FACTS_JSON, annotate: bool = False) -> list[str]:

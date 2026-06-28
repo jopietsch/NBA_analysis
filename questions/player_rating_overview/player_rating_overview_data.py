@@ -1,12 +1,12 @@
 """
-player_ranking_overview_data.py — assemble the unified per-season ratings table.
+player_rating_overview_data.py — assemble the unified per-season ratings table.
 
 Calls nbakit engines (recompute) + third-party loaders + crosswalk to produce
 one merged DataFrame with one row per (player_id, season_end_year) and one
 column per rating system. Caches the merged table to cache/unified_ratings_{year}.csv.
 
 Usage:
-    from player_ranking_overview_data import load_unified_ratings
+    from player_rating_overview_data import load_unified_ratings
     df = load_unified_ratings(2025)   # 2024-25 season
 """
 

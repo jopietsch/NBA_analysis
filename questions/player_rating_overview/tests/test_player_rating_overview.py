@@ -293,7 +293,7 @@ def test_apply_crosswalk_matches_name_season():
 # ── Power-law fit ──────────────────────────────────────────────────────────────
 
 def test_powerlaw_fit_perfect_power_law():
-    from player_ranking_overview_data import powerlaw_fit
+    from player_rating_overview_data import powerlaw_fit
     # value = 100 * rank^-0.5 is an exact power law: R^2 ~ 1, alpha ~ 0.5
     rank = np.arange(1, 51)
     vals = 100.0 * rank ** (-0.5)
@@ -305,7 +305,7 @@ def test_powerlaw_fit_perfect_power_law():
 
 
 def test_powerlaw_fit_drops_nonpositive_tail():
-    from player_ranking_overview_data import powerlaw_fit
+    from player_rating_overview_data import powerlaw_fit
     # Only the leading positive run is fit; values <= 0 truncate the series.
     vals = np.array([5.0, 4.0, 3.0, 2.0, 1.0, 0.0, -1.0, -2.0])
     fit = powerlaw_fit(vals, top_n=50)
@@ -314,5 +314,5 @@ def test_powerlaw_fit_drops_nonpositive_tail():
 
 
 def test_powerlaw_fit_too_few_points_returns_none():
-    from player_ranking_overview_data import powerlaw_fit
+    from player_rating_overview_data import powerlaw_fit
     assert powerlaw_fit(np.array([3.0, 2.0, -1.0]), top_n=50) is None

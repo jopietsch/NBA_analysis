@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-This document explains the statistical methods used in the player ranking overview pipeline. It is written for someone who knows statistics but may not have the formulas fresh. Every method named here matches what the code in `player_ranking_overview_analysis.py` and `nbakit/ratings.py` actually runs.
+This document explains the statistical methods used in the player rating overview pipeline. It is written for someone who knows statistics but may not have the formulas fresh. Every method named here matches what the code in `player_rating_overview_analysis.py` and `nbakit/ratings.py` actually runs.
 
 ---
 
@@ -129,7 +129,7 @@ How concentrated is value at the top of a system? Two measures answer this, and 
 
 A distribution follows a power law when value falls by a roughly constant percentage with each step down the ranks: value(rank) ≈ C · rank^(−α). The exponent α is the steepness. A larger α means value drops off faster, so the top is heavier relative to the rest.
 
-The fit (`powerlaw_fit` in `player_ranking_overview_data.py`) takes a system's top 50 qualified values, sorts them descending, and keeps the leading run of strictly positive values (the logarithm is undefined at zero or below, which is why the BPM-family metrics, full of negative values, contribute only their positive top). It then runs an ordinary least-squares line of log(value) on log(rank). The slope of that line is −α, and the fit's R² measures how straight the points are on log-log axes. A system is labeled a power law when R² ≥ 0.95 (`POWERLAW_R2_THRESHOLD`): a straight line on log-log axes is the signature of a power law. Curves that fall below the threshold "bend," meaning the top player sits below where a straight extrapolation would place them, so there is a natural ceiling rather than a runaway leader.
+The fit (`powerlaw_fit` in `player_rating_overview_data.py`) takes a system's top 50 qualified values, sorts them descending, and keeps the leading run of strictly positive values (the logarithm is undefined at zero or below, which is why the BPM-family metrics, full of negative values, contribute only their positive top). It then runs an ordinary least-squares line of log(value) on log(rank). The slope of that line is −α, and the fit's R² measures how straight the points are on log-log axes. A system is labeled a power law when R² ≥ 0.95 (`POWERLAW_R2_THRESHOLD`): a straight line on log-log axes is the signature of a power law. Curves that fall below the threshold "bend," meaning the top player sits below where a straight extrapolation would place them, so there is a natural ceiling rather than a runaway leader.
 
 The 0.95 cutoff is a convention, not a hypothesis test. Systems sitting right at the line (DBPM just clears it, BPM just misses) are effectively the same shape. The reliable read is the grouping and the order of α across systems, not the label on any single borderline case.
 
@@ -216,6 +216,6 @@ Without published posterior variances from the third-party systems, a tractable 
 
 ## Data pipeline
 
-All recomputed ratings are computed in `nbakit/ratings.py` from totals fetched via `nbakit/data.py` (nba_api endpoints: `LeagueDashPlayerStats`, `LeagueDashTeamStats`, `LeagueStandingsV3`). Third-party results are loaded from cached CSVs and joined via the player crosswalk in `nbakit/player_crosswalk.py`. The unified table is assembled in `player_ranking_overview_data.py` and cached to `cache/unified_ratings_{season}.csv`.
+All recomputed ratings are computed in `nbakit/ratings.py` from totals fetched via `nbakit/data.py` (nba_api endpoints: `LeagueDashPlayerStats`, `LeagueDashTeamStats`, `LeagueStandingsV3`). Third-party results are loaded from cached CSVs and joined via the player crosswalk in `nbakit/player_crosswalk.py`. The unified table is assembled in `player_rating_overview_data.py` and cached to `cache/unified_ratings_{season}.csv`.
 
-The analysis module (`player_ranking_overview_analysis.py`) runs all statistical computations from the unified table, printing results to stdout, which the orchestrator (`player_ranking_overview.py`) captures into `docs/player_ranking_overview_results.md`.
+The analysis module (`player_rating_overview_analysis.py`) runs all statistical computations from the unified table, printing results to stdout, which the orchestrator (`player_rating_overview.py`) captures into `docs/player_rating_overview_results.md`.

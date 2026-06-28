@@ -13,7 +13,7 @@ It covers three analyses:
 - **2025-26 Knicks historically** (`knicks_2026_historic/`): was the playoff run
   all-time dominant? Lighter methods: percentile ranking, SRS, schedule-adjusted
   margin.
-- **Player rating systems** (`player_ranking_overview/`): how a dozen rating
+- **Player rating systems** (`player_rating_overview/`): how a dozen rating
   systems score the same players, how to blend them into one number, and how
   top-heavy the league is. Methods for combining and comparing: z-score
   standardization, ridge regression, the Gini coefficient, power-law fits.
@@ -30,7 +30,7 @@ Companion docs:
   figure takes the form it does*. Read that *after* this once the vocabulary is
   familiar.
 - `knicks_2026_historic/STATS_EXPLAINER.md`: same role for the Knicks analysis.
-- `player_ranking_overview/STATS_EXPLAINER.md`: same role for the rating-systems
+- `player_rating_overview/STATS_EXPLAINER.md`: same role for the rating-systems
   analysis, including the Bayesian foundations of the impact metrics.
 - `home_court/FINDINGS.md` / `knicks_2026_historic/FINDINGS.md`: plain-English
   narratives with no jargon.
@@ -1896,7 +1896,7 @@ genuine significance test in an otherwise descriptive analysis.
 
 # Part 9: Combining and comparing rating systems
 
-The player-ranking overview (`player_ranking_overview/`) is a different kind of
+The player-rating overview (`player_rating_overview/`) is a different kind of
 problem from the other two. There is no win/loss to predict and no trend over
 time. Instead, many *rating systems* (Game Score, PER, Win Shares, BPM, VORP, and
 the impact metrics) each score the same 375 qualified players for 2024-25, and the

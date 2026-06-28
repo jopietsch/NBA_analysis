@@ -1,7 +1,7 @@
 """
-player_ranking_overview_analysis.py — statistical analysis for the player ranking overview.
+player_rating_overview_analysis.py — statistical analysis for the player rating overview.
 
-run() prints all output; the orchestrator captures it to docs/player_ranking_overview_results.md.
+run() prints all output; the orchestrator captures it to docs/player_rating_overview_results.md.
 Sections use the box-drawing header convention: print("─── SECTION " + "─" * 50).
 """
 
@@ -9,13 +9,13 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
-from player_ranking_overview_data import (
+from player_rating_overview_data import (
     load_unified_ratings,
     MIN_MINUTES_QUALIFIER,
     powerlaw_fit,
     POWERLAW_R2_THRESHOLD,
 )
-from player_ranking_overview_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
+from player_rating_overview_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
 
 # Rating systems included in the cross-system comparison
 # (all systems that may be present; silently skipped if absent in the data)

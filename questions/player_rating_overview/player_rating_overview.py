@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-player_ranking_overview.py — pipeline orchestrator.
+player_rating_overview.py — pipeline orchestrator.
 
-Runs: data fetch → plots → analysis → writes docs/player_ranking_overview_results.md
+Runs: data fetch → plots → analysis → writes docs/player_rating_overview_results.md
 
 Usage:
-    MPLBACKEND=Agg python3 player_ranking_overview.py [--year 2025]
+    MPLBACKEND=Agg python3 player_rating_overview.py [--year 2025]
 """
 
 import argparse
@@ -21,17 +21,17 @@ def main() -> None:
     args = parser.parse_args()
     end_year = args.year
 
-    print(f"=== Player Ranking Overview pipeline: {end_year - 1}–{str(end_year)[-2:]} ===")
+    print(f"=== Player Rating Overview pipeline: {end_year - 1}–{str(end_year)[-2:]} ===")
 
     # 1. Data
     print("\n[1/3] Building unified ratings table...")
-    from player_ranking_overview_data import load_unified_ratings
+    from player_rating_overview_data import load_unified_ratings
     df = load_unified_ratings(end_year)
     print(f"  {len(df)} players loaded")
 
     # 2. Plots
     print("\n[2/3] Generating charts...")
-    from player_ranking_overview_plots import (
+    from player_rating_overview_plots import (
         plot_rank_agreement_heatmap,
         plot_system_outliers,
         plot_rank_value_distributions,
@@ -42,7 +42,7 @@ def main() -> None:
         plot_powerlaw_small_multiples,
         plot_top20_table,
     )
-    from player_ranking_overview_analysis import (
+    from player_rating_overview_analysis import (
         ALL_SYSTEMS,
         _present_systems,
         _gini,
@@ -81,14 +81,14 @@ def main() -> None:
     plot_top20_table(qual, present + uber_present)
 
     if uber_present:
-        from player_ranking_overview_plots import plot_uber_rating_comparison
+        from player_rating_overview_plots import plot_uber_rating_comparison
         plot_uber_rating_comparison(qual)
 
     # 3. Analysis → results doc
     print("\n[3/3] Running analysis...")
-    from player_ranking_overview_analysis import run
+    from player_rating_overview_analysis import run
     results_path = os.path.join(os.path.dirname(__file__), "docs",
-                                 "player_ranking_overview_results.md")
+                                 "player_rating_overview_results.md")
     buf = io.StringIO()
     old_stdout = sys.stdout
     sys.stdout = buf
@@ -102,7 +102,7 @@ def main() -> None:
     print(output)
     os.makedirs(os.path.dirname(results_path), exist_ok=True)
     with open(results_path, "w") as f:
-        f.write(f"# Player Ranking Overview: Analysis Results\n\n")
+        f.write(f"# Player Rating Overview: Analysis Results\n\n")
         f.write(f"Season: {end_year - 1}–{str(end_year)[-2:]}\n\n")
         f.write("```\n")
         f.write(output)

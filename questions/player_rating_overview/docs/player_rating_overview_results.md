@@ -1,4 +1,4 @@
-# Player Ranking Overview: Analysis Results
+# Player Rating Overview: Analysis Results
 
 Season: 2024–25
 
@@ -286,6 +286,6 @@ VORP discounts (vs. consensus):
   -1.18  Zion Williamson
   -1.11  Mark Williams
   -1.00  Aaron Gordon
-Saved → docs/player_ranking_overview_facts_reference.md
+Saved → docs/player_rating_overview_facts_reference.md
 
 ```

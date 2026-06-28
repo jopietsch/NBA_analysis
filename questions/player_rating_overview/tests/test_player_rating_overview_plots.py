@@ -11,7 +11,7 @@ import pytest
 import matplotlib
 matplotlib.use("Agg")
 
-import player_ranking_overview_plots as plots
+import player_rating_overview_plots as plots
 
 
 # ── Synthetic data ────────────────────────────────────────────────────────────
