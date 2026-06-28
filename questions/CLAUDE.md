@@ -111,18 +111,28 @@ Remove the block only when the analysis and prose are finalized.
 ## Standard document workflow
 
 Each project uses this naming convention:
-- `docs/<project>_findings.md` — main narrative; drives the PDF report
-- `docs/<project>_summary.md` — standalone one-page summary
-- `docs/<project>_stats_explainer.md` — hand-edited methods companion to `<project>_results.md`
-- `docs/<project>_results.md` — auto-generated analysis output; never edit manually, always re-run the pipeline to refresh
+- `docs/<project>_findings.md.j2` — findings template; rendered to `_findings.md` by `render_docs.py`
+- `docs/<project>_findings.md` — rendered output; committed and drives the PDF report
+- `docs/<project>_summary.md.j2` / `_summary.md` — same pattern; standalone one-page summary
+- `docs/<project>_stats_explainer.md.j2` / `_stats_explainer.md` — methods companion
+- `docs/<project>_investigation.md.j2` / `_investigation.md` — evidence companion
+- `docs/<project>_findings_outline.md.j2` / `_findings_outline.md` — internal outline
+- `docs/<project>_results.md` — auto-generated analysis output; the one doc that is NOT a template; never edit manually, always re-run the pipeline to refresh
+- `docs/<project>_facts.json` — named facts written by `_analysis.py` (`FACTS.set()`); the data model that templates render from
+- `docs/<project>_guards.json` — qualitative claims written by `_analysis.py` (`FACTS.guard()`); verified by the guard tests on every pytest run
+
+Every number cited in any reader-facing doc must come from a `<< f("fact.name") >>` call in the `.md.j2` template, not hand-typed. The only exception is deliberate editorial rounding (e.g. "more than 40%") which stays literal and is covered by `/check-consistency`.
 
 Standard commands (run from the project root):
-- Main report PDF: `python3 generate_report.py`
+- Render templates: `python3 render_docs.py` (run after the analysis pipeline; before building the PDF)
+- Main report PDF: `python3 generate_report.py` (renders templates first, then builds)
 - Any standalone doc PDF: `python3 ../generate_doc_pdf.py docs/<file>.md`
+- Facts reference table: `python3 render_docs.py --reference`
+- Annotated render (reviewer mode): `python3 render_docs.py --annotate`
 
 Cascade rules: when a file changes, update its dependents before closing the task:
-- `<project>_results.md` changes: update `<project>_stats_explainer.md` so every number and conclusion still matches; regenerate its PDF
-- `<project>_findings.md` changes: if headline figures changed, update `<project>_summary.md` to match; regenerate the main report PDF (and summary PDF if updated)
+- `<project>_results.md` changes: re-run `python3 render_docs.py` (re-renders all `.md.j2` from the updated `_facts.json`); update `<project>_stats_explainer.md.j2` if method descriptions changed; regenerate PDFs
+- `<project>_findings.md.j2` changes: run `python3 render_docs.py` to produce the updated `.md`; if headline figures changed, update `<project>_summary.md.j2` to match; regenerate the main report PDF (and summary PDF if updated)
 - Any standalone markdown doc changes: regenerate its PDF
 - The analysis pipeline re-ran and the numbers moved (`<project>_results.md` / `*_facts.json` changed): the guard tests (`test_facts_match_results.py`, `test_prose_claims.py`) only protect templated numbers and qualitative/direction claims. A magnitude word that stays directionally true but goes stale (e.g. "nearly vanished" after a gap shrinks less than before) is caught only by a human pass. So after any data change that moves the numbers, re-run `/review-all` on the affected docs: the guard tests catch direction, the voice pass (reading the rendered `.md`) re-judges stale magnitude words.
 
@@ -131,10 +141,14 @@ Cascade rules: when a file changes, update its dependents before closing the tas
 Run all commands from the project root.
 
 ```bash
-# Run the full analysis pipeline (generates PNGs, runs analysis, writes docs/<project>_results.md)
+# Run the full analysis pipeline (generates SVGs, runs analysis, writes docs/<project>_results.md
+# and docs/<project>_facts.json + _guards.json)
 MPLBACKEND=Agg python3 <project>.py
 
-# Generate the main PDF + HTML report
+# Render .md.j2 templates → .md (run after the pipeline, before building PDFs)
+python3 render_docs.py
+
+# Generate the main PDF + HTML report (renders templates first)
 python3 generate_report.py
 
 # Regenerate any standalone doc PDF + HTML
@@ -142,7 +156,10 @@ python3 ../generate_doc_pdf.py docs/<project>_findings.md
 python3 ../generate_doc_pdf.py docs/<project>_summary.md
 python3 ../generate_doc_pdf.py docs/<project>_stats_explainer.md
 
-# Run all tests
+# Write the facts reference table (dev helper while authoring templates)
+python3 render_docs.py --reference
+
+# Run all tests (includes guard tests: test_facts_match_results.py, test_prose_claims.py)
 python3 -m pytest
 
 # Install dependencies
@@ -164,20 +181,26 @@ Always use `MPLBACKEND=Agg` when running the analysis script to suppress display
 
 ## Standard architecture
 
-Each project follows a four-module pipeline plus two report generators:
+Each project follows a four-module pipeline plus two report generators plus the facts system:
 
 - **`<project>_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. All fetched data is cached as CSVs under `cache/`. This is the only module that calls external APIs.
 - **`<project>_plots.py`** — all visualization; imports the data module and holds no data logic of its own. Each `plot_*` function saves an SVG to `generated/images/`.
-- **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/<project>_results.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`.
+- **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/<project>_results.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`. Register named facts with `FACTS.set()` next to each `print()` call that emits a cited number. Register qualitative claims with `FACTS.guard()`. At the end of `run()`, call `FACTS.dump(_FACTS_PATH)` and `FACTS.dump_guards(_GUARDS_PATH)`.
+- **`<project>_facts.py`** — the `Fact`/`Facts`/`FACTS` module; holds the singleton registry and the `_FACTS_PATH`/`_GUARDS_PATH` constants. The `Fact.display` property renders a number with `fmt`+`unit` or passes a plain-language string through unchanged.
 - **`<project>.py`** (or `<project>_<name>.py`) — pipeline orchestration only; sequences data → plots → analysis; imports the analysis module inside `main()` to avoid circular imports.
-- **`generate_report.py`** — assembles `docs/<project>_findings.md` prose and PNGs into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
+- **`render_docs.py`** — renders `docs/*.md.j2` templates to `docs/*.md` using the facts JSON. Template delimiter: `<< f("fact.name") >>`. Run after the pipeline (which writes facts.json) and before building PDFs. `generate_report.py` calls `render_all()` automatically.
+- **`generate_report.py`** — calls `render_all()` first, then assembles `docs/<project>_findings.md` prose and charts into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
 - **`../generate_doc_pdf.py`** — shared Markdown-to-PDF renderer for standalone docs (headings, lists, tables, code fences, images, `--appendix` flag); lives at `questions/` level, not per-project.
 
 Test pattern:
 - `tests/test_<project>.py` — correctness unit tests for the data/computation layer using synthetic DataFrames; never make live API calls.
 - `tests/test_<project>_plots.py` — no-raise smoke tests for each `plot_*`; no pixel or image comparison (brittle across font and library versions).
+- `tests/test_<project>_facts.py` — unit tests for the `Fact`/`Facts` class (formatting, string passthrough, dump/load roundtrip, unknown-name `KeyError`).
+- `tests/test_render_docs.py` — smoke tests for `render_docs.py` (`--reference` table, annotate mode, `render_all` writes `.annotated.md` without clobbering `.md`).
+- `tests/test_facts_match_results.py` — for each numeric fact, searches `results.md` for the value at several precisions; fails if a fact's value is absent from `results.md` (catches `FACTS.set()` drifting from its sibling `print()`). No-ops gracefully when facts.json is `{}`.
+- `tests/test_prose_claims.py` — loads `*_guards.json`, asserts every guard is `"ok": true`. Skips when guards.json is `{}`.
 
-Adding a new analysis always follows this order: data → plot → analysis → tests → findings section → run pipeline → update findings prose from the results doc.
+Adding a new analysis always follows this order: data → plot → analysis (with FACTS.set/guard calls) → tests → `.md.j2` template updates → run pipeline → `python3 render_docs.py` → update findings prose from the results doc.
 
 ## nba_api quirks
 
