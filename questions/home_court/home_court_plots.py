@@ -1952,6 +1952,87 @@ def plot_oos_forecast(data: dict) -> None:
     save_chart("home_court_oos_forecast.svg", OUTPUT_DIR)
 
 
+def plot_shap_channels(data: dict) -> None:
+    """
+    Non-parametric channel decomposition (gradient boosting + SHAP), regular
+    season and playoffs. Per era, the signed SHAP contribution of each box-score
+    channel, stacked, summing to that era's gap from the overall home win rate.
+    The tall early-era stack collapses toward zero in the recent eras: that
+    shrinking stack is the home-court decline, split by channel with no
+    straight-line assumption. Mirrors home_court_results.md.
+    Saves → home_court_shap_channels.svg
+    """
+    panels = [("Regular season", BLUE), ("Playoffs", GREEN)]
+    if not data or not any(data.get(k) for k, _ in panels):
+        print("plot_shap_channels: no data, skipping.")
+        return
+
+    # channels: list[(key, label)] — colors from the shared category palette.
+    labels = [lbl for _, lbl in data["channels"]]
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2), facecolor=BG)
+
+    for ax, (ctx_key, _c) in zip(axes, panels):
+        d = data.get(ctx_key)
+        ax.set_facecolor(PANEL)
+        if not d:
+            ax.text(0.5, 0.5, "Insufficient data", ha="center", va="center",
+                    transform=ax.transAxes, fontsize=11, color=GRAY)
+            ax.set_title(ctx_key, fontsize=11, color="#2c2c2a")
+            continue
+
+        eras = d["eras"]
+        x = np.arange(len(eras))
+        contrib = {e: d["era_contrib_pp"][e] for e in eras}
+        for i, lbl in enumerate(labels):
+            vals = np.array([contrib[e][i] for e in eras])
+            # Stack positives upward and negatives downward from zero separately.
+            pos_base = np.zeros(len(eras))
+            neg_base = np.zeros(len(eras))
+            for j in range(len(eras)):
+                v = vals[j]
+                if v >= 0:
+                    base, pos_base[j] = pos_base[j], pos_base[j] + v
+                else:
+                    neg_base[j] += v
+                    base = neg_base[j]
+                ax.bar(x[j], v, bottom=base, width=0.7,
+                       color=CATEGORY_COLORS[lbl], edgecolor="white", linewidth=0.6,
+                       zorder=2, label=lbl if j == 0 else None)
+
+        # Era totals (= gap from overall home win rate) as a marker line.
+        totals = np.array([sum(contrib[e]) for e in eras])
+        ax.plot(x, totals, color="#2c2c2a", marker="o", markersize=4,
+                linewidth=1.2, zorder=4, label="Era total")
+        ax.axhline(0, color=GRAY, linewidth=0.9, zorder=1)
+
+        ax.set_xticks(x)
+        ax.set_xticklabels(eras, rotation=45, ha="right", fontsize=8)
+        ax.set_ylabel("Contribution to home edge (pp vs. league mean)", fontsize=9)
+        ax.set_title(ctx_key, fontsize=11, fontweight="bold", color="#2c2c2a")
+        ax.grid(axis="y", alpha=0.3, linewidth=0.6)
+        if ctx_key == "Regular season":
+            handles, lab = ax.get_legend_handles_labels()
+            seen: dict = {}
+            for h, l in zip(handles, lab):
+                seen.setdefault(l, h)
+            ax.legend(seen.values(), seen.keys(), fontsize=7.8,
+                      framealpha=0.85, edgecolor="#ddd", loc="upper right")
+
+    fig.suptitle(
+        "A model with no straight-line assumption splits the decline across the same channels",
+        fontsize=13, fontweight="bold", color="#2c2c2a", y=1.0,
+    )
+    fig.text(
+        0.5, 0.93,
+        "Gradient-boosted win model + SHAP  |  each era's stacked channel "
+        "contributions sum to its gap from the overall home win rate  |  the "
+        "shrinking stack is the decline",
+        ha="center", fontsize=8.5, color=GRAY,
+    )
+    plt.tight_layout(rect=(0, 0, 1, 0.9))
+    save_chart("home_court_shap_channels.svg", OUTPUT_DIR)
+
+
 def plot_attendance(
     att_seasons: list[str], att_avg: list[float],
     reg_seasons: list[str], reg_pcts: list[float],

@@ -143,6 +143,10 @@ Could rebounding and turnovers just be the three-point shift in disguise? No. Wh
 
 A further check guards against the worry that this account was simply fit to the whole history. Train the same box-score model on pre-2014 seasons only, freeze it, and let it predict the years it never saw: it tracks the modern decline closely in both the regular season and the playoffs, so the story is not just hindsight (Appendix A).
 
+The breakdown also holds when the straight-line assumption behind it is dropped. A more flexible win model, one that lets the four factors bend and feed off each other instead of adding up in a straight line, splits each game's result among them and then reads off how much each factor's edge shrank over 40 years. It lands on the same picture: shooting, rebounding, and turnovers each carry a substantial slice of the regular-season decline, fouls the smallest at about << f("shap.reg_fouls_pct") >>, and the slices add back to the same drop (about << f("shap.reg_decline_pp") >>). The playoffs split the same way. Because this method shares none of the simpler one's assumptions, the agreement means the box-score breakdown is a property of the games, not of how it was measured.
+
+![How the home-court decline splits across the four box-score factors when a flexible win model, free of any straight-line assumption, does the splitting. Each era's stacked bars are the factors' contributions to that season's home edge; the tall early-1980s stack shrinks toward zero in the recent seasons, and that shrinking stack is the decline. Regular season and playoffs split it across the same factors, with shooting and rebounding the largest pieces.](../generated/images/home_court_shap_channels.svg){#fig-shap-channels .collapsible}
+
 One plausible explanation is that analytical tools for shot selection, scouting, and preparation have reached every team at roughly the same pace. When all 30 teams land on the same approaches regardless of venue, the home team's preparation advantage has nowhere to go but down.
 
 ---

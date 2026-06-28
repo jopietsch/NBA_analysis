@@ -1259,6 +1259,41 @@
     "unit": null,
     "value": 51.863499999999995
   },
+  "shap.reg_acc": {
+    "display": "0.93",
+    "fmt": "{:.2f}",
+    "note": "SHAP: gradient-boosted win-model accuracy (RS)",
+    "unit": null,
+    "value": 0.9328364288041707
+  },
+  "shap.reg_decline_pp": {
+    "display": "9.4 pp",
+    "fmt": "{:.1f}",
+    "note": "SHAP-implied total RS decline (early minus late era)",
+    "unit": "pp",
+    "value": 9.411949959251482
+  },
+  "shap.reg_fouls_pct": {
+    "display": "14%",
+    "fmt": "{:.0f}%",
+    "note": "SHAP: fouls' share of the channel-explained RS decline",
+    "unit": null,
+    "value": 14.40376549423573
+  },
+  "shap.reg_top_channel": {
+    "display": "Shooting",
+    "fmt": null,
+    "note": "SHAP: largest single channel in the RS decline",
+    "unit": null,
+    "value": "Shooting"
+  },
+  "shap.reg_top_pct": {
+    "display": "35%",
+    "fmt": "{:.0f}%",
+    "note": "SHAP: that channel's share of the channel-explained RS decline",
+    "unit": null,
+    "value": 35.019333629820295
+  },
   "share.fouls.adv": {
     "display": "14%",
     "fmt": "{:.0f}%",

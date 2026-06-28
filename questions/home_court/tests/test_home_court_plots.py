@@ -156,6 +156,43 @@ def test_plot_oos_forecast_empty():
     plots.plot_oos_forecast({"reg": {}, "po": {}})  # must no-op, not raise
 
 
+def _shap_ctx(eras, off=0.0):
+    labels = ["Shooting", "Fouls", "Turnovers", "Rebounding"]
+    contrib = {e: [3.0 - 0.5 * i + off, -0.5, 1.5 - 0.3 * i, 2.0 - 0.4 * i]
+               for i, e in enumerate(eras)}
+    return {
+        "n": 40000, "acc": 0.93, "base_pct": 56.0,
+        "actual_home_win_pct": 60.0,
+        "eras": eras, "early": eras[0], "late": eras[-1],
+        "era_contrib_pp": contrib,
+        "era_dev_pp": {e: sum(contrib[e]) for e in eras},
+        "channels": [
+            {"key": "efg_pct_diff", "label": "Shooting", "contrib_pp": 3.0,
+             "pct": 35.0, "early_pp": 3.2, "late_pp": 0.2},
+            {"key": "foul_diff", "label": "Fouls", "contrib_pp": 1.0,
+             "pct": 12.0, "early_pp": 0.6, "late_pp": -0.4},
+            {"key": "tov_diff", "label": "Turnovers", "contrib_pp": 2.0,
+             "pct": 23.0, "early_pp": 2.3, "late_pp": 0.3},
+            {"key": "reb_diff", "label": "Rebounding", "contrib_pp": 2.5,
+             "pct": 30.0, "early_pp": 2.2, "late_pp": -0.3},
+        ],
+        "shap_decline_pp": 8.5, "actual_decline_pp": 9.0,
+    }
+
+
+def test_plot_shap_channels():
+    eras = ERA_LABELS
+    data = {"channels": [("efg_pct_diff", "Shooting"), ("foul_diff", "Fouls"),
+                         ("tov_diff", "Turnovers"), ("reb_diff", "Rebounding")],
+            "Regular season": _shap_ctx(eras),
+            "Playoffs": _shap_ctx(eras, off=2.0)}
+    plots.plot_shap_channels(data)
+
+
+def test_plot_shap_channels_empty():
+    plots.plot_shap_channels({})  # must no-op, not raise
+
+
 def test_plot_rest_altitude():
     def _ctx(base):
         return {

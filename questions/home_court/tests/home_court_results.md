@@ -606,6 +606,45 @@ All data from cache/ — same source as the plots above.
      split, not an artifact of fitting on the full history.
 
 
+─── NON-PARAMETRIC CHANNEL DECOMPOSITION — GRADIENT BOOSTING + SHAP ────
+   Robustness check on the linear mediation. A gradient-boosted win
+   model learns home_win from the four box-score edges (eFG%, fouls,
+   turnovers, rebounds) with no straight-line assumption and with
+   interactions. SHAP splits each game's predicted win probability into
+   additive channel contributions; averaged within an era they sum to
+   that era's gap from the overall home win rate, so the early-minus-late
+   difference per channel sums to the actual decline. Agreement with the
+   linear breakdown means that breakdown does not hinge on linearity.
+
+   Regular season  (N = 12,839 games, model accuracy 0.931,
+   1984–94 → 2023–26: home win % 61.0 overall)
+
+   Decline decomposition  (signed SHAP, 1984–94 minus 2023–26)
+   Channel        Early pp   Late pp   Contribution  % of decline
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   Shooting          +3.0     -0.7         +3.6 pp           35%
+   Fouls             -0.1     -1.4         +1.3 pp           12%
+   Turnovers         +2.8     +0.3         +2.4 pp           23%
+   Rebounding        +3.2     +0.2         +3.0 pp           29%
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   SHAP total                               +10.3 pp  (actual decline +10.6 pp)
+
+
+   Playoffs  (N = 922 games, model accuracy 0.964,
+   1984–94 → 2023–26: home win % 63.4 overall)
+
+   Decline decomposition  (signed SHAP, 1984–94 minus 2023–26)
+   Channel        Early pp   Late pp   Contribution  % of decline
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   Shooting          +4.3     +0.5         +3.9 pp           47%
+   Fouls             +0.9     -0.0         +0.9 pp           11%
+   Turnovers         -1.2     -2.4         +1.2 pp           14%
+   Rebounding        +2.8     +0.4         +2.3 pp           28%
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   SHAP total                                +8.4 pp  (actual decline +9.4 pp)
+
+
+
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
    Home win % by rule-change era; pairwise tests between consecutive eras.
    Trend-controlled model: home_win ~ year + C(era).

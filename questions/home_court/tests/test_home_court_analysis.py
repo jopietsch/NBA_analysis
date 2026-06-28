@@ -657,3 +657,68 @@ class TestRunShotZoneAnalysis:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             reg.run_shot_zone_analysis([], {}, [], {})
+
+
+class TestShapChannels:
+    """Non-parametric (gradient-boosting + SHAP) channel decomposition."""
+
+    def _make_signal_df(self, n=1800, seed=3):
+        """Game-level df where home_win depends on the channel edges, spanning
+        the earliest and latest eras so a decline decomposition is defined."""
+        rng = np.random.default_rng(seed)
+        early0 = nba.ERA_DEFS[0][1]
+        late1 = nba.ERA_DEFS[-1][2]
+        year = rng.choice([early0, late1], n)
+        # Larger home edges in the early era → a built-in decline to recover.
+        scale = np.where(year == early0, 1.0, 0.3)
+        efg = rng.normal(1.2, 3.0, n) * scale
+        foul = rng.normal(-0.7, 2.0, n) * scale
+        tov = rng.normal(-0.4, 2.0, n) * scale
+        reb = rng.normal(1.5, 3.0, n) * scale
+        lin = 0.10 * efg - 0.06 * foul - 0.06 * tov + 0.05 * reb
+        home_win = (rng.uniform(size=n) < 1 / (1 + np.exp(-lin))).astype(int)
+        df = pd.DataFrame({
+            "year": year, "is_playoff": 0, "home_win": home_win,
+            "efg_pct_diff": efg, "foul_diff": foul,
+            "tov_diff": tov, "reb_diff": reb,
+        })
+        df["era"] = df["year"].apply(reg._era_for_year)
+        return df
+
+    def test_structure_and_reconciliation(self):
+        shap = pytest.importorskip("shap")  # noqa: F841
+        pytest.importorskip("sklearn")
+        df = self._make_signal_df()
+        out = reg.compute_shap_channels(df)
+        assert "Regular season" in out, "expected a regular-season decomposition"
+        d = out["Regular season"]
+
+        # Channel decline contributions sum to the SHAP-implied total decline.
+        chan_sum = sum(r["contrib_pp"] for r in d["channels"])
+        assert abs(chan_sum - d["shap_decline_pp"]) < 1e-6
+
+        # Each era's signed contributions sum to that era's gap from the overall
+        # home win rate (the property that makes the decomposition exact).
+        for era, dev in d["era_dev_pp"].items():
+            assert abs(sum(d["era_contrib_pp"][era]) - dev) < 1e-6
+
+        # SHAP-implied decline tracks the actual early-minus-late drop.
+        assert abs(d["shap_decline_pp"] - d["actual_decline_pp"]) < 2.0
+        assert 0.0 <= d["acc"] <= 1.0
+
+    def test_run_emits_facts(self):
+        pytest.importorskip("shap")
+        pytest.importorskip("sklearn")
+        from home_court_facts import FACTS
+        df = self._make_signal_df()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_shap_channels(df)
+        assert "shap.reg_top_channel" in FACTS
+        assert "shap.reg_decline_pp" in FACTS
+
+    def test_missing_columns_skips_cleanly(self):
+        # Too few rows / no usable context → empty result, no raise.
+        df = self._make_signal_df(n=50)
+        out = reg.compute_shap_channels(df)
+        assert "Regular season" not in out

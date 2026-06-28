@@ -29,6 +29,11 @@
     "ok": true,
     "value": "51.9%"
   },
+  "shap_agrees_with_mediation": {
+    "claim": "a model that makes no straight-line assumption splits the decline across the same channels as the linear breakdown, with rebounding a leading channel and fouls not the largest",
+    "ok": true,
+    "value": "rebounding 28%, fouls 14%"
+  },
   "threept_half_foul_tov": {
     "claim": "the three-point shift explains about half of both the foul and turnover declines",
     "ok": true,

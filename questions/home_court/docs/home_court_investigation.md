@@ -91,6 +91,8 @@ Home court advantage is real, it lives in a few measurable things on the court, 
 
 The four channels above, working together, capture 96% of the regular-season decline, 95% CI [87, 107]%. The playoff channels capture 67% of the playoff decline, 95% CI [38, 107]%, which leaves about a third of the postseason slide outside the measured box score and loosely pinned. The regular-season account is close to complete; the playoff account is the same story told on far fewer games. Everything in Part 2 was tested against this account and added little or nothing to it.
 
+**One more check on the breakdown itself.** The channel shares above come from a straight-line model. To see whether that assumption is doing the work, the same four edges were fed to a flexible win model that lets the factors bend and interact, which then splits each game's outcome among them and reads off how much each factor's edge shrank over the 40 years. It lands on the same split: shooting, rebounding, and turnovers each carry a substantial slice of the regular-season decline and fouls the smallest, about 14%, with the slices adding back to the same drop of about 9.4 pp. The playoffs split the same way. Since the two methods share no assumptions, the agreement says the breakdown is a feature of the games rather than of the straight-line form.
+
 ---
 
 # Part 2: What I Ruled Out

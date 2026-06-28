@@ -1869,6 +1869,180 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
     print()
 
 
+# ── Analysis: Non-parametric channel decomposition (gradient boosting + SHAP) ─
+
+# Same four channels as the linear mediation, so the two decompositions of the
+# decline are directly comparable.
+_SHAP_CHANNELS: list[tuple[str, str]] = [
+    ("efg_pct_diff", "Shooting"),
+    ("foul_diff",    "Fouls"),
+    ("tov_diff",     "Turnovers"),
+    ("reb_diff",     "Rebounding"),
+]
+
+
+def compute_shap_channels(df: pd.DataFrame, seed: int = 0) -> dict:
+    """Non-parametric decomposition of the HCA decline via a gradient-boosted
+    win model and SHAP, as a robustness check on the linear mediation.
+
+    A gradient-boosted classifier learns home_win from the four box-score edges
+    (eFG%, fouls, turnovers, rebounds) with no linearity assumption and with
+    interactions. SHAP values split each game's predicted win probability into
+    additive per-channel contributions that sum to the prediction minus the
+    league-average prediction. Averaging the signed SHAP within an era gives that
+    era's channel contributions, which sum to the era's deviation from the overall
+    home win rate; so the early-minus-late difference per channel sums to the
+    actual decline. That is the non-parametric analogue of the mediation trend
+    decomposition: same target, no straight-line assumption.
+
+    Deterministic given ``seed`` (model fit, background sample, SHAP are all
+    seeded / exact), so home_court_results.md stays reproducible.
+    """
+    # Heavy, optional deps — import lazily so the rest of the pipeline never pays
+    # for them and a missing install degrades to "skip" rather than crash.
+    try:
+        import shap
+        from sklearn.ensemble import GradientBoostingClassifier
+    except ImportError:
+        return {}
+
+    keys = [k for k, _ in _SHAP_CHANNELS]
+    out: dict = {"channels": list(_SHAP_CHANNELS)}
+
+    for label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po].dropna(
+            subset=keys + ["home_win", "era", "year"]
+        ).copy()
+        if len(sub) < 500:
+            continue
+
+        X = sub[keys].values.astype(float)
+        y = sub["home_win"].values.astype(int)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            model = GradientBoostingClassifier(
+                n_estimators=200, max_depth=3, learning_rate=0.05,
+                subsample=0.8, random_state=seed,
+            ).fit(X, y)
+            acc = float(model.score(X, y))
+
+            rng = np.random.default_rng(seed)
+            bg = X[rng.choice(len(X), min(100, len(X)), replace=False)]
+            explainer = shap.TreeExplainer(
+                model, data=bg,
+                feature_perturbation="interventional",
+                model_output="probability",
+            )
+            # SHAP's progress bar writes to stderr; results.md captures stdout.
+            with contextlib.redirect_stderr(io.StringIO()):
+                sv = np.asarray(explainer.shap_values(X))
+            proba = model.predict_proba(X)[:, 1]
+        # Interventional SHAP is exactly additive: per game, the channel values
+        # plus this base sum to the predicted win probability. So averaging the
+        # signed SHAP within an era reconstructs (predicted mean − base) exactly.
+        base = float(np.ravel(explainer.expected_value)[0])
+
+        eras = list(pd.unique(sub.sort_values("year")["era"]))
+        era_mask = {e: (sub["era"] == e).values for e in eras}
+        era_phi = {e: sv[era_mask[e]].mean(axis=0) for e in eras}
+        era_pred = {e: float(proba[era_mask[e]].mean()) for e in eras}   # what SHAP sums to
+        era_actual = {e: float(y[era_mask[e]].mean()) for e in eras}     # observed, for the cross-check
+        early, late = eras[0], eras[-1]
+
+        delta = era_phi[early] - era_phi[late]          # per-channel, in prob units
+        shap_decline_pp = float(delta.sum()) * 100.0     # SHAP-implied total decline
+        actual_decline_pp = (era_actual[early] - era_actual[late]) * 100.0
+
+        channel_rows = []
+        for i, (k, name) in enumerate(_SHAP_CHANNELS):
+            contrib_pp = float(delta[i]) * 100.0
+            channel_rows.append({
+                "key": k, "label": name,
+                "contrib_pp": contrib_pp,
+                "pct": 100.0 * contrib_pp / shap_decline_pp if shap_decline_pp else float("nan"),
+                "early_pp": float(era_phi[early][i]) * 100.0,
+                "late_pp":  float(era_phi[late][i]) * 100.0,
+            })
+
+        out[label] = {
+            "n": len(sub), "acc": acc, "base_pct": base * 100.0,
+            "actual_home_win_pct": float(y.mean()) * 100.0,
+            "eras": eras, "early": early, "late": late,
+            "era_contrib_pp": {e: (era_phi[e] * 100.0).tolist() for e in eras},
+            "era_dev_pp": {e: (era_pred[e] - base) * 100.0 for e in eras},
+            "era_actual_pct": {e: era_actual[e] * 100.0 for e in eras},
+            "channels": channel_rows,
+            "shap_decline_pp": shap_decline_pp,
+            "actual_decline_pp": actual_decline_pp,
+        }
+    return out
+
+
+def run_shap_channels(df: pd.DataFrame) -> None:
+    """Print the gradient-boosting + SHAP channel decomposition of the decline,
+    and compare it with the linear mediation it cross-checks."""
+    _section("NON-PARAMETRIC CHANNEL DECOMPOSITION — GRADIENT BOOSTING + SHAP")
+    print("   Robustness check on the linear mediation. A gradient-boosted win")
+    print("   model learns home_win from the four box-score edges (eFG%, fouls,")
+    print("   turnovers, rebounds) with no straight-line assumption and with")
+    print("   interactions. SHAP splits each game's predicted win probability into")
+    print("   additive channel contributions; averaged within an era they sum to")
+    print("   that era's gap from the overall home win rate, so the early-minus-late")
+    print("   difference per channel sums to the actual decline. Agreement with the")
+    print("   linear breakdown means that breakdown does not hinge on linearity.\n")
+
+    data = compute_shap_channels(df)
+    if not data or "channels" not in data:
+        print("   shap / scikit-learn not available — skipping.\n")
+        return
+
+    for label in ("Regular season", "Playoffs"):
+        d = data.get(label)
+        if not d:
+            continue
+        print(f"   {label}  (N = {d['n']:,} games, model accuracy {d['acc']:.3f},")
+        print(f"   {d['early']} → {d['late']}: home win % {d['actual_home_win_pct']:.1f} overall)\n")
+        print(f"   Decline decomposition  (signed SHAP, {d['early']} minus {d['late']})")
+        print(f"   {'Channel':<12}  {'Early pp':>9}  {'Late pp':>8}  {'Contribution':>13}  {'% of decline':>12}")
+        print(f"   {'─'*12}  {'─'*9}  {'─'*8}  {'─'*13}  {'─'*12}")
+        for r in d["channels"]:
+            print(f"   {r['label']:<12}  {r['early_pp']:>+8.1f}  {r['late_pp']:>+7.1f}  "
+                  f"{r['contrib_pp']:>+11.1f} pp  {r['pct']:>11.0f}%")
+        print(f"   {'─'*12}  {'─'*9}  {'─'*8}  {'─'*13}  {'─'*12}")
+        print(f"   {'SHAP total':<12}  {'':>9}  {'':>8}  {d['shap_decline_pp']:>+11.1f} pp  "
+              f"(actual decline {d['actual_decline_pp']:+.1f} pp)\n")
+
+        if label == "Regular season":
+            ranked = sorted(d["channels"], key=lambda r: r["contrib_pp"], reverse=True)
+            top = ranked[0]
+            FACTS.set("shap.reg_top_channel", top["label"],
+                      note="SHAP: largest single channel in the RS decline")
+            FACTS.set("shap.reg_top_pct", top["pct"], "{:.0f}%",
+                      note="SHAP: that channel's share of the channel-explained RS decline")
+            FACTS.set("shap.reg_acc", d["acc"], "{:.2f}",
+                      note="SHAP: gradient-boosted win-model accuracy (RS)")
+            FACTS.set("shap.reg_decline_pp", d["shap_decline_pp"], "{:.1f}", unit="pp",
+                      note="SHAP-implied total RS decline (early minus late era)")
+            fouls = next(r for r in d["channels"] if r["label"] == "Fouls")
+            FACTS.set("shap.reg_fouls_pct", fouls["pct"], "{:.0f}%",
+                      note="SHAP: fouls' share of the channel-explained RS decline")
+            # Guard: the non-parametric breakdown agrees with the linear mediation
+            # on the big picture — rebounding is a top channel and fouls is not the
+            # largest — so the mediation conclusions don't depend on linearity.
+            reb = next(r for r in d["channels"] if r["label"] == "Rebounding")
+            reb_is_major = reb["pct"] >= 20.0
+            fouls_not_largest = fouls["pct"] < max(r["pct"] for r in d["channels"])
+            FACTS.guard(
+                "shap_agrees_with_mediation",
+                bool(reb_is_major and fouls_not_largest),
+                claim="a model that makes no straight-line assumption splits the "
+                      "decline across the same channels as the linear breakdown, with "
+                      "rebounding a leading channel and fouls not the largest",
+                value=f"rebounding {reb['pct']:.0f}%, fouls {fouls['pct']:.0f}%",
+            )
+        print()
+
+
 # ── Analysis: Out-of-sample forecast of the decline from the channels ────────
 
 _OOS_CHANNELS = ["efg_pct_diff", "foul_diff", "tov_diff", "reb_diff"]
@@ -5199,6 +5373,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         else:
             print("   No cached player-tracking data — run the analysis first to fetch it.\n")
         run_oos_forecast(df)
+        run_shap_channels(df)
 
         # §4 What Didn't Drive the Change (rule changes lead, then the situational
         # suspects, then the combined "put it all together" models)
