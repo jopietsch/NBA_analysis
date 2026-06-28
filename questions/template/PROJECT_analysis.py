@@ -3,7 +3,8 @@
 Add run_* functions here; call them from run(). Use the box-drawing header
 convention: print("─── SECTION TITLE " + "─" * 50). Register named facts with
 FACTS.set() next to each print() that emits a cited number. At the end of run(),
-call FACTS.dump(_FACTS_PATH) and FACTS.dump_guards(_GUARDS_PATH).
+call FACTS.dump(_FACTS_PATH) and FACTS.dump_guards(_GUARDS_PATH), then
+write_reference() to refresh the docs/PROJECT_facts_reference.md lookup table.
 """
 import sys
 
@@ -21,3 +22,5 @@ def run(out=None) -> None:
 
     FACTS.dump(_FACTS_PATH)
     FACTS.dump_guards(_GUARDS_PATH)
+    from render_docs import write_reference
+    print(f"Saved → {write_reference()}")

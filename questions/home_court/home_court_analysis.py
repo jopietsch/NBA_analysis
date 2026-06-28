@@ -5264,6 +5264,8 @@ def run(df: pd.DataFrame | None = None) -> None:
     sys.stdout.write(f"Saved → {_FACTS_PATH}  ({len(FACTS)} facts)\n")
 
     FACTS.dump_guards(_GUARDS_PATH)
+    from render_docs import write_reference
+    sys.stdout.write(f"Saved → {write_reference()}\n")
     failed = FACTS.failed_guards()
     if failed:
         sys.stdout.write(f"\n⚠ {len(failed)} prose claim(s) no longer hold — update the docs:\n")

@@ -378,6 +378,8 @@ def run(end_year: int = 2025) -> None:
             FACTS.set(f"discounts.{s}.{rank}.diff", float(row.get("_res", 0)), "{:.2f}",
                       note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} residual vs consensus (negative)")
 
-    # Dump all facts and guards to docs/
+    # Dump all facts and guards to docs/ (+ the dev facts-reference lookup table)
     FACTS.dump(_FACTS_PATH)
     FACTS.dump_guards(_GUARDS_PATH)
+    from render_docs import write_reference
+    print(f"Saved → {write_reference()}")

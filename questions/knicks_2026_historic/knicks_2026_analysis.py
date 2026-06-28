@@ -1612,6 +1612,8 @@ def main() -> None:
 
     FACTS.dump(_FACTS_PATH)
     FACTS.dump_guards(_GUARDS_PATH)
+    from render_docs import write_reference
+    print(f"Saved → {write_reference()}")
 
     print(f"Saved → knicks_2026_historic_results.md")
     print(f"Saved → {_FACTS_PATH}  ({len(FACTS)} facts)")
