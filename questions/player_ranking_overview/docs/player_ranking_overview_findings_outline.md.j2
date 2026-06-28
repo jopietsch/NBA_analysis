@@ -1,0 +1,83 @@
+# Player Ranking Overview: Findings Outline
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+Internal outline. Cross-referenced to player_ranking_overview_results.md.
+Technical shorthand fine here. Reflects the current << f("cov.n_systems") >>-box-score-system pipeline
+(human rankings removed; impact metrics surveyed but not recomputed).
+
+---
+
+## Structure (matches the 11 sections in the findings)
+
+### § 1. Introduction
+- Hook: ordinal rank compresses; the gap between #1 and #10 is not the gap between #10 and #20.
+- Thesis: two combined ratings answer two questions, what the systems agree on vs. which combination best predicts team wins.
+- Testbed: 2024-25; << f("cov.n_systems") >> box-score systems recomputed; impact metrics and human rankings surveyed but not included.
+
+### § 2. The landscape of player rating
+- Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.
+- Impact metrics (surveyed, not recomputed): RAPTOR, EPM, LEBRON, DARKO, DRIP, ESPN RPM. RAPM backbone + box-score prior; noise/regularization.
+- Human rankings (surveyed, not included): MVP votes, All-NBA, media top-100.
+- Practitioner trust (external, cited in resources bibliography): HoopsHype survey of 29 execs, DARKO top at 8 votes; Dunks & Threes retrodiction order EPM > RPM > RAPTOR > BPM 2.0.
+
+### § 3. Do the systems agree?
+- Spearman matrix. Tight: PER-Game Score << f("corr.GAME_SCORE_PER") >>, BPM-VORP << f("corr.BPM_VORP") >>. Moderate: PER-WS << f("corr.PER_WS") >>, WS-WS/48 << f("corr.WS_WS48") >>. Loose: PER-BPM << f("corr.PER_BPM") >>, Game Score-BPM << f("corr.GAME_SCORE_BPM") >>.
+- Player-level divergence even where overall correlation is high: WS favors efficient bigs (Sabonis +<< f("loves.WS.1.diff") >>, Zubac +<< f("loves.WS.2.diff") >> vs. consensus); PER favors high-usage scorers (Zion +<< f("loves.PER.1.diff") >>, Porziņģis +<< f("loves.PER.3.diff") >>).
+- Chart: rank-agreement heatmap.
+
+### § 4. What the field has learned about evaluating metrics
+- Two tests: retrodiction (first half predicts second half) and team-wins prediction.
+- Both reward RAPM backbone + calibrated box-score prior.
+- Academic caveat: complex metrics do not reliably beat simple ones as inputs to downstream salary/wins models.
+
+### § 5. What each system uniquely sees
+- Unique R²: BPM/OBPM/DBPM << f("uniq.BPM.r2") >>; PER << f("uniq.PER.r2") >>; Game Score << f("uniq.GAME_SCORE.r2") >>; VORP << f("uniq.VORP.r2") >>; WS << f("uniq.WS.r2") >>; WS/48 << f("uniq.WS48.r2") >>.
+- System-outliers chart: who each system rates above/below consensus (e.g. DBPM discounts the offensive stars: Jokić << f("discounts.DBPM.1.diff") >>, Giannis << f("discounts.DBPM.2.diff") >>, SGA << f("discounts.DBPM.3.diff") >>).
+
+### § 6. The two uber ratings
+- Consensus (average normalized score). Top 5: Jokić << f("consensus.top.1.z") >>, SGA << f("consensus.top.2.z") >>, Giannis << f("consensus.top.3.z") >>, Harden << f("consensus.top.4.z") >>, Young << f("consensus.top.5.z") >>.
+- Wins-predictive (weighted by team-wins prediction). Top 5: Jokić << f("wins_pred.top.1.z") >>, SGA << f("wins_pred.top.2.z") >>, Giannis << f("wins_pred.top.3.z") >>, Harden << f("wins_pred.top.4.z") >>, Daniels << f("wins_pred.top.5.z") >>.
+- Consensus vs. wins-predictive Spearman << f("cmp.spearman") >>. Risers: SGA +<< f("cmp.higher.1.diff") >>, Giannis +<< f("cmp.higher.2.diff") >>, Gafford +<< f("cmp.higher.3.diff") >>, Wembanyama +<< f("cmp.higher.4.diff") >>, Caruso +<< f("cmp.higher.5.diff") >>. Fallers: Micic << f("cmp.lower.1.diff") >>, AJ Johnson << f("cmp.lower.2.diff") >>, Cody Williams << f("cmp.lower.3.diff") >>.
+- Illustration: Jokić tops both; SGA close second and the largest riser into wins-predictive.
+
+### § 7. Stars matter more than rank implies (distribution section)
+- Rate metrics spread evenly: PER top-5% share << f("dist.PER.top5pct", "{:.1f}%") >> (Gini << f("dist.PER.gini") >>). Cumulative metrics top-heavy: WS top-5% << f("dist.WS.top5pct", "{:.1f}%") >> (Gini << f("dist.WS.gini") >>), VORP << f("dist.VORP.top5pct", "{:.1f}%") >> (Gini << f("dist.VORP.gini") >>); BPM also high (<< f("dist.BPM.top5pct", "{:.1f}%") >>, Gini << f("dist.BPM.gini") >>).
+- Charts: all-systems distributions, Gini by system, rank-value curves, ordinal-vs-value gap.
+- Point: cumulative metrics' high Gini is how much they disagree with ordinal rank.
+
+### § 8. Who lands in the top 20
+- Top-20-by-system table across the << f("cov.n_systems") >> systems; rank-1-to-rank-20 gap as a concentration read.
+
+### § 9. A note on the recomputed formulas
+- PER cleanest (mean ~15, Jokić high 20s). WS/BPM/VORP are approximations; absolute values differ from BBR.
+- VORP inflation for high-steal defenders: VORP rates Daniels further above consensus than any player (+<< f("loves.VORP.1.diff") >>); per-100 denominator uses player-possessions not team-possessions. Also Ellis, Wallace, Dunn.
+
+### § 10. Limitations
+- Single-season testbed; multi-season needed for stability.
+- RAPM not recomputed; only impact signal is BPM as a box-score proxy.
+- Proprietary/tracking blind spot (Second Spectrum, Synergy, franchise models).
+- Playoff small-sample limit for RAPM-based metrics.
+
+### § 11. What a Bayesian lens would add
+- Uncertainty ranges: single-number metrics hide a ~2-3 pts/100 band; apparent 8th-vs-12th disputes often within it.
+- Playoff vs. regular season: update the full-season prior with playoff lineup data; posterior barely shifts on 6 games, more on a Finals run.
+- Better consensus weighting: estimate system weights from multi-season retrodiction.
+
+---
+
+## Key numbers (from results.md)
+
+- Players: << f("cov.n_total") >> total, << f("cov.n_qualified") >> qualified (>= 500 min). Systems present: << f("cov.n_systems") >>.
+- Correlations: PER-Game Score << f("corr.GAME_SCORE_PER") >>, PER-WS << f("corr.PER_WS") >>, WS-WS/48 << f("corr.WS_WS48") >>, PER-BPM << f("corr.PER_BPM") >>, Game Score-BPM << f("corr.GAME_SCORE_BPM") >>, BPM-VORP << f("corr.BPM_VORP") >>.
+- Consensus top 5: Jokić << f("consensus.top.1.z") >>, SGA << f("consensus.top.2.z") >>, Giannis << f("consensus.top.3.z") >>, Harden << f("consensus.top.4.z") >>, Young << f("consensus.top.5.z") >>.
+- Wins-predictive top 5: Jokić << f("wins_pred.top.1.z") >>, SGA << f("wins_pred.top.2.z") >>, Giannis << f("wins_pred.top.3.z") >>, Harden << f("wins_pred.top.4.z") >>, Daniels << f("wins_pred.top.5.z") >>.
+- Consensus vs. wins-predictive Spearman: << f("cmp.spearman") >>. Top riser SGA +<< f("cmp.higher.1.diff") >>; top faller Micic << f("cmp.lower.1.diff") >>.
+- Concentration (top-5% share / Gini): PER << f("dist.PER.top5pct", "{:.1f}%") >> / << f("dist.PER.gini") >>, WS << f("dist.WS.top5pct", "{:.1f}%") >> / << f("dist.WS.gini") >>, VORP << f("dist.VORP.top5pct", "{:.1f}%") >> / << f("dist.VORP.gini") >>, BPM << f("dist.BPM.top5pct", "{:.1f}%") >> / << f("dist.BPM.gini") >>.
+- Unique R²: BPM/OBPM/DBPM << f("uniq.BPM.r2") >>; PER << f("uniq.PER.r2") >>; Game Score << f("uniq.GAME_SCORE.r2") >>; VORP << f("uniq.VORP.r2") >>; WS << f("uniq.WS.r2") >>; WS/48 << f("uniq.WS48.r2") >>.
