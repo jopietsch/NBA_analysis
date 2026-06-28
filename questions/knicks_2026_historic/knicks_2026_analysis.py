@@ -21,6 +21,7 @@ import pandas as pd
 from nbakit.textfmt import section as _hdr, subsection as _subhdr
 from nbakit.stats import binom_sf_ge, t_interval
 
+from knicks_2026_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
 from knicks_2026_data import (
     KNICKS_TEAM_ID,
     SUBJECT_YEAR,
@@ -123,6 +124,24 @@ def run_raw_claim(po_2026: pd.DataFrame,
     print(f"\n  Best win rate:  {short_label(int(best.year))}  {best.win_rate:.3f}", file=out)
     print(f"  Worst win rate: {short_label(int(worst.year))}  {worst.win_rate:.3f}", file=out)
 
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("raw.wins",          wins,              "{:d}",    note="Knicks 2026 playoff wins")
+    FACTS.set("raw.losses",        losses,            "{:d}",    note="Knicks 2026 playoff losses")
+    FACTS.set("raw.win_rate",      wr,                "{:.3f}",  note="Knicks 2026 playoff win rate")
+    FACTS.set("raw.win_rate_pct",  wr_pct,            "{:.1f}",  note="Win-rate percentile among champion seasons")
+    FACTS.set("raw.win_rate_mean", float(wr_series.mean()), "{:.3f}", note="Mean champion win rate")
+    FACTS.set("raw.win_rate_best", float(wr_series.max()),  "{:.3f}", note="Best champion win rate (2016-17 Warriors)")
+    FACTS.set("raw.margin",        margin,            "{:+.1f}", note="Knicks 2026 avg playoff margin pts/game")
+    FACTS.set("raw.margin_pct",    mgn_pct,           "{:.1f}",  note="Margin percentile among champion seasons")
+    FACTS.set("raw.margin_ci.lo",  ci_lo,             "{:+.1f}", note="95% CI lower bound on margin")
+    FACTS.set("raw.margin_ci.hi",  ci_hi,             "{:+.1f}", note="95% CI upper bound on margin")
+    FACTS.set("raw.n_champions",   n,                 "{:d}",    note="Number of champion seasons in dataset")
+    FACTS.set("raw.ci_lo_pct",     lo_pct,            "{:.0f}",  note="Percentile rank of CI lower bound")
+    FACTS.set("raw.margin_mean",   float(mgn_series.mean()), "{:+.1f}", note="Mean champion avg margin")
+    # Guard: raw margin is best ever
+    FACTS.guard("raw.margin_is_best", mgn_pct == 100.0,
+                "raw avg margin is the highest ever recorded (100th percentile)", mgn_pct)
+
 
 # ── Section 2: East weakness 2025-26 ────────────────────────────────────────
 
@@ -153,6 +172,13 @@ def run_east_weakness(reg_2026: pd.DataFrame,
         print(f"  {name:<30} SRS {srs_val:+.2f}", file=out)
     print(f"  Unique-opponent avg SRS:        {unique_avg:+.2f}", file=out)
     print(f"  Games-weighted avg SRS:         {weighted_avg:+.2f}  (primary metric)", file=out)
+
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("gap.conf.east",      float(conf_avgs["East"]), "{:+.2f}", note="East avg SRS 2025-26")
+    FACTS.set("gap.conf.west",      float(conf_avgs["West"]), "{:+.2f}", note="West avg SRS 2025-26")
+    FACTS.set("gap.west_east",      gap,                      "{:+.2f}", note="West minus East SRS gap 2025-26")
+    FACTS.set("gap.east_h2h",       h2h,                      "{:.3f}",  note="East inter-conference win rate")
+    FACTS.set("opp.srs_weighted",   weighted_avg,             "{:+.2f}", note="Games-weighted avg opponent SRS (primary)")
 
 
 # ── Section 3: Historical East/West gap ─────────────────────────────────────
@@ -210,6 +236,28 @@ def run_gap_history(gap_table: pd.DataFrame, out: io.StringIO) -> None:
     print(f"\n2025-26 East inter-conference win rate: {h2h_2026:.3f}", file=out)
     print(f"Percentile (100th = worst for East): {h2h_pct:.1f}th", file=out)
 
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("gap.pct",      gap_pct,   "{:.1f}",  note="Percentile of West dominance 2025-26 (37th = below average)")
+    FACTS.set("gap.mean",     gap_mean,  "{:+.2f}", note="Historical mean West-East SRS gap")
+    FACTS.set("gap.std",      gap_std,   "{:.2f}",  note="Historical std dev of West-East gap")
+    FACTS.set("gap.ci.lo",    ci_lo,     "{:+.2f}", note="95% CI lower bound on historical mean gap")
+    FACTS.set("gap.ci.hi",    ci_hi,     "{:+.2f}", note="95% CI upper bound on historical mean gap")
+    FACTS.set("gap.z_score",  z_score,   "{:+.2f}", note="Z-score of 2025-26 gap vs historical mean")
+    FACTS.set("gap.east_h2h_pct", h2h_pct, "{:.1f}", note="East H2H pct (100th = worst for East)")
+    # Register top-3 most West-dominant gaps
+    for _rank, (_, _row) in enumerate(top3.iterrows(), 1):
+        FACTS.set(f"gap.top{_rank}.srs", float(_row["srs_gap"]), "{:+.2f}",
+                  note=f"#{_rank} most West-dominant season SRS gap")
+    # Plain-language fact: "63%" of seasons West led by more — not printed directly
+    _pct_more_dominant = 100.0 - gap_pct
+    FACTS.set("gap.pct_more_dominant", f"{_pct_more_dominant:.0f}%",
+              note="% of seasons where West led by more than 2025-26 (editorial rounding)")
+    # Guards
+    FACTS.guard("gap.east_not_historically_weak", gap_pct < 80.0,
+                "the East was not historically weak (West dominance below 80th percentile)", gap_pct)
+    FACTS.guard("gap.west_more_dominant_most_seasons", gap_pct < 50.0,
+                "the West was more dominant in the majority of prior seasons", gap_pct)
+
 
 # ── Section 4: Opponent quality ──────────────────────────────────────────────
 
@@ -234,6 +282,13 @@ def run_opponent_quality(po_2026: pd.DataFrame,
     for _, row in easiest.iterrows():
         marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
         print(f"  {short_label(int(row.year))}: {row.avg_opp_srs:+.2f}{marker}", file=out)
+
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("opp.srs_pct",  opp_pct,                  "{:.1f}",  note="Opponent SRS schedule percentile vs champions")
+    FACTS.set("opp.srs_mean", float(opp_series.mean()), "{:+.2f}", note="Mean champion opponent SRS")
+    # Guard: schedule near historical median, not soft or hard
+    FACTS.guard("opp.schedule_near_median", 35.0 <= opp_pct <= 65.0,
+                "games-weighted opponent SRS sits near the historical median (35th-65th pct)", opp_pct)
 
 
 # ── Section 5: Opponent-adjusted dominance ──────────────────────────────────
@@ -296,6 +351,33 @@ def run_adjusted_dominance(po_2026: pd.DataFrame,
                 f"overperf {row.overperformance:+.2f}{marker}",
                 file=out,
             )
+
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("adj.raw_margin",    raw_margin,              "{:+.2f}", note="Knicks raw playoff margin (full precision)")
+    FACTS.set("adj.opp_srs",       avg_opp,                 "{:+.2f}", note="Games-weighted opponent SRS")
+    FACTS.set("adj.margin",        adj,                     "{:+.2f}", note="Opponent-adjusted margin pts/game")
+    FACTS.set("adj.margin_pct",    adj_pct,                 "{:.1f}",  note="Adj margin percentile among champions")
+    FACTS.set("adj.adj_mean",      float(adj_series.mean()), "{:+.2f}", note="Mean champion adj margin")
+    FACTS.set("adj.adj_best",      float(adj_series.max()),  "{:+.2f}", note="Best adj margin all-time (= Knicks 2026)")
+    FACTS.set("knicks.reg_srs",    knicks_srs,              "{:+.2f}", note="Knicks 2025-26 regular-season SRS")
+    # Register top-5 adj-margin champions (2nd through 5th are the comparison group)
+    _top5_adj = champions.nlargest(5, "adj_margin")[["year", "adj_margin"]]
+    for _rank, (_, _row) in enumerate(_top5_adj.iterrows(), 1):
+        FACTS.set(f"adj.top{_rank}.margin", float(_row["adj_margin"]), "{:+.2f}",
+                  note=f"#{_rank} adj margin all-time")
+    if not np.isnan(knicks_srs) and not np.isnan(overperf):
+        FACTS.set("knicks.expected_margin", expected_margin, "{:+.2f}",
+                  note="Expected margin/game from reg-SRS prediction")
+        FACTS.set("overperf.margin", overperf,             "{:+.2f}", note="Playoff overperformance vs reg-SRS prediction")
+        FACTS.set("overperf.pct",    op_pct,               "{:.1f}",  note="Overperformance percentile among champions")
+        FACTS.set("overperf.best",   float(op_series.max()), "{:+.2f}", note="Best overperformance all-time (2000-01 Lakers)")
+    # Guards
+    FACTS.guard("adj.margin_is_first", adj_pct == 100.0,
+                "opponent-adjusted margin ranks first all-time", adj_pct)
+    if not np.isnan(overperf):
+        FACTS.guard("overperf.is_second_not_first",
+                    overperf < float(op_series.max()) and op_pct >= 95.0,
+                    "playoff overperformance is 2nd all-time (97th+ pct, not 1st)", op_pct)
 
 
 # ── Section 6: Round-by-round split — raw vs. opponent-adjusted ──────────────
@@ -397,6 +479,13 @@ def run_round_split(po_2026: pd.DataFrame,
         print(f"{'Pre-Finals avg (R1–CF)':<28} {pre_raw:>+7.1f} {pre_reg:>+8.1f} {pre_po:>+8.1f}", file=out)
         print(f"{'Finals':<28} {fin_raw:>+7.1f} {fin_reg:>+8.1f} {fin_po:>+8.1f}", file=out)
         print(f"{'Gap (pre − Finals)':<28} {pre_raw-fin_raw:>+7.1f} {pre_reg-fin_reg:>+8.1f} {pre_po-fin_po:>+8.1f}", file=out)
+        # ── Facts: pre-Finals vs Finals summary ──────────────────────────────
+        FACTS.set("prefinals.raw",     pre_raw, "{:+.1f}", note="Pre-Finals avg raw margin (R1–CF)")
+        FACTS.set("prefinals.reg_adj", pre_reg, "{:+.1f}", note="Pre-Finals avg reg-adj margin")
+        FACTS.set("prefinals.po_adj",  pre_po,  "{:+.1f}", note="Pre-Finals avg po-adj margin")
+        FACTS.set("finals.raw",     fin_raw, "{:+.1f}", note="Finals avg raw margin")
+        FACTS.set("finals.reg_adj", fin_reg, "{:+.1f}", note="Finals avg reg-adj margin")
+        FACTS.set("finals.po_adj",  fin_po,  "{:+.1f}", note="Finals avg po-adj margin")
 
     # Historical rank: playoff-SRS-adjusted full-run margin
     if "adj_playoff_margin" in champions.columns:
@@ -425,6 +514,12 @@ def run_round_split(po_2026: pd.DataFrame,
                     f"  adj {r.adj_playoff_margin:+.2f}{marker}",
                     file=out,
                 )
+            # ── Facts: full-run po-SRS-adj margin ────────────────────────────
+            FACTS.set("adj_po.opp_po_srs",  knicks_opp_po, "{:+.2f}", note="Knicks games-wtd opp playoff SRS")
+            FACTS.set("adj_po.margin",       knicks_pa,     "{:+.2f}", note="Full-run playoff-SRS-adj margin")
+            FACTS.set("adj_po.margin_pct",   pa_pct,        "{:.1f}",  note="Adj_po margin percentile among champions")
+            FACTS.guard("adj_po.margin_is_first", pa_pct == 100.0,
+                        "full-run playoff-SRS-adjusted margin ranks first all-time", pa_pct)
 
     # 2025-26 playoff field: who improved most from the regular season
     field = compute_playoff_field_elevation(po_2026, reg_2026)
@@ -447,6 +542,34 @@ def run_round_split(po_2026: pd.DataFrame,
             file=out,
         )
 
+    # ── Facts: per-round margins ──────────────────────────────────────────────
+    _round_keys = ["r1", "r2", "cf", "finals"]
+    for _i, _srow in series_df.iterrows():
+        _pk = _round_keys[_i] if _i < len(_round_keys) else f"r{_i+1}"
+        FACTS.set(f"round.{_pk}.raw",        float(_srow["raw_margin"]),       "{:+.1f}", note=f"{_pk} series raw margin")
+        FACTS.set(f"round.{_pk}.reg_adj",    float(_srow["reg_adj_margin"]),   "{:+.1f}", note=f"{_pk} series reg-adj margin")
+        _pa_val = float(_srow.get("playoff_adj_margin", float("nan")))
+        if not np.isnan(_pa_val):
+            FACTS.set(f"round.{_pk}.po_adj", _pa_val, "{:+.1f}", note=f"{_pk} series po-adj margin")
+        FACTS.set(f"round.{_pk}.opp_reg_srs", float(_srow["opp_reg_srs"]), "{:+.2f}", note=f"{_pk} opp regular-season SRS")
+        _ops_val = float(_srow.get("opp_playoff_srs", float("nan")))
+        if not np.isnan(_ops_val):
+            FACTS.set(f"round.{_pk}.opp_po_srs", _ops_val, "{:+.2f}", note=f"{_pk} opp playoff SRS excl. Knicks")
+    # ── Facts: 2026 playoff field elevation ──────────────────────────────────
+    _field_sorted = field.sort_values("elevation", ascending=False).reset_index(drop=True)
+    for _, _frow in _field_sorted.iterrows():
+        _fnm = name_map.get(int(_frow["team_id"]), f"Team {int(_frow['team_id'])}")
+        _fkey = _fnm.split()[-1].lower()
+        FACTS.set(f"field.{_fkey}.reg_srs",   float(_frow["reg_srs"]),   "{:+.2f}", note=f"{_fnm} reg-season SRS (2025-26)")
+        FACTS.set(f"field.{_fkey}.po_srs",    float(_frow["po_srs"]),    "{:+.2f}", note=f"{_fnm} playoff SRS all games")
+        FACTS.set(f"field.{_fkey}.elevation", float(_frow["elevation"]), "{:+.2f}", note=f"{_fnm} playoff elevation (po−reg)")
+    # Guard: Knicks rose most in field
+    _knicks_frow = _field_sorted[_field_sorted["team_id"] == KNICKS_TEAM_ID]
+    _knicks_elev = float(_knicks_frow["elevation"].iloc[0]) if not _knicks_frow.empty else float("nan")
+    _max_elev    = float(_field_sorted["elevation"].iloc[0]) if not _field_sorted.empty else float("nan")
+    FACTS.guard("field.knicks_rose_most", _knicks_elev == _max_elev,
+                "the Knicks elevated most from reg-season to playoffs of any 2026 playoff team", _knicks_elev)
+
 
 # ── Section 7: Other deflators ───────────────────────────────────────────────
 
@@ -462,6 +585,10 @@ def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
     c_pct = _pct_rank(champions["clutch_rate"].dropna(), clutch, ascending=True)
     print(f"  Percentile (100th = most clutch): {c_pct:.1f}th  "
           f"(mean {champions['clutch_rate'].mean():.3f})", file=out)
+    # ── Facts: clutch rate ────────────────────────────────────────────────────
+    FACTS.set("clutch.rate", clutch, "{:.3f}", note="Fraction Knicks 2026 playoff games decided by ≤5 pts")
+    FACTS.set("clutch.pct",  c_pct,  "{:.1f}", note="Clutch rate percentile vs champions (100=most)")
+    FACTS.set("clutch.mean", float(champions["clutch_rate"].mean()), "{:.3f}", note="Mean champion clutch rate")
 
     print(_subhdr("Home/away splits"), file=out)
     knicks = po_2026[po_2026["TEAM_ID"] == KNICKS_TEAM_ID]
@@ -474,6 +601,15 @@ def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
         a_pct = _pct_rank(champions["away_wr"].dropna(), away_wr, ascending=True)
         print(f"  Home win-rate percentile (vs champions): {h_pct:.1f}th", file=out)
         print(f"  Away win-rate percentile (vs champions): {a_pct:.1f}th", file=out)
+        # ── Facts: home/away splits ───────────────────────────────────────────
+        FACTS.set("home.games",  int(home_g), "{:d}",   note="Knicks 2026 home playoff games")
+        FACTS.set("home.wr",     home_wr,     "{:.3f}", note="Knicks 2026 home win rate")
+        FACTS.set("home.wr_pct", h_pct,       "{:.1f}", note="Home win-rate percentile vs champions")
+        FACTS.set("away.games",  int(away_g), "{:d}",   note="Knicks 2026 away playoff games")
+        FACTS.set("away.wr",     away_wr,     "{:.3f}", note="Knicks 2026 away win rate")
+        FACTS.set("away.wr_pct", a_pct,       "{:.1f}", note="Away win-rate percentile vs champions")
+        FACTS.guard("away.wr_elite", a_pct >= 95.0,
+                    "away win rate is at or above 95th pct among champions", a_pct)
 
     total  = len(knicks)
     wins   = (knicks["WL"] == "W").sum()
@@ -523,6 +659,13 @@ def run_deflators(po_2026: pd.DataFrame, champions: pd.DataFrame,
         print(f"  East opponents (R1–CF), games-weighted: {east_w}-{east_l}, "
               f"avg margin {east_margin:+.1f} pts/game over {len(east)} games", file=out)
         print(f"  Finals games decided by ≤4 pts: {finals_close} of {len(finals)}", file=out)
+        # ── Facts: East combined vs Finals shape ──────────────────────────────
+        FACTS.set("east.wins",          east_w,       "{:d}",   note="Knicks wins vs East opponents (R1–CF)")
+        FACTS.set("east.losses",        east_l,       "{:d}",   note="Knicks losses vs East opponents (R1–CF)")
+        FACTS.set("east.margin",        east_margin,  "{:+.1f}", note="Knicks avg margin vs East (R1–CF)")
+        FACTS.set("east.games",         len(east),    "{:d}",   note="Knicks total games vs East opponents")
+        FACTS.set("finals.close_by4",   finals_close, "{:d}",   note="Finals games decided by ≤4 pts")
+        FACTS.set("finals.total_games", len(finals),  "{:d}",   note="Total Finals games played")
 
 
 # ── Section 8: Playoff SRS and elevation ─────────────────────────────────────
@@ -552,6 +695,13 @@ def run_playoff_srs(po_2026: pd.DataFrame,
     print(f"  Elevation percentile: {elev_pct:.1f}th  "
           f"(mean {elev_series.mean():+.2f}, best {elev_series.max():+.2f}, "
           f"worst {elev_series.min():+.2f})", file=out)
+    # ── Facts: playoff SRS elevation ─────────────────────────────────────────
+    FACTS.set("elev.knicks.reg_srs",   knicks_reg_srs,          "{:+.2f}", note="Knicks 2025-26 regular-season SRS")
+    FACTS.set("elev.knicks.po_srs",    knicks_po_srs,           "{:+.2f}", note="Knicks 2025-26 playoff SRS (all games)")
+    FACTS.set("elev.knicks.elevation", elevation,               "{:+.2f}", note="Knicks 2025-26 playoff elevation (po−reg SRS)")
+    FACTS.set("elev.pct",              elev_pct,                "{:.1f}",  note="Elevation percentile among champions")
+    FACTS.set("elev.mean",             float(elev_series.mean()), "{:+.2f}", note="Mean champion playoff elevation")
+    FACTS.set("elev.best",             float(elev_series.max()),  "{:+.2f}", note="Best champion playoff elevation all-time")
 
     # Print top and bottom elevators
     top5 = champions.dropna(subset=["playoff_elevation"]).nlargest(
@@ -614,6 +764,14 @@ def run_pace_era(reg_2026: pd.DataFrame,
           f"(mean {pa_series.mean():+.2f}, best {pa_series.max():+.2f})", file=out)
     print(f"  Opp+pace-adj margin percentile:      {paa_pct:.1f}th  "
           f"(mean {paa_series.mean():+.2f}, best {paa_series.max():+.2f})", file=out)
+    # ── Facts: era/pace adjustment ───────────────────────────────────────────
+    FACTS.set("scoring.2026",      scoring_2026,              "{:.1f}",  note="2025-26 league avg pts/team/game")
+    FACTS.set("scoring.mean",      ref_scoring,               "{:.1f}",  note="Historical mean pts/team/game")
+    FACTS.set("scoring.scale",     ref_scoring / scoring_2026, "{:.3f}", note="Pace-adj scale factor (ref/2026)")
+    FACTS.set("pace_era.pace_adj", pace_adj,                  "{:+.2f}", note="Pace-adj raw margin (Knicks 2026)")
+    FACTS.set("pace_era.paa_adj",  pace_adj_adj,              "{:+.2f}", note="Opp+pace-adj margin (Knicks 2026)")
+    FACTS.set("pace_era.raw_pct",  pa_pct,                    "{:.1f}",  note="Pace-adj raw margin percentile vs champions")
+    FACTS.set("pace_era.opp_pct",  paa_pct,                   "{:.1f}",  note="Opp+pace-adj margin percentile vs champions")
 
     top5 = champions.dropna(subset=["pace_adj_margin"]).nlargest(
         5, "pace_adj_margin"
@@ -776,6 +934,21 @@ def run_opponent_health(player_po_logs: pd.DataFrame,
             )
         print(f"\nFinals note: {note}", file=out)
 
+    # ── Facts: opponent health ────────────────────────────────────────────────
+    FACTS.set("health.avg", avg_health * 100, "{:.0f}",
+              note="Avg opponent health score across 4 series (×100 = pct)")
+    _round_h_keys = ["hawks", "76ers", "cavs", "spurs"]
+    for _hi, _hrow in health.iterrows():
+        _hk = _round_h_keys[_hi] if _hi < len(_round_h_keys) else f"opp{_hi}"
+        FACTS.set(f"health.{_hk}", float(_hrow["health_score"]) * 100, "{:.0f}",
+                  note=f"{_hrow['team_name']} health score (×100 = pct)")
+    FACTS.guard("health.opponents_nearly_full", avg_health >= 0.95,
+                "all opponents were essentially fully healthy (avg health ≥ 95%)", avg_health)
+    if not finals_row.empty:
+        _spurs_health = float(finals_row["health_score"].iloc[0])
+        FACTS.guard("health.spurs_fully_healthy", _spurs_health >= 0.99,
+                    "the Spurs were fully healthy in the Finals", _spurs_health)
+
 
 # ── Section 12: Betting-market expectations ──────────────────────────────────
 
@@ -798,6 +971,11 @@ def run_betting_market(ats_df: pd.DataFrame,
     print(f"ATS record:             {n_covered}-{n_total - n_covered}", file=out)
     print(f"Avg Knicks spread:      {avg_spread:+.1f} pts (negative = Knicks favored)", file=out)
     print(f"Avg ATS margin:         {avg_ats:+.1f} pts (how much they beat the spread)", file=out)
+    # ── Facts: ATS summary ───────────────────────────────────────────────────
+    FACTS.set("ats.n_total",    n_total,    "{:d}",   note="Total ATS games (of 19)")
+    FACTS.set("ats.n_covered",  n_covered,  "{:d}",   note="Games where Knicks covered spread")
+    FACTS.set("ats.avg_spread", avg_spread, "{:+.1f}", note="Avg Knicks spread (neg=favored)")
+    FACTS.set("ats.avg_margin", avg_ats,    "{:+.1f}", note="Avg ATS margin (how much beat spread)")
 
     # Statistical significance of the ATS record
     # Null hypothesis: each game is a fair coin flip at the spread (p=0.50)
@@ -818,6 +996,7 @@ def run_betting_market(ats_df: pd.DataFrame,
     else:
         sig = "Not statistically significant at p < 0.05."
     print(f"  Interpretation: {sig}", file=out)
+    FACTS.set("ats.p_iid", p_val, "{:.4f}", note="Iid binomial p-value for ATS record")
 
     # Get opponent names via standings
     game_teams = (
@@ -865,6 +1044,11 @@ def run_betting_market(ats_df: pd.DataFrame,
             "  dominance result — it is largely the same data re-expressed.",
             file=out,
         )
+        # ── Facts: cluster-adjusted ATS significance ──────────────────────────
+        FACTS.set("ats.icc",     clus_res["icc"],     "{:.2f}", note="Within-series correlation (ICC)")
+        FACTS.set("ats.deff",    clus_res["deff"],    "{:.2f}", note="Design effect")
+        FACTS.set("ats.n_eff",   clus_res["n_eff"],   "{:.1f}", note="Effective sample size")
+        FACTS.set("ats.p_clust", clus_res["p_value"], "{:.4f}", note="Cluster-adjusted one-tailed p-value")
 
     name_map = standings_2026.set_index("TeamID").apply(
         lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
@@ -887,6 +1071,7 @@ def run_betting_market(ats_df: pd.DataFrame,
     ats_df = ats_df.copy()
     ats_df["OPP_ID"] = ats_df["GAME_ID"].map(opp_game_map)
 
+    _ats_round_keys = ["r1", "r2", "cf", "finals"]
     for i, opp_id in enumerate(first_opp_order):
         sub = ats_df[ats_df["OPP_ID"] == opp_id]
         if sub.empty:
@@ -900,6 +1085,12 @@ def run_betting_market(ats_df: pd.DataFrame,
         total_g = len(sub)
         print(f"  {rnd:<8} {opp_name:<28} {avg_sp:>+8.1f} {avg_act:>+8.1f} "
               f"{avg_at:>+8.1f} {covers}/{total_g}", file=out)
+        # ── Facts: per-round ATS ──────────────────────────────────────────────
+        _rk = _ats_round_keys[i] if i < len(_ats_round_keys) else f"r{i+1}"
+        FACTS.set(f"ats.{_rk}.spread", avg_sp,  "{:+.1f}", note=f"{rnd} avg Knicks spread")
+        FACTS.set(f"ats.{_rk}.actual", avg_act, "{:+.1f}", note=f"{rnd} avg actual margin")
+        FACTS.set(f"ats.{_rk}.ats",    avg_at,  "{:+.1f}", note=f"{rnd} avg ATS margin")
+        FACTS.set(f"ats.{_rk}.covers", f"{covers}/{total_g}", note=f"{rnd} ATS covers/total")
 
     # Highlight Finals specifically
     finals_ats = ats_df[ats_df["OPP_ID"] == first_opp_order[-1]] if first_opp_order else pd.DataFrame()
@@ -915,6 +1106,9 @@ def run_betting_market(ats_df: pd.DataFrame,
         print(f"\nFinals market view: Knicks were {market_view}.", file=out)
         print(f"  Actual avg margin: {finals_avg_actual:+.1f} (vs. spread of {finals_avg_spread:+.1f})",
               file=out)
+        # ── Facts: Finals ATS highlight ───────────────────────────────────────
+        FACTS.set("ats.finals.spread", finals_avg_spread, "{:+.1f}", note="Finals avg Knicks spread")
+        FACTS.set("ats.finals.actual", finals_avg_actual, "{:+.1f}", note="Finals avg actual margin")
 
 
 # ── Section 13: Robustness of the #1 ranking ─────────────────────────────────
@@ -966,6 +1160,14 @@ def run_robustness(po_2026: pd.DataFrame,
     print(f"  P(top 5):                     {boot['p_top5']:.1%}", file=out)
     print(f"  Median rank:                  {boot['rank_median']:.0f}  "
           f"({conf_pct}% interval: {boot['rank_lo']:.0f}–{boot['rank_hi']:.0f})", file=out)
+    # ── Facts: bootstrap rank ─────────────────────────────────────────────────
+    FACTS.set("boot.adj_point",  float(boot["adj_point"]),        "{:+.2f}", note="Bootstrap point estimate adj margin")
+    FACTS.set("boot.ci.lo",      float(boot["ci_lo"]),            "{:+.2f}", note="Bootstrap CI lower bound on adj margin")
+    FACTS.set("boot.ci.hi",      float(boot["ci_hi"]),            "{:+.2f}", note="Bootstrap CI upper bound on adj margin")
+    FACTS.set("boot.p_rank1",    float(boot["p_rank1"]) * 100,   "{:.1f}",  note="P(rank #1 all-time) from bootstrap, ×100")
+    FACTS.set("boot.p_top3",     float(boot["p_top3"])  * 100,   "{:.1f}",  note="P(top 3) from bootstrap, ×100")
+    FACTS.set("boot.p_top5",     float(boot["p_top5"])  * 100,   "{:.1f}",  note="P(top 5) from bootstrap, ×100")
+    FACTS.set("boot.rank_median",float(boot["rank_median"]),      "{:.0f}",  note="Median bootstrap rank")
 
     shr = shrink_adjusted_margin(po_2026, srs_2026, KNICKS_TEAM_ID, other_adj)
     print(_subhdr("Empirical-Bayes shrinkage of the adjusted margin"), file=out)
@@ -988,6 +1190,13 @@ def run_robustness(po_2026: pd.DataFrame,
     other_adj_pct = _pct_rank(other_adj.dropna(), shr["post_mean"], ascending=True)
     print(f"  Even shrunken, that margin still beats {other_adj_pct:.0f}% of "
           f"champions outright.", file=out)
+    # ── Facts: EB shrinkage ───────────────────────────────────────────────────
+    FACTS.set("shrink.post_mean",   float(shr["post_mean"]),          "{:+.2f}", note="EB posterior (shrunken) adj margin")
+    FACTS.set("shrink.ci.lo",       float(shr["ci_lo"]),              "{:+.2f}", note="EB credible interval lower bound")
+    FACTS.set("shrink.ci.hi",       float(shr["ci_hi"]),              "{:+.2f}", note="EB credible interval upper bound")
+    FACTS.set("shrink.weight_data", float(shr["weight_data"]) * 100, "{:.0f}",  note="Weight on 19-game data, ×100")
+    FACTS.set("shrink.pct_above",   other_adj_pct,                    "{:.0f}",  note="% of other champions shrunken margin beats")
+    FACTS.set("shrink.prior_mean",  float(shr["prior_mean"]),         "{:+.2f}", note="Champion prior mean for EB")
 
     # Opponent-strength uncertainty: opponent SRS is itself estimated (~82 games)
     srs_se = compute_srs_se(reg_2026)
@@ -1009,6 +1218,11 @@ def run_robustness(po_2026: pd.DataFrame,
         print(f"  P(top 5):                     {se_boot['p_top5']:.1%}", file=out)
         print("  Opponent-strength noise barely moves the picture: game-to-game\n"
               "  variance dominates the uncertainty in this ranking.", file=out)
+        # ── Facts: SRS-error bootstrap ────────────────────────────────────────
+        FACTS.set("se_boot.p_rank1", float(se_boot["p_rank1"]) * 100, "{:.1f}",
+                  note="P(rank #1) incl. opp-SRS uncertainty, ×100")
+        FACTS.set("se_boot.p_top5",  float(se_boot["p_top5"])  * 100, "{:.1f}",
+                  note="P(top 5) incl. opp-SRS uncertainty, ×100")
 
 
 # ── Section 14: Hierarchical (partial-pooling) ranking ───────────────────────
@@ -1049,6 +1263,16 @@ def run_hierarchical(samples_df: pd.DataFrame, out: io.StringIO) -> None:
     print(f"  Median posterior rank:           {res['rank_median']:.0f}  "
           f"({int(round(res['confidence']*100))}% interval: "
           f"{res['rank_lo']:.0f}–{res['rank_hi']:.0f})", file=out)
+    # ── Facts: hierarchical model ─────────────────────────────────────────────
+    FACTS.set("hier.mu",          float(res["mu"]),              "{:+.2f}", note="Hierarchical population mean (mu)")
+    FACTS.set("hier.tau",         float(res["tau"]),             "{:.2f}",  note="Between-champion SD (tau)")
+    FACTS.set("hier.post_mean",   float(res["subj_post_mean"]), "{:+.2f}", note="Knicks posterior (shrunk) mean adj margin")
+    FACTS.set("hier.ci.lo",       float(res["subj_ci_lo"]),     "{:+.2f}", note="Hierarchical CI lower bound")
+    FACTS.set("hier.ci.hi",       float(res["subj_ci_hi"]),     "{:+.2f}", note="Hierarchical CI upper bound")
+    FACTS.set("hier.p_rank1",     float(res["p_rank1"]) * 100,  "{:.1f}",  note="P(Knicks true #1), ×100")
+    FACTS.set("hier.p_top3",      float(res["p_top3"])  * 100,  "{:.1f}",  note="P(top 3), ×100")
+    FACTS.set("hier.p_top5",      float(res["p_top5"])  * 100,  "{:.1f}",  note="P(top 5), ×100")
+    FACTS.set("hier.rank_median", float(res["rank_median"]),    "{:.0f}",  note="Median posterior rank")
 
     post = res["posterior"]
     print(_subhdr("Top champions by posterior (shrunk) adjusted margin"), file=out)
@@ -1067,7 +1291,8 @@ def run_hierarchical(samples_df: pd.DataFrame, out: io.StringIO) -> None:
 def _alt_rating_ranking(alt_table: pd.DataFrame,
                         champions: pd.DataFrame,
                         rating_label: str,
-                        out: io.StringIO) -> None:
+                        out: io.StringIO,
+                        facts_namespace: str | None = None) -> None:
     """Shared printer: rank the Knicks' adjusted margin under an alternative
     opponent rating and compare to the SRS-based rank."""
     subj = alt_table[alt_table["year"] == SUBJECT_YEAR]
@@ -1095,6 +1320,7 @@ def _alt_rating_ranking(alt_table: pd.DataFrame,
     merged = alt_table.merge(
         champions[["year", "adj_margin"]], on="year", suffixes=("_alt", "_srs")
     ).dropna(subset=["adj_margin_alt", "adj_margin_srs"])
+    corr = None
     if len(merged) >= 3:
         corr = float(merged["adj_margin_alt"].corr(merged["adj_margin_srs"]))
         print(f"  Correlation with SRS-adjusted margin (all champions): {corr:+.3f}", file=out)
@@ -1105,6 +1331,16 @@ def _alt_rating_ranking(alt_table: pd.DataFrame,
         marker = "  ← Knicks" if int(r["year"]) == SUBJECT_YEAR else ""
         print(f"    {short_label(int(r['year'])):<8} raw {r['avg_margin']:+.2f}  "
               f"opp {r['avg_opp_rating']:+.2f}  adj {r['adj_margin']:+.2f}{marker}", file=out)
+
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    if facts_namespace:
+        ns = facts_namespace
+        FACTS.set(f"{ns}.opp_rating", knicks_opp, "{:+.2f}", note=f"Knicks games-wtd opp {rating_label} rating")
+        FACTS.set(f"{ns}.adj_margin", knicks_adj, "{:+.2f}", note=f"Knicks {rating_label}-adj margin")
+        FACTS.set(f"{ns}.rank",       rank,       "{:d}",    note=f"Knicks rank by {rating_label}-adj margin")
+        FACTS.set(f"{ns}.pct",        pct,        "{:.1f}",  note=f"Knicks {rating_label}-adj margin percentile")
+        if corr is not None:
+            FACTS.set(f"{ns}.corr_srs", corr, "{:+.3f}", note=f"{rating_label} vs SRS adj-margin correlation")
 
 
 def run_elo_check(elo_table: pd.DataFrame,
@@ -1122,7 +1358,7 @@ def run_elo_check(elo_table: pd.DataFrame,
         "1 pt).  If the Knicks' ranking holds under Elo, it isn't an SRS artifact.\n",
         file=out,
     )
-    _alt_rating_ranking(elo_table, champions, "Elo", out)
+    _alt_rating_ranking(elo_table, champions, "Elo", out, facts_namespace="elo")
 
     # Sanity: the 2025-26 Knicks' opponents under both systems
     elo_2026 = compute_elo_ratings(reg_2026)
@@ -1155,7 +1391,14 @@ def run_bt_check(bt_table: pd.DataFrame,
         "that the result isn't a margin-inflation artifact.\n",
         file=out,
     )
-    _alt_rating_ranking(bt_table, champions, "Bradley–Terry", out)
+    _alt_rating_ranking(bt_table, champions, "Bradley–Terry", out, facts_namespace="bt")
+    # Guard: BT ranks Knicks #1
+    _bt_subj = bt_table[bt_table["year"] == SUBJECT_YEAR]
+    if not _bt_subj.empty:
+        _bt_adj = float(_bt_subj["adj_margin"].iloc[0])
+        _bt_rank = int((bt_table["adj_margin"].dropna() > _bt_adj).sum()) + 1
+        FACTS.guard("bt.rank_is_first", _bt_rank == 1,
+                    "Bradley-Terry (wins-only) ranks the Knicks #1 all-time among champions", _bt_rank)
 
 
 # ── Section 17: Possessions-based pace adjustment ────────────────────────────
@@ -1217,6 +1460,16 @@ def run_pace_possessions(champions: pd.DataFrame,
               f" at #{ss_rank}.", file=out)
         print(f"  Possessions isolate pace from the 3-point scoring boom, so 2025-26"
               f" is\n  penalized less than the scoring-share number implied.", file=out)
+    # ── Facts: possessions-based pace adjustment ──────────────────────────────
+    FACTS.set("pace.poss_2026",  poss_2026,                    "{:.1f}", note="2025-26 estimated poss/team/game")
+    FACTS.set("pace.poss_mean",  hist_mean,                    "{:.1f}", note="Historical mean poss/team/game")
+    FACTS.set("pace.poss_diff",  poss_2026 - hist_mean,       "{:+.1f}", note="2025-26 poss/game vs historical mean")
+    FACTS.set("pace.raw_per100", float(subj["margin_per100"]), "{:+.2f}", note="Knicks raw margin per 100 possessions")
+    FACTS.set("pace.adj_per100", float(subj["adj_per100"]),    "{:+.2f}", note="Knicks opp-adj margin per 100 possessions")
+    FACTS.set("pace.raw_rank",   raw_rank,                     "{:d}",   note="Knicks raw per-100 margin rank")
+    FACTS.set("pace.adj_rank",   adj_rank,                     "{:d}",   note="Knicks opp-adj per-100 margin rank")
+    FACTS.set("pace.raw_pct",    raw_pct,                      "{:.1f}", note="Raw per-100 margin percentile")
+    FACTS.set("pace.adj_pct",    adj_pct,                      "{:.1f}", note="Opp-adj per-100 margin percentile")
 
     top5 = df.nlargest(5, "adj_per100")[
         ["year", "avg_margin", "poss_per_game", "adj_per100"]]
@@ -1273,6 +1526,22 @@ def run_series_winprob(po_2026: pd.DataFrame,
         "margin-based overperformance in §5.",
         file=out,
     )
+    # ── Facts: win-probability model ─────────────────────────────────────────
+    FACTS.set("winprob.knicks_srs",       champ_srs,                                      "{:+.2f}", note="Knicks regular-season SRS for model")
+    FACTS.set("winprob.p_title",          float(res["p_title"])                  * 100,   "{:.1f}",  note="P(Knicks win title), ×100")
+    FACTS.set("winprob.exp_losses",       float(res["exp_losses_given_title"]),            "{:.1f}",  note="Expected losses in title run")
+    FACTS.set("winprob.p_le3_given_title",float(res["p_le3_losses_given_title"]) * 100,   "{:.1f}",  note="P(title run ≤3 losses | title), ×100")
+    FACTS.set("winprob.p_title_and_le3",  float(res["p_title_and_le3_losses"])   * 100,   "{:.1f}",  note="P(title AND ≤3 losses), unconditional, ×100")
+    _wp_round_keys = ["r1", "r2", "cf", "finals"]
+    for _wi, (_spec, _p) in enumerate(zip(meta, res["series_winprob"])):
+        _wpk = _wp_round_keys[_wi] if _wi < 4 else f"r{_wi+1}"
+        FACTS.set(f"winprob.{_wpk}.p_series", float(_p) * 100, "{:.1f}",
+                  note=f"P(Knicks win {_wpk} series), ×100")
+    # Guard: model made Knicks Finals underdogs
+    if meta:
+        _finals_p = float(res["series_winprob"][-1])
+        FACTS.guard("winprob.title_underdog", _finals_p < 0.5,
+                    "model made Knicks underdogs in the Finals (<50% to win series)", _finals_p)
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
@@ -1341,7 +1610,12 @@ def main() -> None:
         f.write(body)
         f.write("\n```\n")
 
+    FACTS.dump(_FACTS_PATH)
+    FACTS.dump_guards(_GUARDS_PATH)
+
     print(f"Saved → knicks_2026_historic_results.md")
+    print(f"Saved → {_FACTS_PATH}  ({len(FACTS)} facts)")
+    print(f"Saved → {_GUARDS_PATH}")
     print(body)
 
 

@@ -1,0 +1,1626 @@
+{
+  "adj.adj_best": {
+    "display": "+11.23",
+    "fmt": "{:+.2f}",
+    "note": "Best adj margin all-time (= Knicks 2026)",
+    "unit": null,
+    "value": 11.22691533900924
+  },
+  "adj.adj_mean": {
+    "display": "+3.37",
+    "fmt": "{:+.2f}",
+    "note": "Mean champion adj margin",
+    "unit": null,
+    "value": 3.3656462925704247
+  },
+  "adj.margin": {
+    "display": "+11.23",
+    "fmt": "{:+.2f}",
+    "note": "Opponent-adjusted margin pts/game",
+    "unit": null,
+    "value": 11.22691533900924
+  },
+  "adj.margin_pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Adj margin percentile among champions",
+    "unit": null,
+    "value": 100.0
+  },
+  "adj.opp_srs": {
+    "display": "+3.67",
+    "fmt": "{:+.2f}",
+    "note": "Games-weighted opponent SRS",
+    "unit": null,
+    "value": 3.667821503096024
+  },
+  "adj.raw_margin": {
+    "display": "+14.89",
+    "fmt": "{:+.2f}",
+    "note": "Knicks raw playoff margin (full precision)",
+    "unit": null,
+    "value": 14.894736842105264
+  },
+  "adj.top1.margin": {
+    "display": "+11.23",
+    "fmt": "{:+.2f}",
+    "note": "#1 adj margin all-time",
+    "unit": null,
+    "value": 11.22691533900924
+  },
+  "adj.top2.margin": {
+    "display": "+10.23",
+    "fmt": "{:+.2f}",
+    "note": "#2 adj margin all-time",
+    "unit": null,
+    "value": 10.234778583641528
+  },
+  "adj.top3.margin": {
+    "display": "+9.52",
+    "fmt": "{:+.2f}",
+    "note": "#3 adj margin all-time",
+    "unit": null,
+    "value": 9.515074461530816
+  },
+  "adj.top4.margin": {
+    "display": "+9.20",
+    "fmt": "{:+.2f}",
+    "note": "#4 adj margin all-time",
+    "unit": null,
+    "value": 9.19636765343854
+  },
+  "adj.top5.margin": {
+    "display": "+7.72",
+    "fmt": "{:+.2f}",
+    "note": "#5 adj margin all-time",
+    "unit": null,
+    "value": 7.721718196207528
+  },
+  "adj_po.margin": {
+    "display": "+9.05",
+    "fmt": "{:+.2f}",
+    "note": "Full-run playoff-SRS-adj margin",
+    "unit": null,
+    "value": 9.050757904376322
+  },
+  "adj_po.margin_pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Adj_po margin percentile among champions",
+    "unit": null,
+    "value": 100.0
+  },
+  "adj_po.opp_po_srs": {
+    "display": "+5.84",
+    "fmt": "{:+.2f}",
+    "note": "Knicks games-wtd opp playoff SRS",
+    "unit": null,
+    "value": 5.843978937728941
+  },
+  "ats.avg_margin": {
+    "display": "+16.9",
+    "fmt": "{:+.1f}",
+    "note": "Avg ATS margin (how much beat spread)",
+    "unit": null,
+    "value": 16.92105263157895
+  },
+  "ats.avg_spread": {
+    "display": "-2.0",
+    "fmt": "{:+.1f}",
+    "note": "Avg Knicks spread (neg=favored)",
+    "unit": null,
+    "value": -2.026315789473684
+  },
+  "ats.cf.actual": {
+    "display": "+19.2",
+    "fmt": "{:+.1f}",
+    "note": "CF avg actual margin",
+    "unit": null,
+    "value": 19.25
+  },
+  "ats.cf.ats": {
+    "display": "+22.0",
+    "fmt": "{:+.1f}",
+    "note": "CF avg ATS margin",
+    "unit": null,
+    "value": 22.0
+  },
+  "ats.cf.covers": {
+    "display": "4/4",
+    "fmt": null,
+    "note": "CF ATS covers/total",
+    "unit": null,
+    "value": "4/4"
+  },
+  "ats.cf.spread": {
+    "display": "-2.8",
+    "fmt": "{:+.1f}",
+    "note": "CF avg Knicks spread",
+    "unit": null,
+    "value": -2.75
+  },
+  "ats.deff": {
+    "display": "2.82",
+    "fmt": "{:.2f}",
+    "note": "Design effect",
+    "unit": null,
+    "value": 2.8156894136481885
+  },
+  "ats.finals.actual": {
+    "display": "+2.4",
+    "fmt": "{:+.1f}",
+    "note": "Finals avg actual margin",
+    "unit": null,
+    "value": 2.4
+  },
+  "ats.finals.ats": {
+    "display": "-0.1",
+    "fmt": "{:+.1f}",
+    "note": "Finals avg ATS margin",
+    "unit": null,
+    "value": -0.1
+  },
+  "ats.finals.covers": {
+    "display": "2/5",
+    "fmt": null,
+    "note": "Finals ATS covers/total",
+    "unit": null,
+    "value": "2/5"
+  },
+  "ats.finals.spread": {
+    "display": "+2.5",
+    "fmt": "{:+.1f}",
+    "note": "Finals avg Knicks spread",
+    "unit": null,
+    "value": 2.5
+  },
+  "ats.icc": {
+    "display": "0.49",
+    "fmt": "{:.2f}",
+    "note": "Within-series correlation (ICC)",
+    "unit": null,
+    "value": 0.49049429657794674
+  },
+  "ats.n_covered": {
+    "display": "16",
+    "fmt": "{:d}",
+    "note": "Games where Knicks covered spread",
+    "unit": null,
+    "value": 16
+  },
+  "ats.n_eff": {
+    "display": "6.7",
+    "fmt": "{:.1f}",
+    "note": "Effective sample size",
+    "unit": null,
+    "value": 6.747903340440655
+  },
+  "ats.n_total": {
+    "display": "19",
+    "fmt": "{:d}",
+    "note": "Total ATS games (of 19)",
+    "unit": null,
+    "value": 19
+  },
+  "ats.p_clust": {
+    "display": "0.0378",
+    "fmt": "{:.4f}",
+    "note": "Cluster-adjusted one-tailed p-value",
+    "unit": null,
+    "value": 0.03775492568286041
+  },
+  "ats.p_iid": {
+    "display": "0.0022",
+    "fmt": "{:.4f}",
+    "note": "Iid binomial p-value for ATS record",
+    "unit": null,
+    "value": 0.0022125244140625
+  },
+  "ats.r1.actual": {
+    "display": "+17.5",
+    "fmt": "{:+.1f}",
+    "note": "R1 avg actual margin",
+    "unit": null,
+    "value": 17.5
+  },
+  "ats.r1.ats": {
+    "display": "+21.5",
+    "fmt": "{:+.1f}",
+    "note": "R1 avg ATS margin",
+    "unit": null,
+    "value": 21.5
+  },
+  "ats.r1.covers": {
+    "display": "6/6",
+    "fmt": null,
+    "note": "R1 ATS covers/total",
+    "unit": null,
+    "value": "6/6"
+  },
+  "ats.r1.spread": {
+    "display": "-4.0",
+    "fmt": "{:+.1f}",
+    "note": "R1 avg Knicks spread",
+    "unit": null,
+    "value": -4.0
+  },
+  "ats.r2.actual": {
+    "display": "+22.2",
+    "fmt": "{:+.1f}",
+    "note": "R2 avg actual margin",
+    "unit": null,
+    "value": 22.25
+  },
+  "ats.r2.ats": {
+    "display": "+26.2",
+    "fmt": "{:+.1f}",
+    "note": "R2 avg ATS margin",
+    "unit": null,
+    "value": 26.25
+  },
+  "ats.r2.covers": {
+    "display": "4/4",
+    "fmt": null,
+    "note": "R2 ATS covers/total",
+    "unit": null,
+    "value": "4/4"
+  },
+  "ats.r2.spread": {
+    "display": "-4.0",
+    "fmt": "{:+.1f}",
+    "note": "R2 avg Knicks spread",
+    "unit": null,
+    "value": -4.0
+  },
+  "away.games": {
+    "display": "10",
+    "fmt": "{:d}",
+    "note": "Knicks 2026 away playoff games",
+    "unit": null,
+    "value": 10
+  },
+  "away.wr": {
+    "display": "0.900",
+    "fmt": "{:.3f}",
+    "note": "Knicks 2026 away win rate",
+    "unit": null,
+    "value": 0.9
+  },
+  "away.wr_pct": {
+    "display": "97.7",
+    "fmt": "{:.1f}",
+    "note": "Away win-rate percentile vs champions",
+    "unit": null,
+    "value": 97.67441860465115
+  },
+  "boot.adj_point": {
+    "display": "+11.23",
+    "fmt": "{:+.2f}",
+    "note": "Bootstrap point estimate adj margin",
+    "unit": null,
+    "value": 11.226915339009238
+  },
+  "boot.ci.hi": {
+    "display": "+17.71",
+    "fmt": "{:+.2f}",
+    "note": "Bootstrap CI upper bound on adj margin",
+    "unit": null,
+    "value": 17.712579628284633
+  },
+  "boot.ci.lo": {
+    "display": "+5.08",
+    "fmt": "{:+.2f}",
+    "note": "Bootstrap CI lower bound on adj margin",
+    "unit": null,
+    "value": 5.076851546875803
+  },
+  "boot.p_rank1": {
+    "display": "59.6",
+    "fmt": "{:.1f}",
+    "note": "P(rank #1 all-time) from bootstrap, \u00d7100",
+    "unit": null,
+    "value": 59.62
+  },
+  "boot.p_top3": {
+    "display": "69.9",
+    "fmt": "{:.1f}",
+    "note": "P(top 3) from bootstrap, \u00d7100",
+    "unit": null,
+    "value": 69.92
+  },
+  "boot.p_top5": {
+    "display": "82.4",
+    "fmt": "{:.1f}",
+    "note": "P(top 5) from bootstrap, \u00d7100",
+    "unit": null,
+    "value": 82.375
+  },
+  "boot.rank_median": {
+    "display": "1",
+    "fmt": "{:.0f}",
+    "note": "Median bootstrap rank",
+    "unit": null,
+    "value": 1.0
+  },
+  "bt.adj_margin": {
+    "display": "+11.37",
+    "fmt": "{:+.2f}",
+    "note": "Knicks Bradley\u2013Terry-adj margin",
+    "unit": null,
+    "value": 11.371108803675288
+  },
+  "bt.corr_srs": {
+    "display": "+0.990",
+    "fmt": "{:+.3f}",
+    "note": "Bradley\u2013Terry vs SRS adj-margin correlation",
+    "unit": null,
+    "value": 0.9900922225736039
+  },
+  "bt.opp_rating": {
+    "display": "+3.52",
+    "fmt": "{:+.2f}",
+    "note": "Knicks games-wtd opp Bradley\u2013Terry rating",
+    "unit": null,
+    "value": 3.523628038429977
+  },
+  "bt.pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Knicks Bradley\u2013Terry-adj margin percentile",
+    "unit": null,
+    "value": 100.0
+  },
+  "bt.rank": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "Knicks rank by Bradley\u2013Terry-adj margin",
+    "unit": null,
+    "value": 1
+  },
+  "clutch.mean": {
+    "display": "0.256",
+    "fmt": "{:.3f}",
+    "note": "Mean champion clutch rate",
+    "unit": null,
+    "value": 0.25647966171002856
+  },
+  "clutch.pct": {
+    "display": "83.7",
+    "fmt": "{:.1f}",
+    "note": "Clutch rate percentile vs champions (100=most)",
+    "unit": null,
+    "value": 83.72093023255815
+  },
+  "clutch.rate": {
+    "display": "0.316",
+    "fmt": "{:.3f}",
+    "note": "Fraction Knicks 2026 playoff games decided by \u22645 pts",
+    "unit": null,
+    "value": 0.3157894736842105
+  },
+  "east.games": {
+    "display": "14",
+    "fmt": "{:d}",
+    "note": "Knicks total games vs East opponents",
+    "unit": null,
+    "value": 14
+  },
+  "east.losses": {
+    "display": "2",
+    "fmt": "{:d}",
+    "note": "Knicks losses vs East opponents (R1\u2013CF)",
+    "unit": null,
+    "value": 2
+  },
+  "east.margin": {
+    "display": "+19.4",
+    "fmt": "{:+.1f}",
+    "note": "Knicks avg margin vs East (R1\u2013CF)",
+    "unit": null,
+    "value": 19.357142857142858
+  },
+  "east.wins": {
+    "display": "12",
+    "fmt": "{:d}",
+    "note": "Knicks wins vs East opponents (R1\u2013CF)",
+    "unit": null,
+    "value": 12
+  },
+  "elev.best": {
+    "display": "+12.58",
+    "fmt": "{:+.2f}",
+    "note": "Best champion playoff elevation all-time",
+    "unit": null,
+    "value": 12.580918712298697
+  },
+  "elev.knicks.elevation": {
+    "display": "+11.48",
+    "fmt": "{:+.2f}",
+    "note": "Knicks 2025-26 playoff elevation (po\u2212reg SRS)",
+    "unit": null,
+    "value": 11.483801655515112
+  },
+  "elev.knicks.po_srs": {
+    "display": "+17.53",
+    "fmt": "{:+.2f}",
+    "note": "Knicks 2025-26 playoff SRS (all games)",
+    "unit": null,
+    "value": 17.52931547619046
+  },
+  "elev.knicks.reg_srs": {
+    "display": "+6.05",
+    "fmt": "{:+.2f}",
+    "note": "Knicks 2025-26 regular-season SRS",
+    "unit": null,
+    "value": 6.04551382067535
+  },
+  "elev.mean": {
+    "display": "+4.43",
+    "fmt": "{:+.2f}",
+    "note": "Mean champion playoff elevation",
+    "unit": null,
+    "value": 4.430455014568379
+  },
+  "elev.pct": {
+    "display": "97.7",
+    "fmt": "{:.1f}",
+    "note": "Elevation percentile among champions",
+    "unit": null,
+    "value": 97.67441860465115
+  },
+  "elo.adj_margin": {
+    "display": "+9.36",
+    "fmt": "{:+.2f}",
+    "note": "Knicks Elo-adj margin",
+    "unit": null,
+    "value": 9.36361244792159
+  },
+  "elo.corr_srs": {
+    "display": "+0.958",
+    "fmt": "{:+.3f}",
+    "note": "Elo vs SRS adj-margin correlation",
+    "unit": null,
+    "value": 0.9576570398699297
+  },
+  "elo.opp_rating": {
+    "display": "+5.53",
+    "fmt": "{:+.2f}",
+    "note": "Knicks games-wtd opp Elo rating",
+    "unit": null,
+    "value": 5.531124394183675
+  },
+  "elo.pct": {
+    "display": "95.3",
+    "fmt": "{:.1f}",
+    "note": "Knicks Elo-adj margin percentile",
+    "unit": null,
+    "value": 95.34883720930233
+  },
+  "elo.rank": {
+    "display": "3",
+    "fmt": "{:d}",
+    "note": "Knicks rank by Elo-adj margin",
+    "unit": null,
+    "value": 3
+  },
+  "field.76ers.elevation": {
+    "display": "-4.45",
+    "fmt": "{:+.2f}",
+    "note": "Philadelphia 76ers playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -4.448115297776506
+  },
+  "field.76ers.po_srs": {
+    "display": "-4.72",
+    "fmt": "{:+.2f}",
+    "note": "Philadelphia 76ers playoff SRS all games",
+    "unit": null,
+    "value": -4.720684523809501
+  },
+  "field.76ers.reg_srs": {
+    "display": "-0.27",
+    "fmt": "{:+.2f}",
+    "note": "Philadelphia 76ers reg-season SRS (2025-26)",
+    "unit": null,
+    "value": -0.27256922603299477
+  },
+  "field.blazers.elevation": {
+    "display": "+3.01",
+    "fmt": "{:+.2f}",
+    "note": "Portland Trail Blazers playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": 3.0141522487828922
+  },
+  "field.blazers.po_srs": {
+    "display": "+2.73",
+    "fmt": "{:+.2f}",
+    "note": "Portland Trail Blazers playoff SRS all games",
+    "unit": null,
+    "value": 2.7293154761904876
+  },
+  "field.blazers.reg_srs": {
+    "display": "-0.28",
+    "fmt": "{:+.2f}",
+    "note": "Portland Trail Blazers reg-season SRS (2025-26)",
+    "unit": null,
+    "value": -0.28483677259240475
+  },
+  "field.cavaliers.elevation": {
+    "display": "-5.50",
+    "fmt": "{:+.2f}",
+    "note": "Cleveland Cavaliers playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -5.4955939294652305
+  },
+  "field.cavaliers.po_srs": {
+    "display": "-1.72",
+    "fmt": "{:+.2f}",
+    "note": "Cleveland Cavaliers playoff SRS all games",
+    "unit": null,
+    "value": -1.7206845238095054
+  },
+  "field.cavaliers.reg_srs": {
+    "display": "+3.77",
+    "fmt": "{:+.2f}",
+    "note": "Cleveland Cavaliers reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 3.774909405655725
+  },
+  "field.celtics.elevation": {
+    "display": "-9.23",
+    "fmt": "{:+.2f}",
+    "note": "Boston Celtics playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -9.230545273732183
+  },
+  "field.celtics.po_srs": {
+    "display": "-1.86",
+    "fmt": "{:+.2f}",
+    "note": "Boston Celtics playoff SRS all games",
+    "unit": null,
+    "value": -1.8635416666666265
+  },
+  "field.celtics.reg_srs": {
+    "display": "+7.37",
+    "fmt": "{:+.2f}",
+    "note": "Boston Celtics reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 7.367003607065556
+  },
+  "field.hawks.elevation": {
+    "display": "-2.35",
+    "fmt": "{:+.2f}",
+    "note": "Atlanta Hawks playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -2.3533946132092574
+  },
+  "field.hawks.po_srs": {
+    "display": "+0.03",
+    "fmt": "{:+.2f}",
+    "note": "Atlanta Hawks playoff SRS all games",
+    "unit": null,
+    "value": 0.029315476190463555
+  },
+  "field.hawks.reg_srs": {
+    "display": "+2.38",
+    "fmt": "{:+.2f}",
+    "note": "Atlanta Hawks reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 2.382710089399721
+  },
+  "field.knicks.elevation": {
+    "display": "+11.48",
+    "fmt": "{:+.2f}",
+    "note": "New York Knicks playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": 11.483801655515112
+  },
+  "field.knicks.po_srs": {
+    "display": "+17.53",
+    "fmt": "{:+.2f}",
+    "note": "New York Knicks playoff SRS all games",
+    "unit": null,
+    "value": 17.52931547619046
+  },
+  "field.knicks.reg_srs": {
+    "display": "+6.05",
+    "fmt": "{:+.2f}",
+    "note": "New York Knicks reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 6.04551382067535
+  },
+  "field.lakers.elevation": {
+    "display": "-6.26",
+    "fmt": "{:+.2f}",
+    "note": "Los Angeles Lakers playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -6.2643208968768045
+  },
+  "field.lakers.po_srs": {
+    "display": "-4.58",
+    "fmt": "{:+.2f}",
+    "note": "Los Angeles Lakers playoff SRS all games",
+    "unit": null,
+    "value": -4.58497023809525
+  },
+  "field.lakers.reg_srs": {
+    "display": "+1.68",
+    "fmt": "{:+.2f}",
+    "note": "Los Angeles Lakers reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 1.6793506587815539
+  },
+  "field.magic.elevation": {
+    "display": "-8.67",
+    "fmt": "{:+.2f}",
+    "note": "Orlando Magic playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -8.67098927819177
+  },
+  "field.magic.po_srs": {
+    "display": "-7.86",
+    "fmt": "{:+.2f}",
+    "note": "Orlando Magic playoff SRS all games",
+    "unit": null,
+    "value": -7.863541666666615
+  },
+  "field.magic.reg_srs": {
+    "display": "+0.81",
+    "fmt": "{:+.2f}",
+    "note": "Orlando Magic reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 0.8074476115251549
+  },
+  "field.nuggets.elevation": {
+    "display": "-10.51",
+    "fmt": "{:+.2f}",
+    "note": "Denver Nuggets playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -10.511169319442969
+  },
+  "field.nuggets.po_srs": {
+    "display": "-5.54",
+    "fmt": "{:+.2f}",
+    "note": "Denver Nuggets playoff SRS all games",
+    "unit": null,
+    "value": -5.537351190476209
+  },
+  "field.nuggets.reg_srs": {
+    "display": "+4.97",
+    "fmt": "{:+.2f}",
+    "note": "Denver Nuggets reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 4.97381812896676
+  },
+  "field.pistons.elevation": {
+    "display": "-10.68",
+    "fmt": "{:+.2f}",
+    "note": "Detroit Pistons playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -10.678067588867027
+  },
+  "field.pistons.po_srs": {
+    "display": "-3.15",
+    "fmt": "{:+.2f}",
+    "note": "Detroit Pistons playoff SRS all games",
+    "unit": null,
+    "value": -3.149255952380906
+  },
+  "field.pistons.reg_srs": {
+    "display": "+7.53",
+    "fmt": "{:+.2f}",
+    "note": "Detroit Pistons reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 7.528811636486121
+  },
+  "field.raptors.elevation": {
+    "display": "-6.19",
+    "fmt": "{:+.2f}",
+    "note": "Toronto Raptors playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -6.187882483044882
+  },
+  "field.raptors.po_srs": {
+    "display": "-3.43",
+    "fmt": "{:+.2f}",
+    "note": "Toronto Raptors playoff SRS all games",
+    "unit": null,
+    "value": -3.434970238095228
+  },
+  "field.raptors.reg_srs": {
+    "display": "+2.75",
+    "fmt": "{:+.2f}",
+    "note": "Toronto Raptors reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 2.7529122449496546
+  },
+  "field.rockets.elevation": {
+    "display": "-11.95",
+    "fmt": "{:+.2f}",
+    "note": "Houston Rockets playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -11.950460284537568
+  },
+  "field.rockets.po_srs": {
+    "display": "-7.08",
+    "fmt": "{:+.2f}",
+    "note": "Houston Rockets playoff SRS all games",
+    "unit": null,
+    "value": -7.084970238095271
+  },
+  "field.rockets.reg_srs": {
+    "display": "+4.87",
+    "fmt": "{:+.2f}",
+    "note": "Houston Rockets reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 4.865490046442297
+  },
+  "field.spurs.elevation": {
+    "display": "+6.85",
+    "fmt": "{:+.2f}",
+    "note": "San Antonio Spurs playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": 6.852718015403438
+  },
+  "field.spurs.po_srs": {
+    "display": "+15.13",
+    "fmt": "{:+.2f}",
+    "note": "San Antonio Spurs playoff SRS all games",
+    "unit": null,
+    "value": 15.12931547619048
+  },
+  "field.spurs.reg_srs": {
+    "display": "+8.28",
+    "fmt": "{:+.2f}",
+    "note": "San Antonio Spurs reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 8.276597460787041
+  },
+  "field.suns.elevation": {
+    "display": "-7.58",
+    "fmt": "{:+.2f}",
+    "note": "Phoenix Suns playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -7.581862607604956
+  },
+  "field.suns.po_srs": {
+    "display": "-5.83",
+    "fmt": "{:+.2f}",
+    "note": "Phoenix Suns playoff SRS all games",
+    "unit": null,
+    "value": -5.83497023809521
+  },
+  "field.suns.reg_srs": {
+    "display": "+1.75",
+    "fmt": "{:+.2f}",
+    "note": "Phoenix Suns reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 1.7468923695097458
+  },
+  "field.thunder.elevation": {
+    "display": "+0.38",
+    "fmt": "{:+.2f}",
+    "note": "Oklahoma City Thunder playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": 0.37932301832410786
+  },
+  "field.thunder.po_srs": {
+    "display": "+11.42",
+    "fmt": "{:+.2f}",
+    "note": "Oklahoma City Thunder playoff SRS all games",
+    "unit": null,
+    "value": 11.415029761904785
+  },
+  "field.thunder.reg_srs": {
+    "display": "+11.04",
+    "fmt": "{:+.2f}",
+    "note": "Oklahoma City Thunder reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 11.035706743580677
+  },
+  "field.timberwolves.elevation": {
+    "display": "-4.11",
+    "fmt": "{:+.2f}",
+    "note": "Minnesota Timberwolves playoff elevation (po\u2212reg)",
+    "unit": null,
+    "value": -4.110704329726824
+  },
+  "field.timberwolves.po_srs": {
+    "display": "-1.04",
+    "fmt": "{:+.2f}",
+    "note": "Minnesota Timberwolves playoff SRS all games",
+    "unit": null,
+    "value": -1.0373511904762025
+  },
+  "field.timberwolves.reg_srs": {
+    "display": "+3.07",
+    "fmt": "{:+.2f}",
+    "note": "Minnesota Timberwolves reg-season SRS (2025-26)",
+    "unit": null,
+    "value": 3.0733531392506213
+  },
+  "finals.close_by4": {
+    "display": "4",
+    "fmt": "{:d}",
+    "note": "Finals games decided by \u22644 pts",
+    "unit": null,
+    "value": 4
+  },
+  "finals.po_adj": {
+    "display": "-12.1",
+    "fmt": "{:+.1f}",
+    "note": "Finals avg po-adj margin",
+    "unit": null,
+    "value": -12.080059523809526
+  },
+  "finals.raw": {
+    "display": "+2.4",
+    "fmt": "{:+.1f}",
+    "note": "Finals avg raw margin",
+    "unit": null,
+    "value": 2.4
+  },
+  "finals.reg_adj": {
+    "display": "-5.9",
+    "fmt": "{:+.1f}",
+    "note": "Finals avg reg-adj margin",
+    "unit": null,
+    "value": -5.876597460787041
+  },
+  "finals.total_games": {
+    "display": "5",
+    "fmt": "{:d}",
+    "note": "Total Finals games played",
+    "unit": null,
+    "value": 5
+  },
+  "gap.ci.hi": {
+    "display": "+1.34",
+    "fmt": "{:+.2f}",
+    "note": "95% CI upper bound on historical mean gap",
+    "unit": null,
+    "value": 1.3376837008215783
+  },
+  "gap.ci.lo": {
+    "display": "+0.22",
+    "fmt": "{:+.2f}",
+    "note": "95% CI lower bound on historical mean gap",
+    "unit": null,
+    "value": 0.22163144505971355
+  },
+  "gap.conf.east": {
+    "display": "-0.20",
+    "fmt": "{:+.2f}",
+    "note": "East avg SRS 2025-26",
+    "unit": null,
+    "value": -0.1961122392579441
+  },
+  "gap.conf.west": {
+    "display": "+0.20",
+    "fmt": "{:+.2f}",
+    "note": "West avg SRS 2025-26",
+    "unit": null,
+    "value": 0.19611223925794039
+  },
+  "gap.east_h2h": {
+    "display": "0.487",
+    "fmt": "{:.3f}",
+    "note": "East inter-conference win rate",
+    "unit": null,
+    "value": 0.48672566371681414
+  },
+  "gap.east_h2h_pct": {
+    "display": "37.2",
+    "fmt": "{:.1f}",
+    "note": "East H2H pct (100th = worst for East)",
+    "unit": null,
+    "value": 37.2093023255814
+  },
+  "gap.mean": {
+    "display": "+0.78",
+    "fmt": "{:+.2f}",
+    "note": "Historical mean West-East SRS gap",
+    "unit": null,
+    "value": 0.7796575729406459
+  },
+  "gap.pct": {
+    "display": "37.2",
+    "fmt": "{:.1f}",
+    "note": "Percentile of West dominance 2025-26 (37th = below average)",
+    "unit": null,
+    "value": 37.2093023255814
+  },
+  "gap.pct_more_dominant": {
+    "display": "63%",
+    "fmt": null,
+    "note": "% of seasons where West led by more than 2025-26 (editorial rounding)",
+    "unit": null,
+    "value": "63%"
+  },
+  "gap.std": {
+    "display": "1.81",
+    "fmt": "{:.2f}",
+    "note": "Historical std dev of West-East gap",
+    "unit": null,
+    "value": 1.8132179799376043
+  },
+  "gap.top1.srs": {
+    "display": "+4.08",
+    "fmt": "{:+.2f}",
+    "note": "#1 most West-dominant season SRS gap",
+    "unit": null,
+    "value": 4.082222222222235
+  },
+  "gap.top2.srs": {
+    "display": "+3.73",
+    "fmt": "{:+.2f}",
+    "note": "#2 most West-dominant season SRS gap",
+    "unit": null,
+    "value": 3.7271921182266032
+  },
+  "gap.top3.srs": {
+    "display": "+3.11",
+    "fmt": "{:+.2f}",
+    "note": "#3 most West-dominant season SRS gap",
+    "unit": null,
+    "value": 3.1070607553366205
+  },
+  "gap.west_east": {
+    "display": "+0.39",
+    "fmt": "{:+.2f}",
+    "note": "West minus East SRS gap 2025-26",
+    "unit": null,
+    "value": 0.3922244785158845
+  },
+  "gap.z_score": {
+    "display": "-0.21",
+    "fmt": "{:+.2f}",
+    "note": "Z-score of 2025-26 gap vs historical mean",
+    "unit": null,
+    "value": -0.21367154898722854
+  },
+  "health.76ers": {
+    "display": "96",
+    "fmt": "{:.0f}",
+    "note": "Philadelphia 76ers health score (\u00d7100 = pct)",
+    "unit": null,
+    "value": 95.83333333333334
+  },
+  "health.avg": {
+    "display": "98",
+    "fmt": "{:.0f}",
+    "note": "Avg opponent health score across 4 series (\u00d7100 = pct)",
+    "unit": null,
+    "value": 98.17708333333334
+  },
+  "health.cavs": {
+    "display": "97",
+    "fmt": "{:.0f}",
+    "note": "Cleveland Cavaliers health score (\u00d7100 = pct)",
+    "unit": null,
+    "value": 96.875
+  },
+  "health.hawks": {
+    "display": "100",
+    "fmt": "{:.0f}",
+    "note": "Atlanta Hawks health score (\u00d7100 = pct)",
+    "unit": null,
+    "value": 100.0
+  },
+  "health.spurs": {
+    "display": "100",
+    "fmt": "{:.0f}",
+    "note": "San Antonio Spurs health score (\u00d7100 = pct)",
+    "unit": null,
+    "value": 100.0
+  },
+  "hier.ci.hi": {
+    "display": "+7.60",
+    "fmt": "{:+.2f}",
+    "note": "Hierarchical CI upper bound",
+    "unit": null,
+    "value": 7.5985345666624315
+  },
+  "hier.ci.lo": {
+    "display": "+1.80",
+    "fmt": "{:+.2f}",
+    "note": "Hierarchical CI lower bound",
+    "unit": null,
+    "value": 1.7968077387789267
+  },
+  "hier.mu": {
+    "display": "+3.07",
+    "fmt": "{:+.2f}",
+    "note": "Hierarchical population mean (mu)",
+    "unit": null,
+    "value": 3.069809732703178
+  },
+  "hier.p_rank1": {
+    "display": "9.0",
+    "fmt": "{:.1f}",
+    "note": "P(Knicks true #1), \u00d7100",
+    "unit": null,
+    "value": 9.0175
+  },
+  "hier.p_top3": {
+    "display": "22.8",
+    "fmt": "{:.1f}",
+    "note": "P(top 3), \u00d7100",
+    "unit": null,
+    "value": 22.825
+  },
+  "hier.p_top5": {
+    "display": "33.7",
+    "fmt": "{:.1f}",
+    "note": "P(top 5), \u00d7100",
+    "unit": null,
+    "value": 33.6525
+  },
+  "hier.post_mean": {
+    "display": "+4.70",
+    "fmt": "{:+.2f}",
+    "note": "Knicks posterior (shrunk) mean adj margin",
+    "unit": null,
+    "value": 4.697671152720679
+  },
+  "hier.rank_median": {
+    "display": "9",
+    "fmt": "{:.0f}",
+    "note": "Median posterior rank",
+    "unit": null,
+    "value": 9.0
+  },
+  "hier.tau": {
+    "display": "1.97",
+    "fmt": "{:.2f}",
+    "note": "Between-champion SD (tau)",
+    "unit": null,
+    "value": 1.97122687192968
+  },
+  "home.games": {
+    "display": "9",
+    "fmt": "{:d}",
+    "note": "Knicks 2026 home playoff games",
+    "unit": null,
+    "value": 9
+  },
+  "home.wr": {
+    "display": "0.778",
+    "fmt": "{:.3f}",
+    "note": "Knicks 2026 home win rate",
+    "unit": null,
+    "value": 0.7777777777777778
+  },
+  "home.wr_pct": {
+    "display": "23.3",
+    "fmt": "{:.1f}",
+    "note": "Home win-rate percentile vs champions",
+    "unit": null,
+    "value": 23.25581395348837
+  },
+  "knicks.expected_margin": {
+    "display": "+2.38",
+    "fmt": "{:+.2f}",
+    "note": "Expected margin/game from reg-SRS prediction",
+    "unit": null,
+    "value": 2.3776923175793256
+  },
+  "knicks.reg_srs": {
+    "display": "+6.05",
+    "fmt": "{:+.2f}",
+    "note": "Knicks 2025-26 regular-season SRS",
+    "unit": null,
+    "value": 6.04551382067535
+  },
+  "opp.srs_mean": {
+    "display": "+3.68",
+    "fmt": "{:+.2f}",
+    "note": "Mean champion opponent SRS",
+    "unit": null,
+    "value": 3.679990305356382
+  },
+  "opp.srs_pct": {
+    "display": "48.8",
+    "fmt": "{:.1f}",
+    "note": "Opponent SRS schedule percentile vs champions",
+    "unit": null,
+    "value": 48.837209302325576
+  },
+  "opp.srs_weighted": {
+    "display": "+3.67",
+    "fmt": "{:+.2f}",
+    "note": "Games-weighted avg opponent SRS (primary)",
+    "unit": null,
+    "value": 3.667821503096024
+  },
+  "overperf.best": {
+    "display": "+14.49",
+    "fmt": "{:+.2f}",
+    "note": "Best overperformance all-time (2000-01 Lakers)",
+    "unit": null,
+    "value": 14.490315725012154
+  },
+  "overperf.margin": {
+    "display": "+12.52",
+    "fmt": "{:+.2f}",
+    "note": "Playoff overperformance vs reg-SRS prediction",
+    "unit": null,
+    "value": 12.517044524525938
+  },
+  "overperf.pct": {
+    "display": "97.7",
+    "fmt": "{:.1f}",
+    "note": "Overperformance percentile among champions",
+    "unit": null,
+    "value": 97.67441860465115
+  },
+  "pace.adj_pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Opp-adj per-100 margin percentile",
+    "unit": null,
+    "value": 100.0
+  },
+  "pace.adj_per100": {
+    "display": "+11.02",
+    "fmt": "{:+.2f}",
+    "note": "Knicks opp-adj margin per 100 possessions",
+    "unit": null,
+    "value": 11.024181536822006
+  },
+  "pace.adj_rank": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "Knicks opp-adj per-100 margin rank",
+    "unit": null,
+    "value": 1
+  },
+  "pace.poss_2026": {
+    "display": "101.8",
+    "fmt": "{:.1f}",
+    "note": "2025-26 estimated poss/team/game",
+    "unit": null,
+    "value": 101.83899186991869
+  },
+  "pace.poss_diff": {
+    "display": "+3.8",
+    "fmt": "{:+.1f}",
+    "note": "2025-26 poss/game vs historical mean",
+    "unit": null,
+    "value": 3.829781499351739
+  },
+  "pace.poss_mean": {
+    "display": "98.0",
+    "fmt": "{:.1f}",
+    "note": "Historical mean poss/team/game",
+    "unit": null,
+    "value": 98.00921037056695
+  },
+  "pace.raw_pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Raw per-100 margin percentile",
+    "unit": null,
+    "value": 100.0
+  },
+  "pace.raw_per100": {
+    "display": "+14.63",
+    "fmt": "{:+.2f}",
+    "note": "Knicks raw margin per 100 possessions",
+    "unit": null,
+    "value": 14.625770118709205
+  },
+  "pace.raw_rank": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "Knicks raw per-100 margin rank",
+    "unit": null,
+    "value": 1
+  },
+  "pace_era.opp_pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Opp+pace-adj margin percentile vs champions",
+    "unit": null,
+    "value": 100.0
+  },
+  "pace_era.paa_adj": {
+    "display": "+10.05",
+    "fmt": "{:+.2f}",
+    "note": "Opp+pace-adj margin (Knicks 2026)",
+    "unit": null,
+    "value": 10.054932334158453
+  },
+  "pace_era.pace_adj": {
+    "display": "+13.34",
+    "fmt": "{:+.2f}",
+    "note": "Pace-adj raw margin (Knicks 2026)",
+    "unit": null,
+    "value": 13.339868214921623
+  },
+  "pace_era.raw_pct": {
+    "display": "95.3",
+    "fmt": "{:.1f}",
+    "note": "Pace-adj raw margin percentile vs champions",
+    "unit": null,
+    "value": 95.34883720930233
+  },
+  "prefinals.po_adj": {
+    "display": "+20.3",
+    "fmt": "{:+.1f}",
+    "note": "Pre-Finals avg po-adj margin",
+    "unit": null,
+    "value": 20.303571428571423
+  },
+  "prefinals.raw": {
+    "display": "+19.7",
+    "fmt": "{:+.1f}",
+    "note": "Pre-Finals avg raw margin (R1\u2013CF)",
+    "unit": null,
+    "value": 19.666666666666668
+  },
+  "prefinals.reg_adj": {
+    "display": "+17.7",
+    "fmt": "{:+.1f}",
+    "note": "Pre-Finals avg reg-adj margin",
+    "unit": null,
+    "value": 17.704983243659182
+  },
+  "raw.ci_lo_pct": {
+    "display": "63",
+    "fmt": "{:.0f}",
+    "note": "Percentile rank of CI lower bound",
+    "unit": null,
+    "value": 62.7906976744186
+  },
+  "raw.losses": {
+    "display": "3",
+    "fmt": "{:d}",
+    "note": "Knicks 2026 playoff losses",
+    "unit": null,
+    "value": 3
+  },
+  "raw.margin": {
+    "display": "+14.9",
+    "fmt": "{:+.1f}",
+    "note": "Knicks 2026 avg playoff margin pts/game",
+    "unit": null,
+    "value": 14.894736842105264
+  },
+  "raw.margin_ci.hi": {
+    "display": "+22.4",
+    "fmt": "{:+.1f}",
+    "note": "95% CI upper bound on margin",
+    "unit": null,
+    "value": 22.351049653446903
+  },
+  "raw.margin_ci.lo": {
+    "display": "+7.4",
+    "fmt": "{:+.1f}",
+    "note": "95% CI lower bound on margin",
+    "unit": null,
+    "value": 7.438424030763623
+  },
+  "raw.margin_mean": {
+    "display": "+7.0",
+    "fmt": "{:+.1f}",
+    "note": "Mean champion avg margin",
+    "unit": null,
+    "value": 7.045636597926805
+  },
+  "raw.margin_pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Margin percentile among champion seasons",
+    "unit": null,
+    "value": 100.0
+  },
+  "raw.n_champions": {
+    "display": "43",
+    "fmt": "{:d}",
+    "note": "Number of champion seasons in dataset",
+    "unit": null,
+    "value": 43
+  },
+  "raw.win_rate": {
+    "display": "0.842",
+    "fmt": "{:.3f}",
+    "note": "Knicks 2026 playoff win rate",
+    "unit": null,
+    "value": 0.8421052631578947
+  },
+  "raw.win_rate_best": {
+    "display": "0.941",
+    "fmt": "{:.3f}",
+    "note": "Best champion win rate (2016-17 Warriors)",
+    "unit": null,
+    "value": 0.9411764705882353
+  },
+  "raw.win_rate_mean": {
+    "display": "0.752",
+    "fmt": "{:.3f}",
+    "note": "Mean champion win rate",
+    "unit": null,
+    "value": 0.75161210695286
+  },
+  "raw.win_rate_pct": {
+    "display": "88.4",
+    "fmt": "{:.1f}",
+    "note": "Win-rate percentile among champion seasons",
+    "unit": null,
+    "value": 88.37209302325581
+  },
+  "raw.wins": {
+    "display": "16",
+    "fmt": "{:d}",
+    "note": "Knicks 2026 playoff wins",
+    "unit": null,
+    "value": 16
+  },
+  "round.cf.opp_po_srs": {
+    "display": "+2.32",
+    "fmt": "{:+.2f}",
+    "note": "cf opp playoff SRS excl. Knicks",
+    "unit": null,
+    "value": 2.321428571428579
+  },
+  "round.cf.opp_reg_srs": {
+    "display": "+3.77",
+    "fmt": "{:+.2f}",
+    "note": "cf opp regular-season SRS",
+    "unit": null,
+    "value": 3.774909405655725
+  },
+  "round.cf.po_adj": {
+    "display": "+16.9",
+    "fmt": "{:+.1f}",
+    "note": "cf series po-adj margin",
+    "unit": null,
+    "value": 16.92857142857142
+  },
+  "round.cf.raw": {
+    "display": "+19.2",
+    "fmt": "{:+.1f}",
+    "note": "cf series raw margin",
+    "unit": null,
+    "value": 19.25
+  },
+  "round.cf.reg_adj": {
+    "display": "+15.5",
+    "fmt": "{:+.1f}",
+    "note": "cf series reg-adj margin",
+    "unit": null,
+    "value": 15.475090594344275
+  },
+  "round.finals.opp_po_srs": {
+    "display": "+14.48",
+    "fmt": "{:+.2f}",
+    "note": "finals opp playoff SRS excl. Knicks",
+    "unit": null,
+    "value": 14.480059523809526
+  },
+  "round.finals.opp_reg_srs": {
+    "display": "+8.28",
+    "fmt": "{:+.2f}",
+    "note": "finals opp regular-season SRS",
+    "unit": null,
+    "value": 8.276597460787041
+  },
+  "round.finals.po_adj": {
+    "display": "-12.1",
+    "fmt": "{:+.1f}",
+    "note": "finals series po-adj margin",
+    "unit": null,
+    "value": -12.080059523809526
+  },
+  "round.finals.raw": {
+    "display": "+2.4",
+    "fmt": "{:+.1f}",
+    "note": "finals series raw margin",
+    "unit": null,
+    "value": 2.4
+  },
+  "round.finals.reg_adj": {
+    "display": "-5.9",
+    "fmt": "{:+.1f}",
+    "note": "finals series reg-adj margin",
+    "unit": null,
+    "value": -5.876597460787041
+  },
+  "round.r1.opp_reg_srs": {
+    "display": "+2.38",
+    "fmt": "{:+.2f}",
+    "note": "r1 opp regular-season SRS",
+    "unit": null,
+    "value": 2.382710089399721
+  },
+  "round.r1.raw": {
+    "display": "+17.5",
+    "fmt": "{:+.1f}",
+    "note": "r1 series raw margin",
+    "unit": null,
+    "value": 17.5
+  },
+  "round.r1.reg_adj": {
+    "display": "+15.1",
+    "fmt": "{:+.1f}",
+    "note": "r1 series reg-adj margin",
+    "unit": null,
+    "value": 15.11728991060028
+  },
+  "round.r2.opp_po_srs": {
+    "display": "-1.43",
+    "fmt": "{:+.2f}",
+    "note": "r2 opp playoff SRS excl. Knicks",
+    "unit": null,
+    "value": -1.4285714285714306
+  },
+  "round.r2.opp_reg_srs": {
+    "display": "-0.27",
+    "fmt": "{:+.2f}",
+    "note": "r2 opp regular-season SRS",
+    "unit": null,
+    "value": -0.27256922603299477
+  },
+  "round.r2.po_adj": {
+    "display": "+23.7",
+    "fmt": "{:+.1f}",
+    "note": "r2 series po-adj margin",
+    "unit": null,
+    "value": 23.67857142857143
+  },
+  "round.r2.raw": {
+    "display": "+22.2",
+    "fmt": "{:+.1f}",
+    "note": "r2 series raw margin",
+    "unit": null,
+    "value": 22.25
+  },
+  "round.r2.reg_adj": {
+    "display": "+22.5",
+    "fmt": "{:+.1f}",
+    "note": "r2 series reg-adj margin",
+    "unit": null,
+    "value": 22.522569226032996
+  },
+  "scoring.2026": {
+    "display": "115.6",
+    "fmt": "{:.1f}",
+    "note": "2025-26 league avg pts/team/game",
+    "unit": null,
+    "value": 115.60772357723577
+  },
+  "scoring.mean": {
+    "display": "103.5",
+    "fmt": "{:.1f}",
+    "note": "Historical mean pts/team/game",
+    "unit": null,
+    "value": 103.53937860707009
+  },
+  "scoring.scale": {
+    "display": "0.896",
+    "fmt": "{:.3f}",
+    "note": "Pace-adj scale factor (ref/2026)",
+    "unit": null,
+    "value": 0.895609526796858
+  },
+  "se_boot.p_rank1": {
+    "display": "59.4",
+    "fmt": "{:.1f}",
+    "note": "P(rank #1) incl. opp-SRS uncertainty, \u00d7100",
+    "unit": null,
+    "value": 59.37
+  },
+  "se_boot.p_top5": {
+    "display": "81.7",
+    "fmt": "{:.1f}",
+    "note": "P(top 5) incl. opp-SRS uncertainty, \u00d7100",
+    "unit": null,
+    "value": 81.69
+  },
+  "shrink.ci.hi": {
+    "display": "+11.48",
+    "fmt": "{:+.2f}",
+    "note": "EB credible interval upper bound",
+    "unit": null,
+    "value": 11.476029192196284
+  },
+  "shrink.ci.lo": {
+    "display": "+1.53",
+    "fmt": "{:+.2f}",
+    "note": "EB credible interval lower bound",
+    "unit": null,
+    "value": 1.530030569791796
+  },
+  "shrink.pct_above": {
+    "display": "83",
+    "fmt": "{:.0f}",
+    "note": "% of other champions shrunken margin beats",
+    "unit": null,
+    "value": 83.33333333333334
+  },
+  "shrink.post_mean": {
+    "display": "+6.50",
+    "fmt": "{:+.2f}",
+    "note": "EB posterior (shrunken) adj margin",
+    "unit": null,
+    "value": 6.50302988099404
+  },
+  "shrink.prior_mean": {
+    "display": "+3.18",
+    "fmt": "{:+.2f}",
+    "note": "Champion prior mean for EB",
+    "unit": null,
+    "value": 3.1784732200361665
+  },
+  "shrink.weight_data": {
+    "display": "41",
+    "fmt": "{:.0f}",
+    "note": "Weight on 19-game data, \u00d7100",
+    "unit": null,
+    "value": 41.30683443843992
+  },
+  "winprob.cf.p_series": {
+    "display": "68.7",
+    "fmt": "{:.1f}",
+    "note": "P(Knicks win cf series), \u00d7100",
+    "unit": null,
+    "value": 68.7125
+  },
+  "winprob.exp_losses": {
+    "display": "6.5",
+    "fmt": "{:.1f}",
+    "note": "Expected losses in title run",
+    "unit": null,
+    "value": 6.479095853161115
+  },
+  "winprob.finals.p_series": {
+    "display": "31.4",
+    "fmt": "{:.1f}",
+    "note": "P(Knicks win finals series), \u00d7100",
+    "unit": null,
+    "value": 31.4225
+  },
+  "winprob.knicks_srs": {
+    "display": "+6.05",
+    "fmt": "{:+.2f}",
+    "note": "Knicks regular-season SRS for model",
+    "unit": null,
+    "value": 6.04551382067535
+  },
+  "winprob.p_le3_given_title": {
+    "display": "6.7",
+    "fmt": "{:.1f}",
+    "note": "P(title run \u22643 losses | title), \u00d7100",
+    "unit": null,
+    "value": 6.730115567641061
+  },
+  "winprob.p_title": {
+    "display": "14.7",
+    "fmt": "{:.1f}",
+    "note": "P(Knicks win title), \u00d7100",
+    "unit": null,
+    "value": 14.71
+  },
+  "winprob.p_title_and_le3": {
+    "display": "1.0",
+    "fmt": "{:.1f}",
+    "note": "P(title AND \u22643 losses), unconditional, \u00d7100",
+    "unit": null,
+    "value": 0.9900000000000001
+  },
+  "winprob.r1.p_series": {
+    "display": "77.2",
+    "fmt": "{:.1f}",
+    "note": "P(Knicks win r1 series), \u00d7100",
+    "unit": null,
+    "value": 77.17500000000001
+  },
+  "winprob.r2.p_series": {
+    "display": "88.9",
+    "fmt": "{:.1f}",
+    "note": "P(Knicks win r2 series), \u00d7100",
+    "unit": null,
+    "value": 88.90249999999999
+  }
+}

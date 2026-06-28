@@ -1,0 +1,67 @@
+{
+  "adj.margin_is_first": {
+    "claim": "opponent-adjusted margin ranks first all-time",
+    "ok": true,
+    "value": 100.0
+  },
+  "adj_po.margin_is_first": {
+    "claim": "full-run playoff-SRS-adjusted margin ranks first all-time",
+    "ok": true,
+    "value": 100.0
+  },
+  "away.wr_elite": {
+    "claim": "away win rate is at or above 95th pct among champions",
+    "ok": true,
+    "value": 97.67441860465115
+  },
+  "bt.rank_is_first": {
+    "claim": "Bradley-Terry (wins-only) ranks the Knicks #1 all-time among champions",
+    "ok": true,
+    "value": 1
+  },
+  "field.knicks_rose_most": {
+    "claim": "the Knicks elevated most from reg-season to playoffs of any 2026 playoff team",
+    "ok": true,
+    "value": 11.483801655515112
+  },
+  "gap.east_not_historically_weak": {
+    "claim": "the East was not historically weak (West dominance below 80th percentile)",
+    "ok": true,
+    "value": 37.2093023255814
+  },
+  "gap.west_more_dominant_most_seasons": {
+    "claim": "the West was more dominant in the majority of prior seasons",
+    "ok": true,
+    "value": 37.2093023255814
+  },
+  "health.opponents_nearly_full": {
+    "claim": "all opponents were essentially fully healthy (avg health \u2265 95%)",
+    "ok": true,
+    "value": 0.9817708333333334
+  },
+  "health.spurs_fully_healthy": {
+    "claim": "the Spurs were fully healthy in the Finals",
+    "ok": true,
+    "value": 1.0
+  },
+  "opp.schedule_near_median": {
+    "claim": "games-weighted opponent SRS sits near the historical median (35th-65th pct)",
+    "ok": true,
+    "value": 48.837209302325576
+  },
+  "overperf.is_second_not_first": {
+    "claim": "playoff overperformance is 2nd all-time (97th+ pct, not 1st)",
+    "ok": true,
+    "value": 97.67441860465115
+  },
+  "raw.margin_is_best": {
+    "claim": "raw avg margin is the highest ever recorded (100th percentile)",
+    "ok": true,
+    "value": 100.0
+  },
+  "winprob.title_underdog": {
+    "claim": "model made Knicks underdogs in the Finals (<50% to win series)",
+    "ok": true,
+    "value": 0.314225
+  }
+}
