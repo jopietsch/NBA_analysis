@@ -151,6 +151,8 @@ The breakdown also holds when the straight-line assumption behind it is dropped.
 
 ![How the home-court decline splits across the four box-score factors when a flexible win model, free of any straight-line assumption, does the splitting. Each era's stacked bars are the factors' contributions to that season's home edge; the tall early-1980s stack shrinks toward zero in the recent seasons, and that shrinking stack is the decline. Regular season and playoffs split it across the same factors, with shooting and rebounding the largest pieces.](../generated/images/home_court_shap_channels.svg){#fig-shap-channels .collapsible}
 
+A last worry: maybe the categories just stand in for some hidden cause the data never recorded. A standard check measures how big such a hidden cause would have to be to explain a category's link to winning away. For fouls it would have to be more strongly tied to both fouls and winning than the foul advantage itself is, explaining at least << f("sens.reg_fouls_rv") >> of what the model leaves unexplained; for shooting the bar is higher still, << f("sens.reg_efg_rv") >>. Both are hard to dismiss this way. This bounds how solid the box-score story is rather than proving the categories cause home wins.
+
 One plausible explanation is that analytical tools for shot selection, scouting, and preparation have reached every team at roughly the same pace. When all 30 teams land on the same approaches regardless of venue, the home team's preparation advantage has nowhere to go but down.
 
 ---

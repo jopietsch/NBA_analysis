@@ -387,6 +387,38 @@ All data from cache/ — same source as the plots above.
      a blend of heterogeneous effects and should be interpreted with caution.
 
 
+─── MEDIATION ROBUSTNESS — SENSITIVITY TO UNMEASURED CONFOUNDING ───────
+   Robustness check on the mediation. The decomposition assumes the four
+   box-score channels are the path home advantage takes; a hidden cause
+   correlated with both a channel and the outcome could bias its share.
+   For each channel this reports the partial R² with home_win and the
+   robustness value (RV, Cinelli & Hazlett 2020): the minimum share of
+   the residual variation in BOTH that channel and home_win a confounder
+   would have to explain to drive the channel's coefficient to zero.
+   Higher RV = harder to explain away. This bounds robustness to a hidden
+   cause; it does not prove the channel causes home wins.
+
+   Regular season  (N = 12,839 games, residual dof = 12,833)
+
+   Channel        partial R²   robustness value  Interpretation
+   ────────────  ───────────  ─────────────────  ────────────────────────────────────────
+   Shooting            45.9%              59.0%  a confounder must explain ≥ 59.0% of both to zero it out
+   Fouls                9.9%              28.1%  a confounder must explain ≥ 28.1% of both to zero it out
+   Turnovers           21.5%              40.4%  a confounder must explain ≥ 40.4% of both to zero it out
+   Rebounding          18.2%              37.3%  a confounder must explain ≥ 37.3% of both to zero it out
+
+
+   Playoffs  (N = 922 games, residual dof = 916)
+
+   Channel        partial R²   robustness value  Interpretation
+   ────────────  ───────────  ─────────────────  ────────────────────────────────────────
+   Shooting            43.1%              57.0%  a confounder must explain ≥ 57.0% of both to zero it out
+   Fouls                6.4%              22.9%  a confounder must explain ≥ 22.9% of both to zero it out
+   Turnovers           22.1%              40.9%  a confounder must explain ≥ 40.9% of both to zero it out
+   Rebounding          19.6%              38.6%  a confounder must explain ≥ 38.6% of both to zero it out
+
+
+
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
    Buckets: away team more rested (rest_diff < 0), equal rest, and home
    team more rested (rest_diff > 0). Games without a prior game to

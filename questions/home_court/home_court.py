@@ -36,7 +36,8 @@ from home_court_data import (
     compute_attendance_season_stats, compute_attendance_covid_doseresponse,
 )
 from home_court_plots import (
-    plot_results, plot_mediation, plot_rest_altitude, plot_channel_3pa_control,
+    plot_results, plot_mediation, plot_mediation_sensitivity,
+    plot_rest_altitude, plot_channel_3pa_control,
     plot_differential_analysis, plot_rebound_decomposition,
     plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_series_simulation, plot_playoff_quality,
@@ -70,6 +71,7 @@ def main() -> None:
     game_df = _reg.build_game_dataset()
     plot_mediation(_reg.compute_mediation_decomposition(game_df),
                    _reg.compute_mediation_bootstrap(game_df))
+    plot_mediation_sensitivity(_reg.compute_mediation_sensitivity(game_df))
     plot_rest_altitude(_reg.compute_rest_altitude_plotdata(game_df))
     plot_channel_3pa_control(_reg.compute_channel_3pa_control(game_df))
 

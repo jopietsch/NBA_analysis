@@ -4,6 +4,11 @@
     "ok": true,
     "value": "RS 54.6\u219253.5%, PO 58.4\u219257.1%, RS upper 58.6% < early 66.7%"
   },
+  "foul_link_robust_to_confounding": {
+    "claim": "overturning the foul channel needs a hidden cause stronger than the foul channel's own measured link to home winning",
+    "ok": true,
+    "value": "foul RV 28.9% vs partial R\u00b2 10.5%"
+  },
   "net_reg_drop_over_third": {
     "claim": "the regular-season net-rating advantage shrank by more than a third",
     "ok": true,

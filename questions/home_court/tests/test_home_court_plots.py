@@ -347,3 +347,28 @@ def test_plot_referee_rankings():
 
 def test_plot_referee_rankings_empty():
     plots.plot_referee_rankings([])  # must no-op, not raise
+
+
+def test_plot_mediation_sensitivity():
+    channels = [("efg_pct_diff", "Shooting"), ("foul_diff", "Fouls"),
+                ("tov_diff", "Turnovers"), ("reb_diff", "Rebounding")]
+
+    def _ctx(scale):
+        return {
+            "n": 30000, "dof": 29995.0,
+            "channels": [
+                {"key": k, "label": lbl, "robustness_value": rv * scale,
+                 "partial_r2": rv * scale * 0.5}
+                for (k, lbl), rv in zip(channels, (55.0, 28.0, 40.0, 36.0))
+            ],
+        }
+
+    plots.plot_mediation_sensitivity({
+        "channels": channels,
+        "Regular season": _ctx(1.0),
+        "Playoffs": _ctx(0.95),
+    })
+
+
+def test_plot_mediation_sensitivity_empty():
+    plots.plot_mediation_sensitivity({})  # must no-op, not raise

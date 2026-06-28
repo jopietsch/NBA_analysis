@@ -2011,6 +2011,124 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
     print()
 
 
+# ── Analysis: Sensitivity of the mediation to unmeasured confounding ──────────
+
+# Same four channels as the linear mediation, so the sensitivity bounds attach
+# directly to the coefficients that decomposition leans on.
+_SENS_CHANNELS: list[tuple[str, str]] = [
+    ("efg_pct_diff", "Shooting"),
+    ("foul_diff",    "Fouls"),
+    ("tov_diff",     "Turnovers"),
+    ("reb_diff",     "Rebounding"),
+]
+
+
+def compute_mediation_sensitivity(df: pd.DataFrame) -> dict:
+    """Cinelli & Hazlett (2020) sensitivity-to-unmeasured-confounding for the
+    mediation's full OLS model, regular season and playoffs.
+
+    Fits home_win ~ year + the four box-score edges with classical OLS, then for
+    each channel reports the partial R² with the outcome and the robustness value
+    (RV): the minimum share of the residual variation in BOTH that channel and
+    home_win an unmeasured confounder would have to explain to drive the channel's
+    coefficient to zero. Higher RV = harder to explain away. This bounds robustness
+    to a hidden cause; it is not proof of causation.
+
+    The RV uses the classical (non-robust) t-stat and residual degrees of freedom,
+    which is the sensemakr standard. The cluster-by-year p-value the mediation uses
+    is reported alongside for context only. Skips a context with too few rows.
+    """
+    keys = [k for k, _ in _SENS_CHANNELS]
+    rhs = " + ".join(keys)
+    out: dict = {"channels": list(_SENS_CHANNELS)}
+    for label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        d = df[df["is_playoff"] == is_po].dropna(subset=keys + ["home_win", "year"])
+        if len(d) < 100:
+            continue
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            m = smf.ols(f"home_win ~ year + {rhs}", data=d).fit()   # classical SEs
+            m_cl = smf.ols(f"home_win ~ year + {rhs}", data=d).fit(
+                cov_type="cluster", cov_kwds={"groups": d["year"]})
+        dof = float(m.df_resid)
+        rows = []
+        for k, name in _SENS_CHANNELS:
+            t = float(m.tvalues[k])
+            partial_r2 = t**2 / (t**2 + dof)
+            f = t / np.sqrt(dof)
+            rv = 0.5 * (np.sqrt(f**4 + 4.0 * f**2) - f**2)
+            rows.append({
+                "key": k, "label": name,
+                "coef": float(m.params[k]), "t": t, "dof": dof,
+                "partial_r2": partial_r2 * 100.0,
+                "robustness_value": rv * 100.0,
+                "p_cluster": float(m_cl.pvalues[k]),
+            })
+        out[label] = {"n": len(d), "dof": dof, "channels": rows}
+    return out
+
+
+def run_mediation_sensitivity(df: pd.DataFrame) -> None:
+    """Print the Cinelli & Hazlett robustness check on the mediation: how strong
+    an unmeasured confounder would have to be to explain away each channel's link
+    to home winning."""
+    _section("MEDIATION ROBUSTNESS — SENSITIVITY TO UNMEASURED CONFOUNDING")
+    print("   Robustness check on the mediation. The decomposition assumes the four")
+    print("   box-score channels are the path home advantage takes; a hidden cause")
+    print("   correlated with both a channel and the outcome could bias its share.")
+    print("   For each channel this reports the partial R² with home_win and the")
+    print("   robustness value (RV, Cinelli & Hazlett 2020): the minimum share of")
+    print("   the residual variation in BOTH that channel and home_win a confounder")
+    print("   would have to explain to drive the channel's coefficient to zero.")
+    print("   Higher RV = harder to explain away. This bounds robustness to a hidden")
+    print("   cause; it does not prove the channel causes home wins.\n")
+
+    data = compute_mediation_sensitivity(df)
+    if not data or all(k not in data for k in ("Regular season", "Playoffs")):
+        print("   Insufficient data — skipping.\n")
+        return
+
+    for label in ("Regular season", "Playoffs"):
+        d = data.get(label)
+        if not d:
+            continue
+        print(f"   {label}  (N = {d['n']:,} games, residual dof = {d['dof']:,.0f})\n")
+        print(f"   {'Channel':<12}  {'partial R²':>11}  {'robustness value':>17}  Interpretation")
+        print(f"   {'─'*12}  {'─'*11}  {'─'*17}  {'─'*40}")
+        for r in d["channels"]:
+            interp = (f"a confounder must explain ≥ {r['robustness_value']:.1f}% of "
+                      f"both to zero it out")
+            print(f"   {r['label']:<12}  {r['partial_r2']:>10.1f}%  "
+                  f"{r['robustness_value']:>16.1f}%  {interp}")
+        print()
+
+        if label == "Regular season":
+            fouls = next(r for r in d["channels"] if r["label"] == "Fouls")
+            efg   = next(r for r in d["channels"] if r["label"] == "Shooting")
+            FACTS.set("sens.reg_fouls_rv", fouls["robustness_value"], "{:.1f}%",
+                      note="Sensitivity: foul channel robustness value (RS)")
+            FACTS.set("sens.reg_fouls_partial_r2", fouls["partial_r2"], "{:.1f}%",
+                      note="Sensitivity: foul channel partial R² with home_win (RS)")
+            FACTS.set("sens.reg_efg_rv", efg["robustness_value"], "{:.1f}%",
+                      note="Sensitivity: shooting (eFG%) channel robustness value (RS)")
+            FACTS.set("sens.reg_efg_partial_r2", efg["partial_r2"], "{:.1f}%",
+                      note="Sensitivity: shooting (eFG%) channel partial R² with home_win (RS)")
+            # Guard: the foul link is not fragile to a hidden cause. A confounder
+            # would have to explain at least the foul channel's RV of the residual
+            # variation in BOTH fouls and home wins — more than the foul channel's
+            # own partial R² with the outcome — to overturn it. (Bounds robustness;
+            # not a causal proof.)
+            FACTS.guard(
+                "foul_link_robust_to_confounding",
+                bool(fouls["robustness_value"] > fouls["partial_r2"]),
+                claim="overturning the foul channel needs a hidden cause stronger "
+                      "than the foul channel's own measured link to home winning",
+                value=f"foul RV {fouls['robustness_value']:.1f}% vs "
+                      f"partial R² {fouls['partial_r2']:.1f}%",
+            )
+        print()
+
+
 # ── Analysis: Non-parametric channel decomposition (gradient boosting + SHAP) ─
 
 # Same four channels as the linear mediation, so the two decompositions of the
@@ -5501,6 +5619,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
             print("   No cached referee data — run the analysis first to fetch it.\n")
         run_shot_zone_analysis(reg_zone_seasons, reg_zone_stats, po_zone_seasons, po_zone_stats)
         run_mediation_analysis(df)
+        run_mediation_sensitivity(df)
         run_rest_bucket_analysis(df)
         run_factor_summary(df)
 

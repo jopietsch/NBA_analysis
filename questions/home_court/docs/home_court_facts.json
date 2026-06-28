@@ -1315,6 +1315,34 @@
     "unit": null,
     "value": 49.00662251655629
   },
+  "sens.reg_efg_partial_r2": {
+    "display": "48.1%",
+    "fmt": "{:.1f}%",
+    "note": "Sensitivity: shooting (eFG%) channel partial R\u00b2 with home_win (RS)",
+    "unit": null,
+    "value": 48.06859795494217
+  },
+  "sens.reg_efg_rv": {
+    "display": "60.5%",
+    "fmt": "{:.1f}%",
+    "note": "Sensitivity: shooting (eFG%) channel robustness value (RS)",
+    "unit": null,
+    "value": 60.480977406384625
+  },
+  "sens.reg_fouls_partial_r2": {
+    "display": "10.5%",
+    "fmt": "{:.1f}%",
+    "note": "Sensitivity: foul channel partial R\u00b2 with home_win (RS)",
+    "unit": null,
+    "value": 10.522810137214064
+  },
+  "sens.reg_fouls_rv": {
+    "display": "28.9%",
+    "fmt": "{:.1f}%",
+    "note": "Sensitivity: foul channel robustness value (RS)",
+    "unit": null,
+    "value": 28.91364376927441
+  },
   "series.po_now": {
     "display": "53%",
     "fmt": "{:.0f}%",

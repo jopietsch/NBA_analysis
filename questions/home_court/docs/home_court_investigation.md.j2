@@ -95,6 +95,8 @@ The four channels above, working together, capture << f("share.fourfactors.decli
 
 **One more check on the breakdown itself.** The channel shares above come from a straight-line model. To see whether that assumption is doing the work, the same four edges were fed to a flexible win model that lets the factors bend and interact, which then splits each game's outcome among them and reads off how much each factor's edge shrank over the 40 years. It lands on the same split: shooting, rebounding, and turnovers each carry a substantial slice of the regular-season decline and fouls the smallest, about << f("shap.reg_fouls_pct") >>, with the slices adding back to the same drop of about << f("shap.reg_decline_pp") >>. The playoffs split the same way. Since the two methods share no assumptions, the agreement says the breakdown is a feature of the games rather than of the straight-line form.
 
+How fragile are these links to something the box score never measured? One standard check asks how big a hidden, unmeasured cause it would take to explain a channel's link to winning away entirely: a cause linked to both that channel and who wins. To erase the foul link, such a cause would have to explain at least << f("sens.reg_fouls_rv") >> of the leftover variation in both fouls and home wins, more than the foul channel's own measured link to winning (<< f("sens.reg_fouls_partial_r2") >>). For shooting the bar is higher still, << f("sens.reg_efg_rv") >>. Those are demanding thresholds, so the foul and shooting strands are hard to explain away with one omitted cause. This only bounds how robust the links are; it does not prove the channels cause home wins.
+
 ---
 
 # Part 2: What I Ruled Out

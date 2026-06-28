@@ -780,3 +780,55 @@ class TestHcaForecast:
         out = reg.compute_hca_forecast(df, horizon=5)
         assert "Regular season" not in out
         assert "Playoffs" not in out
+
+
+class TestMediationSensitivity:
+    """Cinelli & Hazlett sensitivity-to-confounding on the mediation model."""
+
+    def _make_df(self, n=4000, seed=3):
+        """Synthetic games where home_win depends strongly on the shooting edge
+        and almost not at all on the rebounding edge, so a stronger true effect
+        must produce a higher robustness value."""
+        rng = np.random.default_rng(seed)
+        years = rng.integers(nba.START_YEAR, nba.END_YEAR + 1, n)
+        efg = rng.normal(0.0, 3.0, n)   # strong driver
+        foul = rng.normal(0.0, 2.0, n)  # moderate driver
+        tov = rng.normal(0.0, 2.0, n)   # moderate driver
+        reb = rng.normal(0.0, 2.0, n)   # near-null driver
+        z = 0.0 + 0.40 * efg - 0.10 * foul + 0.10 * tov + 0.002 * reb
+        p = 1.0 / (1.0 + np.exp(-z))
+        home_win = (rng.uniform(0.0, 1.0, n) < p).astype(int)
+        df = pd.DataFrame({
+            "year": years, "is_playoff": rng.integers(0, 2, n),
+            "home_win": home_win, "efg_pct_diff": efg, "foul_diff": foul,
+            "tov_diff": tov, "reb_diff": reb,
+        })
+        df["era"] = df["year"].apply(reg._era_for_year)
+        return df
+
+    def test_returns_bounded_partial_r2_and_rv(self):
+        out = reg.compute_mediation_sensitivity(self._make_df())
+        for ctx in ("Regular season", "Playoffs"):
+            for r in out[ctx]["channels"]:
+                assert 0.0 <= r["partial_r2"] <= 100.0
+                assert 0.0 <= r["robustness_value"] <= 100.0
+
+    def test_stronger_effect_has_higher_robustness_value(self):
+        out = reg.compute_mediation_sensitivity(self._make_df())
+        rs = {r["label"]: r["robustness_value"] for r in out["Regular season"]["channels"]}
+        assert rs["Shooting"] > rs["Rebounding"]
+
+    def test_too_few_rows_skips_context(self):
+        df = self._make_df(n=4000)
+        df = df[df["is_playoff"] == 0].copy()  # no playoff rows -> playoffs skipped
+        out = reg.compute_mediation_sensitivity(df)
+        assert "Regular season" in out
+        assert "Playoffs" not in out
+
+    def test_run_emits_facts(self, capsys):
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_mediation_sensitivity(self._make_df())
+        for name in ("sens.reg_fouls_rv", "sens.reg_fouls_partial_r2",
+                     "sens.reg_efg_rv", "sens.reg_efg_partial_r2"):
+            assert name in reg.FACTS

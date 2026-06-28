@@ -1952,6 +1952,71 @@ def plot_oos_forecast(data: dict) -> None:
     save_chart("home_court_oos_forecast.svg", OUTPUT_DIR)
 
 
+def plot_mediation_sensitivity(data: dict) -> None:
+    """
+    How robust each box-score channel's link to home winning is to a hidden,
+    unmeasured cause (Cinelli & Hazlett robustness value), regular season and
+    playoffs. Each bar is the share of the residual variation a confounder would
+    have to explain in BOTH that channel and home_win to zero out its
+    coefficient: taller = harder to explain away. Channel colors match the
+    mediation chart. Mirrors home_court_results.md.
+    Saves → home_court_mediation_sensitivity.svg
+    """
+    if not data or all(k not in data for k in ("Regular season", "Playoffs")):
+        print("plot_mediation_sensitivity: no data, skipping.")
+        return
+
+    labels = [lbl for _, lbl in data["channels"]]
+    contexts = [("Regular season", "RS"), ("Playoffs", "PO")]
+    avail = [(ctx, short) for ctx, short in contexts if data.get(ctx)]
+
+    y = np.arange(len(labels))
+    h = 0.38
+    fig, ax = plt.subplots(figsize=(9, 4.6), facecolor=BG)
+    ax.set_facecolor(PANEL)
+
+    for off, (ctx, short) in zip((h / 2, -h / 2), avail):
+        rv = {r["label"]: r["robustness_value"] for r in data[ctx]["channels"]}
+        vals = [rv[lbl] for lbl in labels]
+        bars = ax.barh(
+            y + off, vals, height=h,
+            color=[CATEGORY_COLORS[lbl] for lbl in labels],
+            edgecolor="white", linewidth=0.6,
+            alpha=1.0 if short == "RS" else 0.55, zorder=2,
+        )
+        for bar, v in zip(bars, vals):
+            ax.text(bar.get_width() + 0.7, bar.get_y() + bar.get_height() / 2,
+                    f"{v:.0f}%  {short}", va="center", ha="left",
+                    fontsize=7.6, color="#2c2c2a")
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=9)
+    ax.invert_yaxis()
+    ax.set_xlabel("Robustness value: share a hidden cause must explain in both the "
+                  "channel and home wins (%)", fontsize=8.5)
+    ax.set_xlim(0, max(70, ax.get_xlim()[1]))
+    ax.grid(axis="x", alpha=0.3, linewidth=0.6)
+
+    ax.annotate(
+        "higher = harder to explain away",
+        xy=(0.99, 0.04), xycoords="axes fraction", ha="right", va="bottom",
+        fontsize=8, color=GRAY, style="italic",
+    )
+
+    fig.suptitle(
+        "It would take a strong hidden cause to explain away the box-score links",
+        fontsize=12.5, fontweight="bold", color="#2c2c2a", y=0.99,
+    )
+    fig.text(
+        0.5, 0.9,
+        "Cinelli & Hazlett robustness value per channel  |  solid = regular "
+        "season, faded = playoffs  |  taller bars resist an unmeasured confounder",
+        ha="center", fontsize=8.3, color=GRAY,
+    )
+    plt.tight_layout(rect=(0, 0, 1, 0.88))
+    save_chart("home_court_mediation_sensitivity.svg", OUTPUT_DIR)
+
+
 def plot_shap_channels(data: dict) -> None:
     """
     Non-parametric channel decomposition (gradient boosting + SHAP), regular
