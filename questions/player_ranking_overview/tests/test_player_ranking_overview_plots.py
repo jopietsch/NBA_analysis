@@ -76,6 +76,14 @@ def test_plot_powerlaw_fits(tmp_path):
     assert os.path.exists(path)
 
 
+def test_plot_powerlaw_small_multiples(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    df = _mini_ratings(n=30, tmp_path=tmp_path)
+    systems = ["PER", "WS", "VORP", "GAME_SCORE", "BPM"]
+    path = plots.plot_powerlaw_small_multiples(df, systems)
+    assert os.path.exists(path)
+
+
 def test_plot_ordinal_vs_value_gap(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     df = _mini_ratings(n=30, tmp_path=tmp_path)

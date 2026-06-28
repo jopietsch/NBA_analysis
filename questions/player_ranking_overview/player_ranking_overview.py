@@ -39,6 +39,7 @@ def main() -> None:
         plot_gini_by_system,
         plot_all_systems_distributions,
         plot_powerlaw_fits,
+        plot_powerlaw_small_multiples,
         plot_top20_table,
     )
     from player_ranking_overview_analysis import (
@@ -58,6 +59,7 @@ def main() -> None:
     plot_rank_value_distributions(qual, present)
     plot_ordinal_vs_value_gap(qual)
     plot_powerlaw_fits(qual, present)
+    plot_powerlaw_small_multiples(qual, present)
 
     # Gini scores
     gini_scores = {}

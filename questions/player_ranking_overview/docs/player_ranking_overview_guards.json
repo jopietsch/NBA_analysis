@@ -4,10 +4,25 @@
     "ok": true,
     "value": 0.9719977244282626
   },
+  "cumulative_are_power_laws": {
+    "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
+    "ok": true,
+    "value": "WS/48, BPM, OBPM"
+  },
+  "cumulative_steeper_than_rate": {
+    "claim": "cumulative VORP falls off more steeply than rate-metric PER",
+    "ok": true,
+    "value": 0.23442679811344028
+  },
   "jokic_tops_consensus": {
     "claim": "Nikola Joki\u0107 tops the consensus rating",
     "ok": true,
     "value": "Nikola Joki\u0107"
+  },
+  "obpm_bends": {
+    "claim": "Offensive BPM bends rather than holding a straight power law",
+    "ok": true,
+    "value": 0.8781540096676645
   },
   "per_gamescore_close": {
     "claim": "PER and Game Score track closely (r > 0.75)",

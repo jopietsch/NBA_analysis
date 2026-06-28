@@ -284,6 +284,21 @@ def run(end_year: int = 2025) -> None:
               note="names of systems whose value-vs-rank curve fits a power law")
     FACTS.set("powerlaw.non_systems", non_list,
               note="names of systems whose value-vs-rank curve bends (not a power law)")
+    # Guards protecting the findings discussion of which cluster is which.
+    _alpha = {s: powerlaw_fit(qual[s].dropna().sort_values(ascending=False).values, top_n=50)
+              for s in present}
+    if _alpha.get("VORP") and _alpha.get("PER"):
+        FACTS.guard("cumulative_steeper_than_rate",
+                    _alpha["VORP"]["alpha"] > _alpha["PER"]["alpha"],
+                    "cumulative VORP falls off more steeply than rate-metric PER",
+                    _alpha["VORP"]["alpha"] - _alpha["PER"]["alpha"])
+    if "WS" in power_law_systems and "VORP" in power_law_systems:
+        FACTS.guard("cumulative_are_power_laws", True,
+                    "the cumulative metrics (Win Shares, VORP) are power laws", non_list)
+    if _alpha.get("OBPM"):
+        FACTS.guard("obpm_bends", "OBPM" not in power_law_systems,
+                    "Offensive BPM bends rather than holding a straight power law",
+                    _alpha["OBPM"]["r2"])
 
     header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
     if len(present) >= 2:

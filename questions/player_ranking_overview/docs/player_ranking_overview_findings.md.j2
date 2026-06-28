@@ -120,9 +120,21 @@ PER spreads relatively evenly among qualified 2024-25 players: the top 5% accoun
 
 Win Shares and VORP tell a different story. The top 5% of players hold about 15% of total Win Shares, and VORP concentrates far more steeply still: its top 5% hold about 32% of all positive value. Both lean toward the top because they multiply a rate by minutes played, and the best players lead in both.
 
-These drop-offs are sometimes called power laws, which has a precise meaning: value falls by a roughly constant percentage with each step down the ranks. That pattern shows up as a straight line once both axes are stretched onto a log scale. By that test, some systems qualify and some do not. Holding close to a straight line across the top 50: << f("powerlaw.systems") >>. Bending instead, with a rate of decline that changes as rank rises: << f("powerlaw.non_systems") >>. So "the lines are power laws" is true for some systems and not others, and the chart below is the way to tell them apart.
+These drop-offs are sometimes called power laws. The term has a precise meaning: value falls by a roughly constant percentage with each step down the ranks, so the drop from rank 1 to rank 2 is proportionally the same as from rank 10 to rank 20. When that holds there is no natural place to split "stars" from everyone else; the order just keeps shrinking at the same rate. The test is simple. Stretch both axes onto a log scale, and a power law turns into a straight line.
 
-![On log-log axes a power law is a straight line; the curved lines are not power laws.](../generated/images/powerlaw_fits.svg){#fig-powerlaw .collapsible}
+By that test the systems fall into two groups, and the split lines up with the cumulative-versus-rate divide already described. Holding close to a straight line: << f("powerlaw.systems") >>. Bending instead: << f("powerlaw.non_systems") >>.
+
+Win Shares and VORP are the steep power laws. Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down. PER and Game Score are power laws too, but so shallow that the line is nearly flat, which is the same reason their top 50 sit bunched close together in value.
+
+The benders are the plus/minus rate metrics: << f("powerlaw.non_systems") >>. These measure how far above average a player is per possession, a quantity that is roughly even on both sides of the middle and has a natural size to it. Their best player is not a runaway: the top of the curve sits below where a straight power law would put it, and OBPM bends the most.
+
+So the shape tells you what the metric measures. A metric that piles up accumulated value tilts toward a few players at the top; a metric that scores distance from average has a built-in size and does not run away. The small panels below make the difference visible: the blue curves hold a straight line, the grey ones bow.
+
+![One small panel per system: blue curves are power laws (a straight line on a log scale), grey curves bend. Ordered by how steeply value falls, steepest first.](../generated/images/powerlaw_small_multiples.svg){#fig-powerlaw-sm}
+
+Two cautions. The cutoff between "power law" and "bends" is a convention, and the systems sitting right at it (DBPM just clears the line, BPM just misses) are really the same shape. And this is a description of 50 players in one season, not a formal test: it shows which curves are straight and which bend, not a proven law. The reliable read is the two groups and their order, not the label on any single borderline system.
+
+![Every system on one log-log chart, with each fitted power law drawn through it. Useful for comparing the slopes directly.](../generated/images/powerlaw_fits.svg){#fig-powerlaw .collapsible}
 
 ![Gini coefficients by system: Win Shares and VORP concentrate value at the top far more than rate metrics like PER or Game Score.](../generated/images/gini_by_system.svg){#fig-gini}
 

@@ -595,6 +595,77 @@ def plot_powerlaw_fits(df: pd.DataFrame, systems: list[str],
     return save_chart("powerlaw_fits.svg", OUTPUT_DIR, fig=fig)
 
 
+# ── Chart 8c: Power-law small multiples (one panel per system) ────────────────
+
+def plot_powerlaw_small_multiples(df: pd.DataFrame, systems: list[str],
+                                  top_n: int = 50) -> str:
+    """One small log-log panel per system so straight vs bent is obvious.
+
+    Each panel plots a system's top-N value-vs-rank (dots) against its fitted
+    power law (line) on log-log axes. Power-law systems (fit clears
+    POWERLAW_R2_THRESHOLD) are blue; the benders are grey. Panels are ordered by
+    exponent, steepest first, so the concentration ordering reads left to right.
+    """
+    from player_ranking_overview_data import powerlaw_fit, POWERLAW_R2_THRESHOLD
+
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+
+    # Fit every present system, keep those with a fit, order by steepness.
+    fits = []
+    for sys in systems:
+        if sys not in qual.columns:
+            continue
+        vals = qual[sys].dropna().sort_values(ascending=False).reset_index(drop=True)
+        fit = powerlaw_fit(vals.values, top_n=top_n)
+        if fit is not None:
+            fits.append((sys, vals, fit))
+    fits.sort(key=lambda t: t[2]["alpha"], reverse=True)
+
+    n = len(fits)
+    if n == 0:
+        fig, ax = plt.subplots(figsize=(6, 4), facecolor=BG)
+        ax.text(0.5, 0.5, "No data", ha="center", va="center",
+                transform=ax.transAxes, color=GRAY)
+        return save_chart("powerlaw_small_multiples.svg", OUTPUT_DIR, fig=fig)
+
+    ncols = 4
+    nrows = (n + ncols - 1) // ncols
+    fig, axes = plt.subplots(nrows, ncols, figsize=(11, 3.0 * nrows),
+                             facecolor=BG, squeeze=False)
+
+    for idx, (sys, vals, fit) in enumerate(fits):
+        ax = axes[idx // ncols][idx % ncols]
+        ax.set_facecolor(PANEL)
+        rank = np.arange(1, fit["n_points"] + 1)
+        obs = vals.iloc[:fit["n_points"]].values
+        is_power = fit["r2"] >= POWERLAW_R2_THRESHOLD
+        color = BLUE if is_power else GRAY
+        ax.plot(rank, obs, "o", color=color, markersize=3.5, alpha=0.85, zorder=3)
+        fit_line = np.exp(fit["log_c"]) * rank ** (-fit["alpha"])
+        ax.plot(rank, fit_line, "-", color=color, linewidth=1.3, alpha=0.9, zorder=2)
+        ax.set_xscale("log")
+        ax.set_yscale("log")
+        verdict = "power law" if is_power else "bends"
+        ax.set_title(f"{SYSTEM_LABELS.get(sys, sys)}: {verdict}\n"
+                     f"α={fit['alpha']:.2f}, straight-line fit {fit['r2']:.2f}",
+                     fontsize=9, color="#222")
+        ax.grid(True, which="both", color="#e0dfd8", linewidth=0.5, zorder=0)
+        ax.tick_params(labelsize=7, colors=GRAY)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    # Blank any unused panels in the grid.
+    for idx in range(n, nrows * ncols):
+        axes[idx // ncols][idx % ncols].axis("off")
+
+    fig.suptitle("A power law is a straight line; a bent line has a natural size to its top tier",
+                 fontsize=11, color="#222", y=1.0)
+    fig.supxlabel("Player rank, log scale", fontsize=9, color=GRAY)
+    fig.supylabel("Value, log scale", fontsize=9, color=GRAY)
+    fig.tight_layout()
+    return save_chart("powerlaw_small_multiples.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── Chart 9: Top-20 per system table ─────────────────────────────────────────
 
 def _score_fmt(val: float, sys: str) -> str:
