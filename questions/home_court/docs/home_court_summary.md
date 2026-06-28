@@ -40,23 +40,17 @@ The table below answers two questions at once: how much of the home-court advant
 
 Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Shooting accounts for the largest share of the current advantage, but rebounding and turnovers drove most of the decline: together more than half of it.
 
-What changed in the real world to move those numbers? Two things account for most of it. Referees are calling fairer games: home teams once attempted about 2 more free throws per game than visitors, and now the gap is about 0.5. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. The three-point shift reaches further: it explains the entire shooting decline and about half of both the foul and turnover declines, so the move to the perimeter touches close to half the 40-year total. Rebounding is the exception: it barely moves when games have similar three-point rates, yet it is the largest single driver. The data shows the home rebounding advantage shrank; it cannot say why.
+What changed in the real world to move those numbers? Two things account for most of it. Referees are calling fairer games: home teams once attempted about 2 more free throws per game than visitors, and now the gap is about 0.5. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. The three-point shift reaches further: it explains the entire shooting decline and about half of both the foul and turnover declines, so the move to the perimeter touches close to half the 40-year total.
+
+The real surprise is rebounding. It is the largest single driver of the decline, yet it sits almost entirely outside the three-point story: in games with similar three-point rates, the shooting advantage disappears while the rebounding advantage barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell about 8 points while the away rate fell about 5. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams. The data shows the home rebounding advantage shrank; it cannot say why.
+
+Turnovers faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of that fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. The playoffs show the same fade on both counts, with far fewer games to pin down the size.
+
+How far can these trends continue? Both rebounding and turnovers are near their practical limits. Three-point attempts already make up about 40% of all shots, and the offensive-rebound rate is close to a floor. If both are leveling off, the pace of decline should slow. The empty-arena result offers a guide to where the long-run trend settles: near 51%.
 
 A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later regular-season home win rate to within about a point, and still catches the steeper modern playoff drop it was never shown.
 
 The playoff picture runs similar in shape, though a larger share of the playoff decline falls outside the four categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by higher and lower seeds becoming more evenly matched.
-
----
-
-### 2.1 The Biggest Surprises
-
----
-
-**Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding advantage has shrunk steadily for four decades, and it isn't the three-point story in disguise: in games with similar three-point rates, the shooting advantage disappears while the rebounding advantage barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell about 8 points while the away rate fell about 5. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams.
-
-The turnover advantage faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of the fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. So rebounding sits almost entirely outside the three-point story, and about half of the turnover decline does too. The playoffs show the same fade on both counts, though with far fewer games it reads as direction rather than precise size.
-
-How far can these trends continue? Both are near their practical limits. Three-point attempts already make up about 40% of all shots, and the offensive-rebound rate is close to a floor. If both are leveling off, the pace of decline should slow. The empty-arena result offers a guide to where the long-run trend settles: near 51%.
 
 ---
 
