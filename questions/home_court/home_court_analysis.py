@@ -4720,6 +4720,8 @@ def _run_granger_3pa(df: pd.DataFrame) -> None:
         diff_note = "levels"
 
     print(f"   Testing in {diff_note}  (N = {len(data_arr)} observations)\n")
+    # Fact for stats_explainer.md §11 (Granger).
+    FACTS.set("granger.n", len(data_arr), "{:d}", note="Granger test: differenced observations")
 
     for direction, d_arr, y_lbl, x_lbl in [
         ("3PA rate → HCA (does 3PA lead the decline?)",
