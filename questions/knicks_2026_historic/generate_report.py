@@ -13,6 +13,12 @@ from nbakit.report import ReportConfig, build_report
 OUTPUT_DIR = "generated"
 
 if __name__ == "__main__":
+    # Fill prose templates (docs/*.md.j2) from the facts data model before the
+    # PDF/HTML build, so every number in the rendered docs comes from the pipeline.
+    from render_docs import render_all
+    for rendered in render_all():
+        print(f"rendered {rendered}")
+
     build_report(ReportConfig(
         findings_path="docs/knicks_2026_historic_findings.md",
         results_path="docs/knicks_2026_historic_results.md",
