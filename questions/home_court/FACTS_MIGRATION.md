@@ -41,15 +41,22 @@ Ran four parallel worktree subagents. Results:
 - **stats_tutorial.md: DONE** (committed) + wired into `render_all()` (it lives in the
   parent dir but renders from these facts). Byte-identical.
 - **Review tooling: DONE** (committed) — `render_docs.py --watch | --reference | --annotate`.
-- **stats_explainer.md: DONE where shared facts exist** (75 substitutions). A retry
-  subagent (committing incrementally) + a manual finish templated every number that maps
-  to an existing fact. The remaining numbers are **method-specific statistics** cited only
-  here (structural-break F, CUSUM, ITS coefficients, Granger, pace, parity, win-margin,
-  net-rating eras, shrunken franchise HCA, multiple-comparisons) — never registered as
-  facts. Those stay literal and are covered by the updated `/check-consistency` (literal
-  check) + the cross-check test. Fully single-sourcing them would mean ~150 single-use
-  facts across ~20 functions — deferred as low-value.
-- **All five reader-facing docs now render byte-identical from facts.** 208 facts, 7
+- **stats_explainer.md: DONE where shared facts exist.** A retry subagent (committing
+  incrementally) + manual finishes templated every number that maps to an existing fact.
+  Two sessions worked this in parallel and were reconciled onto `main`: §3 CUSUM and §4
+  differentials kept their `diff.*` fact family (the more complete version); §11 Granger
+  (`granger.n`), §15 ITS, §16 placebo, §20 pace (9 new pace facts: season r/p reg+po,
+  realized+expected bivariate, within-era p), §10 3PA (raw corr, within/bivariate effects,
+  partial-corr magnitudes), §18 travel (per-100mi), and §19 b2b (era frequencies + home-win
+  rates + freq component, via precision overrides on the rounded findings facts) were merged
+  in. The remaining literals are **method-specific statistics** cited only here
+  (structural-break F, parity, win-margin, net-rating eras, seed-quality trend, shrunken
+  franchise HCA, multiple-comparisons) — never registered as facts. Those stay literal and
+  are covered by the updated `/check-consistency` (literal check) + the cross-check test.
+  Fully single-sourcing them would mean ~150 single-use facts across ~20 functions —
+  deferred as low-value. Verified §26 seed and §22 crowd reuse nothing further (seed facts
+  live only in findings/investigation; explainer cites the trend qualitatively).
+- **All five reader-facing docs now render byte-identical from facts.** 266 facts, 7
   guards, 250 tests pass. Review tooling, the dual-write cross-check test
   (`tests/test_facts_match_results.py`), and the updated `/check-consistency` skill are in.
 - `results.md`-from-facts (#3) was **declined** — render + cross-check already cover the
