@@ -229,8 +229,15 @@
 
 ---
 
-## Appendix A — The Box-Score Model Predicts a Decline It Never Saw
-- **Out-of-sample forecast (@fig-oos-forecast):** four-factor win model trained only on games through 2013, coefficients frozen, then used to predict each 2014–2026 season's home win% from that season's box-score edges. *RESULTS: held-out RMSE — RS channel 0.95 pp vs trend-extrapolation 1.45 vs flat-mean 5.48; PO channel 3.87 vs trend 7.30 vs flat 8.11.* The frozen model tracks the held-out decline (RS catches the 2021 dip the trend line misses; PO reconstructs the modern decline that a flat early-trend extension misses entirely). The box-score mechanism predicts the decline it was not built on, so it isn't fitted to hindsight. Moved out of §3 into a lead appendix: it's a credibility check on the method, not a step in the causal argument; §3 keeps a one-line pointer here.
+## Appendix A — How We Know This Isn't Made Up
+Consolidated robustness/credibility appendix: gathers the validation battery in plain (findings-tier) language so a reader can see the findings were stress-tested, not cherry-picked. Folds in the old out-of-sample appendix. Each item points to the Investigation doc / RESULTS for full numbers. Bolded mini-sections:
+- **Break date triangulated:** sup-Chow QLR (sb.reg_break=1999) + CUSUM stability + Bayesian changepoint (changepoint.map_year=1999, HPD [1992, 2003]) all agree → the bend is real, not a line-drawing artifact. *RESULTS: STRUCTURAL BREAK / CUSUM / BAYESIAN CHANGE-POINT.*
+- **Placebo tests:** fake breaks at dozens of no-change years; only 1994-95 stands out (era.drop_1995=2.6 pp). *RESULTS: PLACEBO TESTS.*
+- **Out-of-sample forecast (@fig-oos-forecast):** four-factor win model frozen on games through 2013, predicts 2014–2026 from that season's box-score edges. *RESULTS: held-out RMSE — RS channel 0.95 pp vs trend 1.45 vs flat 5.48; PO channel 3.87 vs trend 7.30 vs flat 8.11.* Tracks the held-out decline (RS catches 2021; PO reconstructs the modern slide); not fitted to hindsight.
+- **Non-parametric cross-check (SHAP):** flexible model reaches the same channel split, summing to the same ~9.4 pp drop → breakdown doesn't hinge on linearity. *RESULTS: NON-PARAMETRIC CHANNEL DECOMPOSITION.*
+- **Sensitivity to unmeasured confounding:** a hidden cause would need to explain >60.5% (shooting) / >28.9% (fouls) of residual variation in both channel and outcome to overturn the link. *RESULTS: MEDIATION ROBUSTNESS.*
+- **Multiple-comparisons (BH-FDR):** central results survive correction for the full test battery. *RESULTS: MULTIPLE COMPARISONS — BH FDR.*
+- **Team-quality control:** era decline barely moves with home/away team fixed effects → not a composition artifact. *RESULTS: TEAM QUALITY ROBUSTNESS.*
 
 ![Out-of-sample forecast: pre-2014-trained channel model vs actual vs trend extrapolation, RS and PO](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast}
 
