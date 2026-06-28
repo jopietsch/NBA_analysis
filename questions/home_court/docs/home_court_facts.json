@@ -391,6 +391,13 @@
     "unit": null,
     "value": 26
   },
+  "granger.n": {
+    "display": "42",
+    "fmt": "{:d}",
+    "note": "Granger test: differenced observations",
+    "unit": null,
+    "value": 42
+  },
   "its.po_level": {
     "display": "-2.31",
     "fmt": "{:+.2f}",
