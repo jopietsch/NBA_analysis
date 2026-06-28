@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games; by the 1990s that rate actually matched or exceeded the stronger team's home win rate. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does.  **Has home court really changed? What factors create the advantage? What drove the decline? And what did not?**
+In the 1980s and 1990s, a weaker team playing at home in the NBA playoffs won 65–66% of those games; by the 1990s that rate matched or exceeded the stronger team's home win rate. Today that number is 49%. Home court used to compensate for being outmatched. It no longer does.  **Has home court really changed? What factors create the advantage? What drove the decline? And what did not?**
 
 Yes: the home team’s win rate has fallen. The fall is mostly a slow, steady decline, with two stretches where it briefly sped up. Home teams have historically ***shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees***, and those four differences account for about 95% of the advantage. Two real-world changes drove most of the decline: the **shift to three-point shooting, which alone reaches close to half, and fairer officiating. The largest single box-score category, rebounding**, declined for reasons neither change explains.
 
@@ -22,7 +22,7 @@ Because there are more regular-season games, the analysis is more precise; the p
 
 Forty years ago, home teams won about 65% of regular-season games and nearly 68% in the playoffs. Today it's about 55% and 58%, **a drop of roughly 10 percentage points in both**. The scoring advantage shrank to match: home teams outscored visitors by about 3 points per 100 possessions in the regular season through the mid-2010s, and about 2 today, a drop of more than a third. Most of the fall is a slow, steady slide that accounts for nearly the whole decline, with two stretches where it briefly sped up: one in the mid-1990s and one starting around 2018. Both are accelerations within the trend, not extra drops on top of it.
 
-Home court in the playoffs declined later than in the regular season: playoff home win rates held near 64% through the 2000s and 2010s while the regular season was already sliding, then fell to about 58% in the past few seasons. The per-game advantage is still real, the home team takes the early games at the top seed's arena comfortably and even wins most Game 7s, but a best-of-7 series flattens it. A home-court team that would have won the series about 55% of the time in the 1980s now takes it about 52% of the time, barely better than a coin flip.
+Home court in the playoffs declined later than in the regular season: playoff home win rates held near 64% through the 2000s and 2010s while the regular season was already sliding, then fell to about 58% in the past few seasons. The per-game advantage is still real, the home team wins the early games at the top seed's arena and even takes most Game 7s, but a best-of-7 series flattens it. A home-court team that would have won the series about 55% of the time in the 1980s now takes it about 52% of the time, barely better than a coin flip.
 
 ---
 
@@ -38,11 +38,11 @@ The table below answers two questions at once: how much of the home-court advant
 | Turnover margin | 13% | 27% |
 | **All four together** | **95%** | **96%** |
 
-Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Shooting dominates the current advantage, but rebounding and turnovers drove most of the decline: together more than half of it.
+Regular-season shares; both columns shift somewhat on the games available, and the playoffs run a similar shape. Shooting accounts for the largest share of the current advantage, but rebounding and turnovers drove most of the decline: together more than half of it.
 
 What changed in the real world to move those numbers? Two things account for most of it. Referees are calling fairer games: home teams once attempted about 2 more free throws per game than visitors, and now the gap is about 0.5. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. The three-point shift reaches further: it explains the entire shooting decline and about half of both the foul and turnover declines, so the move to the perimeter touches close to half the 40-year total. Rebounding is the exception: it barely moves when games have similar three-point rates, yet it is the largest single driver. The data shows the home rebounding advantage shrank; it cannot say why.
 
-A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later season's home win rate to within about a point, catching the post-2017 slide it was never shown and the steeper modern playoff drop too.
+A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later regular-season home win rate to within about a point, and still catches the steeper modern playoff drop it was never shown.
 
 The playoff picture runs similar in shape, though a larger share of the playoff decline falls outside the four categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by higher and lower seeds becoming more evenly matched.
 
@@ -52,9 +52,9 @@ The playoff picture runs similar in shape, though a larger share of the playoff 
 
 ---
 
-**Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding advantage has shrunk steadily for four decades, and it isn't the three-point story in disguise: in games with similar three-point rates, the shooting advantage disappears while the rebounding advantage barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell much further than the away rate. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams.
+**Rebounding and turnovers together account for more than half** the 40-year decline. The home rebounding advantage has shrunk steadily for four decades, and it isn't the three-point story in disguise: in games with similar three-point rates, the shooting advantage disappears while the rebounding advantage barely moves. The cleaner measure is each team's share of available offensive rebounds, and there the home rate fell about 8 points while the away rate fell about 5. Home teams no longer crash the offensive boards more aggressively than visitors, and offensive rebounds have gone down for both teams.
 
-The turnover advantage faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of the fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. So rebounding stands almost entirely apart from the three-point story, and turnovers stand half apart. The playoffs show the same fade on both counts, though with far fewer games it reads as direction rather than precise size.
+The turnover advantage faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero. About half of the fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation. So rebounding sits almost entirely outside the three-point story, and about half of the turnover decline does too. The playoffs show the same fade on both counts, though with far fewer games it reads as direction rather than precise size.
 
 How far can these trends continue? Both are near their practical limits. Three-point attempts already make up about 40% of all shots, and the offensive-rebound rate is close to a floor. If both are leveling off, the pace of decline should slow. The empty-arena result offers a guide to where the long-run trend settles: near 51%.
 
