@@ -25,6 +25,7 @@ for f in docs/*.md; do
   case "$(basename "$f")" in
     *_findings.md) continue ;;
     *_facts_reference.md) continue ;;
+    *.annotated.md) continue ;;  # reviewer-mode (--annotate) dev artifacts, not reader-facing
   esac
   echo "── Regenerating $f ──"
   python3 ../generate_doc_pdf.py "$f"
