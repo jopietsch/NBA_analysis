@@ -69,8 +69,8 @@ Expected top-level files after substitution (in addition to `docs/`, `tests/`, `
 <name>_plots.py         — visualization stub
 <name>_analysis.py      — analysis stub (imports <name>_facts)
 <name>.py               — pipeline orchestrator stub
-<name>_facts.py         — Fact/Facts/FACTS module + _FACTS_PATH/_GUARDS_PATH
-render_docs.py          — template renderer (docs/*.md.j2 → docs/*.md)
+<name>_facts.py         — facts shim: FACTS singleton + _FACTS_PATH/_GUARDS_PATH (Fact/Facts live in nbakit.facts)
+render_docs.py          — render shim over nbakit.docs (docs/*.md.j2 → docs/*.md)
 generate_report.py      — PDF/HTML report builder (calls render_all() first)
 conftest.py, pytest.ini, CLAUDE.md, project_definition.md
 ```

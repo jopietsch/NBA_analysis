@@ -1,10 +1,10 @@
-"""No-raise smoke tests for render_docs.py authoring helpers.
+"""No-raise smoke tests for the nbakit.docs render engine.
 
 The --watch loop is intentionally not tested (it blocks until Ctrl-C).
 """
 import json
 
-import render_docs
+from nbakit import docs
 
 
 def _write_facts(tmp_path):
@@ -27,9 +27,10 @@ def _write_facts(tmp_path):
 def test_write_reference_smoke(tmp_path):
     facts_path = _write_facts(tmp_path)
     out_path = str(tmp_path / "reference.md")
-    returned = render_docs.write_reference(facts_path, out_path)
+    returned = docs.write_reference(facts_path, out_path, "Demo facts reference")
     assert returned == out_path
     text = (tmp_path / "reference.md").read_text()
+    assert "# Demo facts reference" in text
     assert "| name | value (display) | unit | note |" in text
     assert "reg.slope" in text
     assert "-0.244 pp/yr" in text
@@ -38,7 +39,7 @@ def test_write_reference_smoke(tmp_path):
 
 def test_make_env_annotate_appends_name(tmp_path):
     facts_path = _write_facts(tmp_path)
-    env = render_docs._make_env(facts_path, annotate=True)
+    env = docs._make_env(facts_path, str(tmp_path), annotate=True)
     f = env.globals["f"]
     assert f("reg.slope") == "-0.244 pp/yr [reg.slope]"
     # precision override still annotates
@@ -49,24 +50,39 @@ def test_make_env_annotate_appends_name(tmp_path):
 
 def test_make_env_default_no_annotation(tmp_path):
     facts_path = _write_facts(tmp_path)
-    f = render_docs._make_env(facts_path, annotate=False).globals["f"]
+    f = docs._make_env(facts_path, str(tmp_path), annotate=False).globals["f"]
     assert f("reg.slope") == "-0.244 pp/yr"
 
 
 def test_render_all_annotate_writes_separate_file(tmp_path, monkeypatch):
     """--annotate writes *.annotated.md and leaves the real *.md untouched."""
-    docs = tmp_path / "docs"
-    docs.mkdir()
-    facts_path = _write_facts(docs)
-    (docs / "doc.md.j2").write_text('slope is << f("reg.slope") >>\n')
-    real_md = docs / "doc.md"
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    facts_path = _write_facts(docs_dir)
+    (docs_dir / "doc.md.j2").write_text('slope is << f("reg.slope") >>\n')
+    real_md = docs_dir / "doc.md"
     real_md.write_text("SENTINEL\n")
 
     monkeypatch.chdir(tmp_path)
-    monkeypatch.setattr(render_docs, "DOCS_DIR", "docs")
 
-    written = render_docs.render_all(facts_path, annotate=True)
+    written = docs.render_all(facts_path, "docs", annotate=True)
     assert written == ["docs/doc.annotated.md"]
-    assert (docs / "doc.annotated.md").read_text() == "slope is -0.244 pp/yr [reg.slope]\n"
+    assert (docs_dir / "doc.annotated.md").read_text() == "slope is -0.244 pp/yr [reg.slope]\n"
     # real .md was not overwritten by annotate mode
     assert real_md.read_text() == "SENTINEL\n"
+
+
+def test_render_all_extra_template_outside_docs_dir(tmp_path, monkeypatch):
+    """extra_templates render next to themselves, outside docs/."""
+    docs_dir = tmp_path / "docs"
+    docs_dir.mkdir()
+    facts_path = _write_facts(docs_dir)
+    extra = tmp_path / "tutorial.md.j2"
+    extra.write_text('slope is << f("reg.slope") >>\n')
+
+    monkeypatch.chdir(tmp_path)
+
+    written = docs.render_all(facts_path, "docs",
+                              extra_templates=("tutorial.md.j2",))
+    assert "tutorial.md" in written
+    assert (tmp_path / "tutorial.md").read_text() == "slope is -0.244 pp/yr\n"

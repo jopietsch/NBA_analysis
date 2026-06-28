@@ -1,208 +1,41 @@
 """Render ``docs/*.md.j2`` templates to ``docs/*.md`` from the facts data model.
 
-Every number cited in the prose comes from a fact (``docs/home_court_facts.json``)
-through the ``f()`` helper, so the documents cannot drift from the analysis. Run
-this after the analysis pipeline (which writes facts.json) and before
-``generate_report.py``.
+Thin wrapper around ``nbakit.docs`` (the shared render engine). All logic lives
+there; this module pins home_court's facts.json path, reference-table title, and
+the shared ``../stats_tutorial.md.j2`` (which lives one level up in questions/
+but draws on the same facts). Run after the analysis pipeline (which writes
+facts.json) and before ``generate_report.py``.
 
-Template delimiters are ``<< ... >>`` rather than Jinja's default ``{{ ... }}``,
-because the docs use Quarto/Pandoc brace attributes (``{#fig-x}``, ``{.collapsible}``,
-``{=typst}``) that would collide with Jinja's ``{{``/``{%``/``{#`` syntax.
-
-Authoring/review helpers (stdlib only):
-- ``--watch``     re-render whenever a template or facts.json changes (poll mtimes).
-- ``--reference`` write ``docs/home_court_facts_reference.md``: every fact in a table.
-- ``--annotate``  render each ``f("name")`` as ``display [name]`` to ``*.annotated.md``
-                  so a reviewer can see which fact backs each number.
+    python3 render_docs.py             # render docs/*.md.j2 → docs/*.md
+    python3 render_docs.py --reference # write the facts reference table
+    python3 render_docs.py --annotate  # render to *.annotated.md with fact names
+    python3 render_docs.py --watch     # re-render on change (Ctrl-C to stop)
 """
-import glob
-import json
 import os
 import sys
-import time
 
-import jinja2
+# Use this worktree's nbakit, not a global install (see conftest.py).
+_d = os.path.dirname(os.path.abspath(__file__))
+while os.path.dirname(_d) != _d and not os.path.isdir(os.path.join(_d, "nbakit", "nbakit")):
+    _d = os.path.dirname(_d)
+sys.path.insert(0, os.path.join(_d, "nbakit"))
 
-DOCS_DIR = "docs"
+from nbakit.docs import render_all as _render_all
+from nbakit.docs import main as _main
+
 FACTS_JSON = "docs/home_court_facts.json"
 REFERENCE_MD = "docs/home_court_facts_reference.md"
-
-
-def _make_env(facts_path: str = FACTS_JSON, annotate: bool = False) -> jinja2.Environment:
-    with open(facts_path) as fh:
-        records = json.load(fh)
-
-    def f(name: str, fmt: str | None = None) -> str:
-        """Display string for a fact. Pass `fmt` (e.g. "{:.2f}") to re-format the
-        raw numeric value at a different precision than the fact's default, so a
-        denser doc can reuse a fact at higher precision without a duplicate.
-
-        In annotate mode the fact name is appended (``display [name]``) so a
-        reviewer can confirm the right fact is wired to each number."""
-        if name not in records:
-            raise KeyError(f"unknown fact {name!r} referenced in template")
-        rec = records[name]
-        if fmt is not None and isinstance(rec["value"], (int, float)):
-            display = fmt.format(rec["value"])
-        else:
-            display = rec["display"]
-        return f"{display} [{name}]" if annotate else display
-
-    env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(DOCS_DIR),
-        undefined=jinja2.StrictUndefined,
-        autoescape=False,
-        keep_trailing_newline=True,
-        variable_start_string="<<",
-        variable_end_string=">>",
-        block_start_string="<%",
-        block_end_string="%>",
-        comment_start_string="<#",
-        comment_end_string="#>",
-    )
-    env.globals["f"] = f
-    # `tm` rewrites an ASCII hyphen-minus to a typographic minus (U+2212), for
-    # docs (e.g. stats_explainer) that use − in negative numbers: << f(...)|tm >>.
-    env.filters["tm"] = lambda s: s.replace("-", "−")
-    return env
+REFERENCE_TITLE = "Home-court facts reference"
+# The stats tutorial lives one level above the project (questions/) but draws on
+# the same facts, so it isn't in docs/. Render it too.
+EXTRA_TEMPLATES = (os.path.join("..", "stats_tutorial.md.j2"),)
 
 
 def render_all(facts_path: str = FACTS_JSON, annotate: bool = False) -> list[str]:
-    """Render every ``docs/*.md.j2`` template.
-
-    Default mode writes ``docs/<doc>.md`` (the real, byte-identical output).
-    Annotate mode writes ``docs/<doc>.annotated.md`` instead, leaving the real
-    ``.md`` untouched.
-    """
-    env = _make_env(facts_path, annotate=annotate)
-    written = []
-    for tpl_path in sorted(glob.glob(os.path.join(DOCS_DIR, "*.md.j2"))):
-        if annotate:
-            out_path = tpl_path[: -len(".md.j2")] + ".annotated.md"
-        else:
-            out_path = tpl_path[: -len(".j2")]
-        template = env.get_template(os.path.basename(tpl_path))
-        with open(out_path, "w") as fh:
-            fh.write(template.render())
-        written.append(out_path)
-
-    # The stats tutorial lives one level above the project (questions/) but draws
-    # on the same facts, so it isn't in DOCS_DIR. Render it too if present.
-    tut_j2 = os.path.join("..", "stats_tutorial.md.j2")
-    if os.path.exists(tut_j2):
-        out_path = os.path.join(
-            "..", "stats_tutorial.annotated.md" if annotate else "stats_tutorial.md"
-        )
-        with open(tut_j2) as fh:
-            tut = env.from_string(fh.read())
-        with open(out_path, "w") as fh:
-            fh.write(tut.render())
-        written.append(out_path)
-    return written
-
-
-def _md_cell(text: str) -> str:
-    """Escape a value for a single markdown table cell."""
-    return str(text).replace("|", "\\|").replace("\n", " ")
-
-
-def write_reference(facts_path: str = FACTS_JSON, out_path: str = REFERENCE_MD) -> str:
-    """Write a markdown lookup table of every fact, grouped by name prefix.
-
-    Columns: name | value (display) | unit | note. Sorted by name within each
-    group (the part of the name before the first dot). This is a generated dev
-    artifact: the lookup authors use while writing templates."""
-    with open(facts_path) as fh:
-        records = json.load(fh)
-
-    groups: dict[str, list[str]] = {}
-    for name in records:
-        groups.setdefault(name.split(".")[0], []).append(name)
-
-    lines = [
-        "# Home-court facts reference",
-        "",
-        "_Generated by `python3 render_docs.py --reference`. Do not edit by hand._",
-        "",
-        f"{len(records)} facts. Reference each in a template with "
-        '`<< f("name") >>` (or `<< f("name", "{:.2f}") >>` to re-format the raw value).',
-        "",
-    ]
-    for group in sorted(groups):
-        lines.append(f"## {group}")
-        lines.append("")
-        lines.append("| name | value (display) | unit | note |")
-        lines.append("|---|---|---|---|")
-        for name in sorted(groups[group]):
-            rec = records[name]
-            unit = rec.get("unit") or ""
-            note = rec.get("note") or ""
-            lines.append(
-                f"| `{name}` | {_md_cell(rec['display'])} "
-                f"| {_md_cell(unit)} | {_md_cell(note)} |"
-            )
-        lines.append("")
-
-    text = "\n".join(lines)
-    with open(out_path, "w") as fh:
-        fh.write(text)
-    return out_path
-
-
-def _snapshot(facts_path: str) -> dict[str, float]:
-    """Modification times for every watched file (templates + facts.json)."""
-    watched = glob.glob(os.path.join(DOCS_DIR, "*.md.j2")) + [facts_path]
-    snap = {}
-    for path in watched:
-        try:
-            snap[path] = os.path.getmtime(path)
-        except OSError:
-            pass
-    return snap
-
-
-def watch(facts_path: str = FACTS_JSON, interval: float = 0.5) -> None:
-    """Re-render whenever a template or facts.json changes. Runs until Ctrl-C."""
-    print(
-        f"watching {DOCS_DIR}/*.md.j2 and {facts_path} "
-        f"(every {interval}s; Ctrl-C to stop)"
-    )
-    for path in render_all(facts_path):
-        print(f"rendered {path}")
-    last = _snapshot(facts_path)
-    try:
-        while True:
-            time.sleep(interval)
-            current = _snapshot(facts_path)
-            if current == last:
-                continue
-            changed = sorted(
-                p for p in set(current) | set(last)
-                if current.get(p) != last.get(p)
-            )
-            print(f"change in {', '.join(changed)}; re-rendering")
-            try:
-                for path in render_all(facts_path):
-                    print(f"  rendered {path}")
-            except Exception as exc:  # keep watching after a bad template/facts edit
-                print(f"  render failed: {exc}")
-            last = _snapshot(facts_path)
-    except KeyboardInterrupt:
-        print("\nstopped watching")
+    """Render every ``docs/*.md.j2`` template plus the stats tutorial."""
+    return _render_all(facts_path, annotate=annotate, extra_templates=EXTRA_TEMPLATES)
 
 
 if __name__ == "__main__":
-    args = sys.argv[1:]
-    if not args:
-        for path in render_all():
-            print(f"rendered {path}")
-    elif args == ["--watch"]:
-        watch()
-    elif args == ["--reference"]:
-        print(f"wrote {write_reference()}")
-    elif args == ["--annotate"]:
-        for path in render_all(annotate=True):
-            print(f"rendered {path}")
-    else:
-        print("usage: render_docs.py [--watch | --reference | --annotate]")
-        sys.exit(2)
+    _main(sys.argv[1:], facts_json=FACTS_JSON, reference_md=REFERENCE_MD,
+          reference_title=REFERENCE_TITLE, extra_templates=EXTRA_TEMPLATES)

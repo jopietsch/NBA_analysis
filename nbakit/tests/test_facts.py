@@ -1,4 +1,4 @@
-from PROJECT_facts import Facts, load_displays
+from nbakit.facts import Facts, load_displays
 
 
 def test_numeric_fact_formats_with_unit():
