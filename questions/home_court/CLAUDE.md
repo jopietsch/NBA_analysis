@@ -1,10 +1,16 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 This is for a python system to get data, and analyze to produce one or more reports with graphs and statistics to understand NBA home court advantage and how and why it has changed over time.
 
 Our main questions for all this analysis and the output is 1: has HCA changed over time? 2: what makes up HCA? 3: what contributed to its change over time? 4: what did NOT contribute to the decline? All our analysis and descriptions should make clear what is going on in the Regular Season vs the Playoffs. Also, we have come across other interesting findings that aren't a part of these questions, make sure we talk about them, but in seperate sections. Since this will be a long report, if some of the conlusions make sense to put in the introduction, please do that, or readers will get bored and not read the report.
+
+The standard commands, module architecture, document workflow, test pattern, and the "adding a new analysis" order live in the parent `../CLAUDE.md` (loaded alongside this file). This file covers only what is specific to home_court.
+
+## Project-specific notes
+
+- `home_court_findings_outline.md` is a **non-standard** doc (not in the standard document set): a condensed outline cross-referenced to `home_court_results.md`. Keep it in sync with the findings and regenerate its PDF with `python3 ../generate_doc_pdf.py docs/home_court_findings_outline.md`.
+- The `stats_tutorial.md` companion lives one level up in `questions/`, not in `docs/`. Its worked examples reproduce `home_court_results.md` rows, so check them when results change. Regenerate with `python3 ../generate_doc_pdf.py ../stats_tutorial.md`.
+- The report is built with no inlined appendix; `home_court_results.md` has its own standalone PDF (`python3 ../generate_doc_pdf.py docs/home_court_results.md`).
 
 ## Key files
 
@@ -15,54 +21,7 @@ Our main questions for all this analysis and the output is 1: has HCA changed ov
 - `docs/home_court_stats_explainer.md` / `stats_tutorial.md` — hand-edited methods companions to `home_court_results.md`; PDFs at `generated/home_court_stats_explainer.pdf` and `../generated/stats_tutorial.pdf` respectively.
 - `docs/home_court_investigation.md` — reader-facing companion that shows the tests behind the findings, in two parts. Part 1 ("What Drives Home Court") covers the confirmed story (the decline, the four box-score channels that make up HCA, and the drivers of the change: fouls, three-pointers, rebounding, turnovers); Part 2 ("What We Ruled Out") covers every ruled-out hypothesis in full (why each seemed plausible, what was tested, what the data showed). Each test reports both p-values and 95% CIs, with a "How to read the numbers" box up top. PDF at `generated/home_court_investigation.pdf`. Regenerate with `python3 ../generate_doc_pdf.py docs/home_court_investigation.md`. Update Part 1 when Sections 1–3 of FINDINGS change and Part 2 when Section 4 changes.
 
-## Commands
-
-```bash
-# Run the full analysis pipeline
-MPLBACKEND=Agg python3 home_court.py
-
-# Generate the standalone RESULTS PDF + HTML
-python3 ../generate_doc_pdf.py docs/home_court_results.md
-
-# Regenerate the findings outline PDF (home_court only — findings_outline is not standard)
-python3 ../generate_doc_pdf.py docs/home_court_findings_outline.md
-
-# Regenerate the Investigation companion doc PDF
-python3 ../generate_doc_pdf.py docs/home_court_investigation.md
-
-# Regenerate the stats_tutorial PDF (lives in parent directory, not docs/)
-python3 ../generate_doc_pdf.py ../stats_tutorial.md
-```
-
-## Architecture
-
-Six files:
-
-- **`home_court_data.py`** — all constants, data fetching, and computation; no matplotlib dependency
-- **`home_court_plots.py`** — all visualization; imports data module, no data logic of its own
-- **`home_court.py`** — pipeline orchestration only; calls data, plots, and regression in sequence; regression module is imported inside `main()` to avoid circular imports
-- **`home_court_analysis.py`** — statistical analysis; `run()` is called by `main()`; outputs go to stdout and are captured in `home_court_results.md`
-- **`generate_report.py`** — assembles PNGs and `docs/home_court_findings.md` prose into a PDF; iterates `##` sections in order with no hardcoded section list; TOC auto-generated; no appendix
-- **`tests/test_home_court.py`** — unit tests for the data/computation layer (correctness, using synthetic DataFrames). Plots get smoke tests only (`tests/test_home_court_plots.py`): feed each `plot_*` synthetic inputs and assert it runs without raising. No pixel/image-comparison tests — they're brittle across font and library versions.
-
-All fetched data is cached as CSVs under `cache/` to avoid re-fetching.
-
-## Adding a new analysis
-
-Every analysis follows the same steps, in this order:
-
-1. **Data** (`home_court_data.py`) — add `fetch_*` and `compute_*` functions; all fetched data cached under `cache/`
-2. **Plot** (`home_court_plots.py`) — add `plot_*` function; save the chart as SVG via `save_chart("chart.svg", OUTPUT_DIR)` so it lands in `generated/images/`; wire the call into `main()` in `home_court.py`
-3. **Regression** (`home_court_analysis.py`) — add `run_*` function; call it from `run()`; output goes to stdout and is captured in `home_court_results.md`
-4. **Tests** — correctness unit tests for the data/computation layer in `tests/test_home_court.py` (use synthetic DataFrames); a no-raise smoke test for the new `plot_*` in `tests/test_home_court_plots.py`
-5. **docs/home_court_findings.md** — add a new `## N. Title` section with placeholder prose and `![Figure N. caption](../generated/images/chart.svg)` image references; the PDF picks it up automatically with no changes to `generate_report.py`
-\6. **`.gitignore`** — nothing to do: all images land in `generated/images/`, which is inside the already-ignored `generated/` tree
-7. **Run** — `MPLBACKEND=Agg python3 home_court.py` to regenerate all PNGs and `docs/home_court_results.md`
-8. **Update docs/home_court_findings.md** — replace placeholder prose with actual numbers and directions from `docs/home_court_results.md`; then regenerate the main report with `python3 generate_report.py` and the results PDF with `python3 ../generate_doc_pdf.py docs/home_court_results.md`
-
 ## updating docs/home_court_findings.md
 - whenever the order of sections changes in home_court_findings.md, the order needs to also change in home_court_results.md so home_court_analysis.py must be updated to the new order
 - throughout home_court_findings.md, make sure that both regular season and playoffs are mentioned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.
 - when home_court_findings.md is edited, also update `docs/home_court_findings_outline.md` to match; then regenerate the outline PDF with `python3 ../generate_doc_pdf.py docs/home_court_findings_outline.md`
-
-
