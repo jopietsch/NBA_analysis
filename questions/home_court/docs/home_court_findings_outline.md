@@ -36,6 +36,7 @@
 - **Decline is league-wide, not team-concentrated (@fig-team-decline-slopes):** per-franchise year-slopes of the home-minus-road win gap, fit separately by OLS then split into true spread vs sampling noise (EB / variance-decomposition idiom). *RESULTS: pooled league slope −0.49 pp/yr (p<0.001); observed SD of team slopes 0.213, noise-adjusted true between-team SD ≈ 0.00 (100% of spread is noise); 0/31 franchises with a positive raw slope.* Every franchise faded at one shared league rate; no team stands apart as the cause. Regular season only (per-team playoff samples too small); playoff decline is itself league-wide.
 - **Era table** moved to §4 (where rule changes are analyzed); in §1 the eras serve as the calendar the rest of the report runs on.
 - **Where the trend is headed:** 3PA share approaching ceiling (~40%); league OREB rate approaching floor (~26%, down from 33%). If both forces are near their asymptotes, pace of decline should slow. Floor from empty-arena data: home teams won 51% with no crowd/bias/prep edge, probably the long-run lower bound. Information diffusion as mechanism is not basketball-specific: other sports investing heavily in analytics are likely on the same trajectory (prediction, not tested here).
+- **State-space forecast (@fig-hca-forecast):** `UnobservedComponents` local-linear-trend on season home win %, RS and PO separately, `get_forecast(5)` with 80%/95% prediction bands. *RESULTS: RS current smoothed level 54.9%, slope −0.3 pp/yr → 2031 central 53.5% [48.4, 58.6]; PO 58.8%, slope −0.3 pp/yr → 2031 central 57.1% [44.9, 69.3] (much wider, ~80 games/postseason).* Central path keeps declining in both; entire RS 95% band for 2031 sits below the mid-1980s level (~66.7%). Projection of the current slope, not a rule-change prediction. Guard: forecast_keeps_declining.
 **Figures:**
 
 ![Season trends](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
@@ -43,6 +44,8 @@
 ![Current-season team home vs road win%](../generated/images/home_court_team_season_hca.svg){#fig-team-season-hca}
 
 ![Per-franchise HCA decline slopes vs the league rate](../generated/images/home_court_team_decline_slopes.svg){#fig-team-decline-slopes}
+
+![State-space forecast of home win % with prediction fan, RS + PO](../generated/images/home_court_hca_forecast.svg){#fig-hca-forecast}
 
 ---
 

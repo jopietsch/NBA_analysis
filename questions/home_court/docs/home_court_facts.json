@@ -328,6 +328,83 @@
     "unit": null,
     "value": "= 0.327"
   },
+  "forecast.horizon_year": {
+    "display": "2031",
+    "fmt": "{:.0f}",
+    "note": "State-space: final forecast (horizon) season",
+    "unit": null,
+    "value": 2031
+  },
+  "forecast.po_current_level": {
+    "display": "58.8%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: current smoothed PO home win % level",
+    "unit": null,
+    "value": 58.7819900870556
+  },
+  "forecast.po_final_central": {
+    "display": "57.1%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: central PO forecast for 2031",
+    "unit": null,
+    "value": 57.09960900780983
+  },
+  "forecast.po_final_hi95": {
+    "display": "69.3%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: PO forecast 95% upper bound, 2031",
+    "unit": null,
+    "value": 69.2515916917303
+  },
+  "forecast.po_final_lo95": {
+    "display": "44.9%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: PO forecast 95% lower bound, 2031",
+    "unit": null,
+    "value": 44.94762632388937
+  },
+  "forecast.po_slope_pp": {
+    "display": "-0.3 pp",
+    "fmt": "{:.1f}",
+    "note": "State-space: current PO trend slope (pp/yr)",
+    "unit": "pp",
+    "value": -0.33647621584915305
+  },
+  "forecast.rs_current_level": {
+    "display": "54.9%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: current smoothed RS home win % level",
+    "unit": null,
+    "value": 54.8843490324958
+  },
+  "forecast.rs_final_central": {
+    "display": "53.5%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: central RS forecast for 2031",
+    "unit": null,
+    "value": 53.48355440151387
+  },
+  "forecast.rs_final_hi95": {
+    "display": "58.6%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: RS forecast 95% upper bound, 2031",
+    "unit": null,
+    "value": 58.57571493885536
+  },
+  "forecast.rs_final_lo95": {
+    "display": "48.4%",
+    "fmt": "{:.1f}%",
+    "note": "State-space: RS forecast 95% lower bound, 2031",
+    "unit": null,
+    "value": 48.39139386417238
+  },
+  "forecast.rs_slope_pp": {
+    "display": "-0.3 pp",
+    "fmt": "{:.1f}",
+    "note": "State-space: current RS trend slope (pp/yr)",
+    "unit": "pp",
+    "value": -0.28015892619638283
+  },
   "format.drop_2014": {
     "display": "7",
     "fmt": "{:.0f}",

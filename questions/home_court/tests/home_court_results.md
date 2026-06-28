@@ -173,6 +173,37 @@ All data from cache/ — same source as the plots above.
      for a season-by-season panel; the playoff decline is league-wide (§1, §5).
 
 
+─── WHERE IS HOME COURT HEADING? — STATE-SPACE FORECAST ────────────────
+   A local-linear-trend state-space model on the season-level home
+   win % lets the underlying level drift with its own slope, then
+   extrapolates a few seasons forward with prediction intervals (the
+   fan). Regular season and playoffs fit separately. This is a forward
+   projection of the current slope, not a claim about future rule
+   changes; the intervals widen with the horizon to show that.
+
+   Regular season  (1984–2025, 12 seasons)
+   Current smoothed level:  54.4%   (trend slope -1.2 pp/yr)
+
+     Season   Forecast      95% interval
+   ────────  ─────────  ────────────────
+       2027      53.2%  [ 45.4,  61.1]
+       2028      52.0%  [ 40.5,  63.5]
+       2029      50.8%  [ 36.2,  65.4]
+       2030      49.6%  [ 32.1,  67.1]
+       2031      48.3%  [ 28.1,  68.6]
+
+   Playoffs  (1984–2025, 12 seasons)
+   Current smoothed level:  57.9%   (trend slope -1.1 pp/yr)
+
+     Season   Forecast      95% interval
+   ────────  ─────────  ────────────────
+       2027      56.8%  [ 43.0,  70.6]
+       2028      55.8%  [ 41.5,  70.1]
+       2029      54.7%  [ 39.9,  69.6]
+       2030      53.7%  [ 38.2,  69.1]
+       2031      52.6%  [ 36.6,  68.6]
+
+
 ─── FOUL & SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
    Positive fta_diff = home team attempted more free throws.

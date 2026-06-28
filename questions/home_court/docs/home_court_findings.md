@@ -40,6 +40,10 @@ Smaller advantage than it was does not mean gone. In the most recent regular sea
 
 The drop is not concentrated in a handful of franchises: every team faded at roughly the same rate, which Section 4 examines.
 
+Where is it heading? Carry the regular-season trend forward and the central line keeps sliding, from about 54.9% today to roughly 53.5% by 2031. That is a projection of the recent slope, not a prediction about future rule changes, so it comes with a wide range it could plausibly land in by then: about 48.4% to 58.6%. The playoffs point the same way, from about 58.8% to 57.1%, but on far fewer games the range is much wider, from about 44.9% to 69.3%. The takeaway is the direction, not the decimal: nothing in the recent data points back up.
+
+![Season-by-season home win %, its smoothed trend, and a forecast for the next five seasons. The shaded fan is the range the rate could plausibly land in, wider for the playoffs because each postseason rests on far fewer games. Regular season in blue, playoffs in green.](../generated/images/home_court_hca_forecast.svg){#fig-hca-forecast}
+
 ---
 
 ## 2. What Creates Home Court Advantage

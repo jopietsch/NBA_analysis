@@ -577,6 +577,148 @@ def run_multilevel_decline(df: pd.DataFrame) -> None:
     print("     for a season-by-season panel; the playoff decline is league-wide (§1, §5).\n")
 
 
+# ── Analysis: State-space forecast of the decline (where is HCA heading?) ─────
+
+def compute_hca_forecast(df: pd.DataFrame, horizon: int = 5) -> dict:
+    """Forecast the season-level home win % forward with a structural
+    time-series model, separately for regular season and playoffs.
+
+    For each context the per-season home win % is the endog series; a local
+    linear trend (an UnobservedComponents state-space model) lets the underlying
+    level drift with its own slope, so the forecast extrapolates the current
+    local slope rather than a single straight line through all 40 years. The fit
+    is deterministic (`.fit(disp=False)`), so home_court_results.md stays
+    reproducible. ``get_forecast`` yields the central path plus 80% and 95%
+    prediction intervals — the fan that carries the honest uncertainty.
+
+    Returns a dict keyed by "Regular season" / "Playoffs"; a context whose fit
+    fails is skipped, so the result may be partial.
+    """
+    out: dict = {"horizon": horizon}
+
+    for label, is_po in [("Regular season", 0), ("Playoffs", 1)]:
+        sub = df[df["is_playoff"] == is_po]
+        if is_po:
+            sub = sub[~sub["year"].isin(nba.SKIP_PLAYOFF_YEARS)]
+        g = sub.groupby("year")["home_win"]
+        pct = (g.sum() / g.count() * 100.0).sort_index()
+        if pct.shape[0] < 8:
+            continue
+        years = pct.index.to_numpy().astype(int)
+        endog = pct.to_numpy().astype(float)
+
+        try:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                res = sm.tsa.UnobservedComponents(
+                    endog, level="local linear trend"
+                ).fit(disp=False)
+                level = np.asarray(res.level["smoothed"], dtype=float)
+                slope = float(np.asarray(res.trend["smoothed"], dtype=float)[-1])
+                fc = res.get_forecast(horizon)
+                mean = np.asarray(fc.predicted_mean, dtype=float)
+                ci95 = np.asarray(fc.conf_int(alpha=0.05), dtype=float)
+                ci80 = np.asarray(fc.conf_int(alpha=0.20), dtype=float)
+        except Exception:
+            # A numerically unstable fit (singular state covariance) drops out
+            # cleanly rather than crashing the whole pipeline.
+            continue
+
+        last_year = int(years[-1])
+        fyears = np.arange(nba.END_YEAR + 1, nba.END_YEAR + 1 + horizon)
+        out[label] = {
+            "years": years.tolist(),
+            "pcts": endog.tolist(),
+            "level": level.tolist(),
+            "slope": slope,
+            "current_level": float(level[-1]),
+            "early_level": float(level[0]),
+            "last_year": last_year,
+            "forecast_years": fyears.tolist(),
+            "mean": mean.tolist(),
+            "ci80_lo": ci80[:, 0].tolist(),
+            "ci80_hi": ci80[:, 1].tolist(),
+            "ci95_lo": ci95[:, 0].tolist(),
+            "ci95_hi": ci95[:, 1].tolist(),
+        }
+    return out
+
+
+def run_hca_forecast(df: pd.DataFrame) -> None:
+    """Print the state-space forecast of home win % for the next few seasons,
+    with prediction intervals, for the regular season and the playoffs."""
+    _section("WHERE IS HOME COURT HEADING? — STATE-SPACE FORECAST")
+    print("   A local-linear-trend state-space model on the season-level home")
+    print("   win % lets the underlying level drift with its own slope, then")
+    print("   extrapolates a few seasons forward with prediction intervals (the")
+    print("   fan). Regular season and playoffs fit separately. This is a forward")
+    print("   projection of the current slope, not a claim about future rule")
+    print("   changes; the intervals widen with the horizon to show that.\n")
+
+    data = compute_hca_forecast(df)
+
+    for label in ("Regular season", "Playoffs"):
+        d = data.get(label)
+        if not d:
+            print(f"   {label}: insufficient data to fit.\n")
+            continue
+        print(f"   {label}  ({d['years'][0]}–{d['last_year']}, "
+              f"{len(d['years'])} seasons)")
+        print(f"   Current smoothed level:  {d['current_level']:.1f}%   "
+              f"(trend slope {d['slope']:+.1f} pp/yr)\n")
+        print(f"   {'Season':>8}  {'Forecast':>9}  {'95% interval':>16}")
+        print(f"   {'─'*8}  {'─'*9}  {'─'*16}")
+        for i, yr in enumerate(d["forecast_years"]):
+            print(f"   {yr:>8}  {d['mean'][i]:>8.1f}%  "
+                  f"[{d['ci95_lo'][i]:>5.1f}, {d['ci95_hi'][i]:>5.1f}]")
+        print()
+
+        if label == "Regular season":
+            FACTS.set("forecast.rs_current_level", d["current_level"], "{:.1f}%",
+                      note="State-space: current smoothed RS home win % level")
+            FACTS.set("forecast.rs_slope_pp", d["slope"], "{:.1f}", unit="pp",
+                      note="State-space: current RS trend slope (pp/yr)")
+            FACTS.set("forecast.rs_final_central", d["mean"][-1], "{:.1f}%",
+                      note=f"State-space: central RS forecast for {d['forecast_years'][-1]}")
+            FACTS.set("forecast.rs_final_lo95", d["ci95_lo"][-1], "{:.1f}%",
+                      note=f"State-space: RS forecast 95% lower bound, {d['forecast_years'][-1]}")
+            FACTS.set("forecast.rs_final_hi95", d["ci95_hi"][-1], "{:.1f}%",
+                      note=f"State-space: RS forecast 95% upper bound, {d['forecast_years'][-1]}")
+            FACTS.set("forecast.horizon_year", d["forecast_years"][-1], "{:.0f}",
+                      note="State-space: final forecast (horizon) season")
+        else:
+            FACTS.set("forecast.po_current_level", d["current_level"], "{:.1f}%",
+                      note="State-space: current smoothed PO home win % level")
+            FACTS.set("forecast.po_slope_pp", d["slope"], "{:.1f}", unit="pp",
+                      note="State-space: current PO trend slope (pp/yr)")
+            FACTS.set("forecast.po_final_central", d["mean"][-1], "{:.1f}%",
+                      note=f"State-space: central PO forecast for {d['forecast_years'][-1]}")
+            FACTS.set("forecast.po_final_lo95", d["ci95_lo"][-1], "{:.1f}%",
+                      note=f"State-space: PO forecast 95% lower bound, {d['forecast_years'][-1]}")
+            FACTS.set("forecast.po_final_hi95", d["ci95_hi"][-1], "{:.1f}%",
+                      note=f"State-space: PO forecast 95% upper bound, {d['forecast_years'][-1]}")
+
+    # Guard: the central path keeps sliding in both contexts, and the entire 95%
+    # range for the final regular-season forecast year stays below the mid-1980s
+    # regular-season level. Verified against the live data before wording this.
+    rs = data.get("Regular season")
+    po = data.get("Playoffs")
+    if rs and po:
+        rs_declines = all(b < a for a, b in zip(rs["mean"], rs["mean"][1:]))
+        po_declines = all(b < a for a, b in zip(po["mean"], po["mean"][1:]))
+        rs_below_early = rs["ci95_hi"][-1] < rs["early_level"]
+        FACTS.guard(
+            "forecast_keeps_declining",
+            bool(rs_declines and po_declines and rs_below_early),
+            claim="the central forecast keeps sliding in both the regular season "
+                  "and the playoffs, and the whole plausible range for the final "
+                  "regular-season forecast year stays below the mid-1980s home win rate",
+            value=(f"RS {rs['mean'][0]:.1f}→{rs['mean'][-1]:.1f}%, "
+                   f"PO {po['mean'][0]:.1f}→{po['mean'][-1]:.1f}%, "
+                   f"RS upper {rs['ci95_hi'][-1]:.1f}% < early {rs['early_level']:.1f}%"),
+        )
+
+
 # ── Analysis: Playoff format periods ──────────────────────────────────────────
 
 def run_format_period_analysis(df: pd.DataFrame) -> None:
@@ -5338,6 +5480,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
         run_cusum_test(df, results)
         results["bayesian_cp"] = run_bayesian_changepoint(df)
         run_multilevel_decline(df)
+        run_hca_forecast(df)
 
         # §2 What Creates Home Court Advantage
         run_differential_analysis(df)

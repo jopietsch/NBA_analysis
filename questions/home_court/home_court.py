@@ -46,6 +46,7 @@ from home_court_plots import (
     plot_referee_era_distribution, plot_referee_rankings,
     plot_team_hca_by_era, plot_team_season_hca, plot_bayesian_changepoint,
     plot_team_decline_slopes, plot_oos_forecast, plot_shap_channels,
+    plot_hca_forecast,
 )
 
 
@@ -185,6 +186,7 @@ def main() -> None:
 
     plot_bayesian_changepoint(_reg.compute_bayesian_changepoint(game_df))
     plot_team_decline_slopes(_reg.compute_multilevel_decline(game_df))
+    plot_hca_forecast(_reg.compute_hca_forecast(game_df))
     plot_oos_forecast(_reg.compute_oos_forecast(game_df))
     plot_shap_channels(_reg.compute_shap_channels(game_df))
 

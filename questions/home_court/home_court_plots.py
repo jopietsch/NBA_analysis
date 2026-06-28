@@ -2033,6 +2033,72 @@ def plot_shap_channels(data: dict) -> None:
     save_chart("home_court_shap_channels.svg", OUTPUT_DIR)
 
 
+def plot_hca_forecast(data: dict) -> None:
+    """
+    Two panels (regular season blue, playoffs green): the season-by-season home
+    win %, its smoothed underlying trend, and a multi-season forecast with shaded
+    80% and 95% prediction bands — the fan that widens with the horizon. The
+    central line keeps sliding while the fan shows how much it could still move.
+    Saves → home_court_hca_forecast.svg
+    """
+    panels = [("Regular season", BLUE), ("Playoffs", GREEN)]
+    if not data or not any(data.get(k) for k, _ in panels):
+        print("plot_hca_forecast: no data, skipping.")
+        return
+
+    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), facecolor=BG)
+
+    for ax, (label, color) in zip(axes, panels):
+        d = data.get(label)
+        ax.set_facecolor(PANEL)
+        if not d:
+            ax.text(0.5, 0.5, "Insufficient data", ha="center", va="center",
+                    transform=ax.transAxes, fontsize=11, color=GRAY)
+            ax.set_title(label, fontsize=11, color="#2c2c2a")
+            continue
+
+        years = d["years"]
+        ax.plot(years, d["pcts"], color=color, linewidth=1.0, marker="o",
+                markersize=2.5, alpha=0.55, zorder=2, label="Actual")
+        ax.plot(years, d["level"], color=color, linewidth=2.0, zorder=3,
+                label="Smoothed trend")
+
+        # Forecast fan: dashed central path bridged from the last smoothed level,
+        # with 80% and 95% prediction bands.
+        fy = d["forecast_years"]
+        bx = [years[-1]] + list(fy)
+        ax.plot(bx, [d["level"][-1]] + d["mean"], color=color, linewidth=1.8,
+                linestyle="--", zorder=3, label="Forecast")
+        ax.fill_between(fy, d["ci95_lo"], d["ci95_hi"], color=color, alpha=0.12,
+                        linewidth=0, zorder=1, label="95% range")
+        ax.fill_between(fy, d["ci80_lo"], d["ci80_hi"], color=color, alpha=0.22,
+                        linewidth=0, zorder=1, label="80% range")
+        ax.axvline(years[-1] + 0.5, color=GRAY, linewidth=1.0, linestyle=":",
+                   alpha=0.7, zorder=1)
+        ax.axhline(50.0, color=GRAY, linewidth=0.8, alpha=0.6, zorder=1)
+
+        ax.set_title(label, fontsize=11, fontweight="bold", color="#2c2c2a")
+        ax.set_xlabel("Season ending", fontsize=9)
+        ax.set_ylabel("Home win %", fontsize=9)
+        ax.yaxis.set_major_formatter(mticker.PercentFormatter(decimals=0))
+        ax.grid(alpha=0.3, linewidth=0.6)
+        ax.legend(fontsize=7.6, framealpha=0.85, edgecolor="#ddd", loc="lower left")
+
+    fig.suptitle(
+        "The home win rate is forecast to keep sliding, with a wide range of outcomes",
+        fontsize=13, fontweight="bold", color="#2c2c2a", y=1.0,
+    )
+    fig.text(
+        0.5, 0.93,
+        "Local-linear-trend state-space model on the season home win %  |  dashed "
+        "central forecast with 80% and 95% prediction bands  |  the band widens "
+        "with the horizon",
+        ha="center", fontsize=8.5, color=GRAY,
+    )
+    plt.tight_layout(rect=(0, 0, 1, 0.9))
+    save_chart("home_court_hca_forecast.svg", OUTPUT_DIR)
+
+
 def plot_attendance(
     att_seasons: list[str], att_avg: list[float],
     reg_seasons: list[str], reg_pcts: list[float],

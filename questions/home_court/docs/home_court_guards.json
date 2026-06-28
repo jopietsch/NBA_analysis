@@ -1,4 +1,9 @@
 {
+  "forecast_keeps_declining": {
+    "claim": "the central forecast keeps sliding in both the regular season and the playoffs, and the whole plausible range for the final regular-season forecast year stays below the mid-1980s home win rate",
+    "ok": true,
+    "value": "RS 54.6\u219253.5%, PO 58.4\u219257.1%, RS upper 58.6% < early 66.7%"
+  },
   "net_reg_drop_over_third": {
     "claim": "the regular-season net-rating advantage shrank by more than a third",
     "ok": true,

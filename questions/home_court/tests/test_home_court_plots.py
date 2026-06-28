@@ -193,6 +193,29 @@ def test_plot_shap_channels_empty():
     plots.plot_shap_channels({})  # must no-op, not raise
 
 
+def test_plot_hca_forecast():
+    def _ctx(base):
+        years = list(range(1984, 2027))
+        pcts = [base - 0.2 * i for i in range(len(years))]
+        fy = [2027, 2028, 2029, 2030, 2031]
+        mean = [pcts[-1] - 0.3 * (i + 1) for i in range(5)]
+        return {
+            "years": years, "pcts": pcts, "level": pcts,
+            "slope": -0.2, "current_level": pcts[-1], "early_level": pcts[0],
+            "last_year": 2026, "forecast_years": fy, "mean": mean,
+            "ci80_lo": [m - 1.5 * (i + 1) for i, m in enumerate(mean)],
+            "ci80_hi": [m + 1.5 * (i + 1) for i, m in enumerate(mean)],
+            "ci95_lo": [m - 3.0 * (i + 1) for i, m in enumerate(mean)],
+            "ci95_hi": [m + 3.0 * (i + 1) for i, m in enumerate(mean)],
+        }
+    plots.plot_hca_forecast({"Regular season": _ctx(64.0),
+                             "Playoffs": _ctx(67.0), "horizon": 5})
+
+
+def test_plot_hca_forecast_empty():
+    plots.plot_hca_forecast({})  # must no-op, not raise
+
+
 def test_plot_rest_altitude():
     def _ctx(base):
         return {

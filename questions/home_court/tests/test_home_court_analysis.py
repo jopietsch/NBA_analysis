@@ -722,3 +722,61 @@ class TestShapChannels:
         df = self._make_signal_df(n=50)
         out = reg.compute_shap_channels(df)
         assert "Regular season" not in out
+
+
+class TestHcaForecast:
+    """State-space (local-linear-trend) forecast of the season home win %."""
+
+    def _make_season_df(self, games_per_year=120, seed=5):
+        """Per-game df spanning START_YEAR..END_YEAR, both regular season and
+        playoffs, with a home-win rate that drifts down over the years so a
+        forecast of a declining series is well defined."""
+        rng = np.random.default_rng(seed)
+        rows = []
+        years = list(range(nba.START_YEAR, nba.END_YEAR + 1))
+        for y in years:
+            frac = (y - nba.START_YEAR) / (nba.END_YEAR - nba.START_YEAR)
+            for is_po in (0, 1):
+                p = 0.66 - 0.11 * frac  # ~66% early → ~55% late
+                wins = rng.uniform(size=games_per_year) < p
+                for w in wins:
+                    rows.append({"year": y, "is_playoff": is_po,
+                                 "home_win": int(w)})
+        df = pd.DataFrame(rows)
+        df["era"] = df["year"].apply(reg._era_for_year)
+        return df
+
+    def test_structure_and_intervals(self):
+        df = self._make_season_df()
+        out = reg.compute_hca_forecast(df, horizon=5)
+        for label in ("Regular season", "Playoffs"):
+            assert label in out, f"expected a {label} forecast"
+            d = out[label]
+            assert len(d["forecast_years"]) == 5
+            assert len(d["mean"]) == 5
+            for key in ("ci80_lo", "ci80_hi", "ci95_lo", "ci95_hi"):
+                assert len(d[key]) == 5
+            # The 95% band brackets the 80% band at every step.
+            for i in range(5):
+                assert d["ci95_lo"][i] <= d["ci80_lo"][i] + 1e-9
+                assert d["ci80_hi"][i] <= d["ci95_hi"][i] + 1e-9
+            assert d["forecast_years"][0] == nba.END_YEAR + 1
+            assert isinstance(d["current_level"], float)
+
+    def test_run_emits_facts(self):
+        from home_court_facts import FACTS
+        df = self._make_season_df()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_hca_forecast(df)
+        for name in ("forecast.rs_current_level", "forecast.rs_final_central",
+                     "forecast.rs_final_lo95", "forecast.rs_final_hi95",
+                     "forecast.po_final_central", "forecast.horizon_year"):
+            assert name in FACTS
+
+    def test_too_few_seasons_skips_cleanly(self):
+        df = self._make_season_df()
+        df = df[df["year"] < nba.START_YEAR + 4]  # only 4 seasons per context
+        out = reg.compute_hca_forecast(df, horizon=5)
+        assert "Regular season" not in out
+        assert "Playoffs" not in out

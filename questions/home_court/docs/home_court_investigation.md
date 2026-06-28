@@ -37,6 +37,8 @@ Home court advantage is real, it lives in a few measurable things on the court, 
 
 **Why it holds.** The whole confidence band is negative in both contexts, so this is not the random bounce of a few odd seasons. A battery of break-detection tests agrees on the shape: the decline bent once, gently, in the late 1990s, slowing from about 0.6 points per year to about 0.25, and has otherwise been a steady drift. It never reversed. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures share the same direction but, on far fewer games, pin down the size less precisely.
 
+**Where it is heading.** A separate test asks what happens if the recent slope simply continues: let the underlying level drift forward and forecast the next five seasons, with intervals that widen the further out they reach. The central regular-season path falls from about 54.9% to 53.5% by 2031, 95% interval [48.4%, 58.6%]; the playoffs fall from about 58.8% to 57.1%, with a far wider 95% interval [44.9%, 69.3%] because each postseason holds so few games. The forecast is a what-if on the current trend, not a prediction about future rules; its value is that even the upper edge of the regular-season interval stays below where home court sat in the mid-1980s.
+
 ## What Home Court Is Made Of: Four Box-Score Channels
 
 **The claim.** Home court can be measured through four box-score factors: shooting, rebounding, foul calls, and turnover margin. The test isn't whether these categories matter, every possession ends in one of them; it's how much of the home advantage each one accounts for, and whether together they capture nearly all of it.
