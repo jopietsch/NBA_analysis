@@ -26,7 +26,7 @@ This command does NOT restate each review's rules. Each subagent reads the relev
 
 5. **Gate once.** Ask whether to apply. If the user wants only a subset, apply only those.
 
-6. **Apply once, in the main thread.** Make all confirmed edits. Reconcile overlapping flags into one coherent edit per region rather than stacking changes. Before saving any changed number, re-check it against `*_results.md` one more time (per the consistency skill's caution).
+6. **Apply once, in the main thread.** Make all confirmed edits. Reconcile overlapping flags into one coherent edit per region rather than stacking changes. Before saving any changed number, re-check it against `*_results.md` one more time (per the consistency skill's caution). For a facts/template doc (a sibling `docs/<doc>.md.j2` exists), edits land in the `.md.j2`, **not** the rendered `.md` (the render overwrites it): preserve any `<< f(...) >>` token inside a sentence you reword, and a flagged literal number that is really a data-model value is better converted to `<< f("name") >>` than hand-corrected (per the consistency skill).
 
 7. **Regenerate once.** Run `/regen` (or `bash /Users/justin/code/nba_analysis/questions/regen_docs.sh`) a single time from the project root, after all edits land — not once per review. Report which files were saved and flag any errors. If the findings doc changed, follow any project-specific cascade in the project's own `CLAUDE.md` (e.g. updating a findings outline and regenerating its PDF).
 

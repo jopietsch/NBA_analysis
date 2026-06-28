@@ -8,7 +8,7 @@ Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current pro
 
 **Steps:**
 
-1. Read each target doc in full.
+1. Read each target doc in full. For a facts/template doc (a sibling `docs/<doc>.md.j2` exists, rendered into the `.md` by `generate_report.py` / `render_docs.py` filling each `<< f("name") >>` from `docs/*_facts.json`), read **both**: judge the argument against the real numbers the reader sees in the rendered `.md`, and open the `.md.j2` to see where an edit must land (literal text vs. a `<< f(...) >>` token). Coherence claims that hinge on a magnitude or direction ("X drove the decline", "barely moved") can only be checked against the rendered value, so you must see it.
 
 2. **Extract the intro's headline claims.** The intro (everything before the first `##` section) is the contract: it tells the reader what the report will establish. List every headline claim — the answer to each stated question, every "X drove the decline," every "Y did not." These are the promises the body must keep.
 
@@ -45,4 +45,4 @@ Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current pro
 
    State explicitly what you verified as coherent, not just what's wrong.
 
-10. Do NOT edit yet. Ask whether to apply. On confirmation, apply the edits, then run `/regen` (or `bash /Users/justin/code/nba_analysis/questions/regen_docs.sh`) from the project root.
+10. Do NOT edit yet. Ask whether to apply. On confirmation, apply the edits, then run `/regen` (or `bash /Users/justin/code/nba_analysis/questions/regen_docs.sh`) from the project root, which renders every `.md.j2` before rebuilding PDFs/HTML. For a facts/template doc, edits go in the `.md.j2`, **not** the rendered `.md` (the render overwrites it); when you reword a sentence that contains a `<< f(...) >>` token, keep the token in place so the number still fills from the data model.

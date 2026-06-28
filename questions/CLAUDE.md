@@ -124,6 +124,7 @@ Cascade rules: when a file changes, update its dependents before closing the tas
 - `<project>_results.md` changes: update `<project>_stats_explainer.md` so every number and conclusion still matches; regenerate its PDF
 - `<project>_findings.md` changes: if headline figures changed, update `<project>_summary.md` to match; regenerate the main report PDF (and summary PDF if updated)
 - Any standalone markdown doc changes: regenerate its PDF
+- The analysis pipeline re-ran and the numbers moved (`<project>_results.md` / `*_facts.json` changed): the guard tests (`test_facts_match_results.py`, `test_prose_claims.py`) only protect templated numbers and qualitative/direction claims. A magnitude word that stays directionally true but goes stale (e.g. "nearly vanished" after a gap shrinks less than before) is caught only by a human pass. So after any data change that moves the numbers, re-run `/review-all` on the affected docs: the guard tests catch direction, the voice pass (reading the rendered `.md`) re-judges stale magnitude words.
 
 ## Standard commands
 
