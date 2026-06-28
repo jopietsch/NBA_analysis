@@ -3023,6 +3023,14 @@ def run_series_simulation(data: dict) -> None:
     po = _span("po_pgame", "po_series")
     if po is not None:
         dpg, ds, last = po
+        # Fact for the prose (§5): the playoff-input series advantage today, a
+        # touch above the regular-season series figure (series.rs_now).
+        FACTS.set("series.po_now", last, "{:.0f}%",
+                  note="Playoff-input series home win %, latest era")
+        if rs is not None:
+            FACTS.guard("playoff_series_above_regular", last >= rs[2],
+                        claim="the playoff series advantage sits at or above the regular-season series advantage",
+                        value=f"playoff {last:.1f}% vs regular {rs[2]:.1f}%")
         print(f"   ► Playoffs: per-game edge fell {dpg:.1f} pp, series edge fell {ds:.1f} pp"
               f" (now {last:.1f}%).")
     print()

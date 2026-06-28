@@ -4,6 +4,11 @@
     "ok": true,
     "value": "largest held-out miss 1.6 pp"
   },
+  "playoff_series_above_regular": {
+    "claim": "the playoff series advantage sits at or above the regular-season series advantage",
+    "ok": true,
+    "value": "playoff 52.5% vs regular 51.9%"
+  },
   "rebounding_largest_driver": {
     "claim": "rebounding is the largest single driver of the decline",
     "ok": true,

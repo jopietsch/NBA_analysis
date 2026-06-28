@@ -1238,6 +1238,13 @@
     "unit": null,
     "value": 49.00662251655629
   },
+  "series.po_now": {
+    "display": "53%",
+    "fmt": "{:.0f}%",
+    "note": "Playoff-input series home win %, latest era",
+    "unit": null,
+    "value": 52.531000000000006
+  },
   "series.rs_early": {
     "display": "55%",
     "fmt": "{:.0f}%",
