@@ -2387,6 +2387,37 @@ All data from cache/ — same source as the plots above.
      for a season-by-season panel; the playoff decline is league-wide (§1, §5).
 
 
+─── WHERE IS HOME COURT HEADING? — STATE-SPACE FORECAST ────────────────
+   A local-linear-trend state-space model on the season-level home
+   win % lets the underlying level drift with its own slope, then
+   extrapolates a few seasons forward with prediction intervals (the
+   fan). Regular season and playoffs fit separately. This is a forward
+   projection of the current slope, not a claim about future rule
+   changes; the intervals widen with the horizon to show that.
+
+   Regular season  (1984–2026, 43 seasons)
+   Current smoothed level:  54.9%   (trend slope -0.3 pp/yr)
+
+     Season   Forecast      95% interval
+   ────────  ─────────  ────────────────
+       2027      54.6%  [ 51.1,  58.1]
+       2028      54.3%  [ 50.4,  58.3]
+       2029      54.0%  [ 49.7,  58.4]
+       2030      53.8%  [ 49.0,  58.5]
+       2031      53.5%  [ 48.4,  58.6]
+
+   Playoffs  (1984–2026, 42 seasons)
+   Current smoothed level:  58.8%   (trend slope -0.3 pp/yr)
+
+     Season   Forecast      95% interval
+   ────────  ─────────  ────────────────
+       2027      58.4%  [ 46.8,  70.0]
+       2028      58.1%  [ 46.4,  69.8]
+       2029      57.8%  [ 45.9,  69.6]
+       2030      57.4%  [ 45.4,  69.4]
+       2031      57.1%  [ 44.9,  69.3]
+
+
 ─── FOUL &amp; SHOOTING DIFFERENTIALS BY ERA  (home minus away, per game) ──
    Negative foul diff = refs call fewer fouls on the home team.
    Positive fta_diff = home team attempted more free throws.
@@ -2644,6 +2675,38 @@ All data from cache/ — same source as the plots above.
    ► Stable coefficients validate the pooled decomposition.
      Large era-to-era shifts would mean the &#39;share&#39; percentages are
      a blend of heterogeneous effects and should be interpreted with caution.
+
+
+─── MEDIATION ROBUSTNESS — SENSITIVITY TO UNMEASURED CONFOUNDING ───────
+   Robustness check on the mediation. The decomposition assumes the four
+   box-score channels are the path home advantage takes; a hidden cause
+   correlated with both a channel and the outcome could bias its share.
+   For each channel this reports the partial R² with home_win and the
+   robustness value (RV, Cinelli &amp; Hazlett 2020): the minimum share of
+   the residual variation in BOTH that channel and home_win a confounder
+   would have to explain to drive the channel&#39;s coefficient to zero.
+   Higher RV = harder to explain away. This bounds robustness to a hidden
+   cause; it does not prove the channel causes home wins.
+
+   Regular season  (N = 49,104 games, residual dof = 49,098)
+
+   Channel        partial R²   robustness value  Interpretation
+   ────────────  ───────────  ─────────────────  ────────────────────────────────────────
+   Shooting            48.1%              60.5%  a confounder must explain ≥ 60.5% of both to zero it out
+   Fouls               10.5%              28.9%  a confounder must explain ≥ 28.9% of both to zero it out
+   Turnovers           21.9%              40.7%  a confounder must explain ≥ 40.7% of both to zero it out
+   Rebounding          17.6%              36.8%  a confounder must explain ≥ 36.8% of both to zero it out
+
+
+   Playoffs  (N = 3,292 games, residual dof = 3,286)
+
+   Channel        partial R²   robustness value  Interpretation
+   ────────────  ───────────  ─────────────────  ────────────────────────────────────────
+   Shooting            45.9%              59.0%  a confounder must explain ≥ 59.0% of both to zero it out
+   Fouls                9.2%              27.1%  a confounder must explain ≥ 27.1% of both to zero it out
+   Turnovers           20.1%              39.1%  a confounder must explain ≥ 39.1% of both to zero it out
+   Rebounding          17.5%              36.6%  a confounder must explain ≥ 36.6% of both to zero it out
+
 
 
 ─── REST DIFFERENTIAL — WIN % BY BUCKET AND ERA STABILITY ──────────────
@@ -2949,6 +3012,45 @@ All data from cache/ — same source as the plots above.
    ► The frozen early channel model reconstructs the 2014–2026 decline
      it never saw and beats a naive extension of the early trend line — the box-score mechanism is stable across the
      split, not an artifact of fitting on the full history.
+
+
+─── NON-PARAMETRIC CHANNEL DECOMPOSITION — GRADIENT BOOSTING + SHAP ────
+   Robustness check on the linear mediation. A gradient-boosted win
+   model learns home_win from the four box-score edges (eFG%, fouls,
+   turnovers, rebounds) with no straight-line assumption and with
+   interactions. SHAP splits each game&#39;s predicted win probability into
+   additive channel contributions; averaged within an era they sum to
+   that era&#39;s gap from the overall home win rate, so the early-minus-late
+   difference per channel sums to the actual decline. Agreement with the
+   linear breakdown means that breakdown does not hinge on linearity.
+
+   Regular season  (N = 49,104 games, model accuracy 0.933,
+   1984–94 → 2023–26: home win % 60.1 overall)
+
+   Decline decomposition  (signed SHAP, 1984–94 minus 2023–26)
+   Channel        Early pp   Late pp   Contribution  % of decline
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   Shooting          +0.3     -3.0         +3.3 pp           35%
+   Fouls             +1.5     +0.1         +1.4 pp           14%
+   Turnovers         +4.2     +2.1         +2.2 pp           23%
+   Rebounding        +2.0     -0.6         +2.6 pp           28%
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   SHAP total                                +9.4 pp  (actual decline +9.3 pp)
+
+
+   Playoffs  (N = 3,292 games, model accuracy 0.950,
+   1984–94 → 2023–26: home win % 64.1 overall)
+
+   Decline decomposition  (signed SHAP, 1984–94 minus 2023–26)
+   Channel        Early pp   Late pp   Contribution  % of decline
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   Shooting          -2.8     -6.3         +3.5 pp           38%
+   Fouls             +0.5     -0.8         +1.3 pp           14%
+   Turnovers         -1.8     -3.0         +1.2 pp           13%
+   Rebounding        +1.6     -1.6         +3.3 pp           35%
+   ────────────  ─────────  ────────  ─────────────  ────────────
+   SHAP total                                +9.3 pp  (actual decline +10.3 pp)
+
 
 
 ─── RULE-CHANGE ERAS — DO THE ERA BREAKS MATTER BEYOND THE YEAR TREND? ─
