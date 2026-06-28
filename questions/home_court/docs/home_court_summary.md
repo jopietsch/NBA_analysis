@@ -48,7 +48,7 @@ Turnovers faded over the same span: home teams once committed slightly fewer tur
 
 Both rebounding and turnovers are near their practical limits: three-point attempts already make up about 40% of all shots and the offensive-rebound rate is close to a floor, so the pace of decline should ease from here.
 
-A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later regular-season home win rate to within about a point, and still catches the steeper modern playoff drop it was never shown.
+To give confidence that this statistical modeling is trustworthy: A model built on the four categories and trained only on seasons through 2013, then left unchanged, predicts each later regular-season home win rate to within about a point, and still catches the steeper modern playoff drop it was never shown.
 
 The playoff picture runs similar in shape, though a larger share of the playoff decline falls outside the four categories; there are too few playoff games to pin down where that remainder goes, and it is not explained by higher and lower seeds becoming more evenly matched.
 
