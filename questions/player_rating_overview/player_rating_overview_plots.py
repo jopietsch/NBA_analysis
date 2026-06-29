@@ -954,8 +954,15 @@ def plot_panel_describe_vs_forecast(panel: dict) -> str:
            ecolor="#1f5fa6", capsize=3, error_kw={"linewidth": 0.8},
            label="forecasts the next season", zorder=3)
 
-    n_seasons = len(panel.get("seasons", []))
+    seasons = panel.get("seasons", [])
+    n_seasons = len(seasons)
     n_pairs = len(panel.get("pairs", []))
+
+    def _season_label(y: int) -> str:
+        return f"{y - 1}-{str(y)[-2:]}"
+    span = (f"{_season_label(min(seasons))} to {_season_label(max(seasons))}"
+            if seasons else "")
+
     ax.set_xticks(x)
     ax.set_xticklabels(labels, rotation=40, ha="right", fontsize=9)
     ax.set_ylabel("R² for team point differential", fontsize=9, color=GRAY)
@@ -966,7 +973,7 @@ def plot_panel_describe_vs_forecast(panel: dict) -> str:
     )
     ax.text(0.5, 1.015,
             f"Averages across {n_seasons} seasons (describe) and {n_pairs} season-pairs "
-            f"(forecast), 2010-11 to 2025-26. Whiskers span the season-to-season range",
+            f"(forecast), {span}. Whiskers span the season-to-season range",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5, color=GRAY)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)

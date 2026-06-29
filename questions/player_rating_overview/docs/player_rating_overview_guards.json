@@ -47,7 +47,7 @@
   "panel_per_describes_better_than_forecasts": {
     "claim": "across the full panel PER describes better than it forecasts",
     "ok": true,
-    "value": 0.39233324734270597
+    "value": 0.38329087800024597
   },
   "per_describes_better_than_predicts": {
     "claim": "PER describes the season far better than it forecasts the next",

@@ -1617,137 +1617,137 @@
     "value": 50.12190752079213
   },
   "panel.BPM.describe_mean": {
-    "display": "0.360",
+    "display": "0.297",
     "fmt": "{:.3f}",
     "note": "BPM mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3603199459088129
+    "value": 0.2974587125000789
   },
   "panel.BPM.forecast_mean": {
-    "display": "0.403",
+    "display": "0.354",
     "fmt": "{:.3f}",
     "note": "BPM mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.40303846551408257
+    "value": 0.35395195017362807
   },
   "panel.DBPM.describe_mean": {
-    "display": "0.051",
+    "display": "0.020",
     "fmt": "{:.3f}",
     "note": "DBPM mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.05126611358602827
+    "value": 0.020083018742306027
   },
   "panel.DBPM.forecast_mean": {
-    "display": "0.088",
+    "display": "0.067",
     "fmt": "{:.3f}",
     "note": "DBPM mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.08750520858229367
+    "value": 0.06713976545193298
   },
   "panel.GAME_SCORE.describe_mean": {
-    "display": "0.435",
+    "display": "0.385",
     "fmt": "{:.3f}",
     "note": "Game Score mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.4350158670677536
+    "value": 0.38520148875452276
   },
   "panel.GAME_SCORE.forecast_mean": {
-    "display": "0.445",
+    "display": "0.420",
     "fmt": "{:.3f}",
     "note": "Game Score mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.44509212663075165
+    "value": 0.4200028186384563
   },
   "panel.OBPM.describe_mean": {
-    "display": "0.294",
+    "display": "0.239",
     "fmt": "{:.3f}",
     "note": "OBPM mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.2944229456693645
+    "value": 0.2387606302161656
   },
   "panel.OBPM.forecast_mean": {
-    "display": "0.341",
+    "display": "0.307",
     "fmt": "{:.3f}",
     "note": "OBPM mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3408944771667909
+    "value": 0.3068841116734584
   },
   "panel.PER.describe_mean": {
-    "display": "0.649",
+    "display": "0.636",
     "fmt": "{:.3f}",
     "note": "PER mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.649488171649009
+    "value": 0.6356900197195877
   },
   "panel.PER.describe_mean_pct": {
-    "display": "65",
+    "display": "64",
     "fmt": "{:.0f}",
     "note": "PER mean describe R\u00b2 across the panel, percent (append % in prose)",
     "unit": null,
-    "value": 64.9488171649009
+    "value": 63.56900197195877
   },
   "panel.PER.forecast_mean": {
-    "display": "0.257",
+    "display": "0.252",
     "fmt": "{:.3f}",
     "note": "PER mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.257154924306303
+    "value": 0.25239914171934175
   },
   "panel.PER.forecast_mean_pct": {
-    "display": "26",
+    "display": "25",
     "fmt": "{:.0f}",
     "note": "PER mean forecast R\u00b2 across the panel, percent (append % in prose)",
     "unit": null,
-    "value": 25.7154924306303
+    "value": 25.239914171934174
   },
   "panel.VORP.describe_mean": {
-    "display": "0.308",
+    "display": "0.242",
     "fmt": "{:.3f}",
     "note": "VORP mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3079311767173081
+    "value": 0.24163134687056925
   },
   "panel.VORP.forecast_mean": {
-    "display": "0.375",
+    "display": "0.311",
     "fmt": "{:.3f}",
     "note": "VORP mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3749691945276618
+    "value": 0.3107003542732285
   },
   "panel.WS.describe_mean": {
-    "display": "0.328",
+    "display": "0.289",
     "fmt": "{:.3f}",
     "note": "Win Shares mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3275553039740423
+    "value": 0.2885615184003516
   },
   "panel.WS.forecast_mean": {
-    "display": "0.346",
+    "display": "0.329",
     "fmt": "{:.3f}",
     "note": "Win Shares mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.34608930123759357
+    "value": 0.32878707589710343
   },
   "panel.WS48.describe_mean": {
-    "display": "0.191",
+    "display": "0.130",
     "fmt": "{:.3f}",
     "note": "WS/48 mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.19061215456073344
+    "value": 0.13020991167047766
   },
   "panel.WS48.forecast_mean": {
-    "display": "0.222",
+    "display": "0.187",
     "fmt": "{:.3f}",
     "note": "WS/48 mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.22188173855137952
+    "value": 0.1873496627102857
   },
   "panel.bpm_beats_per_pairs": {
-    "display": "12",
+    "display": "20",
     "fmt": "{:d}",
     "note": "season-pairs where BPM forecasts better than PER",
     "unit": null,
-    "value": 12
+    "value": 20
   },
   "panel.describe_top.name": {
     "display": "PER",
@@ -1757,18 +1757,18 @@
     "value": "PER"
   },
   "panel.first_season": {
-    "display": "2010-11",
+    "display": "1996-97",
     "fmt": null,
     "note": "first season in the pooled panel",
     "unit": null,
-    "value": "2010-11"
+    "value": "1996-97"
   },
   "panel.forecast_top.mean_pct": {
-    "display": "45",
+    "display": "42",
     "fmt": "{:.0f}",
     "note": "best forecaster's mean forecast R\u00b2 across the panel, percent (append % in prose)",
     "unit": null,
-    "value": 44.50921266307517
+    "value": 42.00028186384563
   },
   "panel.forecast_top.name": {
     "display": "Game Score",
@@ -1785,25 +1785,25 @@
     "value": "2025-26"
   },
   "panel.n_cmp_pairs": {
-    "display": "15",
+    "display": "29",
     "fmt": "{:d}",
     "note": "season-pairs with both BPM and PER forecast scores",
     "unit": null,
-    "value": 15
+    "value": 29
   },
   "panel.n_pairs": {
-    "display": "15",
+    "display": "29",
     "fmt": "{:d}",
     "note": "consecutive season-pairs in the panel",
     "unit": null,
-    "value": 15
+    "value": 29
   },
   "panel.n_seasons": {
-    "display": "16",
+    "display": "30",
     "fmt": "{:d}",
     "note": "seasons in the pooled panel",
     "unit": null,
-    "value": 16
+    "value": 30
   },
   "playoff.consensus1.name": {
     "display": "Nikola Joki\u0107",

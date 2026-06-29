@@ -102,9 +102,9 @@ The lesson is the one every projection system runs into: describing what happene
 
 ![Each system's same-season fit (grey) against how well its prior-season version forecasts this season (blue). PER describes best but forecasts worst; the plus/minus metrics hold more of their predictive signal.](../generated/images/next_season_retrodiction.svg){#fig-next-season}
 
-One pair of seasons could be a fluke, so we ran the same two tests on every season back to 2010-11: 16 seasons for the describe test and 15 year-to-year handoffs for the forecast test. The shape repeats. PER describes best every era, averaging about 65% of the gaps between teams, and forecasts near the bottom, about 26%. The best forecaster across all those handoffs is not a plus/minus metric at all but Game Score, at about 45%, another plain box score that never looks at who won. The 2024-25 result where BPM led was one season's order; BPM still beats PER as a forecaster in 12 of the 15 handoffs. What holds across fifteen years is the gap itself: the rating that best sums up a finished season is consistently not the one to bet the next season on.
+One pair of seasons could be a fluke, so we ran the same two tests on every season back to 1996-97: 30 seasons for the describe test and 29 year-to-year handoffs for the forecast test. The shape repeats. PER describes best every era, averaging about 64% of the gaps between teams, and forecasts near the bottom, about 25%. The best forecaster across all those handoffs is not a plus/minus metric at all but Game Score, at about 42%, another plain box score that never looks at who won. The 2024-25 result where BPM led was one season's order; BPM still beats PER as a forecaster in 20 of the 29 handoffs. What holds across every era in the data is the gap itself: the rating that best sums up a finished season is consistently not the one to bet the next season on.
 
-![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over 16 seasons and 15 season-pairs. Whiskers span the season-to-season range. PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
+![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over 30 seasons and 29 season-pairs. Whiskers span the season-to-season range. PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
 
 ## 5. What each system uniquely sees
 
@@ -194,7 +194,7 @@ The same inflation affects other high-steal defenders in 2024-25: Keon Ellis (12
 
 ## 11. Limitations
 
-The cross-system comparison (rank agreement, the two combined ratings, the playoff risers and fallers) is built on the 2024-25 season alone. The describe-versus-forecast test reaches further: it now runs across 16 seasons back to 2010-11. Player-level stability (do the same names rate highly season after season?) uses the same multi-season cache but is not yet built, and is a natural next step.
+The cross-system comparison (rank agreement, the two combined ratings, the playoff risers and fallers) is built on the 2024-25 season alone. The describe-versus-forecast test reaches further: it now runs across 30 seasons back to 1996-97. Player-level stability (do the same names rate highly season after season?) uses the same multi-season cache but is not yet built, and is a natural next step.
 
 The crosswalk matching rate for each third-party source is reported in `docs/player_rating_overview_results.md`. Players who could not be matched are listed there; they are excluded from the cross-system comparison but retained in the unified table.
 

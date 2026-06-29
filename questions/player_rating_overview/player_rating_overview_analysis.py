@@ -37,7 +37,8 @@ PANEL_SYSTEMS = ["GAME_SCORE", "PER", "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP
 
 # Span of complete seasons held in the shared cache (end-years). The panel
 # describes each season in this range and forecasts each consecutive pair.
-PANEL_START_YEAR = 2011  # 2010-11
+# 1996-97 is the floor: the oldest season nba_api serves advanced splits for.
+PANEL_START_YEAR = 1997  # 1996-97
 PANEL_END_YEAR = 2026    # 2025-26
 
 SYSTEM_LABELS = {
