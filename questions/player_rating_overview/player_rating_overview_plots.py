@@ -914,6 +914,69 @@ def plot_next_season_retrodiction(same: dict, nxt: dict) -> str:
     return save_chart("next_season_retrodiction.svg", OUTPUT_DIR, fig=fig)
 
 
+def plot_panel_describe_vs_forecast(panel: dict) -> str:
+    """Pooled describe-vs-forecast across every season-pair in the cache.
+
+    `panel` is the dict from analysis.panel_retrodiction: {"describe": {sys:
+    [r2,...]}, "forecast": {sys: [r2,...]}, "seasons": [...], "pairs": [...]}.
+    Each system gets a paired bar: grey is its average same-season fit (describe)
+    over all seasons, blue is its average next-season forecast over all pairs.
+    Whiskers span the season-to-season range, so a reader sees the flip is the
+    standing pattern, not one year's bounce. Systems are sorted by forecast mean.
+    """
+    describe, forecast = panel.get("describe", {}), panel.get("forecast", {})
+    systems = [s for s in forecast
+               if forecast[s] and describe.get(s)]
+    if not systems:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No panel data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("panel_describe_vs_forecast.svg", OUTPUT_DIR, fig=fig)
+
+    f_mean = {s: float(np.mean(forecast[s])) for s in systems}
+    systems.sort(key=lambda s: -f_mean[s])
+    d_mean = [float(np.mean(describe[s])) for s in systems]
+    p_mean = [f_mean[s] for s in systems]
+    d_err = [[m - min(describe[s]) for s, m in zip(systems, d_mean)],
+             [max(describe[s]) - m for s, m in zip(systems, d_mean)]]
+    p_err = [[m - min(forecast[s]) for s, m in zip(systems, p_mean)],
+             [max(forecast[s]) - m for s, m in zip(systems, p_mean)]]
+    labels = [SYSTEM_LABELS.get(s, s) for s in systems]
+
+    fig, ax = plt.subplots(figsize=(max(6, len(systems) * 1.0), 5), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    x = np.arange(len(systems))
+    w = 0.4
+    ax.bar(x - w / 2, d_mean, w, yerr=d_err, color=LGRAY, alpha=0.95,
+           ecolor=GRAY, capsize=3, error_kw={"linewidth": 0.8},
+           label="describes the season (same year)", zorder=3)
+    ax.bar(x + w / 2, p_mean, w, yerr=p_err, color=BLUE, alpha=0.9,
+           ecolor="#1f5fa6", capsize=3, error_kw={"linewidth": 0.8},
+           label="forecasts the next season", zorder=3)
+
+    n_seasons = len(panel.get("seasons", []))
+    n_pairs = len(panel.get("pairs", []))
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=40, ha="right", fontsize=9)
+    ax.set_ylabel("R² for team point differential", fontsize=9, color=GRAY)
+    ax.set_ylim(0, 1)
+    ax.set_title(
+        "Describing a season and forecasting the next reward different metrics",
+        fontsize=11.5, color="#222", pad=26
+    )
+    ax.text(0.5, 1.015,
+            f"Averages across {n_seasons} seasons (describe) and {n_pairs} season-pairs "
+            f"(forecast), 2010-11 to 2025-26. Whiskers span the season-to-season range",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.legend(loc="upper right", fontsize=8, frameon=False)
+
+    fig.tight_layout()
+    return save_chart("panel_describe_vs_forecast.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── Chart: regular-season vs playoff risers and fallers ──────────────────────
 
 def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:

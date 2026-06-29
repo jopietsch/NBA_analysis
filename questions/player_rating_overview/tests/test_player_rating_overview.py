@@ -438,3 +438,41 @@ def test_next_season_retrodiction_coverage_below_one_with_rookies():
     scores = next_season_retrodiction(prior, curr, outcomes, ["GOOD"])
     # Rookies have no prior rating, so coverage drops below 1.
     assert 0.0 < scores["GOOD"]["coverage"] < 1.0
+
+
+def _panel_season(skill_to_outcome=2.0, seed=0):
+    """One synthetic season with stable player_ids so seasons chain.
+
+    Player ids and team skill are the same every season, so a prior season's
+    rating maps onto the next season's roster (the forecast test needs the same
+    players across years). GOOD tracks team skill; NOISE is unrelated.
+    """
+    rng = np.random.default_rng(seed)
+    rows, outs = [], []
+    for t in range(14):
+        skill = t - 7
+        for p in range(3):
+            rows.append({"player_id": t * 10 + p, "TEAM_ID": t, "MIN": 1500,
+                         "GOOD": skill + rng.normal(0, 0.01), "NOISE": rng.normal()})
+        outs.append({"TEAM_ID": t, "point_diff": skill_to_outcome * skill})
+    return pd.DataFrame(rows), pd.DataFrame(outs)
+
+
+def test_panel_retrodiction_pools_describe_and_forecast(monkeypatch):
+    import player_rating_overview_analysis as A
+    seasons = {y: _panel_season(seed=y) for y in (2021, 2022, 2023)}
+    monkeypatch.setattr(A, "load_unified_ratings", lambda y, **k: seasons[y][0])
+    monkeypatch.setattr(A, "load_team_outcomes", lambda y: seasons[y][1])
+
+    panel = A.panel_retrodiction(2021, 2023, ["GOOD", "NOISE"])
+
+    # Three describe seasons, two forecast pairs.
+    assert panel["seasons"] == [2021, 2022, 2023]
+    assert panel["pairs"] == [(2021, 2022), (2022, 2023)]
+    assert len(panel["describe"]["GOOD"]) == 3
+    assert len(panel["forecast"]["GOOD"]) == 2
+    # A rating that tracks team skill both describes and forecasts well; an
+    # unrelated rating forecasts worse.
+    assert np.mean(panel["describe"]["GOOD"]) > 0.9
+    assert np.mean(panel["forecast"]["GOOD"]) > 0.9
+    assert np.mean(panel["forecast"]["GOOD"]) > np.mean(panel["forecast"]["NOISE"])

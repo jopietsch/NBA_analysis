@@ -39,6 +39,16 @@
     "ok": true,
     "value": 0.8781540096676645
   },
+  "panel_forecast_top_differs_from_describe_top": {
+    "claim": "across the full panel the best forecaster is not the best describer",
+    "ok": true,
+    "value": "Game Score vs PER"
+  },
+  "panel_per_describes_better_than_forecasts": {
+    "claim": "across the full panel PER describes better than it forecasts",
+    "ok": true,
+    "value": 0.39233324734270597
+  },
   "per_describes_better_than_predicts": {
     "claim": "PER describes the season far better than it forecasts the next",
     "ok": true,

@@ -29,6 +29,17 @@ ALL_SYSTEMS = [
     "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
 ]
 
+# Box-score systems recomputed for every season in the cache (2010-11 onward),
+# so the multi-season panel compares the same set across all season-pairs. The
+# third-party impact metrics (RAPTOR etc.) cover only some years, so they are
+# left out of the pooled panel to keep each system's sample even.
+PANEL_SYSTEMS = ["GAME_SCORE", "PER", "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP"]
+
+# Span of complete seasons held in the shared cache (end-years). The panel
+# describes each season in this range and forecasts each consecutive pair.
+PANEL_START_YEAR = 2011  # 2010-11
+PANEL_END_YEAR = 2026    # 2025-26
+
 SYSTEM_LABELS = {
     "GAME_SCORE": "Game Score",
     "PER": "PER",
@@ -304,6 +315,59 @@ def next_season_retrodiction(df_prior: pd.DataFrame, df_curr: pd.DataFrame,
         r2 = 1.0 - float(((y - yhat) ** 2).sum()) / ss_tot
         result[s] = {"r2": r2, "n": int(len(data)), "coverage": coverage}
     return result
+
+
+def panel_retrodiction(start_year: int, end_year: int,
+                       systems: list[str] | None = None,
+                       target: str = "point_diff") -> dict:
+    """Pool the describe and forecast tests across every season in the cache.
+
+    For each season y in [start_year, end_year], the describe score is the
+    leave-one-team-out CV R² of y's own ratings against y's team point
+    differential (same-season retrodiction). For each consecutive pair (y, y+1),
+    the forecast score is how well y's ratings, carried onto y+1's rosters,
+    predict y+1's point differential (next-season retrodiction). Reads only the
+    cached unified tables and cached team totals, so it makes no network calls.
+
+    Returns {"describe": {sys: [r2, ...]}, "forecast": {sys: [r2, ...]},
+             "seasons": [years], "pairs": [(y, y+1), ...]}.
+    """
+    systems = systems or PANEL_SYSTEMS
+    describe: dict[str, list[float]] = {s: [] for s in systems}
+    forecast: dict[str, list[float]] = {s: [] for s in systems}
+    seasons: list[int] = []
+    pairs: list[tuple[int, int]] = []
+
+    _cache: dict[int, pd.DataFrame] = {}
+
+    def _load(y: int) -> pd.DataFrame:
+        if y not in _cache:
+            _cache[y] = load_unified_ratings(y)
+        return _cache[y]
+
+    for y in range(start_year, end_year + 1):
+        df = _load(y)
+        if df.empty:
+            continue
+        out = load_team_outcomes(y)
+        pres = _present_systems(df, systems)
+        for s, sc in retrodiction_scores(df, out, pres, target=target).items():
+            describe[s].append(sc["cv_r2"])
+        seasons.append(y)
+
+    for y in range(start_year, end_year):
+        df_prior, df_curr = _load(y), _load(y + 1)
+        if df_prior.empty or df_curr.empty:
+            continue
+        out = load_team_outcomes(y + 1)
+        pres = _present_systems(df_prior, systems)
+        for s, sc in next_season_retrodiction(df_prior, df_curr, out, pres,
+                                              target=target).items():
+            forecast[s].append(sc["r2"])
+        pairs.append((y, y + 1))
+
+    return {"describe": describe, "forecast": forecast,
+            "seasons": seasons, "pairs": pairs}
 
 
 def _unique_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
@@ -692,6 +756,90 @@ def run(end_year: int = 2025) -> None:
                         nxt["PER"]["r2"] < retro["PER"]["cv_r2"],
                         "PER describes the season far better than it forecasts the next",
                         retro["PER"]["cv_r2"] - nxt["PER"]["r2"])
+
+    header("MULTI-SEASON DESCRIBE vs FORECAST (FULL PANEL)")
+    print(f"The single pair above is one season. This pools the same two tests")
+    print(f"across every season in the cache: {PANEL_END_YEAR - PANEL_START_YEAR + 1} seasons")
+    print(f"({PANEL_START_YEAR - 1}-{str(PANEL_START_YEAR)[-2:]} through "
+          f"{PANEL_END_YEAR - 1}-{str(PANEL_END_YEAR)[-2:]}) for the describe test and")
+    print(f"the {PANEL_END_YEAR - PANEL_START_YEAR} consecutive season-pairs for the forecast test.")
+    print("Each number below is the average R² across all of those seasons (describe)")
+    print("or pairs (forecast), with the season-to-season range in brackets. Pooling")
+    print("this way shows whether the one-season flip is a fluke or a standing pattern.")
+    panel = panel_retrodiction(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)
+    d_means = {s: float(np.mean(v)) for s, v in panel["describe"].items() if v}
+    f_means = {s: float(np.mean(v)) for s, v in panel["forecast"].items() if v}
+    if d_means and f_means:
+        n_seasons = len(panel["seasons"])
+        n_pairs = len(panel["pairs"])
+        FACTS.set("panel.n_seasons", n_seasons, "{:d}", note="seasons in the pooled panel")
+        FACTS.set("panel.n_pairs", n_pairs, "{:d}", note="consecutive season-pairs in the panel")
+        FACTS.set("panel.first_season", f"{PANEL_START_YEAR - 1}-{str(PANEL_START_YEAR)[-2:]}",
+                  note="first season in the pooled panel")
+        FACTS.set("panel.last_season", f"{PANEL_END_YEAR - 1}-{str(PANEL_END_YEAR)[-2:]}",
+                  note="last season in the pooled panel")
+
+        ranked_f = sorted(f_means.items(), key=lambda kv: -kv[1])
+        print(f"\n  {'':<16}{'describes':>12}{'predicts':>12}")
+        print(f"  {'system':<16}{'(same yr)':>12}{'(next yr)':>12}")
+        for s, fmean in ranked_f:
+            dmean = d_means.get(s, float("nan"))
+            d_lo, d_hi = min(panel["describe"][s]), max(panel["describe"][s])
+            f_lo, f_hi = min(panel["forecast"][s]), max(panel["forecast"][s])
+            tag = "[team-fit]    " if s in OUTCOME_CALIBRATED else "[outcome-blind]"
+            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}"
+                  f"{dmean:>7.3f} [{d_lo:.2f},{d_hi:.2f}]  "
+                  f"{fmean:>6.3f} [{f_lo:.2f},{f_hi:.2f}]")
+            FACTS.set(f"panel.{s}.describe_mean", dmean, "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} mean same-season (describe) R² across the panel")
+            FACTS.set(f"panel.{s}.forecast_mean", fmean, "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} mean next-season (forecast) R² across the panel")
+
+        describe_top = max(d_means.items(), key=lambda kv: kv[1])[0]
+        forecast_top = max(f_means.items(), key=lambda kv: kv[1])[0]
+        d_top_label = SYSTEM_LABELS.get(describe_top, describe_top)
+        f_top_label = SYSTEM_LABELS.get(forecast_top, forecast_top)
+        print(f"\nAcross {n_seasons} seasons the best description is {d_top_label}; across")
+        print(f"{n_pairs} pairs the best forecast is {f_top_label}.")
+        FACTS.set("panel.describe_top.name", str(d_top_label),
+                  note="system with the best average same-season (describe) R² across the panel")
+        FACTS.set("panel.forecast_top.name", str(f_top_label),
+                  note="system with the best average next-season (forecast) R² across the panel")
+
+        if "PER" in d_means and "PER" in f_means:
+            print(f"PER averages {d_means['PER']:.2f} describing but only "
+                  f"{f_means['PER']:.2f} forecasting,\nthe same collapse the single pair "
+                  f"showed, now seen across {n_pairs} pairs.")
+            FACTS.set("panel.PER.describe_mean_pct", d_means["PER"] * 100, "{:.0f}",
+                      note="PER mean describe R² across the panel, percent (append % in prose)")
+            FACTS.set("panel.PER.forecast_mean_pct", f_means["PER"] * 100, "{:.0f}",
+                      note="PER mean forecast R² across the panel, percent (append % in prose)")
+        if forecast_top in f_means:
+            FACTS.set("panel.forecast_top.mean_pct", f_means[forecast_top] * 100, "{:.0f}",
+                      note="best forecaster's mean forecast R² across the panel, percent (append % in prose)")
+
+        # Per-pair robustness: in how many pairs does the team-fit BPM forecast
+        # beat outcome-blind PER? Firms up that the flip is the standing pattern.
+        if "BPM" in panel["forecast"] and "PER" in panel["forecast"]:
+            bpm_f = panel["forecast"]["BPM"]
+            per_f = panel["forecast"]["PER"]
+            n_cmp = min(len(bpm_f), len(per_f))
+            n_bpm_wins = sum(1 for i in range(n_cmp) if bpm_f[i] > per_f[i])
+            print(f"BPM forecasts better than PER in {n_bpm_wins} of {n_cmp} pairs.")
+            FACTS.set("panel.bpm_beats_per_pairs", n_bpm_wins, "{:d}",
+                      note="season-pairs where BPM forecasts better than PER")
+            FACTS.set("panel.n_cmp_pairs", n_cmp, "{:d}",
+                      note="season-pairs with both BPM and PER forecast scores")
+
+        FACTS.guard("panel_forecast_top_differs_from_describe_top",
+                    forecast_top != describe_top,
+                    "across the full panel the best forecaster is not the best describer",
+                    f"{f_top_label} vs {d_top_label}")
+        if "PER" in d_means and "PER" in f_means:
+            FACTS.guard("panel_per_describes_better_than_forecasts",
+                        d_means["PER"] > f_means["PER"],
+                        "across the full panel PER describes better than it forecasts",
+                        d_means["PER"] - f_means["PER"])
 
     header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
     deltas = load_playoff_deltas(end_year)

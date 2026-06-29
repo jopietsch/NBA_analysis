@@ -164,3 +164,24 @@ def test_plot_next_season_retrodiction_empty(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     path = plots.plot_next_season_retrodiction({}, {})
     assert os.path.exists(path)
+
+
+def test_plot_panel_describe_vs_forecast(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    panel = {
+        "describe": {"PER": [0.70, 0.74, 0.69], "BPM": [0.60, 0.63, 0.61],
+                     "WS": [0.50, 0.47, 0.52]},
+        "forecast": {"PER": [0.16, 0.14, 0.18], "BPM": [0.49, 0.52, 0.50],
+                     "WS": [0.40, 0.38, 0.41]},
+        "seasons": [2021, 2022, 2023, 2024],
+        "pairs": [(2021, 2022), (2022, 2023), (2023, 2024)],
+    }
+    path = plots.plot_panel_describe_vs_forecast(panel)
+    assert os.path.exists(path)
+
+
+def test_plot_panel_describe_vs_forecast_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_panel_describe_vs_forecast(
+        {"describe": {}, "forecast": {}, "seasons": [], "pairs": []})
+    assert os.path.exists(path)

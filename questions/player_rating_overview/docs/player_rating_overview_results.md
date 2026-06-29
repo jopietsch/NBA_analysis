@@ -339,6 +339,32 @@ the season itself: PER.
 PER falls from 0.72 describing the season to 0.15
 forecasting the next: a strong descriptor, a weak predictor.
 
+─── MULTI-SEASON DESCRIBE vs FORECAST (FULL PANEL) ──────────────
+The single pair above is one season. This pools the same two tests
+across every season in the cache: 16 seasons
+(2010-11 through 2025-26) for the describe test and
+the 15 consecutive season-pairs for the forecast test.
+Each number below is the average R² across all of those seasons (describe)
+or pairs (forecast), with the season-to-season range in brackets. Pooling
+this way shows whether the one-season flip is a fluke or a standing pattern.
+
+                     describes    predicts
+  system             (same yr)   (next yr)
+  [outcome-blind] Game Score      0.435 [0.22,0.62]   0.445 [0.14,0.61]
+  [team-fit]     BPM             0.360 [0.02,0.65]   0.403 [0.18,0.51]
+  [team-fit]     VORP            0.308 [0.02,0.55]   0.375 [0.10,0.51]
+  [team-fit]     Win Shares      0.328 [0.09,0.54]   0.346 [0.08,0.52]
+  [team-fit]     OBPM            0.294 [-0.07,0.52]   0.341 [0.16,0.53]
+  [outcome-blind] PER             0.649 [0.17,0.81]   0.257 [0.00,0.42]
+  [team-fit]     WS/48           0.191 [-0.11,0.42]   0.222 [0.00,0.51]
+  [team-fit]     DBPM            0.051 [-0.15,0.50]   0.088 [0.00,0.30]
+
+Across 16 seasons the best description is PER; across
+15 pairs the best forecast is Game Score.
+PER averages 0.65 describing but only 0.26 forecasting,
+the same collapse the single pair showed, now seen across 15 pairs.
+BPM forecasts better than PER in 12 of 15 pairs.
+
 ─── REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS) ─────────────
 Players with >= 150 playoff minutes: 96
 Rate metrics compared (each normalized within its season type): PER, WS/48, BPM, OBPM, DBPM

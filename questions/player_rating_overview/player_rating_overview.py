@@ -44,6 +44,7 @@ def main() -> None:
         plot_playoff_shift,
         plot_retrodiction,
         plot_next_season_retrodiction,
+        plot_panel_describe_vs_forecast,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -54,6 +55,10 @@ def main() -> None:
         _build_wins_predictive,
         retrodiction_scores,
         next_season_retrodiction,
+        panel_retrodiction,
+        PANEL_SYSTEMS,
+        PANEL_START_YEAR,
+        PANEL_END_YEAR,
         OUTCOME_CALIBRATED,
     )
 
@@ -101,6 +106,10 @@ def main() -> None:
     if not prior.empty:
         nxt = next_season_retrodiction(prior, df, outcomes, present, target="point_diff")
         plot_next_season_retrodiction(retro, nxt)
+
+    # Pooled describe-vs-forecast across every cached season-pair
+    panel = panel_retrodiction(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)
+    plot_panel_describe_vs_forecast(panel)
 
     # Regular-season vs playoff risers/fallers
     plot_playoff_shift(load_playoff_deltas(end_year))

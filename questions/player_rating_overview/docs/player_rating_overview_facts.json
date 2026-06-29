@@ -1616,6 +1616,195 @@
     "unit": null,
     "value": 50.12190752079213
   },
+  "panel.BPM.describe_mean": {
+    "display": "0.360",
+    "fmt": "{:.3f}",
+    "note": "BPM mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.3603199459088129
+  },
+  "panel.BPM.forecast_mean": {
+    "display": "0.403",
+    "fmt": "{:.3f}",
+    "note": "BPM mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.40303846551408257
+  },
+  "panel.DBPM.describe_mean": {
+    "display": "0.051",
+    "fmt": "{:.3f}",
+    "note": "DBPM mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.05126611358602827
+  },
+  "panel.DBPM.forecast_mean": {
+    "display": "0.088",
+    "fmt": "{:.3f}",
+    "note": "DBPM mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.08750520858229367
+  },
+  "panel.GAME_SCORE.describe_mean": {
+    "display": "0.435",
+    "fmt": "{:.3f}",
+    "note": "Game Score mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.4350158670677536
+  },
+  "panel.GAME_SCORE.forecast_mean": {
+    "display": "0.445",
+    "fmt": "{:.3f}",
+    "note": "Game Score mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.44509212663075165
+  },
+  "panel.OBPM.describe_mean": {
+    "display": "0.294",
+    "fmt": "{:.3f}",
+    "note": "OBPM mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.2944229456693645
+  },
+  "panel.OBPM.forecast_mean": {
+    "display": "0.341",
+    "fmt": "{:.3f}",
+    "note": "OBPM mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.3408944771667909
+  },
+  "panel.PER.describe_mean": {
+    "display": "0.649",
+    "fmt": "{:.3f}",
+    "note": "PER mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.649488171649009
+  },
+  "panel.PER.describe_mean_pct": {
+    "display": "65",
+    "fmt": "{:.0f}",
+    "note": "PER mean describe R\u00b2 across the panel, percent (append % in prose)",
+    "unit": null,
+    "value": 64.9488171649009
+  },
+  "panel.PER.forecast_mean": {
+    "display": "0.257",
+    "fmt": "{:.3f}",
+    "note": "PER mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.257154924306303
+  },
+  "panel.PER.forecast_mean_pct": {
+    "display": "26",
+    "fmt": "{:.0f}",
+    "note": "PER mean forecast R\u00b2 across the panel, percent (append % in prose)",
+    "unit": null,
+    "value": 25.7154924306303
+  },
+  "panel.VORP.describe_mean": {
+    "display": "0.308",
+    "fmt": "{:.3f}",
+    "note": "VORP mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.3079311767173081
+  },
+  "panel.VORP.forecast_mean": {
+    "display": "0.375",
+    "fmt": "{:.3f}",
+    "note": "VORP mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.3749691945276618
+  },
+  "panel.WS.describe_mean": {
+    "display": "0.328",
+    "fmt": "{:.3f}",
+    "note": "Win Shares mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.3275553039740423
+  },
+  "panel.WS.forecast_mean": {
+    "display": "0.346",
+    "fmt": "{:.3f}",
+    "note": "Win Shares mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.34608930123759357
+  },
+  "panel.WS48.describe_mean": {
+    "display": "0.191",
+    "fmt": "{:.3f}",
+    "note": "WS/48 mean same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.19061215456073344
+  },
+  "panel.WS48.forecast_mean": {
+    "display": "0.222",
+    "fmt": "{:.3f}",
+    "note": "WS/48 mean next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": 0.22188173855137952
+  },
+  "panel.bpm_beats_per_pairs": {
+    "display": "12",
+    "fmt": "{:d}",
+    "note": "season-pairs where BPM forecasts better than PER",
+    "unit": null,
+    "value": 12
+  },
+  "panel.describe_top.name": {
+    "display": "PER",
+    "fmt": null,
+    "note": "system with the best average same-season (describe) R\u00b2 across the panel",
+    "unit": null,
+    "value": "PER"
+  },
+  "panel.first_season": {
+    "display": "2010-11",
+    "fmt": null,
+    "note": "first season in the pooled panel",
+    "unit": null,
+    "value": "2010-11"
+  },
+  "panel.forecast_top.mean_pct": {
+    "display": "45",
+    "fmt": "{:.0f}",
+    "note": "best forecaster's mean forecast R\u00b2 across the panel, percent (append % in prose)",
+    "unit": null,
+    "value": 44.50921266307517
+  },
+  "panel.forecast_top.name": {
+    "display": "Game Score",
+    "fmt": null,
+    "note": "system with the best average next-season (forecast) R\u00b2 across the panel",
+    "unit": null,
+    "value": "Game Score"
+  },
+  "panel.last_season": {
+    "display": "2025-26",
+    "fmt": null,
+    "note": "last season in the pooled panel",
+    "unit": null,
+    "value": "2025-26"
+  },
+  "panel.n_cmp_pairs": {
+    "display": "15",
+    "fmt": "{:d}",
+    "note": "season-pairs with both BPM and PER forecast scores",
+    "unit": null,
+    "value": 15
+  },
+  "panel.n_pairs": {
+    "display": "15",
+    "fmt": "{:d}",
+    "note": "consecutive season-pairs in the panel",
+    "unit": null,
+    "value": 15
+  },
+  "panel.n_seasons": {
+    "display": "16",
+    "fmt": "{:d}",
+    "note": "seasons in the pooled panel",
+    "unit": null,
+    "value": 16
+  },
   "playoff.consensus1.name": {
     "display": "Nikola Joki\u0107",
     "fmt": null,
