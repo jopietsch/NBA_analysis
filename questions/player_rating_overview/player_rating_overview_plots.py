@@ -861,6 +861,59 @@ def plot_retrodiction(retro: dict, outcome_calibrated: set) -> str:
     return save_chart("retrodiction.svg", OUTPUT_DIR, fig=fig)
 
 
+# ── Chart: describe vs predict (same-season vs next-season retrodiction) ─────
+
+def plot_next_season_retrodiction(same: dict, nxt: dict) -> str:
+    """Grouped bars: each system's same-season fit vs its next-season forecast.
+
+    `same` is the same-season retrodiction dict ({system: {cv_r2, ...}}); `nxt`
+    is the next-season dict ({system: {r2, ...}}). Bars are paired per system,
+    sorted by next-season R². The muted grey bar is how well the system
+    describes the season just played; the blue bar is how well last season's
+    version forecasts this one. The gap is the overfit/descriptive premium.
+    """
+    if not nxt or not same:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No next-season data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("next_season_retrodiction.svg", OUTPUT_DIR, fig=fig)
+
+    systems = [s for s, _ in sorted(nxt.items(), key=lambda kv: -kv[1]["r2"])
+               if s in same]
+    describe = [same[s]["cv_r2"] for s in systems]
+    predict = [nxt[s]["r2"] for s in systems]
+    labels = [SYSTEM_LABELS.get(s, s) for s in systems]
+
+    fig, ax = plt.subplots(figsize=(max(6, len(systems) * 1.0), 5), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    x = np.arange(len(systems))
+    w = 0.4
+    ax.bar(x - w / 2, describe, w, color=LGRAY, alpha=0.95,
+           label="describes the season (same year)", zorder=3)
+    ax.bar(x + w / 2, predict, w, color=BLUE, alpha=0.9,
+           label="forecasts the next season", zorder=3)
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=40, ha="right", fontsize=9)
+    ax.set_ylabel("R² for team point differential", fontsize=9, color=GRAY)
+    ax.set_ylim(0, 1)
+    ax.set_title(
+        "The best description of a season is not the best forecast of the next",
+        fontsize=11.5, color="#222", pad=26
+    )
+    ax.text(0.5, 1.015,
+            "Grey: how well each system rebuilds the same season. Blue: how well last "
+            "season's version predicts this one (2023-24 to 2024-25)",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.legend(loc="upper right", fontsize=8, frameon=False)
+
+    fig.tight_layout()
+    return save_chart("next_season_retrodiction.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── Chart: regular-season vs playoff risers and fallers ──────────────────────
 
 def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:

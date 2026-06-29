@@ -250,6 +250,62 @@ def retrodiction_scores(df: pd.DataFrame, outcomes: pd.DataFrame,
     return result
 
 
+def next_season_retrodiction(df_prior: pd.DataFrame, df_curr: pd.DataFrame,
+                             outcomes: pd.DataFrame, systems: list[str],
+                             target: str = "point_diff") -> dict:
+    """Grade each system by how well last season's ratings predict this season.
+
+    Each current-season player is assigned their PRIOR-season rating; the team
+    aggregate is the minutes-weighted (current-season minutes) mean of those
+    prior ratings, fit to the current team outcome. Because a metric's team
+    adjustment is fit to its own season, predicting the next season removes the
+    in-sample circularity that flatters the team-fit metrics. Players with no
+    prior rating (rookies, prior non-qualifiers) drop out; `coverage` reports the
+    share of current team minutes that carried a prior rating. Returns
+    {system: {r2, n, coverage}}.
+    """
+    pid_p = "player_id" if "player_id" in df_prior.columns else "PLAYER_ID"
+    pid_c = "player_id" if "player_id" in df_curr.columns else "PLAYER_ID"
+    if "TEAM_ID" not in df_curr.columns or "MIN" not in df_curr.columns:
+        return {}
+    y_map = outcomes.set_index("TEAM_ID")[target]
+    result = {}
+    for s in systems:
+        if s not in df_prior.columns:   # rating comes from the prior season only
+            continue
+        col = df_prior[s]
+        std = col.std()
+        if not std > 0:
+            continue
+        zmap = (pd.DataFrame({"pid": df_prior[pid_p], "z": (col - col.mean()) / std})
+                .dropna().groupby("pid")["z"].mean())
+        cur = pd.DataFrame({
+            "pid": df_curr[pid_c],
+            "TEAM_ID": df_curr["TEAM_ID"],
+            "w": df_curr["MIN"].clip(lower=0).fillna(0) + 1,
+        }).dropna(subset=["TEAM_ID"])
+        cur["z"] = cur["pid"].map(zmap)
+        matched = cur.dropna(subset=["z"])
+        if matched.empty:
+            continue
+        coverage = float(matched["w"].sum() / cur["w"].sum())
+        team = matched.groupby("TEAM_ID").apply(
+            lambda d: np.average(d["z"], weights=d["w"]), include_groups=False)
+        data = pd.DataFrame({"x": team, "y": y_map}).dropna()
+        if len(data) < 10:
+            continue
+        x = data["x"].values
+        y = data["y"].values
+        ss_tot = float(((y - y.mean()) ** 2).sum())
+        if ss_tot <= 0:
+            continue
+        b1, b0 = np.polyfit(x, y, 1)
+        yhat = b1 * x + b0
+        r2 = 1.0 - float(((y - yhat) ** 2).sum()) / ss_tot
+        result[s] = {"r2": r2, "n": int(len(data)), "coverage": coverage}
+    return result
+
+
 def _unique_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
     """For each system, estimate unique variance it explains beyond the others.
 
@@ -583,6 +639,59 @@ def run(end_year: int = 2025) -> None:
                     "an outcome-blind box rating tops the team point-differential "
                     "retrodiction, ahead of the team-adjusted metrics",
                     top_label)
+
+    header("NEXT-SEASON RETRODICTION (PREDICTING THIS SEASON FROM LAST)")
+    print(f"Last season's ({end_year - 2}-{str(end_year - 1)[-2:]}) player ratings are")
+    print("distributed across this season's rosters (weighted by this season's minutes)")
+    print("and fit to this season's team point differential. Because each metric's team")
+    print("adjustment is fit to its own season, predicting the next season removes the")
+    print("in-sample circularity. Describing the season just played and forecasting the")
+    print("next are different tests, and they reward different metrics.")
+    prior = load_unified_ratings(end_year - 1)
+    nxt = (next_season_retrodiction(prior, df_full, outcomes, present, target="point_diff")
+           if not prior.empty else {})
+    if nxt and retro:
+        cover = float(np.mean([v["coverage"] for v in nxt.values()]))
+        print(f"\nPrior-rating coverage: {cover * 100:.0f}% of this season's team minutes")
+        print("were played by players who also carried a rating last season.\n")
+        FACTS.set("nextretro.coverage_pct", cover * 100, "{:.0f}",
+                  note="share of current-season team minutes with a prior-season rating")
+        ranked_n = sorted(nxt.items(), key=lambda kv: -kv[1]["r2"])
+        print(f"  {'':<16}{'describes':>10}{'predicts':>10}")
+        print(f"  {'system':<16}{'(same yr)':>10}{'(next yr)':>10}")
+        for s, sc in ranked_n:
+            same_cv = retro.get(s, {}).get("cv_r2", float("nan"))
+            tag = "[team-fit]    " if s in OUTCOME_CALIBRATED else "[outcome-blind]"
+            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}{same_cv:>8.3f}{sc['r2']:>10.3f}")
+            FACTS.set(f"nextretro.{s}.r2", sc["r2"], "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} next-season retrodiction R² "
+                           f"(predict {end_year - 1}->{end_year})")
+        top_n_sys, top_n_sc = ranked_n[0]
+        top_n_label = SYSTEM_LABELS.get(top_n_sys, top_n_sys)
+        top_same = max(retro.items(), key=lambda kv: kv[1]["cv_r2"])[0]
+        top_same_label = SYSTEM_LABELS.get(top_same, top_same)
+        print(f"\nBest forecaster of next season: {top_n_label} (R²={top_n_sc['r2']:.3f}). "
+              f"Best description of\nthe season itself: {top_same_label}.")
+        FACTS.set("nextretro.top.name", str(top_n_label),
+                  note="system that best predicts next-season team point differential")
+        FACTS.set("nextretro.top.r2", float(top_n_sc["r2"]), "{:.3f}",
+                  note="best next-season retrodiction R²")
+        FACTS.set("nextretro.top.r2_pct", float(top_n_sc["r2"] * 100), "{:.0f}",
+                  note="best next-season retrodiction R² as percent (append % in prose)")
+        FACTS.guard("forecast_top_differs_from_description_top",
+                    top_n_sys != top_same,
+                    "the metric that best forecasts next season is not the one that best "
+                    "describes the season just played",
+                    f"{top_n_label} vs {top_same_label}")
+        if "PER" in nxt and "PER" in retro:
+            print(f"PER falls from {retro['PER']['cv_r2']:.2f} describing the season to "
+                  f"{nxt['PER']['r2']:.2f}\nforecasting the next: a strong descriptor, a weak predictor.")
+            FACTS.set("nextretro.PER.r2_pct", float(nxt["PER"]["r2"] * 100), "{:.0f}",
+                      note="PER next-season retrodiction R² as percent (append % in prose)")
+            FACTS.guard("per_describes_better_than_predicts",
+                        nxt["PER"]["r2"] < retro["PER"]["cv_r2"],
+                        "PER describes the season far better than it forecasts the next",
+                        retro["PER"]["cv_r2"] - nxt["PER"]["r2"])
 
     header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
     deltas = load_playoff_deltas(end_year)

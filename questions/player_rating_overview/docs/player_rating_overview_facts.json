@@ -1525,6 +1525,97 @@
     "unit": null,
     "value": "Day'Ron Sharpe"
   },
+  "nextretro.BPM.r2": {
+    "display": "0.501",
+    "fmt": "{:.3f}",
+    "note": "BPM next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.5012190752079213
+  },
+  "nextretro.DBPM.r2": {
+    "display": "0.131",
+    "fmt": "{:.3f}",
+    "note": "DBPM next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.13067412440644044
+  },
+  "nextretro.GAME_SCORE.r2": {
+    "display": "0.485",
+    "fmt": "{:.3f}",
+    "note": "Game Score next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.48511671974659265
+  },
+  "nextretro.OBPM.r2": {
+    "display": "0.355",
+    "fmt": "{:.3f}",
+    "note": "OBPM next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.3545735116233425
+  },
+  "nextretro.PER.r2": {
+    "display": "0.151",
+    "fmt": "{:.3f}",
+    "note": "PER next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.15105176600349557
+  },
+  "nextretro.PER.r2_pct": {
+    "display": "15",
+    "fmt": "{:.0f}",
+    "note": "PER next-season retrodiction R\u00b2 as percent (append % in prose)",
+    "unit": null,
+    "value": 15.105176600349557
+  },
+  "nextretro.VORP.r2": {
+    "display": "0.362",
+    "fmt": "{:.3f}",
+    "note": "VORP next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.36218626499554585
+  },
+  "nextretro.WS.r2": {
+    "display": "0.403",
+    "fmt": "{:.3f}",
+    "note": "Win Shares next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.402626311624775
+  },
+  "nextretro.WS48.r2": {
+    "display": "0.244",
+    "fmt": "{:.3f}",
+    "note": "WS/48 next-season retrodiction R\u00b2 (predict 2024->2025)",
+    "unit": null,
+    "value": 0.2444227625050347
+  },
+  "nextretro.coverage_pct": {
+    "display": "89",
+    "fmt": "{:.0f}",
+    "note": "share of current-season team minutes with a prior-season rating",
+    "unit": null,
+    "value": 89.1906906957448
+  },
+  "nextretro.top.name": {
+    "display": "BPM",
+    "fmt": null,
+    "note": "system that best predicts next-season team point differential",
+    "unit": null,
+    "value": "BPM"
+  },
+  "nextretro.top.r2": {
+    "display": "0.501",
+    "fmt": "{:.3f}",
+    "note": "best next-season retrodiction R\u00b2",
+    "unit": null,
+    "value": 0.5012190752079213
+  },
+  "nextretro.top.r2_pct": {
+    "display": "50",
+    "fmt": "{:.0f}",
+    "note": "best next-season retrodiction R\u00b2 as percent (append % in prose)",
+    "unit": null,
+    "value": 50.12190752079213
+  },
   "playoff.consensus1.name": {
     "display": "Nikola Joki\u0107",
     "fmt": null,

@@ -312,6 +312,33 @@ VORP are approximate recomputes, so their lower scores partly reflect a
 noisy recompute, not proof PER is the better rating. Rerun once exactly
 computed or published impact metrics (EPM, DARKO, RAPTOR) are loaded.
 
+─── NEXT-SEASON RETRODICTION (PREDICTING THIS SEASON FROM LAST) ─
+Last season's (2023-24) player ratings are
+distributed across this season's rosters (weighted by this season's minutes)
+and fit to this season's team point differential. Because each metric's team
+adjustment is fit to its own season, predicting the next season removes the
+in-sample circularity. Describing the season just played and forecasting the
+next are different tests, and they reward different metrics.
+
+Prior-rating coverage: 89% of this season's team minutes
+were played by players who also carried a rating last season.
+
+                   describes  predicts
+  system           (same yr) (next yr)
+  [team-fit]     BPM              0.623     0.501
+  [outcome-blind] Game Score       0.394     0.485
+  [team-fit]     Win Shares       0.457     0.403
+  [team-fit]     VORP             0.551     0.362
+  [team-fit]     OBPM             0.427     0.355
+  [team-fit]     WS/48            0.201     0.244
+  [outcome-blind] PER              0.723     0.151
+  [team-fit]     DBPM             0.169     0.131
+
+Best forecaster of next season: BPM (R²=0.501). Best description of
+the season itself: PER.
+PER falls from 0.72 describing the season to 0.15
+forecasting the next: a strong descriptor, a weak predictor.
+
 ─── REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS) ─────────────
 Players with >= 150 playoff minutes: 96
 Rate metrics compared (each normalized within its season type): PER, WS/48, BPM, OBPM, DBPM

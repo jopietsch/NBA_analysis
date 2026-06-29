@@ -43,6 +43,7 @@ def main() -> None:
         plot_top20_table,
         plot_playoff_shift,
         plot_retrodiction,
+        plot_next_season_retrodiction,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -52,6 +53,7 @@ def main() -> None:
         _build_consensus,
         _build_wins_predictive,
         retrodiction_scores,
+        next_season_retrodiction,
         OUTCOME_CALIBRATED,
     )
 
@@ -90,9 +92,15 @@ def main() -> None:
 
     # Retrodiction: which rating rebuilds team point differential
     from player_rating_overview_data import load_team_outcomes, load_playoff_deltas
-    retro = retrodiction_scores(df, load_team_outcomes(end_year), present,
-                                target="point_diff")
+    outcomes = load_team_outcomes(end_year)
+    retro = retrodiction_scores(df, outcomes, present, target="point_diff")
     plot_retrodiction(retro, OUTCOME_CALIBRATED)
+
+    # Next-season retrodiction: predict this season from last season's ratings
+    prior = load_unified_ratings(end_year - 1)
+    if not prior.empty:
+        nxt = next_season_retrodiction(prior, df, outcomes, present, target="point_diff")
+        plot_next_season_retrodiction(retro, nxt)
 
     # Regular-season vs playoff risers/fallers
     plot_playoff_shift(load_playoff_deltas(end_year))

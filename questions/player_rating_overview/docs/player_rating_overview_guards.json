@@ -24,6 +24,11 @@
     "ok": true,
     "value": 0.23442679811344028
   },
+  "forecast_top_differs_from_description_top": {
+    "claim": "the metric that best forecasts next season is not the one that best describes the season just played",
+    "ok": true,
+    "value": "BPM vs PER"
+  },
   "jokic_tops_consensus": {
     "claim": "Nikola Joki\u0107 tops the consensus rating",
     "ok": true,
@@ -33,6 +38,11 @@
     "claim": "Offensive BPM bends rather than holding a straight power law",
     "ok": true,
     "value": 0.8781540096676645
+  },
+  "per_describes_better_than_predicts": {
+    "claim": "PER describes the season far better than it forecasts the next",
+    "ok": true,
+    "value": 0.5718867242281447
   },
   "per_gamescore_close": {
     "claim": "PER and Game Score track closely (r > 0.75)",

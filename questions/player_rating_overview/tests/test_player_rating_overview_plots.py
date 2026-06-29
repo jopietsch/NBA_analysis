@@ -150,3 +150,17 @@ def test_plot_retrodiction_empty(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     path = plots.plot_retrodiction({}, outcome_calibrated=set())
     assert os.path.exists(path)
+
+
+def test_plot_next_season_retrodiction(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    same = {"PER": {"cv_r2": 0.72}, "BPM": {"cv_r2": 0.62}, "WS": {"cv_r2": 0.46}}
+    nxt = {"BPM": {"r2": 0.50}, "PER": {"r2": 0.15}, "WS": {"r2": 0.40}}
+    path = plots.plot_next_season_retrodiction(same, nxt)
+    assert os.path.exists(path)
+
+
+def test_plot_next_season_retrodiction_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_next_season_retrodiction({}, {})
+    assert os.path.exists(path)

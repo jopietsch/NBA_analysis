@@ -401,3 +401,40 @@ def test_retrodiction_skips_short_panels():
     df, outcomes = _retro_inputs(n_teams=6)   # fewer than the 10-team minimum
     scores = retrodiction_scores(df, outcomes, ["GOOD"])
     assert scores == {}
+
+
+def _nextseason_inputs(n_teams=14, n_rookies=2, seed=1):
+    """Prior-season ratings + current rosters where prior skill drives the outcome."""
+    rng = np.random.default_rng(seed)
+    prior_rows, curr_rows, outcomes = [], [], []
+    pid = 0
+    for t in range(n_teams):
+        skill = t - n_teams / 2
+        for _ in range(3):
+            pid += 1
+            prior_rows.append({"player_id": pid, "GOOD": skill, "NOISE": rng.normal()})
+            curr_rows.append({"player_id": pid, "TEAM_ID": t, "MIN": 1500})
+        outcomes.append({"TEAM_ID": t, "point_diff": 2.0 * skill})
+    # Rookies appear only in the current season (no prior rating).
+    for r in range(n_rookies):
+        pid += 1
+        curr_rows.append({"player_id": pid, "TEAM_ID": r, "MIN": 1500})
+    return pd.DataFrame(prior_rows), pd.DataFrame(curr_rows), pd.DataFrame(outcomes)
+
+
+def test_next_season_retrodiction_predicts_from_prior():
+    from player_rating_overview_analysis import next_season_retrodiction
+    prior, curr, outcomes = _nextseason_inputs(n_rookies=0)
+    scores = next_season_retrodiction(prior, curr, outcomes, ["GOOD", "NOISE"])
+    # Prior skill perfectly sets the current outcome, so GOOD forecasts it.
+    assert scores["GOOD"]["r2"] > 0.99
+    assert scores["NOISE"]["r2"] < scores["GOOD"]["r2"]
+    assert scores["GOOD"]["coverage"] == pytest.approx(1.0)
+
+
+def test_next_season_retrodiction_coverage_below_one_with_rookies():
+    from player_rating_overview_analysis import next_season_retrodiction
+    prior, curr, outcomes = _nextseason_inputs(n_rookies=4)
+    scores = next_season_retrodiction(prior, curr, outcomes, ["GOOD"])
+    # Rookies have no prior rating, so coverage drops below 1.
+    assert 0.0 < scores["GOOD"]["coverage"] < 1.0
