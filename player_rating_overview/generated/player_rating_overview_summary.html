@@ -9,7 +9,7 @@
 <meta name="author" content="Justin Pietsch">
 <meta name="dcterms.date" content="2026-06-28">
 
-<title>Player Ranking Overview: Findings Outline</title>
+<title>NBA Player Rating Systems: Summary</title>
 <style>
 
 code{white-space: pre-wrap;}
@@ -2169,34 +2169,14 @@ vertical-align: -.125em;
 <body class="quarto-light">
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-  <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#structure-matches-the-11-sections-in-the-findings" id="toc-structure-matches-the-11-sections-in-the-findings" class="nav-link active" data-scroll-target="#structure-matches-the-11-sections-in-the-findings">Structure (matches the 11 sections in the findings)</a>
-  <ul class="collapse">
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">§ 1. Introduction</a></li>
-  <li><a href="#the-landscape-of-player-rating" id="toc-the-landscape-of-player-rating" class="nav-link" data-scroll-target="#the-landscape-of-player-rating">§ 2. The landscape of player rating</a></li>
-  <li><a href="#do-the-systems-agree" id="toc-do-the-systems-agree" class="nav-link" data-scroll-target="#do-the-systems-agree">§ 3. Do the systems agree?</a></li>
-  <li><a href="#what-the-field-has-learned-about-evaluating-metrics" id="toc-what-the-field-has-learned-about-evaluating-metrics" class="nav-link" data-scroll-target="#what-the-field-has-learned-about-evaluating-metrics">§ 4. What the field has learned about evaluating metrics</a></li>
-  <li><a href="#what-each-system-uniquely-sees" id="toc-what-each-system-uniquely-sees" class="nav-link" data-scroll-target="#what-each-system-uniquely-sees">§ 5. What each system uniquely sees</a></li>
-  <li><a href="#the-two-uber-ratings" id="toc-the-two-uber-ratings" class="nav-link" data-scroll-target="#the-two-uber-ratings">§ 6. The two uber ratings</a></li>
-  <li><a href="#stars-matter-more-than-rank-implies-distribution-section" id="toc-stars-matter-more-than-rank-implies-distribution-section" class="nav-link" data-scroll-target="#stars-matter-more-than-rank-implies-distribution-section">§ 7. Stars matter more than rank implies (distribution section)</a></li>
-  <li><a href="#who-lands-in-the-top-20" id="toc-who-lands-in-the-top-20" class="nav-link" data-scroll-target="#who-lands-in-the-top-20">§ 8. Who lands in the top 20</a></li>
-  <li><a href="#a-note-on-the-recomputed-formulas" id="toc-a-note-on-the-recomputed-formulas" class="nav-link" data-scroll-target="#a-note-on-the-recomputed-formulas">§ 9. A note on the recomputed formulas</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§ 10. Limitations</a></li>
-  <li><a href="#what-a-bayesian-lens-would-add" id="toc-what-a-bayesian-lens-would-add" class="nav-link" data-scroll-target="#what-a-bayesian-lens-would-add">§ 11. What a Bayesian lens would add</a></li>
-  </ul></li>
-  <li><a href="#key-numbers-from-results.md" id="toc-key-numbers-from-results.md" class="nav-link" data-scroll-target="#key-numbers-from-results.md">Key numbers (from results.md)</a></li>
-  </ul>
-</nav>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+  
 </div>
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Player Ranking Overview: Findings Outline</h1>
+<h1 class="title">NBA Player Rating Systems: Summary</h1>
 </div>
 
 
@@ -2228,111 +2208,14 @@ vertical-align: -.125em;
 <p style="text-align:center">
 <em>Draft</em>
 </p>
-<p>Internal outline. Cross-referenced to player_ranking_overview_results.md. Technical shorthand fine here. Reflects the current 8-box-score-system pipeline (human rankings removed; impact metrics surveyed but not recomputed).</p>
-<hr>
-<section id="structure-matches-the-11-sections-in-the-findings" class="level2">
-<h2 class="anchored" data-anchor-id="structure-matches-the-11-sections-in-the-findings">Structure (matches the 11 sections in the findings)</h2>
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">§ 1. Introduction</h3>
-<ul>
-<li>Hook: ordinal rank compresses; the gap between #1 and #10 is not the gap between #10 and #20.</li>
-<li>Thesis: two combined ratings answer two questions, what the systems agree on vs. which combination best predicts team wins.</li>
-<li>Testbed: 2024-25; 8 box-score systems recomputed; impact metrics and human rankings surveyed but not included.</li>
-</ul>
-</section>
-<section id="the-landscape-of-player-rating" class="level3">
-<h3 class="anchored" data-anchor-id="the-landscape-of-player-rating">§ 2. The landscape of player rating</h3>
-<ul>
-<li>Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.</li>
-<li>Impact metrics (surveyed, not recomputed): RAPTOR, EPM, LEBRON, DARKO, DRIP, ESPN RPM. RAPM backbone + box-score prior; noise/regularization.</li>
-<li>Human rankings (surveyed, not included): MVP votes, All-NBA, media top-100.</li>
-<li>Practitioner trust (external, cited in resources bibliography): HoopsHype survey of 29 execs, DARKO top at 8 votes; Dunks &amp; Threes retrodiction order EPM &gt; RPM &gt; RAPTOR &gt; BPM 2.0.</li>
-</ul>
-</section>
-<section id="do-the-systems-agree" class="level3">
-<h3 class="anchored" data-anchor-id="do-the-systems-agree">§ 3. Do the systems agree?</h3>
-<ul>
-<li>Spearman matrix. Tight: PER-Game Score 0.831, BPM-VORP 0.972. Moderate: PER-WS 0.759, WS-WS/48 0.695. Loose: PER-BPM 0.489, Game Score-BPM 0.469.</li>
-<li>Player-level divergence even where overall correlation is high: WS favors efficient bigs (Sabonis +2.51, Zubac +1.98 vs. consensus); PER favors high-usage scorers (Zion +1.85, Porziņģis +1.43).</li>
-<li>Chart: rank-agreement heatmap.</li>
-</ul>
-</section>
-<section id="what-the-field-has-learned-about-evaluating-metrics" class="level3">
-<h3 class="anchored" data-anchor-id="what-the-field-has-learned-about-evaluating-metrics">§ 4. What the field has learned about evaluating metrics</h3>
-<ul>
-<li>Two tests: retrodiction (first half predicts second half) and team-wins prediction.</li>
-<li>Both reward RAPM backbone + calibrated box-score prior.</li>
-<li>Academic caveat: complex metrics do not reliably beat simple ones as inputs to downstream salary/wins models.</li>
-</ul>
-</section>
-<section id="what-each-system-uniquely-sees" class="level3">
-<h3 class="anchored" data-anchor-id="what-each-system-uniquely-sees">§ 5. What each system uniquely sees</h3>
-<ul>
-<li>Unique R²: BPM/OBPM/DBPM 1.000; PER 0.892; Game Score 0.888; VORP 0.871; WS 0.864; WS/48 0.837.</li>
-<li>System-outliers chart: who each system rates above/below consensus (e.g. DBPM discounts the offensive stars: Jokić -3.66, Giannis -3.37, SGA -3.28).</li>
-</ul>
-</section>
-<section id="the-two-uber-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="the-two-uber-ratings">§ 6. The two uber ratings</h3>
-<ul>
-<li>Consensus (average normalized score). Top 5: Jokić 3.13, SGA 2.72, Giannis 2.29, Harden 1.84, Young 1.70.</li>
-<li>Wins-predictive (weighted by team-wins prediction). Top 5: Jokić 3.90, SGA 3.87, Giannis 3.30, Harden 2.15, Daniels 2.05.</li>
-<li>Consensus vs. wins-predictive Spearman 0.978. Risers: SGA +1.14, Giannis +1.00, Gafford +0.92, Wembanyama +0.82, Caruso +0.80. Fallers: Micic -0.99, AJ Johnson -0.97, Cody Williams -0.90.</li>
-<li>Illustration: Jokić tops both; SGA close second and the largest riser into wins-predictive.</li>
-</ul>
-</section>
-<section id="stars-matter-more-than-rank-implies-distribution-section" class="level3">
-<h3 class="anchored" data-anchor-id="stars-matter-more-than-rank-implies-distribution-section">§ 7. Stars matter more than rank implies (distribution section)</h3>
-<ul>
-<li>Rate metrics spread evenly: PER top-5% share 8.5% (Gini 0.159). Cumulative metrics top-heavy: WS top-5% 14.8% (Gini 0.363), VORP 31.9% (Gini 0.749); BPM also high (32.2%, Gini 0.767).</li>
-<li>Charts: all-systems distributions, Gini by system, rank-value curves, ordinal-vs-value gap.</li>
-<li>Point: cumulative metrics’ high Gini is how much they disagree with ordinal rank.</li>
-</ul>
-</section>
-<section id="who-lands-in-the-top-20" class="level3">
-<h3 class="anchored" data-anchor-id="who-lands-in-the-top-20">§ 8. Who lands in the top 20</h3>
-<ul>
-<li>Top-20-by-system table across the 8 systems; rank-1-to-rank-20 gap as a concentration read.</li>
-</ul>
-</section>
-<section id="a-note-on-the-recomputed-formulas" class="level3">
-<h3 class="anchored" data-anchor-id="a-note-on-the-recomputed-formulas">§ 9. A note on the recomputed formulas</h3>
-<ul>
-<li>PER cleanest (mean ~15, Jokić high 20s). WS/BPM/VORP are approximations; absolute values differ from BBR.</li>
-<li>VORP inflation for high-steal defenders: VORP rates Daniels further above consensus than any player (+2.81); per-100 denominator uses player-possessions not team-possessions. Also Ellis, Wallace, Dunn.</li>
-</ul>
-</section>
-<section id="limitations" class="level3">
-<h3 class="anchored" data-anchor-id="limitations">§ 10. Limitations</h3>
-<ul>
-<li>Single-season testbed; multi-season needed for stability.</li>
-<li>RAPM not recomputed; only impact signal is BPM as a box-score proxy.</li>
-<li>Proprietary/tracking blind spot (Second Spectrum, Synergy, franchise models).</li>
-<li>Playoff small-sample limit for RAPM-based metrics.</li>
-</ul>
-</section>
-<section id="what-a-bayesian-lens-would-add" class="level3">
-<h3 class="anchored" data-anchor-id="what-a-bayesian-lens-would-add">§ 11. What a Bayesian lens would add</h3>
-<ul>
-<li>Uncertainty ranges: single-number metrics hide a ~2-3 pts/100 band; apparent 8th-vs-12th disputes often within it.</li>
-<li>Playoff vs. regular season: update the full-season prior with playoff lineup data; posterior barely shifts on 6 games, more on a Finals run.</li>
-<li>Better consensus weighting: estimate system weights from multi-season retrodiction.</li>
-</ul>
-<hr>
-</section>
-</section>
-<section id="key-numbers-from-results.md" class="level2">
-<h2 class="anchored" data-anchor-id="key-numbers-from-results.md">Key numbers (from results.md)</h2>
-<ul>
-<li>Players: 569 total, 375 qualified (&gt;= 500 min). Systems present: 8.</li>
-<li>Correlations: PER-Game Score 0.831, PER-WS 0.759, WS-WS/48 0.695, PER-BPM 0.489, Game Score-BPM 0.469, BPM-VORP 0.972.</li>
-<li>Consensus top 5: Jokić 3.13, SGA 2.72, Giannis 2.29, Harden 1.84, Young 1.70.</li>
-<li>Wins-predictive top 5: Jokić 3.90, SGA 3.87, Giannis 3.30, Harden 2.15, Daniels 2.05.</li>
-<li>Consensus vs. wins-predictive Spearman: 0.978. Top riser SGA +1.14; top faller Micic -0.99.</li>
-<li>Concentration (top-5% share / Gini): PER 8.5% / 0.159, WS 14.8% / 0.363, VORP 31.9% / 0.749, BPM 32.2% / 0.767.</li>
-<li>Unique R²: BPM/OBPM/DBPM 1.000; PER 0.892; Game Score 0.888; VORP 0.871; WS 0.864; WS/48 0.837.</li>
-</ul>
-</section>
+<p>NBA players can be rated several different ways, each measuring something different. Box-score systems like PER and Win Shares work from the standard statistics and can be computed back to the 1980s. Lineup-based impact metrics like RAPTOR, EPM, and DARKO try to capture what box stats miss, particularly defensive contribution. Human rankings from MVP voting and All-NBA selections measure reputation and narrative.</p>
+<p>This project recomputes the box-score systems for the 2024-25 season and compares them; the impact metrics and human rankings are surveyed but not yet folded into the comparison. The core findings:</p>
+<p><strong>The systems mostly agree on the stars.</strong> At the very top, the box-score systems converge. The same handful of players (Nikola Jokić, Shai Gilgeous-Alexander, Giannis Antetokounmpo) rise to the top of nearly every system and of both combined ratings.</p>
+<p><strong>They disagree in the middle.</strong> Win Shares favors efficient big men on good teams (Domantas Sabonis, Ivica Zubac), while PER rewards high-usage scorers (Zion Williamson, Kristaps Porziņģis), so the same player can sit many spots apart in the two. The plus/minus systems, sensitive to steals, can rate a high-steal defender well above where the rate metrics place him (an effect this report’s recompute amplifies, see the findings). The systems genuinely see different things outside the very top tier.</p>
+<p><strong>Cumulative metrics concentrate value at the top.</strong> Rate stats like PER are spread fairly evenly among qualified players. Cumulative metrics (Win Shares, and especially VORP) pile much more of their value onto a small number of elite players. The player ranked first is not marginally better than the player ranked tenth; on a cumulative basis, the gap is often several times larger than the distance from tenth to fiftieth. Ordinal rankings hide this.</p>
+<p><strong>A consensus rating and a wins-predictive rating diverge on team context.</strong> When systems are combined into a single number, the two most natural approaches (a straight average of the systems vs. a version weighted to predict team wins) agree strongly at the top but diverge on team context: the wins-predictive rating lifts players on winning teams and discounts players on losing teams, regardless of individual numbers.</p>
+<p><strong>Describing a season and forecasting the next are different jobs.</strong> Grading each system by how well its player ratings rebuild which teams outscored their opponents, PER describes the 2024-25 season best, rebuilding about 72% of the spread between teams. But the order flips when last season’s ratings are used to forecast this one: PER falls to roughly 15%, one of the weakest, while the plus/minus family holds up best, led by BPM at about 50%. PER is a faithful scoreboard of a finished season but a poor crystal ball. This rests on a single pair of seasons, so the size of the flip should firm up with more years.</p>
+<p>Full analysis and exact figures are in <code>player_rating_overview_results.md</code>. Methods are in <code>player_rating_overview_stats_explainer.md</code>.</p>
 
 </main>
 <!-- /main column -->
