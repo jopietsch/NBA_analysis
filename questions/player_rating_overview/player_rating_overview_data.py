@@ -269,6 +269,29 @@ def load_playoff_deltas(end_year: int, *,
     return df
 
 
+# ── Team outcomes (for retrodiction) ──────────────────────────────────────────
+
+def load_team_outcomes(end_year: int) -> pd.DataFrame:
+    """Per-team regular-season outcomes used to grade the rating systems.
+
+    Returns one row per team with:
+      TEAM_ID
+      point_diff   season point differential per game (PLUS_MINUS / games)
+      win_pct      regular-season win percentage
+    Point differential is the retrodiction target: a better rating, aggregated
+    to the team, should better reconstruct who outscored their opponents.
+    """
+    team_df = fetch_team_season_totals(end_year, REGULAR_SEASON)
+    gp = team_df["GP"].replace(0, np.nan)
+    win_pct = (team_df["W_PCT"] if "W_PCT" in team_df.columns
+               else team_df["W"] / gp)
+    return pd.DataFrame({
+        "TEAM_ID": team_df["TEAM_ID"],
+        "point_diff": team_df["PLUS_MINUS"] / gp,
+        "win_pct": win_pct,
+    })
+
+
 # ── Third-party loaders ───────────────────────────────────────────────────────
 
 def _load_raptor(end_year: int) -> pd.DataFrame | None:

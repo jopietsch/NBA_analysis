@@ -1770,6 +1770,139 @@
     "unit": null,
     "value": "Game Score, PER, Win Shares, DBPM, VORP"
   },
+  "retro.BPM.cv_r2": {
+    "display": "0.623",
+    "fmt": "{:.3f}",
+    "note": "BPM retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.6231059759010678
+  },
+  "retro.BPM.r2": {
+    "display": "0.669",
+    "fmt": "{:.3f}",
+    "note": "BPM team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.6694881043079135
+  },
+  "retro.DBPM.cv_r2": {
+    "display": "0.169",
+    "fmt": "{:.3f}",
+    "note": "DBPM retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.16907589484771246
+  },
+  "retro.DBPM.r2": {
+    "display": "0.260",
+    "fmt": "{:.3f}",
+    "note": "DBPM team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.2598095304151101
+  },
+  "retro.GAME_SCORE.cv_r2": {
+    "display": "0.394",
+    "fmt": "{:.3f}",
+    "note": "Game Score retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.39433284546991776
+  },
+  "retro.GAME_SCORE.r2": {
+    "display": "0.494",
+    "fmt": "{:.3f}",
+    "note": "Game Score team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.49359913353916185
+  },
+  "retro.OBPM.cv_r2": {
+    "display": "0.427",
+    "fmt": "{:.3f}",
+    "note": "OBPM retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.4271768691052571
+  },
+  "retro.OBPM.r2": {
+    "display": "0.493",
+    "fmt": "{:.3f}",
+    "note": "OBPM team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.49288236847030786
+  },
+  "retro.PER.cv_r2": {
+    "display": "0.723",
+    "fmt": "{:.3f}",
+    "note": "PER retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.7229384902316403
+  },
+  "retro.PER.r2": {
+    "display": "0.755",
+    "fmt": "{:.3f}",
+    "note": "PER team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.7549999257661649
+  },
+  "retro.VORP.cv_r2": {
+    "display": "0.551",
+    "fmt": "{:.3f}",
+    "note": "VORP retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.5510229011852904
+  },
+  "retro.VORP.r2": {
+    "display": "0.610",
+    "fmt": "{:.3f}",
+    "note": "VORP team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.610451511699599
+  },
+  "retro.WS.cv_r2": {
+    "display": "0.457",
+    "fmt": "{:.3f}",
+    "note": "Win Shares retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.4574735195724543
+  },
+  "retro.WS.r2": {
+    "display": "0.530",
+    "fmt": "{:.3f}",
+    "note": "Win Shares team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.5303530628360661
+  },
+  "retro.WS48.cv_r2": {
+    "display": "0.201",
+    "fmt": "{:.3f}",
+    "note": "WS/48 retrodiction R\u00b2 (leave-one-team-out CV)",
+    "unit": null,
+    "value": 0.20104006062598612
+  },
+  "retro.WS48.r2": {
+    "display": "0.325",
+    "fmt": "{:.3f}",
+    "note": "WS/48 team point-diff retrodiction R\u00b2 (in-sample)",
+    "unit": null,
+    "value": 0.3252212939928182
+  },
+  "retro.top.cv_r2": {
+    "display": "0.723",
+    "fmt": "{:.3f}",
+    "note": "top system's leave-one-team-out retrodiction R\u00b2",
+    "unit": null,
+    "value": 0.7229384902316403
+  },
+  "retro.top.cv_r2_pct": {
+    "display": "72 %",
+    "fmt": "{:.0f}",
+    "note": "top system's retrodiction R\u00b2 as a percent",
+    "unit": "%",
+    "value": 72.29384902316403
+  },
+  "retro.top.name": {
+    "display": "PER",
+    "fmt": null,
+    "note": "system that best retrodicts team point differential (CV)",
+    "unit": null,
+    "value": "PER"
+  },
   "tail.BPM.skew": {
     "display": "1.05",
     "fmt": "{:.2f}",

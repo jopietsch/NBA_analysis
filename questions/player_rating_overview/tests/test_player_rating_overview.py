@@ -355,3 +355,49 @@ def test_playoff_delta_table_basic():
     # Rows sorted by SHIFT_Z, risers first; player 1 rose the most.
     assert out.iloc[0]["PLAYER_ID"] == 1
     assert out["SHIFT_Z"].is_monotonic_decreasing
+
+
+# ── Retrodiction ──────────────────────────────────────────────────────────────
+
+def _retro_inputs(n_teams=14, noise=0.0, seed=0):
+    """Synthetic players where team skill drives both the rating and the outcome."""
+    rng = np.random.default_rng(seed)
+    rows, outcomes = [], []
+    for t in range(n_teams):
+        skill = t - n_teams / 2          # team skill, centered
+        for p in range(3):               # three players per team
+            rows.append({
+                "PLAYER_ID": t * 10 + p,
+                "TEAM_ID": t,
+                "MIN": 1500,
+                "GOOD": skill + rng.normal(0, noise),   # tracks skill
+                "NOISE": rng.normal(0, 1),              # unrelated to skill
+            })
+        outcomes.append({"TEAM_ID": t, "point_diff": 2.0 * skill})
+    return pd.DataFrame(rows), pd.DataFrame(outcomes)
+
+
+def test_retrodiction_good_system_scores_high():
+    from player_rating_overview_analysis import retrodiction_scores
+    df, outcomes = _retro_inputs(noise=0.0)
+    scores = retrodiction_scores(df, outcomes, ["GOOD", "NOISE"])
+    # A rating that tracks team skill rebuilds the outcome almost perfectly.
+    assert scores["GOOD"]["r2"] > 0.99
+    assert scores["GOOD"]["cv_r2"] > 0.99
+    assert scores["GOOD"]["n"] == 14
+
+
+def test_retrodiction_noise_system_scores_low():
+    from player_rating_overview_analysis import retrodiction_scores
+    df, outcomes = _retro_inputs(noise=0.0)
+    scores = retrodiction_scores(df, outcomes, ["GOOD", "NOISE"])
+    # An unrelated rating cannot rebuild the outcome; CV R² is far below GOOD's.
+    assert scores["NOISE"]["cv_r2"] < scores["GOOD"]["cv_r2"]
+    assert scores["NOISE"]["cv_r2"] < 0.5
+
+
+def test_retrodiction_skips_short_panels():
+    from player_rating_overview_analysis import retrodiction_scores
+    df, outcomes = _retro_inputs(n_teams=6)   # fewer than the 10-team minimum
+    scores = retrodiction_scores(df, outcomes, ["GOOD"])
+    assert scores == {}

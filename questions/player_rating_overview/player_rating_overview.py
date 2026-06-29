@@ -42,6 +42,7 @@ def main() -> None:
         plot_powerlaw_small_multiples,
         plot_top20_table,
         plot_playoff_shift,
+        plot_retrodiction,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -50,6 +51,8 @@ def main() -> None:
         _top_share,
         _build_consensus,
         _build_wins_predictive,
+        retrodiction_scores,
+        OUTCOME_CALIBRATED,
     )
 
     present = _present_systems(df, ALL_SYSTEMS)
@@ -85,8 +88,13 @@ def main() -> None:
         from player_rating_overview_plots import plot_uber_rating_comparison
         plot_uber_rating_comparison(qual)
 
+    # Retrodiction: which rating rebuilds team point differential
+    from player_rating_overview_data import load_team_outcomes, load_playoff_deltas
+    retro = retrodiction_scores(df, load_team_outcomes(end_year), present,
+                                target="point_diff")
+    plot_retrodiction(retro, OUTCOME_CALIBRATED)
+
     # Regular-season vs playoff risers/fallers
-    from player_rating_overview_data import load_playoff_deltas
     plot_playoff_shift(load_playoff_deltas(end_year))
 
     # 3. Analysis → results doc

@@ -808,6 +808,59 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
     return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
 
 
+# ── Chart: retrodiction — which rating rebuilds team results ─────────────────
+
+def plot_retrodiction(retro: dict, outcome_calibrated: set) -> str:
+    """Bar chart of each system's leave-one-team-out retrodiction R².
+
+    retro is {system: {"r2", "cv_r2", "n"}}. Bars are the cross-validated R²,
+    sorted high to low. Outcome-blind systems (the genuine test) are drawn in
+    blue; team-fit systems (built from team/lineup results, so a high score is
+    partly mechanical) are muted grey. A faint tick marks each system's
+    in-sample R² so the overfit gap is visible.
+    """
+    if not retro:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No retrodiction data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("retrodiction.svg", OUTPUT_DIR, fig=fig)
+
+    ranked = sorted(retro.items(), key=lambda kv: -kv[1]["cv_r2"])
+    systems = [s for s, _ in ranked]
+    cv = [retro[s]["cv_r2"] for s in systems]
+    insample = [retro[s]["r2"] for s in systems]
+    labels = [SYSTEM_LABELS.get(s, s) for s in systems]
+    colors = [GRAY if s in outcome_calibrated else BLUE for s in systems]
+
+    fig, ax = plt.subplots(figsize=(max(6, len(systems) * 0.95), 5), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    x = np.arange(len(systems))
+    ax.bar(x, cv, color=colors, alpha=0.85, zorder=3)
+    # In-sample R² ticks (overfit gap above each bar)
+    ax.scatter(x, insample, marker="_", s=220, color="#444", linewidths=1.4,
+               zorder=4, label="in-sample R²")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=40, ha="right", fontsize=9)
+    ax.set_ylabel("Out-of-sample R² (leave-one-team-out)", fontsize=9, color=GRAY)
+    ax.set_ylim(0, 1)
+    ax.set_title(
+        "An outcome-blind rating rebuilds team results best",
+        fontsize=12, color="#222", pad=26
+    )
+    ax.text(0.5, 1.015,
+            "How well each system, summed to the team, rebuilds 2024-25 point "
+            "differential. Blue = never uses who won; grey = built from team/lineup results",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5, color=GRAY)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.legend(loc="upper right", fontsize=8, frameon=False)
+
+    fig.tight_layout()
+    return save_chart("retrodiction.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── Chart: regular-season vs playoff risers and fallers ──────────────────────
 
 def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:

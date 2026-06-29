@@ -133,3 +133,20 @@ def test_plot_playoff_shift_empty(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     path = plots.plot_playoff_shift(pd.DataFrame())
     assert os.path.exists(path)
+
+
+def test_plot_retrodiction(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    retro = {
+        "PER": {"r2": 0.76, "cv_r2": 0.72, "n": 30},
+        "BPM": {"r2": 0.67, "cv_r2": 0.62, "n": 30},
+        "WS": {"r2": 0.53, "cv_r2": 0.46, "n": 30},
+    }
+    path = plots.plot_retrodiction(retro, outcome_calibrated={"BPM", "WS"})
+    assert os.path.exists(path)
+
+
+def test_plot_retrodiction_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_retrodiction({}, outcome_calibrated=set())
+    assert os.path.exists(path)

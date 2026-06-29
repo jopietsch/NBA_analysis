@@ -1,4 +1,9 @@
 {
+  "blind_rating_tops_retrodiction": {
+    "claim": "an outcome-blind box rating tops the team point-differential retrodiction, ahead of the team-adjusted metrics",
+    "ok": true,
+    "value": "PER"
+  },
   "bpm_vorp_tight": {
     "claim": "BPM and VORP are tightly linked (r > 0.95)",
     "ok": true,

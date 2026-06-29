@@ -11,6 +11,7 @@ from scipy import stats
 
 from player_rating_overview_data import (
     load_unified_ratings,
+    load_team_outcomes,
     load_playoff_deltas,
     MIN_MINUTES_QUALIFIER,
     MIN_PLAYOFF_MINUTES,
@@ -173,6 +174,80 @@ def _build_wins_predictive(df: pd.DataFrame, systems: list[str]) -> pd.Series:
     if wp_std > 0:
         wp = (wp - wp.mean()) / wp_std
     return wp
+
+
+# Systems whose construction uses team or lineup point differential (BPM's team
+# adjustment, Win Shares' calibration to team wins, the impact metrics' RAPM
+# base). For these, reconstructing team point differential is partly mechanical,
+# so a high retrodiction score is not evidence of quality. The outcome-blind
+# metrics (PER, Game Score) never saw who won, so their score is a genuine read.
+OUTCOME_CALIBRATED = {
+    "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP",
+    "RAPTOR", "RAPTOR_O", "RAPTOR_D", "RAPTOR_WAR",
+    "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
+}
+
+
+def _team_mean_z(df: pd.DataFrame, system: str) -> pd.Series | None:
+    """Minutes-weighted team mean of a system's player z-scores.
+
+    Z-scores the system across all players who carry it, then takes the
+    minutes-weighted average within each team (a small +1 keeps zero-minute rows
+    from vanishing). Returns a Series indexed by TEAM_ID, or None if the system
+    has no spread.
+    """
+    if system not in df.columns or "TEAM_ID" not in df.columns or "MIN" not in df.columns:
+        return None
+    col = df[system]
+    std = col.std()
+    if not std > 0:
+        return None
+    z = (col - col.mean()) / std
+    t = pd.DataFrame({
+        "TEAM_ID": df["TEAM_ID"],
+        "z": z,
+        "w": df["MIN"].clip(lower=0).fillna(0) + 1,
+    }).dropna(subset=["z"])
+    return t.groupby("TEAM_ID").apply(
+        lambda d: np.average(d["z"], weights=d["w"]), include_groups=False
+    )
+
+
+def retrodiction_scores(df: pd.DataFrame, outcomes: pd.DataFrame,
+                        systems: list[str], target: str = "point_diff") -> dict:
+    """Grade each system by how well its team aggregate rebuilds team results.
+
+    For each system: minutes-weighted team mean z-rating, then a single-predictor
+    line onto the team outcome (point differential per game by default). Reports
+    both the in-sample R² and a leave-one-team-out cross-validated R² (the honest
+    out-of-sample read on 30 teams). Returns {system: {r2, cv_r2, n}}.
+    """
+    y_map = outcomes.set_index("TEAM_ID")[target]
+    result = {}
+    for s in systems:
+        tm = _team_mean_z(df, s)
+        if tm is None:
+            continue
+        data = pd.DataFrame({"x": tm, "y": y_map}).dropna()
+        if len(data) < 10:
+            continue
+        x = data["x"].values
+        y = data["y"].values
+        ss_tot = float(((y - y.mean()) ** 2).sum())
+        if ss_tot <= 0:
+            continue
+        b1, b0 = np.polyfit(x, y, 1)
+        yhat = b1 * x + b0
+        r2 = 1.0 - float(((y - yhat) ** 2).sum()) / ss_tot
+        # Leave-one-team-out cross-validation
+        preds = np.empty(len(x))
+        for i in range(len(x)):
+            mask = np.arange(len(x)) != i
+            c1, c0 = np.polyfit(x[mask], y[mask], 1)
+            preds[i] = c1 * x[i] + c0
+        cv_r2 = 1.0 - float(((y - preds) ** 2).sum()) / ss_tot
+        result[s] = {"r2": r2, "cv_r2": cv_r2, "n": int(len(data))}
+    return result
 
 
 def _unique_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
@@ -464,6 +539,50 @@ def run(end_year: int = 2025) -> None:
                       note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} player vs consensus")
             FACTS.set(f"discounts.{s}.{rank}.diff", float(row.get("_res", 0)), "{:.2f}",
                       note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} residual vs consensus (negative)")
+
+    header("RETRODICTION: WHICH RATING REBUILDS TEAM RESULTS")
+    print("Each system's player ratings are minutes-weighted to the team level, then")
+    print("fit to team point differential per game across the 30 teams. R² is the")
+    print("in-sample fit; CV R² is leave-one-team-out (the honest out-of-sample read).")
+    print("Systems marked [team-fit] are built using team or lineup point")
+    print("differential, so a high score is partly mechanical. Systems marked")
+    print("[outcome-blind] never saw who won; their score is the genuine test.")
+    outcomes = load_team_outcomes(end_year)
+    retro = retrodiction_scores(df_full, outcomes, present, target="point_diff")
+    if retro:
+        ranked = sorted(retro.items(), key=lambda kv: -kv[1]["cv_r2"])
+        print()
+        for s, sc in ranked:
+            tag = "[team-fit]    " if s in OUTCOME_CALIBRATED else "[outcome-blind]"
+            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14} "
+                  f"R²={sc['r2']:.3f}  CV R²={sc['cv_r2']:.3f}")
+            FACTS.set(f"retro.{s}.r2", sc["r2"], "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} team point-diff retrodiction R² (in-sample)")
+            FACTS.set(f"retro.{s}.cv_r2", sc["cv_r2"], "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} retrodiction R² (leave-one-team-out CV)")
+
+        top_sys, top_sc = ranked[0]
+        top_label = SYSTEM_LABELS.get(top_sys, top_sys)
+        print(f"\nTop retrodictor: {top_label} (CV R²={top_sc['cv_r2']:.3f}); it "
+              f"rebuilds {top_sc['cv_r2'] * 100:.0f}% of the team point-differential")
+        print("spread out of sample.")
+        FACTS.set("retro.top.name", str(top_label),
+                  note="system that best retrodicts team point differential (CV)")
+        FACTS.set("retro.top.cv_r2", float(top_sc["cv_r2"]), "{:.3f}",
+                  note="top system's leave-one-team-out retrodiction R²")
+        FACTS.set("retro.top.cv_r2_pct", float(top_sc["cv_r2"] * 100), "{:.0f}", unit="%",
+                  note="top system's retrodiction R² as a percent")
+        if top_sys not in OUTCOME_CALIBRATED:
+            print(f"{top_label} never uses who won, yet it beats the team-adjusted box")
+            print("metrics (BPM, VORP, Win Shares) here. Caveat: this project's BPM and")
+            print("VORP are approximate recomputes, so their lower scores partly reflect a")
+            print("noisy recompute, not proof PER is the better rating. Rerun once exactly")
+            print("computed or published impact metrics (EPM, DARKO, RAPTOR) are loaded.")
+        FACTS.guard("blind_rating_tops_retrodiction",
+                    top_sys not in OUTCOME_CALIBRATED,
+                    "an outcome-blind box rating tops the team point-differential "
+                    "retrodiction, ahead of the team-adjusted metrics",
+                    top_label)
 
     header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
     deltas = load_playoff_deltas(end_year)

@@ -287,6 +287,31 @@ VORP discounts (vs. consensus):
   -1.11  Mark Williams
   -1.00  Aaron Gordon
 
+─── RETRODICTION: WHICH RATING REBUILDS TEAM RESULTS ────────────
+Each system's player ratings are minutes-weighted to the team level, then
+fit to team point differential per game across the 30 teams. R² is the
+in-sample fit; CV R² is leave-one-team-out (the honest out-of-sample read).
+Systems marked [team-fit] are built using team or lineup point
+differential, so a high score is partly mechanical. Systems marked
+[outcome-blind] never saw who won; their score is the genuine test.
+
+  [outcome-blind] PER            R²=0.755  CV R²=0.723
+  [team-fit]     BPM            R²=0.669  CV R²=0.623
+  [team-fit]     VORP           R²=0.610  CV R²=0.551
+  [team-fit]     Win Shares     R²=0.530  CV R²=0.457
+  [team-fit]     OBPM           R²=0.493  CV R²=0.427
+  [outcome-blind] Game Score     R²=0.494  CV R²=0.394
+  [team-fit]     WS/48          R²=0.325  CV R²=0.201
+  [team-fit]     DBPM           R²=0.260  CV R²=0.169
+
+Top retrodictor: PER (CV R²=0.723); it rebuilds 72% of the team point-differential
+spread out of sample.
+PER never uses who won, yet it beats the team-adjusted box
+metrics (BPM, VORP, Win Shares) here. Caveat: this project's BPM and
+VORP are approximate recomputes, so their lower scores partly reflect a
+noisy recompute, not proof PER is the better rating. Rerun once exactly
+computed or published impact metrics (EPM, DARKO, RAPTOR) are loaded.
+
 ─── REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS) ─────────────
 Players with >= 150 playoff minutes: 96
 Rate metrics compared (each normalized within its season type): PER, WS/48, BPM, OBPM, DBPM
