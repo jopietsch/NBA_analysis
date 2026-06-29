@@ -1525,6 +1525,104 @@
     "unit": null,
     "value": "Day'Ron Sharpe"
   },
+  "playoff.faller.1.name": {
+    "display": "Michael Porter Jr.",
+    "fmt": null,
+    "note": "playoff faller rank 1 (composite shift)",
+    "unit": null,
+    "value": "Michael Porter Jr."
+  },
+  "playoff.faller.1.z": {
+    "display": "-1.74",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 1 composite shift z",
+    "unit": null,
+    "value": -1.7449693743570125
+  },
+  "playoff.faller.2.name": {
+    "display": "Austin Reaves",
+    "fmt": null,
+    "note": "playoff faller rank 2 (composite shift)",
+    "unit": null,
+    "value": "Austin Reaves"
+  },
+  "playoff.faller.2.z": {
+    "display": "-1.74",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 2 composite shift z",
+    "unit": null,
+    "value": -1.738403451129522
+  },
+  "playoff.faller.3.name": {
+    "display": "Miles McBride",
+    "fmt": null,
+    "note": "playoff faller rank 3 (composite shift)",
+    "unit": null,
+    "value": "Miles McBride"
+  },
+  "playoff.faller.3.z": {
+    "display": "-1.35",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 3 composite shift z",
+    "unit": null,
+    "value": -1.3542261437333798
+  },
+  "playoff.min_floor": {
+    "display": "150",
+    "fmt": "{:d}",
+    "note": "minimum playoff minutes to enter the riser/faller pool",
+    "unit": null,
+    "value": 150
+  },
+  "playoff.n_qualified": {
+    "display": "96",
+    "fmt": "{:d}",
+    "note": "players with >= 150 playoff minutes",
+    "unit": null,
+    "value": 96
+  },
+  "playoff.riser.1.name": {
+    "display": "Gary Trent Jr.",
+    "fmt": null,
+    "note": "playoff riser rank 1 (composite shift)",
+    "unit": null,
+    "value": "Gary Trent Jr."
+  },
+  "playoff.riser.1.z": {
+    "display": "2.27",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 1 composite shift z",
+    "unit": null,
+    "value": 2.268632587758976
+  },
+  "playoff.riser.2.name": {
+    "display": "Kawhi Leonard",
+    "fmt": null,
+    "note": "playoff riser rank 2 (composite shift)",
+    "unit": null,
+    "value": "Kawhi Leonard"
+  },
+  "playoff.riser.2.z": {
+    "display": "2.18",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 2 composite shift z",
+    "unit": null,
+    "value": 2.1835002526456173
+  },
+  "playoff.riser.3.name": {
+    "display": "Paolo Banchero",
+    "fmt": null,
+    "note": "playoff riser rank 3 (composite shift)",
+    "unit": null,
+    "value": "Paolo Banchero"
+  },
+  "playoff.riser.3.z": {
+    "display": "1.58",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 3 composite shift z",
+    "unit": null,
+    "value": 1.5776577222472274
+  },
   "powerlaw.BPM.alpha": {
     "display": "0.34",
     "fmt": "{:.2f}",

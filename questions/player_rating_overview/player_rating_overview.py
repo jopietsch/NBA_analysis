@@ -41,6 +41,7 @@ def main() -> None:
         plot_powerlaw_fits,
         plot_powerlaw_small_multiples,
         plot_top20_table,
+        plot_playoff_shift,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -83,6 +84,10 @@ def main() -> None:
     if uber_present:
         from player_rating_overview_plots import plot_uber_rating_comparison
         plot_uber_rating_comparison(qual)
+
+    # Regular-season vs playoff risers/fallers
+    from player_rating_overview_data import load_playoff_deltas
+    plot_playoff_shift(load_playoff_deltas(end_year))
 
     # 3. Analysis → results doc
     print("\n[3/3] Running analysis...")

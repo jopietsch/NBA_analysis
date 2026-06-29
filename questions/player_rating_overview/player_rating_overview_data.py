@@ -24,6 +24,7 @@ from nbakit.data import (
     fetch_team_season_totals,
     fetch_league_averages,
     REGULAR_SEASON,
+    PLAYOFFS,
     season_str,
 )
 from nbakit.ratings import (
@@ -46,6 +47,24 @@ CACHE_DIR = default_cache_dir()
 # and z-scoring. Players with fewer minutes are kept in the unified table but
 # flagged as below threshold.
 MIN_MINUTES_QUALIFIER = 500
+
+# Rate metrics meaningful for a regular-season vs playoff comparison: each is
+# per-minute or per-possession by construction, so it measures level of play
+# rather than how many games a player accumulated. Cumulative Win Shares and
+# VORP are excluded because their playoff totals mostly track how far a team
+# advanced. Game Score is per-game (minutes-sensitive) and is excluded too.
+PLAYOFF_DELTA_METRICS = ["PER", "WS48", "BPM", "OBPM", "DBPM"]
+
+# Minimum playoff minutes to appear in the riser/faller table. Below this the
+# postseason sample is too small to separate a real shift from noise; it also
+# drops players who barely left the bench in a first-round sweep.
+MIN_PLAYOFF_MINUTES = 150
+
+# Three independent box-score formulations averaged into the composite playoff
+# shift score. OBPM/DBPM are left out (they are the BPM split, so including all
+# three would triple-count the BPM family); they are still reported as the
+# offense/defense breakdown.
+PLAYOFF_SHIFT_FORMULATIONS = ["PER", "WS48", "BPM"]
 
 
 # ── Power-law fit ─────────────────────────────────────────────────────────────
@@ -99,12 +118,19 @@ def _cache(filename: str) -> str:
 
 # ── Recomputed ratings ────────────────────────────────────────────────────────
 
-def _build_recomputed(end_year: int) -> pd.DataFrame:
-    """Compute all box-score recompute ratings for one season."""
-    print(f"  Fetching player totals {season_str(end_year)}...")
-    player_df = fetch_player_season_totals(end_year, REGULAR_SEASON)
-    team_df = fetch_team_season_totals(end_year, REGULAR_SEASON)
-    league = fetch_league_averages(end_year, REGULAR_SEASON)
+def _build_recomputed(end_year: int,
+                      season_type: str = REGULAR_SEASON) -> pd.DataFrame:
+    """Compute all box-score recompute ratings for one season.
+
+    season_type is REGULAR_SEASON or PLAYOFFS. Each rating is normalized within
+    its own season type (PER to a league average of 15, BPM to 0, WS/48 to
+    ~0.100), using that season type's player totals, team totals, and league
+    averages, so a playoff value is comparable to its regular-season twin.
+    """
+    print(f"  Fetching player totals {season_str(end_year)} ({season_type})...")
+    player_df = fetch_player_season_totals(end_year, season_type)
+    team_df = fetch_team_season_totals(end_year, season_type)
+    league = fetch_league_averages(end_year, season_type)
 
     # Merge team totals onto player rows (for USG%, BPM team adjustments)
     team_cols = ["TEAM_ID", "FGA", "FTA", "TOV", "MIN", "GP", "PTS",
@@ -155,6 +181,92 @@ def _build_recomputed(end_year: int) -> pd.DataFrame:
         "QUALIFIED",
     ]
     return p[[c for c in keep_cols if c in p.columns]].copy()
+
+
+# ── Regular-season vs playoff deltas ──────────────────────────────────────────
+
+def _playoff_delta_table(reg: pd.DataFrame, po: pd.DataFrame) -> pd.DataFrame:
+    """Build the regular-vs-playoff delta table from two recomputed frames.
+
+    Pure transform (no I/O): merges the regular-season and playoff recomputes on
+    PLAYER_ID, keeps players with >= MIN_PLAYOFF_MINUTES playoff minutes, and
+    adds <m>_reg, <m>_po, <m>_delta, <m>_delta_adj for each PLAYOFF_DELTA_METRICS
+    metric plus the composite SHIFT_Z. Rows are sorted by SHIFT_Z (risers first).
+    See load_playoff_deltas for the column meanings.
+    """
+    id_cols = ["PLAYER_ID", "PLAYER_NAME", "TEAM_ABBREVIATION"]
+    reg_small = reg[[c for c in id_cols if c in reg.columns]
+                    + ["MIN"] + PLAYOFF_DELTA_METRICS].rename(
+        columns={"MIN": "MIN_reg",
+                 **{m: f"{m}_reg" for m in PLAYOFF_DELTA_METRICS}})
+    po_small = po[["PLAYER_ID", "MIN"] + PLAYOFF_DELTA_METRICS].rename(
+        columns={"MIN": "MIN_po",
+                 **{m: f"{m}_po" for m in PLAYOFF_DELTA_METRICS}})
+
+    df = reg_small.merge(po_small, on="PLAYER_ID", how="inner")
+    df = df[df["MIN_po"] >= MIN_PLAYOFF_MINUTES].copy()
+
+    for m in PLAYOFF_DELTA_METRICS:
+        df[f"{m}_delta"] = df[f"{m}_po"] - df[f"{m}_reg"]
+        pool_shift = df[f"{m}_delta"].mean()
+        df[f"{m}_delta_adj"] = df[f"{m}_delta"] - pool_shift
+
+    # Composite shift score: average the standardized adjusted deltas of three
+    # different box formulations, so a player ranks as a riser only when the
+    # formulations agree (robust to any single metric's scale).
+    z_cols = []
+    for m in PLAYOFF_SHIFT_FORMULATIONS:
+        col = df[f"{m}_delta_adj"]
+        std = col.std()
+        df[f"_z_{m}"] = (col - col.mean()) / std if std > 0 else 0.0
+        z_cols.append(f"_z_{m}")
+    df["SHIFT_Z"] = df[z_cols].mean(axis=1)
+    df = df.drop(columns=z_cols)
+
+    return df.sort_values("SHIFT_Z", ascending=False).reset_index(drop=True)
+
+
+def load_playoff_deltas(end_year: int, *,
+                        force_rebuild: bool = False) -> pd.DataFrame:
+    """Regular-season vs playoff rating deltas for one season.
+
+    Recomputes the box-score rate metrics (PLAYOFF_DELTA_METRICS) for both
+    season types, keeps players with at least MIN_PLAYOFF_MINUTES playoff
+    minutes, and for each metric reports:
+      <m>_reg, <m>_po    the regular-season and playoff value
+      <m>_delta          playoff minus regular (positive = rose in the playoffs)
+      <m>_delta_adj      that delta minus the average delta among the qualified
+                         playoff pool, so a riser is measured against the other
+                         rotation players who also advanced, not against the
+                         whole league. (Each metric is already normalized within
+                         its season type, so this only corrects for the qualified
+                         pool being stronger than league average.)
+      SHIFT_Z            composite riser/faller score: the average of the
+                         standardized adjusted deltas of PER, WS/48, and BPM.
+
+    Rows are sorted by SHIFT_Z (risers first).
+    Cached at cache/playoff_deltas_{season}.csv. Returns an empty DataFrame when
+    the season has no playoff data (e.g. a season still in progress).
+    """
+    path = _cache(f"playoff_deltas_{season_str(end_year)}.csv")
+    if os.path.exists(path) and not force_rebuild:
+        try:
+            return pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            return pd.DataFrame()
+
+    reg = _build_recomputed(end_year, REGULAR_SEASON)
+    po = _build_recomputed(end_year, PLAYOFFS)
+
+    if po.empty:
+        pd.DataFrame().to_csv(path, index=False)
+        return pd.DataFrame()
+
+    df = _playoff_delta_table(reg, po)
+    df.to_csv(path, index=False)
+    print(f"Playoff deltas: {len(df)} players with >= {MIN_PLAYOFF_MINUTES} "
+          f"playoff minutes → {path}")
+    return df
 
 
 # ── Third-party loaders ───────────────────────────────────────────────────────

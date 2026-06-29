@@ -110,3 +110,26 @@ def test_plot_unique_signal(tmp_path):
     unique_r2 = {"PER": 0.12, "WS": 0.08, "BPM": 0.31, "VORP": 0.05}
     path = plots.plot_unique_signal(unique_r2)
     assert os.path.exists(path)
+
+
+def _mini_deltas(n: int = 24) -> pd.DataFrame:
+    rng = np.random.default_rng(7)
+    df = pd.DataFrame({
+        "PLAYER_NAME": [f"Player {i}" for i in range(1, n + 1)],
+        "TEAM_ABBREVIATION": rng.choice(["AAA", "BBB", "CCC"], size=n),
+        "PER_delta_adj": rng.normal(0, 3, n),
+        "SHIFT_Z": rng.normal(0, 1, n),
+    })
+    return df
+
+
+def test_plot_playoff_shift(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_playoff_shift(_mini_deltas(), top_n=5)
+    assert os.path.exists(path)
+
+
+def test_plot_playoff_shift_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_playoff_shift(pd.DataFrame())
+    assert os.path.exists(path)

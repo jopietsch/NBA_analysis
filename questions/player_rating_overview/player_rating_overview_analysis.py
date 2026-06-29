@@ -11,7 +11,10 @@ from scipy import stats
 
 from player_rating_overview_data import (
     load_unified_ratings,
+    load_playoff_deltas,
     MIN_MINUTES_QUALIFIER,
+    MIN_PLAYOFF_MINUTES,
+    PLAYOFF_DELTA_METRICS,
     powerlaw_fit,
     POWERLAW_R2_THRESHOLD,
 )
@@ -461,6 +464,65 @@ def run(end_year: int = 2025) -> None:
                       note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} player vs consensus")
             FACTS.set(f"discounts.{s}.{rank}.diff", float(row.get("_res", 0)), "{:.2f}",
                       note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} residual vs consensus (negative)")
+
+    header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
+    deltas = load_playoff_deltas(end_year)
+    if deltas.empty:
+        print("  No playoff data available for this season — section skipped.")
+    else:
+        n_qual = len(deltas)
+        metric_list = ", ".join(SYSTEM_LABELS.get(m, m) for m in PLAYOFF_DELTA_METRICS)
+        print(f"Players with >= {MIN_PLAYOFF_MINUTES} playoff minutes: {n_qual}")
+        print(f"Rate metrics compared (each normalized within its season type): {metric_list}")
+        print("Delta = playoff minus regular season. 'adj' subtracts the average delta")
+        print("among this qualified pool, so a riser is measured against the other")
+        print("rotation players who also advanced. The composite shift z averages the")
+        print("standardized adjusted deltas of PER, WS/48, and BPM, so a riser needs the")
+        print("three box formulations to agree.")
+        print("Note: this project's BPM scale is approximate; the rankings carry the")
+        print("signal, not the raw BPM points.")
+        FACTS.set("playoff.n_qualified", n_qual, "{:d}",
+                  note=f"players with >= {MIN_PLAYOFF_MINUTES} playoff minutes")
+        FACTS.set("playoff.min_floor", MIN_PLAYOFF_MINUTES, "{:d}",
+                  note="minimum playoff minutes to enter the riser/faller pool")
+
+        risers = deltas.nlargest(10, "SHIFT_Z")
+        fallers = deltas.nsmallest(10, "SHIFT_Z")
+
+        def _line(rank, row):
+            # PER is the one metric on a trustworthy real scale (normalized to a
+            # league average of 15), shown alongside the composite z.
+            return (f"  {rank:>2}. {row['PLAYER_NAME']:<26} "
+                    f"{row.get('TEAM_ABBREVIATION', ''):>3}  "
+                    f"shift z = {row['SHIFT_Z']:+.2f}  "
+                    f"(PER {row['PER_delta_adj']:+.1f} vs regular season)")
+
+        print("\nBiggest playoff RISERS (raised their level above their regular-season form):")
+        for rank, (_, row) in enumerate(risers.iterrows(), 1):
+            print(_line(rank, row))
+            if rank <= 3:
+                FACTS.set(f"playoff.riser.{rank}.name", str(row["PLAYER_NAME"]),
+                          note=f"playoff riser rank {rank} (composite shift)")
+                FACTS.set(f"playoff.riser.{rank}.z", float(row["SHIFT_Z"]), "{:.2f}",
+                          note=f"playoff riser rank {rank} composite shift z")
+
+        print("\nBiggest playoff FALLERS (dropped below their regular-season form):")
+        for rank, (_, row) in enumerate(fallers.iterrows(), 1):
+            print(_line(rank, row))
+            if rank <= 3:
+                FACTS.set(f"playoff.faller.{rank}.name", str(row["PLAYER_NAME"]),
+                          note=f"playoff faller rank {rank} (composite shift)")
+                FACTS.set(f"playoff.faller.{rank}.z", float(row["SHIFT_Z"]), "{:.2f}",
+                          note=f"playoff faller rank {rank} composite shift z")
+
+        top_riser = str(risers.iloc[0]["PLAYER_NAME"])
+        top_faller = str(fallers.iloc[0]["PLAYER_NAME"])
+        FACTS.guard("playoff_top_riser_positive",
+                    float(risers.iloc[0]["SHIFT_Z"]) > 0,
+                    f"the top playoff riser ({top_riser}) gained on the pool", top_riser)
+        FACTS.guard("playoff_top_faller_negative",
+                    float(fallers.iloc[0]["SHIFT_Z"]) < 0,
+                    f"the top playoff faller ({top_faller}) lost ground on the pool", top_faller)
 
     # Dump all facts and guards to docs/ (+ the dev facts-reference lookup table)
     FACTS.dump(_FACTS_PATH)

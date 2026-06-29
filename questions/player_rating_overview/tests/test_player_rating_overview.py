@@ -316,3 +316,42 @@ def test_powerlaw_fit_drops_nonpositive_tail():
 def test_powerlaw_fit_too_few_points_returns_none():
     from player_rating_overview_data import powerlaw_fit
     assert powerlaw_fit(np.array([3.0, 2.0, -1.0]), top_n=50) is None
+
+
+# ── Regular-season vs playoff deltas ──────────────────────────────────────────
+
+def _recompute_frame(player_ids, mins, per, ws48, bpm, obpm, dbpm):
+    return pd.DataFrame({
+        "PLAYER_ID": player_ids,
+        "PLAYER_NAME": [f"P{i}" for i in player_ids],
+        "TEAM_ABBREVIATION": ["AAA"] * len(player_ids),
+        "MIN": mins,
+        "PER": per, "WS48": ws48, "BPM": bpm, "OBPM": obpm, "DBPM": dbpm,
+    })
+
+
+def test_playoff_delta_table_basic():
+    from player_rating_overview_data import _playoff_delta_table, MIN_PLAYOFF_MINUTES
+    ids = [1, 2, 3, 4]
+    reg = _recompute_frame(ids, [2000, 2000, 2000, 2000],
+                           per=[15, 12, 18, 14], ws48=[.10, .08, .12, .09],
+                           bpm=[0, -2, 4, 1], obpm=[0, -1, 2, 0], dbpm=[0, -1, 2, 1])
+    # Player 1 rises across the board; player 4 has too few playoff minutes.
+    po = _recompute_frame(ids, [400, 400, 400, MIN_PLAYOFF_MINUTES - 1],
+                          per=[20, 11, 18, 30], ws48=[.14, .07, .12, .30],
+                          bpm=[6, -3, 4, 30], obpm=[3, -2, 2, 15], dbpm=[3, -1, 2, 15])
+    out = _playoff_delta_table(reg, po)
+
+    # Player 4 is filtered out by the minutes floor.
+    assert set(out["PLAYER_ID"]) == {1, 2, 3}
+    # Raw delta is playoff minus regular.
+    row1 = out[out["PLAYER_ID"] == 1].iloc[0]
+    assert row1["PER_delta"] == pytest.approx(5.0)
+    assert row1["BPM_delta"] == pytest.approx(6.0)
+    # Adjusted delta removes the pool mean, so it sums to ~0 across the pool.
+    assert out["PER_delta_adj"].mean() == pytest.approx(0.0, abs=1e-9)
+    # Composite is a z-score average, centered at ~0 across the pool.
+    assert out["SHIFT_Z"].mean() == pytest.approx(0.0, abs=1e-9)
+    # Rows sorted by SHIFT_Z, risers first; player 1 rose the most.
+    assert out.iloc[0]["PLAYER_ID"] == 1
+    assert out["SHIFT_Z"].is_monotonic_decreasing

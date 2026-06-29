@@ -286,6 +286,41 @@ VORP discounts (vs. consensus):
   -1.18  Zion Williamson
   -1.11  Mark Williams
   -1.00  Aaron Gordon
+
+─── REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS) ─────────────
+Players with >= 150 playoff minutes: 96
+Rate metrics compared (each normalized within its season type): PER, WS/48, BPM, OBPM, DBPM
+Delta = playoff minus regular season. 'adj' subtracts the average delta
+among this qualified pool, so a riser is measured against the other
+rotation players who also advanced. The composite shift z averages the
+standardized adjusted deltas of PER, WS/48, and BPM, so a riser needs the
+three box formulations to agree.
+Note: this project's BPM scale is approximate; the rankings carry the
+signal, not the raw BPM points.
+
+Biggest playoff RISERS (raised their level above their regular-season form):
+   1. Gary Trent Jr.             MIL  shift z = +2.27  (PER +8.2 vs regular season)
+   2. Kawhi Leonard              LAC  shift z = +2.18  (PER +6.1 vs regular season)
+   3. Paolo Banchero             ORL  shift z = +1.58  (PER +2.5 vs regular season)
+   4. Donovan Mitchell           CLE  shift z = +1.54  (PER +7.0 vs regular season)
+   5. LeBron James               LAL  shift z = +1.38  (PER +3.6 vs regular season)
+   6. Giannis Antetokounmpo      MIL  shift z = +1.34  (PER +2.8 vs regular season)
+   7. Max Strus                  CLE  shift z = +1.29  (PER +4.9 vs regular season)
+   8. Buddy Hield                GSW  shift z = +1.19  (PER +3.4 vs regular season)
+   9. Nicolas Batum              LAC  shift z = +1.07  (PER +3.7 vs regular season)
+  10. Dennis Schröder            DET  shift z = +1.05  (PER +4.4 vs regular season)
+
+Biggest playoff FALLERS (dropped below their regular-season form):
+   1. Michael Porter Jr.         DEN  shift z = -1.74  (PER -7.0 vs regular season)
+   2. Austin Reaves              LAL  shift z = -1.74  (PER -6.1 vs regular season)
+   3. Miles McBride              NYK  shift z = -1.35  (PER -3.3 vs regular season)
+   4. Nikola Jokić               DEN  shift z = -1.35  (PER -6.4 vs regular season)
+   5. Kristaps Porziņģis         BOS  shift z = -1.24  (PER -8.4 vs regular season)
+   6. Thomas Bryant              IND  shift z = -1.23  (PER -5.0 vs regular season)
+   7. Payton Pritchard           BOS  shift z = -1.16  (PER -2.7 vs regular season)
+   8. Draymond Green             GSW  shift z = -1.13  (PER -2.4 vs regular season)
+   9. Ty Jerome                  CLE  shift z = -1.11  (PER -3.6 vs regular season)
+  10. Mike Conley                MIN  shift z = -1.11  (PER -2.7 vs regular season)
 Saved → docs/player_rating_overview_facts_reference.md
 
 ```

@@ -29,6 +29,16 @@
     "ok": true,
     "value": 0.8314650130845375
   },
+  "playoff_top_faller_negative": {
+    "claim": "the top playoff faller (Michael Porter Jr.) lost ground on the pool",
+    "ok": true,
+    "value": "Michael Porter Jr."
+  },
+  "playoff_top_riser_positive": {
+    "claim": "the top playoff riser (Gary Trent Jr.) gained on the pool",
+    "ok": true,
+    "value": "Gary Trent Jr."
+  },
   "strong_consensus_wins_corr": {
     "claim": "the two ratings agree very closely (r > 0.95)",
     "ok": true,

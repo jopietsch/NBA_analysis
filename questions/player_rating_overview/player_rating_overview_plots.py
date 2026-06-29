@@ -806,3 +806,57 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
                  fontsize=12, color="#222", y=1.01)
     fig.tight_layout()
     return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart: regular-season vs playoff risers and fallers ──────────────────────
+
+def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:
+    """Diverging bar chart of the biggest playoff risers and fallers.
+
+    Expects the frame from load_playoff_deltas(), which carries the composite
+    SHIFT_Z column. Shows the top_n risers (green) and top_n fallers (red) by
+    that score. The bar length is the composite shift z; the players who agreed
+    across PER, WS/48, and BPM the most sit at the ends.
+    """
+    if deltas is None or deltas.empty or "SHIFT_Z" not in deltas.columns:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No playoff data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("playoff_shift.svg", OUTPUT_DIR, fig=fig)
+
+    risers = deltas.nlargest(top_n, "SHIFT_Z")
+    fallers = deltas.nsmallest(top_n, "SHIFT_Z")
+    sel = pd.concat([fallers, risers]).drop_duplicates(subset="PLAYER_NAME")
+    sel = sel.sort_values("SHIFT_Z")
+
+    names = sel["PLAYER_NAME"].tolist()
+    teams = sel.get("TEAM_ABBREVIATION", pd.Series([""] * len(sel))).tolist()
+    vals = sel["SHIFT_Z"].tolist()
+    colors = [GREEN if v > 0 else RED for v in vals]
+
+    fig, ax = plt.subplots(figsize=(7.5, max(5, len(sel) * 0.34)), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    y = np.arange(len(sel))
+    ax.barh(y, vals, color=colors, alpha=0.85, zorder=3)
+    ax.axvline(0, color="#444", linewidth=0.9, zorder=4)
+
+    ax.set_yticks(y)
+    ax.set_yticklabels([f"{n}  ({t})" if t else n for n, t in zip(names, teams)],
+                       fontsize=8)
+    ax.set_xlabel("Composite playoff shift (z-score; agreement of PER, WS/48, BPM)",
+                  fontsize=9, color=GRAY)
+    ax.set_title(
+        "Who rose and who fell in the 2024-25 playoffs",
+        fontsize=12, color="#222", pad=24
+    )
+    ax.text(0.5, 1.01,
+            "Box-score rate metrics, playoff vs regular season, "
+            "players with 150+ playoff minutes",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+    fig.tight_layout()
+    return save_chart("playoff_shift.svg", OUTPUT_DIR, fig=fig)
