@@ -12,7 +12,7 @@
 
 Every "top players" list puts names in order. But ordinal rank is a compression: the gap between the best player in the league and the tenth-best is not the same as the gap between the tenth and the twentieth. The numbers beneath the ranks tell a different story than the ranks themselves.
 
-This report surveys how NBA players get rated, compares what each system actually measures, and builds two combined ratings designed to answer two different questions: what do all the systems agree on, and which combination of them best explains which teams win? It also grades the systems one at a time, by how well each rebuilds which teams outscored their opponents and how well last season's ratings forecast this one, and recomputes the box-score metrics for the playoffs to show who rose and who fell.
+This report surveys how NBA players get rated, compares what each system actually measures, and builds two combined ratings designed to answer two different questions: what do all the systems agree on, and which combination of them best explains which teams win? It also grades the systems one at a time, by how well each rebuilds which teams outscored their opponents, how well last season's ratings forecast this one, and how steady each rating is from one season to the next, and recomputes the box-score metrics for the playoffs to show who rose and who fell.
 
 The testbed is the 2024-25 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP. The lineup-based impact metrics and human rankings described next are surveyed as part of the landscape, but are not recomputed or included in the comparison here. The architecture extends to earlier seasons, and to those other systems, as data allows.
 
@@ -106,6 +106,14 @@ One pair of seasons could be a fluke, so we ran the same two tests on every seas
 
 ![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over << f("panel.n_seasons") >> seasons and << f("panel.n_pairs") >> season-pairs. Whiskers span the season-to-season range. PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
 
+### Which ratings hold steady year to year
+
+There is a third way to judge a rating: how much a player's own number carries from one season to the next. Match the players who logged real minutes in back-to-back seasons, and ask how many of the top << f("stability.top_n") >> by each system one year are still in the top << f("stability.top_n") >> the next. The simplest box scores are the stickiest. << f("stability.top_retention.name") >> keeps << f("stability.GAME_SCORE.retention_pct") >>% of its top << f("stability.top_n") >> from one year to the next, and PER keeps << f("stability.PER.retention_pct") >>%, against a chance level near << f("stability.chance_pct") >>%. On a 0-to-1 stickiness scale, where 1 would mean a player's rating repeats exactly, << f("stability.most_stable.name") >> is the steadiest at << f("stability.most_stable.corr") >> and << f("stability.least_stable.name") >> the jumpiest at << f("stability.least_stable.corr") >>, pooled over << f("stability.n_pairs") >> season-to-season handoffs.
+
+Stickiness is not the same as quality. A rating can repeat year to year because it captures a real, lasting skill or because it is slow to notice a player changing. What stands out is how this lens cuts against the forecasting one. PER is among the stickiest individual ratings yet one of the weakest forecasters of team results; BPM is the jumpiest yet forecasts team point differential better than PER does. The plain reading is that the box-score rate metrics measure a stable individual trait, the scoring and production a player carries with them, while the plus/minus metrics move around more because they fold in team and role, the very context that helps them forecast a team. Only << f("stability.most_stable.name") >> sits near the top of both lists, steady and predictive at once.
+
+![Left: how much a player's rating carries from one season to the next, on a 0-to-1 scale. Right: the share of each system's top << f("stability.top_n") >> who are still top << f("stability.top_n") >> the next season, with the chance level marked. Pooled over << f("stability.n_pairs") >> season-pairs among players who qualified in both.](../generated/images/rating_stability.svg){#fig-rating-stability}
+
 ## 5. What each system uniquely sees
 
 Not all systems add independent information. Measuring what each one adds beyond the others shows the eight box-score systems overlap heavily: most of what any single system says can be rebuilt from the rest. Offensive and Defensive BPM are the clearest case, since regular BPM is just their sum, so once you have two of the three the third tells you nothing new. Win Shares and WS/48 hold the most signal of their own, but even they share the large majority of their ranking with the field. The eight are closer to several views of one underlying thing than to eight independent opinions (see results for the full breakdown).
@@ -194,7 +202,7 @@ The same inflation affects other high-steal defenders in 2024-25: Keon Ellis (12
 
 ## 11. Limitations
 
-The cross-system comparison (rank agreement, the two combined ratings, the playoff risers and fallers) is built on the 2024-25 season alone. The describe-versus-forecast test reaches further: it now runs across << f("panel.n_seasons") >> seasons back to << f("panel.first_season") >>. Player-level stability (do the same names rate highly season after season?) uses the same multi-season cache but is not yet built, and is a natural next step.
+The cross-system comparison (rank agreement, the two combined ratings, the playoff risers and fallers) is built on the 2024-25 season alone. Two tests reach further, both across << f("panel.n_seasons") >> seasons back to << f("panel.first_season") >>: the describe-versus-forecast panel and the year-over-year stability of each rating. Extending the cross-system comparison itself across all those seasons, rather than the single testbed year, is the natural next step.
 
 The crosswalk matching rate for each third-party source is reported in `docs/player_rating_overview_results.md`. Players who could not be matched are listed there; they are excluded from the cross-system comparison but retained in the unified table.
 

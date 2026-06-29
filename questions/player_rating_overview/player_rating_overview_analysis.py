@@ -371,6 +371,63 @@ def panel_retrodiction(start_year: int, end_year: int,
             "seasons": seasons, "pairs": pairs}
 
 
+# "Elite tier" size for the year-over-year retention measure: of the top-N
+# players by a system one season, how many are still top-N the next.
+STABILITY_TOP_N = 20
+
+
+def rating_stability(start_year: int, end_year: int,
+                     systems: list[str] | None = None,
+                     top_n: int = STABILITY_TOP_N) -> dict:
+    """Year-over-year persistence of each system's player ratings.
+
+    For every consecutive season-pair in [start_year, end_year], match players
+    who qualified (>= MIN_MINUTES_QUALIFIER minutes) in BOTH seasons and, per
+    system, record two things: the correlation between a player's rating one
+    season and the next (reliability, scale-free so league drift cancels), and
+    the share of the top-`top_n` players one season still in the top-`top_n` the
+    next (elite-tier retention). Reads only the cached unified tables, so it
+    makes no network calls. Returns {"corr": {sys: [r, ...]},
+    "retention": {sys: [share, ...]}, "pairs": [(y, y+1), ...]}.
+    """
+    systems = systems or PANEL_SYSTEMS
+    corr: dict[str, list[float]] = {s: [] for s in systems}
+    retention: dict[str, list[float]] = {s: [] for s in systems}
+    pairs: list[tuple[int, int]] = []
+
+    _cache: dict[int, pd.DataFrame] = {}
+
+    def _load(y: int) -> pd.DataFrame:
+        if y not in _cache:
+            _cache[y] = load_unified_ratings(y)
+        return _cache[y]
+
+    for y in range(start_year, end_year):
+        a, b = _load(y), _load(y + 1)
+        if a.empty or b.empty or "player_id" not in a.columns or "player_id" not in b.columns:
+            continue
+        qa = a[a["QUALIFIED"] == True] if "QUALIFIED" in a.columns else a
+        qb = b[b["QUALIFIED"] == True] if "QUALIFIED" in b.columns else b
+        had_pair = False
+        for s in systems:
+            if s not in qa.columns or s not in qb.columns:
+                continue
+            left = qa[["player_id", s]].dropna().rename(columns={s: "a"})
+            right = qb[["player_id", s]].dropna().rename(columns={s: "b"})
+            m = left.merge(right, on="player_id")
+            if len(m) >= 10 and m["a"].std() > 0 and m["b"].std() > 0:
+                corr[s].append(float(np.corrcoef(m["a"], m["b"])[0, 1]))
+                had_pair = True
+            if len(left) >= top_n and len(right) >= top_n:
+                top_a = set(left.nlargest(top_n, "a")["player_id"])
+                top_b = set(right.nlargest(top_n, "b")["player_id"])
+                retention[s].append(len(top_a & top_b) / top_n)
+        if had_pair:
+            pairs.append((y, y + 1))
+
+    return {"corr": corr, "retention": retention, "pairs": pairs}
+
+
 def _unique_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
     """For each system, estimate unique variance it explains beyond the others.
 
@@ -841,6 +898,77 @@ def run(end_year: int = 2025) -> None:
                         d_means["PER"] > f_means["PER"],
                         "across the full panel PER describes better than it forecasts",
                         d_means["PER"] - f_means["PER"])
+
+    header("PLAYER RATING STABILITY (YEAR OVER YEAR)")
+    print("A different lens: not how well a rating predicts team results, but how")
+    print("much a player's own rating carries from one season to the next. For every")
+    print(f"pair of seasons, players who qualified ({MIN_MINUTES_QUALIFIER}+ minutes) in both are")
+    print("matched, and each system gets two numbers: the correlation between a")
+    print("player's rating this season and next (1.0 = perfectly sticky, 0 = a coin")
+    print(f"flip), and the share of the top {STABILITY_TOP_N} one season still in the top")
+    print(f"{STABILITY_TOP_N} the next. Stability is persistence, not quality: a rating can be")
+    print("sticky because it tracks a real, lasting trait or because it is slow to")
+    print("move. These box scores also share inputs (points, rebounds, assists), so")
+    print("some of the shared stickiness is mechanical.")
+    stab = rating_stability(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)
+    corr_means = {s: float(np.mean(v)) for s, v in stab["corr"].items() if v}
+    ret_means = {s: float(np.mean(v)) for s, v in stab["retention"].items() if v}
+    if corr_means:
+        n_pairs = len(stab["pairs"])
+        chance = STABILITY_TOP_N / len(qual) if len(qual) else float("nan")
+        FACTS.set("stability.n_pairs", n_pairs, "{:d}",
+                  note="consecutive season-pairs in the stability panel")
+        FACTS.set("stability.top_n", STABILITY_TOP_N, "{:d}",
+                  note="elite-tier size for the year-over-year retention measure")
+        FACTS.set("stability.chance_pct", chance * 100, "{:.0f}",
+                  note="chance-level top-N retention (top-N / qualified pool), percent")
+        ranked = sorted(corr_means.items(), key=lambda kv: -kv[1])
+        print(f"\n  {'system':<16}{'year-to-year':>14}{'top-' + str(STABILITY_TOP_N) + ' kept':>14}")
+        for s, cm in ranked:
+            rm = ret_means.get(s, float("nan"))
+            c_lo, c_hi = min(stab["corr"][s]), max(stab["corr"][s])
+            print(f"  {SYSTEM_LABELS.get(s, s):<16}{cm:>9.3f} [{c_lo:.2f},{c_hi:.2f}]"
+                  f"{rm * 100:>10.0f}%")
+            FACTS.set(f"stability.{s}.corr", cm, "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} year-over-year rating correlation (mean across pairs)")
+            FACTS.set(f"stability.{s}.retention_pct", rm * 100, "{:.0f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} top-{STABILITY_TOP_N} retention, percent (append % in prose)")
+
+        most, least = ranked[0], ranked[-1]
+        most_label = SYSTEM_LABELS.get(most[0], most[0])
+        least_label = SYSTEM_LABELS.get(least[0], least[0])
+        ret_top = max(ret_means.items(), key=lambda kv: kv[1])
+        ret_top_label = SYSTEM_LABELS.get(ret_top[0], ret_top[0])
+        print(f"\nSteadiest year to year: {most_label} (corr {most[1]:.2f}). "
+              f"Jumpiest: {least_label} (corr {least[1]:.2f}).")
+        print(f"Best at keeping the same names in the top {STABILITY_TOP_N}: "
+              f"{ret_top_label} ({ret_top[1] * 100:.0f}%), "
+              f"against a chance level near {chance * 100:.0f}%.")
+        FACTS.set("stability.most_stable.name", str(most_label),
+                  note="system with the highest year-over-year rating correlation")
+        FACTS.set("stability.most_stable.corr", float(most[1]), "{:.2f}",
+                  note="highest year-over-year rating correlation")
+        FACTS.set("stability.least_stable.name", str(least_label),
+                  note="system with the lowest year-over-year rating correlation")
+        FACTS.set("stability.least_stable.corr", float(least[1]), "{:.2f}",
+                  note="lowest year-over-year rating correlation")
+        FACTS.set("stability.top_retention.name", str(ret_top_label),
+                  note="system that best keeps the same names in its top tier year to year")
+
+        # Guards. Stability and forecasting are different axes: the steadiest
+        # individual rating is not automatically the best team forecaster, and
+        # PER (very sticky) is not the jumpiest even though it forecasts worst.
+        FACTS.guard("stability_min_retention_beats_chance",
+                    min(ret_means.values()) > 4 * chance,
+                    "even the lowest elite-tier retention is several times the "
+                    "chance level: every system's top tier is far stickier than random",
+                    min(ret_means.values()))
+        if "PER" in corr_means and "BPM" in corr_means:
+            FACTS.guard("stability_per_stickier_than_bpm",
+                        corr_means["PER"] > corr_means["BPM"],
+                        "PER is more stable year to year than BPM, the opposite of their "
+                        "forecasting order",
+                        corr_means["PER"] - corr_means["BPM"])
 
     header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
     deltas = load_playoff_deltas(end_year)

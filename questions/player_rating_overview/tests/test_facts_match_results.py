@@ -27,9 +27,13 @@ _RESULTS = os.path.join(_DOCS, "player_rating_overview_results.md")
 # in results.md's "Rating systems present: 8" line.
 # powerlaw.n_systems: same single-digit-integer case (5 of 8 systems fit a power
 # law); the count is reported in words in the section, not as a decimal.
+# stability.chance_pct: the chance-level top-N retention (~5%) is printed rounded
+# to a bare "5%", and the single digit "5" is filtered by _candidates while the
+# stored float (5.3) has no verbatim ".3" form in results.md.
 ALLOW_ABSENT: set[str] = {
     "cov.n_systems",
     "powerlaw.n_systems",
+    "stability.chance_pct",
 }
 
 

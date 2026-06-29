@@ -984,6 +984,76 @@ def plot_panel_describe_vs_forecast(panel: dict) -> str:
     return save_chart("panel_describe_vs_forecast.svg", OUTPUT_DIR, fig=fig)
 
 
+def plot_rating_stability(stab: dict, top_n: int = 20, chance: float | None = None) -> str:
+    """Two panels of year-over-year stability, one bar per box-score system.
+
+    `stab` is the dict from analysis.rating_stability: {"corr": {sys: [r,...]},
+    "retention": {sys: [share,...]}, "pairs": [...]}. Left panel is each
+    system's average season-to-season rating correlation (whiskers span the
+    pair-to-pair range); right panel is the share of its top-`top_n` players who
+    stay top-`top_n` the next season, with a dashed line at the chance level.
+    Systems are sorted by correlation, steadiest on top.
+    """
+    corr, ret = stab.get("corr", {}), stab.get("retention", {})
+    systems = [s for s in corr if corr[s] and ret.get(s)]
+    if not systems:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No stability data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("rating_stability.svg", OUTPUT_DIR, fig=fig)
+
+    c_mean = {s: float(np.mean(corr[s])) for s in systems}
+    systems.sort(key=lambda s: c_mean[s])  # ascending so steadiest ends on top
+    labels = [SYSTEM_LABELS.get(s, s) for s in systems]
+    cm = [c_mean[s] for s in systems]
+    c_err = [[m - min(corr[s]) for s, m in zip(systems, cm)],
+             [max(corr[s]) - m for s, m in zip(systems, cm)]]
+    rm = [float(np.mean(ret[s])) for s in systems]
+    y = np.arange(len(systems))
+
+    fig, (axc, axr) = plt.subplots(
+        1, 2, figsize=(10, max(3.5, len(systems) * 0.55)),
+        facecolor=BG, sharey=True)
+    for ax in (axc, axr):
+        ax.set_facecolor(PANEL)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+
+    axc.barh(y, cm, color=BLUE, alpha=0.9, xerr=c_err, ecolor=GRAY,
+             capsize=3, error_kw={"linewidth": 0.8}, zorder=3)
+    axc.set_yticks(y)
+    axc.set_yticklabels(labels, fontsize=9)
+    axc.set_xlim(0, 1)
+    axc.set_xlabel("year-to-year rating correlation", fontsize=8.5, color=GRAY)
+    axc.set_title("How sticky each rating is", fontsize=10, color="#222")
+    axc.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+    axr.barh(y, [v * 100 for v in rm], color=GRAY, alpha=0.85, zorder=3)
+    axr.set_xlim(0, 100)
+    axr.set_xlabel(f"top-{top_n} players kept the next season (%)", fontsize=8.5, color=GRAY)
+    axr.set_title(f"Same names in the top {top_n}", fontsize=10, color="#222")
+    axr.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+    if chance is not None:
+        axr.axvline(chance * 100, color=RED, linestyle="--", linewidth=1, zorder=4)
+        axr.text(chance * 100 + 1.5, len(systems) - 0.4, "chance",
+                 color=RED, fontsize=7.5, va="center")
+
+    prs = stab.get("pairs", [])
+    n_pairs = len(prs)
+    span = ""
+    if prs:
+        first, last = min(p[0] for p in prs), max(p[1] for p in prs)
+        span = f" ({first - 1}-{str(first)[-2:]} to {last - 1}-{str(last)[-2:]})"
+    fig.suptitle("Simple box scores are the steadiest player ratings season to season",
+                 fontsize=11.5, color="#222", x=0.5, y=1.0)
+    fig.text(0.5, 0.965,
+             f"Across {n_pairs} season-pairs{span}, among players who qualified in "
+             f"both. Whiskers span the pair-to-pair range",
+             ha="center", va="bottom", fontsize=7.5, color=GRAY)
+    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    return save_chart("rating_stability.svg", OUTPUT_DIR, fig=fig)
+
+
 # ── Chart: regular-season vs playoff risers and fallers ──────────────────────
 
 def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:

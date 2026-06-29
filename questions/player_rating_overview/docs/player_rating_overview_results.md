@@ -365,6 +365,31 @@ PER averages 0.64 describing but only 0.25 forecasting,
 the same collapse the single pair showed, now seen across 29 pairs.
 BPM forecasts better than PER in 20 of 29 pairs.
 
+─── PLAYER RATING STABILITY (YEAR OVER YEAR) ────────────────────
+A different lens: not how well a rating predicts team results, but how
+much a player's own rating carries from one season to the next. For every
+pair of seasons, players who qualified (500+ minutes) in both are
+matched, and each system gets two numbers: the correlation between a
+player's rating this season and next (1.0 = perfectly sticky, 0 = a coin
+flip), and the share of the top 20 one season still in the top
+20 the next. Stability is persistence, not quality: a rating can be
+sticky because it tracks a real, lasting trait or because it is slow to
+move. These box scores also share inputs (points, rebounds, assists), so
+some of the shared stickiness is mechanical.
+
+  system            year-to-year   top-20 kept
+  Game Score          0.847 [0.81,0.89]        68%
+  DBPM                0.806 [0.71,0.86]        40%
+  PER                 0.803 [0.76,0.85]        64%
+  WS/48               0.796 [0.69,0.86]        47%
+  OBPM                0.746 [0.63,0.81]        56%
+  Win Shares          0.722 [0.65,0.79]        53%
+  VORP                0.710 [0.55,0.79]        49%
+  BPM                 0.697 [0.59,0.76]        50%
+
+Steadiest year to year: Game Score (corr 0.85). Jumpiest: BPM (corr 0.70).
+Best at keeping the same names in the top 20: Game Score (68%), against a chance level near 5%.
+
 ─── REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS) ─────────────
 Players with >= 150 playoff minutes: 96
 Rate metrics compared (each normalized within its season type): PER, WS/48, BPM, OBPM, DBPM

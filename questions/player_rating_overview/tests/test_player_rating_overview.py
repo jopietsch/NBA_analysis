@@ -476,3 +476,30 @@ def test_panel_retrodiction_pools_describe_and_forecast(monkeypatch):
     assert np.mean(panel["describe"]["GOOD"]) > 0.9
     assert np.mean(panel["forecast"]["GOOD"]) > 0.9
     assert np.mean(panel["forecast"]["GOOD"]) > np.mean(panel["forecast"]["NOISE"])
+
+
+def _stability_season(seed, stable_skill):
+    """One season: STABLE equals a fixed per-player skill, NOISE is random."""
+    rng = np.random.default_rng(seed)
+    return pd.DataFrame([
+        {"player_id": pid, "MIN": 1500, "QUALIFIED": True,
+         "STABLE": float(stable_skill[pid]), "NOISE": rng.normal()}
+        for pid in range(20)
+    ])
+
+
+def test_rating_stability_persistent_vs_noise(monkeypatch):
+    import player_rating_overview_analysis as A
+    skill = np.arange(20, dtype=float)  # identical every season
+    seasons = {y: _stability_season(y, skill) for y in (2021, 2022, 2023)}
+    monkeypatch.setattr(A, "load_unified_ratings", lambda y, **k: seasons[y])
+
+    st = A.rating_stability(2021, 2023, ["STABLE", "NOISE"], top_n=5)
+
+    assert st["pairs"] == [(2021, 2022), (2022, 2023)]
+    # A rating fixed to player skill repeats exactly; a random one does not.
+    assert np.mean(st["corr"]["STABLE"]) > 0.99
+    assert np.mean(st["corr"]["STABLE"]) > np.mean(st["corr"]["NOISE"])
+    # The same five players stay in the top five every year for STABLE.
+    assert np.mean(st["retention"]["STABLE"]) == pytest.approx(1.0)
+    assert np.mean(st["retention"]["STABLE"]) > np.mean(st["retention"]["NOISE"])

@@ -45,6 +45,7 @@ def main() -> None:
         plot_retrodiction,
         plot_next_season_retrodiction,
         plot_panel_describe_vs_forecast,
+        plot_rating_stability,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -56,6 +57,8 @@ def main() -> None:
         retrodiction_scores,
         next_season_retrodiction,
         panel_retrodiction,
+        rating_stability,
+        STABILITY_TOP_N,
         PANEL_SYSTEMS,
         PANEL_START_YEAR,
         PANEL_END_YEAR,
@@ -110,6 +113,11 @@ def main() -> None:
     # Pooled describe-vs-forecast across every cached season-pair
     panel = panel_retrodiction(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)
     plot_panel_describe_vs_forecast(panel)
+
+    # Year-over-year player-rating stability across every cached season-pair
+    stab = rating_stability(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)
+    _chance = STABILITY_TOP_N / len(qual) if len(qual) else None
+    plot_rating_stability(stab, top_n=STABILITY_TOP_N, chance=_chance)
 
     # Regular-season vs playoff risers/fallers
     plot_playoff_shift(load_playoff_deltas(end_year))

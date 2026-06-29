@@ -69,6 +69,16 @@
     "ok": true,
     "value": "Gary Trent Jr."
   },
+  "stability_min_retention_beats_chance": {
+    "claim": "even the lowest elite-tier retention is several times the chance level: every system's top tier is far stickier than random",
+    "ok": true,
+    "value": 0.3982758620689655
+  },
+  "stability_per_stickier_than_bpm": {
+    "claim": "PER is more stable year to year than BPM, the opposite of their forecasting order",
+    "ok": true,
+    "value": 0.10617415503447025
+  },
   "strong_consensus_wins_corr": {
     "claim": "the two ratings agree very closely (r > 0.95)",
     "ok": true,

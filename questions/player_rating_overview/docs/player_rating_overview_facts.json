@@ -2197,6 +2197,174 @@
     "unit": null,
     "value": "PER"
   },
+  "stability.BPM.corr": {
+    "display": "0.697",
+    "fmt": "{:.3f}",
+    "note": "BPM year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.6969832197921432
+  },
+  "stability.BPM.retention_pct": {
+    "display": "50",
+    "fmt": "{:.0f}",
+    "note": "BPM top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 50.3448275862069
+  },
+  "stability.DBPM.corr": {
+    "display": "0.806",
+    "fmt": "{:.3f}",
+    "note": "DBPM year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.8057089966224619
+  },
+  "stability.DBPM.retention_pct": {
+    "display": "40",
+    "fmt": "{:.0f}",
+    "note": "DBPM top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 39.82758620689655
+  },
+  "stability.GAME_SCORE.corr": {
+    "display": "0.847",
+    "fmt": "{:.3f}",
+    "note": "Game Score year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.8465567834672562
+  },
+  "stability.GAME_SCORE.retention_pct": {
+    "display": "68",
+    "fmt": "{:.0f}",
+    "note": "Game Score top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 68.10344827586205
+  },
+  "stability.OBPM.corr": {
+    "display": "0.746",
+    "fmt": "{:.3f}",
+    "note": "OBPM year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.746040838880209
+  },
+  "stability.OBPM.retention_pct": {
+    "display": "56",
+    "fmt": "{:.0f}",
+    "note": "OBPM top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 56.379310344827594
+  },
+  "stability.PER.corr": {
+    "display": "0.803",
+    "fmt": "{:.3f}",
+    "note": "PER year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.8031573748266134
+  },
+  "stability.PER.retention_pct": {
+    "display": "64",
+    "fmt": "{:.0f}",
+    "note": "PER top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 64.13793103448275
+  },
+  "stability.VORP.corr": {
+    "display": "0.710",
+    "fmt": "{:.3f}",
+    "note": "VORP year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.7095426628793088
+  },
+  "stability.VORP.retention_pct": {
+    "display": "49",
+    "fmt": "{:.0f}",
+    "note": "VORP top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 48.96551724137932
+  },
+  "stability.WS.corr": {
+    "display": "0.722",
+    "fmt": "{:.3f}",
+    "note": "Win Shares year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.7223573003538992
+  },
+  "stability.WS.retention_pct": {
+    "display": "53",
+    "fmt": "{:.0f}",
+    "note": "Win Shares top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 52.93103448275862
+  },
+  "stability.WS48.corr": {
+    "display": "0.796",
+    "fmt": "{:.3f}",
+    "note": "WS/48 year-over-year rating correlation (mean across pairs)",
+    "unit": null,
+    "value": 0.7955716160042124
+  },
+  "stability.WS48.retention_pct": {
+    "display": "47",
+    "fmt": "{:.0f}",
+    "note": "WS/48 top-20 retention, percent (append % in prose)",
+    "unit": null,
+    "value": 46.89655172413793
+  },
+  "stability.chance_pct": {
+    "display": "5",
+    "fmt": "{:.0f}",
+    "note": "chance-level top-N retention (top-N / qualified pool), percent",
+    "unit": null,
+    "value": 5.333333333333334
+  },
+  "stability.least_stable.corr": {
+    "display": "0.70",
+    "fmt": "{:.2f}",
+    "note": "lowest year-over-year rating correlation",
+    "unit": null,
+    "value": 0.6969832197921432
+  },
+  "stability.least_stable.name": {
+    "display": "BPM",
+    "fmt": null,
+    "note": "system with the lowest year-over-year rating correlation",
+    "unit": null,
+    "value": "BPM"
+  },
+  "stability.most_stable.corr": {
+    "display": "0.85",
+    "fmt": "{:.2f}",
+    "note": "highest year-over-year rating correlation",
+    "unit": null,
+    "value": 0.8465567834672562
+  },
+  "stability.most_stable.name": {
+    "display": "Game Score",
+    "fmt": null,
+    "note": "system with the highest year-over-year rating correlation",
+    "unit": null,
+    "value": "Game Score"
+  },
+  "stability.n_pairs": {
+    "display": "29",
+    "fmt": "{:d}",
+    "note": "consecutive season-pairs in the stability panel",
+    "unit": null,
+    "value": 29
+  },
+  "stability.top_n": {
+    "display": "20",
+    "fmt": "{:d}",
+    "note": "elite-tier size for the year-over-year retention measure",
+    "unit": null,
+    "value": 20
+  },
+  "stability.top_retention.name": {
+    "display": "Game Score",
+    "fmt": null,
+    "note": "system that best keeps the same names in its top tier year to year",
+    "unit": null,
+    "value": "Game Score"
+  },
   "tail.BPM.skew": {
     "display": "1.05",
     "fmt": "{:.2f}",

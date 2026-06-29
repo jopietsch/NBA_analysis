@@ -185,3 +185,22 @@ def test_plot_panel_describe_vs_forecast_empty(tmp_path):
     path = plots.plot_panel_describe_vs_forecast(
         {"describe": {}, "forecast": {}, "seasons": [], "pairs": []})
     assert os.path.exists(path)
+
+
+def test_plot_rating_stability(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    stab = {
+        "corr": {"Game Score": [0.85, 0.83, 0.86], "PER": [0.80, 0.78, 0.82],
+                 "BPM": [0.70, 0.68, 0.72]},
+        "retention": {"Game Score": [0.68, 0.70, 0.66], "PER": [0.64, 0.62, 0.66],
+                      "BPM": [0.50, 0.48, 0.52]},
+        "pairs": [(2021, 2022), (2022, 2023), (2023, 2024)],
+    }
+    path = plots.plot_rating_stability(stab, top_n=20, chance=0.05)
+    assert os.path.exists(path)
+
+
+def test_plot_rating_stability_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_rating_stability({"corr": {}, "retention": {}, "pairs": []})
+    assert os.path.exists(path)
