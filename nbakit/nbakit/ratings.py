@@ -444,3 +444,145 @@ def vorp(player_df: pd.DataFrame, games_in_season: int = 82) -> pd.Series:
     total_team_minutes = games_in_season * minutes_per_team_game
     mp_pct = player_df["MIN"] / total_team_minutes
     return (player_df["BPM"] - replacement_level) * mp_pct * games_in_season
+
+
+# ── RAPM (Regularized Adjusted Plus-Minus) ────────────────────────────────────
+
+def rapm(
+    possessions_df: pd.DataFrame,
+    *,
+    alphas=None,
+    cv: int = 5,
+) -> pd.DataFrame:
+    """Regularized Adjusted Plus-Minus via ridge regression with cross-validated penalty.
+
+    Returns a DataFrame indexed by player_id with columns RAPM, O_RAPM, D_RAPM.
+
+    Sign convention:
+      O_RAPM > 0  — player's offense adds points above average.
+      D_RAPM > 0  — player's defense prevents points (good defender).
+      RAPM = O_RAPM + D_RAPM.
+
+    Input schema (possessions_df):
+      One row per possession. Two accepted formats for the ten players on court:
+
+      Format A (list columns):
+        off_player_ids  — list of 5 player IDs on offense for this possession
+        def_player_ids  — list of 5 player IDs on defense
+
+      Format B (flat columns):
+        off1 .. off5   — one column per offensive player ID
+        def1 .. def5   — one column per defensive player ID
+
+      Both formats also require:
+        points   — points scored by the offense on this possession (numeric)
+        weight   — (optional) possession weight; defaults to 1 per row
+
+    Method:
+      Builds a sparse design matrix with 2 columns per player: an offensive
+      column (+1 when the player is on offense) and a defensive column (-1 when
+      on defense). The target y = points * 100 (i.e., the per-100-possessions
+      scale). Fits sklearn.linear_model.RidgeCV with k-fold cross-validation
+      to choose the regularization penalty from ``alphas``.
+
+      Ridge acts as a shrinkage prior here, not a possession-level predictor, so
+      the default ``alphas`` grid is bounded (see below): an unbounded grid lets
+      CV drive the penalty arbitrarily high and collapse the point-per-100 scale.
+
+    Parameters
+    ----------
+    possessions_df : DataFrame
+        Possession-level data as described above.
+    alphas : array-like, optional
+        Candidate regularization penalties. Defaults to 17 values log-spaced
+        from 10 to 1000. The upper bound is intentional: it caps shrinkage so
+        the output stays on an interpretable point-per-100 scale even when the
+        possession data is sparse or noisy.
+    cv : int
+        Number of folds for cross-validation (default 5).
+
+    Returns
+    -------
+    DataFrame indexed by player_id with columns RAPM, O_RAPM, D_RAPM.
+    """
+    from scipy.sparse import coo_matrix, csr_matrix
+    from sklearn.linear_model import RidgeCV
+
+    df = possessions_df.reset_index(drop=True)
+    n = len(df)
+
+    # --- Resolve player-ID columns ---
+    off_cols_5 = [f"off{i}" for i in range(1, 6)]
+    def_cols_5 = [f"def{i}" for i in range(1, 6)]
+
+    if "off_player_ids" in df.columns and "def_player_ids" in df.columns:
+        off_ids = df["off_player_ids"].tolist()
+        def_ids = df["def_player_ids"].tolist()
+    elif all(c in df.columns for c in off_cols_5 + def_cols_5):
+        off_ids = df[off_cols_5].values.tolist()
+        def_ids = df[def_cols_5].values.tolist()
+    else:
+        raise ValueError(
+            "possessions_df must have either 'off_player_ids'/'def_player_ids' "
+            "list columns, or 'off1'..'off5'/'def1'..'def5' columns."
+        )
+
+    # --- Build player index ---
+    all_ids = sorted({pid for group in off_ids + def_ids for pid in group})
+    pid_to_idx = {pid: i for i, pid in enumerate(all_ids)}
+    n_players = len(all_ids)
+    n_cols = n_players * 2  # column layout: 2*i = offensive, 2*i+1 = defensive
+
+    # --- Build sparse design matrix in COO format ---
+    rows, cols, vals = [], [], []
+    for row_i in range(n):
+        for pid in off_ids[row_i]:
+            rows.append(row_i)
+            cols.append(pid_to_idx[pid] * 2)
+            vals.append(1.0)
+        for pid in def_ids[row_i]:
+            rows.append(row_i)
+            cols.append(pid_to_idx[pid] * 2 + 1)
+            vals.append(-1.0)
+
+    X = csr_matrix(
+        coo_matrix((vals, (rows, cols)), shape=(n, n_cols), dtype=np.float32)
+    )
+    y = df["points"].to_numpy(dtype=np.float64) * 100.0
+
+    weights = (
+        df["weight"].to_numpy(dtype=np.float64)
+        if "weight" in df.columns
+        else np.ones(n, dtype=np.float64)
+    )
+
+    # --- Ridge regression with cross-validated alpha ---
+    # The grid is deliberately bounded to [10, 1000]. A single possession is
+    # almost unpredictable, so cross-validation that is free to pick a very large
+    # penalty will: it minimizes possession-level prediction error by shrinking
+    # every coefficient toward zero. With an unbounded grid (e.g. up to 1e5) that
+    # collapses the point-per-100 scale entirely (ratings come out near ±0.05
+    # instead of ±5). Ridge here is a shrinkage prior, not a possession predictor,
+    # so the upper bound keeps the penalty in a regime that preserves interpretable
+    # units; on clean, plentiful data CV still settles near the low end (~15).
+    if alphas is None:
+        alphas = np.logspace(1, 3, 17)  # 10 .. 1000
+
+    model = RidgeCV(alphas=alphas, cv=cv, fit_intercept=True)
+    model.fit(X, y, sample_weight=weights)
+
+    coefs = model.coef_  # shape (n_cols,)
+
+    # Even indices = offensive columns; odd = defensive columns.
+    # D_RAPM = the defensive coefficient directly: because X uses -1 for
+    # defensive presence, a positive beta_def means the player's presence
+    # lowers the opponent's score (good defense).
+    o_rapm = coefs[0::2]
+    d_rapm = coefs[1::2]
+
+    result = pd.DataFrame(
+        {"O_RAPM": o_rapm, "D_RAPM": d_rapm},
+        index=pd.Index(all_ids, name="player_id"),
+    )
+    result["RAPM"] = result["O_RAPM"] + result["D_RAPM"]
+    return result[["RAPM", "O_RAPM", "D_RAPM"]]
