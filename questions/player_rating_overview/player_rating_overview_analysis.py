@@ -643,6 +643,23 @@ def run(end_year: int = 2025) -> None:
                     float(fallers.iloc[0]["SHIFT_Z"]) < 0,
                     f"the top playoff faller ({top_faller}) lost ground on the pool", top_faller)
 
+        # Did the regular-season consensus #1 hold up in the playoffs?
+        if "CONSENSUS" in qual.columns and qual["CONSENSUS"].notna().sum() > 0:
+            cons_top = str(qual.nlargest(1, "CONSENSUS")["PLAYER_NAME"].iloc[0])
+            match = deltas[deltas["PLAYER_NAME"] == cons_top]
+            if not match.empty:
+                z = float(match.iloc[0]["SHIFT_Z"])
+                order = deltas.sort_values("SHIFT_Z").reset_index(drop=True)
+                frank = int(order.index[order["PLAYER_NAME"] == cons_top][0]) + 1
+                print(f"\nRegular-season consensus #1 {cons_top}: playoff shift "
+                      f"z = {z:+.2f} (faller rank {frank} of {len(deltas)})")
+                FACTS.set("playoff.consensus1.name", cons_top,
+                          note="regular-season consensus #1 player (playoff shift lookup)")
+                FACTS.set("playoff.consensus1.z", z, "{:.2f}",
+                          note="regular-season consensus #1 player's composite playoff shift z")
+                FACTS.guard("consensus_top_fell_in_playoffs", z < 0,
+                            f"the regular-season consensus #1 ({cons_top}) fell in the playoffs", z)
+
     # Dump all facts and guards to docs/ (+ the dev facts-reference lookup table)
     FACTS.dump(_FACTS_PATH)
     FACTS.dump_guards(_GUARDS_PATH)

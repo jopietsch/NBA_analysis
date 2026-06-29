@@ -9,6 +9,11 @@
     "ok": true,
     "value": 0.9719977244282626
   },
+  "consensus_top_fell_in_playoffs": {
+    "claim": "the regular-season consensus #1 (Nikola Joki\u0107) fell in the playoffs",
+    "ok": true,
+    "value": -1.3450280947186712
+  },
   "cumulative_are_power_laws": {
     "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
     "ok": true,

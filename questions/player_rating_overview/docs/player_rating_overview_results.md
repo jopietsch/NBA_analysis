@@ -346,6 +346,8 @@ Biggest playoff FALLERS (dropped below their regular-season form):
    8. Draymond Green             GSW  shift z = -1.13  (PER -2.4 vs regular season)
    9. Ty Jerome                  CLE  shift z = -1.11  (PER -3.6 vs regular season)
   10. Mike Conley                MIN  shift z = -1.11  (PER -2.7 vs regular season)
+
+Regular-season consensus #1 Nikola Jokić: playoff shift z = -1.35 (faller rank 4 of 96)
 Saved → docs/player_rating_overview_facts_reference.md
 
 ```

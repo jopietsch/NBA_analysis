@@ -1525,6 +1525,20 @@
     "unit": null,
     "value": "Day'Ron Sharpe"
   },
+  "playoff.consensus1.name": {
+    "display": "Nikola Joki\u0107",
+    "fmt": null,
+    "note": "regular-season consensus #1 player (playoff shift lookup)",
+    "unit": null,
+    "value": "Nikola Joki\u0107"
+  },
+  "playoff.consensus1.z": {
+    "display": "-1.35",
+    "fmt": "{:.2f}",
+    "note": "regular-season consensus #1 player's composite playoff shift z",
+    "unit": null,
+    "value": -1.3450280947186712
+  },
   "playoff.faller.1.name": {
     "display": "Michael Porter Jr.",
     "fmt": null,
