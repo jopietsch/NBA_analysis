@@ -12,7 +12,7 @@
 
 Every "top players" list puts names in order. But ordinal rank is a compression: the gap between the best player in the league and the tenth-best is not the same as the gap between the tenth and the twentieth. The numbers beneath the ranks tell a different story than the ranks themselves.
 
-This report surveys how NBA players get rated, compares what each system actually measures, and builds two combined ratings designed to answer two different questions: what do all the systems agree on, and which combination of them best explains which teams win?
+This report surveys how NBA players get rated, compares what each system actually measures, and builds two combined ratings designed to answer two different questions: what do all the systems agree on, and which combination of them best explains which teams win? It also grades the systems one at a time by how well each rebuilds which teams outscored their opponents, and recomputes the box-score metrics for the playoffs to show who rose and who fell.
 
 The testbed is the 2024-25 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP. The lineup-based impact metrics and human rankings described next are surveyed as part of the landscape, but are not recomputed or included in the comparison here. The architecture extends to earlier seasons, and to those other systems, as data allows.
 
@@ -88,6 +88,14 @@ Both tests reward the same thing: a RAPM backbone stabilized by a well-calibrate
 
 One important result from the academic literature runs against the intuition that more sophisticated is better: peer-reviewed research has found that complex metrics do not reliably outperform simpler ones when used to predict salaries or wins. That is not a flaw in the metrics themselves. They are built to estimate player impact per possession, not to serve as inputs in every downstream analysis. The lesson is that a metric's predictive accuracy in a retrodiction test is not the same as its usefulness for a specific application, and the right tool depends on the question being asked.
 
+### A direct test on the systems here
+
+A related test grades the systems one at a time rather than combining them. Add up a single system's player ratings across a team's roster, weighted by minutes played, and check how closely that total matches which teams actually outscored their opponents over 2024-25. Each system is graded on teams held out of the calculation, so it cannot score well just by fitting this exact season.
+
+The outcome is a useful surprise. PER, the oldest and simplest per-minute box score, rebuilt about << f("retro.top.cv_r2_pct") >>% of the differences between teams, more than the plus/minus metrics that are explicitly built to track team results. One caveat keeps this from being a verdict on which system is best. The recomputed BPM and VORP here are approximations (see the note on the recomputed formulas below), so their weaker showing partly reflects a noisy recompute rather than a real shortcoming. The fair takeaway is narrow: a plain box-score productivity score already carries most of the signal about which teams win, and this comparison should be rerun against published impact metrics before ranking the systems against each other.
+
+![How well each system, summed to the team, rebuilds 2024-25 team point differential. Blue systems never use who won; grey systems are built from team or lineup results, where a high score is partly mechanical.](../generated/images/retrodiction.svg){#fig-retrodiction}
+
 ## 5. What each system uniquely sees
 
 Not all systems add independent information. Measuring what each one adds beyond the others shows the eight box-score systems overlap heavily: most of what any single system says can be rebuilt from the rest. Offensive and Defensive BPM are the clearest case, since regular BPM is just their sum, so once you have two of the three the third tells you nothing new. Win Shares and WS/48 hold the most signal of their own, but even they share the large majority of their ranking with the field. The eight are closer to several views of one underlying thing than to eight independent opinions (see results for the full breakdown).
@@ -154,7 +162,17 @@ The table below shows the top 20 players under each system and their raw score. 
 
 ![Top 20 players and their raw scores under each of the eight rating systems. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
 
-## 9. A note on the recomputed formulas
+## 9. Who rose and fell in the playoffs
+
+The box-score rate metrics can be computed a second time using only playoff games, which makes a direct before-and-after read possible: did a player's production climb or sink once the postseason started? This works only for the box-score systems. The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way.
+
+Among the << f("playoff.n_qualified") >> players who logged at least << f("playoff.min_floor") >> playoff minutes in 2024-25, each player's change is measured against the rest of that group. That strips out the leaguewide dip that comes from tougher defense and facing the same opponent night after night, so what is left is who rose or fell relative to the other rotation players who also advanced.
+
+The biggest risers were << f("playoff.riser.1.name") >>, << f("playoff.riser.2.name") >>, and << f("playoff.riser.3.name") >>. The biggest fallers were << f("playoff.faller.1.name") >>, << f("playoff.faller.2.name") >>, and << f("playoff.faller.3.name") >>. The list rewards players whose game travels into a grind-it-out playoff series and marks down those who leaned on production that dried up against a focused defense. It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
+
+![Who rose and who fell in the 2024-25 playoffs, by box-score rate metrics, for players with at least << f("playoff.min_floor") >> playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
+
+## 10. A note on the recomputed formulas
 
 The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations. The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the low 30s). The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures. The relative rankings within each system are directionally correct.
 
@@ -164,7 +182,7 @@ One consequence is visible in the data: VORP rates << f("loves.VORP.1.name") >> 
 
 The same inflation affects other high-steal defenders in 2024-25: Keon Ellis (121 steals across the season), Cason Wallace, and Kris Dunn all carry VORP values in this dataset that exceed their BBR equivalents. Their Win Shares figures (typically 3-4, about right for a productive reserve) are the more representative number. This is not a separate bug from the Daniels case; it is the same per-100 denominator approximation applied to any player with a high steal rate relative to their minutes.
 
-## 10. Limitations
+## 11. Limitations
 
 The 2024-25 testbed is a single season. Stability analysis (do the same players rate highly across multiple seasons?) requires multi-season data and is a natural extension.
 
@@ -174,9 +192,9 @@ RAPM (regularized adjusted plus/minus) is the technical backbone of every seriou
 
 The tracking-based and team-internal systems (Second Spectrum, franchise models, Synergy) are documented in the inventory but not accessible. The blind spot is acknowledged.
 
-Comparing playoff performance to regular season performance in the same year is a place where the Bayesian framing matters most. Box-score rate metrics (BPM, PER, true shooting percentage) can be computed separately for regular season and playoffs from standard box-score data and compared directly: the difference shows whether a player's production rose or fell in the postseason. RAPM-based impact metrics cannot do this reliably. A first-round exit provides roughly 6 games of lineup data; even a Finals run provides only 20 to 24 games. That sample is too small for the lineup regression to stabilize, regardless of how good the prior is. The small-sample problem is not a solvable data-engineering issue; it is a fundamental limit of how RAPM works.
+Comparing playoff performance to regular season performance is done for the box-score systems in Section 9, where the rate metrics are recomputed from postseason games and compared directly. The limit is the impact metrics: RAPM-based systems cannot do this reliably. A first-round exit provides roughly 6 games of lineup data; even a Finals run provides only 20 to 24 games. That sample is too small for the lineup regression to stabilize, regardless of how good the prior is. The small-sample problem is not a solvable data-engineering issue; it is a fundamental limit of how RAPM works.
 
-## 11. What a Bayesian lens would add
+## 12. What a Bayesian lens would add
 
 The impact metrics already apply Bayesian reasoning in one place. The box-score prior is a starting belief about what a player should be worth, derived from their individual stats. The lineup on/off data is the evidence that updates that belief. A player with many lineup possessions gets pulled strongly toward what the data shows; a bench player with few possessions barely moves from the prior. That structure is the skeleton of EPM, LEBRON, DARKO, and every other serious impact metric.
 
@@ -184,7 +202,7 @@ Two things a more complete Bayesian treatment would add:
 
 **Uncertainty ranges.** Every metric publishes a single number (EPM: +8.2 per 100 possessions), with no range, no width. With one season of lineup data, the true uncertainty band around any RAPM-based estimate is roughly 2-3 points per 100 possessions. Publishing that range would make visible what the single number hides: the apparent disagreements between metrics about who ranks 8th versus 12th are often smaller than the uncertainty around any individual estimate. This does not mean the metrics are unreliable. It means the precision they imply is a display choice, not a statistical one.
 
-**Playoff versus regular season.** The most useful Bayesian application is also the most practical. Box-score rate metrics (BPM, PER, true shooting percentage) can be computed separately for regular season and playoffs from standard box-score data and compared directly. The difference shows whether a player's production rose or fell when the stakes went up. For RAPM-based metrics the right approach is different: treat the full-season estimate as the prior and update it with playoff lineup data. The updated estimate barely shifts for a player who exits in the first round (roughly 6 games of new evidence), and moves more for a player who reaches the Finals (20-24 games). The shift (in which direction and by how much) is the honest answer to "did this player hold up in the playoffs?" without pretending there is more data than there is. A player whose updated estimate barely moves showed results consistent with the regular-season picture. A player whose updated estimate shifts meaningfully showed something different.
+**Playoff versus regular season.** Section 9 already compares regular season and playoffs for the box-score rate metrics directly, which is the practical version. The Bayesian addition is for the RAPM-based metrics, where the right approach is different: treat the full-season estimate as the prior and update it with playoff lineup data. The updated estimate barely shifts for a player who exits in the first round (roughly 6 games of new evidence), and moves more for a player who reaches the Finals (20-24 games). The shift (in which direction and by how much) is the honest answer to "did this player hold up in the playoffs?" without pretending there is more data than there is. A player whose updated estimate barely moves showed results consistent with the regular-season picture. A player whose updated estimate shifts meaningfully showed something different.
 
 **Better consensus weighting.** The wins-predictive rating in this report is a step toward what is sometimes called model averaging: instead of treating all systems as equally reliable, weight them by how well they predicted team wins. A more fully Bayesian version would estimate those weights from retrodiction performance across multiple seasons and update them as new data arrives. The practical difference at the top of the rankings is small, because the systems that predict team wins best already carry the most weight. But the principled foundation matters when choosing which metrics to trust for a specific question, particularly for players at the margins of the top tier.
 

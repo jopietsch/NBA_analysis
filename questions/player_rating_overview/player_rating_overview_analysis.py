@@ -570,8 +570,8 @@ def run(end_year: int = 2025) -> None:
                   note="system that best retrodicts team point differential (CV)")
         FACTS.set("retro.top.cv_r2", float(top_sc["cv_r2"]), "{:.3f}",
                   note="top system's leave-one-team-out retrodiction R²")
-        FACTS.set("retro.top.cv_r2_pct", float(top_sc["cv_r2"] * 100), "{:.0f}", unit="%",
-                  note="top system's retrodiction R² as a percent")
+        FACTS.set("retro.top.cv_r2_pct", float(top_sc["cv_r2"] * 100), "{:.0f}",
+                  note="top system's retrodiction R² as a percent (append % in prose)")
         if top_sys not in OUTCOME_CALIBRATED:
             print(f"{top_label} never uses who won, yet it beats the team-adjusted box")
             print("metrics (BPM, VORP, Win Shares) here. Caveat: this project's BPM and")

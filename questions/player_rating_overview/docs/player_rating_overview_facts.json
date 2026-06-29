@@ -1890,10 +1890,10 @@
     "value": 0.7229384902316403
   },
   "retro.top.cv_r2_pct": {
-    "display": "72 %",
+    "display": "72",
     "fmt": "{:.0f}",
-    "note": "top system's retrodiction R\u00b2 as a percent",
-    "unit": "%",
+    "note": "top system's retrodiction R\u00b2 as a percent (append % in prose)",
+    "unit": null,
     "value": 72.29384902316403
   },
   "retro.top.name": {
