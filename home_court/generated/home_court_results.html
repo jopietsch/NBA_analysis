@@ -2562,12 +2562,12 @@ All data from cache/ — same source as the plots above.
    Trend decomposition  (pp of home win % per year):
    Total trend (home_win ~ year): -0.244 pp/yr  (p = &lt;0.001  ***)
 
-   Channel           Trend in diff/yr     Contribution  % of trend
-   ────────────────  ────────────────  ───────────────  ──────────
-   eFG% diff (pp)         -0.0151 ***    -0.0516 pp/yr         21%
-   Foul diff              +0.0222 ***    -0.0438 pp/yr         18%
-   TOV diff               +0.0193 ***    -0.0651 pp/yr         27%
-   REB diff               -0.0443 ***    -0.0738 pp/yr         30%
+   Channel           Trend in diff/yr        95% CI (diff/yr)     Contribution  % of trend
+   ────────────────  ────────────────  ──────────────────────  ───────────────  ──────────
+   eFG% diff (pp)         -0.0151 ***      [-0.0224, -0.0078]    -0.0516 pp/yr         21%
+   Foul diff              +0.0222 ***      [+0.0168, +0.0275]    -0.0438 pp/yr         18%
+   TOV diff               +0.0193 ***      [+0.0142, +0.0244]    -0.0651 pp/yr         27%
+   REB diff               -0.0443 ***      [-0.0517, -0.0370]    -0.0738 pp/yr         30%
    ────────────────  ────────────────  ───────────────  ──────────
    Sum, channels                         -0.2344 pp/yr         96%
    Unmediated                            -0.0097 pp/yr          4%
@@ -2590,12 +2590,12 @@ All data from cache/ — same source as the plots above.
    Trend decomposition  (pp of home win % per year):
    Total trend (home_win ~ year): -0.225 pp/yr  (p = &lt;0.001  ***)
 
-   Channel           Trend in diff/yr     Contribution  % of trend
-   ────────────────  ────────────────  ───────────────  ──────────
-   eFG% diff (pp)         -0.0087        -0.0278 pp/yr         12%
-   Foul diff              +0.0204 **     -0.0396 pp/yr         18%
-   TOV diff               +0.0066        -0.0218 pp/yr         10%
-   REB diff               -0.0374 **     -0.0622 pp/yr         28%
+   Channel           Trend in diff/yr        95% CI (diff/yr)     Contribution  % of trend
+   ────────────────  ────────────────  ──────────────────────  ───────────────  ──────────
+   eFG% diff (pp)         -0.0087          [-0.0290, +0.0116]    -0.0278 pp/yr         12%
+   Foul diff              +0.0204 **       [+0.0070, +0.0339]    -0.0396 pp/yr         18%
+   TOV diff               +0.0066          [-0.0086, +0.0218]    -0.0218 pp/yr         10%
+   REB diff               -0.0374 **       [-0.0630, -0.0118]    -0.0622 pp/yr         28%
    ────────────────  ────────────────  ───────────────  ──────────
    Sum, channels                         -0.1514 pp/yr         67%
    Unmediated                            -0.0734 pp/yr         33%
@@ -2813,7 +2813,7 @@ All data from cache/ — same source as the plots above.
    p = &lt;0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0095  (≈ -2.27 pp per 10 pp 3PA)  p = &lt;0.001  ***
+   coef = -0.0095  (≈ -2.27 pp per 10 pp 3PA)  95% CI [-3.08, -1.45]  p = &lt;0.001  ***
    (If this is small and insignificant, 3PA effect is fully explained
     by the secular trend — higher 3PA and lower HCA happen at the same
     time but 3PA does not predict outcomes within any given era.)
@@ -2837,7 +2837,7 @@ All data from cache/ — same source as the plots above.
    p = &lt;0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0136  (≈ -3.12 pp per 10 pp 3PA)  p = 0.027  *
+   coef = -0.0136  (≈ -3.12 pp per 10 pp 3PA)  95% CI [-5.89, -0.36]  p = 0.027  *
    (If this is small and insignificant, 3PA effect is fully explained
     by the secular trend — higher 3PA and lower HCA happen at the same
     time but 3PA does not predict outcomes within any given era.)
@@ -2899,6 +2899,8 @@ All data from cache/ — same source as the plots above.
    (percentage points) — a pace- and volume-free measure of the edge.
    Trend = slope of trend line (change per season year).
 
+   reg: reb-share-edge trend/yr = -0.052  95% CI [-0.060, -0.044]  (p = &lt;0.001)
+   po: reb-share-edge trend/yr = -0.046  95% CI [-0.076, -0.015]  (p = 0.004)
    Regular season  (N = 49,107 games)
 
    Era                OREB diff       DREB diff        REB diff Share edge (pp)
@@ -3083,6 +3085,7 @@ All data from cache/ — same source as the plots above.
    Predictor                     log-odds     ≈pp         p     
    ────────────────────────────  ────────  ──────  ────────  ───
    era: 1995–01                    -0.108    -2.6     0.010   **
+   → 1994-95 (1995–01) level shift: -2.6 pp  95% CI [-4.6, -0.6] pp  (drop magnitude [0.6, 4.6])
    era: 2002–04                    +0.001    +0.0     0.988     
    era: 2005–17                    +0.027    +0.6     0.722     
    era: 2018–22                    +0.001    +0.0     0.990     
@@ -3253,18 +3256,26 @@ All data from cache/ — same source as the plots above.
    Channel              Pre slope/yr   Level shift   Slope chg/yr     Lev p     Slp p
    ──────────────────  ─────────────  ────────────  ─────────────  ────────  ────────
    Foul diff                  +0.002        +0.436         +0.011     0.007     0.636  **/
+        level-shift 95% CI [+0.13, +0.74]
    eFG% diff (pp)             +0.012        -0.200         -0.025     0.327     0.392  /
+        level-shift 95% CI [-0.61, +0.21]
    TOV diff                   +0.039        +0.170         -0.028     0.181     0.130  /
+        level-shift 95% CI [-0.08, +0.42]
    REB diff                   -0.051        +0.036         +0.007     0.845     0.795  /
+        level-shift 95% CI [-0.34, +0.41]
 
    Playoffs  (N = 42 seasons)
 
    Channel              Pre slope/yr   Level shift   Slope chg/yr     Lev p     Slp p
    ──────────────────  ─────────────  ────────────  ─────────────  ────────  ────────
    Foul diff                  -0.073        +0.395         +0.097     0.315     0.092  /
+        level-shift 95% CI [-0.39, +1.18]
    eFG% diff (pp)             -0.031        +0.435         +0.013     0.524     0.898  /
+        level-shift 95% CI [-0.93, +1.80]
    TOV diff                   +0.020        +0.379         -0.026     0.376     0.674  /
+        level-shift 95% CI [-0.48, +1.23]
    REB diff                   +0.051        -0.937         -0.073     0.220     0.507  /
+        level-shift 95% CI [-2.46, +0.58]
 
    Note: foul_diff = PF_home − PF_away. Negative values mean away teams
    get MORE fouls called (home court foul advantage). A positive level shift
@@ -3361,7 +3372,7 @@ All data from cache/ — same source as the plots above.
    p = &lt;0.001  ***
 
    Controlling for era (within-era game-level effect):
-   coef = +0.0107  (≈ +2.57 pp per 10 possessions)  p = &lt;0.001  ***
+   coef = +0.0107  (≈ +2.57 pp per 10 possessions)  95% CI [+1.67, +3.48]  p = &lt;0.001  ***
 
    Expected pace (LOO)  (N = 48,866 games)
    Bivariate: coef = +0.0064  (≈ +1.54 pp per 10 poss)  p = 0.227  
@@ -3386,7 +3397,7 @@ All data from cache/ — same source as the plots above.
    p = 0.363  
 
    Controlling for era (within-era game-level effect):
-   coef = -0.0053  (≈ -1.23 pp per 10 possessions)  p = 0.285  
+   coef = -0.0053  (≈ -1.23 pp per 10 possessions)  95% CI [-3.49, +1.03]  p = 0.285  
 
    Expected pace (LOO)  (N = 3,292 games)
    Bivariate: coef = -0.0056  (≈ -1.29 pp per 10 poss)  p = 0.367  
