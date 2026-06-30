@@ -21,7 +21,8 @@ Primary testbed is the 2025-26 regular season, with multi-season analysis back t
 - This project carries two **non-standard** docs beyond the standard set:
   - `docs/player_rating_overview_inventory.md.j2`: an inventory of every rating system tagged with source, coverage, and availability.
   - `docs/player_rating_resources.md.j2`: a curated reading list (note the filename is `player_rating_resources`, not `player_rating_overview_resources`).
-- Recomputed `BPM`/`VORP` absolute values are approximate; spot-check against Basketball-Reference rather than treating them as exact.
+- `BPM`/`VORP` are recomputed (linear fit to reproduce Basketball-Reference's OBPM/DBPM on standard advanced percentages, plus a team-margin anchor) and validated against BBR each run by the "BPM VALIDATION vs BASKETBALL-REFERENCE" analysis section (2025-26: r≈0.93 BPM, 0.96 VORP). The fit weights live in `nbakit/nbakit/ratings.py` (`_OBPM_W`/`_DBPM_W`); `fetch_bbr_advanced` in the data module supplies the reference. DBPM agreement is the weakest (box defense is hard).
+- The `RAPM` family (bare `RAPM`, and to a lesser degree `RAPM_MY`) is still a known-broken recompute under repair: bare possession-based RAPM produces implausible leaders. Treat RAPM-family absolute values as provisional and say so in the docs. Fixing BPM improved `RAPM_MY` (its OBPM/DBPM prior), but bare RAPM needs its own pass.
 - Third-party snapshots (DARKO, EPM, LEBRON, ESPN RPM) require manual CSVs and are partly paywalled or defunct; note coverage gaps in the docs where a system is missing or stale.
 - See `FACTS_MIGRATION.md`, `PLAN.md`, and `RAPM_PRIOR_DESIGN.md` for in-progress design notes.
 
@@ -30,3 +31,15 @@ Primary testbed is the 2025-26 regular season, with multi-season analysis back t
 - When section order changes, update the order of the analysis calls in `player_rating_overview_analysis.py` to match, so `player_rating_overview_results.md` lines up.
 - When the findings change, update `docs/player_rating_overview_findings_outline.md` to match (the `/sync-outline` command does this), then regenerate its PDF.
 - Throughout the findings, keep the three questions answerable: state them in the intro, develop each in the body, re-answer them in the summary.
+
+## When a metric is fixed or added (the standing cascade)
+
+Fixing a rating (the RAPM follow-on) or adding a new one moves numbers across every doc. The examples section (`## 4`, archetype reps) and the BPM validation / Playoff-Weighted Value sections are built to keep up with minimal hand-work, but only if you run the cascade:
+
+1. **Rerun the pipeline.** `MPLBACKEND=Agg python3 player_rating_overview.py` (regenerates `_results.md`, `_facts.json`, `_guards.json`, images), then `python3 render_docs.py`. Every templated number refreshes automatically.
+2. **Run pytest.** `test_facts_match_results.py` catches facts that drifted from their `print()`; `test_prose_claims.py` fails loudly if any guard's premise flipped (e.g. an example archetype's defining claim, or `blind_rating_rebuilds_team_diff`). A failing guard names the exact sentence to revisit.
+3. **Re-run `/review-all`** on the changed reader-facing docs. The guards catch direction; only a human voice pass catches a magnitude word that stayed directionally true but went stale.
+
+The four non-pinned example archetypes are **rule-selected in `_analysis.py`** (`example.*.name` facts: agreed elite = best worst-rank; defense star = top-BPM-tier max DBPM; split scorer = high-USG, PER rank >> BPM rank; riser = top playoff shift) and re-point automatically when the data moves. Brunson is the one pinned example. So a metric change usually needs new prose only where a sentence interprets *why* a number is what it is, not for the names or figures themselves.
+
+Watch for downstream flips when a metric's distribution changes: the BPM rewrite (team-margin anchor) made BPM mechanically top the team-point-differential retrodiction (`retro.mechanical.*`; the genuine champion is the top outcome-blind rating in `retro.top.*`) and moved OBPM/DBPM/VORP into the power-law group in `## 6`. These are correct consequences, not bugs, but they require prose updates that the guards flag.

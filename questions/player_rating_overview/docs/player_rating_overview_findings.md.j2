@@ -8,8 +8,8 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-The rating that best describes a finished NBA season is one of the worst at predicting the next one.
-Averaged across the << f("panel.n_seasons") >> seasons tested, PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in a season just played, more than the plus/minus metrics built to track exactly that, yet it forecasts the next at only about << f("panel.PER.forecast_mean_pct") >>%.
+Among the ratings that never use who won, the one that best describes a finished NBA season is one of the worst at predicting the next.
+Averaged across the << f("panel.n_seasons") >> seasons tested, PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in a season just played, more than any other rating that never looks at team results, yet it forecasts the next at only about << f("panel.PER.forecast_mean_pct") >>%.
 That split is one thread of a larger problem: every "top players" list uses a different method, and they disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
 This report surveys how NBA players get rated and puts three questions to the systems:
@@ -92,7 +92,7 @@ EPM is the only public metric that directly optimizes the weighting of each unde
 
 **LEBRON** (BBall-Index) also uses a luck-adjusted RAPM with a box-score prior.
 "Luck adjustment" means the on/off data strips out the swing from whether shots happened to fall, rather than crediting the player for it.
-The prior weights come from PIPM (Player Impact Plus/Minus), an earlier metric by Jacob Goldstein that is no longer updated.
+The prior's starting values come from PIPM (Player Impact Plus/Minus), an earlier metric by Jacob Goldstein that is no longer updated.
 
 **DARKO DPM** is best thought of as a projection system rather than a season average.
 Like baseball projection systems (PECOTA, Steamer), DARKO weights recent games more heavily and updates daily, so it answers "what is this player's current true talent?" more than "how did this player perform this season?" That distinction matters when comparing across systems.
@@ -187,11 +187,11 @@ A related test grades the systems one at a time rather than combining them.
 Add up a single system's player ratings across a team's roster, weighted by minutes played, and check how closely that total matches which teams actually outscored their opponents over 2025-26.
 Each system is graded on teams held out of the calculation, so it cannot score well just by fitting this exact season.
 
-The outcome is a useful surprise.
-PER, the oldest and simplest per-minute box score, rebuilt about << f("retro.top.cv_r2_pct") >>% of the differences between teams, more than the plus/minus metrics that are explicitly built to track team results.
-Two cautions apply before reading that as a verdict.
-The recomputed BPM and VORP here are approximations (see the note on the recomputed formulas below), so part of their weaker showing is a noisy recompute.
-And rebuilding the season just played is only half the test.
+Read it the honest way, by separating the metrics built from team results from those that never saw them.
+BPM and VORP are anchored to each team's point differential by design, so adding them back up to the team rebuilds that differential almost perfectly (<< f("retro.mechanical.name") >> reaches essentially 100%, VORP nearly as high).
+That is mechanical, not a mark of quality, so the real question is which rating that never used who won comes closest.
+There a useful surprise holds up: PER, the oldest and simplest per-minute box score, rebuilds about << f("retro.top.cv_r2_pct") >>% of the differences between teams, ahead of every other outcome-blind rating.
+One caution before reading that as a verdict: rebuilding the season just played is only half the test.
 
 ![How well each system, summed to the team, rebuilds 2025-26 team point differential. Blue systems never use who won; grey systems are built from team or lineup results, where a high score is partly mechanical.](../generated/images/retrodiction.svg){#fig-retrodiction}
 
@@ -211,18 +211,19 @@ Which rating is "better" depends on the question.
 
 One pair of seasons could be a fluke, so we ran the same two tests on every season back to << f("panel.first_season") >>: << f("panel.n_seasons") >> seasons for the describe test and << f("panel.n_pairs") >> year-to-year handoffs for the forecast test.
 The shape repeats.
-PER describes best every era, averaging about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams, and forecasts near the bottom, about << f("panel.PER.forecast_mean_pct") >>%.
-The best forecaster across all those handoffs is not a plus/minus metric at all but << f("panel.forecast_top.name") >>, at about << f("panel.forecast_top.mean_pct") >>%, another plain box score that never looks at who won.
+Among the ratings that never use who won, PER describes best every era, averaging about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams, and forecasts near the bottom, about << f("panel.PER.forecast_mean_pct") >>%.
+The team-anchored box metrics, BPM and VORP, sit above it on the describe test, but mechanically: they are built to reproduce team point differential, so rebuilding it is no test of them.
+The best forecaster across all those handoffs is << f("panel.forecast_top.name") >>, at about << f("panel.forecast_top.mean_pct") >>%, a box-built rating that carries more of its signal from one season to the next than PER does.
 The single 2025-26 handoff agrees: << f("panel.forecast_top.name") >> forecasts best there too, and across the full panel BPM still beats PER as a forecaster in << f("panel.bpm_beats_per_pairs") >> of the << f("panel.n_cmp_pairs") >> handoffs.
-What holds across every era in the data is the gap itself: the rating that best sums up a finished season is consistently not the one to bet the next season on.
+What holds across every era is the gap itself: PER, the best honest description of a finished season, is consistently among the worst bets on the next one.
 
-![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over << f("panel.n_seasons") >> seasons and << f("panel.n_pairs") >> season-pairs. Whiskers span the season-to-season range. PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
+![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over << f("panel.n_seasons") >> seasons and << f("panel.n_pairs") >> season-pairs. Whiskers span the season-to-season range. BPM and VORP describe near-perfectly because they are anchored to team results; among the ratings that never use who won, PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
 
 RAPM can only be computed back to << f("ipanel.first_season") >>, the seasons with play-by-play, so a fair test scores it against the box scores on those same << f("ipanel.n_seasons") >> seasons rather than against their full 30-year history.
-On that even footing the bare single-season RAPM is a weak forecaster of next-season team results: it ranks << f("ipanel.RAPM.forecast_rank") >> of << f("ipanel.n_systems") >>, rebuilding about << f("ipanel.RAPM.forecast_mean_pct") >>% of the gaps between teams, behind every box score but one.
+On that even footing the bare single-season RAPM is a weak forecaster of next-season team results: it ranks << f("ipanel.RAPM.forecast_rank") >> of << f("ipanel.n_systems") >>, rebuilding about << f("ipanel.RAPM.forecast_mean_pct") >>% of the gaps between teams, behind every other system in the panel.
 The plain box scores again lead, with << f("ipanel.forecast_top.name") >> on top at about << f("ipanel.forecast_top.mean_pct") >>%.
 This is the same lesson the single-season noise pointed to: without a box-score prior to steady it, one year of RAPM carries too much randomness to forecast the next.
-Its same-season describe score is mid-pack (about << f("ipanel.RAPM.describe_mean_pct") >>%), but for RAPM that number reads high for a mechanical reason, since RAPM is built from the very lineup margins the describe test rebuilds.
+Its same-season describe score is near the bottom (about << f("ipanel.RAPM.describe_mean_pct") >>%): even though RAPM is built from the very lineup margins the describe test rebuilds, one noisy season of it reconstructs team results worse than the box scores do.
 
 RAPM+prior does better than the bare version on the same test, forecasting << f("ipanel.RAPM_MY.forecast_rank") >> of << f("ipanel.n_systems") >> at about << f("ipanel.RAPM_MY.forecast_mean_pct") >>%, but it still lands below the box scores.
 Pooling three seasons and leaning on a box-score prior sharpen which players rate highly (Section 12), yet they do not make the lineup signal a better forecaster of team results than a plain box score already is.
@@ -248,16 +249,38 @@ Only << f("stability.most_stable.name") >> sits near the top of both lists, stea
 
 ## 4. What each system uniquely sees
 
-Not all systems add independent information, and they split sharply on how much.
-The simplest all-in-one box scores are the most redundant: about << f("overlap.PER.r2", "{:.0%}") >> of PER and << f("overlap.GAME_SCORE.r2", "{:.0%}") >> of Game Score can be rebuilt from the other systems, so each mostly repeats what the field already says.
-The metrics built to isolate defense and lineup impact carry the most of their own: Defensive BPM and BPM leave roughly half of their ranking unexplained by the rest, and the RAPM family carries somewhat less of its own, in the 30-40% range.
-One caveat keeps that from being a clean verdict: this report's BPM, VORP, and RAPM are approximate recomputes, and a noisy rating looks independent simply because its noise lines up with nothing, so part of their low overlap may be recompute slack rather than real signal.
+Not all systems add independent information, and they split widely on how much.
+The all-in-one summaries are the most redundant: about << f("overlap.PER.r2", "{:.0%}") >> of PER, << f("overlap.GAME_SCORE.r2", "{:.0%}") >> of Game Score, and roughly << f("overlap.BPM.r2", "{:.0%}") >> of BPM and << f("overlap.VORP.r2", "{:.0%}") >> of VORP can be rebuilt from the other systems, so each mostly repeats what the field already says.
+The metric that carries by far the most of its own is Defensive BPM: only about << f("overlap.DBPM.r2", "{:.0%}") >> of it can be rebuilt from the rest, because measuring defense from the box score picks up something the scoring-heavy systems miss.
+Win Shares per minute is the next most independent.
+The RAPM family lands in the middle, in the << f("overlap.RAPM.r2", "{:.0%}") >> to << f("overlap.D_RAPM_MY.r2", "{:.0%}") >> range, but one caveat keeps that from being a clean read: this report's RAPM is still an approximate recompute under repair, and a noisy rating can look independent simply because its noise lines up with nothing.
+BPM and VORP carry no such caveat (they are validated against Basketball-Reference, a rank agreement of << f("bpm_val.r_bpm", "{:.2f}") >> on a 0-to-1 scale), and they sit with the redundant systems, not the independent ones: a validated rating can still be redundant if it says what the others already do.
 The measure holds each metric's own components out of the comparison, so BPM is never counted as "explained" by its own offensive and defensive halves (see results for the full breakdown).
 
 The "system outliers" chart shows the players each system rates most above and below the consensus.
 This is where methodological differences become visible: a system that captures defensive value heavily will love rim protectors; a system that penalizes inefficient volume scoring will discount high-usage players with middling true shooting.
 
 ![Players each system rates most above or below the consensus.](../generated/images/system_outliers.svg){#fig-outliers}
+
+**Five players make the divergence concrete.** The fastest way to feel what each system catches is to watch where a handful of players land.
+
+Start with the one everyone agrees on.
+<< f("example.elite.name") >> ranks first in nearly every system at once: his worst finish across the five box scores is << f("example.elite.worst_rank", "{:d}") >>, and even the impact metrics put him within a hair of the top.
+That is the rare player box scores, impact metrics, and human voters all point at together, and he is the ceiling against which every disagreement below gets measured.
+
+Now the defense-first star.
+<< f("example.defense.name") >> grades out at an all-around BPM of << f("example.defense.bpm") >>, and most of it is defense: << f("example.defense.dbpm") >> of that number comes from his defensive rating alone, the kind of value a pure scoring metric never records.
+
+Now the high-volume scorer the systems split on.
+Counting stats love << f("example.split.name") >>, with Player Efficiency Rating placing him << f("example.split.per_rank", "{:d}") >>th.
+The impact-aware metrics are cooler: BPM has him down at << f("example.split.bpm_rank", "{:d}") >>th, because heavy scoring counts for less once efficiency and team results enter the picture.
+
+Then Jalen Brunson, the player the playoffs make interesting (section 8).
+His offense rates with the best, an offensive BPM of << f("example.brunson.obpm") >> that ranks << f("example.brunson.obpm_rank", "{:d}") >>th.
+His defense pulls the other way, a defensive BPM of << f("example.brunson.dbpm") >>, so his all-around BPM of << f("example.brunson.bpm") >> sits at << f("example.brunson.bpm_rank", "{:d}") >>th.
+The same player is a top-fifteen offensive player and a top-thirty contributor overall, and the gap between those two is exactly what his defense costs him.
+
+And one player who answers a different question, << f("example.riser.name") >>: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where section 8 picks up.
 
 ## 5. The two uber ratings
 
@@ -284,12 +307,12 @@ Aggregating across systems is not unique to this report.
 HoopsHype publishes periodic "Analytics MVP" posts that combine EPM, LEBRON, DARKO, RAPTOR, and BPM into a single ranking, typically using a simple equal-weighted average.
 ESPN's #NBArank is a different kind of aggregate: journalists vote rather than models, making it closer to the human-reputation category than to a model combination.
 Some metrics do the aggregation internally: LEBRON, for example, blends a box-score prior with luck-adjusted on/off data as part of its own formula rather than publishing both separately and combining them downstream.
-What distinguishes the wins-predictive rating here is that the system weights are estimated from data (how well each system actually predicted team wins) rather than assigned by hand.
-The practical difference is small (the two ratings agree at << f("cmp.spearman", "{:.2f}") >> on a 0-to-1 scale), but the weights tell you which systems carried the most predictive signal for 2025-26, which is worth knowing.
+What distinguishes the wins-predictive rating here is that how much each system counts is estimated from data (how well each system actually predicted team wins) rather than assigned by hand.
+The practical difference is small (the two ratings agree at << f("cmp.spearman", "{:.2f}") >> on a 0-to-1 scale), but it tells you which systems carried the most predictive signal for 2025-26, which is worth knowing.
 
 The 2025-26 season shows how this plays out.
-<< f("consensus.top.1.name") >> tops both ratings and pulls away under the wins-predictive weighting: the consensus puts him at << f("consensus.top.1.z") >>, the wins-predictive rating at << f("wins_pred.top.1.z") >>.
-He also gains more than any other player when the rating shifts to wins-predictive (<< f("cmp.higher.1.diff", "{:+.2f}") >> versus his consensus rating), because Denver was one of the league's stronger teams and that rating rewards strong individual production that lines up with team success.
+<< f("consensus.top.1.name") >> tops both ratings and pulls further ahead under the wins-predictive weighting: the consensus puts him at << f("consensus.top.1.z") >>, the wins-predictive rating at << f("wins_pred.top.1.z") >>, because Denver was one of the league's stronger teams and that rating rewards strong production that lines up with team success.
+The single biggest gainer, though, is << f("cmp.higher.1.name") >>, who moves up << f("cmp.higher.1.diff", "{:+.2f}") >> versus his consensus rating.
 The deep-rotation players on losing teams move the opposite way: solid rate metrics, but no team wins behind them.
 
 ## 6. Stars matter more than rank implies
@@ -313,13 +336,12 @@ By that test the systems fall into two groups, and the split lines up with the c
 Holding close to a straight line: << f("powerlaw.systems") >>.
 Bending instead: << f("powerlaw.non_systems") >>.
 
-Win Shares is the steep power law, and VORP concentrates value just as hard, though its top-50 curve bends rather than holding the straight line.
+Win Shares and VORP concentrate the most value of any system, with their top 5% holding the largest shares.
 Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down.
 PER and Game Score are power laws too, but so shallow that the line is nearly flat, which is the same reason their top 50 sit bunched close together in value.
 
-Most of the benders are per-possession metrics.
-They measure how far above average a player is per possession, a quantity that is roughly even on both sides of the middle and has a natural size to it, so their best player is not a runaway: the top of the curve sits below where a straight power law would put it, and OBPM bends the most.
-VORP is the exception in this group: it concentrates value as hard as a power law, but its top-50 curve still bends just short of a clean straight line.
+The benders are the impact metrics.
+They score how far above average a player is per possession against the lineup he shares the floor with, a quantity that is roughly even on both sides of the middle and has a natural size to it, so their best player is not a runaway: the top of the curve sits below where a straight power law would put it.
 
 RAPM, the impact metric built for this report, is the clearest case, and it answers a natural question: no, RAPM is not a power law.
 The log-log test above only reads the top 50 players, but RAPM's whole distribution settles it.
@@ -327,7 +349,7 @@ Pooled across all << f("rapm_shape.n_seasons") >> seasons with play-by-play (<< 
 A power law needs a long one-sided tail of standout values.
 RAPM has none, because a per-possession impact is scored against the average player and runs about as far into the minus as the plus.
 VORP, set beside it, leans to the right: a handful of stars trail a long tail above the pack.
-That lean toward the top, not a hump centered on zero, is the precondition a power law needs, the one RAPM lacks entirely; VORP has it, even though its own top-50 curve bends just short of a clean line.
+That lean toward the top, not a hump centered on zero, is the precondition a power law needs, the one RAPM lacks entirely and VORP has.
 
 ![RAPM's full distribution against VORP's. RAPM is a symmetric bell with no heavy tail, so it cannot be a power law at all; VORP leans right, with the one-sided tail of stars a power law's shape needs.](../generated/images/distribution_shape.svg){#fig-distribution-shape}
 
@@ -338,7 +360,7 @@ The small panels below make the difference visible: the blue curves hold a strai
 ![One small panel per system: blue curves are power laws (a straight line on a log scale), grey curves bend. Ordered by how steeply value falls, steepest first.](../generated/images/powerlaw_small_multiples.svg){#fig-powerlaw-sm}
 
 Two cautions.
-The cutoff between "power law" and "bends" is a convention, and the systems sitting right at it (BPM just clears the line, DBPM just misses) are really the same shape.
+The cutoff between "power law" and "bends" is a convention, and the systems sitting right at it (PER clears the line, Win Shares per-48 just misses) are really the same shape.
 And this is a description of 50 players in one season, not a formal test: it shows which curves are straight and which bend, not a proven law.
 The reliable read is the two groups and their order, not the label on any single borderline system.
 
@@ -385,13 +407,27 @@ It describes one postseason, not proof that any of these players is reliably bet
 
 ![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least << f("playoff.min_floor") >> playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
 
+**Putting the two halves together: who delivered the most value once the playoffs are weighted in.** The riser-and-faller read says who changed, not who held the most value across the whole season once the playoffs are weighted in.
+For that, blend each playoff player's regular-season and playoff BPM into one number, counting a playoff minute << f("pwv.weight", "{:d}") >> times a regular-season minute.
+Call it Playoff-Weighted Value.
+Because it is built on BPM, which is validated against Basketball-Reference, it stays on a real scale: points per 100 possessions above an average player.
+
+The top of that list is the expected company: << f("pwv.top.1.name") >>, << f("pwv.top.2.name") >>, and << f("pwv.top.3.name") >>.
+Brunson is the interesting case, and the one this report started from: did he really jump from the regular season to the playoffs, and does any metric catch it?
+Yes, and the size is honest.
+His BPM rose from << f("pwv.brunson_bpm_reg") >> in the regular season to << f("pwv.brunson_bpm_po") >> in the playoffs, a real step up.
+Weighted only by minutes that leaves him << f("pwv.brunson_rank_k1", "{:d}") >>th of the << f("pwv.pool_n", "{:d}") >> playoff players; lean on the postseason and he climbs to << f("pwv.brunson_rank_k2", "{:d}") >>th; lean on it harder still and he holds at << f("pwv.brunson_rank_k3", "{:d}") >>th, never quite breaking the top five.
+The honest reading is a genuine top-ten playoff performer who got better when it counted, not a hidden top-five star the regular-season numbers were missing: the players ahead of him were either better all-around or rose more.
+
+![Brunson raised his game in the playoffs, but not into the top five. Regular-season versus playoff BPM for the top 12 by playoff-weighted value.](../generated/images/playoff_weighted_value.svg){#fig-playoff-weighted-value}
+
 ## 9. What changed from 2024-25 to 2025-26
 
 The whole cross-system comparison rests on one season, so it is fair to ask how much of it survives when the season turns over.
 The top barely moves, the middle churns, and the systems disagree by about the same amount as before.
 
 Across the << f("cmp2.n_both") >> players who qualified in both seasons, the consensus order agrees from 2024-25 to 2025-26 at about << f("cmp2.consensus_corr") >> on a 0-to-1 scale: a steady spine with a moving body.
-<< f("cmp2.top_b.1.name") >> and << f("cmp2.top_b.2.name") >> hold the top two spots in both seasons, but only << f("cmp2.held_top5") >> of the top five carry over; << f("cmp2.top_b.3.name") >>, << f("cmp2.top_b.4.name") >>, and << f("cmp2.top_b.5.name") >> move up to take the other three.
+<< f("cmp2.top_b.1.name") >> and << f("cmp2.top_b.2.name") >> hold the top two spots in both seasons, and << f("cmp2.top_b.3.name") >> holds his as well, so << f("cmp2.held_top5") >> of the top five carry over; << f("cmp2.top_b.4.name") >> and << f("cmp2.top_b.5.name") >> are the new arrivals, taking the two open spots.
 
 The biggest one-year swings are exactly what a single season cannot tell apart from real change.
 << f("cmp2.riser.1.name") >> climbed the most in standardized standing (<< f("cmp2.riser.1.delta") >>) and << f("cmp2.faller.1.name") >> fell the most (<< f("cmp2.faller.1.delta") >>); injuries, role changes, and roster moves drive most of these, and the rating systems only record them.
@@ -420,28 +456,28 @@ One pattern runs under all three answers: value is top-heavy.
 The gap between the best player and the tenth dwarfs the gap from the tenth to the fiftieth, so a ranked list understates how much a single elite player is worth.
 
 The cross-system comparison rests on the 2025-26 season alone, so its exact orderings are a snapshot; year to year the order holds at the top (<< f("cmp2.top_b.1.name") >> and << f("cmp2.top_b.2.name") >> lead both seasons, rank agreement about << f("cmp2.consensus_corr") >>) but churns below it, while the describe-versus-forecast and stability findings span << f("panel.n_seasons") >> seasons and are the firmer results.
-The recomputed BPM and VORP are approximations (Section 11), so read them for rank, not exact value.
+The recomputed BPM and VORP are validated against Basketball-Reference (Section 11) and best read for rank; their very top is slightly compressed.
 
 ## 11. A note on the recomputed formulas
 
-The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations.
-The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the low 30s).
-The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures.
-The relative rankings within each system are directionally correct.
+Four of the box-score systems here are recomputed from raw totals (PER, Win Shares, BPM, VORP) rather than copied from a published source.
+PER and Win Shares land in the expected range (PER averages 15, with << f("example.elite.name") >> in the low 30s) and are used as is.
+BPM and VORP needed real repair, and that repair is worth describing, because an earlier version of this report had them wrong.
 
-A planned improvement is to spot-check the recomputed values against Basketball-Reference (BBR) for 5-10 known players, and to tighten the BPM per-100-possession rate computation (currently using player-possession-based denominators rather than the team-possession-based denominators BBR uses).
-For comparison purposes (which system ranks whom higher or lower), the current implementation is sufficient.
-For absolute values, treat the recomputed BPM/VORP as approximations.
+**The bug.** The first recompute built BPM's per-100 rates on each player's own possessions instead of the team's, which inflated the rates for low-minute and high-steal players.
+The symptoms: a reserve, John Konchar, graded as the league's best player by BPM; VORP ran roughly thirty times too large, with a single-season leader near 250 where the real scale tops out under 10; and usage rate read close to 100% for a starter instead of the correct 30%.
+The numbers were not merely approximate: they were wrong in scale and in order.
 
-One consequence is visible in the data: VORP rates << f("loves.VORP.1.name") >> further above the consensus than any other player, placing him near the very top, far above where he lands in any other system.
-On Basketball-Reference's published VORP, he ranks nowhere near the top of the league.
-The difference traces to steals: Wallace led the league in steals in 2025-26, and the DBPM formula credits steals heavily.
-Our approximation amplifies that credit further because it uses player-possession denominators rather than team-possession denominators, inflating per-100 steal rates.
-His more modest standing in the rate metrics tells a more representative story of a strong defensive specialist whose overall value does not place him among the very best players in the league.
+**The fix.** BPM is now built in two steps.
+First, the standard advanced rates (usage, assist, turnover, rebound, steal, and block percentages, each computed against team and league context the way Basketball-Reference does) feed a model tuned to reproduce Basketball-Reference's published offensive and defensive BPM.
+Second, each team's ratings are anchored so its players, weighted by minutes, sum to the team's actual point differential, which is the defining property of BPM and what sets the scale.
+VORP was rebuilt on the corrected BPM with the right minutes base.
 
-The same inflation affects other high-steal defenders in 2025-26: Ausar Thompson (146 steals across the season) and Kris Dunn (131) both carry VORP values in this dataset that exceed their BBR equivalents.
-Their Win Shares figures (around 4 to 5, about right for a productive role player) are the more representative number.
-This is not a separate bug from the Wallace case; it is the same per-100 denominator approximation applied to any player with a high steal rate relative to their minutes.
+**The check.** Against Basketball-Reference's published 2025-26 figures, across << f("bpm_val.n", "{:d}") >> qualified players, the recomputed values now line up: a rank-and-value agreement of << f("bpm_val.r_bpm", "{:.2f}") >> for BPM, << f("bpm_val.r_obpm", "{:.2f}") >> for offensive BPM, and << f("bpm_val.r_vorp", "{:.2f}") >> for VORP, on a 0-to-1 scale.
+Defensive BPM is weaker at << f("bpm_val.r_dbpm", "{:.2f}") >>, which is honest: box-score defense is hard, and Basketball-Reference's own defensive BPM is limited for the same reason.
+Two caveats remain.
+The recompute slightly compresses the very top, grading the best player a notch below his Basketball-Reference mark.
+And the impact metrics in the RAPM family are still being repaired, so their absolute values should not yet be trusted; the investigation companion documents what is wrong and what is being done about it.
 
 ## 12. Limitations
 

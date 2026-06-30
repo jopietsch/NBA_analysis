@@ -13,7 +13,10 @@ from player_rating_overview_data import (
     load_unified_ratings,
     load_team_outcomes,
     load_playoff_deltas,
+    playoff_weighted_value,
+    PLAYOFF_VALUE_WEIGHT,
     pooled_qualified_values,
+    fetch_bbr_advanced,
     MIN_MINUTES_QUALIFIER,
     MIN_PLAYOFF_MINUTES,
     PLAYOFF_DELTA_METRICS,
@@ -21,6 +24,7 @@ from player_rating_overview_data import (
     POWERLAW_R2_THRESHOLD,
 )
 from player_rating_overview_facts import FACTS, _FACTS_PATH, _GUARDS_PATH
+from nbakit.player_crosswalk import build_crosswalk, apply_crosswalk
 
 # Rating systems included in the cross-system comparison
 # (all systems that may be present; silently skipped if absent in the data)
@@ -709,6 +713,75 @@ def run(end_year: int = 2026) -> None:
         else:
             print(f"  Too few overlapping players ({len(cmp)}) for comparison")
 
+    # BPM family validation against Basketball-Reference's published values —
+    # our BPM was just rewritten, so this checks it reproduces an authoritative
+    # source rather than only agreeing with itself.
+    header("BPM VALIDATION vs BASKETBALL-REFERENCE")
+    bbr = fetch_bbr_advanced(end_year)
+    if bbr is None or bbr.empty:
+        print("  BBR advanced stats unavailable — section skipped.")
+    else:
+        xwalk_df = df_full[["player_id", "PLAYER_NAME", "TEAM_ABBREVIATION"]].rename(
+            columns={"player_id": "PLAYER_ID"})
+        xwalk = build_crosswalk(xwalk_df, end_year)
+        bbr_matched = apply_crosswalk(bbr, xwalk, name_col="player_name",
+                                      season_col="season_end_year")
+        bbr_matched = bbr_matched.dropna(subset=["player_id"]).copy()
+        bbr_matched["player_id"] = bbr_matched["player_id"].astype(int)
+
+        qual_full = df_full[df_full["QUALIFIED"] == True] if "QUALIFIED" in df_full.columns else df_full
+        val = qual_full.merge(bbr_matched, on="player_id", how="inner",
+                              suffixes=("", "_bbr"))
+        n_matched = len(val)
+        print(f"  Qualified players matched to BBR: {n_matched}")
+        FACTS.set("bpm_val.n", n_matched, "{:d}",
+                  note="qualified players matched to BBR advanced stats")
+
+        r_by_metric = {}
+        for ours, theirs in (("BPM", "bpm"), ("OBPM", "obpm"),
+                             ("DBPM", "dbpm"), ("VORP", "vorp")):
+            pair = val[[ours, theirs]].dropna()
+            if len(pair) < 10:
+                continue
+            r = float(np.corrcoef(pair[ours], pair[theirs])[0, 1])
+            mae = float((pair[ours] - pair[theirs]).abs().mean())
+            r_by_metric[ours] = r
+            print(f"  {ours} vs BBR {theirs}: r={r:.3f}  MAE={mae:.2f} (n={len(pair)})")
+            fact_key = ours.lower()
+            FACTS.set(f"bpm_val.r_{fact_key}", r, "{:.3f}",
+                      note=f"Pearson r between our {ours} and BBR {theirs}")
+            if ours == "BPM":
+                FACTS.set("bpm_val.mae_bpm", mae, "{:.2f}",
+                          note="mean absolute diff our BPM vs BBR bpm")
+
+        spot_names = ["Nikola Joki", "Shai Gilgeous", "Giannis", "Wembanyama",
+                     "Luka", "Jalen Brunson", "Jayson Tatum", "Kawhi"]
+        print("\n  Spot check (ours vs BBR):")
+        print(f"  {'Player':<22}{'BPM':>8}{'BBR BPM':>10}{'OBPM':>8}{'BBR OBPM':>10}"
+              f"{'DBPM':>8}{'BBR DBPM':>10}")
+        for needle in spot_names:
+            hit = val[val["PLAYER_NAME"].str.contains(needle, case=False, na=False)]
+            if hit.empty:
+                continue
+            row = hit.iloc[0]
+            print(f"  {row['PLAYER_NAME']:<22}{row['BPM']:>8.1f}{row['bpm']:>10.1f}"
+                  f"{row['OBPM']:>8.1f}{row['obpm']:>10.1f}"
+                  f"{row['DBPM']:>8.1f}{row['dbpm']:>10.1f}")
+            if "Brunson" in needle:
+                FACTS.set("bpm_val.brunson_bpm", float(row["BPM"]), "{:.1f}",
+                          note="our BPM for Jalen Brunson")
+                FACTS.set("bpm_val.brunson_bbr_bpm", float(row["bpm"]), "{:.1f}",
+                          note="BBR's published BPM for Jalen Brunson")
+
+        if "BPM" in r_by_metric:
+            FACTS.guard("bpm_val_strong", r_by_metric["BPM"] > 0.85,
+                        "our BPM reproduces Basketball-Reference BPM (r > 0.85)",
+                        r_by_metric["BPM"])
+        if "VORP" in r_by_metric:
+            FACTS.guard("vorp_val_strong", r_by_metric["VORP"] > 0.90,
+                        "our VORP reproduces Basketball-Reference VORP (r > 0.90)",
+                        r_by_metric["VORP"])
+
     header("BASIC DISTRIBUTION STATS")
     for s in present:
         vals = qual[s].dropna().values
@@ -831,10 +904,11 @@ def run(end_year: int = 2026) -> None:
     if "WS" in power_law_systems and "VORP" in power_law_systems:
         FACTS.guard("cumulative_are_power_laws", True,
                     "the cumulative metrics (Win Shares, VORP) are power laws", non_list)
-    if _alpha.get("OBPM"):
-        FACTS.guard("obpm_bends", "OBPM" not in power_law_systems,
-                    "Offensive BPM bends rather than holding a straight power law",
-                    _alpha["OBPM"]["r2"])
+    if _alpha.get("RAPM"):
+        FACTS.guard("rapm_not_power_law", "RAPM" not in power_law_systems,
+                    "the impact metric RAPM bends rather than holding a straight power "
+                    "law: it is a symmetric spread, not a one-sided tail of stars",
+                    _alpha["RAPM"]["r2"])
 
     header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
     if len(present) >= 2:
@@ -1025,26 +1099,41 @@ def run(end_year: int = 2026) -> None:
 
         top_sys, top_sc = ranked[0]
         top_label = SYSTEM_LABELS.get(top_sys, top_sys)
-        print(f"\nTop retrodictor: {top_label} (CV R²={top_sc['cv_r2']:.3f}); it "
-              f"rebuilds {top_sc['cv_r2'] * 100:.0f}% of the team point-differential")
-        print("spread out of sample.")
-        FACTS.set("retro.top.name", str(top_label),
-                  note="system that best retrodicts team point differential (CV)")
-        FACTS.set("retro.top.cv_r2", float(top_sc["cv_r2"]), "{:.3f}",
-                  note="top system's leave-one-team-out retrodiction R²")
-        FACTS.set("retro.top.cv_r2_pct", float(top_sc["cv_r2"] * 100), "{:.0f}",
-                  note="top system's retrodiction R² as a percent (append % in prose)")
-        if top_sys not in OUTCOME_CALIBRATED:
-            print(f"{top_label} never uses who won, yet it beats the team-adjusted box")
-            print("metrics (BPM, VORP, Win Shares) here. Caveat: this project's BPM and")
-            print("VORP are approximate recomputes, so their lower scores partly reflect a")
-            print("noisy recompute, not proof PER is the better rating. Rerun once exactly")
-            print("computed or published impact metrics (EPM, DARKO, RAPTOR) are loaded.")
-        FACTS.guard("blind_rating_tops_retrodiction",
-                    top_sys not in OUTCOME_CALIBRATED,
-                    "an outcome-blind box rating tops the team point-differential "
-                    "retrodiction, ahead of the team-adjusted metrics",
-                    top_label)
+        blind_ranked = [(s, sc) for s, sc in ranked if s not in OUTCOME_CALIBRATED]
+        if blind_ranked:
+            tb_sys, tb_sc = blind_ranked[0]
+            tb_label = SYSTEM_LABELS.get(tb_sys, tb_sys)
+            # The team-margin anchor makes the box metrics reconstruct team point
+            # differential by construction (BPM equals it exactly), so the top of
+            # the list is mechanical. The genuine test is among the outcome-blind
+            # ratings, where PER still leads at the same ~73% as before.
+            print(f"\n{top_label} sits on top at CV R²={top_sc['cv_r2']:.3f}, but only")
+            print("mechanically: the team-margin anchor builds the box metrics to sum to")
+            print("team point differential (BPM equals it exactly). Among the ratings that")
+            print(f"never saw who won, {tb_label} leads, rebuilding "
+                  f"{tb_sc['cv_r2'] * 100:.0f}% of the team point-differential spread")
+            print("out of sample.")
+            FACTS.set("retro.top.name", str(tb_label),
+                      note="top outcome-blind retrodictor of team point differential (CV)")
+            FACTS.set("retro.top.cv_r2", float(tb_sc["cv_r2"]), "{:.3f}",
+                      note="top outcome-blind rating's leave-one-team-out retrodiction R²")
+            FACTS.set("retro.top.cv_r2_pct", float(tb_sc["cv_r2"] * 100), "{:.0f}",
+                      note="top outcome-blind rating's retrodiction R² as a percent (append %)")
+            FACTS.set("retro.mechanical.name", str(top_label),
+                      note="rating that tops retrodiction mechanically (team-anchored box metric)")
+            FACTS.set("retro.mechanical.cv_r2", float(top_sc["cv_r2"]), "{:.3f}",
+                      note="the mechanically-top rating's retrodiction R² (≈1.0 by construction)")
+            FACTS.guard("blind_rating_rebuilds_team_diff",
+                        tb_sc["cv_r2"] > 0.5
+                        and all(tb_sc["cv_r2"] >= sc["cv_r2"] for _, sc in blind_ranked),
+                        f"among ratings that never saw who won, {tb_label} rebuilds the most "
+                        f"team point differential ({tb_sc['cv_r2'] * 100:.0f}% out of sample)",
+                        tb_label)
+            FACTS.guard("team_anchored_box_is_mechanical",
+                        top_sys in OUTCOME_CALIBRATED and top_sc["cv_r2"] > 0.95,
+                        "the team-anchored box metrics top this test only mechanically "
+                        "(BPM is built to equal team point differential)",
+                        f"{top_label} CV R²={top_sc['cv_r2']:.2f}")
 
     header("NEXT-SEASON RETRODICTION (PREDICTING THIS SEASON FROM LAST)")
     print(f"Last season's ({end_year - 2}-{str(end_year - 1)[-2:]}) player ratings are")
@@ -1345,8 +1434,9 @@ def run(end_year: int = 2026) -> None:
         print("rotation players who also advanced. The composite shift z averages the")
         print("standardized adjusted deltas of PER, WS/48, and BPM, so a riser needs the")
         print("three box formulations to agree.")
-        print("Note: this project's BPM scale is approximate; the rankings carry the")
-        print("signal, not the raw BPM points.")
+        print("Note: BPM here is our recompute, validated against Basketball-Reference")
+        print("(see the BPM-validation section); the playoff BPM is anchored to each")
+        print("team's playoff point margin.")
         FACTS.set("playoff.n_qualified", n_qual, "{:d}",
                   note=f"players with >= {MIN_PLAYOFF_MINUTES} playoff minutes")
         FACTS.set("playoff.min_floor", MIN_PLAYOFF_MINUTES, "{:d}",
@@ -1461,6 +1551,171 @@ def run(end_year: int = 2026) -> None:
                       note=f"biggest consensus faller {rank}, {la} to {lb}")
             FACTS.set(f"cmp2.faller.{rank}.delta", float(row["delta"]), "{:+.2f}",
                       note=f"consensus z change for faller {rank}")
+
+    # ── Playoff-Weighted Value: who drove playoff success ────────────────────
+    # An honest combine that blends each playoff player's regular-season and
+    # postseason BPM, weighting playoff minutes more. BPM is now validated
+    # against Basketball-Reference, so the blend sits on a real scale.
+    header("PLAYOFF-WEIGHTED VALUE (REGULAR SEASON + PLAYOFFS)")
+    pwv_deltas = load_playoff_deltas(end_year)
+    BRUNSON_ID = 1628973
+    if pwv_deltas.empty:
+        print("  No playoff data available for this season — section skipped.")
+    else:
+        pool_n = len(pwv_deltas)
+        print(f"Playoff pool: {pool_n} players with >= {MIN_PLAYOFF_MINUTES} "
+              f"playoff minutes.")
+        print(f"PWV = minutes-weighted blend of regular-season and playoff BPM, "
+              f"playoff minutes weighted {PLAYOFF_VALUE_WEIGHT}x (primary).")
+        FACTS.set("pwv.pool_n", pool_n, "{:d}",
+                  note=f"players in the playoff pool (>= {MIN_PLAYOFF_MINUTES} playoff min)")
+        FACTS.set("pwv.weight", PLAYOFF_VALUE_WEIGHT, "{:d}",
+                  note="primary playoff-minute weight in PWV")
+
+        # Brunson's rank as the playoff weight rises: the honest sensitivity read.
+        brunson_ranks = {}
+        for k in (1, 2, 3):
+            pwv_k = playoff_weighted_value(pwv_deltas, k=k)
+            ranks = pwv_k.rank(ascending=False, method="min")
+            if (pwv_deltas["PLAYER_ID"] == BRUNSON_ID).any():
+                br = int(ranks[pwv_deltas["PLAYER_ID"] == BRUNSON_ID].iloc[0])
+                brunson_ranks[k] = br
+                FACTS.set(f"pwv.brunson_rank_k{k}", br, "{:d}",
+                          note=f"Brunson PWV rank with playoff weight {k}x (of {pool_n})")
+
+        # Primary table at the chosen weight.
+        pwv_deltas = pwv_deltas.copy()
+        pwv_deltas["PWV"] = playoff_weighted_value(pwv_deltas)
+        ordered = pwv_deltas.sort_values("PWV", ascending=False).reset_index(drop=True)
+        print(f"\nTop 10 by Playoff-Weighted Value (playoffs x{PLAYOFF_VALUE_WEIGHT}):")
+        for rank, (_, row) in enumerate(ordered.head(10).iterrows(), 1):
+            print(f"  {rank:>2}. {row['PLAYER_NAME']:<26} PWV {row['PWV']:+.2f}  "
+                  f"(reg {row['BPM_reg']:+.1f} → playoff {row['BPM_po']:+.1f})")
+            if rank <= 3:
+                FACTS.set(f"pwv.top.{rank}.name", str(row["PLAYER_NAME"]),
+                          note=f"Playoff-Weighted Value rank {rank}")
+                FACTS.set(f"pwv.top.{rank}.value", float(row["PWV"]), "{:.1f}",
+                          note=f"Playoff-Weighted Value of rank {rank}")
+
+        if brunson_ranks:
+            brow = pwv_deltas[pwv_deltas["PLAYER_ID"] == BRUNSON_ID].iloc[0]
+            print(f"\nJalen Brunson: regular-season BPM {brow['BPM_reg']:+.1f}, "
+                  f"playoff BPM {brow['BPM_po']:+.1f}.")
+            print(f"  PWV rank as the playoffs are weighted more: "
+                  f"{brunson_ranks.get(1)}th (1x) → {brunson_ranks.get(2)}th (2x) "
+                  f"→ {brunson_ranks.get(3)}th (3x), of {pool_n}.")
+            FACTS.set("pwv.brunson_bpm_reg", float(brow["BPM_reg"]), "{:+.1f}",
+                      note="Brunson regular-season BPM")
+            FACTS.set("pwv.brunson_bpm_po", float(brow["BPM_po"]), "{:+.1f}",
+                      note="Brunson playoff BPM")
+            FACTS.guard("pwv_brunson_rises_with_playoffs",
+                        brunson_ranks.get(3, 99) < brunson_ranks.get(1, 0),
+                        "weighting the playoffs more lifts Brunson's combined rank "
+                        f"(from {brunson_ranks.get(1)}th to {brunson_ranks.get(3)}th)",
+                        f"{brunson_ranks.get(1)} -> {brunson_ranks.get(3)}")
+            FACTS.guard("pwv_brunson_not_top5",
+                        brunson_ranks.get(3, 0) > 5,
+                        "even with the playoffs weighted heavily Brunson stays outside "
+                        "the top 5 of the playoff pool", brunson_ranks.get(3))
+
+    # ── Example players: archetypes that show what each system captures ───────
+    # Rule-selected representatives (emitted as facts so the prose re-points
+    # automatically when a metric is fixed or added); Brunson is the pinned case
+    # study. See the findings "Examples" section.
+    header("EXAMPLE PLAYERS (ARCHETYPES)")
+    ex_q = df_full[df_full["QUALIFIED"] == True].copy() if "QUALIFIED" in df_full.columns else df_full.copy()
+    _ex_systems = [c for c in ["PER", "WS", "BPM", "GAME_SCORE", "VORP"] if c in ex_q.columns]
+    if len(ex_q) > 20 and len(_ex_systems) >= 3 and "BPM" in ex_q.columns:
+        for s in _ex_systems:
+            ex_q[s + "_rk"] = ex_q[s].rank(ascending=False, method="min")
+        chosen = {}
+
+        # Agreed elite: best (lowest) worst-rank across the core systems.
+        ex_q["_worst_rk"] = ex_q[[s + "_rk" for s in _ex_systems]].max(axis=1)
+        elite = ex_q.nsmallest(1, "_worst_rk").iloc[0]
+        chosen["elite"] = str(elite["PLAYER_NAME"])
+        print(f"Agreed elite (best worst-rank across {len(_ex_systems)} systems): "
+              f"{chosen['elite']} (worst rank {int(elite['_worst_rk'])}).")
+        FACTS.set("example.elite.name", chosen["elite"],
+                  note="agreed-elite archetype: best worst-rank across systems")
+        FACTS.set("example.elite.worst_rank", int(elite["_worst_rk"]), "{:d}",
+                  note="the agreed elite's worst rank across the core systems")
+
+        # Defense-driven star: among the top BPM tier, the largest DBPM.
+        if {"OBPM", "DBPM"}.issubset(ex_q.columns):
+            tier = ex_q.nsmallest(12, "BPM_rk")
+            dstar = tier.nlargest(1, "DBPM").iloc[0]
+            chosen["defense"] = str(dstar["PLAYER_NAME"])
+            dshare = float(dstar["DBPM"]) / float(dstar["BPM"]) if dstar["BPM"] else 0.0
+            print(f"Defense-driven star (top-12 BPM, highest DBPM): {chosen['defense']} "
+                  f"(BPM {dstar['BPM']:+.1f}, of which DBPM {dstar['DBPM']:+.1f}).")
+            FACTS.set("example.defense.name", chosen["defense"],
+                      note="defense-driven archetype: highest DBPM among the top BPM tier")
+            FACTS.set("example.defense.dbpm", float(dstar["DBPM"]), "{:+.1f}",
+                      note="the defense-driven star's DBPM")
+            FACTS.set("example.defense.bpm", float(dstar["BPM"]), "{:+.1f}",
+                      note="the defense-driven star's BPM")
+            FACTS.guard("example_defense_is_defense_led", dshare > 0.30,
+                        f"the defense example ({chosen['defense']}) draws more than a "
+                        "third of its BPM from defense", dshare)
+
+        # High-usage scorer the metrics split on: high USG%, counting stats (PER)
+        # rate the player well above where the impact-ish BPM ranks them.
+        if "USG_PCT" in ex_q.columns and "PER_rk" in ex_q.columns:
+            hi = ex_q[(ex_q["USG_PCT"] >= ex_q["USG_PCT"].quantile(0.90))
+                      & (ex_q["PER_rk"] <= 50)].copy()
+            if not hi.empty:
+                hi["_split"] = hi["BPM_rk"] - hi["PER_rk"]
+                split = hi.nlargest(1, "_split").iloc[0]
+                chosen["split"] = str(split["PLAYER_NAME"])
+                print(f"High-usage scorer the metrics split on: {chosen['split']} "
+                      f"(USG {split['USG_PCT']:.0%}, PER rank {int(split['PER_rk'])} "
+                      f"vs BPM rank {int(split['BPM_rk'])}).")
+                FACTS.set("example.split.name", chosen["split"],
+                          note="high-usage split archetype: PER ranks well above BPM")
+                FACTS.set("example.split.per_rank", int(split["PER_rk"]), "{:d}",
+                          note="the split scorer's PER rank")
+                FACTS.set("example.split.bpm_rank", int(split["BPM_rk"]), "{:d}",
+                          note="the split scorer's BPM rank")
+                FACTS.guard("example_split_per_over_bpm",
+                            int(split["BPM_rk"]) > int(split["PER_rk"]),
+                            f"counting stats rate the split scorer ({chosen['split']}) "
+                            "well above where impact-aware BPM puts him",
+                            f"PER {int(split['PER_rk'])} vs BPM {int(split['BPM_rk'])}")
+
+        # Biggest playoff riser: top of the corrected playoff shift.
+        if not pwv_deltas.empty and "SHIFT_Z" in pwv_deltas.columns:
+            riser = pwv_deltas.sort_values("SHIFT_Z", ascending=False).iloc[0]
+            chosen["riser"] = str(riser["PLAYER_NAME"])
+            print(f"Biggest playoff riser (top composite shift): {chosen['riser']} "
+                  f"(shift z {riser['SHIFT_Z']:+.2f}).")
+            FACTS.set("example.riser.name", chosen["riser"],
+                      note="biggest-playoff-riser archetype: top composite shift")
+
+        # Brunson, the pinned case study: offense rates well, defense drags the
+        # all-around number down. Numbers for the worked-examples prose.
+        brow = ex_q[ex_q["player_id"] == 1628973] if "player_id" in ex_q.columns else ex_q[ex_q.get("PLAYER_ID") == 1628973]
+        if not brow.empty:
+            br = brow.iloc[0]
+            FACTS.set("example.brunson.obpm", float(br["OBPM"]), "{:+.1f}",
+                      note="Brunson offensive BPM")
+            FACTS.set("example.brunson.dbpm", float(br["DBPM"]), "{:+.1f}",
+                      note="Brunson defensive BPM")
+            FACTS.set("example.brunson.bpm", float(br["BPM"]), "{:+.1f}",
+                      note="Brunson overall BPM")
+            FACTS.set("example.brunson.obpm_rank",
+                      int((ex_q["OBPM"] > float(br["OBPM"])).sum()) + 1, "{:d}",
+                      note="Brunson OBPM rank among qualified players")
+            FACTS.set("example.brunson.bpm_rank",
+                      int((ex_q["BPM"] > float(br["BPM"])).sum()) + 1, "{:d}",
+                      note="Brunson overall BPM rank among qualified players")
+
+        # The five representatives should be distinct people for the section to work.
+        reps = [chosen.get(k) for k in ("elite", "defense", "split", "riser")]
+        reps = [r for r in reps if r] + ["Jalen Brunson"]
+        FACTS.guard("example_reps_distinct", len(set(reps)) == len(reps),
+                    "the example archetypes resolve to distinct players",
+                    "; ".join(reps))
 
     # Dump all facts and guards to docs/ (+ the dev facts-reference lookup table)
     FACTS.dump(_FACTS_PATH)

@@ -1,192 +1,248 @@
 {
+  "bpm_val.brunson_bbr_bpm": {
+    "display": "3.1",
+    "fmt": "{:.1f}",
+    "note": "BBR's published BPM for Jalen Brunson",
+    "unit": null,
+    "value": 3.1
+  },
+  "bpm_val.brunson_bpm": {
+    "display": "3.4",
+    "fmt": "{:.1f}",
+    "note": "our BPM for Jalen Brunson",
+    "unit": null,
+    "value": 3.4009462736526803
+  },
+  "bpm_val.mae_bpm": {
+    "display": "0.80",
+    "fmt": "{:.2f}",
+    "note": "mean absolute diff our BPM vs BBR bpm",
+    "unit": null,
+    "value": 0.8037512812663696
+  },
+  "bpm_val.n": {
+    "display": "361",
+    "fmt": "{:d}",
+    "note": "qualified players matched to BBR advanced stats",
+    "unit": null,
+    "value": 361
+  },
+  "bpm_val.r_bpm": {
+    "display": "0.930",
+    "fmt": "{:.3f}",
+    "note": "Pearson r between our BPM and BBR bpm",
+    "unit": null,
+    "value": 0.9304684848481363
+  },
+  "bpm_val.r_dbpm": {
+    "display": "0.877",
+    "fmt": "{:.3f}",
+    "note": "Pearson r between our DBPM and BBR dbpm",
+    "unit": null,
+    "value": 0.876998927841909
+  },
+  "bpm_val.r_obpm": {
+    "display": "0.946",
+    "fmt": "{:.3f}",
+    "note": "Pearson r between our OBPM and BBR obpm",
+    "unit": null,
+    "value": 0.9457537962622934
+  },
+  "bpm_val.r_vorp": {
+    "display": "0.961",
+    "fmt": "{:.3f}",
+    "note": "Pearson r between our VORP and BBR vorp",
+    "unit": null,
+    "value": 0.9607150902111112
+  },
   "cmp.higher.1.diff": {
-    "display": "1.76",
+    "display": "1.51",
     "fmt": "{:.2f}",
     "note": "rank 1 wins-predictive minus consensus diff (positive)",
     "unit": null,
-    "value": 1.763758507468704
+    "value": 1.5078380574582555
   },
   "cmp.higher.1.name": {
-    "display": "Nikola Joki\u0107",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "rank 1 player rated higher by wins-predictive than consensus",
     "unit": null,
-    "value": "Nikola Joki\u0107"
+    "value": "Victor Wembanyama"
   },
   "cmp.higher.2.diff": {
-    "display": "1.48",
+    "display": "0.93",
     "fmt": "{:.2f}",
     "note": "rank 2 wins-predictive minus consensus diff (positive)",
     "unit": null,
-    "value": 1.4843667890272667
+    "value": 0.9280980782639721
   },
   "cmp.higher.2.name": {
-    "display": "Giannis Antetokounmpo",
+    "display": "Kawhi Leonard",
     "fmt": null,
     "note": "rank 2 player rated higher by wins-predictive than consensus",
     "unit": null,
-    "value": "Giannis Antetokounmpo"
+    "value": "Kawhi Leonard"
   },
   "cmp.higher.3.diff": {
-    "display": "1.43",
+    "display": "0.91",
     "fmt": "{:.2f}",
     "note": "rank 3 wins-predictive minus consensus diff (positive)",
     "unit": null,
-    "value": 1.4280126523659211
+    "value": 0.9089079016991806
   },
   "cmp.higher.3.name": {
-    "display": "Victor Wembanyama",
+    "display": "Paul Reed",
     "fmt": null,
     "note": "rank 3 player rated higher by wins-predictive than consensus",
     "unit": null,
-    "value": "Victor Wembanyama"
+    "value": "Paul Reed"
   },
   "cmp.higher.4.diff": {
-    "display": "1.14",
+    "display": "0.83",
     "fmt": "{:.2f}",
     "note": "rank 4 wins-predictive minus consensus diff (positive)",
     "unit": null,
-    "value": 1.1406933485442852
+    "value": 0.8260593213562815
   },
   "cmp.higher.4.name": {
-    "display": "Jalen Duren",
+    "display": "Shai Gilgeous-Alexander",
     "fmt": null,
     "note": "rank 4 player rated higher by wins-predictive than consensus",
     "unit": null,
-    "value": "Jalen Duren"
+    "value": "Shai Gilgeous-Alexander"
   },
   "cmp.higher.5.diff": {
-    "display": "1.06",
+    "display": "0.78",
     "fmt": "{:.2f}",
     "note": "rank 5 wins-predictive minus consensus diff (positive)",
     "unit": null,
-    "value": 1.0597207266543065
+    "value": 0.7816880001309812
   },
   "cmp.higher.5.name": {
-    "display": "Paul Reed",
+    "display": "Chet Holmgren",
     "fmt": null,
     "note": "rank 5 player rated higher by wins-predictive than consensus",
     "unit": null,
-    "value": "Paul Reed"
+    "value": "Chet Holmgren"
   },
   "cmp.lower.1.diff": {
-    "display": "-0.81",
+    "display": "-0.93",
     "fmt": "{:.2f}",
     "note": "rank 1 wins-predictive minus consensus diff (negative)",
     "unit": null,
-    "value": -0.808759807585997
+    "value": -0.9348197798187732
   },
   "cmp.lower.1.name": {
-    "display": "Kam Jones",
+    "display": "Jericho Sims",
     "fmt": null,
     "note": "rank 1 player rated lower by wins-predictive than consensus",
     "unit": null,
-    "value": "Kam Jones"
+    "value": "Jericho Sims"
   },
   "cmp.lower.2.diff": {
-    "display": "-0.79",
+    "display": "-0.82",
     "fmt": "{:.2f}",
     "note": "rank 2 wins-predictive minus consensus diff (negative)",
     "unit": null,
-    "value": -0.7924128889012205
+    "value": -0.8161163221657383
   },
   "cmp.lower.2.name": {
-    "display": "Drake Powell",
+    "display": "Bub Carrington",
     "fmt": null,
     "note": "rank 2 player rated lower by wins-predictive than consensus",
     "unit": null,
-    "value": "Drake Powell"
+    "value": "Bub Carrington"
   },
   "cmp.lower.3.diff": {
-    "display": "-0.78",
+    "display": "-0.71",
     "fmt": "{:.2f}",
     "note": "rank 3 wins-predictive minus consensus diff (negative)",
     "unit": null,
-    "value": -0.784345531111316
+    "value": -0.7071308709135339
   },
   "cmp.lower.3.name": {
-    "display": "Max Christie",
+    "display": "Terance Mann",
     "fmt": null,
     "note": "rank 3 player rated lower by wins-predictive than consensus",
     "unit": null,
-    "value": "Max Christie"
+    "value": "Terance Mann"
   },
   "cmp.lower.4.diff": {
-    "display": "-0.71",
+    "display": "-0.68",
     "fmt": "{:.2f}",
     "note": "rank 4 wins-predictive minus consensus diff (negative)",
     "unit": null,
-    "value": -0.7065938126171705
+    "value": -0.6811267349179642
   },
   "cmp.lower.4.name": {
-    "display": "Cason Wallace",
+    "display": "Kam Jones",
     "fmt": null,
     "note": "rank 4 player rated lower by wins-predictive than consensus",
     "unit": null,
-    "value": "Cason Wallace"
+    "value": "Kam Jones"
   },
   "cmp.lower.5.diff": {
-    "display": "-0.70",
+    "display": "-0.59",
     "fmt": "{:.2f}",
     "note": "rank 5 wins-predictive minus consensus diff (negative)",
     "unit": null,
-    "value": -0.6950763121054878
+    "value": -0.589538168807126
   },
   "cmp.lower.5.name": {
-    "display": "Gary Harris",
+    "display": "Cody Williams",
     "fmt": null,
     "note": "rank 5 player rated lower by wins-predictive than consensus",
     "unit": null,
-    "value": "Gary Harris"
+    "value": "Cody Williams"
   },
   "cmp.spearman": {
-    "display": "0.953",
+    "display": "0.963",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr between consensus and wins-predictive ratings",
     "unit": null,
-    "value": 0.9532164678193248
+    "value": 0.963319528054311
   },
   "cmp2.agree_a": {
-    "display": "0.59",
+    "display": "0.70",
     "fmt": "{:.2f}",
     "note": "mean box-score rank agreement, 2024-25",
     "unit": null,
-    "value": 0.5948723024993363
+    "value": 0.6995420791140441
   },
   "cmp2.agree_b": {
-    "display": "0.61",
+    "display": "0.73",
     "fmt": "{:.2f}",
     "note": "mean box-score rank agreement, 2025-26",
     "unit": null,
-    "value": 0.614233527435238
+    "value": 0.733595626598993
   },
   "cmp2.consensus_corr": {
-    "display": "0.67",
+    "display": "0.75",
     "fmt": "{:.2f}",
     "note": "year-over-year consensus rank agreement, 2024-25 to 2025-26",
     "unit": null,
-    "value": 0.6663700540126969
+    "value": 0.7453720184462401
   },
   "cmp2.faller.1.delta": {
-    "display": "-1.79",
+    "display": "-1.48",
     "fmt": "{:+.2f}",
     "note": "consensus z change for faller 1",
     "unit": null,
-    "value": -1.790552339583929
+    "value": -1.482545964869519
   },
   "cmp2.faller.1.name": {
-    "display": "Jayson Tatum",
+    "display": "Ivica Zubac",
     "fmt": null,
     "note": "biggest consensus faller 1, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Jayson Tatum"
+    "value": "Ivica Zubac"
   },
   "cmp2.faller.2.delta": {
-    "display": "-1.57",
+    "display": "-1.46",
     "fmt": "{:+.2f}",
     "note": "consensus z change for faller 2",
     "unit": null,
-    "value": -1.567057048471696
+    "value": -1.462993715302425
   },
   "cmp2.faller.2.name": {
     "display": "Domantas Sabonis",
@@ -196,53 +252,53 @@
     "value": "Domantas Sabonis"
   },
   "cmp2.faller.3.delta": {
-    "display": "-1.34",
+    "display": "-1.19",
     "fmt": "{:+.2f}",
     "note": "consensus z change for faller 3",
     "unit": null,
-    "value": -1.3397722528003921
+    "value": -1.1928112794666514
   },
   "cmp2.faller.3.name": {
-    "display": "Tyler Herro",
+    "display": "Anthony Davis",
     "fmt": null,
     "note": "biggest consensus faller 3, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Tyler Herro"
+    "value": "Anthony Davis"
   },
   "cmp2.faller.4.delta": {
-    "display": "-1.33",
+    "display": "-1.15",
     "fmt": "{:+.2f}",
     "note": "consensus z change for faller 4",
     "unit": null,
-    "value": -1.3280140462669066
+    "value": -1.150968976165624
   },
   "cmp2.faller.4.name": {
-    "display": "Ivica Zubac",
+    "display": "Jordan Poole",
     "fmt": null,
     "note": "biggest consensus faller 4, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Ivica Zubac"
+    "value": "Jordan Poole"
   },
   "cmp2.faller.5.delta": {
-    "display": "-1.28",
+    "display": "-1.11",
     "fmt": "{:+.2f}",
     "note": "consensus z change for faller 5",
     "unit": null,
-    "value": -1.2765093846131301
+    "value": -1.1069091272574747
   },
   "cmp2.faller.5.name": {
-    "display": "Jordan Poole",
+    "display": "De'Andre Hunter",
     "fmt": null,
     "note": "biggest consensus faller 5, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Jordan Poole"
+    "value": "De'Andre Hunter"
   },
   "cmp2.held_top5": {
-    "display": "2",
+    "display": "3",
     "fmt": "{:d}",
     "note": "how many of 2024-25 consensus top 5 are still top 5 in 2025-26",
     "unit": null,
-    "value": 2
+    "value": 3
   },
   "cmp2.n_both": {
     "display": "290",
@@ -252,11 +308,11 @@
     "value": 290
   },
   "cmp2.riser.1.delta": {
-    "display": "+1.52",
+    "display": "+1.35",
     "fmt": "{:+.2f}",
     "note": "consensus z change for riser 1",
     "unit": null,
-    "value": 1.5177136774758218
+    "value": 1.3520928436009858
   },
   "cmp2.riser.1.name": {
     "display": "Kawhi Leonard",
@@ -266,60 +322,60 @@
     "value": "Kawhi Leonard"
   },
   "cmp2.riser.2.delta": {
-    "display": "+1.26",
+    "display": "+1.25",
     "fmt": "{:+.2f}",
     "note": "consensus z change for riser 2",
     "unit": null,
-    "value": 1.2591141807440251
+    "value": 1.2504402760788065
   },
   "cmp2.riser.2.name": {
-    "display": "Brandon Ingram",
+    "display": "Micah Potter",
     "fmt": null,
     "note": "biggest consensus riser 2, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Brandon Ingram"
+    "value": "Micah Potter"
   },
   "cmp2.riser.3.delta": {
-    "display": "+1.22",
+    "display": "+1.25",
     "fmt": "{:+.2f}",
     "note": "consensus z change for riser 3",
     "unit": null,
-    "value": 1.2155055157262222
+    "value": 1.2456940025061947
   },
   "cmp2.riser.3.name": {
-    "display": "Neemias Queta",
+    "display": "Stephon Castle",
     "fmt": null,
     "note": "biggest consensus riser 3, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Neemias Queta"
+    "value": "Stephon Castle"
   },
   "cmp2.riser.4.delta": {
-    "display": "+1.12",
+    "display": "+1.19",
     "fmt": "{:+.2f}",
     "note": "consensus z change for riser 4",
     "unit": null,
-    "value": 1.122829829210123
+    "value": 1.18859996303077
   },
   "cmp2.riser.4.name": {
-    "display": "Reed Sheppard",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "biggest consensus riser 4, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Reed Sheppard"
+    "value": "Victor Wembanyama"
   },
   "cmp2.riser.5.delta": {
-    "display": "+1.12",
+    "display": "+1.13",
     "fmt": "{:+.2f}",
     "note": "consensus z change for riser 5",
     "unit": null,
-    "value": 1.1222734311205567
+    "value": 1.1267620304688684
   },
   "cmp2.riser.5.name": {
-    "display": "Jalen Johnson",
+    "display": "Neemias Queta",
     "fmt": null,
     "note": "biggest consensus riser 5, 2024-25 to 2025-26",
     "unit": null,
-    "value": "Jalen Johnson"
+    "value": "Neemias Queta"
   },
   "cmp2.top_a.1.name": {
     "display": "Nikola Joki\u0107",
@@ -343,18 +399,18 @@
     "value": "Giannis Antetokounmpo"
   },
   "cmp2.top_a.4.name": {
-    "display": "Tyrese Haliburton",
+    "display": "Ivica Zubac",
     "fmt": null,
     "note": "2024-25 consensus rank 4",
     "unit": null,
-    "value": "Tyrese Haliburton"
+    "value": "Ivica Zubac"
   },
   "cmp2.top_a.5.name": {
-    "display": "James Harden",
+    "display": "Tyrese Haliburton",
     "fmt": null,
     "note": "2024-25 consensus rank 5",
     "unit": null,
-    "value": "James Harden"
+    "value": "Tyrese Haliburton"
   },
   "cmp2.top_b.1.name": {
     "display": "Nikola Joki\u0107",
@@ -371,25 +427,25 @@
     "value": "Shai Gilgeous-Alexander"
   },
   "cmp2.top_b.3.name": {
-    "display": "Mitchell Robinson",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "2025-26 consensus rank 3",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Giannis Antetokounmpo"
   },
   "cmp2.top_b.4.name": {
-    "display": "Luka Don\u010di\u0107",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "2025-26 consensus rank 4",
     "unit": null,
-    "value": "Luka Don\u010di\u0107"
+    "value": "Victor Wembanyama"
   },
   "cmp2.top_b.5.name": {
-    "display": "Victor Wembanyama",
+    "display": "Luka Don\u010di\u0107",
     "fmt": null,
     "note": "2025-26 consensus rank 5",
     "unit": null,
-    "value": "Victor Wembanyama"
+    "value": "Luka Don\u010di\u0107"
   },
   "cmp2.year_a": {
     "display": "2024-25",
@@ -413,11 +469,11 @@
     "value": "Nikola Joki\u0107"
   },
   "consensus.top.1.z": {
-    "display": "2.79",
+    "display": "3.87",
     "fmt": "{:.2f}",
     "note": "consensus rank 1 z-score",
     "unit": null,
-    "value": 2.7918267036686344
+    "value": 3.8729293916319563
   },
   "consensus.top.2.name": {
     "display": "Shai Gilgeous-Alexander",
@@ -427,200 +483,200 @@
     "value": "Shai Gilgeous-Alexander"
   },
   "consensus.top.2.z": {
-    "display": "2.11",
+    "display": "3.05",
     "fmt": "{:.2f}",
     "note": "consensus rank 2 z-score",
     "unit": null,
-    "value": 2.1087805257146033
+    "value": 3.0488106163219277
   },
   "consensus.top.3.name": {
-    "display": "Mitchell Robinson",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "consensus rank 3 player name",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Giannis Antetokounmpo"
   },
   "consensus.top.3.z": {
-    "display": "2.08",
+    "display": "2.62",
     "fmt": "{:.2f}",
     "note": "consensus rank 3 z-score",
     "unit": null,
-    "value": 2.081512872819084
+    "value": 2.61760642452075
   },
   "consensus.top.4.name": {
-    "display": "Luka Don\u010di\u0107",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "consensus rank 4 player name",
     "unit": null,
-    "value": "Luka Don\u010di\u0107"
+    "value": "Victor Wembanyama"
   },
   "consensus.top.4.z": {
-    "display": "2.00",
+    "display": "2.57",
     "fmt": "{:.2f}",
     "note": "consensus rank 4 z-score",
     "unit": null,
-    "value": 1.9979635831005385
+    "value": 2.5706410243613274
   },
   "consensus.top.5.name": {
-    "display": "Victor Wembanyama",
+    "display": "Luka Don\u010di\u0107",
     "fmt": null,
     "note": "consensus rank 5 player name",
     "unit": null,
-    "value": "Victor Wembanyama"
+    "value": "Luka Don\u010di\u0107"
   },
   "consensus.top.5.z": {
-    "display": "1.79",
+    "display": "2.36",
     "fmt": "{:.2f}",
     "note": "consensus rank 5 z-score",
     "unit": null,
-    "value": 1.7858414286967061
+    "value": 2.3616408083186644
   },
   "corr.BPM_DBPM": {
-    "display": "0.446",
+    "display": "0.498",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs DBPM",
     "unit": null,
-    "value": 0.44640953320782273
+    "value": 0.4978471118949692
   },
   "corr.BPM_D_RAPM": {
-    "display": "0.121",
+    "display": "0.112",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs D-RAPM",
     "unit": null,
-    "value": 0.12138258530761488
+    "value": 0.11177499094886048
   },
   "corr.BPM_D_RAPM_MY": {
-    "display": "0.305",
+    "display": "0.173",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs D-RAPM+prior",
     "unit": null,
-    "value": 0.3054694878004859
+    "value": 0.17286882185435548
   },
   "corr.BPM_OBPM": {
-    "display": "0.564",
+    "display": "0.888",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs OBPM",
     "unit": null,
-    "value": 0.5637827331030861
+    "value": 0.888167575002258
   },
   "corr.BPM_O_RAPM": {
-    "display": "-0.028",
+    "display": "0.162",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs O-RAPM",
     "unit": null,
-    "value": -0.027841294059108634
+    "value": 0.16229051430579955
   },
   "corr.BPM_O_RAPM_MY": {
-    "display": "0.044",
+    "display": "0.348",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs O-RAPM+prior",
     "unit": null,
-    "value": 0.043715087569149984
+    "value": 0.34842637926979664
   },
   "corr.BPM_RAPM": {
-    "display": "0.078",
+    "display": "0.197",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs RAPM",
     "unit": null,
-    "value": 0.0775416316313414
+    "value": 0.19672139342778958
   },
   "corr.BPM_RAPM_MY": {
-    "display": "0.294",
+    "display": "0.422",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs RAPM+prior",
     "unit": null,
-    "value": 0.2940497769903647
+    "value": 0.42214192564479164
   },
   "corr.BPM_VORP": {
-    "display": "0.972",
+    "display": "0.964",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: BPM vs VORP",
     "unit": null,
-    "value": 0.9715904754572756
+    "value": 0.9642655790413046
   },
   "corr.DBPM_D_RAPM": {
-    "display": "0.138",
+    "display": "0.168",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs D-RAPM",
     "unit": null,
-    "value": 0.1382961906117215
+    "value": 0.16848961449088826
   },
   "corr.DBPM_D_RAPM_MY": {
-    "display": "0.436",
+    "display": "0.307",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs D-RAPM+prior",
     "unit": null,
-    "value": 0.43613517064522433
+    "value": 0.3073013784505005
   },
   "corr.DBPM_O_RAPM": {
-    "display": "-0.158",
+    "display": "-0.045",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs O-RAPM",
     "unit": null,
-    "value": -0.1582865723526264
+    "value": -0.0448040015868239
   },
   "corr.DBPM_O_RAPM_MY": {
-    "display": "-0.235",
+    "display": "-0.022",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs O-RAPM+prior",
     "unit": null,
-    "value": -0.2349671376147584
+    "value": -0.021975244702930993
   },
   "corr.DBPM_RAPM": {
-    "display": "0.005",
+    "display": "0.085",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs RAPM",
     "unit": null,
-    "value": 0.004804796998409955
+    "value": 0.0846192394732109
   },
   "corr.DBPM_RAPM_MY": {
-    "display": "0.170",
+    "display": "0.213",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs RAPM+prior",
     "unit": null,
-    "value": 0.1697571628424144
+    "value": 0.213464362950306
   },
   "corr.DBPM_VORP": {
-    "display": "0.420",
+    "display": "0.466",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: DBPM vs VORP",
     "unit": null,
-    "value": 0.4204546754815156
+    "value": 0.46647501246718787
   },
   "corr.D_RAPM_D_RAPM_MY": {
-    "display": "0.759",
+    "display": "0.838",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: D-RAPM vs D-RAPM+prior",
     "unit": null,
-    "value": 0.7592424660025424
+    "value": 0.8375851748611279
   },
   "corr.D_RAPM_O_RAPM_MY": {
-    "display": "-0.122",
+    "display": "-0.107",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: D-RAPM vs O-RAPM+prior",
     "unit": null,
-    "value": -0.12154500035493576
+    "value": -0.1074397756228345
   },
   "corr.D_RAPM_RAPM_MY": {
-    "display": "0.525",
+    "display": "0.508",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: D-RAPM vs RAPM+prior",
     "unit": null,
-    "value": 0.5249564273310975
+    "value": 0.508398979784659
   },
   "corr.GAME_SCORE_BPM": {
-    "display": "0.428",
+    "display": "0.739",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs BPM",
     "unit": null,
-    "value": 0.4282183813618624
+    "value": 0.7392758577364164
   },
   "corr.GAME_SCORE_DBPM": {
-    "display": "-0.409",
+    "display": "0.102",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs DBPM",
     "unit": null,
-    "value": -0.40915760913941246
+    "value": 0.10202853283555677
   },
   "corr.GAME_SCORE_D_RAPM": {
     "display": "0.102",
@@ -630,18 +686,18 @@
     "value": 0.10229226287819683
   },
   "corr.GAME_SCORE_D_RAPM_MY": {
-    "display": "0.038",
+    "display": "0.122",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs D-RAPM+prior",
     "unit": null,
-    "value": 0.038284292765231716
+    "value": 0.12245950149689573
   },
   "corr.GAME_SCORE_OBPM": {
-    "display": "0.863",
+    "display": "0.806",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs OBPM",
     "unit": null,
-    "value": 0.8627770595744393
+    "value": 0.8061259800864933
   },
   "corr.GAME_SCORE_O_RAPM": {
     "display": "0.114",
@@ -651,11 +707,11 @@
     "value": 0.11382239814593559
   },
   "corr.GAME_SCORE_O_RAPM_MY": {
-    "display": "0.241",
+    "display": "0.292",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs O-RAPM+prior",
     "unit": null,
-    "value": 0.24051724415658543
+    "value": 0.29206324766328406
   },
   "corr.GAME_SCORE_PER": {
     "display": "0.862",
@@ -672,18 +728,18 @@
     "value": 0.14874296641196832
   },
   "corr.GAME_SCORE_RAPM_MY": {
-    "display": "0.225",
+    "display": "0.339",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs RAPM+prior",
     "unit": null,
-    "value": 0.22484919118528435
+    "value": 0.3385508334102639
   },
   "corr.GAME_SCORE_VORP": {
-    "display": "0.452",
+    "display": "0.786",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Game Score vs VORP",
     "unit": null,
-    "value": 0.452063398747049
+    "value": 0.7863544476227581
   },
   "corr.GAME_SCORE_WS": {
     "display": "0.674",
@@ -700,60 +756,60 @@
     "value": 0.39328514872141473
   },
   "corr.OBPM_DBPM": {
-    "display": "-0.370",
+    "display": "0.089",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs DBPM",
     "unit": null,
-    "value": -0.36998669907413423
+    "value": 0.08863451270875528
   },
   "corr.OBPM_D_RAPM": {
-    "display": "0.081",
+    "display": "0.054",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs D-RAPM",
     "unit": null,
-    "value": 0.08059285713730259
+    "value": 0.054232961611726055
   },
   "corr.OBPM_D_RAPM_MY": {
-    "display": "-0.013",
+    "display": "0.054",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs D-RAPM+prior",
     "unit": null,
-    "value": -0.012742249208448827
+    "value": 0.05350775953996771
   },
   "corr.OBPM_O_RAPM": {
-    "display": "0.109",
+    "display": "0.216",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs O-RAPM",
     "unit": null,
-    "value": 0.10900149295199792
+    "value": 0.2155266563418688
   },
   "corr.OBPM_O_RAPM_MY": {
-    "display": "0.260",
+    "display": "0.427",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs O-RAPM+prior",
     "unit": null,
-    "value": 0.25983663623550807
+    "value": 0.4268188568980126
   },
   "corr.OBPM_RAPM": {
-    "display": "0.144",
+    "display": "0.192",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs RAPM",
     "unit": null,
-    "value": 0.14363966788677915
+    "value": 0.1918162812530932
   },
   "corr.OBPM_RAPM_MY": {
-    "display": "0.206",
+    "display": "0.393",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs RAPM+prior",
     "unit": null,
-    "value": 0.20602171007047723
+    "value": 0.3934688932414344
   },
   "corr.OBPM_VORP": {
-    "display": "0.563",
+    "display": "0.866",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: OBPM vs VORP",
     "unit": null,
-    "value": 0.5631661780328872
+    "value": 0.8659240455255377
   },
   "corr.O_RAPM_D_RAPM": {
     "display": "-0.115",
@@ -763,46 +819,46 @@
     "value": -0.11458648206896774
   },
   "corr.O_RAPM_D_RAPM_MY": {
-    "display": "-0.157",
+    "display": "-0.139",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: O-RAPM vs D-RAPM+prior",
     "unit": null,
-    "value": -0.15720943398133827
+    "value": -0.1388807514728723
   },
   "corr.O_RAPM_MY_D_RAPM_MY": {
-    "display": "-0.185",
+    "display": "-0.117",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: O-RAPM+prior vs D-RAPM+prior",
     "unit": null,
-    "value": -0.18476111379395885
+    "value": -0.11661300415735863
   },
   "corr.O_RAPM_O_RAPM_MY": {
-    "display": "0.772",
+    "display": "0.786",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: O-RAPM vs O-RAPM+prior",
     "unit": null,
-    "value": 0.7715158000846292
+    "value": 0.7860605008271281
   },
   "corr.O_RAPM_RAPM_MY": {
-    "display": "0.434",
+    "display": "0.499",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: O-RAPM vs RAPM+prior",
     "unit": null,
-    "value": 0.4335007585849184
+    "value": 0.4993675033707788
   },
   "corr.PER_BPM": {
-    "display": "0.511",
+    "display": "0.901",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs BPM",
     "unit": null,
-    "value": 0.5113702197679998
+    "value": 0.9005462233557948
   },
   "corr.PER_DBPM": {
-    "display": "-0.235",
+    "display": "0.288",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs DBPM",
     "unit": null,
-    "value": -0.23536595431782403
+    "value": 0.28799753911208736
   },
   "corr.PER_D_RAPM": {
     "display": "0.101",
@@ -812,18 +868,18 @@
     "value": 0.1012351208875638
   },
   "corr.PER_D_RAPM_MY": {
-    "display": "0.117",
+    "display": "0.156",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs D-RAPM+prior",
     "unit": null,
-    "value": 0.11668876822184074
+    "value": 0.155810353881503
   },
   "corr.PER_OBPM": {
-    "display": "0.756",
+    "display": "0.895",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs OBPM",
     "unit": null,
-    "value": 0.756038157093566
+    "value": 0.8952325184697125
   },
   "corr.PER_O_RAPM": {
     "display": "0.145",
@@ -833,11 +889,11 @@
     "value": 0.14501430796581374
   },
   "corr.PER_O_RAPM_MY": {
-    "display": "0.237",
+    "display": "0.337",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs O-RAPM+prior",
     "unit": null,
-    "value": 0.2369556665799046
+    "value": 0.3367058340218198
   },
   "corr.PER_RAPM": {
     "display": "0.180",
@@ -847,18 +903,18 @@
     "value": 0.17973424587927364
   },
   "corr.PER_RAPM_MY": {
-    "display": "0.288",
+    "display": "0.400",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs RAPM+prior",
     "unit": null,
-    "value": 0.28835880705592287
+    "value": 0.40016568112282785
   },
   "corr.PER_VORP": {
-    "display": "0.520",
+    "display": "0.891",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: PER vs VORP",
     "unit": null,
-    "value": 0.5196513875432991
+    "value": 0.8913558868067102
   },
   "corr.PER_WS": {
     "display": "0.768",
@@ -882,25 +938,25 @@
     "value": 0.6764752246510048
   },
   "corr.RAPM_D_RAPM_MY": {
-    "display": "0.468",
+    "display": "0.538",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: RAPM vs D-RAPM+prior",
     "unit": null,
-    "value": 0.46846820725448696
+    "value": 0.5379363001963311
   },
   "corr.RAPM_MY_D_RAPM_MY": {
-    "display": "0.652",
+    "display": "0.608",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: RAPM+prior vs D-RAPM+prior",
     "unit": null,
-    "value": 0.6517128177577636
+    "value": 0.6077905454668261
   },
   "corr.RAPM_MY_O_RAPM_MY": {
-    "display": "0.567",
+    "display": "0.673",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: RAPM+prior vs O-RAPM+prior",
     "unit": null,
-    "value": 0.5669232757759735
+    "value": 0.6728936506936689
   },
   "corr.RAPM_O_RAPM": {
     "display": "0.607",
@@ -910,74 +966,74 @@
     "value": 0.6067465122146225
   },
   "corr.RAPM_O_RAPM_MY": {
-    "display": "0.431",
+    "display": "0.457",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: RAPM vs O-RAPM+prior",
     "unit": null,
-    "value": 0.43052107568530096
+    "value": 0.45733444468773377
   },
   "corr.RAPM_RAPM_MY": {
-    "display": "0.718",
+    "display": "0.755",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: RAPM vs RAPM+prior",
     "unit": null,
-    "value": 0.7184236319892766
+    "value": 0.7547803847503601
   },
   "corr.VORP_D_RAPM": {
     "display": "0.130",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: VORP vs D-RAPM",
     "unit": null,
-    "value": 0.12972418658889406
+    "value": 0.13020032263049278
   },
   "corr.VORP_D_RAPM_MY": {
-    "display": "0.285",
+    "display": "0.175",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: VORP vs D-RAPM+prior",
     "unit": null,
-    "value": 0.2852378163996761
+    "value": 0.1751119713998433
   },
   "corr.VORP_O_RAPM": {
-    "display": "-0.028",
+    "display": "0.148",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: VORP vs O-RAPM",
     "unit": null,
-    "value": -0.02801059674865516
+    "value": 0.14775181247749714
   },
   "corr.VORP_O_RAPM_MY": {
-    "display": "0.060",
+    "display": "0.326",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: VORP vs O-RAPM+prior",
     "unit": null,
-    "value": 0.05966308986962249
+    "value": 0.32562161804268985
   },
   "corr.VORP_RAPM": {
-    "display": "0.083",
+    "display": "0.202",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: VORP vs RAPM",
     "unit": null,
-    "value": 0.08313595239261694
+    "value": 0.20216640788017368
   },
   "corr.VORP_RAPM_MY": {
-    "display": "0.288",
+    "display": "0.411",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: VORP vs RAPM+prior",
     "unit": null,
-    "value": 0.28790888849118307
+    "value": 0.4113172182501634
   },
   "corr.WS48_BPM": {
-    "display": "0.418",
+    "display": "0.602",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs BPM",
     "unit": null,
-    "value": 0.41769517495111164
+    "value": 0.6015443426961942
   },
   "corr.WS48_DBPM": {
-    "display": "0.126",
+    "display": "0.319",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs DBPM",
     "unit": null,
-    "value": 0.1258659960324959
+    "value": 0.31894815927206066
   },
   "corr.WS48_D_RAPM": {
     "display": "0.069",
@@ -987,18 +1043,18 @@
     "value": 0.0685479261586986
   },
   "corr.WS48_D_RAPM_MY": {
-    "display": "0.207",
+    "display": "0.168",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs D-RAPM+prior",
     "unit": null,
-    "value": 0.20653117341316776
+    "value": 0.16812945745708915
   },
   "corr.WS48_OBPM": {
-    "display": "0.305",
+    "display": "0.537",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs OBPM",
     "unit": null,
-    "value": 0.30539083536990913
+    "value": 0.5367838421245754
   },
   "corr.WS48_O_RAPM": {
     "display": "0.132",
@@ -1008,11 +1064,11 @@
     "value": 0.13227128112033945
   },
   "corr.WS48_O_RAPM_MY": {
-    "display": "0.167",
+    "display": "0.262",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs O-RAPM+prior",
     "unit": null,
-    "value": 0.16688234985023268
+    "value": 0.26162075775395766
   },
   "corr.WS48_RAPM": {
     "display": "0.152",
@@ -1022,32 +1078,32 @@
     "value": 0.1516744358160062
   },
   "corr.WS48_RAPM_MY": {
-    "display": "0.305",
+    "display": "0.340",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs RAPM+prior",
     "unit": null,
-    "value": 0.304676964580522
+    "value": 0.34009810890895414
   },
   "corr.WS48_VORP": {
-    "display": "0.420",
+    "display": "0.552",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: WS/48 vs VORP",
     "unit": null,
-    "value": 0.4199398797706504
+    "value": 0.5522910353226066
   },
   "corr.WS_BPM": {
-    "display": "0.677",
+    "display": "0.680",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs BPM",
     "unit": null,
-    "value": 0.6772566387706047
+    "value": 0.679922378493937
   },
   "corr.WS_DBPM": {
-    "display": "-0.002",
+    "display": "0.306",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs DBPM",
     "unit": null,
-    "value": -0.0018011184420064412
+    "value": 0.30559924209273676
   },
   "corr.WS_D_RAPM": {
     "display": "0.110",
@@ -1057,18 +1113,18 @@
     "value": 0.11044101017715793
   },
   "corr.WS_D_RAPM_MY": {
-    "display": "0.169",
+    "display": "0.160",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs D-RAPM+prior",
     "unit": null,
-    "value": 0.16895064215599198
+    "value": 0.15971098120129146
   },
   "corr.WS_OBPM": {
-    "display": "0.744",
+    "display": "0.630",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs OBPM",
     "unit": null,
-    "value": 0.7441385331477225
+    "value": 0.6304360021947139
   },
   "corr.WS_O_RAPM": {
     "display": "0.139",
@@ -1078,11 +1134,11 @@
     "value": 0.13912981750303194
   },
   "corr.WS_O_RAPM_MY": {
-    "display": "0.242",
+    "display": "0.262",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs O-RAPM+prior",
     "unit": null,
-    "value": 0.24192387844466817
+    "value": 0.2615843199047639
   },
   "corr.WS_RAPM": {
     "display": "0.194",
@@ -1092,18 +1148,18 @@
     "value": 0.193653948635297
   },
   "corr.WS_RAPM_MY": {
-    "display": "0.343",
+    "display": "0.354",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs RAPM+prior",
     "unit": null,
-    "value": 0.3434235070118975
+    "value": 0.35369431466237944
   },
   "corr.WS_VORP": {
-    "display": "0.671",
+    "display": "0.743",
     "fmt": "{:.3f}",
     "note": "Spearman rank corr: Win Shares vs VORP",
     "unit": null,
-    "value": 0.6705247461320613
+    "value": 0.7431860388825178
   },
   "corr.WS_WS48": {
     "display": "0.796",
@@ -1141,53 +1197,53 @@
     "value": 572
   },
   "discounts.BPM.1.diff": {
-    "display": "-1.39",
+    "display": "-1.02",
     "fmt": "{:.2f}",
     "note": "BPM discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.3888309897598856
+    "value": -1.016663859743377
   },
   "discounts.BPM.1.name": {
-    "display": "Giannis Antetokounmpo",
+    "display": "Jericho Sims",
     "fmt": null,
     "note": "BPM discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "Giannis Antetokounmpo"
+    "value": "Jericho Sims"
   },
   "discounts.BPM.2.diff": {
-    "display": "-1.34",
+    "display": "-0.81",
     "fmt": "{:.2f}",
     "note": "BPM discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.3357368221348997
+    "value": -0.8100012339998222
   },
   "discounts.BPM.2.name": {
-    "display": "Domantas Sabonis",
+    "display": "Rudy Gobert",
     "fmt": null,
     "note": "BPM discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "Domantas Sabonis"
+    "value": "Rudy Gobert"
   },
   "discounts.BPM.3.diff": {
-    "display": "-1.19",
+    "display": "-0.81",
     "fmt": "{:.2f}",
     "note": "BPM discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.1871869004066942
+    "value": -0.8064796084935826
   },
   "discounts.BPM.3.name": {
-    "display": "Jayson Tatum",
+    "display": "Dwight Powell",
     "fmt": null,
     "note": "BPM discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Jayson Tatum"
+    "value": "Dwight Powell"
   },
   "discounts.DBPM.1.diff": {
-    "display": "-3.44",
+    "display": "-2.70",
     "fmt": "{:.2f}",
     "note": "DBPM discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -3.4430601813163486
+    "value": -2.7000070360460606
   },
   "discounts.DBPM.1.name": {
     "display": "Nikola Joki\u0107",
@@ -1197,438 +1253,438 @@
     "value": "Nikola Joki\u0107"
   },
   "discounts.DBPM.2.diff": {
-    "display": "-2.80",
+    "display": "-2.47",
     "fmt": "{:.2f}",
     "note": "DBPM discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -2.80052930590752
+    "value": -2.4747953899171975
   },
   "discounts.DBPM.2.name": {
-    "display": "Luka Don\u010di\u0107",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "DBPM discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "Luka Don\u010di\u0107"
+    "value": "Giannis Antetokounmpo"
   },
   "discounts.DBPM.3.diff": {
-    "display": "-2.78",
+    "display": "-2.26",
     "fmt": "{:.2f}",
     "note": "DBPM discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -2.7791281650136446
+    "value": -2.2625834088345353
   },
   "discounts.DBPM.3.name": {
-    "display": "Shai Gilgeous-Alexander",
+    "display": "Lauri Markkanen",
     "fmt": null,
     "note": "DBPM discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Shai Gilgeous-Alexander"
+    "value": "Lauri Markkanen"
   },
   "discounts.GAME_SCORE.1.diff": {
-    "display": "-2.18",
+    "display": "-1.91",
     "fmt": "{:.2f}",
     "note": "Game Score discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -2.1818889832872967
+    "value": -1.9100070671421534
   },
   "discounts.GAME_SCORE.1.name": {
-    "display": "Mitchell Robinson",
+    "display": "Paul Reed",
     "fmt": null,
     "note": "Game Score discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Paul Reed"
   },
   "discounts.GAME_SCORE.2.diff": {
-    "display": "-1.89",
+    "display": "-1.68",
     "fmt": "{:.2f}",
     "note": "Game Score discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.8910026606903347
+    "value": -1.6765330478996998
   },
   "discounts.GAME_SCORE.2.name": {
-    "display": "John Konchar",
+    "display": "Mitchell Robinson",
     "fmt": null,
     "note": "Game Score discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "John Konchar"
+    "value": "Mitchell Robinson"
   },
   "discounts.GAME_SCORE.3.diff": {
-    "display": "-1.83",
+    "display": "-1.62",
     "fmt": "{:.2f}",
     "note": "Game Score discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.8284025327304558
+    "value": -1.6158953189495788
   },
   "discounts.GAME_SCORE.3.name": {
-    "display": "Moussa Cisse",
+    "display": "Clint Capela",
     "fmt": null,
     "note": "Game Score discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Moussa Cisse"
+    "value": "Clint Capela"
   },
   "discounts.OBPM.1.diff": {
-    "display": "-2.34",
+    "display": "-1.47",
     "fmt": "{:.2f}",
     "note": "OBPM discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -2.3444036903400187
+    "value": -1.4742949898326576
   },
   "discounts.OBPM.1.name": {
-    "display": "Mitchell Robinson",
+    "display": "Lonzo Ball",
     "fmt": null,
     "note": "OBPM discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Lonzo Ball"
   },
   "discounts.OBPM.2.diff": {
-    "display": "-2.21",
+    "display": "-1.47",
     "fmt": "{:.2f}",
     "note": "OBPM discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -2.21432233400755
+    "value": -1.4718854833727426
   },
   "discounts.OBPM.2.name": {
-    "display": "John Konchar",
+    "display": "Moussa Cisse",
     "fmt": null,
     "note": "OBPM discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "John Konchar"
+    "value": "Moussa Cisse"
   },
   "discounts.OBPM.3.diff": {
-    "display": "-1.84",
+    "display": "-1.36",
     "fmt": "{:.2f}",
     "note": "OBPM discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.8353324598544
+    "value": -1.357640496530072
   },
   "discounts.OBPM.3.name": {
-    "display": "Moussa Cisse",
+    "display": "Ausar Thompson",
     "fmt": null,
     "note": "OBPM discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Moussa Cisse"
+    "value": "Ausar Thompson"
   },
   "discounts.PER.1.diff": {
-    "display": "-1.72",
+    "display": "-0.99",
     "fmt": "{:.2f}",
     "note": "PER discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.7154618719406682
+    "value": -0.9910955820926568
   },
   "discounts.PER.1.name": {
-    "display": "John Konchar",
+    "display": "Dorian Finney-Smith",
     "fmt": null,
     "note": "PER discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "John Konchar"
+    "value": "Dorian Finney-Smith"
   },
   "discounts.PER.2.diff": {
-    "display": "-1.51",
+    "display": "-0.81",
     "fmt": "{:.2f}",
     "note": "PER discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.5106482603400282
+    "value": -0.8136461529425936
   },
   "discounts.PER.2.name": {
-    "display": "Gary Harris",
+    "display": "Tyus Jones",
     "fmt": null,
     "note": "PER discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "Gary Harris"
+    "value": "Tyus Jones"
   },
   "discounts.PER.3.diff": {
-    "display": "-1.46",
+    "display": "-0.77",
     "fmt": "{:.2f}",
     "note": "PER discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.464576416965674
+    "value": -0.7655357671422848
   },
   "discounts.PER.3.name": {
-    "display": "Kris Dunn",
+    "display": "Josh Green",
     "fmt": null,
     "note": "PER discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Kris Dunn"
+    "value": "Josh Green"
   },
   "discounts.VORP.1.diff": {
-    "display": "-1.60",
+    "display": "-1.00",
     "fmt": "{:.2f}",
     "note": "VORP discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.5977771818860889
+    "value": -1.0046631564033928
   },
   "discounts.VORP.1.name": {
-    "display": "Giannis Antetokounmpo",
+    "display": "Bub Carrington",
     "fmt": null,
     "note": "VORP discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "Giannis Antetokounmpo"
+    "value": "Bub Carrington"
   },
   "discounts.VORP.2.diff": {
-    "display": "-1.25",
+    "display": "-0.88",
     "fmt": "{:.2f}",
     "note": "VORP discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.2510913310285772
+    "value": -0.8803737420546197
   },
   "discounts.VORP.2.name": {
-    "display": "Ivica Zubac",
+    "display": "Mitchell Robinson",
     "fmt": null,
     "note": "VORP discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "Ivica Zubac"
+    "value": "Mitchell Robinson"
   },
   "discounts.VORP.3.diff": {
-    "display": "-1.21",
+    "display": "-0.84",
     "fmt": "{:.2f}",
     "note": "VORP discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.2135708753614294
+    "value": -0.843398560646913
   },
   "discounts.VORP.3.name": {
-    "display": "Jimmy Butler III",
+    "display": "Moussa Cisse",
     "fmt": null,
     "note": "VORP discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Jimmy Butler III"
+    "value": "Moussa Cisse"
   },
   "discounts.WS.1.diff": {
-    "display": "-1.49",
+    "display": "-1.64",
     "fmt": "{:.2f}",
     "note": "Win Shares discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.4870668298559004
+    "value": -1.6370694069768372
   },
   "discounts.WS.1.name": {
-    "display": "Moussa Cisse",
+    "display": "Jayson Tatum",
     "fmt": null,
     "note": "Win Shares discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "Moussa Cisse"
+    "value": "Jayson Tatum"
   },
   "discounts.WS.2.diff": {
-    "display": "-1.32",
+    "display": "-1.60",
     "fmt": "{:.2f}",
     "note": "Win Shares discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.3248411915949336
+    "value": -1.6010170933271806
   },
   "discounts.WS.2.name": {
-    "display": "John Konchar",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "Win Shares discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "John Konchar"
+    "value": "Giannis Antetokounmpo"
   },
   "discounts.WS.3.diff": {
-    "display": "-1.04",
+    "display": "-1.54",
     "fmt": "{:.2f}",
     "note": "Win Shares discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.0394251789713407
+    "value": -1.5361637559485297
   },
   "discounts.WS.3.name": {
-    "display": "Jaren Jackson Jr.",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "Win Shares discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Jaren Jackson Jr."
+    "value": "Victor Wembanyama"
   },
   "discounts.WS48.1.diff": {
-    "display": "-1.54",
+    "display": "-1.88",
     "fmt": "{:.2f}",
     "note": "WS/48 discounts rank 1 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.5400804782167548
+    "value": -1.8801219199090493
   },
   "discounts.WS48.1.name": {
-    "display": "Tyrese Maxey",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "WS/48 discounts rank 1 player vs consensus",
     "unit": null,
-    "value": "Tyrese Maxey"
+    "value": "Victor Wembanyama"
   },
   "discounts.WS48.2.diff": {
-    "display": "-1.49",
+    "display": "-1.70",
     "fmt": "{:.2f}",
     "note": "WS/48 discounts rank 2 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.4943313584655187
+    "value": -1.6980819576045545
   },
   "discounts.WS48.2.name": {
-    "display": "Brandon Ingram",
+    "display": "Kawhi Leonard",
     "fmt": null,
     "note": "WS/48 discounts rank 2 player vs consensus",
     "unit": null,
-    "value": "Brandon Ingram"
+    "value": "Kawhi Leonard"
   },
   "discounts.WS48.3.diff": {
-    "display": "-1.44",
+    "display": "-1.62",
     "fmt": "{:.2f}",
     "note": "WS/48 discounts rank 3 residual vs consensus (negative)",
     "unit": null,
-    "value": -1.436319747022355
+    "value": -1.6243224411748751
   },
   "discounts.WS48.3.name": {
-    "display": "Anthony Edwards",
+    "display": "Luka Don\u010di\u0107",
     "fmt": null,
     "note": "WS/48 discounts rank 3 player vs consensus",
     "unit": null,
-    "value": "Anthony Edwards"
+    "value": "Luka Don\u010di\u0107"
   },
   "dist.BPM.exkurt": {
-    "display": "+0.15",
+    "display": "+1.68",
     "fmt": "{:+.2f}",
     "note": "BPM excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 0.15103197081843467
+    "value": 1.683139125401918
   },
   "dist.BPM.frac_neg": {
-    "display": "57",
+    "display": "58",
     "fmt": "{:.0f}",
     "note": "BPM share of qualified players below zero (percent)",
     "unit": null,
-    "value": 57.14285714285714
+    "value": 58.201058201058196
   },
   "dist.BPM.gini": {
-    "display": "0.750",
+    "display": "0.767",
     "fmt": "{:.3f}",
     "note": "BPM Gini coefficient",
     "unit": null,
-    "value": 0.749517856095649
+    "value": 0.7672284462041026
   },
   "dist.BPM.max": {
-    "display": "41.52",
+    "display": "11.43",
     "fmt": "{:.2f}",
     "note": "BPM max",
     "unit": null,
-    "value": 41.52062738629141
+    "value": 11.43283772814761
   },
   "dist.BPM.mean": {
-    "display": "-1.56",
+    "display": "-0.24",
     "fmt": "{:.2f}",
     "note": "BPM mean",
     "unit": null,
-    "value": -1.5599304783998662
+    "value": -0.23746543575294468
   },
   "dist.BPM.median": {
-    "display": "-2.00",
+    "display": "-0.43",
     "fmt": "{:.2f}",
     "note": "BPM median",
     "unit": null,
-    "value": -2.0004513060718496
+    "value": -0.43024795921893166
   },
   "dist.BPM.min": {
-    "display": "-23.72",
+    "display": "-5.72",
     "fmt": "{:.2f}",
     "note": "BPM min",
     "unit": null,
-    "value": -23.723434762642064
+    "value": -5.721796954132516
   },
   "dist.BPM.skew": {
-    "display": "+0.36",
+    "display": "+0.78",
     "fmt": "{:+.2f}",
     "note": "BPM skewness",
     "unit": null,
-    "value": 0.3579746421060351
+    "value": 0.7753681601626
   },
   "dist.BPM.std": {
-    "display": "10.18",
+    "display": "2.66",
     "fmt": "{:.2f}",
     "note": "BPM std dev",
     "unit": null,
-    "value": 10.183882190343558
+    "value": 2.66217197002955
   },
   "dist.BPM.top5pct": {
-    "display": "30.1 %",
+    "display": "34.3 %",
     "fmt": "{:.1f}",
     "note": "BPM top-5% share of total value",
     "unit": "%",
-    "value": 30.113261732424895
+    "value": 34.279729418640606
   },
   "dist.CONSENSUS.gini": {
-    "display": "0.736",
+    "display": "0.749",
     "fmt": "{:.3f}",
     "note": "Consensus Gini coefficient (inflated by centering)",
     "unit": null,
-    "value": 0.736146498620279
+    "value": 0.7486630434490091
   },
   "dist.CONSENSUS.top5pct": {
-    "display": "28.6 %",
+    "display": "31.3 %",
     "fmt": "{:.1f}",
     "note": "Consensus top-5% share of positive value",
     "unit": "%",
-    "value": 28.581511922287987
+    "value": 31.287129795383528
   },
   "dist.DBPM.exkurt": {
-    "display": "+3.09",
+    "display": "+0.63",
     "fmt": "{:+.2f}",
     "note": "DBPM excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 3.089121347248981
+    "value": 0.6328824966362379
   },
   "dist.DBPM.frac_neg": {
-    "display": "28",
+    "display": "53",
     "fmt": "{:.0f}",
     "note": "DBPM share of qualified players below zero (percent)",
     "unit": null,
-    "value": 27.77777777777778
+    "value": 52.910052910052904
   },
   "dist.DBPM.gini": {
-    "display": "0.626",
+    "display": "0.732",
     "fmt": "{:.3f}",
     "note": "DBPM Gini coefficient",
     "unit": null,
-    "value": 0.6261286869618388
+    "value": 0.7324476751552742
   },
   "dist.DBPM.max": {
-    "display": "57.43",
+    "display": "3.89",
     "fmt": "{:.2f}",
     "note": "DBPM max",
     "unit": null,
-    "value": 57.427880963934
+    "value": 3.891331880148888
   },
   "dist.DBPM.mean": {
-    "display": "5.87",
+    "display": "-0.02",
     "fmt": "{:.2f}",
     "note": "DBPM mean",
     "unit": null,
-    "value": 5.866456296298755
+    "value": -0.019341690062845224
   },
   "dist.DBPM.median": {
-    "display": "3.58",
+    "display": "-0.10",
     "fmt": "{:.2f}",
     "note": "DBPM median",
     "unit": null,
-    "value": 3.583353421010548
+    "value": -0.0998408929429597
   },
   "dist.DBPM.min": {
-    "display": "-9.37",
+    "display": "-3.01",
     "fmt": "{:.2f}",
     "note": "DBPM min",
     "unit": null,
-    "value": -9.372852218068642
+    "value": -3.0123623641807535
   },
   "dist.DBPM.skew": {
-    "display": "+1.43",
+    "display": "+0.32",
     "fmt": "{:+.2f}",
     "note": "DBPM skewness",
     "unit": null,
-    "value": 1.425170491529433
+    "value": 0.3206157687739138
   },
   "dist.DBPM.std": {
-    "display": "8.97",
+    "display": "1.10",
     "fmt": "{:.2f}",
     "note": "DBPM std dev",
     "unit": null,
-    "value": 8.971775315552788
+    "value": 1.103986303209651
   },
   "dist.DBPM.top5pct": {
-    "display": "22.8 %",
+    "display": "30.4 %",
     "fmt": "{:.1f}",
     "note": "DBPM top-5% share of total value",
     "unit": "%",
-    "value": 22.772210066448146
+    "value": 30.437481764861545
   },
   "dist.D_RAPM.exkurt": {
     "display": "-0.15",
@@ -1701,74 +1757,74 @@
     "value": 23.59075314698739
   },
   "dist.D_RAPM_MY.exkurt": {
-    "display": "+0.11",
+    "display": "-0.12",
     "fmt": "{:+.2f}",
     "note": "D-RAPM+prior excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 0.11241824688878443
+    "value": -0.11951914996533253
   },
   "dist.D_RAPM_MY.frac_neg": {
-    "display": "14",
+    "display": "48",
     "fmt": "{:.0f}",
     "note": "D-RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
-    "value": 14.285714285714285
+    "value": 47.61904761904761
   },
   "dist.D_RAPM_MY.gini": {
-    "display": "0.438",
+    "display": "0.697",
     "fmt": "{:.3f}",
     "note": "D-RAPM+prior Gini coefficient",
     "unit": null,
-    "value": 0.4375738705802321
+    "value": 0.6974233185406167
   },
   "dist.D_RAPM_MY.max": {
-    "display": "24.99",
+    "display": "10.63",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior max",
     "unit": null,
-    "value": 24.99499308431596
+    "value": 10.625673978384972
   },
   "dist.D_RAPM_MY.mean": {
-    "display": "6.39",
+    "display": "0.18",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior mean",
     "unit": null,
-    "value": 6.386071761265755
+    "value": 0.18164729968184498
   },
   "dist.D_RAPM_MY.median": {
-    "display": "6.28",
+    "display": "0.17",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior median",
     "unit": null,
-    "value": 6.281325987493503
+    "value": 0.16554391789388576
   },
   "dist.D_RAPM_MY.min": {
-    "display": "-9.86",
+    "display": "-8.30",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior min",
     "unit": null,
-    "value": -9.864772931966383
+    "value": -8.304007499386145
   },
   "dist.D_RAPM_MY.skew": {
-    "display": "+0.14",
+    "display": "+0.13",
     "fmt": "{:+.2f}",
     "note": "D-RAPM+prior skewness",
     "unit": null,
-    "value": 0.140725437478567
+    "value": 0.13478362135497018
   },
   "dist.D_RAPM_MY.std": {
-    "display": "5.97",
+    "display": "3.24",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior std dev",
     "unit": null,
-    "value": 5.974887623953704
+    "value": 3.2394211853097334
   },
   "dist.D_RAPM_MY.top5pct": {
-    "display": "14.5 %",
+    "display": "25.2 %",
     "fmt": "{:.1f}",
     "note": "D-RAPM+prior top-5% share of total value",
     "unit": "%",
-    "value": 14.485631247962965
+    "value": 25.18825320707185
   },
   "dist.GAME_SCORE.exkurt": {
     "display": "+0.88",
@@ -1841,74 +1897,74 @@
     "value": 11.523607402455454
   },
   "dist.OBPM.exkurt": {
-    "display": "+0.62",
+    "display": "+2.05",
     "fmt": "{:+.2f}",
     "note": "OBPM excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 0.6192499937838236
+    "value": 2.049198252221097
   },
   "dist.OBPM.frac_neg": {
-    "display": "81",
+    "display": "59",
     "fmt": "{:.0f}",
     "note": "OBPM share of qualified players below zero (percent)",
     "unit": null,
-    "value": 80.68783068783068
+    "value": 58.730158730158735
   },
   "dist.OBPM.gini": {
-    "display": "0.896",
+    "display": "0.769",
     "fmt": "{:.3f}",
     "note": "OBPM Gini coefficient",
     "unit": null,
-    "value": 0.8956933542902301
+    "value": 0.7687057427282253
   },
   "dist.OBPM.max": {
-    "display": "24.63",
+    "display": "10.16",
     "fmt": "{:.2f}",
     "note": "OBPM max",
     "unit": null,
-    "value": 24.62501193602471
+    "value": 10.155572979212666
   },
   "dist.OBPM.mean": {
-    "display": "-7.43",
+    "display": "-0.22",
     "fmt": "{:.2f}",
     "note": "OBPM mean",
     "unit": null,
-    "value": -7.426386774698622
+    "value": -0.21812374569009946
   },
   "dist.OBPM.median": {
-    "display": "-9.31",
+    "display": "-0.46",
     "fmt": "{:.2f}",
     "note": "OBPM median",
     "unit": null,
-    "value": -9.305283937986644
+    "value": -0.45626077691505307
   },
   "dist.OBPM.min": {
-    "display": "-22.47",
+    "display": "-5.65",
     "fmt": "{:.2f}",
     "note": "OBPM min",
     "unit": null,
-    "value": -22.46867364419364
+    "value": -5.652741169601775
   },
   "dist.OBPM.skew": {
-    "display": "+0.99",
+    "display": "+0.84",
     "fmt": "{:+.2f}",
     "note": "OBPM skewness",
     "unit": null,
-    "value": 0.986195754889134
+    "value": 0.8404206960440991
   },
   "dist.OBPM.std": {
-    "display": "9.18",
+    "display": "2.30",
     "fmt": "{:.2f}",
     "note": "OBPM std dev",
     "unit": null,
-    "value": 9.178948277154195
+    "value": 2.298430560544642
   },
   "dist.OBPM.top5pct": {
-    "display": "55.6 %",
+    "display": "34.9 %",
     "fmt": "{:.1f}",
     "note": "OBPM top-5% share of total value",
     "unit": "%",
-    "value": 55.581205125298005
+    "value": 34.943636795507516
   },
   "dist.O_RAPM.exkurt": {
     "display": "+0.57",
@@ -1981,74 +2037,74 @@
     "value": 27.2891102879487
   },
   "dist.O_RAPM_MY.exkurt": {
-    "display": "+1.02",
+    "display": "+0.85",
     "fmt": "{:+.2f}",
     "note": "O-RAPM+prior excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 1.0170074737086612
+    "value": 0.8518317926815606
   },
   "dist.O_RAPM_MY.frac_neg": {
-    "display": "94",
+    "display": "54",
     "fmt": "{:.0f}",
     "note": "O-RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
-    "value": 94.17989417989418
+    "value": 54.232804232804234
   },
   "dist.O_RAPM_MY.gini": {
-    "display": "0.967",
+    "display": "0.751",
     "fmt": "{:.3f}",
     "note": "O-RAPM+prior Gini coefficient",
     "unit": null,
-    "value": 0.9668343699819062
+    "value": 0.7512323864458168
   },
   "dist.O_RAPM_MY.max": {
-    "display": "12.76",
+    "display": "13.75",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior max",
     "unit": null,
-    "value": 12.758677771735323
+    "value": 13.754655998894275
   },
   "dist.O_RAPM_MY.mean": {
-    "display": "-8.79",
+    "display": "-0.11",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior mean",
     "unit": null,
-    "value": -8.786513956362764
+    "value": -0.10825391905084107
   },
   "dist.O_RAPM_MY.median": {
-    "display": "-8.99",
+    "display": "-0.32",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior median",
     "unit": null,
-    "value": -8.992518013367603
+    "value": -0.31749105652757814
   },
   "dist.O_RAPM_MY.min": {
-    "display": "-20.91",
+    "display": "-7.77",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior min",
     "unit": null,
-    "value": -20.910107388775454
+    "value": -7.773902521444169
   },
   "dist.O_RAPM_MY.skew": {
-    "display": "+0.48",
+    "display": "+0.58",
     "fmt": "{:+.2f}",
     "note": "O-RAPM+prior skewness",
     "unit": null,
-    "value": 0.4774092677291686
+    "value": 0.5763379119217316
   },
   "dist.O_RAPM_MY.std": {
-    "display": "5.62",
+    "display": "3.61",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior std dev",
     "unit": null,
-    "value": 5.624369110936913
+    "value": 3.611356703578424
   },
   "dist.O_RAPM_MY.top5pct": {
-    "display": "97.8 %",
+    "display": "33.5 %",
     "fmt": "{:.1f}",
     "note": "O-RAPM+prior top-5% share of total value",
     "unit": "%",
-    "value": 97.79900838831372
+    "value": 33.4684256268824
   },
   "dist.PER.exkurt": {
     "display": "+1.25",
@@ -2191,158 +2247,158 @@
     "value": 23.698308003900344
   },
   "dist.RAPM_MY.exkurt": {
-    "display": "+1.94",
+    "display": "-0.07",
     "fmt": "{:+.2f}",
     "note": "RAPM+prior excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 1.9425607752303664
+    "value": -0.06988915929006279
   },
   "dist.RAPM_MY.frac_neg": {
-    "display": "66",
+    "display": "51",
     "fmt": "{:.0f}",
     "note": "RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
-    "value": 66.13756613756614
+    "value": 51.05820105820106
   },
   "dist.RAPM_MY.gini": {
-    "display": "0.818",
+    "display": "0.718",
     "fmt": "{:.3f}",
     "note": "RAPM+prior Gini coefficient",
     "unit": null,
-    "value": 0.8183058335989666
+    "value": 0.7175490533119337
   },
   "dist.RAPM_MY.max": {
-    "display": "37.52",
+    "display": "12.80",
     "fmt": "{:.2f}",
     "note": "RAPM+prior max",
     "unit": null,
-    "value": 37.51523949212577
+    "value": 12.795352125173974
   },
   "dist.RAPM_MY.mean": {
-    "display": "-2.40",
+    "display": "0.07",
     "fmt": "{:.2f}",
     "note": "RAPM+prior mean",
     "unit": null,
-    "value": -2.400442195097009
+    "value": 0.07339338063100388
   },
   "dist.RAPM_MY.median": {
-    "display": "-2.29",
+    "display": "-0.13",
     "fmt": "{:.2f}",
     "note": "RAPM+prior median",
     "unit": null,
-    "value": -2.2915560733828233
+    "value": -0.12679611944268893
   },
   "dist.RAPM_MY.min": {
-    "display": "-23.27",
+    "display": "-11.60",
     "fmt": "{:.2f}",
     "note": "RAPM+prior min",
     "unit": null,
-    "value": -23.274095408292588
+    "value": -11.604404437243543
   },
   "dist.RAPM_MY.skew": {
-    "display": "+0.38",
+    "display": "+0.12",
     "fmt": "{:+.2f}",
     "note": "RAPM+prior skewness",
     "unit": null,
-    "value": 0.383951164669597
+    "value": 0.12447557462079117
   },
   "dist.RAPM_MY.std": {
-    "display": "7.30",
+    "display": "4.46",
     "fmt": "{:.2f}",
     "note": "RAPM+prior std dev",
     "unit": null,
-    "value": 7.30068078446356
+    "value": 4.461920863839824
   },
   "dist.RAPM_MY.top5pct": {
-    "display": "38.4 %",
+    "display": "26.3 %",
     "fmt": "{:.1f}",
     "note": "RAPM+prior top-5% share of total value",
     "unit": "%",
-    "value": 38.43447886486985
+    "value": 26.33623294957478
   },
   "dist.VORP.exkurt": {
-    "display": "+1.02",
+    "display": "+4.96",
     "fmt": "{:+.2f}",
     "note": "VORP excess kurtosis (0 = normal)",
     "unit": null,
-    "value": 1.0165294391765904
+    "value": 4.956798344646025
   },
   "dist.VORP.frac_neg": {
-    "display": "50",
+    "display": "25",
     "fmt": "{:.0f}",
     "note": "VORP share of qualified players below zero (percent)",
     "unit": null,
-    "value": 50.0
+    "value": 24.6031746031746
   },
   "dist.VORP.gini": {
-    "display": "0.733",
+    "display": "0.611",
     "fmt": "{:.3f}",
     "note": "VORP Gini coefficient",
     "unit": null,
-    "value": 0.7329697608528678
+    "value": 0.6111789873911961
   },
   "dist.VORP.max": {
-    "display": "247.58",
+    "display": "7.73",
     "fmt": "{:.2f}",
     "note": "VORP max",
     "unit": null,
-    "value": 247.5786009177416
+    "value": 7.7295299016218895
   },
   "dist.VORP.mean": {
-    "display": "17.39",
+    "display": "0.81",
     "fmt": "{:.2f}",
     "note": "VORP mean",
     "unit": null,
-    "value": 17.385087068264227
+    "value": 0.8072468623836255
   },
   "dist.VORP.median": {
-    "display": "-0.01",
+    "display": "0.54",
     "fmt": "{:.2f}",
     "note": "VORP median",
     "unit": null,
-    "value": -0.009561572210144954
+    "value": 0.5378077286019421
   },
   "dist.VORP.min": {
-    "display": "-72.92",
+    "display": "-1.64",
     "fmt": "{:.2f}",
     "note": "VORP min",
     "unit": null,
-    "value": -72.92326698879468
+    "value": -1.644079624222376
   },
   "dist.VORP.skew": {
-    "display": "+1.17",
+    "display": "+1.71",
     "fmt": "{:+.2f}",
     "note": "VORP skewness",
     "unit": null,
-    "value": 1.1721769116949259
+    "value": 1.70713170175249
   },
   "dist.VORP.std": {
-    "display": "65.12",
+    "display": "1.24",
     "fmt": "{:.2f}",
     "note": "VORP std dev",
     "unit": null,
-    "value": 65.11954815832591
+    "value": 1.2362883483316098
   },
   "dist.VORP.top5pct": {
-    "display": "29.1 %",
+    "display": "24.5 %",
     "fmt": "{:.1f}",
     "note": "VORP top-5% share of total value",
     "unit": "%",
-    "value": 29.068697019577478
+    "value": 24.480184963717974
   },
   "dist.WINS_PRED.gini": {
-    "display": "0.737",
+    "display": "0.749",
     "fmt": "{:.3f}",
     "note": "Wins-Predictive Gini coefficient (inflated by centering)",
     "unit": null,
-    "value": 0.7367570871941271
+    "value": 0.7493987617582023
   },
   "dist.WINS_PRED.top5pct": {
-    "display": "29.8 %",
+    "display": "31.9 %",
     "fmt": "{:.1f}",
     "note": "Wins-Predictive top-5% share of positive value",
     "unit": "%",
-    "value": 29.758891841911506
+    "value": 31.916916197217947
   },
   "dist.WS.exkurt": {
     "display": "+1.83",
@@ -2484,33 +2540,131 @@
     "unit": "%",
     "value": 11.772039735577989
   },
+  "example.brunson.bpm": {
+    "display": "+3.4",
+    "fmt": "{:+.1f}",
+    "note": "Brunson overall BPM",
+    "unit": null,
+    "value": 3.4009462736526803
+  },
+  "example.brunson.bpm_rank": {
+    "display": "29",
+    "fmt": "{:d}",
+    "note": "Brunson overall BPM rank among qualified players",
+    "unit": null,
+    "value": 29
+  },
+  "example.brunson.dbpm": {
+    "display": "-0.9",
+    "fmt": "{:+.1f}",
+    "note": "Brunson defensive BPM",
+    "unit": null,
+    "value": -0.8576709731439571
+  },
+  "example.brunson.obpm": {
+    "display": "+4.3",
+    "fmt": "{:+.1f}",
+    "note": "Brunson offensive BPM",
+    "unit": null,
+    "value": 4.2586172467966374
+  },
+  "example.brunson.obpm_rank": {
+    "display": "12",
+    "fmt": "{:d}",
+    "note": "Brunson OBPM rank among qualified players",
+    "unit": null,
+    "value": 12
+  },
+  "example.defense.bpm": {
+    "display": "+8.9",
+    "fmt": "{:+.1f}",
+    "note": "the defense-driven star's BPM",
+    "unit": null,
+    "value": 8.86161608407823
+  },
+  "example.defense.dbpm": {
+    "display": "+3.9",
+    "fmt": "{:+.1f}",
+    "note": "the defense-driven star's DBPM",
+    "unit": null,
+    "value": 3.891331880148888
+  },
+  "example.defense.name": {
+    "display": "Victor Wembanyama",
+    "fmt": null,
+    "note": "defense-driven archetype: highest DBPM among the top BPM tier",
+    "unit": null,
+    "value": "Victor Wembanyama"
+  },
+  "example.elite.name": {
+    "display": "Nikola Joki\u0107",
+    "fmt": null,
+    "note": "agreed-elite archetype: best worst-rank across systems",
+    "unit": null,
+    "value": "Nikola Joki\u0107"
+  },
+  "example.elite.worst_rank": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "the agreed elite's worst rank across the core systems",
+    "unit": null,
+    "value": 1
+  },
+  "example.riser.name": {
+    "display": "Jayson Tatum",
+    "fmt": null,
+    "note": "biggest-playoff-riser archetype: top composite shift",
+    "unit": null,
+    "value": "Jayson Tatum"
+  },
+  "example.split.bpm_rank": {
+    "display": "126",
+    "fmt": "{:d}",
+    "note": "the split scorer's BPM rank",
+    "unit": null,
+    "value": 126
+  },
+  "example.split.name": {
+    "display": "Pascal Siakam",
+    "fmt": null,
+    "note": "high-usage split archetype: PER ranks well above BPM",
+    "unit": null,
+    "value": "Pascal Siakam"
+  },
+  "example.split.per_rank": {
+    "display": "45",
+    "fmt": "{:d}",
+    "note": "the split scorer's PER rank",
+    "unit": null,
+    "value": 45
+  },
   "ipanel.BPM.describe_mean": {
-    "display": "0.351",
+    "display": "0.999",
     "fmt": "{:.3f}",
     "note": "BPM mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.3512995490656764
+    "value": 0.9994595683251057
   },
   "ipanel.BPM.forecast_mean": {
-    "display": "0.384",
+    "display": "0.601",
     "fmt": "{:.3f}",
     "note": "BPM mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.384331019360284
+    "value": 0.6007962054459086
   },
   "ipanel.DBPM.describe_mean": {
-    "display": "0.024",
+    "display": "0.524",
     "fmt": "{:.3f}",
     "note": "DBPM mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.024013215746761764
+    "value": 0.5236324728612864
   },
   "ipanel.DBPM.forecast_mean": {
-    "display": "0.061",
+    "display": "0.293",
     "fmt": "{:.3f}",
     "note": "DBPM mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.06064655360156504
+    "value": 0.29345470988278144
   },
   "ipanel.GAME_SCORE.describe_mean": {
     "display": "0.424",
@@ -2527,18 +2681,18 @@
     "value": 0.445750295789499
   },
   "ipanel.OBPM.describe_mean": {
-    "display": "0.294",
+    "display": "0.698",
     "fmt": "{:.3f}",
     "note": "OBPM mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.29374942198409404
+    "value": 0.697959643357674
   },
   "ipanel.OBPM.forecast_mean": {
-    "display": "0.346",
+    "display": "0.468",
     "fmt": "{:.3f}",
     "note": "OBPM mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.3456654263727518
+    "value": 0.46848005218451844
   },
   "ipanel.PER.describe_mean": {
     "display": "0.641",
@@ -2590,53 +2744,53 @@
     "value": 16.870556684647934
   },
   "ipanel.RAPM.forecast_rank": {
-    "display": "9",
+    "display": "10",
     "fmt": "{:d}",
     "note": "RAPM's rank among systems as a forecaster in the impact-era panel",
     "unit": null,
-    "value": 9
+    "value": 10
   },
   "ipanel.RAPM_MY.describe_mean": {
-    "display": "0.281",
+    "display": "0.413",
     "fmt": "{:.3f}",
     "note": "RAPM+prior mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.2812856759183946
+    "value": 0.4126018718263626
   },
   "ipanel.RAPM_MY.forecast_mean": {
-    "display": "0.236",
+    "display": "0.321",
     "fmt": "{:.3f}",
     "note": "RAPM+prior mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.2359485200803899
+    "value": 0.3211689816898665
   },
   "ipanel.RAPM_MY.forecast_mean_pct": {
-    "display": "24",
+    "display": "32",
     "fmt": "{:.0f}",
     "note": "RAPM_MY mean forecast R\u00b2 (impact-era panel), percent (append % in prose)",
     "unit": null,
-    "value": 23.59485200803899
+    "value": 32.11689816898665
   },
   "ipanel.RAPM_MY.forecast_rank": {
-    "display": "8",
+    "display": "6",
     "fmt": "{:d}",
     "note": "RAPM_MY's rank among systems as a forecaster in the impact-era panel",
     "unit": null,
-    "value": 8
+    "value": 6
   },
   "ipanel.VORP.describe_mean": {
-    "display": "0.301",
+    "display": "0.919",
     "fmt": "{:.3f}",
     "note": "VORP mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.30075400441479827
+    "value": 0.9192963247572195
   },
   "ipanel.VORP.forecast_mean": {
-    "display": "0.359",
+    "display": "0.553",
     "fmt": "{:.3f}",
     "note": "VORP mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.3589189555196582
+    "value": 0.55346938236798
   },
   "ipanel.WS.describe_mean": {
     "display": "0.369",
@@ -2674,18 +2828,18 @@
     "value": "2013-14"
   },
   "ipanel.forecast_top.mean_pct": {
-    "display": "45",
+    "display": "60",
     "fmt": "{:.0f}",
     "note": "best impact-era forecaster's mean forecast R\u00b2, percent (append % in prose)",
     "unit": null,
-    "value": 44.575029578949895
+    "value": 60.07962054459086
   },
   "ipanel.forecast_top.name": {
-    "display": "Game Score",
+    "display": "BPM",
     "fmt": null,
     "note": "best forecaster in the impact-era panel",
     "unit": null,
-    "value": "Game Score"
+    "value": "BPM"
   },
   "ipanel.n_pairs": {
     "display": "12",
@@ -2709,179 +2863,179 @@
     "value": 10
   },
   "loves.BPM.1.diff": {
-    "display": "2.93",
+    "display": "1.21",
     "fmt": "{:.2f}",
     "note": "BPM loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.9330716373484425
+    "value": 1.2067410138577812
   },
   "loves.BPM.1.name": {
-    "display": "John Konchar",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "BPM loves rank 1 player vs consensus",
     "unit": null,
-    "value": "John Konchar"
+    "value": "Giannis Antetokounmpo"
   },
   "loves.BPM.2.diff": {
-    "display": "1.63",
+    "display": "1.08",
     "fmt": "{:.2f}",
     "note": "BPM loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.6322699158559741
+    "value": 1.078300996897813
   },
   "loves.BPM.2.name": {
-    "display": "Cason Wallace",
+    "display": "Paul Reed",
     "fmt": null,
     "note": "BPM loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Cason Wallace"
+    "value": "Paul Reed"
   },
   "loves.BPM.3.diff": {
-    "display": "1.36",
+    "display": "0.96",
     "fmt": "{:.2f}",
     "note": "BPM loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.3618835277091021
+    "value": 0.9596466831103423
   },
   "loves.BPM.3.name": {
-    "display": "Gary Harris",
+    "display": "Shai Gilgeous-Alexander",
     "fmt": null,
     "note": "BPM loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Gary Harris"
+    "value": "Shai Gilgeous-Alexander"
   },
   "loves.DBPM.1.diff": {
-    "display": "4.45",
+    "display": "2.85",
     "fmt": "{:.2f}",
     "note": "DBPM loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 4.4478657129322015
+    "value": 2.8529031948299655
   },
   "loves.DBPM.1.name": {
-    "display": "John Konchar",
+    "display": "Alex Caruso",
     "fmt": null,
     "note": "DBPM loves rank 1 player vs consensus",
     "unit": null,
-    "value": "John Konchar"
+    "value": "Alex Caruso"
   },
   "loves.DBPM.2.diff": {
-    "display": "2.85",
+    "display": "2.69",
     "fmt": "{:.2f}",
     "note": "DBPM loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.846453069972679
+    "value": 2.6939760434817313
   },
   "loves.DBPM.2.name": {
-    "display": "Gary Harris",
+    "display": "Cason Wallace",
     "fmt": null,
     "note": "DBPM loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Gary Harris"
+    "value": "Cason Wallace"
   },
   "loves.DBPM.3.diff": {
-    "display": "2.59",
+    "display": "2.41",
     "fmt": "{:.2f}",
     "note": "DBPM loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.5856027792868708
+    "value": 2.40890970270028
   },
   "loves.DBPM.3.name": {
-    "display": "Jonathan Isaac",
+    "display": "Dru Smith",
     "fmt": null,
     "note": "DBPM loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Jonathan Isaac"
+    "value": "Dru Smith"
   },
   "loves.GAME_SCORE.1.diff": {
-    "display": "2.00",
+    "display": "1.60",
     "fmt": "{:.2f}",
     "note": "Game Score loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.001584720727272
+    "value": 1.6037116819069293
   },
   "loves.GAME_SCORE.1.name": {
-    "display": "Jayson Tatum",
+    "display": "Lauri Markkanen",
     "fmt": null,
     "note": "Game Score loves rank 1 player vs consensus",
     "unit": null,
-    "value": "Jayson Tatum"
+    "value": "Lauri Markkanen"
   },
   "loves.GAME_SCORE.2.diff": {
-    "display": "1.92",
+    "display": "1.42",
     "fmt": "{:.2f}",
     "note": "Game Score loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.9159095788838352
+    "value": 1.4177827378429793
   },
   "loves.GAME_SCORE.2.name": {
-    "display": "Lauri Markkanen",
+    "display": "Keyonte George",
     "fmt": null,
     "note": "Game Score loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Lauri Markkanen"
+    "value": "Keyonte George"
   },
   "loves.GAME_SCORE.3.diff": {
-    "display": "1.90",
+    "display": "1.31",
     "fmt": "{:.2f}",
     "note": "Game Score loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.8986866894616734
+    "value": 1.3110749889953348
   },
   "loves.GAME_SCORE.3.name": {
-    "display": "Joel Embiid",
+    "display": "Anthony Edwards",
     "fmt": null,
     "note": "Game Score loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Joel Embiid"
+    "value": "Anthony Edwards"
   },
   "loves.OBPM.1.diff": {
-    "display": "2.33",
+    "display": "1.74",
     "fmt": "{:.2f}",
     "note": "OBPM loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.334014570007138
+    "value": 1.743373324017289
   },
   "loves.OBPM.1.name": {
-    "display": "Jaylen Brown",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "OBPM loves rank 1 player vs consensus",
     "unit": null,
-    "value": "Jaylen Brown"
+    "value": "Giannis Antetokounmpo"
   },
   "loves.OBPM.2.diff": {
-    "display": "1.79",
+    "display": "1.27",
     "fmt": "{:.2f}",
     "note": "OBPM loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.7863907371303123
+    "value": 1.265375048976524
   },
   "loves.OBPM.2.name": {
-    "display": "Jalen Brunson",
+    "display": "Darius Garland",
     "fmt": null,
     "note": "OBPM loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Jalen Brunson"
+    "value": "Darius Garland"
   },
   "loves.OBPM.3.diff": {
-    "display": "1.62",
+    "display": "1.26",
     "fmt": "{:.2f}",
     "note": "OBPM loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.6196564820089012
+    "value": 1.2601784408024914
   },
   "loves.OBPM.3.name": {
-    "display": "Brandon Ingram",
+    "display": "Stephen Curry",
     "fmt": null,
     "note": "OBPM loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Brandon Ingram"
+    "value": "Stephen Curry"
   },
   "loves.PER.1.diff": {
-    "display": "2.47",
+    "display": "1.16",
     "fmt": "{:.2f}",
     "note": "PER loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.472253815161182
+    "value": 1.1553538191455024
   },
   "loves.PER.1.name": {
     "display": "Giannis Antetokounmpo",
@@ -2891,25 +3045,25 @@
     "value": "Giannis Antetokounmpo"
   },
   "loves.PER.2.diff": {
-    "display": "1.75",
+    "display": "1.03",
     "fmt": "{:.2f}",
     "note": "PER loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.749725247490463
+    "value": 1.0341587204802098
   },
   "loves.PER.2.name": {
-    "display": "Victor Wembanyama",
+    "display": "Jaylen Brown",
     "fmt": null,
     "note": "PER loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Victor Wembanyama"
+    "value": "Jaylen Brown"
   },
   "loves.PER.3.diff": {
-    "display": "1.68",
+    "display": "0.98",
     "fmt": "{:.2f}",
     "note": "PER loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.6838755706689141
+    "value": 0.9767443810825369
   },
   "loves.PER.3.name": {
     "display": "Joel Embiid",
@@ -2919,95 +3073,95 @@
     "value": "Joel Embiid"
   },
   "loves.VORP.1.diff": {
-    "display": "2.13",
+    "display": "2.07",
     "fmt": "{:.2f}",
     "note": "VORP loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.1283507442488525
+    "value": 2.070096669547906
   },
   "loves.VORP.1.name": {
-    "display": "Cason Wallace",
+    "display": "Shai Gilgeous-Alexander",
     "fmt": null,
     "note": "VORP loves rank 1 player vs consensus",
     "unit": null,
-    "value": "Cason Wallace"
+    "value": "Shai Gilgeous-Alexander"
   },
   "loves.VORP.2.diff": {
-    "display": "1.91",
+    "display": "1.72",
     "fmt": "{:.2f}",
     "note": "VORP loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.9084616577877727
+    "value": 1.7189056569133063
   },
   "loves.VORP.2.name": {
-    "display": "Kris Dunn",
+    "display": "Nikola Joki\u0107",
     "fmt": null,
     "note": "VORP loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Kris Dunn"
+    "value": "Nikola Joki\u0107"
   },
   "loves.VORP.3.diff": {
-    "display": "1.88",
+    "display": "1.66",
     "fmt": "{:.2f}",
     "note": "VORP loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.8799669152263245
+    "value": 1.6631718911405282
   },
   "loves.VORP.3.name": {
-    "display": "Scottie Barnes",
+    "display": "Luka Don\u010di\u0107",
     "fmt": null,
     "note": "VORP loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Scottie Barnes"
+    "value": "Luka Don\u010di\u0107"
   },
   "loves.WS.1.diff": {
-    "display": "2.35",
+    "display": "2.14",
     "fmt": "{:.2f}",
     "note": "Win Shares loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.353830032376814
+    "value": 2.1386496968086735
   },
   "loves.WS.1.name": {
-    "display": "Donovan Clingan",
+    "display": "Amen Thompson",
     "fmt": null,
     "note": "Win Shares loves rank 1 player vs consensus",
     "unit": null,
-    "value": "Donovan Clingan"
+    "value": "Amen Thompson"
   },
   "loves.WS.2.diff": {
-    "display": "2.18",
+    "display": "2.08",
     "fmt": "{:.2f}",
     "note": "Win Shares loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.1758729810025117
+    "value": 2.0785728355339206
   },
   "loves.WS.2.name": {
-    "display": "Nikola Joki\u0107",
+    "display": "Donovan Clingan",
     "fmt": null,
     "note": "Win Shares loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Nikola Joki\u0107"
+    "value": "Donovan Clingan"
   },
   "loves.WS.3.diff": {
-    "display": "1.92",
+    "display": "1.83",
     "fmt": "{:.2f}",
     "note": "Win Shares loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 1.9245372780328807
+    "value": 1.834118873514553
   },
   "loves.WS.3.name": {
-    "display": "Amen Thompson",
+    "display": "Rudy Gobert",
     "fmt": null,
     "note": "Win Shares loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Amen Thompson"
+    "value": "Rudy Gobert"
   },
   "loves.WS48.1.diff": {
-    "display": "2.73",
+    "display": "2.80",
     "fmt": "{:.2f}",
     "note": "WS/48 loves rank 1 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.728126008109042
+    "value": 2.7981893769534825
   },
   "loves.WS48.1.name": {
     "display": "Steven Adams",
@@ -3017,46 +3171,46 @@
     "value": "Steven Adams"
   },
   "loves.WS48.2.diff": {
-    "display": "2.18",
+    "display": "2.38",
     "fmt": "{:.2f}",
     "note": "WS/48 loves rank 2 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.1813981238117823
+    "value": 2.3798658437940707
   },
   "loves.WS48.2.name": {
-    "display": "Luka Garza",
+    "display": "Dylan Cardwell",
     "fmt": null,
     "note": "WS/48 loves rank 2 player vs consensus",
     "unit": null,
-    "value": "Luka Garza"
+    "value": "Dylan Cardwell"
   },
   "loves.WS48.3.diff": {
-    "display": "2.02",
+    "display": "2.24",
     "fmt": "{:.2f}",
     "note": "WS/48 loves rank 3 residual vs consensus (positive)",
     "unit": null,
-    "value": 2.0211805900388335
+    "value": 2.2437034548836485
   },
   "loves.WS48.3.name": {
-    "display": "Day'Ron Sharpe",
+    "display": "Jericho Sims",
     "fmt": null,
     "note": "WS/48 loves rank 3 player vs consensus",
     "unit": null,
-    "value": "Day'Ron Sharpe"
+    "value": "Jericho Sims"
   },
   "nextretro.BPM.r2": {
-    "display": "0.360",
+    "display": "0.560",
     "fmt": "{:.3f}",
     "note": "BPM next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.36031746384848495
+    "value": 0.5595398081262252
   },
   "nextretro.DBPM.r2": {
-    "display": "0.029",
+    "display": "0.256",
     "fmt": "{:.3f}",
     "note": "DBPM next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.02875637543366627
+    "value": 0.25647268753031627
   },
   "nextretro.D_RAPM.r2": {
     "display": "0.024",
@@ -3066,11 +3220,11 @@
     "value": 0.02377501816522709
   },
   "nextretro.D_RAPM_MY.r2": {
-    "display": "0.018",
+    "display": "0.091",
     "fmt": "{:.3f}",
     "note": "D-RAPM+prior next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.017812996105948553
+    "value": 0.0912217441793789
   },
   "nextretro.GAME_SCORE.r2": {
     "display": "0.400",
@@ -3080,11 +3234,11 @@
     "value": 0.40006112752042033
   },
   "nextretro.OBPM.r2": {
-    "display": "0.284",
+    "display": "0.420",
     "fmt": "{:.3f}",
     "note": "OBPM next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.2843460748533142
+    "value": 0.4195394681556003
   },
   "nextretro.O_RAPM.r2": {
     "display": "0.086",
@@ -3094,11 +3248,11 @@
     "value": 0.08636419344242463
   },
   "nextretro.O_RAPM_MY.r2": {
-    "display": "0.194",
+    "display": "0.211",
     "fmt": "{:.3f}",
     "note": "O-RAPM+prior next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.19358983475124136
+    "value": 0.21110741270741062
   },
   "nextretro.PER.r2": {
     "display": "0.368",
@@ -3122,18 +3276,18 @@
     "value": 0.12020426743766444
   },
   "nextretro.RAPM_MY.r2": {
-    "display": "0.195",
+    "display": "0.340",
     "fmt": "{:.3f}",
     "note": "RAPM+prior next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.19535742177551685
+    "value": 0.3400441562922354
   },
   "nextretro.VORP.r2": {
-    "display": "0.356",
+    "display": "0.562",
     "fmt": "{:.3f}",
     "note": "VORP next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
-    "value": 0.3559469484680189
+    "value": 0.561783235280906
   },
   "nextretro.WS.r2": {
     "display": "0.374",
@@ -3157,151 +3311,151 @@
     "value": 88.38741366605105
   },
   "nextretro.top.name": {
-    "display": "Game Score",
+    "display": "VORP",
     "fmt": null,
     "note": "system that best predicts next-season team point differential",
     "unit": null,
-    "value": "Game Score"
+    "value": "VORP"
   },
   "nextretro.top.r2": {
-    "display": "0.400",
+    "display": "0.562",
     "fmt": "{:.3f}",
     "note": "best next-season retrodiction R\u00b2",
     "unit": null,
-    "value": 0.40006112752042033
+    "value": 0.561783235280906
   },
   "nextretro.top.r2_pct": {
-    "display": "40",
+    "display": "56",
     "fmt": "{:.0f}",
     "note": "best next-season retrodiction R\u00b2 as percent (append % in prose)",
     "unit": null,
-    "value": 40.006112752042036
+    "value": 56.1783235280906
   },
   "overlap.BPM.r2": {
-    "display": "0.545",
+    "display": "0.861",
     "fmt": "{:.3f}",
     "note": "BPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.5452437925801927
+    "value": 0.8610763622494029
   },
   "overlap.DBPM.r2": {
-    "display": "0.489",
+    "display": "0.333",
     "fmt": "{:.3f}",
     "note": "DBPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.4890943377362038
+    "value": 0.33283429820992405
   },
   "overlap.D_RAPM.r2": {
-    "display": "0.657",
+    "display": "0.730",
     "fmt": "{:.3f}",
     "note": "D-RAPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6565650442196345
+    "value": 0.7304558394177121
   },
   "overlap.D_RAPM_MY.r2": {
-    "display": "0.733",
+    "display": "0.762",
     "fmt": "{:.3f}",
     "note": "D-RAPM+prior overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.7327401983519677
+    "value": 0.7621569197700229
   },
   "overlap.GAME_SCORE.r2": {
-    "display": "0.889",
+    "display": "0.882",
     "fmt": "{:.3f}",
     "note": "Game Score overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.8891321591030704
+    "value": 0.882122163582599
   },
   "overlap.OBPM.r2": {
-    "display": "0.894",
+    "display": "0.879",
     "fmt": "{:.3f}",
     "note": "OBPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.8940137738632153
+    "value": 0.8789566964587213
   },
   "overlap.O_RAPM.r2": {
-    "display": "0.636",
+    "display": "0.666",
     "fmt": "{:.3f}",
     "note": "O-RAPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6356041038230718
+    "value": 0.6657398743921332
   },
   "overlap.O_RAPM_MY.r2": {
-    "display": "0.663",
+    "display": "0.739",
     "fmt": "{:.3f}",
     "note": "O-RAPM+prior overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6627456754709296
+    "value": 0.7391517275992594
   },
   "overlap.PER.r2": {
-    "display": "0.902",
+    "display": "0.946",
     "fmt": "{:.3f}",
     "note": "PER overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.9024965530285772
+    "value": 0.945730375019107
   },
   "overlap.RAPM.r2": {
-    "display": "0.607",
+    "display": "0.647",
     "fmt": "{:.3f}",
     "note": "RAPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6072004712686243
+    "value": 0.6468890368916282
   },
   "overlap.RAPM_MY.r2": {
-    "display": "0.660",
+    "display": "0.710",
     "fmt": "{:.3f}",
     "note": "RAPM+prior overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6602996226595719
+    "value": 0.7104805909514368
   },
   "overlap.VORP.r2": {
-    "display": "0.571",
+    "display": "0.841",
     "fmt": "{:.3f}",
     "note": "VORP overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.5710501551807583
+    "value": 0.8406293343107659
   },
   "overlap.WS.r2": {
-    "display": "0.680",
+    "display": "0.659",
     "fmt": "{:.3f}",
     "note": "Win Shares overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6801582767985446
+    "value": 0.658620864653011
   },
   "overlap.WS48.r2": {
-    "display": "0.621",
+    "display": "0.579",
     "fmt": "{:.3f}",
     "note": "WS/48 overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
-    "value": 0.6214732772425868
+    "value": 0.5787572916484383
   },
   "panel.BPM.describe_mean": {
-    "display": "0.297",
+    "display": "0.999",
     "fmt": "{:.3f}",
     "note": "BPM mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.29745871250007894
+    "value": 0.9993893998933404
   },
   "panel.BPM.forecast_mean": {
-    "display": "0.354",
+    "display": "0.514",
     "fmt": "{:.3f}",
     "note": "BPM mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.35395195017362807
+    "value": 0.5135704331248797
   },
   "panel.DBPM.describe_mean": {
-    "display": "0.020",
+    "display": "0.490",
     "fmt": "{:.3f}",
     "note": "DBPM mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.02008301874230602
+    "value": 0.490389478569956
   },
   "panel.DBPM.forecast_mean": {
-    "display": "0.067",
+    "display": "0.260",
     "fmt": "{:.3f}",
     "note": "DBPM mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.06713976545193298
+    "value": 0.25993335958817465
   },
   "panel.GAME_SCORE.describe_mean": {
     "display": "0.385",
@@ -3318,18 +3472,18 @@
     "value": 0.4200028186384563
   },
   "panel.OBPM.describe_mean": {
-    "display": "0.239",
+    "display": "0.614",
     "fmt": "{:.3f}",
     "note": "OBPM mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.23876063021616556
+    "value": 0.6137284066021509
   },
   "panel.OBPM.forecast_mean": {
-    "display": "0.307",
+    "display": "0.380",
     "fmt": "{:.3f}",
     "note": "OBPM mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3068841116734584
+    "value": 0.37964026272906237
   },
   "panel.PER.describe_mean": {
     "display": "0.636",
@@ -3360,18 +3514,18 @@
     "value": 25.239914171934174
   },
   "panel.VORP.describe_mean": {
-    "display": "0.242",
+    "display": "0.907",
     "fmt": "{:.3f}",
     "note": "VORP mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.24163134687056922
+    "value": 0.9073297176127327
   },
   "panel.VORP.forecast_mean": {
-    "display": "0.311",
+    "display": "0.519",
     "fmt": "{:.3f}",
     "note": "VORP mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.3107003542732285
+    "value": 0.5186343379166272
   },
   "panel.WS.describe_mean": {
     "display": "0.289",
@@ -3392,28 +3546,28 @@
     "fmt": "{:.3f}",
     "note": "WS/48 mean same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.13020991167047763
+    "value": 0.13020991167047766
   },
   "panel.WS48.forecast_mean": {
     "display": "0.187",
     "fmt": "{:.3f}",
     "note": "WS/48 mean next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": 0.18734966271028575
+    "value": 0.1873496627102857
   },
   "panel.bpm_beats_per_pairs": {
-    "display": "20",
+    "display": "29",
     "fmt": "{:d}",
     "note": "season-pairs where BPM forecasts better than PER",
     "unit": null,
-    "value": 20
+    "value": 29
   },
   "panel.describe_top.name": {
-    "display": "PER",
+    "display": "BPM",
     "fmt": null,
     "note": "system with the best average same-season (describe) R\u00b2 across the panel",
     "unit": null,
-    "value": "PER"
+    "value": "BPM"
   },
   "panel.first_season": {
     "display": "1996-97",
@@ -3423,18 +3577,18 @@
     "value": "1996-97"
   },
   "panel.forecast_top.mean_pct": {
-    "display": "42",
+    "display": "52",
     "fmt": "{:.0f}",
     "note": "best forecaster's mean forecast R\u00b2 across the panel, percent (append % in prose)",
     "unit": null,
-    "value": 42.00028186384563
+    "value": 51.863433791662715
   },
   "panel.forecast_top.name": {
-    "display": "Game Score",
+    "display": "VORP",
     "fmt": null,
     "note": "system with the best average next-season (forecast) R\u00b2 across the panel",
     "unit": null,
-    "value": "Game Score"
+    "value": "VORP"
   },
   "panel.last_season": {
     "display": "2025-26",
@@ -3472,53 +3626,53 @@
     "value": "Nikola Joki\u0107"
   },
   "playoff.consensus1.z": {
-    "display": "-1.64",
+    "display": "-2.46",
     "fmt": "{:.2f}",
     "note": "regular-season consensus #1 player's composite playoff shift z",
     "unit": null,
-    "value": -1.640337953011792
+    "value": -2.462073915850377
   },
   "playoff.faller.1.name": {
-    "display": "Jalen Duren",
+    "display": "Nikola Joki\u0107",
     "fmt": null,
     "note": "playoff faller rank 1 (composite shift)",
     "unit": null,
-    "value": "Jalen Duren"
+    "value": "Nikola Joki\u0107"
   },
   "playoff.faller.1.z": {
-    "display": "-1.71",
+    "display": "-2.46",
     "fmt": "{:.2f}",
     "note": "playoff faller rank 1 composite shift z",
     "unit": null,
-    "value": -1.7093720116248108
+    "value": -2.462073915850377
   },
   "playoff.faller.2.name": {
-    "display": "Nikola Joki\u0107",
+    "display": "Jalen Duren",
     "fmt": null,
     "note": "playoff faller rank 2 (composite shift)",
     "unit": null,
-    "value": "Nikola Joki\u0107"
+    "value": "Jalen Duren"
   },
   "playoff.faller.2.z": {
-    "display": "-1.64",
+    "display": "-2.35",
     "fmt": "{:.2f}",
     "note": "playoff faller rank 2 composite shift z",
     "unit": null,
-    "value": -1.640337953011792
+    "value": -2.350725555958132
   },
   "playoff.faller.3.name": {
-    "display": "Mitchell Robinson",
+    "display": "Nickeil Alexander-Walker",
     "fmt": null,
     "note": "playoff faller rank 3 (composite shift)",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Nickeil Alexander-Walker"
   },
   "playoff.faller.3.z": {
-    "display": "-1.62",
+    "display": "-2.07",
     "fmt": "{:.2f}",
     "note": "playoff faller rank 3 composite shift z",
     "unit": null,
-    "value": -1.6233488950497847
+    "value": -2.0690679059577155
   },
   "playoff.min_floor": {
     "display": "150",
@@ -3542,74 +3696,74 @@
     "value": "Jayson Tatum"
   },
   "playoff.riser.1.z": {
-    "display": "2.37",
+    "display": "2.15",
     "fmt": "{:.2f}",
     "note": "playoff riser rank 1 composite shift z",
     "unit": null,
-    "value": 2.3654281245649766
+    "value": 2.1527026673482705
   },
   "playoff.riser.2.name": {
-    "display": "Tari Eason",
+    "display": "OG Anunoby",
     "fmt": null,
     "note": "playoff riser rank 2 (composite shift)",
     "unit": null,
-    "value": "Tari Eason"
+    "value": "OG Anunoby"
   },
   "playoff.riser.2.z": {
-    "display": "1.78",
+    "display": "2.09",
     "fmt": "{:.2f}",
     "note": "playoff riser rank 2 composite shift z",
     "unit": null,
-    "value": 1.7821230451785195
+    "value": 2.0947634425638224
   },
   "playoff.riser.3.name": {
-    "display": "Max Strus",
+    "display": "Mike Conley",
     "fmt": null,
     "note": "playoff riser rank 3 (composite shift)",
     "unit": null,
-    "value": "Max Strus"
+    "value": "Mike Conley"
   },
   "playoff.riser.3.z": {
-    "display": "1.62",
+    "display": "1.95",
     "fmt": "{:.2f}",
     "note": "playoff riser rank 3 composite shift z",
     "unit": null,
-    "value": 1.623622002404904
+    "value": 1.951823130646152
   },
   "powerlaw.BPM.alpha": {
-    "display": "0.32",
+    "display": "0.43",
     "fmt": "{:.2f}",
     "note": "BPM power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 0.32038431684622626
+    "value": 0.43182770937751447
   },
   "powerlaw.BPM.r2": {
-    "display": "0.97",
+    "display": "0.98",
     "fmt": "{:.2f}",
     "note": "BPM log-log power-law fit R^2",
     "unit": null,
-    "value": 0.9669565129997276
+    "value": 0.9790589442888529
   },
   "powerlaw.CONSENSUS.alpha": {
-    "display": "0.31",
+    "display": "0.38",
     "fmt": "{:.2f}",
     "note": "Consensus power-law exponent (center-robust steepness)",
     "unit": null,
-    "value": 0.31304509294883226
+    "value": 0.3762798522754313
   },
   "powerlaw.DBPM.alpha": {
-    "display": "0.28",
+    "display": "0.36",
     "fmt": "{:.2f}",
     "note": "DBPM power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 0.2811275734122993
+    "value": 0.36430266779659554
   },
   "powerlaw.DBPM.r2": {
-    "display": "0.94",
+    "display": "0.97",
     "fmt": "{:.2f}",
     "note": "DBPM log-log power-law fit R^2",
     "unit": null,
-    "value": 0.9410110367600258
+    "value": 0.968382784064088
   },
   "powerlaw.D_RAPM.alpha": {
     "display": "0.19",
@@ -3626,18 +3780,18 @@
     "value": 0.8593214526435266
   },
   "powerlaw.D_RAPM_MY.alpha": {
-    "display": "0.20",
+    "display": "0.27",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 0.20008827381631186
+    "value": 0.2679049636744178
   },
   "powerlaw.D_RAPM_MY.r2": {
-    "display": "0.96",
+    "display": "0.97",
     "fmt": "{:.2f}",
     "note": "D-RAPM+prior log-log power-law fit R^2",
     "unit": null,
-    "value": 0.960890368017684
+    "value": 0.9741765918581113
   },
   "powerlaw.GAME_SCORE.alpha": {
     "display": "0.17",
@@ -3654,18 +3808,18 @@
     "value": 0.9731166095356915
   },
   "powerlaw.OBPM.alpha": {
-    "display": "0.55",
+    "display": "0.44",
     "fmt": "{:.2f}",
     "note": "OBPM power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 0.5456746788797803
+    "value": 0.4393690845820778
   },
   "powerlaw.OBPM.r2": {
-    "display": "0.78",
+    "display": "0.97",
     "fmt": "{:.2f}",
     "note": "OBPM log-log power-law fit R^2",
     "unit": null,
-    "value": 0.7779187262171282
+    "value": 0.9716784559239714
   },
   "powerlaw.O_RAPM.alpha": {
     "display": "0.36",
@@ -3682,18 +3836,18 @@
     "value": 0.965962206519867
   },
   "powerlaw.O_RAPM_MY.alpha": {
-    "display": "1.04",
+    "display": "0.42",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 1.036940004682645
+    "value": 0.415323916048454
   },
   "powerlaw.O_RAPM_MY.r2": {
-    "display": "0.75",
+    "display": "0.94",
     "fmt": "{:.2f}",
     "note": "O-RAPM+prior log-log power-law fit R^2",
     "unit": null,
-    "value": 0.747044016712183
+    "value": 0.9376619305363713
   },
   "powerlaw.PER.alpha": {
     "display": "0.14",
@@ -3724,39 +3878,39 @@
     "value": 0.9473100071571364
   },
   "powerlaw.RAPM_MY.alpha": {
-    "display": "0.39",
+    "display": "0.26",
     "fmt": "{:.2f}",
     "note": "RAPM+prior power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 0.3907023211898004
+    "value": 0.26414560989753016
   },
   "powerlaw.RAPM_MY.r2": {
-    "display": "0.95",
+    "display": "0.92",
     "fmt": "{:.2f}",
     "note": "RAPM+prior log-log power-law fit R^2",
     "unit": null,
-    "value": 0.9478671680072308
+    "value": 0.9212568335366023
   },
   "powerlaw.VORP.alpha": {
-    "display": "0.30",
+    "display": "0.37",
     "fmt": "{:.2f}",
     "note": "VORP power-law exponent (value ~ rank^-alpha)",
     "unit": null,
-    "value": 0.29708300878654614
+    "value": 0.37176372651846895
   },
   "powerlaw.VORP.r2": {
-    "display": "0.86",
+    "display": "0.98",
     "fmt": "{:.2f}",
     "note": "VORP log-log power-law fit R^2",
     "unit": null,
-    "value": 0.858245062385693
+    "value": 0.9777905265162153
   },
   "powerlaw.WINS_PRED.alpha": {
-    "display": "0.34",
+    "display": "0.40",
     "fmt": "{:.2f}",
     "note": "Wins-Predictive power-law exponent (center-robust steepness)",
     "unit": null,
-    "value": 0.3435713240098984
+    "value": 0.39942045769343965
   },
   "powerlaw.WS.alpha": {
     "display": "0.23",
@@ -3787,39 +3941,130 @@
     "value": 0.9456322991239423
   },
   "powerlaw.n_systems": {
-    "display": "6",
+    "display": "9",
     "fmt": "{:d}",
     "note": "systems whose value-vs-rank curve fits a power law",
     "unit": null,
-    "value": 6
+    "value": 9
   },
   "powerlaw.non_systems": {
-    "display": "WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior",
+    "display": "WS/48, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior",
     "fmt": null,
     "note": "names of systems whose value-vs-rank curve bends (not a power law)",
     "unit": null,
-    "value": "WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior"
+    "value": "WS/48, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior"
   },
   "powerlaw.systems": {
-    "display": "Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM+prior",
+    "display": "Game Score, PER, Win Shares, BPM, OBPM, DBPM, VORP, O-RAPM, D-RAPM+prior",
     "fmt": null,
     "note": "names of systems whose value-vs-rank curve fits a power law",
     "unit": null,
-    "value": "Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM+prior"
+    "value": "Game Score, PER, Win Shares, BPM, OBPM, DBPM, VORP, O-RAPM, D-RAPM+prior"
+  },
+  "pwv.brunson_bpm_po": {
+    "display": "+4.6",
+    "fmt": "{:+.1f}",
+    "note": "Brunson playoff BPM",
+    "unit": null,
+    "value": 4.627956304796628
+  },
+  "pwv.brunson_bpm_reg": {
+    "display": "+3.4",
+    "fmt": "{:+.1f}",
+    "note": "Brunson regular-season BPM",
+    "unit": null,
+    "value": 3.4009462736526803
+  },
+  "pwv.brunson_rank_k1": {
+    "display": "15",
+    "fmt": "{:d}",
+    "note": "Brunson PWV rank with playoff weight 1x (of 103)",
+    "unit": null,
+    "value": 15
+  },
+  "pwv.brunson_rank_k2": {
+    "display": "7",
+    "fmt": "{:d}",
+    "note": "Brunson PWV rank with playoff weight 2x (of 103)",
+    "unit": null,
+    "value": 7
+  },
+  "pwv.brunson_rank_k3": {
+    "display": "7",
+    "fmt": "{:d}",
+    "note": "Brunson PWV rank with playoff weight 3x (of 103)",
+    "unit": null,
+    "value": 7
+  },
+  "pwv.pool_n": {
+    "display": "103",
+    "fmt": "{:d}",
+    "note": "players in the playoff pool (>= 150 playoff min)",
+    "unit": null,
+    "value": 103
+  },
+  "pwv.top.1.name": {
+    "display": "Nikola Joki\u0107",
+    "fmt": null,
+    "note": "Playoff-Weighted Value rank 1",
+    "unit": null,
+    "value": "Nikola Joki\u0107"
+  },
+  "pwv.top.1.value": {
+    "display": "10.2",
+    "fmt": "{:.1f}",
+    "note": "Playoff-Weighted Value of rank 1",
+    "unit": null,
+    "value": 10.19459312435281
+  },
+  "pwv.top.2.name": {
+    "display": "Victor Wembanyama",
+    "fmt": null,
+    "note": "Playoff-Weighted Value rank 2",
+    "unit": null,
+    "value": "Victor Wembanyama"
+  },
+  "pwv.top.2.value": {
+    "display": "8.8",
+    "fmt": "{:.1f}",
+    "note": "Playoff-Weighted Value of rank 2",
+    "unit": null,
+    "value": 8.830282776443186
+  },
+  "pwv.top.3.name": {
+    "display": "Shai Gilgeous-Alexander",
+    "fmt": null,
+    "note": "Playoff-Weighted Value rank 3",
+    "unit": null,
+    "value": "Shai Gilgeous-Alexander"
+  },
+  "pwv.top.3.value": {
+    "display": "8.6",
+    "fmt": "{:.1f}",
+    "note": "Playoff-Weighted Value of rank 3",
+    "unit": null,
+    "value": 8.556565696570358
+  },
+  "pwv.weight": {
+    "display": "2",
+    "fmt": "{:d}",
+    "note": "primary playoff-minute weight in PWV",
+    "unit": null,
+    "value": 2
   },
   "rapm.box_corr_mean": {
-    "display": "0.14",
+    "display": "0.18",
     "fmt": "{:.2f}",
     "note": "mean abs rank corr of single-season RAPM with box-score systems",
     "unit": null,
-    "value": 0.1390805301277506
+    "value": 0.17878223300841808
   },
   "rapm.consensus_corr": {
-    "display": "0.25",
+    "display": "0.30",
     "fmt": "{:.2f}",
     "note": "bare single-season RAPM rank agreement with the consensus",
     "unit": null,
-    "value": 0.25405968186424926
+    "value": 0.29666063775789914
   },
   "rapm.top.1.name": {
     "display": "Moussa Cisse",
@@ -3857,25 +4102,25 @@
     "value": "Mitchell Robinson"
   },
   "rapm.top1_consensus_rank": {
-    "display": "37",
+    "display": "119",
     "fmt": "{:d}",
     "note": "consensus rank of the single-season RAPM #1 player",
     "unit": null,
-    "value": 37
+    "value": 119
   },
   "rapm_my.box_corr_mean": {
-    "display": "0.29",
+    "display": "0.38",
     "fmt": "{:.2f}",
     "note": "mean abs rank corr of RAPM_MY with box-score systems",
     "unit": null,
-    "value": 0.2905445225525291
+    "value": 0.3776613469998967
   },
   "rapm_my.consensus_corr": {
-    "display": "0.48",
+    "display": "0.54",
     "fmt": "{:.2f}",
     "note": "RAPM_MY rank agreement with the consensus rating",
     "unit": null,
-    "value": 0.47915205125650034
+    "value": 0.5440434170304064
   },
   "rapm_my.top.1.name": {
     "display": "Moussa Cisse",
@@ -3885,32 +4130,32 @@
     "value": "Moussa Cisse"
   },
   "rapm_my.top.2.name": {
-    "display": "Mitchell Robinson",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "RAPM_MY rank 2 (qualified players)",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Giannis Antetokounmpo"
   },
   "rapm_my.top.3.name": {
-    "display": "Rasheer Fleming",
+    "display": "Franz Wagner",
     "fmt": null,
     "note": "RAPM_MY rank 3 (qualified players)",
     "unit": null,
-    "value": "Rasheer Fleming"
+    "value": "Franz Wagner"
   },
   "rapm_my.top.4.name": {
-    "display": "Cooper Flagg",
+    "display": "Nikola Joki\u0107",
     "fmt": null,
     "note": "RAPM_MY rank 4 (qualified players)",
     "unit": null,
-    "value": "Cooper Flagg"
+    "value": "Nikola Joki\u0107"
   },
   "rapm_my.top.5.name": {
-    "display": "Isaiah Jackson",
+    "display": "Victor Wembanyama",
     "fmt": null,
     "note": "RAPM_MY rank 5 (qualified players)",
     "unit": null,
-    "value": "Isaiah Jackson"
+    "value": "Victor Wembanyama"
   },
   "rapm_shape.exkurt": {
     "display": "+0.10",
@@ -3948,39 +4193,39 @@
     "value": 0.04493371329203869
   },
   "rapm_shape.vorp_skew": {
-    "display": "+1.58",
+    "display": "+1.95",
     "fmt": "{:+.2f}",
     "note": "pooled VORP skewness (right-skewed accumulation metric)",
     "unit": null,
-    "value": 1.5814204961350535
+    "value": 1.9544467766796243
   },
   "retro.BPM.cv_r2": {
-    "display": "0.551",
+    "display": "1.000",
     "fmt": "{:.3f}",
     "note": "BPM retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": 0.5505604849912349
+    "value": 0.9995841703728042
   },
   "retro.BPM.r2": {
-    "display": "0.604",
+    "display": "1.000",
     "fmt": "{:.3f}",
     "note": "BPM team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.6038749958561417
+    "value": 0.9996605948870767
   },
   "retro.DBPM.cv_r2": {
-    "display": "0.074",
+    "display": "0.815",
     "fmt": "{:.3f}",
     "note": "DBPM retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": 0.07413340847417615
+    "value": 0.8154525629535424
   },
   "retro.DBPM.r2": {
-    "display": "0.183",
+    "display": "0.834",
     "fmt": "{:.3f}",
     "note": "DBPM team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.1826578341942865
+    "value": 0.8337941373037603
   },
   "retro.D_RAPM.cv_r2": {
     "display": "-0.076",
@@ -3997,18 +4242,18 @@
     "value": 0.06418579592364537
   },
   "retro.D_RAPM_MY.cv_r2": {
-    "display": "-0.104",
+    "display": "0.057",
     "fmt": "{:.3f}",
     "note": "D-RAPM+prior retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": -0.10418316495996338
+    "value": 0.0566109528845018
   },
   "retro.D_RAPM_MY.r2": {
-    "display": "0.048",
+    "display": "0.180",
     "fmt": "{:.3f}",
     "note": "D-RAPM+prior team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.047555304628122186
+    "value": 0.18002863007927106
   },
   "retro.GAME_SCORE.cv_r2": {
     "display": "0.471",
@@ -4025,18 +4270,18 @@
     "value": 0.5205544912917643
   },
   "retro.OBPM.cv_r2": {
-    "display": "0.454",
+    "display": "0.741",
     "fmt": "{:.3f}",
     "note": "OBPM retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": 0.4543945822720643
+    "value": 0.741383130297144
   },
   "retro.OBPM.r2": {
-    "display": "0.518",
+    "display": "0.784",
     "fmt": "{:.3f}",
     "note": "OBPM team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.5182967523877056
+    "value": 0.7840046948719869
   },
   "retro.O_RAPM.cv_r2": {
     "display": "0.173",
@@ -4053,18 +4298,18 @@
     "value": 0.26955405874987226
   },
   "retro.O_RAPM_MY.cv_r2": {
-    "display": "0.234",
+    "display": "0.283",
     "fmt": "{:.3f}",
     "note": "O-RAPM+prior retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": 0.23373707559075851
+    "value": 0.28260328594735307
   },
   "retro.O_RAPM_MY.r2": {
-    "display": "0.328",
+    "display": "0.376",
     "fmt": "{:.3f}",
     "note": "O-RAPM+prior team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.3281035727539162
+    "value": 0.37572317739481775
   },
   "retro.PER.cv_r2": {
     "display": "0.727",
@@ -4095,32 +4340,32 @@
     "value": 0.3219826055112255
   },
   "retro.RAPM_MY.cv_r2": {
-    "display": "0.302",
+    "display": "0.500",
     "fmt": "{:.3f}",
     "note": "RAPM+prior retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": 0.30176507706107925
+    "value": 0.5001654775864228
   },
   "retro.RAPM_MY.r2": {
-    "display": "0.380",
+    "display": "0.553",
     "fmt": "{:.3f}",
     "note": "RAPM+prior team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.3800924441306228
+    "value": 0.5526002629006161
   },
   "retro.VORP.cv_r2": {
-    "display": "0.493",
+    "display": "0.939",
     "fmt": "{:.3f}",
     "note": "VORP retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
-    "value": 0.4933796572392172
+    "value": 0.9387734108972418
   },
   "retro.VORP.r2": {
-    "display": "0.558",
+    "display": "0.948",
     "fmt": "{:.3f}",
     "note": "VORP team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
-    "value": 0.5582081339577805
+    "value": 0.9481010497855802
   },
   "retro.WS.cv_r2": {
     "display": "0.535",
@@ -4150,54 +4395,68 @@
     "unit": null,
     "value": 0.4509602456959274
   },
+  "retro.mechanical.cv_r2": {
+    "display": "1.000",
+    "fmt": "{:.3f}",
+    "note": "the mechanically-top rating's retrodiction R\u00b2 (\u22481.0 by construction)",
+    "unit": null,
+    "value": 0.9995841703728042
+  },
+  "retro.mechanical.name": {
+    "display": "BPM",
+    "fmt": null,
+    "note": "rating that tops retrodiction mechanically (team-anchored box metric)",
+    "unit": null,
+    "value": "BPM"
+  },
   "retro.top.cv_r2": {
     "display": "0.727",
     "fmt": "{:.3f}",
-    "note": "top system's leave-one-team-out retrodiction R\u00b2",
+    "note": "top outcome-blind rating's leave-one-team-out retrodiction R\u00b2",
     "unit": null,
     "value": 0.7273925613321701
   },
   "retro.top.cv_r2_pct": {
     "display": "73",
     "fmt": "{:.0f}",
-    "note": "top system's retrodiction R\u00b2 as a percent (append % in prose)",
+    "note": "top outcome-blind rating's retrodiction R\u00b2 as a percent (append %)",
     "unit": null,
     "value": 72.73925613321701
   },
   "retro.top.name": {
     "display": "PER",
     "fmt": null,
-    "note": "system that best retrodicts team point differential (CV)",
+    "note": "top outcome-blind retrodictor of team point differential (CV)",
     "unit": null,
     "value": "PER"
   },
   "stability.BPM.corr": {
-    "display": "0.697",
+    "display": "0.750",
     "fmt": "{:.3f}",
     "note": "BPM year-over-year rating correlation (mean across pairs)",
     "unit": null,
-    "value": 0.6969832197921432
+    "value": 0.7503672709164845
   },
   "stability.BPM.retention_pct": {
-    "display": "50",
+    "display": "59",
     "fmt": "{:.0f}",
     "note": "BPM top-20 retention, percent (append % in prose)",
     "unit": null,
-    "value": 50.3448275862069
+    "value": 58.620689655172434
   },
   "stability.DBPM.corr": {
-    "display": "0.806",
+    "display": "0.674",
     "fmt": "{:.3f}",
     "note": "DBPM year-over-year rating correlation (mean across pairs)",
     "unit": null,
-    "value": 0.8057089966224619
+    "value": 0.6738798245669927
   },
   "stability.DBPM.retention_pct": {
-    "display": "40",
+    "display": "39",
     "fmt": "{:.0f}",
     "note": "DBPM top-20 retention, percent (append % in prose)",
     "unit": null,
-    "value": 39.82758620689655
+    "value": 38.793103448275865
   },
   "stability.GAME_SCORE.corr": {
     "display": "0.847",
@@ -4214,18 +4473,18 @@
     "value": 68.10344827586205
   },
   "stability.OBPM.corr": {
-    "display": "0.746",
+    "display": "0.763",
     "fmt": "{:.3f}",
     "note": "OBPM year-over-year rating correlation (mean across pairs)",
     "unit": null,
-    "value": 0.746040838880209
+    "value": 0.7631862171094848
   },
   "stability.OBPM.retention_pct": {
-    "display": "56",
+    "display": "62",
     "fmt": "{:.0f}",
     "note": "OBPM top-20 retention, percent (append % in prose)",
     "unit": null,
-    "value": 56.379310344827594
+    "value": 61.7241379310345
   },
   "stability.PER.corr": {
     "display": "0.803",
@@ -4242,18 +4501,18 @@
     "value": 64.13793103448275
   },
   "stability.VORP.corr": {
-    "display": "0.710",
+    "display": "0.789",
     "fmt": "{:.3f}",
     "note": "VORP year-over-year rating correlation (mean across pairs)",
     "unit": null,
-    "value": 0.7095426628793088
+    "value": 0.7889784684996535
   },
   "stability.VORP.retention_pct": {
-    "display": "49",
+    "display": "58",
     "fmt": "{:.0f}",
     "note": "VORP top-20 retention, percent (append % in prose)",
     "unit": null,
-    "value": 48.96551724137932
+    "value": 58.27586206896551
   },
   "stability.WS.corr": {
     "display": "0.722",
@@ -4291,18 +4550,18 @@
     "value": 5.291005291005291
   },
   "stability.least_stable.corr": {
-    "display": "0.70",
+    "display": "0.67",
     "fmt": "{:.2f}",
     "note": "lowest year-over-year rating correlation",
     "unit": null,
-    "value": 0.6969832197921432
+    "value": 0.6738798245669927
   },
   "stability.least_stable.name": {
-    "display": "BPM",
+    "display": "DBPM",
     "fmt": null,
     "note": "system with the lowest year-over-year rating correlation",
     "unit": null,
-    "value": "BPM"
+    "value": "DBPM"
   },
   "stability.most_stable.corr": {
     "display": "0.85",
@@ -4340,11 +4599,11 @@
     "value": "Game Score"
   },
   "tail.BPM.skew": {
-    "display": "1.57",
+    "display": "2.09",
     "fmt": "{:.2f}",
     "note": "BPM skewness (positive values only)",
     "unit": null,
-    "value": 1.5731585822137328
+    "value": 2.0866905897849612
   },
   "tail.PER.skew": {
     "display": "0.83",
@@ -4354,11 +4613,11 @@
     "value": 0.8292206019930478
   },
   "tail.VORP.skew": {
-    "display": "1.10",
+    "display": "2.07",
     "fmt": "{:.2f}",
     "note": "VORP skewness (positive values only)",
     "unit": null,
-    "value": 1.0971552156419775
+    "value": 2.0681713775614696
   },
   "tail.WS.skew": {
     "display": "1.16",
@@ -4375,11 +4634,11 @@
     "value": "Nikola Joki\u0107"
   },
   "wins_pred.top.1.z": {
-    "display": "4.56",
+    "display": "4.49",
     "fmt": "{:.2f}",
     "note": "wins-predictive rank 1 z-score",
     "unit": null,
-    "value": 4.5555852111373385
+    "value": 4.491653178149749
   },
   "wins_pred.top.2.name": {
     "display": "Victor Wembanyama",
@@ -4389,52 +4648,52 @@
     "value": "Victor Wembanyama"
   },
   "wins_pred.top.2.z": {
-    "display": "3.21",
+    "display": "4.08",
     "fmt": "{:.2f}",
     "note": "wins-predictive rank 2 z-score",
     "unit": null,
-    "value": 3.2138540810626273
+    "value": 4.078479081819583
   },
   "wins_pred.top.3.name": {
-    "display": "Mitchell Robinson",
+    "display": "Shai Gilgeous-Alexander",
     "fmt": null,
     "note": "wins-predictive rank 3 player name",
     "unit": null,
-    "value": "Mitchell Robinson"
+    "value": "Shai Gilgeous-Alexander"
   },
   "wins_pred.top.3.z": {
-    "display": "3.04",
+    "display": "3.87",
     "fmt": "{:.2f}",
     "note": "wins-predictive rank 3 z-score",
     "unit": null,
-    "value": 3.0403035621538
+    "value": 3.874869937678209
   },
   "wins_pred.top.4.name": {
-    "display": "Shai Gilgeous-Alexander",
+    "display": "Giannis Antetokounmpo",
     "fmt": null,
     "note": "wins-predictive rank 4 player name",
     "unit": null,
-    "value": "Shai Gilgeous-Alexander"
+    "value": "Giannis Antetokounmpo"
   },
   "wins_pred.top.4.z": {
-    "display": "2.87",
+    "display": "3.16",
     "fmt": "{:.2f}",
     "note": "wins-predictive rank 4 z-score",
     "unit": null,
-    "value": 2.8698255497647844
+    "value": 3.1555624969364966
   },
   "wins_pred.top.5.name": {
-    "display": "Giannis Antetokounmpo",
+    "display": "Luka Don\u010di\u0107",
     "fmt": null,
     "note": "wins-predictive rank 5 player name",
     "unit": null,
-    "value": "Giannis Antetokounmpo"
+    "value": "Luka Don\u010di\u0107"
   },
   "wins_pred.top.5.z": {
-    "display": "2.79",
+    "display": "3.07",
     "fmt": "{:.2f}",
     "note": "wins-predictive rank 5 z-score",
     "unit": null,
-    "value": 2.785073217532337
+    "value": 3.0727997974884875
   }
 }

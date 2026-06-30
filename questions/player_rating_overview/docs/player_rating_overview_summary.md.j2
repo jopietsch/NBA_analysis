@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-The rating that best describes a finished NBA season is one of the worst at predicting the next one: across the << f("panel.n_seasons") >> seasons tested, PER rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in a season just played but forecasts the next at only about << f("panel.PER.forecast_mean_pct") >>%.
+Among the ratings that never use who won, the one that best describes a finished NBA season is one of the worst at predicting the next: across the << f("panel.n_seasons") >> seasons tested, PER rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in a season just played but forecasts the next at only about << f("panel.PER.forecast_mean_pct") >>%.
 That is one sign of a larger truth: there is no single best way to rate NBA players, and the systems disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
 This report recomputes the box-score systems for 2025-26, adds a from-scratch RAPM built from a full season of play-by-play, and puts three questions to them:
@@ -23,11 +23,13 @@ Below the top tier they part: Win Shares favors efficient big men on good teams 
 The from-scratch RAPM, built only from which lineups outscored their opponents, barely moves with the box scores (about << f("rapm.box_corr_mean") >> on a 0-to-1 scale), which is the point of an impact metric, though one season of it is too noisy to trust raw: its raw 2025-26 list puts a reserve, << f("rapm.top.1.name") >>, on top.
 
 **What does each uniquely capture?
-It depends.** Each system tilts toward a player type, but the simplest box scores (PER, Game Score) are nearly reconstructable from the others, while the metrics built for defense and lineup impact (BPM, Defensive BPM, RAPM) carry the most of their own, part of which may be recompute noise.
+It depends.** Each system tilts toward a player type, but the all-in-one summaries (PER, Game Score, and the now-validated BPM and VORP) are nearly reconstructable from the others, while Defensive BPM carries the most of its own, picking up defense the scoring-heavy systems miss.
+BPM is recomputed and validated against Basketball-Reference here (rank-and-value agreement << f("bpm_val.r_bpm", "{:.2f}") >>), which makes it accurate but no less redundant; the RAPM family is still an approximate recompute under repair, so part of its apparent independence may be noise.
 
 **How should they be combined?
 Into two ratings that answer different questions.** A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.
 They agree almost exactly (<< f("cmp.spearman", "{:.2f}") >> on a 0-to-1 scale) on the best players and part mainly on players whose production did not turn into team wins.
+Beyond those two, a playoff-weighted version of BPM (blending each player's regular-season and playoff value) follows one more thread the report picked up: Jalen Brunson did raise his game in the postseason (BPM << f("pwv.brunson_bpm_reg") >> to << f("pwv.brunson_bpm_po") >>), which lifts him to << f("pwv.brunson_rank_k2", "{:d}") >>th of the << f("pwv.pool_n", "{:d}") >> playoff players, a real step up but short of the top five.
 
 One pattern runs under all three answers: value is top-heavy.
 Cumulative metrics like Win Shares and VORP pile most of their value onto a few elite players, so the gap from the best player to the tenth is often several times the gap from tenth to fiftieth, something a ranked list hides.

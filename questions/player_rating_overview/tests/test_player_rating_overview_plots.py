@@ -247,3 +247,27 @@ def test_plot_rating_stability_empty(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     path = plots.plot_rating_stability({"corr": {}, "retention": {}, "pairs": []})
     assert os.path.exists(path)
+
+
+def _mini_pwv_deltas(n: int = 24) -> pd.DataFrame:
+    rng = np.random.default_rng(11)
+    return pd.DataFrame({
+        "PLAYER_ID": range(1, n + 1),
+        "PLAYER_NAME": [f"Player {i}" for i in range(1, n + 1)],
+        "BPM_reg": rng.normal(0, 3, n),
+        "BPM_po": rng.normal(0, 3, n),
+        "MIN_reg": rng.uniform(800, 2800, n),
+        "MIN_po": rng.uniform(150, 800, n),
+    })
+
+
+def test_plot_playoff_weighted_value(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_playoff_weighted_value(_mini_pwv_deltas(), top_n=8)
+    assert os.path.exists(path)
+
+
+def test_plot_playoff_weighted_value_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_playoff_weighted_value(pd.DataFrame())
+    assert os.path.exists(path)

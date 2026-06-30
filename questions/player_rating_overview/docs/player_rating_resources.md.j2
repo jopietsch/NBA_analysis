@@ -19,7 +19,7 @@ Read these before anything else.
 ### BPM 2.0: 2020 revision
 **URL:** <https://www.sports-reference.com/blog/2020/02/introducing-bpm-2-0/>  
 **Author:** Sports-Reference / Daniel Myers  
-**What it covers:** The 2020 overhaul that updated the regression coefficients, improved defensive estimation, and extended coverage further back. BPM 2.0 is what Basketball-Reference publishes today and what our pipeline approximates. The post explains what changed from version 1, which makes it useful for understanding where the original formula fell short.
+**What it covers:** The 2020 overhaul that updated the regression coefficients, improved defensive estimation, and extended coverage further back. BPM 2.0 is what Basketball-Reference publishes today; our pipeline recomputes BPM and validates it against those published values. The post explains what changed from version 1, which makes it useful for understanding where the original formula fell short.
 
 ### BPM 2.0 official about page
 **URL:** <https://www.basketball-reference.com/about/bpm2.html>  
