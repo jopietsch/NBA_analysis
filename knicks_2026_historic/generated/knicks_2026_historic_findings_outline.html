@@ -2190,6 +2190,8 @@ vertical-align: -.125em;
   <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§14. Limitations</a></li>
   <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">§15. Methodology</a></li>
   <li><a href="#appendix-a-companion-documents" id="toc-appendix-a-companion-documents" class="nav-link" data-scroll-target="#appendix-a-companion-documents">Appendix A: Companion Documents</a></li>
+  <li><a href="#appendix-b-every-champion-opponent-and-pace-adjusted" id="toc-appendix-b-every-champion-opponent-and-pace-adjusted" class="nav-link" data-scroll-target="#appendix-b-every-champion-opponent-and-pace-adjusted">Appendix B: Every Champion, Opponent-and-Pace-Adjusted</a></li>
+  <li><a href="#appendix-c-the-full-field-title-odds" id="toc-appendix-c-the-full-field-title-odds" class="nav-link" data-scroll-target="#appendix-c-the-full-field-title-odds">Appendix C: The Full-Field Title Odds</a></li>
   <li><a href="#key-numbers-registry" id="toc-key-numbers-registry" class="nav-link" data-scroll-target="#key-numbers-registry">Key Numbers Registry</a></li>
   </ul>
 </nav>
@@ -2352,6 +2354,7 @@ vertical-align: -.125em;
 <ul>
 <li>Forward model (reg-season SRS only): Knicks given only 14.7% title probability (Spurs out-rated them in regular season).</li>
 <li>Expected losses in title run: 6.5 (actual: 3). P(championship run losing &lt;=3 games): 6.7%. P(title AND &lt;=3 losses): 1.0%.</li>
+<li>Path-only caveat: model follows only the Knicks’ realized bracket, not the full field. Strongest reg-season team was Oklahoma City Thunder (+11.04 SRS), ahead of the Spurs (+8.28); OKC exited before the Finals so only the Spurs are scored.</li>
 <li>Echoes the margin overperformance in §4: the Knicks played far above their regular-season level.</li>
 <li>knicks_2026_historic_results.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL</li>
 </ul>
@@ -2388,6 +2391,22 @@ vertical-align: -.125em;
 <ul>
 <li>Findings now end with “Appendix A: Companion Documents” linking the standalone Regression Results (RESULTS), The Investigation, the one-page Summary, the Stats Explainer, and this Outline.</li>
 <li>The report is built with <code>include_appendix=False</code>: RESULTS is no longer inlined as a report appendix; it is a linked companion doc.</li>
+</ul>
+</section>
+<section id="appendix-b-every-champion-opponent-and-pace-adjusted" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-b-every-champion-opponent-and-pace-adjusted">Appendix B: Every Champion, Opponent-and-Pace-Adjusted</h2>
+<ul>
+<li>Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie).</li>
+<li>Reading the shape: scores are bell-shaped, not a power law. Mean +3.29, 65% within 1 SD; Knicks sit +2.0 SD above the mean (the expected spot for the best of 43 draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.</li>
+<li>knicks_2026_historic_results.md refs: §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING</li>
+</ul>
+</section>
+<section id="appendix-c-the-full-field-title-odds" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-c-the-full-field-title-odds">Appendix C: The Full-Field Title Odds</h2>
+<ul>
+<li>Forward bracket sim of all 16 playoff teams (generalizes §12’s realized-path model): seeds into the fixed bracket, plays every round from reg-season SRS. Favorite = Oklahoma City Thunder at 54.5%, more than triple any rival.</li>
+<li>Knicks only 3.5% as the East 3-seed, far below the realized-path 14.7% (§12); gap is the bracket draw (East 1/2 seeds upset before NY met them), not play. Neither knows they would elevate.</li>
+<li>knicks_2026_historic_results.md refs: §20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)</li>
 </ul>
 <hr>
 </section>
@@ -2705,6 +2724,27 @@ vertical-align: -.125em;
 <td>possessions only ~4% above average</td>
 <td>§17 POSSESSIONS-BASED PACE</td>
 <td>2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%)</td>
+</tr>
+<tr class="odd">
+<td>K43</td>
+<td>§12</td>
+<td>field’s strongest reg-season team was Oklahoma City Thunder (+11.04 SRS)</td>
+<td>§18 SERIES-LEVEL WIN-PROBABILITY (field note)</td>
+<td>strongest field SRS +11.04 vs. Spurs +8.28</td>
+</tr>
+<tr class="even">
+<td>K44</td>
+<td>App.B</td>
+<td>champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out</td>
+<td>§19 APPENDIX RANKING (shape)</td>
+<td>mean +3.29, SD 3.38, 65% within 1 SD</td>
+</tr>
+<tr class="odd">
+<td>K45</td>
+<td>App.C</td>
+<td>full-field favorite Oklahoma City Thunder 54.5%, Knicks 3.5%</td>
+<td>§20 FULL-FIELD TITLE ODDS</td>
+<td>favorite 54.5%, Knicks 3.5% (seed 3), Spurs 14.2%</td>
 </tr>
 </tbody>
 </table>
