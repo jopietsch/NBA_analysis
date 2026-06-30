@@ -23,6 +23,7 @@ def main() -> None:
     reg_2026         = data.fetch_game_logs(data.SUBJECT_YEAR, data.REGULAR_SEASON)
     standings_2026   = data.fetch_standings(data.SUBJECT_YEAR)
     player_po_2026   = data.fetch_player_game_logs(data.SUBJECT_YEAR, data.PLAYOFFS)
+    player_rs_2026   = data.fetch_player_game_logs(data.SUBJECT_YEAR, data.REGULAR_SEASON)
 
     print("Building champion stats table (all seasons)...")
     champions = data.build_champions_table(data.START_YEAR, data.END_YEAR)
@@ -32,6 +33,9 @@ def main() -> None:
 
     health_df = data.compute_opponent_health(
         player_po_2026, po_2026, data.KNICKS_TEAM_ID, standings_2026
+    )
+    continuity = data.compute_core_continuity(
+        player_po_2026, player_rs_2026, po_2026, reg_2026, data.KNICKS_TEAM_ID
     )
 
     print("Loading betting odds from cache / BBR...")
@@ -59,6 +63,7 @@ def main() -> None:
                            health_df=health_df, ats_df=ats_df, series_df=series_df,
                            posterior_df=hier.get("posterior"),
                            p_rank1=hier.get("p_rank1"),
+                           continuity=continuity,
                            elo_table=elo_table, bt_table=bt_table,
                            capped_table=capped_table)
     for p in paths:

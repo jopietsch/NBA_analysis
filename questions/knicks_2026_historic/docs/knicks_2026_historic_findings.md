@@ -141,7 +141,7 @@ The Knicks beat East opponents who were at or a bit below their season-long form
 
 ---
 
-## 6. Both Finalists Were the Biggest Risers
+## 6. The Rise: Biggest in the Field, 2nd-Biggest Ever
 
 The Knicks did not reach the Finals as a polished regular-season team that simply held form.
 By team rating (SRS, quality adjusted for schedule), they were only the fifth-strongest team in the playoff field during the regular season, at +6.05 (the table below lists notable risers, not the full regular-season order).
@@ -171,6 +171,32 @@ And the Finals paired the two teams that had improved the most since October: th
 These playoff ratings rest on a few weeks of games, so the exact figures carry the same small-sample caution as the rest of the run (see §10).
 
 ![Regular-season to playoff jump in team rating: the Knicks rose more than any 2025-26 playoff team, the Spurs second](../generated/images/knicks_2026_field_elevation.svg){#fig-field-elevation width=100%}
+
+**How historic was the rise?** Set it against every champion since 1983-84, and two different yardsticks land on the same answer.
+The first, *elevation*, is the plain version: playoff rating minus regular-season rating.
+The Knicks' jump of **+11.48** (regular-season SRS +6.05 up to a playoff +17.53) ranks **2nd of 43**, behind only the 00–01 Lakers (+12.58).
+The second, *overperformance*, asks the same thing but nets out the schedule: how far the Knicks' actual playoff margin (+14.9) beat what their own regular-season rating predicted against the teams they drew (+2.38 per game).
+That **+12.52**-per-game outperformance also ranks **2nd**, behind the same 00–01 Lakers.
+Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and the second-biggest any champion has produced.
+
+![Every champion ranked by how far it rose from the regular season to the playoffs, on two measures. The Knicks (blue) and the 2000-01 Lakers (orange) are the only two near the top of both; most champions sit near the middle, and a long tail of declines belongs to teams that won on a strong regular season and merely held form.](../generated/images/knicks_2026_rise_ranking.svg){#fig-rise-ranking .collapsible}
+
+**What the rise is made of.** It is not spread evenly across the run.
+The first three rounds against the East were demolitions: raw margins of +17.5, +22.2, and +19.2.
+The Finals were a near-even fight (+2.4), and once the Spurs' own playoff form is netted out, the Knicks actually came out behind on the scoreboard math (§5).
+So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen even further than the Knicks pushed to the hardest test of the run.
+
+**Is there anything behind the jump we can actually see?** One thing shows up in who was on the floor.
+The Knicks' core five (Karl-Anthony Towns, OG Anunoby, Josh Hart, Mikal Bridges, Jalen Brunson) were together for only **56%** of the regular season, but **89%** of the playoffs.
+With the full core healthy, their regular-season margin was **+8.09**; short-handed it dropped to **+4.08**, and the full-season figure (+6.33) is just the blend of the two.
+Some of the jump, then, is plain continuity: the playoffs were the longest healthy stretch the team had all year.
+
+![Regular-season point margin split by how much of the core was available, against the playoff margin. The Knicks were better with the full core (+8.09 vs. +4.08 short-handed) and were intact far more often in the playoffs (89% of games vs. 56% in the regular season), yet the playoff margin (+14.9) is bigger than full health alone explains.](../generated/images/knicks_2026_core_continuity.svg){#fig-core-continuity}
+
+But health does not finish the story.
+Even at full strength in the regular season (+8.09), the Knicks were nowhere near their playoff margin (+14.9).
+A healthy roster lifts the realistic baseline a couple of points above the full-season number, no more; the rest of the jump is the weaker, underperforming early-round opponents (§5) and a genuine playoff step-up that the data here can measure but cannot pin to a cause.
+Pinning down *why* a team shoots or defends better for six weeks would take possession-level and shot-quality data this study does not carry, so the honest answer is that continuity is the one piece of the rise we can see, and it is only a piece.
 
 ---
 

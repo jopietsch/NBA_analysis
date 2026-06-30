@@ -165,6 +165,42 @@ def test_plot_title_run_rarity(tmp_path, monkeypatch):
     assert os.path.exists(path)
 
 
+def test_plot_rise_ranking(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    df = _mini_champions().copy()
+    # include a 2000-01 Lakers row to exercise the second highlight color
+    df = pd.concat([df, pd.DataFrame([{**df.iloc[0].to_dict(), "year": 2001}])],
+                   ignore_index=True)
+    df["playoff_elevation"] = [3.0, -1.0, 5.0, 2.0, 4.0, -2.0, 11.5, 12.6]
+    df["overperformance"] = [3.0, -1.0, 5.0, 2.0, 4.0, -2.0, 12.5, 14.5]
+    path = plots.plot_rise_ranking(df)
+    assert os.path.exists(path)
+
+
+def test_plot_rise_ranking_missing_cols(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    # bare champions fixture lacks the rise columns → returns "" not raising
+    assert plots.plot_rise_ranking(_mini_champions()) == ""
+
+
+def test_plot_core_continuity(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    continuity = {
+        "core_n": 5, "core_players": ["A", "B", "C", "D", "E"],
+        "rs_games": 82, "po_games": 19,
+        "rs_full_share": 0.56, "po_full_share": 0.89,
+        "rs_full_margin": 8.1, "rs_short_margin": 4.1,
+        "rs_full_n": 46, "rs_short_n": 36, "po_margin": 14.9,
+    }
+    path = plots.plot_core_continuity(continuity)
+    assert os.path.exists(path)
+
+
+def test_plot_core_continuity_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    assert plots.plot_core_continuity({}) == ""
+
+
 def _mini_alt_table(adj_subject: float) -> pd.DataFrame:
     years = list(range(2020, 2026)) + [SUBJECT_YEAR]
     rows = []

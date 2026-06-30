@@ -34,6 +34,7 @@ from knicks_2026_data import (
     season_range_label,
     fetch_game_logs,
     fetch_player_game_logs,
+    compute_core_continuity,
     fetch_standings,
     compute_srs,
     identify_champion,
@@ -373,6 +374,11 @@ def run_adjusted_dominance(po_2026: pd.DataFrame,
         FACTS.set("overperf.margin", overperf,             "{:+.2f}", note="Playoff overperformance vs reg-SRS prediction")
         FACTS.set("overperf.pct",    op_pct,               "{:.1f}",  note="Overperformance percentile among champions")
         FACTS.set("overperf.best",   float(op_series.max()), "{:+.2f}", note="Best overperformance all-time (2000-01 Lakers)")
+        _op_rank = int((op_series > overperf).sum()) + 1
+        _op_best_year = int(champions.loc[champions["overperformance"].idxmax(), "year"])
+        FACTS.set("overperf.knicks_rank", _op_rank, "{:d}", note="Knicks overperformance rank among champions")
+        FACTS.set("overperf.n",           int(len(op_series)), "{:d}", note="Champions ranked by overperformance")
+        FACTS.set("overperf.best_season", short_label(_op_best_year), note="Biggest-overperformance champion season")
     # Guards
     FACTS.guard("adj.margin_is_first", adj_pct == 100.0,
                 "opponent-adjusted margin ranks first all-time", adj_pct)
@@ -704,6 +710,11 @@ def run_playoff_srs(po_2026: pd.DataFrame,
     FACTS.set("elev.pct",              elev_pct,                "{:.1f}",  note="Elevation percentile among champions")
     FACTS.set("elev.mean",             float(elev_series.mean()), "{:+.2f}", note="Mean champion playoff elevation")
     FACTS.set("elev.best",             float(elev_series.max()),  "{:+.2f}", note="Best champion playoff elevation all-time")
+    elev_rank = int((elev_series > elevation).sum()) + 1
+    elev_best_year = int(champions.loc[champions["playoff_elevation"].idxmax(), "year"])
+    FACTS.set("elev.knicks_rank", elev_rank, "{:d}", note="Knicks elevation rank among champions")
+    FACTS.set("elev.n",           int(len(elev_series)), "{:d}", note="Champions ranked by elevation")
+    FACTS.set("elev.best_season", short_label(elev_best_year), note="Biggest-elevation champion season")
 
     # Print top and bottom elevators
     top5 = champions.dropna(subset=["playoff_elevation"]).nlargest(
@@ -728,6 +739,62 @@ def run_playoff_srs(po_2026: pd.DataFrame,
             f"playoff {row.champion_po_srs:+.2f}  elev {row.playoff_elevation:+.2f}",
             file=out,
         )
+
+
+def run_core_continuity(continuity: dict, out: io.StringIO) -> None:
+    """What's behind the jump: roster health/continuity, reg season vs playoffs."""
+    print(_hdr("§8b WHAT'S BEHIND THE JUMP: ROSTER CONTINUITY"), file=out)
+    c = continuity
+    if not c or c.get("core_n", 0) == 0:
+        print("  No player-log data for the continuity check.", file=out)
+        return
+
+    print(
+        "Core = the high-minute playoff rotation (>= 20 mpg across the playoff\n"
+        "run). For each game we count how many of the core actually played, then\n"
+        "split the Knicks' point margin by how many were available.\n",
+        file=out,
+    )
+    print(f"  Core ({c['core_n']}): {', '.join(c['core_players'])}", file=out)
+    print(f"  Full core together: {c['rs_full_share']:.0%} of the regular season "
+          f"({c['rs_full_n']} of {c['rs_games']}), "
+          f"{c['po_full_share']:.0%} of the playoffs", file=out)
+    print(f"  Reg-season margin, all {c['core_n']} core:   {c['rs_full_margin']:+.2f} "
+          f"({c['rs_full_n']} games)", file=out)
+    print(f"  Reg-season margin, missing >=1 core: {c['rs_short_margin']:+.2f} "
+          f"({c['rs_short_n']} games)", file=out)
+    print(f"  Reg-season margin, full season:      {c['rs_season_margin']:+.2f}", file=out)
+    print(f"  Playoff margin:                      {c['po_margin']:+.2f}", file=out)
+    print("\n  Margin by number of core available (regular season):", file=out)
+    for _, r in c["by_avail"].sort_values("avail").iterrows():
+        print(f"    {int(r['avail'])}/{c['core_n']} available: "
+              f"{int(r['n_games']):>2} games, margin {r['margin']:+.2f}", file=out)
+    print(
+        "\n  The Knicks were clearly better with the core intact, and were intact\n"
+        "  far more often in the playoffs. But even the full-core regular-season\n"
+        "  margin falls well short of the playoff margin, so health is part of the\n"
+        "  jump, not the whole of it.",
+        file=out,
+    )
+
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("continuity.core_n",          c["core_n"],            "{:d}",   note="Size of the playoff core rotation")
+    FACTS.set("continuity.core_list",       ", ".join(c["core_players"]),     note="Core rotation players")
+    FACTS.set("continuity.rs_full_share",   c["rs_full_share"] * 100, "{:.0f}", note="Share of reg-season games with full core (×100)")
+    FACTS.set("continuity.po_full_share",   c["po_full_share"] * 100, "{:.0f}", note="Share of playoff games with full core (×100)")
+    FACTS.set("continuity.rs_full_margin",  c["rs_full_margin"],    "{:+.2f}", note="Reg-season margin with full core")
+    FACTS.set("continuity.rs_short_margin", c["rs_short_margin"],   "{:+.2f}", note="Reg-season margin missing >=1 core")
+    FACTS.set("continuity.rs_full_n",       c["rs_full_n"],         "{:d}",   note="Reg-season games with full core")
+    FACTS.set("continuity.rs_season_margin", c["rs_season_margin"], "{:+.2f}", note="Reg-season full-season margin")
+    FACTS.set("continuity.po_margin",       c["po_margin"],         "{:+.2f}", note="Playoff margin")
+    FACTS.guard("continuity.full_core_better",
+                c["rs_full_margin"] > c["rs_short_margin"],
+                "the Knicks had a bigger margin with the full core than short-handed",
+                f"{c['rs_full_margin']:+.2f} vs {c['rs_short_margin']:+.2f}")
+    FACTS.guard("continuity.jump_exceeds_health",
+                c["po_margin"] > c["rs_full_margin"],
+                "the playoff margin exceeds even the full-core regular-season margin, so health does not fully explain the jump",
+                f"{c['po_margin']:+.2f} vs {c['rs_full_margin']:+.2f}")
 
 
 # ── Section 9: Era/pace normalization ────────────────────────────────────────
@@ -1837,6 +1904,10 @@ def main() -> None:
     reg_2026         = fetch_game_logs(SUBJECT_YEAR, REGULAR_SEASON)
     standings_2026   = fetch_standings(SUBJECT_YEAR)
     player_po_2026   = fetch_player_game_logs(SUBJECT_YEAR, PLAYOFFS)
+    player_rs_2026   = fetch_player_game_logs(SUBJECT_YEAR, REGULAR_SEASON)
+    continuity       = compute_core_continuity(
+        player_po_2026, player_rs_2026, po_2026, reg_2026, KNICKS_TEAM_ID
+    )
 
     print("Building champion stats table (all seasons)...")
     champions = build_champions_table(START_YEAR, END_YEAR)
@@ -1874,6 +1945,7 @@ def main() -> None:
     run_round_split(po_2026, reg_2026, standings_2026, champions, out)
     run_deflators(po_2026, champions, out)
     run_playoff_srs(po_2026, reg_2026, champions, out)
+    run_core_continuity(continuity, out)
     run_pace_era(reg_2026, po_2026, champions, out)
     run_verdict(po_2026, reg_2026, champions, gap_table, out)
     run_opponent_health(player_po_2026, po_2026, standings_2026, out)

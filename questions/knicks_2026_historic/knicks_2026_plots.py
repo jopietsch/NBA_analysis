@@ -743,6 +743,121 @@ def plot_rank_vs_z_intervals(posterior_df: pd.DataFrame, top_n: int = 10) -> str
     return path
 
 
+# ── 13c. How historic was the rise: elevation & overperformance rankings ─────
+
+LAKERS_2001_YEAR = 2001   # the one champion that out-rose the 2025-26 Knicks
+
+
+def plot_rise_ranking(champions: pd.DataFrame) -> str:
+    """Two-panel ranking of every champion by how much it rose from the regular
+    season to the playoffs: elevation (playoff SRS − regular-season SRS) on the
+    left, overperformance (actual margin − what the team's own regular-season
+    rating predicts against its opponents) on the right. The Knicks and the
+    2000-01 Lakers, the two biggest risers on both, are highlighted; the long
+    tail past zero is the champions who coasted in on a strong regular season."""
+    need = {"playoff_elevation", "overperformance", "year"}
+    if champions is None or champions.empty or not need <= set(champions.columns):
+        return ""
+
+    n = int(champions["playoff_elevation"].notna().sum())
+    fig, (axL, axR) = plt.subplots(
+        1, 2, figsize=(12, max(5, n * 0.22)), facecolor=BG)
+
+    def _panel(ax, col, xlabel, title):
+        d = champions.dropna(subset=[col]).sort_values(col).reset_index(drop=True)
+        def _color(yr):
+            if int(yr) == SUBJECT_YEAR:        return KNICKS_BLUE
+            if int(yr) == LAKERS_2001_YEAR:    return KNICKS_ORANGE
+            return GRAY
+        colors = [_color(yr) for yr in d["year"]]
+        ax.barh(range(len(d)), d[col], color=colors, edgecolor="none", zorder=2)
+        ax.axvline(0, color=GRAY, linewidth=0.8)
+        mean_val = float(d[col].mean())
+        ax.axvline(mean_val, color=RED, linewidth=1.2, linestyle="--", zorder=3)
+        ax.set_yticks(range(len(d)))
+        ax.set_yticklabels([short_label(int(y)) for y in d["year"]], fontsize=6.5)
+        ax.set_xlabel(xlabel, fontsize=9.5)
+        ax.set_title(title, fontsize=10, fontweight="bold", color="#2c2c2a", pad=8)
+        _style(ax)
+        for yr in (SUBJECT_YEAR, LAKERS_2001_YEAR):
+            m = d["year"] == yr
+            if m.any():
+                pos = int(np.where(m.values)[0][0])
+                val = float(d.loc[m, col].iloc[0])
+                ax.text(val + 0.15, pos, f"{val:+.1f}", va="center", fontsize=7.5,
+                        color=(KNICKS_BLUE if yr == SUBJECT_YEAR else KNICKS_ORANGE),
+                        fontweight="bold")
+
+    _panel(axL, "playoff_elevation",
+           "Elevation: playoff − regular-season SRS", "By elevation")
+    _panel(axR, "overperformance",
+           "Overperformance vs. own regular-season rating (pts/game)", "By overperformance")
+
+    fig.suptitle("On both rise metrics the Knicks are 2nd of "
+                 f"{n}, behind only the 2000-01 Lakers",
+                 fontsize=12, fontweight="bold", color="#2c2c2a", y=1.01)
+    handles = [
+        mpatches.Patch(color=KNICKS_BLUE, label="2025-26 Knicks"),
+        mpatches.Patch(color=KNICKS_ORANGE, label="2000-01 Lakers"),
+        mpatches.Patch(color=GRAY, label="Other champions"),
+        plt.Line2D([0], [0], color=RED, linestyle="--", label="Historical mean"),
+    ]
+    axR.legend(handles=handles, fontsize=8, framealpha=0.85, edgecolor="#ddd",
+               loc="lower right")
+    fig.tight_layout()
+    path = save_chart("knicks_2026_rise_ranking.svg", OUTPUT_DIR, fig=fig)
+    return path
+
+
+# ── 13d. What's behind the jump: roster continuity ───────────────────────────
+
+def plot_core_continuity(continuity: dict) -> str:
+    """Regular-season point margin split by how much of the playoff core was
+    available, against the playoff margin. The Knicks were clearly better with
+    the full core (and were rarely intact in the regular season), but even the
+    full-core regular-season margin falls well short of the playoff jump, so
+    health is part of the story, not the whole of it."""
+    c = continuity
+    if not c or c.get("core_n", 0) == 0:
+        return ""
+
+    labels = [f"Reg. season,\nmissing ≥1 of {c['core_n']}",
+              f"Reg. season,\nall {c['core_n']} core",
+              "Playoffs"]
+    vals = [c["rs_short_margin"], c["rs_full_margin"], c["po_margin"]]
+    ns = [c["rs_short_n"], c["rs_full_n"], c["po_games"]]
+    colors = [GRAY, BLUE, KNICKS_BLUE]
+
+    fig, ax = _fig(figsize=(8.5, 4.2))
+    y = np.arange(len(vals))
+    ax.barh(y, vals, color=colors, edgecolor="none", zorder=2)
+    ax.axvline(0, color=GRAY, linewidth=0.8)
+    for yi, v, nn in zip(y, vals, ns):
+        ax.text(v + 0.25, yi, f"{v:+.1f}  ({nn} g)", va="center",
+                fontsize=9, color="#2c2c2a")
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=9)
+    ax.invert_yaxis()
+    ax.set_xlabel("Point margin per game", fontsize=10)
+    ax.set_xlim(right=max(vals) * 1.18)
+    ax.set_title(
+        "With the full core the Knicks were better, but the playoff jump is "
+        "bigger than health alone",
+        fontsize=10.5, fontweight="bold", color="#2c2c2a", pad=18,
+    )
+    ax.text(
+        0.5, 1.01,
+        f"The {c['core_n']} core players were together {c['rs_full_share']:.0%} "
+        f"of the regular season, {c['po_full_share']:.0%} of the playoffs",
+        transform=ax.transAxes, ha="center", va="bottom", fontsize=8.5, color=GRAY,
+    )
+    _style(ax)
+    ax.grid(axis="y", visible=False)
+    fig.tight_layout()
+    path = save_chart("knicks_2026_core_continuity.svg", OUTPUT_DIR, fig=fig)
+    return path
+
+
 # ── Orchestrator ─────────────────────────────────────────────────────────────
 
 # ── 12. Reg→playoff SRS elevation across the 2025-26 field ───────────────────
@@ -949,6 +1064,7 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              series_df: pd.DataFrame | None = None,
              posterior_df: pd.DataFrame | None = None,
              p_rank1: float | None = None,
+             continuity: dict | None = None,
              elo_table: pd.DataFrame | None = None,
              bt_table: pd.DataFrame | None = None,
              capped_table: pd.DataFrame | None = None) -> list:
@@ -966,8 +1082,13 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
         plot_opponent_srs_by_round(po_2026, reg_srs, standings_2026),
         plot_bootstrap_margin(po_2026, reg_srs, champions),
         plot_playoff_field_elevation(po_2026, reg_2026, standings_2026),
+        plot_rise_ranking(champions),
         plot_title_run_rarity(po_2026, reg_2026, standings_2026),
     ]
+    if continuity:
+        p = plot_core_continuity(continuity)
+        if p:
+            paths.append(p)
     if series_df is not None and not series_df.empty:
         p = plot_round_split(series_df)
         if p:

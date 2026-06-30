@@ -29,6 +29,16 @@
     "ok": true,
     "value": 1
   },
+  "continuity.full_core_better": {
+    "claim": "the Knicks had a bigger margin with the full core than short-handed",
+    "ok": true,
+    "value": "+8.09 vs +4.08"
+  },
+  "continuity.jump_exceeds_health": {
+    "claim": "the playoff margin exceeds even the full-core regular-season margin, so health does not fully explain the jump",
+    "ok": true,
+    "value": "+14.89 vs +8.09"
+  },
   "field.knicks_rose_most": {
     "claim": "the Knicks elevated most from reg-season to playoffs of any 2026 playoff team",
     "ok": true,

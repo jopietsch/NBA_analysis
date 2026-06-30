@@ -58,14 +58,17 @@ Update when findings prose or RESULTS change.
 - Full-run playoff-SRS-adjusted margin: +9.05 pts/game, 100th pct. Effectively tied with 1986-87 Lakers +8.99.
 - knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (playoff SRS table)
 
-## §6. Both Finalists Were the Biggest Risers
+## §6. The Rise: Biggest in the Field, 2nd-Biggest Ever
 
 - Knicks: reg SRS +6.05 → playoff SRS +17.53, elevation +11.48 — largest of any 2026 playoff team.
 - Spurs: reg SRS +8.28 → playoff SRS +15.13, elevation +6.85 — second largest.
 - OKC led regular season (+11.04) but barely changed (+0.38 elevation).
 - Finals paired the two biggest risers in the field, not the two best regular-season teams.
 - Note: Spurs playoff SRS here (+15.13) includes the Knicks series; the §5 independent measure (+14.48) excludes it.
-- knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (field elevation table)
+- How historic, champion-wide: elevation +11.48 ranks 2nd of 43 (behind 00–01 Lakers +12.58); overperformance +12.52 ranks 2nd of 43 (behind 00–01 Lakers +14.49). Chart: knicks_2026_rise_ranking (both metrics, Knicks + 2000-01 Lakers highlighted).
+- What it's made of: round-by-round (§5) — East demolitions (+17.5, +22.2, +19.2), Finals near-even (+2.4) and opponent-adjusted negative; rise rests on the East rounds, not the Finals.
+- What's behind the jump (observable): roster continuity. Core 5 together 56% of reg season vs 89% of playoffs; margin full-core +8.09 vs short-handed +4.08 (full-season +6.33). Health lifts the baseline a couple points but +8.09 still +14.9 short of the playoff margin — health is a piece, not the whole. Chart: knicks_2026_core_continuity. No box-score/lineup data to pin the mechanism.
+- knicks_2026_historic_results.md refs: §5 OVERPERFORMANCE, §6 ROUND-BY-ROUND, §8 PLAYOFF SRS AND ELEVATION, §8b ROSTER CONTINUITY
 
 ## §7. Other Context
 

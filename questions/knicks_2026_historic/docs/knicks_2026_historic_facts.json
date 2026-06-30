@@ -475,6 +475,69 @@
     "unit": null,
     "value": 0.3157894736842105
   },
+  "continuity.core_list": {
+    "display": "Karl-Anthony Towns, OG Anunoby, Josh Hart, Mikal Bridges, Jalen Brunson",
+    "fmt": null,
+    "note": "Core rotation players",
+    "unit": null,
+    "value": "Karl-Anthony Towns, OG Anunoby, Josh Hart, Mikal Bridges, Jalen Brunson"
+  },
+  "continuity.core_n": {
+    "display": "5",
+    "fmt": "{:d}",
+    "note": "Size of the playoff core rotation",
+    "unit": null,
+    "value": 5
+  },
+  "continuity.po_full_share": {
+    "display": "89",
+    "fmt": "{:.0f}",
+    "note": "Share of playoff games with full core (\u00d7100)",
+    "unit": null,
+    "value": 89.47368421052632
+  },
+  "continuity.po_margin": {
+    "display": "+14.89",
+    "fmt": "{:+.2f}",
+    "note": "Playoff margin",
+    "unit": null,
+    "value": 14.894736842105264
+  },
+  "continuity.rs_full_margin": {
+    "display": "+8.09",
+    "fmt": "{:+.2f}",
+    "note": "Reg-season margin with full core",
+    "unit": null,
+    "value": 8.08695652173913
+  },
+  "continuity.rs_full_n": {
+    "display": "46",
+    "fmt": "{:d}",
+    "note": "Reg-season games with full core",
+    "unit": null,
+    "value": 46
+  },
+  "continuity.rs_full_share": {
+    "display": "56",
+    "fmt": "{:.0f}",
+    "note": "Share of reg-season games with full core (\u00d7100)",
+    "unit": null,
+    "value": 56.09756097560976
+  },
+  "continuity.rs_season_margin": {
+    "display": "+6.33",
+    "fmt": "{:+.2f}",
+    "note": "Reg-season full-season margin",
+    "unit": null,
+    "value": 6.329268292682927
+  },
+  "continuity.rs_short_margin": {
+    "display": "+4.08",
+    "fmt": "{:+.2f}",
+    "note": "Reg-season margin missing >=1 core",
+    "unit": null,
+    "value": 4.083333333333333
+  },
   "east.games": {
     "display": "14",
     "fmt": "{:d}",
@@ -510,6 +573,13 @@
     "unit": null,
     "value": 12.580918712298697
   },
+  "elev.best_season": {
+    "display": "00\u201301",
+    "fmt": null,
+    "note": "Biggest-elevation champion season",
+    "unit": null,
+    "value": "00\u201301"
+  },
   "elev.knicks.elevation": {
     "display": "+11.48",
     "fmt": "{:+.2f}",
@@ -531,12 +601,26 @@
     "unit": null,
     "value": 6.04551382067535
   },
+  "elev.knicks_rank": {
+    "display": "2",
+    "fmt": "{:d}",
+    "note": "Knicks elevation rank among champions",
+    "unit": null,
+    "value": 2
+  },
   "elev.mean": {
     "display": "+4.43",
     "fmt": "{:+.2f}",
     "note": "Mean champion playoff elevation",
     "unit": null,
     "value": 4.430455014568379
+  },
+  "elev.n": {
+    "display": "43",
+    "fmt": "{:d}",
+    "note": "Champions ranked by elevation",
+    "unit": null,
+    "value": 43
   },
   "elev.pct": {
     "display": "97.7",
@@ -1280,12 +1364,33 @@
     "unit": null,
     "value": 14.490315725012154
   },
+  "overperf.best_season": {
+    "display": "00\u201301",
+    "fmt": null,
+    "note": "Biggest-overperformance champion season",
+    "unit": null,
+    "value": "00\u201301"
+  },
+  "overperf.knicks_rank": {
+    "display": "2",
+    "fmt": "{:d}",
+    "note": "Knicks overperformance rank among champions",
+    "unit": null,
+    "value": 2
+  },
   "overperf.margin": {
     "display": "+12.52",
     "fmt": "{:+.2f}",
     "note": "Playoff overperformance vs reg-SRS prediction",
     "unit": null,
     "value": 12.517044524525938
+  },
+  "overperf.n": {
+    "display": "43",
+    "fmt": "{:d}",
+    "note": "Champions ranked by overperformance",
+    "unit": null,
+    "value": 43
   },
   "overperf.pct": {
     "display": "97.7",

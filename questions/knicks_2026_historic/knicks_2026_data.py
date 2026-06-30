@@ -831,6 +831,76 @@ def compute_opponent_health(
     return df
 
 
+# ── Roster continuity / health (reg-season vs. playoffs) ──────────────────────
+
+def compute_core_continuity(
+    player_po_logs: pd.DataFrame,
+    player_rs_logs: pd.DataFrame,
+    team_po_logs: pd.DataFrame,
+    team_rs_logs: pd.DataFrame,
+    team_id: int,
+    min_threshold: float = 20.0,
+) -> dict:
+    """How much of a team's reg→playoff jump tracks roster health/continuity.
+
+    The 'core' is the high-minute playoff rotation: players averaging at least
+    `min_threshold` minutes across the team's playoff appearances.  For the
+    regular season and the playoffs we count, per game, how many of the core
+    actually played (MIN > 0), then split the team's point margins by how many
+    of the core were available.  If the team played markedly better with the
+    core intact and was rarely intact in the regular season, that is an
+    observable piece of the playoff jump.
+
+    Returns a dict of scalars plus `by_avail` (regular-season margin by number
+    of core available) and `core_players` (names).
+    """
+    def _players(df):
+        d = df[df["TEAM_ID"] == team_id].copy()
+        d["MIN_FLOAT"] = d["MIN"].apply(parse_min)
+        d["GAME_ID"] = d["GAME_ID"].astype(str)
+        return d
+
+    po_p, rs_p = _players(player_po_logs), _players(player_rs_logs)
+    avg_min = po_p[po_p["MIN_FLOAT"] > 0].groupby("PLAYER_ID")["MIN_FLOAT"].mean()
+    core_ids = list(avg_min[avg_min >= min_threshold].index)
+    core_n = len(core_ids)
+    id_name = po_p.drop_duplicates("PLAYER_ID").set_index("PLAYER_ID")["PLAYER_NAME"]
+    core_players = [str(id_name.get(i, i)) for i in core_ids]
+
+    def _by_game(player_df, team_df):
+        tg = team_df[team_df["TEAM_ID"] == team_id].copy()
+        tg["GAME_ID"] = tg["GAME_ID"].astype(str)
+        tg["margin"] = tg["PLUS_MINUS"]
+        per = (player_df[(player_df["MIN_FLOAT"] > 0)
+                         & (player_df["PLAYER_ID"].isin(core_ids))]
+               .groupby("GAME_ID")["PLAYER_ID"].nunique())
+        tg["avail"] = tg["GAME_ID"].map(per).fillna(0).astype(int)
+        return tg
+
+    rs, po = _by_game(rs_p, team_rs_logs), _by_game(po_p, team_po_logs)
+    full, short = rs[rs["avail"] == core_n], rs[rs["avail"] < core_n]
+    by_avail = (rs.groupby("avail")["margin"].agg(["size", "mean"])
+                .reset_index().rename(columns={"size": "n_games", "mean": "margin"}))
+
+    return {
+        "core_players":     core_players,
+        "core_n":           core_n,
+        "rs_games":         int(len(rs)),
+        "po_games":         int(len(po)),
+        "rs_full_share":    float((rs["avail"] == core_n).mean()) if len(rs) else float("nan"),
+        "po_full_share":    float((po["avail"] == core_n).mean()) if len(po) else float("nan"),
+        "avg_core_rs":      float(rs["avail"].mean()) if len(rs) else float("nan"),
+        "avg_core_po":      float(po["avail"].mean()) if len(po) else float("nan"),
+        "rs_full_margin":   float(full["margin"].mean()) if len(full) else float("nan"),
+        "rs_short_margin":  float(short["margin"].mean()) if len(short) else float("nan"),
+        "rs_full_n":        int(len(full)),
+        "rs_short_n":       int(len(short)),
+        "rs_season_margin": float(rs["margin"].mean()) if len(rs) else float("nan"),
+        "po_margin":        float(po["margin"].mean()) if len(po) else float("nan"),
+        "by_avail":         by_avail,
+    }
+
+
 # ── Betting-market odds (ESPN core API) ───────────────────────────────────────
 
 

@@ -679,3 +679,45 @@ def test_compute_capped_srs_bounds_blowouts():
     # both still rank team A first; ratings remain zero-sum
     assert srs.idxmax() == 100 and capped.idxmax() == 100
     assert abs(capped.sum()) < 1e-9
+
+
+def _continuity_player_logs():
+    """3 core players (25 mpg). PO: all 3 every game. RS: R1 full, R2 missing one."""
+    po, rs = [], []
+    for gid in ("G1", "G2"):
+        for pid in (10, 11, 12):
+            po.append({"PLAYER_ID": pid, "PLAYER_NAME": f"P{pid}",
+                       "TEAM_ID": KNICKS_ID, "GAME_ID": gid, "MIN": "25:00"})
+    for pid in (10, 11, 12):                       # R1: full core
+        rs.append({"PLAYER_ID": pid, "PLAYER_NAME": f"P{pid}",
+                   "TEAM_ID": KNICKS_ID, "GAME_ID": "R1", "MIN": "25:00"})
+    for pid in (10, 11):                            # R2: one core missing
+        rs.append({"PLAYER_ID": pid, "PLAYER_NAME": f"P{pid}",
+                   "TEAM_ID": KNICKS_ID, "GAME_ID": "R2", "MIN": "25:00"})
+    rs.append({"PLAYER_ID": 12, "PLAYER_NAME": "P12",
+               "TEAM_ID": KNICKS_ID, "GAME_ID": "R2", "MIN": "0:00"})
+    return pd.DataFrame(po), pd.DataFrame(rs)
+
+
+def test_compute_core_continuity():
+    player_po, player_rs = _continuity_player_logs()
+    team_po = pd.DataFrame([
+        {"GAME_ID": "G1", "TEAM_ID": KNICKS_ID, "PLUS_MINUS": 18.0},
+        {"GAME_ID": "G2", "TEAM_ID": KNICKS_ID, "PLUS_MINUS": 12.0},
+    ])
+    team_rs = pd.DataFrame([
+        {"GAME_ID": "R1", "TEAM_ID": KNICKS_ID, "PLUS_MINUS": 10.0},
+        {"GAME_ID": "R2", "TEAM_ID": KNICKS_ID, "PLUS_MINUS": 2.0},
+    ])
+    c = data.compute_core_continuity(
+        player_po, player_rs, team_po, team_rs, KNICKS_ID, min_threshold=20.0
+    )
+    assert c["core_n"] == 3
+    assert c["rs_full_n"] == 1
+    assert c["rs_full_margin"] == pytest.approx(10.0)      # R1, full core
+    assert c["rs_short_margin"] == pytest.approx(2.0)      # R2, one missing
+    assert c["rs_full_share"] == pytest.approx(0.5)        # 1 of 2 RS games
+    assert c["po_full_share"] == pytest.approx(1.0)        # both PO games full
+    assert c["po_margin"] == pytest.approx(15.0)           # (18+12)/2
+    # health helps but the playoff margin still exceeds the full-core RS margin
+    assert c["po_margin"] > c["rs_full_margin"] > c["rs_short_margin"]

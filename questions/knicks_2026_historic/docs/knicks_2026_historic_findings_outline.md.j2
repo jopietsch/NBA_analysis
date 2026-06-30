@@ -58,14 +58,17 @@ Update when findings prose or RESULTS change.
 - Full-run playoff-SRS-adjusted margin: << f("adj_po.margin") >> pts/game, << f("adj_po.margin_pct", "{:.0f}") >>th pct. Effectively tied with 1986-87 Lakers +8.99.
 - knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (playoff SRS table)
 
-## §6. Both Finalists Were the Biggest Risers
+## §6. The Rise: Biggest in the Field, 2nd-Biggest Ever
 
 - Knicks: reg SRS << f("field.knicks.reg_srs") >> → playoff SRS << f("field.knicks.po_srs") >>, elevation << f("field.knicks.elevation") >> — largest of any 2026 playoff team.
 - Spurs: reg SRS << f("field.spurs.reg_srs") >> → playoff SRS << f("field.spurs.po_srs") >>, elevation << f("field.spurs.elevation") >> — second largest.
 - OKC led regular season (<< f("field.thunder.reg_srs") >>) but barely changed (<< f("field.thunder.elevation") >> elevation).
 - Finals paired the two biggest risers in the field, not the two best regular-season teams.
 - Note: Spurs playoff SRS here (<< f("field.spurs.po_srs") >>) includes the Knicks series; the §5 independent measure (<< f("round.finals.opp_po_srs") >>) excludes it.
-- knicks_2026_historic_results.md refs: §6 ROUND-BY-ROUND (field elevation table)
+- How historic, champion-wide: elevation << f("elev.knicks.elevation") >> ranks << f("elev.knicks_rank") >>nd of << f("elev.n") >> (behind << f("elev.best_season") >> Lakers << f("elev.best") >>); overperformance << f("overperf.margin") >> ranks << f("overperf.knicks_rank") >>nd of << f("overperf.n") >> (behind << f("overperf.best_season") >> Lakers << f("overperf.best") >>). Chart: knicks_2026_rise_ranking (both metrics, Knicks + 2000-01 Lakers highlighted).
+- What it's made of: round-by-round (§5) — East demolitions (<< f("round.r1.raw") >>, << f("round.r2.raw") >>, << f("round.cf.raw") >>), Finals near-even (<< f("round.finals.raw") >>) and opponent-adjusted negative; rise rests on the East rounds, not the Finals.
+- What's behind the jump (observable): roster continuity. Core << f("continuity.core_n") >> together << f("continuity.rs_full_share") >>% of reg season vs << f("continuity.po_full_share") >>% of playoffs; margin full-core << f("continuity.rs_full_margin") >> vs short-handed << f("continuity.rs_short_margin") >> (full-season << f("continuity.rs_season_margin") >>). Health lifts the baseline a couple points but << f("continuity.rs_full_margin") >> still << f("raw.margin") >> short of the playoff margin — health is a piece, not the whole. Chart: knicks_2026_core_continuity. No box-score/lineup data to pin the mechanism.
+- knicks_2026_historic_results.md refs: §5 OVERPERFORMANCE, §6 ROUND-BY-ROUND, §8 PLAYOFF SRS AND ELEVATION, §8b ROSTER CONTINUITY
 
 ## §7. Other Context
 

@@ -215,6 +215,29 @@ Bottom 5 (most declined reg→playoff):
   23–24: reg +10.75 → playoff +9.74  elev -1.00
   92–93: reg +6.19 → playoff +5.27  elev -0.92
 
+─── §8b WHAT'S BEHIND THE JUMP: ROSTER CONTINUITY ──────────────────────
+Core = the high-minute playoff rotation (>= 20 mpg across the playoff
+run). For each game we count how many of the core actually played, then
+split the Knicks' point margin by how many were available.
+
+  Core (5): Karl-Anthony Towns, OG Anunoby, Josh Hart, Mikal Bridges, Jalen Brunson
+  Full core together: 56% of the regular season (46 of 82), 89% of the playoffs
+  Reg-season margin, all 5 core:   +8.09 (46 games)
+  Reg-season margin, missing >=1 core: +4.08 (36 games)
+  Reg-season margin, full season:      +6.33
+  Playoff margin:                      +14.89
+
+  Margin by number of core available (regular season):
+    0/5 available:  1 games, margin -14.00
+    3/5 available:  7 games, margin -8.57
+    4/5 available: 28 games, margin +7.89
+    5/5 available: 46 games, margin +8.09
+
+  The Knicks were clearly better with the core intact, and were intact
+  far more often in the playoffs. But even the full-core regular-season
+  margin falls well short of the playoff margin, so health is part of the
+  jump, not the whole of it.
+
 ─── §9  ERA / PACE ADJUSTMENT ──────────────────────────────────────────
 League scoring environment:
   2025-26 avg pts/team/game: 115.6
