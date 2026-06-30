@@ -298,6 +298,7 @@ We built a simple forecaster that knows only each team's regular-season strength
 
 The forecast was not kind.
 Because the Spurs out-rated the Knicks over the regular season, the model made New York a Finals underdog (about a << f("winprob.finals.p_series", "{:.0f}") >>% chance to win that series) and gave them only about a **<< f("winprob.p_title", "{:.0f}") >>% chance to win the title at all**.
+This forecast follows only the Knicks' actual bracket, not the whole field: the strongest regular-season team was << f("winprob.field_best_team") >> (<< f("winprob.field_best_srs") >> SRS, ahead of the Spurs' << f("field.spurs.reg_srs") >>), but the Thunder lost before the Finals, so the Spurs are the only rival the model ever weighs.
 A run as clean as << f("raw.wins") >>-<< f("raw.losses") >>, losing just three games across four rounds, was rarer still: only about **<< f("winprob.p_le3_given_title", "{:.0f}") >>% of the model's championship runs were that tidy**, and barely **<< f("winprob.p_title_and_le3", "{:.0f}") >>%** of all simulated seasons produced both a title and three or fewer losses.
 
 Almost nothing about the Knicks' regular season predicted this.
@@ -394,3 +395,24 @@ All files are in the same folder as this PDF (`generated/`).
 | Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
 | Findings Outline | `knicks_2026_historic_findings_outline.pdf` | Condensed section-by-section outline cross-referenced to the regression output. |
 :::
+
+---
+
+## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
+
+The headline rankings throughout this report quote percentiles and the top few names.
+Here is the full list: all << f("raw.n_champions") >> champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §2 and §14.
+Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
+The three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era.
+
+<< f("appendix.ranking_table") >>
+
+Two things the full list makes plain.
+The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are netted out.
+And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with the 2018-19 Raptors just above the line.
+The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to call a tie, which is the same verdict §10 reaches the harder way.
+
+**The scores form a bell curve, not a handful of runaway giants.** The average champion sits at << f("appendix.dist.mean") >> points per game, and about << f("appendix.dist.within1sd_pct") >>% of them fall within one standard deviation (the typical spread of the scores) of that average.
+The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).
+That matters for reading the #1 claim: the Knicks' top score sits about << f("appendix.dist.knicks_z") >> standard deviations above the average champion, which is high but exactly where the single best of << f("raw.n_champions") >> bell-curve draws is expected to land.
+The best champion is the leading edge of an ordinary spread, not a breed apart, which is the statistical echo of §10's conclusion that first place is real but not settled.

@@ -298,6 +298,7 @@ We built a simple forecaster that knows only each team's regular-season strength
 
 The forecast was not kind.
 Because the Spurs out-rated the Knicks over the regular season, the model made New York a Finals underdog (about a 31% chance to win that series) and gave them only about a **15% chance to win the title at all**.
+This forecast follows only the Knicks' actual bracket, not the whole field: the strongest regular-season team was Oklahoma City Thunder (+11.04 SRS, ahead of the Spurs' +8.28), but the Thunder lost before the Finals, so the Spurs are the only rival the model ever weighs.
 A run as clean as 16-3, losing just three games across four rounds, was rarer still: only about **7% of the model's championship runs were that tidy**, and barely **1%** of all simulated seasons produced both a title and three or fewer losses.
 
 Almost nothing about the Knicks' regular season predicted this.
@@ -394,3 +395,68 @@ All files are in the same folder as this PDF (`generated/`).
 | Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
 | Findings Outline | `knicks_2026_historic_findings_outline.pdf` | Condensed section-by-section outline cross-referenced to the regression output. |
 :::
+
+---
+
+## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
+
+The headline rankings throughout this report quote percentiles and the top few names.
+Here is the full list: all 43 champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §2 and §14.
+Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
+The three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era.
+
+| # | Season | Champion | Raw | Opp-adj | Opp+Pace |
+|--:|---|---|--:|--:|--:|
+| 1 | 25–26 | **New York Knicks** | +14.89 | +11.23 | +10.05 |
+| 2 | 16–17 | Golden State Warriors | +13.65 | +10.23 | +10.04 |
+| 3 | 86–87 | Los Angeles Lakers | +10.83 | +9.52 | +8.96 |
+| 4 | 90–91 | Chicago Bulls | +11.71 | +9.20 | +8.96 |
+| 5 | 00–01 | Los Angeles Lakers | +12.75 | +7.26 | +7.93 |
+| 6 | 85–86 | Boston Celtics | +10.56 | +7.72 | +7.25 |
+| 7 | 22–23 | Denver Nuggets | +8.30 | +7.68 | +6.93 |
+| 8 | 84–85 | Los Angeles Lakers | +10.16 | +7.21 | +6.74 |
+| 9 | 95–96 | Chicago Bulls | +10.56 | +6.03 | +6.27 |
+| 10 | 17–18 | Golden State Warriors | +10.00 | +6.04 | +5.88 |
+| 11 | 98–99 | San Antonio Spurs | +7.24 | +4.90 | +5.54 |
+| 12 | 23–24 | Boston Celtics | +8.05 | +6.06 | +5.49 |
+| 13 | 13–14 | San Antonio Spurs | +9.30 | +4.82 | +4.94 |
+| 14 | 14–15 | Golden State Warriors | +7.81 | +4.48 | +4.64 |
+| 15 | 19–20 | Los Angeles Lakers | +6.86 | +4.80 | +4.44 |
+| 16 | 24–25 | Oklahoma City Thunder | +8.35 | +4.68 | +4.25 |
+| 17 | 89–90 | Detroit Pistons | +7.00 | +4.25 | +4.12 |
+| 18 | 11–12 | Miami Heat | +7.09 | +3.81 | +4.10 |
+| 19 | 88–89 | Detroit Pistons | +7.71 | +4.26 | +4.04 |
+| 20 | 12–13 | Miami Heat | +6.43 | +3.71 | +3.92 |
+| 21 | 03–04 | Detroit Pistons | +6.35 | +3.44 | +3.82 |
+| 22 | 08–09 | Los Angeles Lakers | +7.22 | +3.35 | +3.47 |
+| 23 | 15–16 | Cleveland Cavaliers | +8.62 | +3.21 | +3.24 |
+| 24 | 07–08 | Boston Celtics | +5.23 | +2.75 | +2.85 |
+| 25 | 97–98 | Chicago Bulls | +7.00 | +2.42 | +2.62 |
+| 26 | 91–92 | Chicago Bulls | +6.18 | +2.20 | +2.17 |
+| 27 | 20–21 | Milwaukee Bucks | +5.13 | +1.80 | +1.66 |
+| 28 | 02–03 | San Antonio Spurs | +5.50 | +1.35 | +1.47 |
+| 29 | 83–84 | Boston Celtics | +4.17 | +1.42 | +1.34 |
+| 30 | 10–11 | Dallas Mavericks | +5.76 | +1.26 | +1.31 |
+| 31 | 18–19 | Toronto Raptors | +5.46 | +1.15 | +1.07 |
+| 32 | 92–93 | Chicago Bulls | +5.84 | +0.79 | +0.77 |
+| 33 | 04–05 | San Antonio Spurs | +4.35 | +0.65 | +0.69 |
+| 34 | 21–22 | Golden State Warriors | +5.05 | +0.46 | +0.43 |
+| 35 | 05–06 | Miami Heat | +3.78 | +0.22 | +0.24 |
+| 36 | 96–97 | Chicago Bulls | +5.74 | +0.04 | +0.04 |
+| 37 | 06–07 | San Antonio Spurs | +3.90 | -0.13 | -0.14 |
+| 38 | 09–10 | Los Angeles Lakers | +3.83 | -0.27 | -0.28 |
+| 39 | 87–88 | Los Angeles Lakers | +2.54 | -0.33 | -0.32 |
+| 40 | 93–94 | Houston Rockets | +3.13 | -1.61 | -1.64 |
+| 41 | 01–02 | Los Angeles Lakers | +3.79 | -1.94 | -2.10 |
+| 42 | 99–00 | Los Angeles Lakers | +2.39 | -2.42 | -2.58 |
+| 43 | 94–95 | Houston Rockets | +2.77 | -2.99 | -3.06 |
+
+Two things the full list makes plain.
+The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are netted out.
+And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with the 2018-19 Raptors just above the line.
+The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to call a tie, which is the same verdict §10 reaches the harder way.
+
+**The scores form a bell curve, not a handful of runaway giants.** The average champion sits at +3.29 points per game, and about 65% of them fall within one standard deviation (the typical spread of the scores) of that average.
+The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).
+That matters for reading the #1 claim: the Knicks' top score sits about +2.0 standard deviations above the average champion, which is high but exactly where the single best of 43 bell-curve draws is expected to land.
+The best champion is the leading edge of an ordinary spread, not a breed apart, which is the statistical echo of §10's conclusion that first place is real but not settled.

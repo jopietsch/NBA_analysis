@@ -1526,6 +1526,23 @@ def run_series_winprob(po_2026: pd.DataFrame,
         "margin-based overperformance in §5.",
         file=out,
     )
+
+    # The model only scores the Knicks' realized path, so the Spurs are the one
+    # rival it rates. The field's strongest regular-season team was someone else.
+    _field = compute_playoff_field_elevation(po_2026, reg_2026)
+    _best = _field.loc[_field["reg_srs"].idxmax()]
+    _best_name = name_map.get(int(_best["team_id"]), f"Team {int(_best['team_id'])}")
+    _best_srs = float(_best["reg_srs"])
+    _finals_oid, _finals_srs, _ = meta[-1]
+    print(
+        f"\nField note: this is not a full-field title sim; it follows only the\n"
+        f"Knicks' actual bracket. By regular-season SRS the strongest team in the\n"
+        f"field was {_best_name} ({_best_srs:+.2f}), ahead of the Spurs ({_finals_srs:+.2f}).\n"
+        f"The model never scores {_best_name.split()[-1]} because they exited before the\n"
+        f"Finals; the Spurs are the only rival it rates, since New York played them.",
+        file=out,
+    )
+
     # ── Facts: win-probability model ─────────────────────────────────────────
     FACTS.set("winprob.knicks_srs",       champ_srs,                                      "{:+.2f}", note="Knicks regular-season SRS for model")
     FACTS.set("winprob.p_title",          float(res["p_title"])                  * 100,   "{:.1f}",  note="P(Knicks win title), ×100")
@@ -1542,6 +1559,99 @@ def run_series_winprob(po_2026: pd.DataFrame,
         _finals_p = float(res["series_winprob"][-1])
         FACTS.guard("winprob.title_underdog", _finals_p < 0.5,
                     "model made Knicks underdogs in the Finals (<50% to win series)", _finals_p)
+    # Facts + guard: the field's strongest reg-season team
+    FACTS.set("winprob.field_best_team", _best_name, note="Strongest 2026 field team by reg-season SRS")
+    FACTS.set("winprob.field_best_srs",  _best_srs, "{:+.2f}", note="Strongest 2026 field team reg-season SRS")
+    FACTS.guard("winprob.field_best_not_finalist",
+                int(_best["team_id"]) not in (KNICKS_TEAM_ID, int(_finals_oid)),
+                "the field's strongest reg-season team reached neither the Finals nor was the Knicks",
+                _best_name)
+
+
+def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
+    """Full opp+pace-adjusted ranking of every champion, plus its distribution.
+
+    Prints the complete ranked table and a shape summary (mean, spread, where the
+    Knicks land, and a normality check) to results.md, and registers the table as
+    a string fact plus the distribution scalars the findings appendix cites.
+    """
+    from nba_api.stats.static import teams as _static_teams
+    from scipy import stats as _stats
+
+    print(_hdr("§19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING"), file=out)
+
+    nm = {t["id"]: t["full_name"] for t in _static_teams.get_teams()}
+    df = champions.dropna(subset=["pace_adj_adj_margin"]).copy()
+    df = df.sort_values("pace_adj_adj_margin", ascending=False).reset_index(drop=True)
+    df["rank"] = df.index + 1
+    df["name"] = df["champion_id"].map(lambda i: nm.get(int(i), f"Team {int(i)}"))
+
+    print(
+        "Opponent-and-pace-adjusted regular-season margin (pts/game) for all\n"
+        f"{len(df)} champions, most dominant first. Raw = scoring margin; OppAdj =\n"
+        "after strength-of-schedule; Opp+Pace = also scaled to a common scoring\n"
+        "environment so eras compare on one ruler.\n",
+        file=out,
+    )
+    thdr = f"{'#':>2}  {'Season':<7} {'Champion':<24} {'Raw':>6} {'OppAdj':>7} {'Opp+Pace':>9}"
+    print(thdr, file=out)
+    print("─" * len(thdr), file=out)
+    for _, r in df.iterrows():
+        marker = "  ← Knicks" if int(r["champion_id"]) == KNICKS_TEAM_ID else ""
+        print(
+            f"{int(r['rank']):>2}  {short_label(int(r['year'])):<7} {r['name']:<24} "
+            f"{r['avg_margin']:>+6.2f} {r['adj_margin']:>+7.2f} "
+            f"{r['pace_adj_adj_margin']:>+9.2f}{marker}",
+            file=out,
+        )
+
+    # Distribution / shape of the 43 scores.
+    x = df["pace_adj_adj_margin"].to_numpy()
+    mean = float(x.mean())
+    sd = float(x.std(ddof=1))
+    knicks_v = float(df.loc[df["champion_id"] == KNICKS_TEAM_ID, "pace_adj_adj_margin"].iloc[0])
+    knicks_z = (knicks_v - mean) / sd
+    within1 = int(((x > mean - sd) & (x < mean + sd)).sum())
+    within1_pct = 100.0 * within1 / len(x)
+    skew = float(_stats.skew(x))
+    exkurt = float(_stats.kurtosis(x))           # excess; 0 == normal
+    sw_w, sw_p = (float(v) for v in _stats.shapiro(x))
+
+    print(_subhdr("Shape of the champion-dominance distribution"), file=out)
+    print(f"  Mean:                 {mean:+.2f} pts/game", file=out)
+    print(f"  Standard deviation:    {sd:.2f}", file=out)
+    print(f"  Knicks (top score):   {knicks_v:+.2f}  ({knicks_z:+.1f} SD above the mean)", file=out)
+    print(f"  Within 1 SD of mean:  {within1} of {len(x)} ({within1_pct:.0f}%)", file=out)
+    print(f"  Skew:                 {skew:+.2f}  (0 = symmetric)", file=out)
+    print(f"  Excess kurtosis:      {exkurt:+.2f}  (0 = normal; <0 = thinner tails)", file=out)
+    print(f"  Shapiro-Wilk:         W={sw_w:.3f}, p={sw_p:.3f}  (p>0.05: consistent with normal)", file=out)
+    print(
+        "\nThe scores form a bell-shaped spread, not a heavy-tailed power law: near-\n"
+        "symmetric, tails no fatter than a normal curve, and a normality test it\n"
+        "passes comfortably. The Knicks are the top order statistic of an ordinary\n"
+        "bell curve, about 2 SD out, right where the best of 43 draws is expected.",
+        file=out,
+    )
+
+    # ── Facts: appendix ranking table (string) + distribution scalars ────────
+    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Pace |",
+             "|--:|---|---|--:|--:|--:|"]
+    for _, r in df.iterrows():
+        _nm = f"**{r['name']}**" if int(r["champion_id"]) == KNICKS_TEAM_ID else r["name"]
+        _rows.append(
+            f"| {int(r['rank'])} | {short_label(int(r['year']))} | {_nm} | "
+            f"{r['avg_margin']:+.2f} | {r['adj_margin']:+.2f} | {r['pace_adj_adj_margin']:+.2f} |"
+        )
+    FACTS.set("appendix.ranking_table", "\n".join(_rows),
+              note="Full opp+pace-adjusted champion ranking, markdown table")
+    FACTS.set("appendix.dist.mean",        mean,        "{:+.2f}", note="Mean opp+pace champion margin")
+    FACTS.set("appendix.dist.sd",          sd,          "{:.2f}",  note="SD of opp+pace champion margins")
+    FACTS.set("appendix.dist.knicks_z",    knicks_z,    "{:+.1f}", note="Knicks score in SDs above the mean")
+    FACTS.set("appendix.dist.within1sd_pct", within1_pct, "{:.0f}", note="Pct of champions within 1 SD of mean")
+    FACTS.guard("appendix.dist.bell_not_powerlaw",
+                (sw_p > 0.05) and (abs(skew) < 0.5) and (exkurt < 1.0),
+                "the champion-dominance scores are bell-shaped, not a heavy-tailed power law",
+                f"skew={skew:+.2f}, exkurt={exkurt:+.2f}, shapiro_p={sw_p:.3f}")
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
@@ -1598,6 +1708,7 @@ def main() -> None:
     run_bt_check(bt_table, champions, out)
     run_pace_possessions(champions, poss_table, out)
     run_series_winprob(po_2026, reg_2026, standings_2026, out)
+    run_appendix_ranking(champions, out)
 
     body = out.getvalue()
 

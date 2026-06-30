@@ -9,6 +9,11 @@
     "ok": true,
     "value": 100.0
   },
+  "appendix.dist.bell_not_powerlaw": {
+    "claim": "the champion-dominance scores are bell-shaped, not a heavy-tailed power law",
+    "ok": true,
+    "value": "skew=+0.18, exkurt=-0.65, shapiro_p=0.623"
+  },
   "away.wr_elite": {
     "claim": "away win rate is at or above 95th pct among champions",
     "ok": true,
@@ -58,6 +63,11 @@
     "claim": "raw avg margin is the highest ever recorded (100th percentile)",
     "ok": true,
     "value": 100.0
+  },
+  "winprob.field_best_not_finalist": {
+    "claim": "the field's strongest reg-season team reached neither the Finals nor was the Knicks",
+    "ok": true,
+    "value": "Oklahoma City Thunder"
   },
   "winprob.title_underdog": {
     "claim": "model made Knicks underdogs in the Finals (<50% to win series)",
