@@ -634,13 +634,6 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 | Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
 :::
 
-## Appendix E: Why is this draft?
-I'm using this project as an exercise to learn statistics, and NBA analytics.
-I am not a statistician, but I have used statistics before.
-I did use Claude Code quite a bit throughout.
-I believe this is all accurate, because I have done my best to make sure everything makes sense and it clear.
-I could be wrong, but as far as I know, I am not.
-
 ## Appendix E: Was this written by AI?
 Mostly yes, but hopefully that isn't a bad thing.
 I'm trying to build a toolkit to ask interesting NBA questions, do analysis, make graphs, and create understanding.
