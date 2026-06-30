@@ -8,22 +8,34 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-## 1. Introduction
+The rating that best describes a finished NBA season is the worst at predicting the next one.
+PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in the season just played, more than the plus/minus metrics built to track exactly that, yet it forecasts the next season at only about << f("panel.PER.forecast_mean_pct") >>%.
+That split is one thread of a larger problem: every "top players" list uses a different method, and they disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
-Every "top players" list puts names in order.
-But ordinal rank is a compression: the gap between the best player in the league and the tenth-best is not the same as the gap between the tenth and the twentieth.
-The numbers beneath the ranks tell a different story than the ranks themselves.
+This report surveys how NBA players get rated and puts three questions to the systems:
 
-This report surveys how NBA players get rated, compares what each system actually measures, and builds two combined ratings designed to answer two different questions: what do all the systems agree on, and which combination of them best explains which teams win?
-It also grades the systems one at a time, by how well each rebuilds which teams outscored their opponents, how well last season's ratings forecast this one, and how steady each rating is from one season to the next, and recomputes the box-score metrics for the playoffs to show who rose and who fell.
+1. **Do the systems agree?**
+2. **What does each system uniquely capture?**
+3. **How should they be combined into one rating?**
+
+A few things to settle up front:
+
+- Is there a single best system? No: the one that best sums up a finished season (PER) is among the weakest at forecasting the next, so "best" depends on the question you are asking.
+- Do the systems agree? At the very top, closely; below the top tier they diverge enough to change who you would pick.
+- Is a higher rank a proportionally bigger gap? No: value is top-heavy, so the gap from the best player to the tenth is far larger than from the tenth to the fiftieth.
+
+The short answers run through the report.
+The box-score systems move together but only loosely track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them, agreeing with the box scores at about << f("rapm.box_corr_mean") >> on a 0-to-1 scale.
+Each system tilts toward a player type, yet most of what any one says can be rebuilt from the others, so they are closer to several views of one thing than to independent opinions.
+And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (<< f("cmp.spearman", "{:.2f}") >> on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
 
 The testbed is the 2024-25 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
 It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version that shows how noisy raw plus/minus is, and a prior-informed, multi-year version (RAPM_MY) built the way the published metrics are.
-Section 3 shows how far each sits from the box scores, and Section 11 covers how they are built.
-The other impact metrics and the human rankings described next are surveyed as part of the landscape, but are not recomputed or included in the comparison here.
-The architecture extends to earlier seasons, and to those other systems, as data allows.
+Two findings reach beyond the single season, across << f("panel.n_seasons") >> seasons back to << f("panel.first_season") >>: the describe-versus-forecast test above and each rating's year-to-year stability.
+Because the cross-system comparison rests on one season while those panels span decades, treat the single-season orderings as a snapshot and the panel findings as the firmer, repeated pattern.
+The other impact metrics and the human rankings are surveyed as part of the landscape (Section 1) but are not recomputed or included in the comparison here.
 
-## 2. The landscape of player rating
+## 1. The landscape of player rating
 
 ### Box-score systems
 
@@ -118,7 +130,7 @@ A player with a great story can receive more MVP votes than their on-court numbe
 Human rankings sit outside this report's current testbed: the pipeline was narrowed to systems that can be recomputed directly from box-score data.
 They are described here because they are part of how players actually get rated, and adding a reputation dataset to compare model-based and reputation-based consensus is a natural extension.
 
-## 3. Do the systems agree?
+## 2. Do the systems agree?
 
 ![Agreement between each pair of systems: darker squares mean stronger rank correlation.](../generated/images/rank_agreement_heatmap.svg){#fig-agreement}
 
@@ -144,11 +156,11 @@ The report also builds that fixed version.
 RAPM_MY pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
 The effect is large: its order agrees with the consensus at about << f("rapm_my.consensus_corr") >> on the 0-to-1 scale, up from << f("rapm.consensus_corr") >> for the bare version, and the top is led by << f("rapm_my.top.1.name") >> and << f("rapm_my.top.3.name") >> rather than reserves.
 It is RAPM_MY, not the bare version, that feeds the consensus rating.
-How it is built is in Section 11; whether it forecasts team results any better is tested in Section 4.
+How it is built is in Section 11; whether it forecasts team results any better is tested in Section 3.
 
 The exact figures are in `docs/player_rating_overview_results.md`.
 
-## 4. What the field has learned about evaluating these metrics
+## 3. What the field has learned about evaluating these metrics
 
 Not all player rating systems are equally trusted, and the analytics community has developed two main ways to test whether a metric is actually measuring what it claims to measure.
 
@@ -233,7 +245,7 @@ Only << f("stability.most_stable.name") >> sits near the top of both lists, stea
 
 ![Left: how much a player's rating carries from one season to the next, on a 0-to-1 scale. Right: the share of each system's top << f("stability.top_n") >> who are still top << f("stability.top_n") >> the next season, with the chance level marked. Pooled over << f("stability.n_pairs") >> season-pairs among players who qualified in both.](../generated/images/rating_stability.svg){#fig-rating-stability}
 
-## 5. What each system uniquely sees
+## 4. What each system uniquely sees
 
 Not all systems add independent information.
 Measuring what each one adds beyond the others shows the eight box-score systems overlap heavily: most of what any single system says can be rebuilt from the rest.
@@ -246,7 +258,7 @@ This is where methodological differences become visible: a system that captures 
 
 ![Players each system rates most above or below the consensus.](../generated/images/system_outliers.svg){#fig-outliers}
 
-## 6. The two uber ratings
+## 5. The two uber ratings
 
 Two combined ratings are built from the systems present in the data.
 
@@ -279,7 +291,7 @@ The 2024-25 season shows how this plays out.
 Gilgeous-Alexander gains more than any other player when the rating shifts to wins-predictive, because Oklahoma City had the league's best record and that rating rewards strong individual production that lines up with team success.
 The deep-rotation players on losing teams move the opposite way: solid rate metrics, but no team wins behind them.
 
-## 7. Stars matter more than rank implies
+## 6. Stars matter more than rank implies
 
 ![Rating systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
 
@@ -348,14 +360,14 @@ The numerical gap is often several times larger than the gap between rank 10 and
 
 The data is consistent with the explanation that elite talent is worth more than rank implies: having the best player on the roster matters more to winning than being one step ahead of the second-best, and a ranked list treats every step between players as equal.
 
-## 8. Who lands in the top 20
+## 7. Who lands in the top 20
 
 The table below shows the top 20 players under each system and their raw score.
 The gap between rank 1 and rank 20 is the most direct read on how concentrated value is: a large gap means the top player is in a different tier from the rest; a small gap means the list is relatively flat.
 
 ![Top 20 players and their raw scores under each of the eight rating systems. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
 
-## 9. Who rose and fell in the playoffs
+## 8. Who rose and fell in the playoffs
 
 The box-score rate metrics can be computed a second time using only playoff games, which makes a direct before-and-after read possible: did a player's production climb or sink once the postseason started?
 This works only for the box-score systems.
@@ -371,6 +383,26 @@ The list rewards players whose game travels into a grind-it-out playoff series a
 It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
 
 ![Who rose and who fell in the 2024-25 playoffs, by box-score rate metrics, for players with at least << f("playoff.min_floor") >> playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
+
+## 9. Summary
+
+**Do the systems agree?** On the best handful of players, closely; below the top tier, less than their reputations suggest.
+The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about << f("rapm.box_corr_mean") >> on a 0-to-1 scale), which is the point of an impact metric and also why one season of it is too noisy to trust raw.
+No system is best at everything: PER describes a finished season better than any other (about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams) yet forecasts the next among the worst (about << f("panel.PER.forecast_mean_pct") >>%), a split that holds across all << f("panel.n_seasons") >> seasons tested.
+
+**What does each system uniquely capture?** Less than it looks.
+Each tilts toward a player type, Win Shares toward efficient bigs on winning teams, PER toward high-usage scorers, the impact metrics toward off-ball and defensive value the box score misses, but most of what any one system says can be rebuilt from the others.
+The eight box-score systems are closer to several views of one underlying thing than to eight independent opinions.
+
+**How should they be combined?** Into two ratings that answer different questions.
+A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.
+They agree almost exactly (<< f("cmp.spearman", "{:.2f}") >> on a 0-to-1 scale) on the best players and part mainly on role players whose production did not turn into team wins.
+
+One pattern runs under all three answers: value is top-heavy.
+The gap between the best player and the tenth dwarfs the gap from the tenth to the fiftieth, so a ranked list understates how much a single elite player is worth.
+
+The cross-system comparison rests on the 2024-25 season alone, so its exact orderings are a snapshot; the describe-versus-forecast and stability findings span << f("panel.n_seasons") >> seasons and are the firmer results.
+The recomputed BPM and VORP are approximations (Section 10), so read them for rank, not exact value.
 
 ## 10. A note on the recomputed formulas
 
@@ -406,7 +438,7 @@ RAPM (regularized adjusted plus/minus) is the technical backbone of every seriou
 This report now computes it directly from play-by-play, for 2024-25 and back through << f("ipanel.first_season") >>.
 Within a season, every possession is reconstructed into the five-on-five lineup that was on the floor, and a single statistical model estimates all the players' contributions to the scoring margin at once (<< f("cov.rapm_n_players") >> players in 2024-25).
 Two things make this version weaker than the published metrics.
-It uses one season of lineup data with no box-score prior, so it is noisy: bench players who shared the floor with strong lineups can rate near the top, which is what puts << f("rapm.top.1.name") >> at the head of the raw 2024-25 list (Section 3), and across the seasons it forecasts next-season team results worse than the plain box scores (Section 4).
+It uses one season of lineup data with no box-score prior, so it is noisy: bench players who shared the floor with strong lineups can rate near the top, which is what puts << f("rapm.top.1.name") >> at the head of the raw 2024-25 list (Section 2), and across the seasons it forecasts next-season team results worse than the plain box scores (Section 3).
 And the bare version's offensive and defensive halves are kept out of the consensus, so one noisy single-season split cannot swing the order at the top.
 
 The report also computes the stabilized version, RAPM_MY.
@@ -414,14 +446,14 @@ It pools three seasons of possessions, weighting recent ones more heavily, and s
 A player with few possessions stays near his box score, while a heavy-minute player moves toward what the lineup data shows.
 This is the prior-plus-RAPM recipe the published metrics use, and it helps where expected: the top tier becomes recognizable stars (<< f("rapm_my.top.1.name") >>, << f("rapm_my.top.3.name") >>), and its order agrees with the consensus at << f("rapm_my.consensus_corr") >>, up from << f("rapm.consensus_corr") >> for the bare version.
 RAPM_MY, combined only, is the version that feeds the consensus.
-What it does not do is turn RAPM into a strong forecaster of team results: across the seasons it still predicts next-season point differential below the box scores (Section 4), and heavy-minute role players who spend their court time in strong lineups, the hardest case for any plus/minus method, can still rate too high.
+What it does not do is turn RAPM into a strong forecaster of team results: across the seasons it still predicts next-season point differential below the box scores (Section 3), and heavy-minute role players who spend their court time in strong lineups, the hardest case for any plus/minus method, can still rate too high.
 Matching a published metric like EPM or LEBRON would need the player-tracking data they use and we do not have.
 A public RAPM snapshot can be dropped into the cache schema to validate the computed values when one is available.
 
 The tracking-based and team-internal systems (Second Spectrum, franchise models, Synergy) are documented in the inventory but not accessible.
 The blind spot is acknowledged.
 
-Comparing playoff performance to regular season performance is done for the box-score systems in Section 9, where the rate metrics are recomputed from postseason games and compared directly.
+Comparing playoff performance to regular season performance is done for the box-score systems in Section 8, where the rate metrics are recomputed from postseason games and compared directly.
 The limit is the impact metrics: RAPM-based systems cannot do this reliably.
 A first-round exit provides roughly 6 games of lineup data; even a Finals run provides only 20 to 24 games.
 That sample is too small for the lineup regression to stabilize, regardless of how good the prior is.
@@ -443,7 +475,7 @@ Publishing that range would make visible what the single number hides: the appar
 This does not mean the metrics are unreliable.
 It means the precision they imply is a display choice, not a statistical one.
 
-**Playoff versus regular season.** Section 9 already compares regular season and playoffs for the box-score rate metrics directly, which is the practical version.
+**Playoff versus regular season.** Section 8 already compares regular season and playoffs for the box-score rate metrics directly, which is the practical version.
 The Bayesian addition is for the RAPM-based metrics, where the right approach is different: treat the full-season estimate as the prior and update it with playoff lineup data.
 The updated estimate barely shifts for a player who exits in the first round (roughly 6 games of new evidence), and moves more for a player who reaches the Finals (20-24 games).
 The shift (in which direction and by how much) is the honest answer to "did this player hold up in the playoffs?" without pretending there is more data than there is.
