@@ -8,7 +8,7 @@ NBA home court advantage has shrunk steadily for 40 years (regular-season home w
 
 ## Two sentences
 
-NBA home court advantage has declined steadily for four decades (regular-season home win rate from about 65% to 55%, the playoffs behind but following the same path from about 68% to 58%), and that advantage is built from four box-score categories: shooting, rebounding, foul calls, and turnover margin, which together capture about 95% of it. All four narrowed: fairer officiating shrank the foul edge, the shift to three-point shooting flattened the shooting edge (and part of the foul and turnover edges), home teams stopped crashing the offensive glass harder than visitors, and the turnover gap closed, while travel, time zones, pace, crowd size, competitive balance, and every rule change except the 1994–95 hand-checking crackdown were tested and ruled out.
+NBA home court advantage has declined steadily for four decades (regular-season home win rate from about 65% to 55%, the playoffs behind but following the same path from about 68% to 58%), and that advantage is built from four box-score categories: shooting, rebounding, foul calls, and turnover margin, which together capture about 95% of it. All four narrowed: fairer officiating shrank the foul advantage, the shift to three-point shooting flattened the shooting advantage (and part of the foul and turnover advantages), home teams stopped crashing the offensive glass harder than visitors, and the turnover gap closed, while travel, time zones, pace, crowd size, competitive balance, and every rule change except the 1994–95 hand-checking crackdown were tested and ruled out.
 
 ## Four sentences (one per question)
 
