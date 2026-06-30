@@ -2,6 +2,17 @@
 
 Writing rules that apply to all prose in this project (FINDINGS, SUMMARY, STATS_EXPLAINER, and any other docs).
 
+## The target: clear and lively, not inflated and not flat
+
+The target is a clear, lively magazine feature. There are two ways to miss it, and most of the rules below only guard against one of them:
+
+- **Inflated** — filler, drama, jargon, rhetorical buildup. The "No drama", "Don't overstate", and "Write like a person" rules all remove this.
+- **Flat** — every sentence the same length, findings stated with no concrete number or example, an opening that defines instead of hooks, a whole stretch of short subject-verb declaratives. Almost nothing else here guards against this, so it is the easy trap: dry prose breaks no rule and scores zero violations. That is exactly how clean prose ends up lifeless.
+
+The prohibitions remove inflation. They are not a license for flatness. If cutting a filler word also kills the pace, recast the sentence; don't just delete. The "Reach for these" section below is the positive counterweight: use it, don't only avoid the bad.
+
+**Filler vs. texture.** The test for whether a word earns its place is *not* "is it strictly necessary" — that test yields dryness, because almost nothing is strictly necessary. The test is: **does removing it lose meaning, pace, or clarity?** "It is worth noting that" loses nothing, so cut it. A short punchy sentence isn't strictly necessary either, but it carries pace, so keep it.
+
 ## No em-dashes
 
 Never write em-dashes (`—`). Replace with the appropriate alternative:
@@ -14,10 +25,10 @@ If you find an em-dash in existing text, replace it using the same rules.
 
 ## No drama, no exaggeration: clarity only
 
-Write like a careful analyst, not a sportswriter trying to hold attention. Avoid:
+Write like a careful analyst who can also tell a story: hold attention with the finding and the concrete detail, never with manufactured excitement the data doesn't earn. Avoid:
 - Superlatives that aren't backed by the data ("most dramatic", "stunning", "remarkable")
 - Emotional amplifiers ("sharply", "dramatically", "massive") unless the magnitude in the data actually warrants them; and then use the number instead
-- Rhetorical buildup before a finding; just state the finding
+- Throat-clearing buildup that teases a finding without stating it ("Two things are happening at once", "The reason may surprise you"). This is *not* a ban on a strong opener: leading with the finding stated vividly is the hook the "Reach for these" section asks for. Cut the tease, keep the hook.
 
 Prefer: "The gap fell from 1.2 to 0.25 fouls per game." Over: "The whistle shifted dramatically, with the home advantage nearly vanishing."
 
@@ -72,9 +83,20 @@ Avoid patterns that make prose sound generated rather than written:
 - No filler openers: "It appears that", "It is worth noting that", "Two things are happening at once." Start with the claim or the finding.
 - No filler transition words: "in conclusion", "moreover", "literally", "a related result confirms this." Cut them or recast the sentence.
 - No summarizing closing sentences that restate what was just said ("The result is what X looks like", "This is consistent with the pattern above").
-- Vary sentence length deliberately. Short sentences land findings. Longer ones carry context. Monotone rhythm is numbing regardless of content.
-- Replace vague or abstract phrases with concrete ones. Not "the advantage significantly diminished" but "the gap fell from 1.2 to 0.25 fouls per game." Not "strategies converged toward the same optima" but "every team ended up running similar offenses regardless of venue." Not "situational factors" but "off-court explanations" or the specific things (rest, travel, altitude).
+- Vary sentence length deliberately, and replace vague or abstract phrases with concrete ones: not "the advantage significantly diminished" but "the gap fell from 1.2 to 0.25 fouls per game"; not "situational factors" but "off-court explanations" or the specific things (rest, travel, altitude). These two are the positive counterpart to the filler rules above; "Reach for these" is where they live as techniques to lead with, not just defects to avoid.
 - No jargon substituting for plain explanation: name what happened, don't label the process ("information diffusion", "structural instability").
+
+## Reach for these (the positive moves)
+
+The rules above are mostly prohibitions; on their own they pull prose toward the flat failure mode. These are the additive moves that make a doc lively without inflating it. Reach for them. Several already appear in the shipped docs, so they are house style, not a stretch:
+
+- **Open with the hook, not the definition.** Lead a doc or section with the finding that earns attention, not a sentence that defines the topic. ("In the 1980s a weaker team playing at home won 65% of those games. Today that number is 49%." beats "This section examines home win rates.")
+- **Vary the rhythm on purpose.** A short sentence to land a finding, after a longer one that sets it up. Monotone numbs regardless of content; if three sentences in a row share a length and shape, recast one.
+- **A concrete named example over a general statement.** "Denver's altitude", "the empty-arena 2020–21 test", "45 of 47 playoff officials" — a specific lands where a category slides past.
+- **Rhetorical structure that aids comprehension**, not drama: the "what is NOT behind it" device, the Yes/No bullets up front, a table that turns a set of proportions into something legible at a glance.
+- **Honest first person** where it reflects what was actually done: "I ran a tighter test and found…", "I split those apart". It is more direct than the passive alternative and signals a real choice was made.
+
+These are moves, not quotas. A section that is already vivid does not need more of them; the point is that a flat section has a fix that is *not* "add drama."
 
 ## Verify narrative matches data
 

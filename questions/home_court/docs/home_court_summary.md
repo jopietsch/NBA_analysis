@@ -28,7 +28,7 @@ Home court in the playoffs declined later than in the regular season: playoff ho
 
 ## 2. What Creates Home Court Advantage, and What Changed
 
-The table below answers two questions at once: how much of the home-court advantage each category accounts for today, and how much of the 40-year decline it explains.
+Shooting is the largest piece of home court today, but it is not the largest driver of its decline: rebounding and turnovers are. The table holds both facts at once, what each category contributes to the advantage now and how much of the 40-year decline it explains.
 
 | Box-score category | Share of the advantage | Share of the decline |
 |---|---:|---:|
@@ -38,7 +38,7 @@ The table below answers two questions at once: how much of the home-court advant
 | Turnover margin | 13% | 27% |
 | **All four together** | **95%** | **96%** |
 
-Regular-season shares; both figures vary somewhat depending on the game sample. Shooting accounts for the largest share of the current advantage, but rebounding and turnovers account for most of the decline: together more than half of it.
+Regular-season shares; both figures vary somewhat with the game sample. Together, rebounding and turnovers are more than half the decline.
 
 Two real-world changes are identifiable; together they account for a little over half the 40-year decline. Referees are calling fairer games: home teams once attempted about 2 more free throws per game than visitors, and now the gap is about 0.5. The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap. The three-point shift reaches further: it accounts for the entire shooting decline and about half of both the foul and turnover declines, so the move to the perimeter touches close to half the 40-year total on its own. It is the biggest single real-world force, but still not the engine behind the whole decline.
 

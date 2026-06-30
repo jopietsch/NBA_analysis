@@ -48,11 +48,11 @@ Where is it heading? Carry the regular-season trend forward and it keeps sliding
 
 ## 2. What Creates Home Court Advantage
 
-We measure the home advantage through the Four Factors that decide every possession, the framework Dean Oliver built: shooting (effective field goal percentage), rebounding, foul calls, and turnover margin. They cover essentially every way a possession can end: a made shot, a turnover, a trip to the free-throw line, or a rebounded miss. Together they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting is the largest piece, more than 40%, followed by rebounding. All four matter, and they count for about the same in both the regular season and the playoffs.
+Four things decide every possession: a shot falls or it doesn't, the ball is turned over, a foul sends someone to the line, or a miss is rebounded. Those are the Four Factors, the framework Dean Oliver built (shooting as effective field goal percentage, rebounding, foul calls, and turnover margin), and home teams have historically come out ahead on all four. Together they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs. Shooting is the largest piece, more than 40%, followed by rebounding. All four matter, and they count for about the same in both the regular season and the playoffs.
 
 A caution on what this measures. The Four Factors are where the advantage shows up on the stat sheet, not why it exists. Behind each one sits a real-world cause: crowd comfort and familiar rims are the usual explanations for the shooting gap, referee tendencies sit behind the foul gap, rest and travel behind specific matchups. Some of those causes can be measured, and some can only be guessed at. So this section is firmer on where the advantage lands than on what ultimately produces it, and it says so wherever a cause is only a plausible explanation.
 
-The rest of this section walks through each. Rest and altitude add to the picture for specific matchups, covered later.
+Rest and altitude add to the picture for specific matchups, covered later.
 
 **Referee foul calls and free throws.** In every decade and in both regular season and playoffs, referees have called fewer fouls on home teams. In the 1980s and early 1990s, home teams averaged about 1.2 fewer foul calls per game in the regular season, translating to roughly 2 extra free throw attempts per game. In the playoffs the gap was even wider: about 1.6 fewer fouls per game and 2.4 more free throws. With fouls go free throws, and with free throws go points. This is the most consistent component of home court advantage.
 

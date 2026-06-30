@@ -1,4 +1,4 @@
-Review one or more reader-facing docs for voice and plain-language problems. This is the deep on-demand pass that complements the `voice_check.py` hook: the hook only flags hard jargon on save, while this also catches drama, em-dashes, overstated causation, and generated-sounding prose.
+Review one or more reader-facing docs for voice and plain-language problems. This is the deep on-demand pass that complements the `voice_check.py` hook: the hook only flags hard jargon on save, while this also catches drama, em-dashes, overstated causation, generated-sounding prose, and prose that has gone flat. The hook and most of the rules are subtractive (they remove inflation); this review is the one place that also pushes *back toward* engagement, so a maximally dry doc should not pass it clean.
 
 Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md` (the standard doc names from `questions/CLAUDE.md`).
 
@@ -16,6 +16,7 @@ Steps:
    - **Em-dashes** (banned everywhere).
    - **Drama / exaggeration** not backed by the data: superlatives, emotional amplifiers, rhetorical buildup. Overstated causation where only association was shown.
    - **Generated-sounding prose**: filler openers ("It is worth noting"), filler transitions ("moreover"), summarizing closers that restate the prior sentence, monotone rhythm, vague abstractions where a concrete number belongs.
+   - **Too dry / flat** (the symmetric check — the one category that flags *life absent* rather than badness present): (a) a section that states its findings with no concrete number, named example, or image to anchor them; (b) monotone rhythm — a stretch where nearly every sentence is the same length and shape; (c) an opening (of the doc or a section) that defines the topic instead of leading with the finding that earns attention; (d) a run of short subject-verb declaratives with nothing to vary the pace. The fix is never "add drama"; it is the "Reach for these" moves in `questions/CLAUDE.md` — recast for rhythm, lead with the hook, name the concrete example. Do not invent findings or numbers the data doesn't support to fill a flat spot; if a section is flat because it is genuinely thin, say so rather than dressing it up. Apply this with judgment, not as a quota: a section that is already vivid needs nothing here.
    - Leave real NBA stats as-is (eFG%, net rating, pace, Four Factors, OREB%); do not flag these.
 4. For each flag, quote the phrase with its line number, say briefly why it's a problem, and propose a specific rewrite.
 5. Present the review grouped by severity. Do NOT edit yet.
