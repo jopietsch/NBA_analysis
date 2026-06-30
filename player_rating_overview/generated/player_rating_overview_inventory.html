@@ -2695,12 +2695,12 @@ vertical-align: -.125em;
 </section>
 <section id="coverage-summary" class="level2">
 <h2 class="anchored" data-anchor-id="coverage-summary">Coverage summary</h2>
-<p>The analysis focuses on 2024–25 as the primary test season. Multi-season coverage extends as far back as each source allows. The crosswalk (player identity reconciliation across systems) is keyed on <code>(player_normalized_name, season, team_abbr)</code> with a hand-maintained override table for collisions.</p>
+<p>The analysis focuses on 2025–26 as the primary test season. Multi-season coverage extends as far back as each source allows. The crosswalk (player identity reconciliation across systems) is keyed on <code>(player_normalized_name, season, team_abbr)</code> with a hand-maintained override table for collisions.</p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
 <th>Recompute systems</th>
-<th>Active as of 2024–25</th>
+<th>Active as of 2025–26</th>
 <th>How far back</th>
 </tr>
 </thead>
@@ -2726,7 +2726,7 @@ vertical-align: -.125em;
 <thead>
 <tr class="header">
 <th>Results-only systems</th>
-<th>Active as of 2024–25</th>
+<th>Active as of 2025–26</th>
 <th>How far back</th>
 </tr>
 </thead>
@@ -2784,7 +2784,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="open-items">Open items</h2>
 <ul>
 <li>RAPM (Regularized Adjusted Plus/Minus): computed in-house from nba_api play-by-play (PlayByPlayV3) for 2013-14 through 2025-26, reconstructed into five-on-five possessions and fit with cross-validated ridge regression. Two versions: a bare single-season RAPM (zero-mean prior) kept to show the raw noise, and RAPM_MY, which pools three seasons with recency weights and shrinks each player toward a BPM prior (offense toward OBPM, defense toward DBPM). RAPM_MY feeds the consensus. Still open: loading a public RAPM snapshot to validate the values, and a luck adjustment / tracking-based prior to approach EPM or LEBRON (the player-tracking inputs are not publicly available).</li>
-<li>Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2024–25; adjusted for multi-season pools.</li>
+<li>Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2025–26; adjusted for multi-season pools.</li>
 </ul>
 </section>
 
@@ -3216,6 +3216,41 @@ document.addEventListener("DOMContentLoaded", function () {
 details.collapsible-figure > summary { cursor: pointer; color: #2780e3; margin: 0.6em 0; }
 details.collapsible-figure[open] > summary { color: inherit; }
 details.collapsible-figure > summary::marker { color: #2780e3; }
+</style>
+<!-- Opt-in sortable tables: wrap a markdown table in a ::: {.sortable}
+     fenced div and its header cells become click-to-sort in HTML only.
+     Numeric cells sort numerically, text cells alphabetically; each
+     click toggles direction. PDF/Typst ignores the class. -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  var numRe = /^[-+]?\d*\.?\d+%?$/;
+  document.querySelectorAll(".sortable table").forEach(function (table) {
+    var ths = table.querySelectorAll("thead th");
+    var dirs = {};
+    ths.forEach(function (th, idx) {
+      th.style.cursor = "pointer";
+      th.title = "Click to sort";
+      th.addEventListener("click", function () {
+        var tbody = table.querySelector("tbody");
+        var rows = Array.prototype.slice.call(tbody.querySelectorAll("tr"));
+        var dir = dirs[idx] === 1 ? -1 : 1;
+        dirs = {}; dirs[idx] = dir;
+        rows.sort(function (a, b) {
+          var x = a.children[idx].textContent.trim();
+          var y = b.children[idx].textContent.trim();
+          if (numRe.test(x) && numRe.test(y)) return (parseFloat(x) - parseFloat(y)) * dir;
+          return x.localeCompare(y) * dir;
+        });
+        rows.forEach(function (r) { tbody.appendChild(r); });
+        ths.forEach(function (h) { h.removeAttribute("data-sort-dir"); });
+        th.setAttribute("data-sort-dir", dir === 1 ? "▲" : "▼");
+      });
+    });
+  });
+});
+</script>
+<style>
+.sortable table thead th[data-sort-dir]::after { content: " " attr(data-sort-dir); font-size: 0.8em; color: #2780e3; }
 </style>
 
 
