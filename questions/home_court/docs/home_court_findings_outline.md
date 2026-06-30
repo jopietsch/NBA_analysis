@@ -9,7 +9,7 @@
 :::
 
 ## Introduction (Intro / TL;DR)
-- **Three guiding questions:** (1) Has HCA really changed? (2) What makes home court an advantage? (3) What's driving the decline — and what isn't?
+- **Four guiding questions** (bolded in the intro, in section order): (1) Has home court really shrunk, and by how much? (2) What is it made of, and why does it exist? (3) If it changed, what changed it? (4) What do we think changed it, but didn't?
 - **Headline answers:**
   - Change is real & one-directional: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**. Shape = a slow gradual fade + steeper stretches in the mid-1990s and post-2017, with a brief visible uptick around 2002-04 in between.
   - HCA is built from four box-score categories (shooting, rebounding, foul calls, turnover margin) that capture **~95%** of it, shooting the largest; plus smaller rest & altitude boosts for specific matchups.

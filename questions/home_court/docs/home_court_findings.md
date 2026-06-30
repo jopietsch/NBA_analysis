@@ -7,12 +7,21 @@
 ::: {.content-visible when-format="html"}
 <p style="text-align:center"><em>Draft</em></p>
 :::
+We all assume home court matters.
+We've heard the stories: the hostile crowd, the friendly whistle, the team that's almost unbeatable at home.
+It feels bigger in the playoffs than in the regular season.
+And maybe it isn't what it used to be.
+Is that right?
 
-Home court advantage in the NBA has been shrinking for four decades.
-**Has it really changed?
-What creates it?
-What drove it down?
-And what didn't?**
+Those hunches are what this report set out to test.
+Four questions drove all of it:
+
+- **Has home court really shrunk, and by how much?**
+- **What is it made of, and why does it exist at all?**
+- **If it changed, what changed it?**
+- **And what do we think changed it, but didn't?**
+
+The short answer to the first: home court advantage in the NBA has been shrinking for four decades.
 
 A few things people assume, settled up front:
 
@@ -53,6 +62,8 @@ The analysis covers about 52,000 regular-season and playoff games; see Appendix 
 
 ## 1. The 40-Year Decline
 
+First question: has home court really shrunk, and by how much?
+Yes, and the shape of the decline tells you more than the headline number does.
 The decline is mostly a steady fade of about a quarter of a point per year, which over 40 years accounts for nearly the whole decline.
 Two drops stand out where the slide briefly sped up within that trend.
 The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%.
@@ -83,6 +94,7 @@ The low end of that range even dips below the level Section 6 argues is the like
 
 ## 2. What Creates Home Court Advantage
 
+So what is home court actually made of?
 Four things decide every possession: a shot falls or it doesn't, the ball is turned over, a foul sends someone to the line, or a miss is rebounded.
 Those are the Four Factors, the framework Dean Oliver built (shooting as effective field goal percentage, rebounding, foul calls, and turnover margin), and home teams have historically come out ahead on all four.
 Together they account for about 95% of the home advantage in the regular season, and a similar share in the playoffs.
@@ -130,16 +142,13 @@ These shares describe what home court is made of today; Section 3 asks which of 
 
 ## 3. What's Driving the Decline
 
-Two questions hide inside "what's driving the decline," and they answer different things.
-The first: *where* does the decline show up on the stat sheet?
-That one has clean answers: the Four Factors as mentioned above.
-The second: *what changed in the real world* to make those categories narrow?
-That is the more interesting question, and the honest answer is that the data settles only part of it.
-Some causes are proven.
-Others are the best explanation available but stay proposals.
-The table labels which is which, so you always know what you're reading.
-
-Here is the section in one view: each box-score category, how much of the regular-season decline it carries, the real-world change behind it, and whether that change is proven or still a proposal.
+"What's driving the decline" is really two questions, and they don't take the same kind of answer.
+One is *where* the decline shows up on the stat sheet.
+That one is clean: it's the four box-score categories from Section 2, every one of them narrowing.
+The other is *what changed in the real world* to make those categories narrow.
+That is the question we actually care about, and the honest answer is that the data settles only part of it.
+Some causes are proven; others are the best explanation on offer but stay proposals.
+The table below is the map for this whole section: each box-score category, how much of the regular-season decline it carries, the real-world change behind it, and whether that change is proven or still a proposal.
 
 | Box-score category | Share of the decline | What changed in the real world | Is that cause proven? |
 |---|---|---|---|
@@ -165,8 +174,8 @@ So the playoff breakdown points in the same direction as the regular-season find
 
 ### Three-point shooting: one shift across three of the four categories
 
-Three-point shooting shifted shot selection and narrowed the shooting advantage.
-The league's move to the perimeter changed shot selection in two visible ways.
+Begin with the cause that runs through the most rows of the table: the move to the three-point line, which touches three of the four categories.
+It narrowed the shooting advantage and reshaped shot selection, in two visible ways.
 First, away teams have closed the gap in paint attempts: in the 1990s home teams generated about 1.3 percentage points more of their attempts from close range than road teams; in the most recent seasons that gap has shrunk to 0.2 points.
 Second, three-point volume itself rose for everyone.
 In games with similar three-point rates, the home shooting advantage shows no decline at all.
@@ -199,6 +208,7 @@ In the playoffs this pattern is less clear, since team quality tends to matter m
 
 ### Rebounding and turnovers: the largest drivers
 
+Now the biggest row in the table, and the one the three-point boom doesn't explain.
 The home team's rebounding advantage has shrunk steadily for 40 years, and it is not the three-point story in disguise: in games with the same three-point volume, the rebounding advantage barely moves.
 
 Both sides of the glass show declining home advantages.
@@ -241,6 +251,7 @@ Player-tracking cameras, in use since 2013–14, corroborate this for the modern
 
 ### Officiating got fairer and more uniform
 
+That leaves the foul row, where two different causes split the work.
 The home foul differential in the regular season has dropped from 1.2 fouls per game in the 1980s to roughly a quarter of a foul per game today, an 80% reduction.
 In free throw terms: home teams once attempted roughly 2 more free throws per game than visitors; now it's just under half a free throw.
 In the playoffs the foul gap fell from 1.6 to about 0.7 fouls per game, and the free throw advantage from 2.4 to 1.1 attempts.
@@ -259,6 +270,8 @@ About half of the foul decline traces to this mechanical shift in shot selection
 
 ### What the three-point shift explains, and what it doesn't
 
+Step back to all four rows at once.
+A suspicion has been building through this section: that the move to threes is secretly behind everything.
 Could rebounding and turnovers just be the three-point shift in disguise?
 No. When games with similar three-point rates are compared directly, the **shooting** decline disappears entirely: the shooting gap closed because of the perimeter shift, not any separate cause.
 The **rebounding** decline barely moves and stays the surest of the four.
@@ -276,6 +289,8 @@ When all 30 teams land on the same approaches regardless of venue, the home team
 
 ## 4. What Didn't Drive the Change
 
+On to the fourth question: what do we *think* changed home court, but didn't?
+Plenty of prime suspects, and most of them have an alibi.
 The opening chart shades seasons by the NBA's major rule changes.
 A natural assumption is that those boundaries explain where home court bent.
 Here are the eras and what defines them:
@@ -325,6 +340,8 @@ This is a regular-season result; per-team playoff samples are too small to split
 
 ## 5. The Playoff Picture
 
+Everything so far has leaned on the regular season, where the games run into the tens of thousands.
+But home court is supposed to matter most in the playoffs, so what happens there?
 The playoffs are not a shrunken version of the regular season.
 They have their own structure, their own baseline, and their own timeline of decline.
 
@@ -389,6 +406,7 @@ Additional findings, including individual referee rankings, franchise-level comp
 
 ## 6. Summary
 
+Back to the four questions we opened with.
 Home court advantage in the NBA has dropped about 10 percentage points over 40 years: the regular season from 65% to about 55%, the playoffs from nearly 68% to 58%.
 By net rating (how much the home team outscores its opponent per 100 possessions), the regular-season advantage has shrunk by about a third, from about 3 points in the mid-2010s to about 2 today; the playoffs compressed more slowly and still sit higher.
 
@@ -628,7 +646,17 @@ Mostly yes, but hopefully that isn't a bad thing.
 I'm trying to build a toolkit to ask interesting NBA questions, do analysis, make graphs, and create understanding.
 I want to do more of these than I can write, so I'm having Claude write most of the text.
 I have gone back-and-forth with claude for many dozens of hours, making it make things clear so that I understand.
-Claude is not doing any of the calculation, that is Python using standard Python methods.
+Claude is not doing any of the calculation, that is Python using standard Python methodologies.
 Interpreting those results are Claude, but I make it make me understand, and I hope that's good enough.
 I'm still uncertain about using LLMs to write text, but it's so much faster than me.
 I think the results are good as long as I do a lot of work making it clearer.
+
+This is kind of interesting, because I can kind of treat the text as output from a program.
+I can ask if we can make things clearer, or add more curiosity throughout the document.
+From that I get text changes.
+So I can operate at a higher abstraction.
+Of course, that doesn't mean it sounds human or like you want to read it.
+But I think if you read this you will get my intention.
+
+I tried out AI slop detectors to see how bad it is.
+One said that every paragraph I tried was 99.9 - 100% AI. even the above paragraph that I, a human, definitely wrote.
