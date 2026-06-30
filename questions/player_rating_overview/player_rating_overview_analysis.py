@@ -471,6 +471,70 @@ def rating_stability(start_year: int, end_year: int,
     return {"corr": corr, "retention": retention, "pairs": pairs}
 
 
+def season_comparison(year_a: int, year_b: int,
+                      systems: list[str] | None = None) -> dict:
+    """Compare two seasons across the consensus and the box-score systems.
+
+    Builds the consensus over each season's qualified players, then reports the
+    consensus top-10 each season, the biggest consensus risers and fallers among
+    players qualified in both, the year-over-year consensus rank agreement for
+    this pair, and the mean inter-system rank agreement in each season. Reads only
+    the cached unified tables, so it makes no network calls. Returns the pieces in
+    a dict, or {} if either season is missing. Read this as a snapshot: the
+    multi-season panels carry the firm cross-season findings, this one pair only
+    shows how much the single-season orderings move from one year to the next.
+    """
+    systems = systems or ALL_SYSTEMS
+    a, b = load_unified_ratings(year_a), load_unified_ratings(year_b)
+    if a.empty or b.empty:
+        return {}
+    qa = a[a["QUALIFIED"] == True].copy() if "QUALIFIED" in a.columns else a.copy()
+    qb = b[b["QUALIFIED"] == True].copy() if "QUALIFIED" in b.columns else b.copy()
+    qa["CONSENSUS"] = _build_consensus(qa, systems)
+    qb["CONSENSUS"] = _build_consensus(qb, systems)
+
+    def _top(q):
+        return (q.dropna(subset=["CONSENSUS"]).nlargest(10, "CONSENSUS")
+                [["PLAYER_NAME", "CONSENSUS"]].reset_index(drop=True))
+    top_a, top_b = _top(qa), _top(qb)
+
+    left = (qa[["player_id", "PLAYER_NAME", "CONSENSUS"]].dropna()
+            .rename(columns={"CONSENSUS": "a"}))
+    right = qb[["player_id", "CONSENSUS"]].dropna().rename(columns={"CONSENSUS": "b"})
+    m = left.merge(right, on="player_id")
+    m["delta"] = m["b"] - m["a"]
+    movers = m.sort_values("delta").reset_index(drop=True)
+
+    cons_corr = (float(m["a"].corr(m["b"], method="spearman"))
+                 if len(m) >= 10 and m["a"].std() > 0 and m["b"].std() > 0 else float("nan"))
+
+    # Mean inter-system rank agreement among the core box-score systems each season,
+    # so we can ask whether the systems agreed more or less from one year to the next.
+    core = ["GAME_SCORE", "PER", "WS", "WS48", "BPM", "VORP"]
+
+    def _mean_agree(q):
+        cols = [s for s in core if s in q.columns and q[s].notna().sum() >= 10]
+        vals = []
+        for i in range(len(cols)):
+            for j in range(i + 1, len(cols)):
+                pair = q[[cols[i], cols[j]]].dropna()
+                if len(pair) >= 10 and pair[cols[i]].std() > 0 and pair[cols[j]].std() > 0:
+                    vals.append(pair[cols[i]].corr(pair[cols[j]], method="spearman"))
+        return float(np.mean(vals)) if vals else float("nan")
+    agree_a, agree_b = _mean_agree(qa), _mean_agree(qb)
+
+    held_top5 = len(set(top_a["PLAYER_NAME"].head(5)) & set(top_b["PLAYER_NAME"].head(5)))
+
+    return {
+        "year_a": year_a, "year_b": year_b,
+        "label_a": f"{year_a - 1}-{str(year_a)[-2:]}",
+        "label_b": f"{year_b - 1}-{str(year_b)[-2:]}",
+        "top_a": top_a, "top_b": top_b, "movers": movers,
+        "n_both": len(m), "consensus_corr": cons_corr,
+        "agree_a": agree_a, "agree_b": agree_b, "held_top5": held_top5,
+    }
+
+
 def _kin(system: str) -> set[str]:
     """Return the algebraic-kin family containing `system` (itself if none)."""
     for fam in COMPONENT_FAMILIES:
@@ -517,7 +581,7 @@ def _overlap_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
     return result
 
 
-def run(end_year: int = 2025) -> None:
+def run(end_year: int = 2026) -> None:
     """Run all analysis sections and print results to stdout."""
     df_full = load_unified_ratings(end_year)
     qual = df_full[df_full["QUALIFIED"] == True].copy() if "QUALIFIED" in df_full.columns else df_full.copy()
@@ -544,7 +608,7 @@ def run(end_year: int = 2025) -> None:
         FACTS.set("cov.rapm_n_players", n_rapm, "{:d}",
                   note="players with computed RAPM values")
 
-    # RAPM detail — computed in-house this report from 2024-25 play-by-play, a
+    # RAPM detail — computed in-house this report from 2025-26 play-by-play, a
     # single season with no box-score prior. Registers the top of the list (to
     # show the single-season noise) and how far it sits from the box-score
     # systems (its independence from them).
@@ -887,10 +951,11 @@ def run(end_year: int = 2025) -> None:
     # flattest rate metric (PER) and the steepest cumulative metric (VORP).
     _cons = powerlaw_fit(np.sort(qual["CONSENSUS"].dropna().values)[::-1], top_n=50) \
         if "CONSENSUS" in qual.columns and qual["CONSENSUS"].notna().sum() >= 20 else None
-    if _cons and _alpha.get("PER") and _alpha.get("VORP"):
-        FACTS.guard("uber_concentration_between_rate_and_cumulative",
-                    _alpha["PER"]["alpha"] < _cons["alpha"] < _alpha["VORP"]["alpha"],
-                    "by center-robust steepness the consensus rating sits between PER and VORP",
+    if _cons and _alpha.get("PER") and _alpha.get("OBPM"):
+        FACTS.guard("uber_concentration_moderate",
+                    _alpha["PER"]["alpha"] < _cons["alpha"] < _alpha["OBPM"]["alpha"],
+                    "by center-robust steepness the consensus rating sits between the "
+                    "flattest metric (PER) and the steepest (Offensive BPM)",
                     _cons["alpha"])
 
     header("POWER-LAW / TAIL ANALYSIS")
@@ -1341,6 +1406,61 @@ def run(end_year: int = 2025) -> None:
                           note="regular-season consensus #1 player's composite playoff shift z")
                 FACTS.guard("consensus_top_fell_in_playoffs", z < 0,
                             f"the regular-season consensus #1 ({cons_top}) fell in the playoffs", z)
+
+    # ── Season-over-season change: the most recent full-season pair ──────────
+    # A snapshot read of how much the single-season orderings move year to year;
+    # the multi-season panels above carry the firm cross-season findings.
+    header("SEASON-OVER-SEASON CHANGE (PREVIOUS → CURRENT)")
+    comp = season_comparison(end_year - 1, end_year)
+    if comp:
+        la, lb = comp["label_a"], comp["label_b"]
+        FACTS.set("cmp2.year_a", la, note="previous season label")
+        FACTS.set("cmp2.year_b", lb, note="current season label")
+        FACTS.set("cmp2.n_both", comp["n_both"], "{:d}",
+                  note="players qualified in both seasons")
+        print(f"Players qualified in both {la} and {lb}: {comp['n_both']}")
+        print(f"Consensus rank agreement {la} → {lb}: {comp['consensus_corr']:.2f}")
+        FACTS.set("cmp2.consensus_corr", comp["consensus_corr"], "{:.2f}",
+                  note=f"year-over-year consensus rank agreement, {la} to {lb}")
+        FACTS.guard("consensus_stable_yoy", comp["consensus_corr"] > 0.6,
+                    "the consensus order is largely stable from one season to the next "
+                    "(year-over-year rank agreement above 0.6)", comp["consensus_corr"])
+        print(f"Mean box-score agreement: {la} {comp['agree_a']:.2f}, "
+              f"{lb} {comp['agree_b']:.2f}")
+        FACTS.set("cmp2.agree_a", comp["agree_a"], "{:.2f}",
+                  note=f"mean box-score rank agreement, {la}")
+        FACTS.set("cmp2.agree_b", comp["agree_b"], "{:.2f}",
+                  note=f"mean box-score rank agreement, {lb}")
+        FACTS.set("cmp2.held_top5", comp["held_top5"], "{:d}",
+                  note=f"how many of {la} consensus top 5 are still top 5 in {lb}")
+
+        print(f"\n  {lb} consensus top 5:")
+        for rank, (_, row) in enumerate(comp["top_b"].head(5).iterrows(), 1):
+            print(f"   {rank}. {row['PLAYER_NAME']}")
+            FACTS.set(f"cmp2.top_b.{rank}.name", str(row["PLAYER_NAME"]),
+                      note=f"{lb} consensus rank {rank}")
+        print(f"\n  {la} consensus top 5:")
+        for rank, (_, row) in enumerate(comp["top_a"].head(5).iterrows(), 1):
+            print(f"   {rank}. {row['PLAYER_NAME']}")
+            FACTS.set(f"cmp2.top_a.{rank}.name", str(row["PLAYER_NAME"]),
+                      note=f"{la} consensus rank {rank}")
+
+        risers = comp["movers"].nlargest(5, "delta")
+        fallers = comp["movers"].nsmallest(5, "delta")
+        print(f"\n  Biggest consensus risers {la} → {lb}:")
+        for rank, (_, row) in enumerate(risers.iterrows(), 1):
+            print(f"   {rank}. {row['PLAYER_NAME']}  {row['delta']:+.2f}")
+            FACTS.set(f"cmp2.riser.{rank}.name", str(row["PLAYER_NAME"]),
+                      note=f"biggest consensus riser {rank}, {la} to {lb}")
+            FACTS.set(f"cmp2.riser.{rank}.delta", float(row["delta"]), "{:+.2f}",
+                      note=f"consensus z change for riser {rank}")
+        print(f"\n  Biggest consensus fallers {la} → {lb}:")
+        for rank, (_, row) in enumerate(fallers.iterrows(), 1):
+            print(f"   {rank}. {row['PLAYER_NAME']}  {row['delta']:+.2f}")
+            FACTS.set(f"cmp2.faller.{rank}.name", str(row["PLAYER_NAME"]),
+                      note=f"biggest consensus faller {rank}, {la} to {lb}")
+            FACTS.set(f"cmp2.faller.{rank}.delta", float(row["delta"]), "{:+.2f}",
+                      note=f"consensus z change for faller {rank}")
 
     # Dump all facts and guards to docs/ (+ the dev facts-reference lookup table)
     FACTS.dump(_FACTS_PATH)

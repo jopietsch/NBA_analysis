@@ -143,17 +143,17 @@ Updated as each is pulled.
 
 ## Coverage summary
 
-The analysis focuses on 2024–25 as the primary test season.
+The analysis focuses on 2025–26 as the primary test season.
 Multi-season coverage extends as far back as each source allows.
 The crosswalk (player identity reconciliation across systems) is keyed on `(player_normalized_name, season, team_abbr)` with a hand-maintained override table for collisions.
 
-| Recompute systems | Active as of 2024–25 | How far back |
+| Recompute systems | Active as of 2025–26 | How far back |
 |---|---|---|
 | Game Score, PER, TS%, eFG%, USG% | Yes | 1983–84 (nba_api coverage) |
 | Win Shares | Yes | 1983–84 (nba_api) |
 | BPM 2.0 / VORP | Yes | 1983–84 (nba_api) |
 
-| Results-only systems | Active as of 2024–25 | How far back |
+| Results-only systems | Active as of 2025–26 | How far back |
 |---|---|---|
 | RAPTOR | No (FTE defunct) | 2013–14 to 2022–23 |
 | DARKO DPM | Yes (projection-style) | 2013–14 |
@@ -170,4 +170,4 @@ The crosswalk (player identity reconciliation across systems) is keyed on `(play
 ## Open items
 
 - RAPM (Regularized Adjusted Plus/Minus): computed in-house from nba_api play-by-play (PlayByPlayV3) for 2013-14 through 2025-26, reconstructed into five-on-five possessions and fit with cross-validated ridge regression. Two versions: a bare single-season RAPM (zero-mean prior) kept to show the raw noise, and RAPM_MY, which pools three seasons with recency weights and shrinks each player toward a BPM prior (offense toward OBPM, defense toward DBPM). RAPM_MY feeds the consensus. Still open: loading a public RAPM snapshot to validate the values, and a luck adjustment / tracking-based prior to approach EPM or LEBRON (the player-tracking inputs are not publicly available).
-- Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2024–25; adjusted for multi-season pools.
+- Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2025–26; adjusted for multi-season pools.

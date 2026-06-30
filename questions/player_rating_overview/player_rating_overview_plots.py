@@ -869,7 +869,7 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
                 ax.set_title(gname, fontsize=10, color=gcolor, fontweight="bold",
                              pad=6, loc="left")
 
-    fig.suptitle("Top 20 players by each rating system — 2024-25",
+    fig.suptitle("Top 20 players by each rating system — 2025-26",
                  fontsize=12, color="#222", y=1.01)
     fig.tight_layout()
     return save_chart("top20_by_system.svg", OUTPUT_DIR, fig=fig)
@@ -916,7 +916,7 @@ def plot_retrodiction(retro: dict, outcome_calibrated: set) -> str:
         fontsize=12, color="#222", pad=26
     )
     ax.text(0.5, 1.015,
-            "How well each system, summed to the team, rebuilds 2024-25 point "
+            "How well each system, summed to the team, rebuilds 2025-26 point "
             "differential. Blue = never uses who won; grey = built from team/lineup results",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5, color=GRAY)
     ax.spines["top"].set_visible(False)
@@ -970,7 +970,7 @@ def plot_next_season_retrodiction(same: dict, nxt: dict) -> str:
     )
     ax.text(0.5, 1.015,
             "Grey: how well each system rebuilds the same season. Blue: how well last "
-            "season's version predicts this one (2023-24 to 2024-25)",
+            "season's version predicts this one (2024-25 to 2025-26)",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=7.5, color=GRAY)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
@@ -1161,7 +1161,7 @@ def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:
     ax.set_xlabel("Composite playoff shift (z-score; agreement of PER, WS/48, BPM)",
                   fontsize=9, color=GRAY)
     ax.set_title(
-        "Who rose and who fell in the 2024-25 playoffs",
+        "Who rose and who fell in the 2025-26 playoffs",
         fontsize=12, color="#222", pad=24
     )
     ax.text(0.5, 1.01,
@@ -1175,3 +1175,54 @@ def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:
 
     fig.tight_layout()
     return save_chart("playoff_shift.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart: season-over-season consensus movers ───────────────────────────────
+
+def plot_season_comparison(comp: dict, top_n: int = 8) -> str:
+    """Diverging bars of the biggest consensus risers and fallers between two seasons.
+
+    Expects the dict from season_comparison(): a `movers` frame carrying the
+    per-player consensus change (`delta`) between the two seasons. Shows the
+    top_n climbers (green) and top_n sliders (red) by that change, read as a
+    snapshot of how much the single-season order moves year to year.
+    """
+    movers = comp.get("movers") if comp else None
+    if movers is None or len(movers) == 0:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No comparison data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("season_comparison.svg", OUTPUT_DIR, fig=fig)
+
+    risers = movers.nlargest(top_n, "delta")
+    fallers = movers.nsmallest(top_n, "delta")
+    sel = (pd.concat([fallers, risers]).drop_duplicates(subset="player_id")
+           .sort_values("delta"))
+    names = sel["PLAYER_NAME"].tolist()
+    vals = sel["delta"].tolist()
+    colors = [GREEN if v > 0 else RED for v in vals]
+    la, lb = comp.get("label_a", ""), comp.get("label_b", "")
+
+    fig, ax = plt.subplots(figsize=(7.5, max(5, len(sel) * 0.34)), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    y = np.arange(len(sel))
+    ax.barh(y, vals, color=colors, alpha=0.85, zorder=3)
+    ax.axvline(0, color="#444", linewidth=0.9, zorder=4)
+    ax.set_yticks(y)
+    ax.set_yticklabels(names, fontsize=8)
+    ax.set_xlabel(f"Change in consensus rating (z-score), {la} → {lb}",
+                  fontsize=9, color=GRAY)
+    ax.set_title(
+        f"Who climbed and who slid in the consensus, {la} to {lb}",
+        fontsize=12, color="#222", pad=24
+    )
+    ax.text(0.5, 1.01,
+            "Players qualified in both seasons; change in standardized consensus standing",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+    fig.tight_layout()
+    return save_chart("season_comparison.svg", OUTPUT_DIR, fig=fig)

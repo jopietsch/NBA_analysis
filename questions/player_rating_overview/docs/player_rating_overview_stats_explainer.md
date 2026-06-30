@@ -232,7 +232,7 @@ Larger λ means stronger shrinkage toward the prior; smaller λ means more trust
 Calibrating λ well, so that bench players with few possessions are not estimated wildly from noise, is where most of the engineering work in these systems lives.
 
 This report computes its own RAPM with exactly this estimator.
-Each 2024-25 game's play-by-play is reconstructed into possessions; the design matrix gives every player two columns, one marked +1 on the possessions they played offense and one marked −1 on the possessions they played defense, the target is the offense's points per 100 possessions, and λ is chosen by five-fold cross-validation.
+Each 2025-26 game's play-by-play is reconstructed into possessions; the design matrix gives every player two columns, one marked +1 on the possessions they played offense and one marked −1 on the possessions they played defense, the target is the offense's points per 100 possessions, and λ is chosen by five-fold cross-validation.
 The prior is the zero-mean one above, with no SPM term.
 That bare setup is the reason the single-season estimate is noisier than EPM or LEBRON.
 

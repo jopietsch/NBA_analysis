@@ -151,6 +151,33 @@ def test_plot_playoff_shift_empty(tmp_path):
     assert os.path.exists(path)
 
 
+def _mini_comp():
+    rng = np.random.default_rng(7)
+    n = 40
+    a = rng.normal(0, 1, n)
+    movers = pd.DataFrame({
+        "player_id": range(1, n + 1),
+        "PLAYER_NAME": [f"Player {i}" for i in range(1, n + 1)],
+        "a": a,
+        "b": a + rng.normal(0, 0.5, n),
+    })
+    movers["delta"] = movers["b"] - movers["a"]
+    return {"label_a": "2024-25", "label_b": "2025-26",
+            "movers": movers.sort_values("delta").reset_index(drop=True)}
+
+
+def test_plot_season_comparison(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_season_comparison(_mini_comp(), top_n=6)
+    assert os.path.exists(path)
+
+
+def test_plot_season_comparison_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_season_comparison({})
+    assert os.path.exists(path)
+
+
 def test_plot_retrodiction(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     retro = {

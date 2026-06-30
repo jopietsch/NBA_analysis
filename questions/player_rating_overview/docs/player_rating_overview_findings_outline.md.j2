@@ -15,13 +15,13 @@ Reflects the current pipeline: << f("cov.n_systems") >> recomputed box-score sys
 
 ---
 
-## Structure (matches the 12 sections in the findings)
+## Structure (matches the 13 sections in the findings)
 
 ### Intro (question-driven; before §1)
 - Hook: the rating that best describes a finished season forecasts the next worst. PER ~<< f("panel.PER.describe_mean_pct") >>% describe vs ~<< f("panel.PER.forecast_mean_pct") >>% forecast, averaged across << f("panel.n_seasons") >> seasons.
 - Three questions: (1) do the systems agree? (2) what does each uniquely capture? (3) how should they be combined?
 - Settled up front: no single best system; agree at the top, diverge below; value is top-heavy (gap #1→#10 >> #10→#50).
-- Testbed 2024-25; << f("cov.n_systems") >> box-score systems + RAPM/RAPM_MY recomputed; other impact + human rankings surveyed only. Two panels span << f("panel.n_seasons") >> seasons back to << f("panel.first_season") >>.
+- Testbed 2025-26; << f("cov.n_systems") >> box-score systems + RAPM/RAPM_MY recomputed; other impact + human rankings surveyed only. Two panels span << f("panel.n_seasons") >> seasons back to << f("panel.first_season") >>.
 
 ### § 1. The landscape of player rating
 - Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.
@@ -32,13 +32,13 @@ Reflects the current pipeline: << f("cov.n_systems") >> recomputed box-score sys
 ### § 2. Do the systems agree?
 - Spearman matrix. Tight: PER-Game Score << f("corr.GAME_SCORE_PER") >>, BPM-VORP << f("corr.BPM_VORP") >>. Moderate: PER-WS << f("corr.PER_WS") >>, WS-WS/48 << f("corr.WS_WS48") >>. Loose: PER-BPM << f("corr.PER_BPM") >>, Game Score-BPM << f("corr.GAME_SCORE_BPM") >>.
 - Player-level divergence even where overall correlation is high: WS favors efficient bigs (<< f("loves.WS.1.name") >>, << f("loves.WS.2.name") >>); PER favors high-usage scorers (<< f("loves.PER.1.name") >>, << f("loves.PER.3.name") >>).
-- RAPM sits apart: agrees with box scores at << f("rapm.box_corr_mean") >>; bare 2024-25 puts reserve << f("rapm.top.1.name") >> at #<< f("rapm.top1_consensus_rank") >> in consensus. Fixed RAPM_MY agrees with consensus << f("rapm_my.consensus_corr") >> (up from << f("rapm.consensus_corr") >>), top << f("rapm_my.top.1.name") >>/<< f("rapm_my.top.3.name") >>; RAPM_MY (combined only) feeds the consensus.
+- RAPM sits apart: agrees with box scores at << f("rapm.box_corr_mean") >>; bare 2025-26 puts reserve << f("rapm.top.1.name") >> at #<< f("rapm.top1_consensus_rank") >> in consensus. Fixed RAPM_MY agrees with consensus << f("rapm_my.consensus_corr") >> (up from << f("rapm.consensus_corr") >>, ~double) but very top still catches low-minute noise (<< f("rapm_my.top.1.name") >>); RAPM_MY (combined only) feeds the consensus.
 - Chart: rank-agreement heatmap.
 
 ### § 3. What the field has learned about evaluating these metrics
 - Two community tests: retrodiction (1st-half → 2nd-half outcomes) and team-wins prediction; both reward a RAPM backbone + calibrated box-score prior. Academic caveat: complex metrics don't reliably beat simple ones as inputs to downstream salary/wins models.
-- Direct describe test (held-out teams, 2024-25): PER best, ~<< f("retro.top.cv_r2_pct") >>% of team point-diff, above the plus/minus metrics.
-- Forecast test (prior-season ratings predict this season): order flips, PER ~<< f("nextretro.PER.r2_pct") >>%, plus/minus best (<< f("nextretro.top.name") >> ~<< f("nextretro.top.r2_pct") >>%). Coverage ~<< f("nextretro.coverage_pct") >>%.
+- Direct describe test (held-out teams, 2025-26): PER best, ~<< f("retro.top.cv_r2_pct") >>% of team point-diff, above the plus/minus metrics.
+- Forecast test (prior-season ratings predict this season): order flips, PER ~<< f("nextretro.PER.r2_pct") >>%, best forecaster << f("nextretro.top.name") >> ~<< f("nextretro.top.r2_pct") >>%. Coverage ~<< f("nextretro.coverage_pct") >>%.
 - Multi-season panel (<< f("panel.n_seasons") >> seasons / << f("panel.n_pairs") >> handoffs back to << f("panel.first_season") >>): PER describes ~<< f("panel.PER.describe_mean_pct") >>%, forecasts ~<< f("panel.PER.forecast_mean_pct") >>%; best forecaster << f("panel.forecast_top.name") >> ~<< f("panel.forecast_top.mean_pct") >>%; BPM beats PER forecasting << f("panel.bpm_beats_per_pairs") >>/<< f("panel.n_cmp_pairs") >> handoffs.
 - Impact-era panel (<< f("ipanel.n_seasons") >> seasons from << f("ipanel.first_season") >>, box scores vs RAPM): bare RAPM forecasts << f("ipanel.RAPM.forecast_rank") >>/<< f("ipanel.n_systems") >> (~<< f("ipanel.RAPM.forecast_mean_pct") >>%, describe ~<< f("ipanel.RAPM.describe_mean_pct") >>% but mechanical), RAPM_MY << f("ipanel.RAPM_MY.forecast_rank") >>/<< f("ipanel.n_systems") >> (~<< f("ipanel.RAPM_MY.forecast_mean_pct") >>%), both below box scores; top << f("ipanel.forecast_top.name") >> ~<< f("ipanel.forecast_top.mean_pct") >>%.
 - Stability (year-over-year): Game Score retains << f("stability.GAME_SCORE.retention_pct") >>% of its top << f("stability.top_n") >>, PER << f("stability.PER.retention_pct") >>% (chance ~<< f("stability.chance_pct") >>%); steadiest << f("stability.most_stable.name") >> << f("stability.most_stable.corr") >>, jumpiest << f("stability.least_stable.name") >> << f("stability.least_stable.corr") >>; << f("stability.n_pairs") >> pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; BPM jumpy but better).
@@ -55,7 +55,7 @@ Reflects the current pipeline: << f("cov.n_systems") >> recomputed box-score sys
 
 ### § 6. Stars matter more than rank implies (distribution section)
 - Rate metrics spread evenly: PER top-5% share << f("dist.PER.top5pct", "{:.1f}%") >>. Cumulative top-heavy: WS top-5% ~15%, VORP ~32%.
-- Power-law steepness (alpha): PER << f("powerlaw.PER.alpha") >> (shallow), Consensus << f("powerlaw.CONSENSUS.alpha") >>, Wins-Pred << f("powerlaw.WINS_PRED.alpha") >>, VORP << f("powerlaw.VORP.alpha") >> (steepest). Two groups: straight-line power laws vs. benders (plus/minus rate metrics).
+- Power-law steepness (alpha): PER << f("powerlaw.PER.alpha") >> (shallowest); the cumulative metrics and uber ratings cluster higher (VORP << f("powerlaw.VORP.alpha") >>, Consensus << f("powerlaw.CONSENSUS.alpha") >>, Wins-Pred << f("powerlaw.WINS_PRED.alpha") >>), up to the noisy plus/minus halves. Two groups: straight-line power laws vs. benders (plus/minus rate metrics).
 - RAPM full distribution (<< f("rapm_shape.n_seasons") >> seasons, << f("rapm_shape.n") >> player-seasons, << f("rapm_shape.frac_neg") >>% below 0) is a symmetric bell, not a power law; VORP leans right (the tail a power law needs).
 - Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini << f("dist.CONSENSUS.gini") >> > WS << f("dist.WS.gini") >>, an artifact, not real top-heaviness).
 - Charts: all-systems distributions, distribution shape, power-law small multiples, power-law fits, gini, rank-value curves, ordinal-vs-value gap.
@@ -67,21 +67,25 @@ Reflects the current pipeline: << f("cov.n_systems") >> recomputed box-score sys
 - Box-score rate metrics recomputed on playoff games only (impact metrics can't: a playoff run is too few games). << f("playoff.n_qualified") >> players ≥ << f("playoff.min_floor") >> playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).
 - Risers: << f("playoff.riser.1.name") >>, << f("playoff.riser.2.name") >>, << f("playoff.riser.3.name") >>. Fallers: << f("playoff.faller.1.name") >>, << f("playoff.faller.2.name") >>, << f("playoff.faller.3.name") >>, incl. regular-season consensus #1 << f("playoff.consensus1.name") >>. One postseason, not proof.
 
-### § 9. Summary
+### § 9. What changed from 2024-25 to 2025-26
+- Snapshot read of the most recent full-season pair (<< f("cmp2.n_both") >> players qualified in both). Consensus order agrees << f("cmp2.consensus_corr") >> year-over-year: top stable (<< f("cmp2.top_b.1.name") >>, << f("cmp2.top_b.2.name") >> lead both; only << f("cmp2.held_top5") >> of top 5 carry over), middle churns.
+- Biggest mover up << f("cmp2.riser.1.name") >> (<< f("cmp2.riser.1.delta") >>), down << f("cmp2.faller.1.name") >> (<< f("cmp2.faller.1.delta") >>); one-year swings, not signal. What did NOT change: box-score agreement << f("cmp2.agree_a") >> → << f("cmp2.agree_b") >>, disagreement is structural. Chart: season comparison (consensus movers).
+
+### § 10. Summary
 - Re-answers the three questions: agree at the top / each captures less uniquely than it looks (heavy overlap) / two combined ratings agreeing at << f("cmp.spearman") >>.
 - Through-line: value is top-heavy. Caveat: single-season cross-system comparison is a snapshot; the describe-vs-forecast and stability panels (<< f("panel.n_seasons") >> seasons) are the firmer results.
 
-### § 10. A note on the recomputed formulas
+### § 11. A note on the recomputed formulas
 - PER cleanest (mean ~15, Jokić low 30s). WS/BPM/VORP are approximations; absolute values differ from BBR.
-- VORP inflation for high-steal defenders: VORP rates << f("loves.VORP.1.name") >> further above consensus than any player (per-100 denominator uses player-possessions not team-possessions). Also Ellis, Wallace, Dunn.
+- VORP inflation for high-steal defenders: VORP rates << f("loves.VORP.1.name") >> further above consensus than any player (per-100 denominator uses player-possessions not team-possessions). Also Ausar Thompson, Dunn.
 
-### § 11. Limitations
+### § 12. Limitations
 - Single-season cross-system testbed; only the describe-vs-forecast and stability panels reach across << f("panel.n_seasons") >> seasons.
-- RAPM now computed from play-by-play (2024-25 back to << f("ipanel.first_season") >>, << f("cov.rapm_n_players") >> players in 2024-25): bare = noisy, no prior; RAPM_MY = 3 pooled seasons + BPM prior (consensus corr << f("rapm_my.consensus_corr") >>); neither beats box scores at forecasting. No tracking data, so can't match EPM/LEBRON.
+- RAPM now computed from play-by-play (2025-26 back to << f("ipanel.first_season") >>, << f("cov.rapm_n_players") >> players in 2025-26): bare = noisy, no prior; RAPM_MY = 3 pooled seasons + BPM prior (consensus corr << f("rapm_my.consensus_corr") >>); neither beats box scores at forecasting. No tracking data, so can't match EPM/LEBRON.
 - Tracking/team-internal blind spot (Second Spectrum, Synergy, franchise models).
 - Playoff small-sample limit for RAPM-based metrics.
 
-### § 12. What a Bayesian lens would add
+### § 13. What a Bayesian lens would add
 - Uncertainty ranges: single-number metrics hide a ~2-3 pts/100 band; apparent 8th-vs-12th disputes often within it.
 - Playoff vs. regular season: update the full-season prior with playoff lineup data; posterior barely shifts on 6 games, more on a Finals run.
 - Better consensus weighting: estimate system weights from multi-season retrodiction.

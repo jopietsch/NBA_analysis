@@ -20,11 +20,11 @@
 
 ## Comparison set
 
-**What is being compared against what:** Player ratings across all available systems in the 2024-25 regular season; secondary multi-season analysis where sources allow.
+**What is being compared against what:** Player ratings across all available systems in the 2025-26 regular season; secondary multi-season analysis where sources allow.
 
-**Time range:** Primary testbed: 2024-25. Multi-season: back to 1983-84 for box-score systems; 2013-14 for impact metrics.
+**Time range:** Primary testbed: 2025-26. Multi-season: back to 1983-84 for box-score systems; 2013-14 for impact metrics.
 
-**Inclusion criteria:** Qualified players: 500+ regular-season minutes in 2024-25. All players retained in the unified table; qualifier filters apply to distribution/z-score analysis.
+**Inclusion criteria:** Qualified players: 500+ regular-season minutes in 2025-26. All players retained in the unified table; qualifier filters apply to distribution/z-score analysis.
 
 **Why this set and not another:** Most recent completed season as the testbed. The architecture parameterizes season so earlier and future seasons can be added without rewriting.
 
@@ -64,7 +64,7 @@
 
 - [x] Inventory doc: all systems tagged with source, coverage, availability
 - [ ] nbakit fetchers: `fetch_player_season_totals`, `fetch_team_season_totals`, `fetch_league_averages` pass unit tests with synthetic data
-- [ ] nbakit ratings: recomputed PER/WS/BPM/VORP spot-check within rounding of BBR for 5+ known players in 2024-25
+- [ ] nbakit ratings: recomputed PER/WS/BPM/VORP spot-check within rounding of BBR for 5+ known players in 2025-26
 - [ ] Crosswalk: RAPTOR (where available) matches at >90%; unmatched players listed
 - [ ] Pipeline runs: `MPLBACKEND=Agg python3 player_rating_overview.py` generates charts + results.md
 - [ ] All 7 plot_ functions produce no-raise smoke tests green
@@ -81,5 +81,5 @@
 
 - RAPM: attempt from play-by-play stints (pbpstats), or use a public snapshot?
 - Wins-predictive: α for ridge needs cross-validation across seasons before trusting weights; single-season α=5 is a placeholder.
-- EPM and LEBRON: can full-season snapshots be obtained for 2024-25 without a subscription?
+- EPM and LEBRON: can full-season snapshots be obtained for 2025-26 without a subscription?
 - ESPN RPM: still published? Last confirmed year?

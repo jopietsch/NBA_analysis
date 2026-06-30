@@ -16,8 +16,8 @@ import sys
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--year", type=int, default=2025,
-                        help="Season end year (default: 2025 = 2024-25 season)")
+    parser.add_argument("--year", type=int, default=2026,
+                        help="Season end year (default: 2026 = 2025-26 season)")
     args = parser.parse_args()
     end_year = args.year
 
@@ -47,6 +47,7 @@ def main() -> None:
         plot_next_season_retrodiction,
         plot_panel_describe_vs_forecast,
         plot_rating_stability,
+        plot_season_comparison,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -59,6 +60,7 @@ def main() -> None:
         next_season_retrodiction,
         panel_retrodiction,
         rating_stability,
+        season_comparison,
         STABILITY_TOP_N,
         PANEL_SYSTEMS,
         PANEL_START_YEAR,
@@ -137,6 +139,9 @@ def main() -> None:
 
     # Regular-season vs playoff risers/fallers
     plot_playoff_shift(load_playoff_deltas(end_year))
+
+    # Season-over-season consensus movers (most recent full-season pair)
+    plot_season_comparison(season_comparison(end_year - 1, end_year))
 
     # 3. Analysis → results doc
     print("\n[3/3] Running analysis...")

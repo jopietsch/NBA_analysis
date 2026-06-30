@@ -25,11 +25,11 @@ A few things to settle up front:
 - Is a higher rank a proportionally bigger gap? No: value is top-heavy, so the gap from the best player to the tenth is far larger than from the tenth to the fiftieth.
 
 The short answers run through the report.
-The box-score systems move together but only loosely track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them, agreeing with the box scores at about 0.22 on a 0-to-1 scale.
+The box-score systems move together but only loosely track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them, agreeing with the box scores at about 0.14 on a 0-to-1 scale.
 Each system tilts toward a player type, and the simplest box scores (PER, Game Score) prove largely redundant, nearly rebuilt from the others, while the metrics built for defense and lineup impact carry more of their own.
-And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (0.93 on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
+And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (0.95 on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
 
-The testbed is the 2024-25 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
+The testbed is the 2025-26 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
 It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version that shows how noisy raw plus/minus is, and a prior-informed, multi-year version (RAPM_MY) built the way the published metrics are.
 Two findings reach beyond the single season, across 30 seasons back to 1996-97: the describe-versus-forecast test above and each rating's year-to-year stability.
 Because the cross-system comparison rests on one season while those panels span decades, treat the single-season orderings as a snapshot and the panel findings as the firmer, repeated pattern.
@@ -84,7 +84,7 @@ Every serious system handles this by adding a "prior": a box-score estimate of w
 The systems mostly differ in how that prior is built and what data feeds it.
 
 **RAPTOR** (FiveThirtyEight, 2013-14 through 2022-23) combined on/off lineup data with player-tracking data (speed, distance, shot quality).
-FiveThirtyEight shut down its sports coverage in April 2023, so RAPTOR has no 2024-25 values.
+FiveThirtyEight shut down its sports coverage in April 2023, so RAPTOR has no 2025-26 values.
 Historical data is downloadable from their GitHub.
 
 **EPM** (dunksandthrees) uses a RAPM calculation with a Bayesian prior built from a highly optimized Statistical Plus/Minus model that incorporates player-tracking data.
@@ -135,28 +135,29 @@ They are described here because they are part of how players actually get rated,
 ![Agreement between each pair of systems: darker squares mean stronger rank correlation.](../generated/images/rank_agreement_heatmap.svg){#fig-agreement}
 
 The box-score systems mostly move in the same direction, but how tightly varies a lot by pair.
-PER and Game Score track closely (0.83 on a 0-to-1 scale, among qualified 2024-25 players).
-PER and Win Shares agree fairly well too (0.76), as do Win Shares and WS/48 (0.70).
-The loosest pairings are between the per-minute rate metrics and the plus/minus family: PER and BPM move together only moderately (0.49), and Game Score and BPM about the same (0.47).
+PER and Game Score track closely (0.86 on a 0-to-1 scale, among qualified 2025-26 players).
+PER and Win Shares agree fairly well too (0.77), as do Win Shares and WS/48 (0.80).
+The loosest pairings are between the per-minute rate metrics and the plus/minus family: PER and BPM move together only moderately (0.51), and Game Score and BPM about the same (0.43).
 The tightest pair is BPM and VORP (0.97), which is no surprise, since VORP is built directly from BPM.
 
 Even the pairs that agree overall still hand out value differently player by player.
-Win Shares, which divides a team's actual wins among its players, favors efficient bigs on good teams: Domantas Sabonis and Nikola Jokić both rate well above their consensus rank in it.
-PER, a per-minute efficiency score, leans toward high-usage scorers, with Zion Williamson and Anthony Davis among its biggest risers.
+Win Shares, which divides a team's actual wins among its players, favors efficient bigs on good teams: Donovan Clingan and Nikola Jokić both rate well above their consensus rank in it.
+PER, a per-minute efficiency score, leans toward high-usage scorers, with Giannis Antetokounmpo and Joel Embiid among its biggest risers.
 Two systems can land near each other in the overall order while still disagreeing about which individual players to credit.
 
 RAPM, the one impact metric computed here, sits apart from all of them.
-It is built only from which lineups outscored their opponents, with no box-score inputs at all, so it shares little with the rest: its rank order agrees with the box-score systems at about 0.22 on the same 0-to-1 scale, well below how tightly those systems track each other.
+It is built only from which lineups outscored their opponents, with no box-score inputs at all, so it shares little with the rest: its rank order agrees with the box-score systems at about 0.14 on the same 0-to-1 scale, well below how tightly those systems track each other.
 That distance is the whole point of an impact metric, since it is meant to catch what the box score misses.
 But a single season of lineup data is noisy, and it shows.
-The bare 2024-25 RAPM puts reserves and rookies near the top, led by Isaiah Joe, who lands at number 201 in the consensus that the box-score systems build.
+The bare 2025-26 RAPM puts reserves and rookies near the top, led by Moussa Cisse, who lands at number 37 in the consensus that the box-score systems build.
 This is why every published impact metric (EPM, LEBRON, DARKO) pulls its RAPM toward a box-score prior rather than using it raw.
 
 The report also builds that fixed version.
 RAPM_MY pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
-The effect is large: its order agrees with the consensus at about 0.58 on the 0-to-1 scale, up from 0.37 for the bare version, and the top is led by Shai Gilgeous-Alexander and Giannis Antetokounmpo rather than reserves.
+The effect shows up in the aggregate: its order agrees with the consensus at about 0.48 on the 0-to-1 scale, up from 0.25 for the bare version, nearly double.
+The lift is in the broad order, not a clean top tier: in 2025-26 a few low-minute players, Moussa Cisse among them, still spike above the established stars.
 It is RAPM_MY, not the bare version, that feeds the consensus rating.
-How it is built is in Section 11; whether it forecasts team results any better is tested in Section 3.
+How it is built is in Section 12; whether it forecasts team results any better is tested in Section 3.
 
 The exact figures are in `docs/player_rating_overview_results.md`.
 
@@ -183,24 +184,24 @@ The lesson is that a metric's predictive accuracy in a retrodiction test is not 
 ### A direct test on the systems here
 
 A related test grades the systems one at a time rather than combining them.
-Add up a single system's player ratings across a team's roster, weighted by minutes played, and check how closely that total matches which teams actually outscored their opponents over 2024-25.
+Add up a single system's player ratings across a team's roster, weighted by minutes played, and check how closely that total matches which teams actually outscored their opponents over 2025-26.
 Each system is graded on teams held out of the calculation, so it cannot score well just by fitting this exact season.
 
 The outcome is a useful surprise.
-PER, the oldest and simplest per-minute box score, rebuilt about 72% of the differences between teams, more than the plus/minus metrics that are explicitly built to track team results.
+PER, the oldest and simplest per-minute box score, rebuilt about 73% of the differences between teams, more than the plus/minus metrics that are explicitly built to track team results.
 Two cautions apply before reading that as a verdict.
 The recomputed BPM and VORP here are approximations (see the note on the recomputed formulas below), so part of their weaker showing is a noisy recompute.
 And rebuilding the season just played is only half the test.
 
-![How well each system, summed to the team, rebuilds 2024-25 team point differential. Blue systems never use who won; grey systems are built from team or lineup results, where a high score is partly mechanical.](../generated/images/retrodiction.svg){#fig-retrodiction}
+![How well each system, summed to the team, rebuilds 2025-26 team point differential. Blue systems never use who won; grey systems are built from team or lineup results, where a high score is partly mechanical.](../generated/images/retrodiction.svg){#fig-retrodiction}
 
 The other half is forecasting.
-Take each player's rating from the prior season (2023-24), spread it across this season's rosters, and see how well that predicts which teams outscored their opponents in 2024-25.
+Take each player's rating from the prior season (2024-25), spread it across this season's rosters, and see how well that predicts which teams outscored their opponents in 2025-26.
 This is a stricter test: a metric's team adjustment is tuned to its own season, so it earns nothing for predicting a season it has not seen.
 The order flips.
-PER, the best description of the season, becomes one of the weakest forecasts of the next, falling from about 72% to roughly 15%.
-In this one pair the plus/minus family holds up best, with BPM on top at about 50%.
-(About 89% of this season's minutes came from players who also rated the year before; rookies have no prior mark.)
+PER, the best description of the season, becomes one of the weakest forecasts of the next, falling from about 73% to roughly 37%.
+In this one pair the plus/minus family holds up best, with Game Score on top at about 40%.
+(About 88% of this season's minutes came from players who also rated the year before; rookies have no prior mark.)
 
 The lesson is the one every projection system runs into: describing what happened and forecasting what comes next are different jobs.
 PER is a faithful scoreboard of a finished season but a poor crystal ball.
@@ -212,7 +213,7 @@ One pair of seasons could be a fluke, so we ran the same two tests on every seas
 The shape repeats.
 PER describes best every era, averaging about 64% of the gaps between teams, and forecasts near the bottom, about 25%.
 The best forecaster across all those handoffs is not a plus/minus metric at all but Game Score, at about 42%, another plain box score that never looks at who won.
-The 2024-25 result where BPM led was one season's order; BPM still beats PER as a forecaster in 20 of the 29 handoffs.
+The single 2025-26 handoff agrees: Game Score forecasts best there too, and across the full panel BPM still beats PER as a forecaster in 20 of the 29 handoffs.
 What holds across every era in the data is the gap itself: the rating that best sums up a finished season is consistently not the one to bet the next season on.
 
 ![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over 30 seasons and 29 season-pairs. Whiskers span the season-to-season range. PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
@@ -224,7 +225,7 @@ This is the same lesson the single-season noise pointed to: without a box-score 
 Its same-season describe score is mid-pack (about 34%), but for RAPM that number reads high for a mechanical reason, since RAPM is built from the very lineup margins the describe test rebuilds.
 
 The prior-informed RAPM_MY does better than the bare version on the same test, forecasting 8 of 10 at about 24%, but it still lands below the box scores.
-Pooling three seasons and leaning on a box-score prior sharpen which players rate highly (Section 11), yet they do not make the lineup signal a better forecaster of team results than a plain box score already is.
+Pooling three seasons and leaning on a box-score prior sharpen which players rate highly (Section 12), yet they do not make the lineup signal a better forecaster of team results than a plain box score already is.
 
 ![The same describe-versus-forecast test on the 13 seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the bare single-season RAPM and the prior-informed RAPM_MY both sit toward the right, forecasting next-season team results below the plain box scores, with RAPM_MY edging ahead of the bare version.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
 
@@ -248,7 +249,7 @@ Only Game Score sits near the top of both lists, steady and predictive at once.
 ## 4. What each system uniquely sees
 
 Not all systems add independent information, and they split sharply on how much.
-The simplest all-in-one box scores are the most redundant: about 89% of PER and 89% of Game Score can be rebuilt from the other systems, so each mostly repeats what the field already says.
+The simplest all-in-one box scores are the most redundant: about 90% of PER and 89% of Game Score can be rebuilt from the other systems, so each mostly repeats what the field already says.
 The metrics built to isolate defense and lineup impact carry the most of their own: Defensive BPM, BPM, and the RAPM family leave roughly half of their ranking unexplained by the rest.
 One caveat keeps that from being a clean verdict: this report's BPM, VORP, and RAPM are approximate recomputes, and a noisy rating looks independent simply because its noise lines up with nothing, so part of their low overlap may be recompute slack rather than real signal.
 The measure holds each metric's own components out of the comparison, so BPM is never counted as "explained" by its own offensive and defensive halves (see results for the full breakdown).
@@ -269,13 +270,13 @@ Once every system is on this common scale, they can be combined.
 
 **Consensus rating:** the average normalized score across all systems.
 This measures what the crowd of methodologies agrees on, not what is best-supported by any one theory.
-The 2024-25 consensus top five: Nikola Jokić, Shai Gilgeous-Alexander, Giannis Antetokounmpo, Tyrese Haliburton, and James Harden.
+The 2025-26 consensus top five: Nikola Jokić, Shai Gilgeous-Alexander, Mitchell Robinson, Luka Dončić, and Victor Wembanyama.
 
 **Wins-predictive rating:** a combination of those scores weighted by how well each system (aggregated to team level) predicts actual team wins.
-The two ratings agree very closely (0.93 on a 0-to-1 scale): they reach the same conclusions about the very best players.
+The two ratings agree very closely (0.95 on a 0-to-1 scale): they reach the same conclusions about the very best players.
 The wins-predictive rating pushes the stars on winning teams higher still.
-Giannis Antetokounmpo rises the most, with Victor Wembanyama close behind, and Isaiah Joe, Evan Mobley, and Brandon Clarke also move up.
-Players on losing teams slide the other way: Dillon Jones and other deep-rotation players on poor teams rate lower on the wins-predictive scale than on the consensus, because their on-court production did not translate into team wins.
+Nikola Jokić rises the most, with Giannis Antetokounmpo close behind, and Victor Wembanyama, Jalen Duren, and Paul Reed also move up.
+Players on losing teams slide the other way: Kam Jones and other deep-rotation players on poor teams rate lower on the wins-predictive scale than on the consensus, because their on-court production did not translate into team wins.
 
 ![Consensus versus wins-predictive rating: each dot is a player; distance from the diagonal marks where the two approaches disagree.](../generated/images/uber_rating_comparison.svg){#fig-uber}
 
@@ -284,18 +285,18 @@ HoopsHype publishes periodic "Analytics MVP" posts that combine EPM, LEBRON, DAR
 ESPN's #NBArank is a different kind of aggregate: journalists vote rather than models, making it closer to the human-reputation category than to a model combination.
 Some metrics do the aggregation internally: LEBRON, for example, blends a box-score prior with luck-adjusted on/off data as part of its own formula rather than publishing both separately and combining them downstream.
 What distinguishes the wins-predictive rating here is that the system weights are estimated from data (how well each system actually predicted team wins) rather than assigned by hand.
-The practical difference is small (the two ratings agree at 0.93 on a 0-to-1 scale), but the weights tell you which systems carried the most predictive signal for 2024-25, which is worth knowing.
+The practical difference is small (the two ratings agree at 0.95 on a 0-to-1 scale), but the weights tell you which systems carried the most predictive signal for 2025-26, which is worth knowing.
 
-The 2024-25 season shows how this plays out.
-Nikola Jokić tops both ratings, with Shai Gilgeous-Alexander close behind in each (the consensus puts them at 2.92 and 2.72; the wins-predictive rating at 3.72 and 3.45).
-Gilgeous-Alexander gains more than any other player when the rating shifts to wins-predictive, because Oklahoma City had the league's best record and that rating rewards strong individual production that lines up with team success.
+The 2025-26 season shows how this plays out.
+Nikola Jokić tops both ratings and pulls away under the wins-predictive weighting: the consensus puts him at 2.79, the wins-predictive rating at 4.56.
+He also gains more than any other player when the rating shifts to wins-predictive (+1.76 versus his consensus rating), because Denver was one of the league's stronger teams and that rating rewards strong individual production that lines up with team success.
 The deep-rotation players on losing teams move the opposite way: solid rate metrics, but no team wins behind them.
 
 ## 6. Stars matter more than rank implies
 
 ![Rating systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
 
-PER spreads relatively evenly among qualified 2024-25 players: the top 5% account for only 8.5% of total value.
+PER spreads relatively evenly among qualified 2025-26 players: the top 5% account for only 8.6% of total value.
 The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
 
 Win Shares and VORP tell a different story.
@@ -309,14 +310,14 @@ The test is simple.
 Stretch both axes onto a log scale, and a power law turns into a straight line.
 
 By that test the systems fall into two groups, and the split lines up with the cumulative-versus-rate divide already described.
-Holding close to a straight line: Game Score, PER, Win Shares, DBPM, VORP, D-RAPM, D-RAPM (MY).
-Bending instead: WS/48, BPM, OBPM, RAPM, O-RAPM, RAPM (multi-yr+prior), O-RAPM (MY).
+Holding close to a straight line: Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM (MY).
+Bending instead: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (multi-yr+prior), O-RAPM (MY).
 
 Win Shares and VORP are the steep power laws.
 Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down.
 PER and Game Score are power laws too, but so shallow that the line is nearly flat, which is the same reason their top 50 sit bunched close together in value.
 
-The benders are the plus/minus rate metrics: WS/48, BPM, OBPM, RAPM, O-RAPM, RAPM (multi-yr+prior), O-RAPM (MY).
+The benders are the plus/minus rate metrics: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (multi-yr+prior), O-RAPM (MY).
 These measure how far above average a player is per possession, a quantity that is roughly even on both sides of the middle and has a natural size to it.
 Their best player is not a runaway: the top of the curve sits below where a straight power law would put it, and OBPM bends the most.
 
@@ -345,9 +346,9 @@ The reliable read is the two groups and their order, not the label on any single
 
 An older, more familiar way to put a single number on concentration is the Gini coefficient (0 means everyone is rated the same, 1 means one player holds all the value).
 It is kept here only as a cross-check, because it has a real limit: it works for metrics that pile up a quantity that cannot drop below zero, like Win Shares or VORP, but not for the 0-centered metrics.
-On those (the BPM family and the two combined ratings) it counts every below-average player as a zero and inflates the score, which is why Consensus shows a Gini of 0.756, above Win Shares at 0.363, an ordering that is not real.
+On those (the BPM family and the two combined ratings) it counts every below-average player as a zero and inflates the score, which is why Consensus shows a Gini of 0.736, above Win Shares at 0.362, an ordering that is not real.
 The steepness read above is the one to trust.
-By it the combined ratings land in the middle of the pack: Consensus at 0.31 and Wins-Predictive at 0.32, steeper than PER at 0.13 but flatter than VORP at 0.36.
+By it the combined ratings land in the middle of the pack: Consensus at 0.31 and Wins-Predictive at 0.34, steeper than PER at 0.14 but flatter than VORP at 0.30.
 
 ![Gini coefficient by system, kept as a cross-check. It ranks the 0-centered metrics (the BPM family and the two combined ratings, outlined) near the top, but that is an artifact of how Gini handles below-average players, not real top-heaviness.](../generated/images/gini_by_system.svg){#fig-gini .collapsible}
 
@@ -373,21 +374,38 @@ The box-score rate metrics can be computed a second time using only playoff game
 This works only for the box-score systems.
 The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way.
 
-Among the 96 players who logged at least 150 playoff minutes in 2024-25, each player's change is measured against the rest of that group.
+Among the 103 players who logged at least 150 playoff minutes in 2025-26, each player's change is measured against the rest of that group.
 That strips out the leaguewide dip that comes from tougher defense and facing the same opponent night after night, so what is left is who rose or fell relative to the other rotation players who also advanced.
 
-The biggest risers were Gary Trent Jr., Kawhi Leonard, and Paolo Banchero.
-The biggest fallers were Michael Porter Jr., Austin Reaves, and Miles McBride.
-The fallers also include the regular-season consensus number one, Nikola Jokić, whose box-score rates slipped as Denver lost in the second round.
+The biggest risers were Jayson Tatum, Tari Eason, and Max Strus.
+The biggest fallers were Jalen Duren, Nikola Jokić, and Mitchell Robinson.
+The fallers also include the regular-season consensus number one, Nikola Jokić, whose box-score rates slipped as Denver lost in the first round.
 The list rewards players whose game travels into a grind-it-out playoff series and marks down those who leaned on production that dried up against a focused defense.
 It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
 
-![Who rose and who fell in the 2024-25 playoffs, by box-score rate metrics, for players with at least 150 playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
+![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least 150 playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
 
-## 9. Summary
+## 9. What changed from 2024-25 to 2025-26
+
+The whole cross-system comparison rests on one season, so it is fair to ask how much of it survives when the season turns over.
+The top barely moves, the middle churns, and the systems disagree by about the same amount as before.
+
+Across the 290 players who qualified in both seasons, the consensus order agrees from 2024-25 to 2025-26 at about 0.67 on a 0-to-1 scale: a steady spine with a moving body.
+Nikola Jokić and Shai Gilgeous-Alexander hold the top two spots in both seasons, but only 2 of the top five carry over; Mitchell Robinson, Luka Dončić, and Victor Wembanyama move up to take the other three.
+
+The biggest one-year swings are exactly what a single season cannot tell apart from real change.
+Kawhi Leonard climbed the most in standardized standing (+1.52) and Jayson Tatum fell the most (-1.79); injuries, role changes, and roster moves drive most of these, and the rating systems only record them.
+This is why the report treats the single-season orderings as a snapshot and rests its findings on the 30-season panels instead.
+
+![Who climbed and who slid in the consensus rating from 2024-25 to 2025-26, among players qualified in both seasons. Green rose, red fell.](../generated/images/season_comparison.svg){#fig-season-comparison}
+
+What did not change is how much the systems agree with one another: the mean rank agreement among the box-score systems was 0.59 in 2024-25 and 0.61 in 2025-26.
+The disagreement this report describes is built into how the metrics are made, not an accident of one season.
+
+## 10. Summary
 
 **Do the systems agree?** On the best handful of players, closely; below the top tier, less than their reputations suggest.
-The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about 0.22 on a 0-to-1 scale), which is the point of an impact metric and also why one season of it is too noisy to trust raw.
+The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about 0.14 on a 0-to-1 scale), which is the point of an impact metric and also why one season of it is too noisy to trust raw.
 No system is best at everything: PER describes a finished season better than any other (about 64% of the gaps between teams) yet forecasts the next among the worst (about 25%), a split that holds across all 30 seasons tested.
 
 **What does each system uniquely capture?** It depends on the system.
@@ -396,15 +414,15 @@ But how much each adds beyond the rest splits sharply: the simplest all-in-one b
 
 **How should they be combined?** Into two ratings that answer different questions.
 A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.
-They agree almost exactly (0.93 on a 0-to-1 scale) on the best players and part mainly on role players whose production did not turn into team wins.
+They agree almost exactly (0.95 on a 0-to-1 scale) on the best players and part mainly on role players whose production did not turn into team wins.
 
 One pattern runs under all three answers: value is top-heavy.
 The gap between the best player and the tenth dwarfs the gap from the tenth to the fiftieth, so a ranked list understates how much a single elite player is worth.
 
-The cross-system comparison rests on the 2024-25 season alone, so its exact orderings are a snapshot; the describe-versus-forecast and stability findings span 30 seasons and are the firmer results.
-The recomputed BPM and VORP are approximations (Section 10), so read them for rank, not exact value.
+The cross-system comparison rests on the 2025-26 season alone, so its exact orderings are a snapshot; year to year the order holds at the top (Nikola Jokić and Shai Gilgeous-Alexander lead both seasons, rank agreement about 0.67) but churns below it, while the describe-versus-forecast and stability findings span 30 seasons and are the firmer results.
+The recomputed BPM and VORP are approximations (Section 11), so read them for rank, not exact value.
 
-## 10. A note on the recomputed formulas
+## 11. A note on the recomputed formulas
 
 The box-score recompute engines (PER, Win Shares, BPM, VORP) implement the published methodologies from Hollinger and Basketball-Reference, but they are approximations.
 The most precisely recomputed metric is PER: the league-average normalization produces values in the expected range (mean ~15, Nikola Jokić in the low 30s).
@@ -415,19 +433,19 @@ A Phase 3 planned improvement is to spot-check the recomputed values against BBR
 For comparison purposes (which system ranks whom higher or lower), the current implementation is sufficient.
 For absolute values, treat the recomputed BPM/VORP as approximations.
 
-One consequence is visible in the data: VORP rates Dyson Daniels further above the consensus than any other player, placing him near the very top, far above where he lands in any other system.
-On Basketball-Reference's published figures, Daniels ranks well outside the top 10.
-The difference traces to steals: Daniels led the league in steals in 2024-25, and the DBPM formula credits steals heavily.
+One consequence is visible in the data: VORP rates Cason Wallace further above the consensus than any other player, placing him near the very top, far above where he lands in any other system.
+On Basketball-Reference's published VORP, he ranks nowhere near the top of the league.
+The difference traces to steals: Wallace led the league in steals in 2025-26, and the DBPM formula credits steals heavily.
 Our approximation amplifies that credit further because it uses player-possession denominators rather than team-possession denominators, inflating per-100 steal rates.
 His more modest standing in the rate metrics tells a more representative story of a strong defensive specialist whose overall value does not place him among the very best players in the league.
 
-The same inflation affects other high-steal defenders in 2024-25: Keon Ellis (121 steals across the season), Cason Wallace, and Kris Dunn all carry VORP values in this dataset that exceed their BBR equivalents.
-Their Win Shares figures (typically 3-4, about right for a productive reserve) are the more representative number.
+The same inflation affects other high-steal defenders in 2025-26: Ausar Thompson (146 steals across the season) and Kris Dunn (131) both carry VORP values in this dataset that exceed their BBR equivalents.
+Their Win Shares figures (around 4 to 5, about right for a productive role player) are the more representative number.
 This is not a separate bug from the Daniels case; it is the same per-100 denominator approximation applied to any player with a high steal rate relative to their minutes.
 
-## 11. Limitations
+## 12. Limitations
 
-The cross-system comparison (rank agreement, the two combined ratings, the playoff risers and fallers) is built on the 2024-25 season alone.
+The cross-system comparison (rank agreement, the two combined ratings, the playoff risers and fallers) is built on the 2025-26 season alone.
 Two tests reach further, both across 30 seasons back to 1996-97: the describe-versus-forecast panel and the year-over-year stability of each rating.
 Extending the cross-system comparison itself across all those seasons, rather than the single testbed year, is the natural next step.
 
@@ -435,16 +453,17 @@ The crosswalk matching rate for each third-party source is reported in `docs/pla
 Players who could not be matched are listed there; they are excluded from the cross-system comparison but retained in the unified table.
 
 RAPM (regularized adjusted plus/minus) is the technical backbone of every serious modern impact metric (EPM, LEBRON, DARKO, RAPTOR, and RPM all build on it).
-This report now computes it directly from play-by-play, for 2024-25 and back through 2013-14.
-Within a season, every possession is reconstructed into the five-on-five lineup that was on the floor, and a single statistical model estimates all the players' contributions to the scoring margin at once (554 players in 2024-25).
+This report now computes it directly from play-by-play, for 2025-26 and back through 2013-14.
+Within a season, every possession is reconstructed into the five-on-five lineup that was on the floor, and a single statistical model estimates all the players' contributions to the scoring margin at once (572 players in 2025-26).
 Two things make this version weaker than the published metrics.
-It uses one season of lineup data with no box-score prior, so it is noisy: bench players who shared the floor with strong lineups can rate near the top, which is what puts Isaiah Joe at the head of the raw 2024-25 list (Section 2), and across the seasons it forecasts next-season team results worse than the plain box scores (Section 3).
+It uses one season of lineup data with no box-score prior, so it is noisy: bench players who shared the floor with strong lineups can rate near the top, which is what puts Moussa Cisse at the head of the raw 2025-26 list (Section 2), and across the seasons it forecasts next-season team results worse than the plain box scores (Section 3).
 And the bare version's offensive and defensive halves are kept out of the consensus, so one noisy single-season split cannot swing the order at the top.
 
 The report also computes the stabilized version, RAPM_MY.
 It pools three seasons of possessions, weighting recent ones more heavily, and shrinks each player toward a box-score prior: the offensive half toward Offensive BPM, the defensive half toward Defensive BPM.
 A player with few possessions stays near his box score, while a heavy-minute player moves toward what the lineup data shows.
-This is the prior-plus-RAPM recipe the published metrics use, and it helps where expected: the top tier becomes recognizable stars (Shai Gilgeous-Alexander, Giannis Antetokounmpo), and its order agrees with the consensus at 0.58, up from 0.37 for the bare version.
+This is the prior-plus-RAPM recipe the published metrics use, and it helps where expected: its order agrees with the consensus at 0.48, up from 0.25 for the bare version, nearly double the agreement.
+The gain is in the overall order; at the very top, low-minute players like Moussa Cisse can still post inflated values, a reminder that this is an approximate in-house recompute.
 RAPM_MY, combined only, is the version that feeds the consensus.
 What it does not do is turn RAPM into a strong forecaster of team results: across the seasons it still predicts next-season point differential below the box scores (Section 3), and heavy-minute role players who spend their court time in strong lineups, the hardest case for any plus/minus method, can still rate too high.
 Matching a published metric like EPM or LEBRON would need the player-tracking data they use and we do not have.
@@ -459,7 +478,7 @@ A first-round exit provides roughly 6 games of lineup data; even a Finals run pr
 That sample is too small for the lineup regression to stabilize, regardless of how good the prior is.
 The small-sample problem is not a solvable data-engineering issue; it is a fundamental limit of how RAPM works.
 
-## 12. What a Bayesian lens would add
+## 13. What a Bayesian lens would add
 
 The impact metrics already apply Bayesian reasoning in one place.
 The box-score prior is a starting belief about what a player should be worth, derived from their individual stats.

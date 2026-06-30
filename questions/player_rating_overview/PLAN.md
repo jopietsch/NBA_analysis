@@ -21,7 +21,7 @@ question about the game, it surveys *how players are rated*. Goals, in the user'
    plain ordinal ranking hides.
 
 ### Decisions locked with the user
-- **Time scope:** start with the most recent completed season (2024-25) as the testbed, but
+- **Time scope:** start with the most recent completed season (2025-26) as the testbed, but
   architect so coverage extends as far back as each source allows. Future projects will reuse
   this data/analysis.
 - **Uber rating:** build **both** the consensus and the wins-predictive rating, and compare.

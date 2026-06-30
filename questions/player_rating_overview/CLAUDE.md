@@ -14,7 +14,7 @@ The report is question-driven (see "Document arc for question-driven reports" in
 
 The findings intro should state these three in bold and front-load their answers; the body should develop one cluster of sections per question; the summary should re-answer all three. `/check-coherence` uses this set as the contract.
 
-Primary testbed is the 2024-25 regular season, with multi-season analysis back to 1983-84 (box-score systems) and 2013-14 (impact metrics) where sources allow. Throughout the docs, be clear which claims rest on the single-season testbed versus the multi-season cache, and flag where impact-metric divergence could be one-season noise rather than real disagreement.
+Primary testbed is the 2025-26 regular season, with multi-season analysis back to 1983-84 (box-score systems) and 2013-14 (impact metrics) where sources allow. Throughout the docs, be clear which claims rest on the single-season testbed versus the multi-season cache, and flag where impact-metric divergence could be one-season noise rather than real disagreement.
 
 ## Project-specific notes
 

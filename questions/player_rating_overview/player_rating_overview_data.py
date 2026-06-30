@@ -7,7 +7,7 @@ column per rating system. Caches the merged table to cache/unified_ratings_{year
 
 Usage:
     from player_rating_overview_data import load_unified_ratings
-    df = load_unified_ratings(2025)   # 2024-25 season
+    df = load_unified_ratings(2026)   # 2025-26 season
 """
 
 import os
