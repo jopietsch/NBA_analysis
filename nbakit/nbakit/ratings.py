@@ -453,6 +453,7 @@ def rapm(
     *,
     alphas=None,
     cv: int = 5,
+    prior=None,
 ) -> pd.DataFrame:
     """Regularized Adjusted Plus-Minus via ridge regression with cross-validated penalty.
 
@@ -489,6 +490,13 @@ def rapm(
       the default ``alphas`` grid is bounded (see below): an unbounded grid lets
       CV drive the penalty arbitrarily high and collapse the point-per-100 scale.
 
+      When ``prior`` is provided, implements prior-mean ridge (shrink toward the
+      box-score prior instead of zero) via the substitution gamma = beta - prior_vector:
+        y' = y - X @ prior_vector
+        fit RidgeCV on (X, y') -> gamma
+        beta = gamma + prior_vector
+      Players absent from ``prior`` fall back to a zero prior.
+
     Parameters
     ----------
     possessions_df : DataFrame
@@ -500,6 +508,18 @@ def rapm(
         possession data is sparse or noisy.
     cv : int
         Number of folds for cross-validation (default 5).
+    prior : DataFrame, optional
+        Box-score prior for each player. Must be indexed by player_id with two
+        columns:
+          ``off`` -- offensive prior in points per 100 possessions; same scale
+                     and sign as O_RAPM (positive = above-average offense).
+          ``def`` -- defensive prior in points per 100 possessions; same scale
+                     and sign as D_RAPM (positive = good defender who prevents
+                     points).
+        Players present in the possessions but absent from ``prior`` receive a
+        zero prior (standard ridge-toward-zero behavior). When None (default),
+        all priors are zero and rapm() returns the same result as the no-prior
+        call.
 
     Returns
     -------
@@ -556,6 +576,22 @@ def rapm(
         else np.ones(n, dtype=np.float64)
     )
 
+    # --- Build prior vector aligned to design-matrix columns ---
+    # Column layout: 2*i = offensive column (prior["off"]), 2*i+1 = defensive
+    # column (prior["def"]). Both use the same sign as O_RAPM / D_RAPM.
+    # Players absent from prior keep their prior at zero (standard ridge behavior).
+    prior_vector = np.zeros(n_cols, dtype=np.float64)
+    if prior is not None:
+        for pid, idx in pid_to_idx.items():
+            if pid in prior.index:
+                prior_vector[idx * 2] = float(prior.loc[pid, "off"])
+                prior_vector[idx * 2 + 1] = float(prior.loc[pid, "def"])
+
+    # Shift target so ridge shrinks gamma = beta - prior_vector toward zero,
+    # which is equivalent to shrinking beta toward prior_vector.
+    # y' = y - X @ prior_vector is a no-op when prior_vector is all zeros.
+    y_fit = y - X.dot(prior_vector)
+
     # --- Ridge regression with cross-validated alpha ---
     # The grid is deliberately bounded to [10, 1000]. A single possession is
     # almost unpredictable, so cross-validation that is free to pick a very large
@@ -569,9 +605,10 @@ def rapm(
         alphas = np.logspace(1, 3, 17)  # 10 .. 1000
 
     model = RidgeCV(alphas=alphas, cv=cv, fit_intercept=True)
-    model.fit(X, y, sample_weight=weights)
+    model.fit(X, y_fit, sample_weight=weights)
 
-    coefs = model.coef_  # shape (n_cols,)
+    # Recover beta = gamma + prior_vector (no-op when prior_vector is all zeros)
+    coefs = model.coef_ + prior_vector  # shape (n_cols,)
 
     # Even indices = offensive columns; odd = defensive columns.
     # D_RAPM = the defensive coefficient directly: because X uses -1 for

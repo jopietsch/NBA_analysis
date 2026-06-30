@@ -40,6 +40,7 @@ def main() -> None:
         plot_all_systems_distributions,
         plot_powerlaw_fits,
         plot_powerlaw_small_multiples,
+        plot_distribution_shape,
         plot_top20_table,
         plot_playoff_shift,
         plot_retrodiction,
@@ -77,6 +78,7 @@ def main() -> None:
     plot_ordinal_vs_value_gap(qual)
     plot_powerlaw_fits(qual, present)
     plot_powerlaw_small_multiples(qual, present)
+    plot_distribution_shape(qual)
 
     # Compute uber ratings first so they can be included in the Gini and
     # distribution charts (highlighted, since they are the combined ratings).

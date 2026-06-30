@@ -84,6 +84,22 @@ def test_plot_powerlaw_small_multiples(tmp_path):
     assert os.path.exists(path)
 
 
+def test_plot_distribution_shape(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    df = _mini_ratings(n=60, tmp_path=tmp_path)
+    df["RAPM"] = np.random.default_rng(7).normal(0, 3, len(df))
+    path = plots.plot_distribution_shape(df)
+    assert os.path.exists(path)
+
+
+def test_plot_distribution_shape_missing_rate_system(tmp_path):
+    # No RAPM column: the rate panel falls back to a "no data" message, no raise.
+    plots.OUTPUT_DIR = str(tmp_path)
+    df = _mini_ratings(n=30, tmp_path=tmp_path)
+    path = plots.plot_distribution_shape(df)
+    assert os.path.exists(path)
+
+
 def test_plot_ordinal_vs_value_gap(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     df = _mini_ratings(n=30, tmp_path=tmp_path)

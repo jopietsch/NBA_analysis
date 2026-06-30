@@ -8,7 +8,7 @@ Season: 2024–25
 Season: 2024–25
 Total players in unified table: 569
 Qualified players (>= 500 min): 375
-Rating systems present: 11
+Rating systems present: 14
   Game Score: 375 players with data
   PER: 375 players with data
   Win Shares: 375 players with data
@@ -20,6 +20,9 @@ Rating systems present: 11
   RAPM: 375 players with data
   O-RAPM: 375 players with data
   D-RAPM: 375 players with data
+  RAPM (multi-yr+prior): 375 players with data
+  O-RAPM (MY): 375 players with data
+  D-RAPM (MY): 375 players with data
   RAPM players with computed values: 554
 
 ─── RAPM — COMPUTED SINGLE-SEASON (NO PRIOR) ────────────────────
@@ -29,7 +32,16 @@ Rating systems present: 11
   4. Brandon Clarke: RAPM +9.32 per 100
   5. Jabari Smith Jr.: RAPM +9.14 per 100
   Mean rank agreement with box-score systems: 0.22
-  RAPM #1 (Isaiah Joe) consensus rank: 178
+  RAPM #1 (Isaiah Joe) consensus rank: 201
+
+─── RAPM_MY — PRIOR-INFORMED, MULTI-YEAR ────────────────────────
+  1. Shai Gilgeous-Alexander: RAPM_MY +17.24 per 100
+  2. Isaiah Joe: RAPM_MY +15.71 per 100
+  3. Giannis Antetokounmpo: RAPM_MY +15.44 per 100
+  4. Lonzo Ball: RAPM_MY +13.84 per 100
+  5. Ivica Zubac: RAPM_MY +12.99 per 100
+  Mean rank agreement with box-score systems: 0.37
+  Rank agreement with the consensus: 0.58
 
 ─── BASIC DISTRIBUTION STATS ────────────────────────────────────
 
@@ -37,56 +49,85 @@ Game Score (n=375):
   Mean: 9.45  Median: 8.18  Std: 4.89
   Min: 2.15  Max: 30.11
   Gini: 0.283  Top-5% share: 11.5%
+  Skew: +1.00  Excess kurtosis: +0.76  Below zero: 0%
 
 PER (n=375):
   Mean: 14.78  Median: 14.28  Std: 4.25
   Min: 4.63  Max: 32.33
   Gini: 0.159  Top-5% share: 8.5%
+  Skew: +0.73  Excess kurtosis: +1.01  Below zero: 0%
 
 Win Shares (n=375):
   Mean: 3.30  Median: 2.79  Std: 2.28
   Min: 0.02  Max: 14.91
   Gini: 0.363  Top-5% share: 14.8%
+  Skew: +1.45  Excess kurtosis: +2.70  Below zero: 0%
 
 WS/48 (n=375):
   Mean: 0.11  Median: 0.09  Std: 0.05
   Min: 0.00  Max: 0.28
   Gini: 0.265  Top-5% share: 11.5%
+  Skew: +0.90  Excess kurtosis: +0.72  Below zero: 0%
 
 BPM (n=375):
   Mean: -1.51  Median: -2.19  Std: 9.83
   Min: -24.29  Max: 27.48
   Gini: 0.767  Top-5% share: 32.2%
+  Skew: +0.34  Excess kurtosis: -0.06  Below zero: 58%
 
 OBPM (n=375):
   Mean: -7.59  Median: -10.15  Std: 9.78
   Min: -22.71  Max: 26.18
   Gini: 0.881  Top-5% share: 52.7%
+  Skew: +1.02  Excess kurtosis: +0.66  Below zero: 79%
 
 DBPM (n=375):
   Mean: 6.08  Median: 4.44  Std: 8.96
   Min: -8.11  Max: 45.81
   Gini: 0.599  Top-5% share: 23.0%
+  Skew: +1.29  Excess kurtosis: +2.18  Below zero: 28%
 
 VORP (n=375):
   Mean: 17.50  Median: -1.41  Std: 68.09
   Min: -95.85  Max: 316.67
   Gini: 0.749  Top-5% share: 31.9%
+  Skew: +1.46  Excess kurtosis: +2.78  Below zero: 51%
 
 RAPM (n=375):
   Mean: 0.08  Median: -0.16  Std: 4.08
   Min: -11.62  Max: 13.06
   Gini: 0.711  Top-5% share: 25.4%
+  Skew: +0.02  Excess kurtosis: -0.08  Below zero: 51%
 
 O-RAPM (n=375):
   Mean: 0.10  Median: 0.04  Std: 3.07
   Min: -8.51  Max: 8.95
   Gini: 0.713  Top-5% share: 27.0%
+  Skew: +0.23  Excess kurtosis: -0.17  Below zero: 49%
 
 D-RAPM (n=375):
   Mean: -0.02  Median: 0.12  Std: 2.89
   Min: -10.92  Max: 7.34
   Gini: 0.695  Top-5% share: 24.4%
+  Skew: -0.28  Excess kurtosis: +0.33  Below zero: 49%
+
+RAPM (multi-yr+prior) (n=375):
+  Mean: -2.99  Median: -2.80  Std: 7.56
+  Min: -26.69  Max: 17.24
+  Gini: 0.812  Top-5% share: 36.4%
+  Skew: -0.11  Excess kurtosis: +0.19  Below zero: 68%
+
+O-RAPM (MY) (n=375):
+  Mean: -9.17  Median: -9.53  Std: 5.81
+  Min: -23.58  Max: 21.01
+  Gini: 0.971  Top-5% share: 96.4%
+  Skew: +0.53  Excess kurtosis: +2.06  Below zero: 93%
+
+D-RAPM (MY) (n=375):
+  Mean: 6.18  Median: 6.05  Std: 5.93
+  Min: -15.79  Max: 25.62
+  Gini: 0.442  Top-5% share: 14.5%
+  Skew: +0.03  Excess kurtosis: +0.59  Below zero: 14%
 
 ─── POWER-LAW FIT (VALUE VS RANK, LOG-LOG) ──────────────────────
 A system's top-50 value-vs-rank curve is a power law when the
@@ -125,8 +166,17 @@ O-RAPM (n=50 positive ranks):
 D-RAPM (n=50 positive ranks):
   exponent alpha=0.24  R^2=0.959  -> power law
 
-Power-law systems (R^2 >= 0.95): Game Score, PER, Win Shares, DBPM, VORP, D-RAPM
-Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM
+RAPM (multi-yr+prior) (n=50 positive ranks):
+  exponent alpha=0.32  R^2=0.867  -> not a power law (bends)
+
+O-RAPM (MY) (n=26 positive ranks):
+  exponent alpha=1.40  R^2=0.767  -> not a power law (bends)
+
+D-RAPM (MY) (n=50 positive ranks):
+  exponent alpha=0.20  R^2=0.976  -> power law
+
+Power-law systems (R^2 >= 0.95): Game Score, PER, Win Shares, DBPM, VORP, D-RAPM, D-RAPM (MY)
+Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM, RAPM (multi-yr+prior), O-RAPM (MY)
 
 ─── RANK AGREEMENT (SPEARMAN CORRELATIONS) ──────────────────────
   Game Score vs PER: r=0.831
@@ -139,6 +189,9 @@ Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM
   Game Score vs RAPM: r=0.189
   Game Score vs O-RAPM: r=0.190
   Game Score vs D-RAPM: r=0.062
+  Game Score vs RAPM (multi-yr+prior): r=0.262
+  Game Score vs O-RAPM (MY): r=0.389
+  Game Score vs D-RAPM (MY): r=-0.035
   PER vs Win Shares: r=0.759
   PER vs WS/48: r=0.611
   PER vs BPM: r=0.489
@@ -148,6 +201,9 @@ Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM
   PER vs RAPM: r=0.225
   PER vs O-RAPM: r=0.199
   PER vs D-RAPM: r=0.091
+  PER vs RAPM (multi-yr+prior): r=0.343
+  PER vs O-RAPM (MY): r=0.375
+  PER vs D-RAPM (MY): r=0.062
   Win Shares vs WS/48: r=0.695
   Win Shares vs BPM: r=0.640
   Win Shares vs OBPM: r=0.761
@@ -156,6 +212,9 @@ Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM
   Win Shares vs RAPM: r=0.279
   Win Shares vs O-RAPM: r=0.244
   Win Shares vs D-RAPM: r=0.146
+  Win Shares vs RAPM (multi-yr+prior): r=0.399
+  Win Shares vs O-RAPM (MY): r=0.351
+  Win Shares vs D-RAPM (MY): r=0.172
   WS/48 vs BPM: r=0.371
   WS/48 vs OBPM: r=0.200
   WS/48 vs DBPM: r=0.183
@@ -163,27 +222,54 @@ Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM
   WS/48 vs RAPM: r=0.233
   WS/48 vs O-RAPM: r=0.144
   WS/48 vs D-RAPM: r=0.181
+  WS/48 vs RAPM (multi-yr+prior): r=0.393
+  WS/48 vs O-RAPM (MY): r=0.169
+  WS/48 vs D-RAPM (MY): r=0.322
   BPM vs OBPM: r=0.560
   BPM vs DBPM: r=0.347
   BPM vs VORP: r=0.972
   BPM vs RAPM: r=0.200
   BPM vs O-RAPM: r=0.166
   BPM vs D-RAPM: r=0.119
+  BPM vs RAPM (multi-yr+prior): r=0.406
+  BPM vs O-RAPM (MY): r=0.191
+  BPM vs D-RAPM (MY): r=0.332
   OBPM vs DBPM: r=-0.464
   OBPM vs VORP: r=0.572
   OBPM vs RAPM: r=0.175
   OBPM vs O-RAPM: r=0.214
   OBPM vs D-RAPM: r=0.024
+  OBPM vs RAPM (multi-yr+prior): r=0.212
+  OBPM vs O-RAPM (MY): r=0.421
+  OBPM vs D-RAPM (MY): r=-0.122
   DBPM vs VORP: r=0.308
   DBPM vs RAPM: r=0.059
   DBPM vs O-RAPM: r=-0.039
   DBPM vs D-RAPM: r=0.132
+  DBPM vs RAPM (multi-yr+prior): r=0.207
+  DBPM vs O-RAPM (MY): r=-0.266
+  DBPM vs D-RAPM (MY): r=0.513
   VORP vs RAPM: r=0.205
   VORP vs O-RAPM: r=0.172
   VORP vs D-RAPM: r=0.113
+  VORP vs RAPM (multi-yr+prior): r=0.391
+  VORP vs O-RAPM (MY): r=0.201
+  VORP vs D-RAPM (MY): r=0.303
   RAPM vs O-RAPM: r=0.695
   RAPM vs D-RAPM: r=0.636
+  RAPM vs RAPM (multi-yr+prior): r=0.762
+  RAPM vs O-RAPM (MY): r=0.541
+  RAPM vs D-RAPM (MY): r=0.437
   O-RAPM vs D-RAPM: r=-0.062
+  O-RAPM vs RAPM (multi-yr+prior): r=0.546
+  O-RAPM vs O-RAPM (MY): r=0.779
+  O-RAPM vs D-RAPM (MY): r=-0.039
+  D-RAPM vs RAPM (multi-yr+prior): r=0.479
+  D-RAPM vs O-RAPM (MY): r=-0.057
+  D-RAPM vs D-RAPM (MY): r=0.687
+  RAPM (multi-yr+prior) vs O-RAPM (MY): r=0.603
+  RAPM (multi-yr+prior) vs D-RAPM (MY): r=0.644
+  O-RAPM (MY) vs D-RAPM (MY): r=-0.151
 
 ─── WHAT EACH SYSTEM UNIQUELY CAPTURES ──────────────────────────
   BPM: unique R² = 1.000
@@ -192,79 +278,82 @@ Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM
   RAPM: unique R² = 1.000
   O-RAPM: unique R² = 1.000
   D-RAPM: unique R² = 1.000
+  RAPM (multi-yr+prior): unique R² = 1.000
+  O-RAPM (MY): unique R² = 1.000
+  D-RAPM (MY): unique R² = 1.000
   PER: unique R² = 0.893
-  Game Score: unique R² = 0.888
-  VORP: unique R² = 0.872
-  Win Shares: unique R² = 0.867
-  WS/48: unique R² = 0.838
+  Game Score: unique R² = 0.890
+  VORP: unique R² = 0.873
+  Win Shares: unique R² = 0.868
+  WS/48: unique R² = 0.839
 
 ─── CONSENSUS RATING — TOP 20 ───────────────────────────────────
-   1. Nikola Jokić                    Consensus z = 2.78
-   2. Shai Gilgeous-Alexander         Consensus z = 2.55
-   3. Giannis Antetokounmpo           Consensus z = 2.25
-   4. Trae Young                      Consensus z = 1.62
-   5. Tyrese Haliburton               Consensus z = 1.61
-   6. James Harden                    Consensus z = 1.60
-   7. Ivica Zubac                     Consensus z = 1.52
-   8. LeBron James                    Consensus z = 1.51
-   9. Jayson Tatum                    Consensus z = 1.43
-  10. Domantas Sabonis                Consensus z = 1.39
-  11. Rudy Gobert                     Consensus z = 1.36
-  12. Jarrett Allen                   Consensus z = 1.36
-  13. Amen Thompson                   Consensus z = 1.32
-  14. Karl-Anthony Towns              Consensus z = 1.32
-  15. Dyson Daniels                   Consensus z = 1.28
-  16. Alperen Sengun                  Consensus z = 1.28
-  17. Jalen Duren                     Consensus z = 1.26
-  18. Stephen Curry                   Consensus z = 1.24
-  19. Josh Hart                       Consensus z = 1.22
-  20. Devin Booker                    Consensus z = 1.21
+   1. Nikola Jokić                    Consensus z = 2.92
+   2. Shai Gilgeous-Alexander         Consensus z = 2.72
+   3. Giannis Antetokounmpo           Consensus z = 2.31
+   4. Tyrese Haliburton               Consensus z = 1.65
+   5. James Harden                    Consensus z = 1.62
+   6. Ivica Zubac                     Consensus z = 1.54
+   7. LeBron James                    Consensus z = 1.53
+   8. Trae Young                      Consensus z = 1.49
+   9. Jarrett Allen                   Consensus z = 1.42
+  10. Dyson Daniels                   Consensus z = 1.40
+  11. Domantas Sabonis                Consensus z = 1.39
+  12. Jayson Tatum                    Consensus z = 1.38
+  13. Karl-Anthony Towns              Consensus z = 1.36
+  14. Rudy Gobert                     Consensus z = 1.34
+  15. Amen Thompson                   Consensus z = 1.34
+  16. Devin Booker                    Consensus z = 1.33
+  17. Alperen Sengun                  Consensus z = 1.29
+  18. Anthony Edwards                 Consensus z = 1.29
+  19. Jalen Duren                     Consensus z = 1.28
+  20. Walker Kessler                  Consensus z = 1.27
 
 ─── WINS-PREDICTIVE RATING — TOP 20 ─────────────────────────────
-   1. Shai Gilgeous-Alexander         Wins-predictive z = 3.71
-   2. Giannis Antetokounmpo           Wins-predictive z = 3.69
-   3. Nikola Jokić                    Wins-predictive z = 3.22
-   4. Jayson Tatum                    Wins-predictive z = 2.42
-   5. Ivica Zubac                     Wins-predictive z = 2.27
-   6. LeBron James                    Wins-predictive z = 2.26
-   7. Victor Wembanyama               Wins-predictive z = 2.19
-   8. Luka Dončić                     Wins-predictive z = 2.14
-   9. Stephen Curry                   Wins-predictive z = 2.10
-  10. Jarrett Allen                   Wins-predictive z = 1.98
-  11. Nikola Vučević                  Wins-predictive z = 1.94
-  12. Evan Mobley                     Wins-predictive z = 1.94
-  13. Anthony Davis                   Wins-predictive z = 1.87
-  14. Amen Thompson                   Wins-predictive z = 1.83
-  15. Trae Young                      Wins-predictive z = 1.82
-  16. Rudy Gobert                     Wins-predictive z = 1.82
-  17. Tyrese Haliburton               Wins-predictive z = 1.80
-  18. Karl-Anthony Towns              Wins-predictive z = 1.74
-  19. Franz Wagner                    Wins-predictive z = 1.72
-  20. Jaren Jackson Jr.               Wins-predictive z = 1.65
+   1. Giannis Antetokounmpo           Wins-predictive z = 3.72
+   2. Shai Gilgeous-Alexander         Wins-predictive z = 3.45
+   3. Nikola Jokić                    Wins-predictive z = 3.24
+   4. Victor Wembanyama               Wins-predictive z = 2.42
+   5. Ivica Zubac                     Wins-predictive z = 2.37
+   6. LeBron James                    Wins-predictive z = 2.28
+   7. Jayson Tatum                    Wins-predictive z = 2.26
+   8. Evan Mobley                     Wins-predictive z = 2.18
+   9. Jarrett Allen                   Wins-predictive z = 2.02
+  10. Luka Dončić                     Wins-predictive z = 1.99
+  11. Amen Thompson                   Wins-predictive z = 1.92
+  12. Rudy Gobert                     Wins-predictive z = 1.89
+  13. Anthony Davis                   Wins-predictive z = 1.86
+  14. Nikola Vučević                  Wins-predictive z = 1.85
+  15. Tyrese Haliburton               Wins-predictive z = 1.84
+  16. Stephen Curry                   Wins-predictive z = 1.83
+  17. Franz Wagner                    Wins-predictive z = 1.73
+  18. Karl-Anthony Towns              Wins-predictive z = 1.72
+  19. Jaren Jackson Jr.               Wins-predictive z = 1.70
+  20. Dereck Lively II                Wins-predictive z = 1.68
 
 ─── COMPARISON: CONSENSUS vs. WINS-PREDICTIVE ───────────────────
-  Spearman correlation between consensus and wins-predictive: 0.938 (p=0.000)
+  Spearman correlation between consensus and wins-predictive: 0.925 (p=0.000)
   Players rated much higher by wins-predictive than consensus:
-    Giannis Antetokounmpo           diff = +1.45
-    Victor Wembanyama               diff = +1.25
-    Shai Gilgeous-Alexander         diff = +1.15
-    Jayson Tatum                    diff = +0.99
-    Luka Dončić                     diff = +0.97
+    Giannis Antetokounmpo           diff = +1.41
+    Victor Wembanyama               diff = +1.39
+    Isaiah Joe                      diff = +0.97
+    Evan Mobley                     diff = +0.91
+    Brandon Clarke                  diff = +0.90
   Players rated much lower by wins-predictive than consensus:
-    Dillon Jones                    diff = -1.17
-    KJ Martin                       diff = -1.16
-    Ben Sheppard                    diff = -0.98
-    Craig Porter Jr.                diff = -0.95
-    Gabe Vincent                    diff = -0.94
+    Dillon Jones                    diff = -1.23
+    KJ Martin                       diff = -1.14
+    Ben Sheppard                    diff = -1.04
+    Gary Trent Jr.                  diff = -0.98
+    Craig Porter Jr.                diff = -0.97
 
 ─── UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS) ─
 Gini clips negatives to zero, so it inflates 0-centered metrics (the uber
 ratings and the BPM family). The power-law exponent alpha does not depend on
 where zero sits, so it is the fair cross-system concentration read.
 
-Consensus: Gini=0.754 (inflated), top-5% share=30.0%, alpha=0.31
+Consensus: Gini=0.756 (inflated), top-5% share=30.0%, alpha=0.31
 
-Wins-Predictive: Gini=0.736 (inflated), top-5% share=29.0%, alpha=0.32
+Wins-Predictive: Gini=0.732 (inflated), top-5% share=28.7%, alpha=0.32
 
 ─── POWER-LAW / TAIL ANALYSIS ───────────────────────────────────
 
@@ -283,76 +372,76 @@ Rate metrics:
 ─── WHO EACH SYSTEM LOVES vs. CONSENSUS ─────────────────────────
 
 Game Score loves (vs. consensus):
-  +1.96  Joel Embiid
-  +1.83  Cam Thomas
-  +1.76  Brandon Ingram
+  +1.92  Joel Embiid
+  +1.88  Cam Thomas
+  +1.72  Brandon Ingram
 Game Score discounts (vs. consensus):
-  -1.97  Dwight Powell
-  -1.67  John Konchar
-  -1.34  Kris Dunn
+  -2.07  Dwight Powell
+  -1.70  John Konchar
+  -1.37  Jaylen Clark
 
 PER loves (vs. consensus):
-  +1.90  Zion Williamson
-  +1.60  Giannis Antetokounmpo
-  +1.56  Anthony Davis
+  +1.97  Zion Williamson
+  +1.54  Giannis Antetokounmpo
+  +1.53  Anthony Davis
 PER discounts (vs. consensus):
-  -1.66  Cam Reddish
-  -1.41  Delon Wright
-  -1.39  John Konchar
+  -1.70  Cam Reddish
+  -1.50  Delon Wright
+  -1.48  Gary Harris
 
 Win Shares loves (vs. consensus):
   +2.66  Domantas Sabonis
-  +2.31  Nikola Jokić
-  +1.94  Ivica Zubac
+  +2.18  Nikola Jokić
+  +1.91  Ivica Zubac
 Win Shares discounts (vs. consensus):
-  -1.31  John Konchar
-  -1.15  Dwight Powell
-  -1.11  Victor Wembanyama
+  -1.34  John Konchar
+  -1.25  Dwight Powell
+  -1.20  Victor Wembanyama
 
 WS/48 loves (vs. consensus):
   +2.99  Steven Adams
-  +2.56  Day'Ron Sharpe
-  +2.46  Richaun Holmes
+  +2.49  Day'Ron Sharpe
+  +2.40  Richaun Holmes
 WS/48 discounts (vs. consensus):
-  -1.72  Anthony Edwards
+  -1.81  Anthony Edwards
   -1.57  Jaren Jackson Jr.
-  -1.45  Jayson Tatum
+  -1.51  Dyson Daniels
 
 BPM loves (vs. consensus):
-  +2.41  Cam Reddish
-  +2.27  John Konchar
-  +2.19  Dwight Powell
+  +2.37  Cam Reddish
+  +2.24  John Konchar
+  +2.09  Dwight Powell
 BPM discounts (vs. consensus):
-  -1.44  Joel Embiid
-  -1.40  Malcolm Brogdon
+  -1.48  Joel Embiid
+  -1.42  Malcolm Brogdon
   -1.25  Immanuel Quickley
 
 OBPM loves (vs. consensus):
-  +2.05  Anthony Edwards
-  +1.89  Jalen Green
-  +1.71  Devin Booker
+  +1.96  Anthony Edwards
+  +1.83  Jalen Green
+  +1.59  Devin Booker
 OBPM discounts (vs. consensus):
-  -1.77  John Konchar
+  -1.80  John Konchar
+  -1.44  Cam Reddish
   -1.41  Alex Caruso
-  -1.39  Cam Reddish
 
 DBPM loves (vs. consensus):
-  +4.32  Cam Reddish
-  +3.96  John Konchar
-  +2.98  Zeke Nnaji
+  +4.28  Cam Reddish
+  +3.93  John Konchar
+  +2.97  Zeke Nnaji
 DBPM discounts (vs. consensus):
-  -3.32  Giannis Antetokounmpo
-  -3.31  Nikola Jokić
-  -3.11  Shai Gilgeous-Alexander
+  -3.44  Nikola Jokić
+  -3.38  Giannis Antetokounmpo
+  -3.27  Shai Gilgeous-Alexander
 
 VORP loves (vs. consensus):
-  +3.09  Dyson Daniels
-  +2.66  Anthony Edwards
-  +2.36  James Harden
+  +2.98  Dyson Daniels
+  +2.57  Anthony Edwards
+  +2.33  James Harden
 VORP discounts (vs. consensus):
-  -1.13  Zion Williamson
-  -1.06  Jabari Smith Jr.
-  -1.03  Mark Williams
+  -1.10  Aaron Gordon
+  -1.09  Mark Williams
+  -1.06  Zion Williamson
 
 ─── RETRODICTION: WHICH RATING REBUILDS TEAM RESULTS ────────────
 Each system's player ratings are minutes-weighted to the team level, then
@@ -364,11 +453,14 @@ differential, so a high score is partly mechanical. Systems marked
 
   [outcome-blind] PER            R²=0.755  CV R²=0.723
   [team-fit]     BPM            R²=0.669  CV R²=0.623
+  [team-fit]     RAPM (multi-yr+prior) R²=0.650  CV R²=0.578
   [team-fit]     VORP           R²=0.610  CV R²=0.551
   [team-fit]     RAPM           R²=0.546  CV R²=0.482
   [team-fit]     Win Shares     R²=0.530  CV R²=0.457
   [team-fit]     OBPM           R²=0.493  CV R²=0.427
   [outcome-blind] Game Score     R²=0.494  CV R²=0.394
+  [team-fit]     O-RAPM (MY)    R²=0.400  CV R²=0.308
+  [team-fit]     D-RAPM (MY)    R²=0.362  CV R²=0.290
   [team-fit]     WS/48          R²=0.325  CV R²=0.201
   [team-fit]     D-RAPM         R²=0.274  CV R²=0.188
   [team-fit]     DBPM           R²=0.260  CV R²=0.169
@@ -456,10 +548,12 @@ next season's rosters) is the honest read.
   [team-fit]     OBPM            0.294       0.346
   [outcome-blind] PER             0.641       0.267
   [team-fit]     WS/48           0.244       0.260
+  [team-fit]     RAPM (multi-yr+prior)  0.281       0.236
   [team-fit]     RAPM            0.339       0.169
   [team-fit]     DBPM            0.024       0.061
 
-Over these 12 pairs RAPM forecasts 8 of 9; the best forecaster is Game Score.
+Over these 12 pairs RAPM forecasts 9 of 10; the best forecaster is Game Score.
+RAPM_MY forecasts 8 of 10 (bare RAPM was 9).
 
 ─── PLAYER RATING STABILITY (YEAR OVER YEAR) ────────────────────
 A different lens: not how well a rating predicts team results, but how

@@ -176,3 +176,103 @@ def test_rapm_invalid_columns_raises():
     df = pd.DataFrame({"x": [1, 2], "points": [1.0, 0.0]})
     with pytest.raises(ValueError, match="off_player_ids"):
         rapm(df)
+
+
+# ── Prior-mean ridge tests ─────────────────────────────────────────────────────
+
+def test_rapm_prior_zero_matches_no_prior():
+    """A zero prior produces the same result as calling with no prior at all.
+
+    This is the regression guard: the prior code path must not change output
+    when prior_vector is all zeros.
+    """
+    df, _, _ = _simulate_possessions(n_players=20, n_possessions=1000, seed=11)
+
+    result_baseline = rapm(df, cv=3)
+
+    player_ids = list(result_baseline.index)
+    zero_prior = pd.DataFrame(
+        {"off": np.zeros(len(player_ids)), "def": np.zeros(len(player_ids))},
+        index=pd.Index(player_ids, name="player_id"),
+    )
+    result_zero_prior = rapm(df, cv=3, prior=zero_prior)
+
+    pd.testing.assert_frame_equal(result_baseline, result_zero_prior, atol=1e-10)
+
+
+def test_rapm_prior_sparse_player_shrinks_to_prior():
+    """A player with very few possessions ends up near his box-score prior.
+
+    The sparse player (player_id == sparse_id) appears in only 2 possessions.
+    With alpha=500 and 2 data points, regularization overwhelms the data and
+    the estimate stays close to the prior (off=+5, def=+3). A data-rich player
+    (player_id == 0, ~4000 appearances) given a deliberately wrong prior
+    (off=-10) still recovers closer to his true rating than to -10.
+    """
+    rng = np.random.default_rng(7)
+    n_reg = 20
+    n_poss = 8000
+    sparse_id = n_reg
+    regular_ids = list(range(n_reg))
+
+    o_true = rng.normal(0.0, 3.0, size=n_reg + 1)
+    d_true = rng.normal(0.0, 2.0, size=n_reg + 1)
+
+    off_lists, def_lists, pts_list = [], [], []
+
+    # Many possessions for the 20 regular players
+    for _ in range(n_poss):
+        chosen = rng.choice(regular_ids, size=10, replace=False)
+        off5 = chosen[:5].tolist()
+        def5 = chosen[5:].tolist()
+        true_pts = 100.0 + o_true[off5].sum() - d_true[def5].sum()
+        pts = (true_pts + rng.normal(0.0, 10.0)) / 100.0
+        off_lists.append(off5)
+        def_lists.append(def5)
+        pts_list.append(pts)
+
+    # Only 2 possessions for the sparse player (on offense each time)
+    for _ in range(2):
+        chosen = rng.choice(regular_ids, size=9, replace=False)
+        off5 = [sparse_id] + chosen[:4].tolist()
+        def5 = chosen[4:9].tolist()
+        true_pts = 100.0 + o_true[off5].sum() - d_true[def5].sum()
+        pts = (true_pts + rng.normal(0.0, 10.0)) / 100.0
+        off_lists.append(off5)
+        def_lists.append(def5)
+        pts_list.append(pts)
+
+    df = pd.DataFrame({
+        "off_player_ids": off_lists,
+        "def_player_ids": def_lists,
+        "points": pts_list,
+    })
+
+    # Sparse player prior: off=+5, def=+3 (distinctive signal to detect)
+    # Rich player (id=0) prior: deliberately wrong at -10 for both
+    prior = pd.DataFrame(
+        {"off": [5.0, -10.0], "def": [3.0, -10.0]},
+        index=pd.Index([sparse_id, 0], name="player_id"),
+    )
+
+    # Fixed alpha=500 so test is deterministic and shrinkage strength is known
+    result = rapm(df, alphas=[500.0], cv=2, prior=prior)
+
+    sparse_o = result.loc[sparse_id, "O_RAPM"]
+    sparse_d = result.loc[sparse_id, "D_RAPM"]
+    rich_o = result.loc[0, "O_RAPM"]
+    true_o_rich = o_true[0]
+
+    # Sparse player: 2 possessions vs. alpha=500 -> prior dominates
+    assert abs(sparse_o - 5.0) < 1.5, (
+        f"Sparse O_RAPM = {sparse_o:.3f}, expected near prior=5.0"
+    )
+    assert abs(sparse_d - 3.0) < 1.5, (
+        f"Sparse D_RAPM = {sparse_d:.3f}, expected near prior=3.0"
+    )
+
+    # Rich player: ~4000 appearances vs. alpha=500 -> data dominates wrong prior
+    assert abs(rich_o - true_o_rich) < abs(rich_o - (-10.0)), (
+        f"Rich player O_RAPM = {rich_o:.3f}, true = {true_o_rich:.3f}, "
+        f"wrong prior = -10. Data should dominate the prior."
+    )

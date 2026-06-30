@@ -17,7 +17,7 @@
   "cumulative_are_power_laws": {
     "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
     "ok": true,
-    "value": "WS/48, BPM, OBPM, RAPM, O-RAPM"
+    "value": "WS/48, BPM, OBPM, RAPM, O-RAPM, RAPM (multi-yr+prior), O-RAPM (MY)"
   },
   "cumulative_steeper_than_rate": {
     "claim": "cumulative VORP falls off more steeply than rate-metric PER",
@@ -79,6 +79,26 @@
     "ok": true,
     "value": "12 pairs"
   },
+  "rapm_less_skewed_than_vorp": {
+    "claim": "RAPM is far less skewed than the right-skewed accumulation metric VORP",
+    "ok": true,
+    "value": 1.442778675284059
+  },
+  "rapm_my_beats_bare_consensus": {
+    "claim": "RAPM_MY tracks the consensus better than bare RAPM",
+    "ok": true,
+    "value": "0.58 vs 0.37"
+  },
+  "rapm_my_forecasts_better_than_bare": {
+    "claim": "RAPM_MY forecasts next-season team results better than bare RAPM",
+    "ok": true,
+    "value": "0.236 vs 0.169"
+  },
+  "rapm_symmetric_not_powerlaw": {
+    "claim": "RAPM is a near-symmetric bell (skew near zero), not the heavy-tailed shape a power law needs",
+    "ok": true,
+    "value": 0.021737024761672222
+  },
   "stability_min_retention_beats_chance": {
     "claim": "even the lowest elite-tier retention is several times the chance level: every system's top tier is far stickier than random",
     "ok": true,
@@ -92,12 +112,12 @@
   "strong_consensus_wins_corr": {
     "claim": "the two ratings agree very closely (r > 0.90)",
     "ok": true,
-    "value": 0.9384762771646377
+    "value": 0.9250403913983388
   },
   "uber_concentration_between_rate_and_cumulative": {
     "claim": "by center-robust steepness the consensus rating sits between PER and VORP",
     "ok": true,
-    "value": 0.31353495551474514
+    "value": 0.3093676340627777
   },
   "vorp_more_concentrated_than_per": {
     "claim": "VORP top-5% share far exceeds PER",

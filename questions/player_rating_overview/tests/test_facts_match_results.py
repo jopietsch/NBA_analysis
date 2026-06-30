@@ -34,6 +34,10 @@ ALLOW_ABSENT: set[str] = {
     "cov.n_systems",
     "powerlaw.n_systems",
     "ipanel.n_systems",
+    # Derived single-digit ranks: printed as "N of M" in results.md, but the
+    # test drops bare one-digit candidates, so they cannot be matched directly.
+    "ipanel.RAPM.forecast_rank",
+    "ipanel.RAPM_MY.forecast_rank",
     "stability.chance_pct",
 }
 

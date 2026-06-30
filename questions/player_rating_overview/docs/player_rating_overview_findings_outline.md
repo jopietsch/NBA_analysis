@@ -9,7 +9,7 @@
 :::
 
 Internal outline. Cross-referenced to player_rating_overview_results.md.
-Technical shorthand fine here. Reflects the current 11-box-score-system pipeline
+Technical shorthand fine here. Reflects the current 14-box-score-system pipeline
 (human rankings removed; impact metrics surveyed but not recomputed).
 
 ---
@@ -19,7 +19,7 @@ Technical shorthand fine here. Reflects the current 11-box-score-system pipeline
 ### § 1. Introduction
 - Hook: ordinal rank compresses; the gap between #1 and #10 is not the gap between #10 and #20.
 - Thesis: two combined ratings answer two questions, what the systems agree on vs. which combination best predicts team wins.
-- Testbed: 2024-25; 11 box-score systems recomputed; impact metrics and human rankings surveyed but not included.
+- Testbed: 2024-25; 14 box-score systems recomputed; impact metrics and human rankings surveyed but not included.
 
 ### § 2. The landscape of player rating
 - Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.
@@ -29,7 +29,7 @@ Technical shorthand fine here. Reflects the current 11-box-score-system pipeline
 
 ### § 3. Do the systems agree?
 - Spearman matrix. Tight: PER-Game Score 0.831, BPM-VORP 0.972. Moderate: PER-WS 0.759, WS-WS/48 0.695. Loose: PER-BPM 0.489, Game Score-BPM 0.469.
-- Player-level divergence even where overall correlation is high: WS favors efficient bigs (Sabonis +2.66, Zubac +2.31 vs. consensus); PER favors high-usage scorers (Zion +1.90, Porziņģis +1.56).
+- Player-level divergence even where overall correlation is high: WS favors efficient bigs (Sabonis +2.66, Zubac +2.18 vs. consensus); PER favors high-usage scorers (Zion +1.97, Porziņģis +1.53).
 - Chart: rank-agreement heatmap.
 
 ### § 4. What the field has learned about evaluating metrics
@@ -38,13 +38,13 @@ Technical shorthand fine here. Reflects the current 11-box-score-system pipeline
 - Academic caveat: complex metrics do not reliably beat simple ones as inputs to downstream salary/wins models.
 
 ### § 5. What each system uniquely sees
-- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.888; VORP 0.872; WS 0.867; WS/48 0.838.
-- System-outliers chart: who each system rates above/below consensus (e.g. DBPM discounts the offensive stars: Jokić -3.32, Giannis -3.31, SGA -3.11).
+- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.
+- System-outliers chart: who each system rates above/below consensus (e.g. DBPM discounts the offensive stars: Jokić -3.44, Giannis -3.38, SGA -3.27).
 
 ### § 6. The two uber ratings
-- Consensus (average normalized score). Top 5: Jokić 2.78, SGA 2.55, Giannis 2.25, Harden 1.62, Young 1.61.
-- Wins-predictive (weighted by team-wins prediction). Top 5: Jokić 3.71, SGA 3.69, Giannis 3.22, Harden 2.42, Daniels 2.27.
-- Consensus vs. wins-predictive Spearman 0.938. Risers: SGA +1.45, Giannis +1.25, Gafford +1.15, Wembanyama +0.99, Caruso +0.97. Fallers: Micic -1.17, AJ Johnson -1.16, Cody Williams -0.98.
+- Consensus (average normalized score). Top 5: Jokić 2.92, SGA 2.72, Giannis 2.31, Harden 1.65, Young 1.62.
+- Wins-predictive (weighted by team-wins prediction). Top 5: Jokić 3.72, SGA 3.45, Giannis 3.24, Harden 2.42, Daniels 2.37.
+- Consensus vs. wins-predictive Spearman 0.925. Risers: SGA +1.41, Giannis +1.39, Gafford +0.97, Wembanyama +0.91, Caruso +0.90. Fallers: Micic -1.23, AJ Johnson -1.14, Cody Williams -1.04.
 - Illustration: Jokić tops both; SGA close second and the largest riser into wins-predictive.
 
 ### § 7. Stars matter more than rank implies (distribution section)
@@ -53,11 +53,11 @@ Technical shorthand fine here. Reflects the current 11-box-score-system pipeline
 - Point: cumulative metrics' high Gini is how much they disagree with ordinal rank.
 
 ### § 8. Who lands in the top 20
-- Top-20-by-system table across the 11 systems; rank-1-to-rank-20 gap as a concentration read.
+- Top-20-by-system table across the 14 systems; rank-1-to-rank-20 gap as a concentration read.
 
 ### § 9. A note on the recomputed formulas
 - PER cleanest (mean ~15, Jokić high 20s). WS/BPM/VORP are approximations; absolute values differ from BBR.
-- VORP inflation for high-steal defenders: VORP rates Daniels further above consensus than any player (+3.09); per-100 denominator uses player-possessions not team-possessions. Also Ellis, Wallace, Dunn.
+- VORP inflation for high-steal defenders: VORP rates Daniels further above consensus than any player (+2.98); per-100 denominator uses player-possessions not team-possessions. Also Ellis, Wallace, Dunn.
 
 ### § 10. Limitations
 - Single-season testbed; multi-season needed for stability.
@@ -74,10 +74,10 @@ Technical shorthand fine here. Reflects the current 11-box-score-system pipeline
 
 ## Key numbers (from results.md)
 
-- Players: 569 total, 375 qualified (>= 500 min). Systems present: 11.
+- Players: 569 total, 375 qualified (>= 500 min). Systems present: 14.
 - Correlations: PER-Game Score 0.831, PER-WS 0.759, WS-WS/48 0.695, PER-BPM 0.489, Game Score-BPM 0.469, BPM-VORP 0.972.
-- Consensus top 5: Jokić 2.78, SGA 2.55, Giannis 2.25, Harden 1.62, Young 1.61.
-- Wins-predictive top 5: Jokić 3.71, SGA 3.69, Giannis 3.22, Harden 2.42, Daniels 2.27.
-- Consensus vs. wins-predictive Spearman: 0.938. Top riser SGA +1.45; top faller Micic -1.17.
+- Consensus top 5: Jokić 2.92, SGA 2.72, Giannis 2.31, Harden 1.65, Young 1.62.
+- Wins-predictive top 5: Jokić 3.72, SGA 3.45, Giannis 3.24, Harden 2.42, Daniels 2.37.
+- Consensus vs. wins-predictive Spearman: 0.925. Top riser SGA +1.41; top faller Micic -1.23.
 - Concentration (top-5% share / Gini): PER 8.5% / 0.159, WS 14.8% / 0.363, VORP 31.9% / 0.749, BPM 32.2% / 0.767.
-- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.888; VORP 0.872; WS 0.867; WS/48 0.838.
+- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.

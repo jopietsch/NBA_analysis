@@ -585,3 +585,122 @@ def test_compute_rapm_no_pbp_returns_empty(monkeypatch, tmp_path):
     assert result.empty
     for col in ["player_id", "RAPM", "O_RAPM", "D_RAPM"]:
         assert col in result.columns
+
+
+# ── pool_possessions ──────────────────────────────────────────────────────────
+
+def _mini_possessions_poolable(n: int = 10, seed: int = 0) -> pd.DataFrame:
+    """Synthetic possession table with renamed columns (off1..5/def1..5/points).
+
+    This is the format _season_possessions emits — already renamed, ready to
+    pool.
+    """
+    rng = np.random.default_rng(seed)
+    off_ids = [101, 102, 103, 104, 105]
+    def_ids = [106, 107, 108, 109, 110]
+    records = []
+    for _ in range(n):
+        rec = {f"off{i + 1}": off_ids[i] for i in range(5)}
+        rec.update({f"def{i + 1}": def_ids[i] for i in range(5)})
+        rec["points"] = int(rng.choice([0, 2, 3], p=[0.6, 0.3, 0.1]))
+        records.append(rec)
+    return pd.DataFrame(records)
+
+
+def test_pool_possessions_three_seasons_schema_and_weights(monkeypatch):
+    """pool_possessions concatenates 3 seasons, attaches correct weights, right schema."""
+    import player_rating_overview_data as D
+
+    frames = {
+        2023: _mini_possessions_poolable(10, seed=0),
+        2024: _mini_possessions_poolable(10, seed=1),
+        2025: _mini_possessions_poolable(10, seed=2),
+    }
+    monkeypatch.setattr(D, "_season_possessions", lambda yr, *a, **k: frames.get(yr, pd.DataFrame(columns=D._POSS_COLS)))
+
+    result = D.pool_possessions(2025, n_seasons=3)
+
+    # Schema: off1..off5, def1..def5, points, weight
+    expected_cols = [f"off{i}" for i in range(1, 6)] + [f"def{i}" for i in range(1, 6)] + ["points", "weight"]
+    for col in expected_cols:
+        assert col in result.columns, f"Missing column: {col}"
+
+    # 3 seasons x 10 rows each = 30 rows
+    assert len(result) == 30
+
+    # Weights: 2023 -> 1/3, 2024 -> 2/3, 2025 -> 1.0
+    unique_weights = sorted(result["weight"].unique())
+    assert len(unique_weights) == 3
+    assert unique_weights[0] == pytest.approx(1 / 3)
+    assert unique_weights[1] == pytest.approx(2 / 3)
+    assert unique_weights[2] == pytest.approx(1.0)
+
+    # Each season contributes exactly 10 rows at its weight
+    assert np.isclose(result["weight"], 1 / 3).sum() == 10
+    assert np.isclose(result["weight"], 2 / 3).sum() == 10
+    assert np.isclose(result["weight"], 1.0).sum() == 10
+
+
+def test_pool_possessions_two_seasons_weights(monkeypatch):
+    """pool_possessions with n_seasons=2 uses weights 0.5 / 1.0."""
+    import player_rating_overview_data as D
+
+    frames = {
+        2024: _mini_possessions_poolable(8, seed=3),
+        2025: _mini_possessions_poolable(8, seed=4),
+    }
+    monkeypatch.setattr(D, "_season_possessions", lambda yr, *a, **k: frames.get(yr, pd.DataFrame(columns=D._POSS_COLS)))
+
+    result = D.pool_possessions(2025, n_seasons=2)
+
+    assert len(result) == 16
+    unique_weights = sorted(result["weight"].unique())
+    assert unique_weights[0] == pytest.approx(0.5)
+    assert unique_weights[1] == pytest.approx(1.0)
+
+
+def test_pool_possessions_fewer_than_two_seasons_returns_empty(monkeypatch):
+    """pool_possessions returns empty DataFrame when fewer than 2 seasons have PBP."""
+    import player_rating_overview_data as D
+
+    # Only 2025 has data; 2023 and 2024 return empty
+    frames = {2025: _mini_possessions_poolable(10, seed=5)}
+    monkeypatch.setattr(D, "_season_possessions", lambda yr, *a, **k: frames.get(yr, pd.DataFrame(columns=D._POSS_COLS)))
+
+    result = D.pool_possessions(2025, n_seasons=3)
+
+    assert result.empty
+    for col in [f"off{i}" for i in range(1, 6)] + [f"def{i}" for i in range(1, 6)] + ["points", "weight"]:
+        assert col in result.columns
+
+
+def test_pool_possessions_explicit_weights(monkeypatch):
+    """pool_possessions accepts explicit weights that override the defaults."""
+    import player_rating_overview_data as D
+
+    frames = {
+        2024: _mini_possessions_poolable(5, seed=6),
+        2025: _mini_possessions_poolable(5, seed=7),
+    }
+    monkeypatch.setattr(D, "_season_possessions", lambda yr, *a, **k: frames.get(yr, pd.DataFrame(columns=D._POSS_COLS)))
+
+    result = D.pool_possessions(2025, n_seasons=2, weights=[0.3, 0.9])
+
+    assert len(result) == 10
+    unique_weights = sorted(result["weight"].unique())
+    assert unique_weights[0] == pytest.approx(0.3)
+    assert unique_weights[1] == pytest.approx(0.9)
+
+
+def test_pool_possessions_wrong_weights_length_raises(monkeypatch):
+    """pool_possessions raises ValueError when explicit weights length mismatches."""
+    import player_rating_overview_data as D
+
+    frames = {
+        2024: _mini_possessions_poolable(5, seed=8),
+        2025: _mini_possessions_poolable(5, seed=9),
+    }
+    monkeypatch.setattr(D, "_season_possessions", lambda yr, *a, **k: frames.get(yr, pd.DataFrame(columns=D._POSS_COLS)))
+
+    with pytest.raises(ValueError, match="weights"):
+        D.pool_possessions(2025, n_seasons=2, weights=[0.5])

@@ -28,15 +28,17 @@ ALL_SYSTEMS = [
     "RAPTOR", "RAPTOR_WAR", "RAPTOR_O", "RAPTOR_D",
     "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
     "RAPM", "O_RAPM", "D_RAPM",
+    "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY",
 ]
 
-# Systems kept out of the consensus average. The RAPM offense/defense splits are
-# computed and shown in the correlation matrix and the offense/defense
-# breakdowns, but only the combined RAPM enters the consensus: counting all
-# three would give the RAPM family three votes and let one noisy single-season
-# split swing the headline order. (The BPM/RAPTOR splits predate this and are
-# left in the consensus to keep the rest of the report's numbers unchanged.)
-CONSENSUS_EXCLUDE = {"O_RAPM", "D_RAPM"}
+# Systems kept out of the consensus average. Two RAPM families are computed: the
+# bare single-season RAPM (noisy, kept for the demonstration) and the prior-
+# informed multi-year RAPM_MY (the headline impact metric). Only the combined
+# RAPM_MY enters the consensus. Bare RAPM and every offense/defense split are
+# excluded so the RAPM family gets a single, stabilized vote rather than several
+# noisy ones. (The BPM/RAPTOR splits predate this and stay in the consensus to
+# keep the rest of the report's numbers unchanged.)
+CONSENSUS_EXCLUDE = {"RAPM", "O_RAPM", "D_RAPM", "O_RAPM_MY", "D_RAPM_MY"}
 
 # Box-score systems recomputed for every season in the cache (2010-11 onward),
 # so the multi-season panel compares the same set across all season-pairs. The
@@ -55,7 +57,7 @@ PANEL_END_YEAR = 2026    # 2025-26
 # window, so RAPM is compared against the box scores on equal seasons rather
 # than against their full 30-season history. Only the combined RAPM is included
 # (not its offensive/defensive halves), matching the consensus treatment.
-RAPM_PANEL_SYSTEMS = PANEL_SYSTEMS + ["RAPM"]
+RAPM_PANEL_SYSTEMS = PANEL_SYSTEMS + ["RAPM", "RAPM_MY"]
 RAPM_PANEL_START_YEAR = 2014  # 2013-14, first season with cached play-by-play
 RAPM_PANEL_END_YEAR = 2026    # 2025-26
 
@@ -84,6 +86,9 @@ SYSTEM_LABELS = {
     "RAPM": "RAPM",
     "O_RAPM": "O-RAPM",
     "D_RAPM": "D-RAPM",
+    "RAPM_MY": "RAPM (multi-yr+prior)",
+    "O_RAPM_MY": "O-RAPM (MY)",
+    "D_RAPM_MY": "D-RAPM (MY)",
     "MVP_SHARE": "MVP Vote Share",
     "ALL_NBA_PTS": "All-NBA Points",
     "CONSENSUS": "Consensus",
@@ -219,6 +224,7 @@ OUTCOME_CALIBRATED = {
     "RAPTOR", "RAPTOR_O", "RAPTOR_D", "RAPTOR_WAR",
     "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
     "RAPM", "O_RAPM", "D_RAPM",
+    "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY",
 }
 
 
@@ -547,6 +553,48 @@ def run(end_year: int = 2025) -> None:
             FACTS.set("rapm.top1_consensus_rank", rapm1_consensus_rank, "{:d}",
                       note="consensus rank of the single-season RAPM #1 player")
 
+    # RAPM_MY detail — the prior-informed, multi-year version. Registers its top
+    # (should be recognizable stars, not single-season noise) and how much closer
+    # it sits to the box-score systems and the consensus than bare RAPM does.
+    if "RAPM_MY" in qual.columns and qual["RAPM_MY"].notna().sum() >= 20:
+        header("RAPM_MY — PRIOR-INFORMED, MULTI-YEAR")
+        rq = qual[qual["RAPM_MY"].notna()].copy()
+        top5 = rq.nlargest(5, "RAPM_MY")
+        for rank, (_, row) in enumerate(top5.iterrows(), 1):
+            print(f"  {rank}. {row['PLAYER_NAME']}: RAPM_MY {row['RAPM_MY']:+.2f} per 100")
+            FACTS.set(f"rapm_my.top.{rank}.name", str(row["PLAYER_NAME"]),
+                      note=f"RAPM_MY rank {rank} (qualified players)")
+        box = [b for b in ("GAME_SCORE", "PER", "WS", "WS48", "BPM", "VORP")
+               if b in rq.columns]
+        box_corrs = []
+        for b in box:
+            pair = rq[[b, "RAPM_MY"]].dropna()
+            if len(pair) > 10:
+                box_corrs.append(abs(pair[b].corr(pair["RAPM_MY"], method="spearman")))
+        my_box_corr = float(np.mean(box_corrs)) if box_corrs else float("nan")
+        print(f"  Mean rank agreement with box-score systems: {my_box_corr:.2f}")
+        FACTS.set("rapm_my.box_corr_mean", my_box_corr, "{:.2f}",
+                  note="mean abs rank corr of RAPM_MY with box-score systems")
+        # Correlation with the consensus, and how it compares to bare RAPM, is the
+        # face-validity check that the prior + pooling sharpened the metric.
+        cons = _build_consensus(qual, present)
+        cons_pair = qual.assign(_C=cons)[["RAPM_MY", "_C"]].dropna()
+        if len(cons_pair) > 10:
+            my_cons = abs(cons_pair["RAPM_MY"].corr(cons_pair["_C"], method="spearman"))
+            print(f"  Rank agreement with the consensus: {my_cons:.2f}")
+            FACTS.set("rapm_my.consensus_corr", float(my_cons), "{:.2f}",
+                      note="RAPM_MY rank agreement with the consensus rating")
+        bare_pair = qual.assign(_C=cons)[["RAPM", "_C"]].dropna() \
+            if "RAPM" in qual.columns else None
+        if bare_pair is not None and len(bare_pair) > 10:
+            bare_cons = abs(bare_pair["RAPM"].corr(bare_pair["_C"], method="spearman"))
+            FACTS.set("rapm.consensus_corr", float(bare_cons), "{:.2f}",
+                      note="bare single-season RAPM rank agreement with the consensus")
+            if len(cons_pair) > 10:
+                FACTS.guard("rapm_my_beats_bare_consensus", my_cons > bare_cons,
+                            "RAPM_MY tracks the consensus better than bare RAPM",
+                            f"{my_cons:.2f} vs {bare_cons:.2f}")
+
     # RAPM vs public snapshot comparison (no-ops when RAPM_PUBLIC is absent)
     if "RAPM" in df_full.columns and "RAPM_PUBLIC" in df_full.columns:
         header("RAPM: COMPUTED VS PUBLIC SNAPSHOT")
@@ -575,7 +623,16 @@ def run(end_year: int = 2025) -> None:
         print(f"  Mean: {vals.mean():.2f}  Median: {np.median(vals):.2f}  "
               f"Std: {vals.std():.2f}")
         print(f"  Min: {vals.min():.2f}  Max: {vals.max():.2f}")
+        _skew = float(stats.skew(vals))
+        _exkurt = float(stats.kurtosis(vals))  # excess kurtosis (0 = normal)
+        _frac_neg = float(np.mean(vals < 0))
         print(f"  Gini: {_gini(vals):.3f}  Top-5% share: {_top_share(vals)*100:.1f}%")
+        print(f"  Skew: {_skew:+.2f}  Excess kurtosis: {_exkurt:+.2f}  "
+              f"Below zero: {_frac_neg*100:.0f}%")
+        FACTS.set(f"dist.{s}.skew", _skew, "{:+.2f}", note=f"{SYSTEM_LABELS.get(s, s)} skewness")
+        FACTS.set(f"dist.{s}.exkurt", _exkurt, "{:+.2f}", note=f"{SYSTEM_LABELS.get(s, s)} excess kurtosis (0 = normal)")
+        FACTS.set(f"dist.{s}.frac_neg", _frac_neg * 100, "{:.0f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} share of qualified players below zero (percent)")
         FACTS.set(f"dist.{s}.mean", float(vals.mean()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} mean")
         FACTS.set(f"dist.{s}.median", float(np.median(vals)), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} median")
         FACTS.set(f"dist.{s}.std", float(vals.std()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} std dev")
@@ -595,6 +652,23 @@ def run(end_year: int = 2025) -> None:
         _per_top5 = _top_share(qual["PER"].dropna().values, 0.05)
         FACTS.guard("vorp_more_concentrated_than_per", _vorp_top5 > _per_top5,
                     "VORP top-5% share far exceeds PER", _vorp_top5)
+    # Guard: RAPM is a near-symmetric, roughly Gaussian rate, not a power law.
+    # A power law needs a heavy one-sided tail (large positive skew). RAPM's skew
+    # sits near zero; VORP, an accumulation metric, carries the right-skew tail.
+    if "RAPM" in qual.columns and qual["RAPM"].notna().sum() >= 20:
+        _rapm_vals = qual["RAPM"].dropna().values
+        _rapm_skew = float(stats.skew(_rapm_vals))
+        FACTS.guard("rapm_symmetric_not_powerlaw",
+                    abs(_rapm_skew) < 0.5,
+                    "RAPM is a near-symmetric bell (skew near zero), not the "
+                    "heavy-tailed shape a power law needs",
+                    _rapm_skew)
+        if "VORP" in qual.columns:
+            _vorp_skew = float(stats.skew(qual["VORP"].dropna().values))
+            FACTS.guard("rapm_less_skewed_than_vorp",
+                        abs(_rapm_skew) < abs(_vorp_skew),
+                        "RAPM is far less skewed than the right-skewed accumulation metric VORP",
+                        _vorp_skew - abs(_rapm_skew))
 
     header("POWER-LAW FIT (VALUE VS RANK, LOG-LOG)")
     print(f"A system's top-{50} value-vs-rank curve is a power law when the")
@@ -1048,6 +1122,21 @@ def run(end_year: int = 2025) -> None:
         FACTS.guard("rapm_in_impact_panel", i_n_pairs >= 5 and "RAPM" in if_means,
                     "RAPM is scored across the impact-era panel alongside the box scores",
                     f"{i_n_pairs} pairs")
+
+        # RAPM_MY in the panel: the prior + multi-year version should forecast
+        # next-season team results better than bare RAPM (the headline upgrade).
+        if "RAPM_MY" in if_means:
+            my_rank = [s for s, _ in ranked_if].index("RAPM_MY") + 1
+            FACTS.set("ipanel.RAPM_MY.forecast_rank", my_rank, "{:d}",
+                      note="RAPM_MY's rank among systems as a forecaster in the impact-era panel")
+            FACTS.set("ipanel.RAPM_MY.forecast_mean_pct", if_means["RAPM_MY"] * 100, "{:.0f}",
+                      note="RAPM_MY mean forecast R² (impact-era panel), percent (append % in prose)")
+            print(f"RAPM_MY forecasts {my_rank} of {n_ipanel_systems} "
+                  f"(bare RAPM was {rapm_forecast_rank}).")
+            FACTS.guard("rapm_my_forecasts_better_than_bare",
+                        if_means["RAPM_MY"] > if_means["RAPM"],
+                        "RAPM_MY forecasts next-season team results better than bare RAPM",
+                        f"{if_means['RAPM_MY']:.3f} vs {if_means['RAPM']:.3f}")
 
     header("PLAYER RATING STABILITY (YEAR OVER YEAR)")
     print("A different lens: not how well a rating predicts team results, but how")

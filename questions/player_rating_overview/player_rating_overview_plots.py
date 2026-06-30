@@ -48,6 +48,8 @@ SYSTEM_COLORS = {
     "EPM": GREEN,
     "LEBRON": GREEN,
     "ESPN_RPM": GREEN,
+    "RAPM": GREEN,
+    "RAPM_MY": GREEN,
     # Human / reputation
     "MVP_SHARE": RED,
     "ALL_NBA_PTS": RED,
@@ -79,6 +81,12 @@ SYSTEM_LABELS = {
     "EPM": "EPM",
     "LEBRON": "LEBRON",
     "ESPN_RPM": "ESPN RPM",
+    "RAPM": "RAPM",
+    "O_RAPM": "O-RAPM",
+    "D_RAPM": "D-RAPM",
+    "RAPM_MY": "RAPM+prior",
+    "O_RAPM_MY": "O-RAPM (MY)",
+    "D_RAPM_MY": "D-RAPM (MY)",
     "MVP_SHARE": "MVP Vote Share",
     "ALL_NBA_PTS": "All-NBA Points",
     "CONSENSUS": "Consensus Rating",
@@ -676,6 +684,65 @@ def plot_powerlaw_small_multiples(df: pd.DataFrame, systems: list[str],
     fig.supylabel("Value, log scale", fontsize=9, color=GRAY)
     fig.tight_layout()
     return save_chart("powerlaw_small_multiples.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart 8d: Distribution shape (rate metric vs accumulation metric) ─────────
+
+def plot_distribution_shape(df: pd.DataFrame, rate_sys: str = "RAPM",
+                            accum_sys: str = "VORP") -> str:
+    """Full-distribution histograms contrasting a rate metric with an accumulation metric.
+
+    The power-law charts (8b/8c) only look at the positive top-50 tail. This
+    panel shows the whole distribution, which is where the difference in shape
+    lives. RAPM (a per-100 rate) is a near-symmetric bell, so its top and bottom
+    are mirror images and there is no heavy tail for a power law to sit in. VORP
+    (a rate times minutes) is right-skewed: a long tail of high-value stars. That
+    skew, not the sign, is the power-law signature. A normal curve is overlaid on
+    each so "symmetric" vs "skewed" reads at a glance.
+    """
+    qual = df[df.get("QUALIFIED", pd.Series(True, index=df.index)) == True].copy()
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.4), facecolor=BG)
+
+    panels = [
+        (rate_sys, BLUE, "near-symmetric bell, no heavy tail"),
+        (accum_sys, GRAY, "right-skewed, a long tail of stars"),
+    ]
+    for ax, (sys, color, blurb) in zip(axes, panels):
+        ax.set_facecolor(PANEL)
+        if sys not in qual.columns or qual[sys].dropna().shape[0] < 5:
+            ax.text(0.5, 0.5, f"No {sys} data", ha="center", va="center",
+                    transform=ax.transAxes, color=GRAY)
+            continue
+        vals = qual[sys].dropna().values
+        mean, std = float(vals.mean()), float(vals.std())
+        ax.hist(vals, bins=30, density=True, color=color, alpha=0.55,
+                edgecolor="white", linewidth=0.4, zorder=2)
+        if std > 0:
+            xs = np.linspace(vals.min(), vals.max(), 200)
+            ax.plot(xs, stats.norm.pdf(xs, mean, std), color="#222",
+                    linewidth=1.3, alpha=0.8, zorder=3, label="normal curve")
+        skew = float(stats.skew(vals))
+        exkurt = float(stats.kurtosis(vals))
+        ax.set_title(f"{SYSTEM_LABELS.get(sys, sys)}: {blurb}", fontsize=10, color="#222")
+        ax.text(0.97, 0.95,
+                f"skew {skew:+.2f}\nexcess kurtosis {exkurt:+.2f}",
+                transform=ax.transAxes, ha="right", va="top", fontsize=8,
+                color=GRAY,
+                bbox=dict(boxstyle="round", fc="white", ec="#ddd", alpha=0.85))
+        ax.set_xlabel("Value", fontsize=9, color=GRAY)
+        ax.tick_params(labelsize=8, colors=GRAY)
+        ax.grid(axis="y", color="#e0dfd8", linewidth=0.6, zorder=0)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.legend(fontsize=7.5, frameon=False, loc="upper left")
+
+    axes[0].set_ylabel("Share of qualified players", fontsize=9, color=GRAY)
+    fig.suptitle(
+        "RAPM is symmetric, so it has no heavy tail to be a power law; VORP is right-skewed",
+        fontsize=11, color="#222", y=1.0)
+    fig.tight_layout()
+    return save_chart("distribution_shape.svg", OUTPUT_DIR, fig=fig)
 
 
 # ── Chart 9: Top-20 per system table ─────────────────────────────────────────

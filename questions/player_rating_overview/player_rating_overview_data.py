@@ -561,33 +561,48 @@ def fetch_all_nba(end_year: int) -> pd.DataFrame | None:
 
 # ── Computed RAPM ─────────────────────────────────────────────────────────────
 
-def compute_rapm(end_year: int,
-                 season_type: str = REGULAR_SEASON) -> pd.DataFrame:
-    """Compute RAPM from cached PBP data for one season.
+# Columns emitted by _season_possessions (renamed from off_player_i / def_player_i).
+_POSS_COLS = (
+    [f"off{i}" for i in range(1, 6)] +
+    [f"def{i}" for i in range(1, 6)] +
+    ["points"]
+)
 
-    Reads all cached pbp_v3_{game_id}.csv files for the season, reconstructs
-    possessions, and fits a ridge-regression RAPM. Results are cached at
-    cache/rapm_computed_{season}.csv.
 
-    Returns a DataFrame with columns player_id, RAPM, O_RAPM, D_RAPM.
-    Returns an empty DataFrame (with those columns) if no PBP is cached yet.
+def _season_possessions(end_year: int,
+                         season_type: str = REGULAR_SEASON) -> pd.DataFrame:
+    """Build a possession table for one season from cached PBP files.
+
+    Reads cached pbp_v3_{gid}.csv and boxscore_trad_{gid}.csv files, normalizes
+    game IDs to zero-padded strings so the starter join fires, calls
+    reconstruct_possessions, and renames off_player_i / def_player_i to off{i} /
+    def{i}. Returns a DataFrame with columns off1..off5, def1..def5, points.
+    Returns an empty DataFrame (same schema) when no PBP is cached.
     """
-    cache_path = _cache(f"rapm_computed_{season_str(end_year)}.csv")
-    empty = pd.DataFrame(columns=["player_id", "RAPM", "O_RAPM", "D_RAPM"])
+    empty = pd.DataFrame(columns=_POSS_COLS)
 
-    # Enumerate game IDs for this season from the cached game log.
+    # Reconstruction (read every game's PBP + reconcile lineups) is the expensive
+    # step and is shared across the single-season and pooled paths, so cache the
+    # finished possession table per season. Only the regular season is cached
+    # (the only season type the RAPM paths use).
+    poss_cache = _cache(f"possessions_{season_str(end_year)}.csv")
+    if season_type == REGULAR_SEASON and os.path.exists(poss_cache):
+        try:
+            cached = pd.read_csv(poss_cache)
+            return cached if not cached.empty else empty
+        except pd.errors.EmptyDataError:
+            return empty
+
     try:
         logs = fetch_game_logs(end_year, season_type)
     except Exception as e:
-        print(f"  RAPM: could not load game logs: {e} — skipping")
+        print(f"  possessions {season_str(end_year)}: could not load game logs: {e} — skipping")
         return empty
 
     game_ids = sorted(logs["GAME_ID"].dropna().unique())
     if not game_ids:
-        print(f"  RAPM: no game IDs found for {season_str(end_year)} — skipping")
         return empty
 
-    # Collect cached PBP files.
     pbp_dfs: list[pd.DataFrame] = []
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
@@ -602,7 +617,6 @@ def compute_rapm(end_year: int,
             pbp_dfs.append(df)
 
     if not pbp_dfs:
-        print(f"  RAPM: no PBP games cached for {season_str(end_year)} — skipping")
         return empty
 
     pbp_all = pd.concat(pbp_dfs, ignore_index=True)
@@ -635,20 +649,38 @@ def compute_rapm(end_year: int,
     if players_df is not None:
         players_df = players_df.copy()
         players_df["game_id"] = players_df["game_id"].apply(lambda g: f"{int(float(g)):010d}")
-        print(f"  RAPM: using box-score starters for {len(player_dfs)} games")
+        print(f"  possessions {season_str(end_year)}: using box-score starters for {len(player_dfs)} games")
 
-    # Reconstruct possessions; emits off_player_1..5 / def_player_1..5.
     poss = reconstruct_possessions(pbp_all, players_df=players_df)
     if poss.empty:
-        print(f"  RAPM: possession reconstruction returned empty for {season_str(end_year)}")
         return empty
 
-    # Bridge column-name mismatch: rapm() wants off1..off5 / def1..def5.
-    rename_map = {}
-    for i in range(1, 6):
-        rename_map[f"off_player_{i}"] = f"off{i}"
-        rename_map[f"def_player_{i}"] = f"def{i}"
+    rename_map = {f"off_player_{i}": f"off{i}" for i in range(1, 6)}
+    rename_map.update({f"def_player_{i}": f"def{i}" for i in range(1, 6)})
     poss = poss.rename(columns=rename_map)
+    if season_type == REGULAR_SEASON:
+        poss.to_csv(poss_cache, index=False)
+    return poss
+
+
+def compute_rapm(end_year: int,
+                 season_type: str = REGULAR_SEASON) -> pd.DataFrame:
+    """Compute RAPM from cached PBP data for one season.
+
+    Reads all cached pbp_v3_{game_id}.csv files for the season, reconstructs
+    possessions, and fits a ridge-regression RAPM. Results are cached at
+    cache/rapm_computed_{season}.csv.
+
+    Returns a DataFrame with columns player_id, RAPM, O_RAPM, D_RAPM.
+    Returns an empty DataFrame (with those columns) if no PBP is cached yet.
+    """
+    cache_path = _cache(f"rapm_computed_{season_str(end_year)}.csv")
+    empty = pd.DataFrame(columns=["player_id", "RAPM", "O_RAPM", "D_RAPM"])
+
+    poss = _season_possessions(end_year, season_type)
+    if poss.empty:
+        print(f"  RAPM: no possessions for {season_str(end_year)} — skipping")
+        return empty
 
     try:
         result = compute_rapm_fit(poss)
@@ -664,9 +696,109 @@ def compute_rapm(end_year: int,
 
     result["player_id"] = result["player_id"].astype(int)
     result.to_csv(cache_path, index=False)
-    n_games = len(pbp_dfs)
-    print(f"  RAPM computed from {n_games} games ({season_str(end_year)}) → {cache_path}")
+    print(f"  RAPM computed from {season_str(end_year)} → {cache_path}")
     return result[["player_id", "RAPM", "O_RAPM", "D_RAPM"]]
+
+
+def pool_possessions(end_year: int, n_seasons: int = 3,
+                     weights=None) -> pd.DataFrame:
+    """Assemble a possession table spanning multiple seasons with recency weights.
+
+    Builds possessions for the n_seasons most recent seasons ending at end_year
+    (inclusive), attaches a per-row recency weight, and concatenates. Ready to
+    feed the RAPM ridge regression with pooled lineup data.
+
+    Returns an empty DataFrame (columns off1..off5, def1..def5, points, weight)
+    when fewer than 2 seasons have cached PBP — RAPM needs at least 2 seasons.
+
+    Default weights: linear recency with the most recent season highest.
+      n_seasons=3: 1/3 (oldest) / 2/3 / 1.0 (current)
+      n_seasons=2: 1/2 (older) / 1.0 (current)
+    Each season's position in the window determines its weight regardless of
+    which other seasons have data.
+
+    weights: optional list that overrides the defaults. Must have the same length
+      as the number of seasons that actually have cached PBP, ordered oldest first.
+    """
+    empty = pd.DataFrame(columns=_POSS_COLS + ["weight"])
+
+    window = list(range(end_year - n_seasons + 1, end_year + 1))  # oldest → newest
+    default_w = [(pos + 1) / n_seasons for pos in range(n_seasons)]
+
+    present: list[tuple[pd.DataFrame, float]] = []
+    for pos, yr in enumerate(window):
+        poss = _season_possessions(yr)
+        if not poss.empty:
+            present.append((poss, default_w[pos]))
+
+    if len(present) < 2:
+        return empty
+
+    if weights is not None:
+        if len(weights) != len(present):
+            raise ValueError(
+                f"pool_possessions: weights has {len(weights)} entries but "
+                f"{len(present)} seasons have cached PBP"
+            )
+        present = [(df, w) for (df, _), w in zip(present, weights)]
+
+    parts = []
+    for df, w in present:
+        chunk = df.copy()
+        chunk["weight"] = w
+        parts.append(chunk)
+
+    return pd.concat(parts, ignore_index=True)
+
+
+def compute_rapm_my(end_year: int, prior_df: pd.DataFrame | None = None,
+                    n_seasons: int = 3) -> pd.DataFrame:
+    """Prior-informed, multi-year RAPM (RAPM_MY).
+
+    Pools up to n_seasons of possessions (pool_possessions) and fits the ridge
+    with a box-score prior: each player's offensive coefficient shrinks toward
+    OBPM and the defensive coefficient toward DBPM, so the combined estimate
+    shrinks toward BPM. Low-possession players collapse onto their box score;
+    heavy-minute players move toward what the pooled lineup data shows.
+
+    prior_df: DataFrame with player_id, OBPM, DBPM. When None it is built from
+    the current season's recomputed box scores.
+
+    Returns player_id, RAPM_MY, O_RAPM_MY, D_RAPM_MY. Empty when fewer than two
+    seasons of PBP are cached. Cached at cache/rapm_computed_my_{season}.csv.
+    """
+    cache_path = _cache(f"rapm_computed_my_{season_str(end_year)}.csv")
+    empty = pd.DataFrame(columns=["player_id", "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"])
+
+    poss = pool_possessions(end_year, n_seasons=n_seasons)
+    if poss.empty:
+        print(f"  RAPM_MY: <2 seasons of PBP for {season_str(end_year)} — skipping")
+        return empty
+
+    if prior_df is None:
+        base = _build_recomputed(end_year).rename(columns={"PLAYER_ID": "player_id"})
+        prior_df = base[["player_id", "OBPM", "DBPM"]]
+
+    prior = prior_df.dropna(subset=["player_id"]).copy()
+    prior["player_id"] = prior["player_id"].astype(int)
+    prior = (prior.set_index("player_id")[["OBPM", "DBPM"]]
+                  .rename(columns={"OBPM": "off", "DBPM": "def"}))
+
+    try:
+        result = compute_rapm_fit(poss, prior=prior)
+    except Exception as e:
+        print(f"  RAPM_MY: fit failed for {season_str(end_year)}: {e}")
+        return empty
+
+    result = result.reset_index().rename(columns={"index": "player_id"})
+    if "player_id" not in result.columns:
+        result.columns.values[0] = "player_id"
+    result["player_id"] = result["player_id"].astype(int)
+    result = result.rename(columns={"RAPM": "RAPM_MY", "O_RAPM": "O_RAPM_MY",
+                                    "D_RAPM": "D_RAPM_MY"})
+    result.to_csv(cache_path, index=False)
+    print(f"  RAPM_MY computed (pool {n_seasons}) for {season_str(end_year)} → {cache_path}")
+    return result[["player_id", "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"]]
 
 
 def _load_rapm_snapshot(end_year: int) -> pd.DataFrame | None:
@@ -780,6 +912,21 @@ def load_unified_ratings(end_year: int, *,
                               on="player_id", how="left")
     else:
         for col in ("RAPM", "O_RAPM", "D_RAPM"):
+            merged[col] = np.nan
+
+    # 3c. Prior-informed multi-year RAPM (RAPM_MY) — box-score prior (OBPM/DBPM)
+    # plus pooled possessions. All-NaN when fewer than two seasons are cached.
+    prior_src = (merged[["player_id", "OBPM", "DBPM"]]
+                 if {"OBPM", "DBPM"}.issubset(merged.columns) else None)
+    rapm_my_df = compute_rapm_my(end_year, prior_df=prior_src)
+    if not rapm_my_df.empty:
+        rapm_my_df = rapm_my_df.dropna(subset=["player_id"]).copy()
+        rapm_my_df["player_id"] = rapm_my_df["player_id"].astype(int)
+        merged = merged.merge(
+            rapm_my_df[["player_id", "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"]],
+            on="player_id", how="left")
+    else:
+        for col in ("RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"):
             merged[col] = np.nan
 
     # 3c. Public RAPM snapshot for validation — uses crosswalk
