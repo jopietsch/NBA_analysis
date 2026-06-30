@@ -13,8 +13,8 @@ It feels bigger in the playoffs than in the regular season.
 And maybe it isn't what it used to be.
 Is that right?
 
-Those hunches are what this report set out to test.
-Four questions drove all of it:
+
+Four questions drove this analysis:
 
 - **Has home court really shrunk, and by how much?**
 - **What is it made of, and why does it exist at all?**
@@ -23,7 +23,7 @@ Four questions drove all of it:
 
 The short answer to the first: home court advantage in the NBA has been shrinking for four decades.
 
-A few things people assume, settled up front:
+A few things people assume:
 
 - Did the rise in three-point shooting play a part? Yes, a big one.
 - Was it better travel, or load management? Only a little.
@@ -48,12 +48,12 @@ Today the weaker team hosting wins about 49%, while the stronger team's home rat
 It no longer does.**
 
 **What is not behind it** is just as interesting: rule changes (with the single real exception of 1994–95), travel, time zones, pace of play, crowd size, and the playoff format changes, including the much-blamed 2014 switch.
-Two more nearly make the list.
+Two more matter only a little.
 Teams play fewer back-to-backs than they used to, so visitors arrive less tired, but that schedule change accounts for only about 8% of the decline.
 And competitive balance: in a year when the league's teams bunch closer in quality, home court dips a little, but parity has risen and fallen for 40 years while home court has fallen steadily, so it can't explain the long decline.
 Each factor is tested; only 1994–95 registers a genuine effect, and it is accounted for above.
 
-The regular season and the playoffs share a similar shape and pattern, but the playoffs are behind the regular season in this decline.
+The regular season and the playoffs share a similar shape and pattern, but the playoffs lag behind the regular season in this decline.
 The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size.
 The analysis covers about 52,000 regular-season and playoff games; see Appendix D for companion documents including the full statistical tables, and Appendix A for additional findings.
 
@@ -62,8 +62,8 @@ The analysis covers about 52,000 regular-season and playoff games; see Appendix 
 
 ## 1. The 40-Year Decline
 
-First question: has home court really shrunk, and by how much?
-Yes, and the shape of the decline tells you more than the headline number does.
+
+As mentioned, home court advantage has shrunk and the shape of the decline tells you more than the headline number does.
 The decline is mostly a steady fade of about a quarter of a point per year, which over 40 years accounts for nearly the whole decline.
 Two drops stand out where the slide briefly sped up within that trend.
 The first came in the mid-to-late 1990s, when the regular-season rate fell from about 65% to 60%.
@@ -189,7 +189,7 @@ The timing even lines up with the second steepening, when the three-point share 
 
 It is tempting to read that chart as three-point shooting causing the decline, but two things that both drift steadily over 40 years will track each other whether or not one affects the other, and plenty of unrelated things changed across these same decades.
 So the 40-year mirror image, on its own, is weak evidence.
-Strip out the shared long-run drift and compare only the year-to-year swings, and the link holds but loses about 42% of its strength: a real part of that striking chart is just two trends pointed the same way.
+Strip out the shared long-run drift and compare only the year-to-year swings, and the link holds but loses about 42% of its strength: a real part of that near-mirror-image chart is just two trends pointed the same way.
 
 The evidence that three-point shooting genuinely hurts home teams comes from a comparison the 40-year chart can't make: games within the same season, where the era and everything else that drifted across decades is the same for both.
 There, the high-three-point games are the ones home teams lose more often, about 2 to 3 fewer home wins per 100 games for every 10-point rise in three-point volume.
@@ -239,7 +239,7 @@ The other half is separate from three-point volume.
 Together, turnovers account for about 27% of the regular-season decline, nearly matching rebounding.
 In the playoffs the turnover trend is small and bounces around too much to be sure of, so the playoff evidence is consistent with the regular-season story rather than established on its own.
 
-What drove that other half is not something this data can answer.
+What drove that other half is a question this data can't settle either.
 Improved scouting and video preparation are the most plausible contributors: visiting teams are better prepared for unfamiliar defensive schemes than they once were.
 But that is a hypothesis, not a finding.
 
@@ -247,7 +247,10 @@ The playoffs point the same way on rebounding: the home rebound-share advantage 
 
 ![Why the home rebounding and turnover advantages faded. Left: home and away offensive-rebound rates over time; the lines converge and cross, meaning home teams no longer crash the offensive glass more than visitors. Center-left: raw OREB and DREB differentials (home minus away per game) over time; both declined, with the defensive advantage falling more in absolute terms. Center-right: seasons with a larger total home rebounding advantage tend to be seasons where home teams win more (these move together, but that does not mean one causes the other). Right: the home turnover advantage (away minus home turnovers per game) has declined from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding .collapsible}
 
-Player-tracking cameras, in use since 2013–14, corroborate this for the modern window: the home advantage in converting offensive-rebound chances kept shrinking and home teams show no box-out advantage, though by the time the cameras arrived most of the decline had already happened (Appendix A).
+Player-tracking cameras, in use since 2013–14, give a direct read on the same offensive-glass retreat, including the box-outs a box score never recorded: the home advantage in converting offensive-rebound chances kept shrinking across the tracking era, from about 1.2 to 1.3 percentage points in the mid-2010s to under 0.2 today, while home teams held no measurable box-out advantage and the second-chance-points advantage barely changed.
+By the time the cameras arrived, most of the 40-year decline had already happened, so this corroborates the modern mechanism rather than the long decline.
+
+![The modern player-tracking view of the home rebounding advantage (2013–14 on). Left: the home advantage in converting offensive-rebound chances keeps shrinking, falling from about 1.2 to 1.3 percentage points in the mid-2010s to under 0.2 today. Center: home teams hold no measurable box-out advantage. Right: the second-chance-points advantage shows little change across this window. A short window that corroborates the modern mechanism, not the 40-year decline.](../generated/images/home_court_rebounding_tracking.svg){#fig-rebounding-tracking .collapsible}
 
 ### Officiating got fairer and more uniform
 
@@ -450,16 +453,20 @@ That is not specific to basketball; every major sport investing in the same anal
 
 ## Appendix A: Additional Findings
 
-A few results surfaced along the way that don't bear directly on the four questions.
+Three threads turned up that don't bear on the four questions: how much referees really differ once short samples are accounted for, why a couple of buildings still rank highest even as every franchise's advantage faded, and why blowouts keep getting bigger even as home teams win less of them.
 
-**Referees differ in home-court bias, but less than the raw numbers suggest.** Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team.
+### Referees differ, but by less than the leaderboard suggests
+
+Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team.
 The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit roughly a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte.
 About 60% of that raw spread is the random bounce of how few games some officials worked.
-Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests.
-This measures tendencies, not proof that any one official decides games.
+Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests, and this measures tendencies, not proof that any one official decides games.
 
 ![Top/bottom 15 referees ranked by home foul differential (≥50 playoff games). Values are adjusted for how few games each official worked: raw differences are pulled toward the league average so that small samples don't dominate the leaderboard.](../generated/images/home_court_referee_rankings.svg){#fig-referee-rankings .collapsible}
 
+### What separates one franchise from another
+
+Start with which buildings are hardest to win in.
 **Denver and Utah have the largest home-court advantages in the league, likely because of altitude.** Across 40 seasons, the Nuggets and Jazz hold the largest regular-season home advantages of any franchise: about 28 and 27 percentage points above their own road win rates, against a league average near 20.
 Both play at altitude.
 The franchise spread is real: roughly 70% of the variation across teams reflects genuine differences, not noise.
@@ -469,6 +476,7 @@ With only two high-altitude franchises, elevation can't be fully separated from 
 
 ![Franchise home court advantage, regular season and playoffs. Each bar carries a range showing how much the figure could shift on the available games: in the regular season most franchises sit clearly apart, but in the playoffs the ranges are wide and overlapping, so the franchise differences there are mostly noise.](../generated/images/home_court_team_hca.svg){#fig-team-hca .collapsible}
 
+Those are the levels franchises sit at today; the next question is how much each one's advantage *fell* over the 40 years.
 **The decline is universal, but the raw two-era drops vary widely.** These raw differences are inflated by the random bounce of small samples and compression from a high starting point; once those are removed (§4), the true team-to-team difference in decline rate is near zero.
 Splitting the 40-year record at 2001–02, the league average dropped from about 25.6 percentage points to about 17.
 Every one of the 26 franchises with at least 400 home games in both halves declined.
@@ -480,6 +488,8 @@ The pattern is consistent with compression: franchises that had the most home-co
 
 ![Franchise HCA in the early era (1984–2001, blue) and recent era (2002–26, green), sorted by early-era HCA. Every franchise shifted left. The dashed vertical lines mark the league average in each era.](../generated/images/home_court_team_hca_era.svg){#fig-team-hca-era .collapsible}
 
+All of that is the regular season.
+Does the same pecking order hold in the playoffs?
 **In the playoffs, every franchise's home court looks the same.** That real regular-season spread vanishes in the postseason.
 With fewer than 150 playoff home games on record for most franchises, the apparent gaps just reflect how few games each has played.
 The real spread between franchises is too small to separate from the random bounce of those few games.
@@ -491,29 +501,15 @@ Averaged across franchises with both records, home court is worth about 20 point
 Teams that protect their building in the regular season tend to do so in the playoffs as well, but only loosely.
 The crowd, the stakes, and the familiar floor seem to count for more in the playoffs.
 
-**The blowouts are getting bigger, even as home teams win less.** As home court advantage has declined, the margin when the home team *does* win has grown.
+### Blowouts are getting bigger, even as home teams win less
+
+As home court advantage has declined, the margin when the home team *does* win has grown.
 Home wins are more lopsided; home losses are more lopsided too.
 Track the full spread of margins regardless of who won: the gap between the biggest wins and biggest losses widens by about 0.2 points per year in the regular season and 0.3 in the playoffs.
 In the regular season blowouts grow in both directions; in the playoffs the spread widens mainly because the big home wins keep getting bigger.
 Fewer home wins overall, but the ones that happen are more decisive.
 
 ![Three panels. Left: mean all-game point margin per season for regular season and playoffs. Center: mean win margin and mean loss margin per season (regular season); the two lines diverging means the average home win is getting bigger while the average home loss is getting worse. Right: the same by era.](../generated/images/home_court_margin.svg){#fig-margin .collapsible}
-
-**Player-tracking cameras caught the final chapter of the rebounding fade.** Cameras installed in 2013–14 let the home rebounding advantage be watched directly for the first time.
-The home advantage in converting offensive-rebound chances kept shrinking across the whole tracking era, from about 1.2 to 1.3 percentage points in the mid-2010s to under 0.2 today.
-Home teams have held no measurable box-out advantage throughout the window, and the second-chance-points advantage barely changed.
-By the time the cameras arrived, most of the 40-year decline had already happened, so this corroborates the modern mechanism rather than the long decline.
-
-![The modern player-tracking view of the home rebounding advantage (2013–14 on). Left: the home advantage in converting offensive-rebound chances keeps shrinking, falling from about 1.2 to 1.3 percentage points in the mid-2010s to under 0.2 today. Center: home teams hold no measurable box-out advantage. Right: the second-chance-points advantage shows little change across this window. A short window that corroborates the modern mechanism, not the 40-year decline.](../generated/images/home_court_rebounding_tracking.svg){#fig-rebounding-tracking .collapsible}
-
-**The box-score breakdown points to what each team can still do.** For a home team, rebounding is the one category it can still control: it carries 30% of the regular-season decline, is almost entirely separate from three-point volume, and has not been equalized by the league-wide strategic shift to the perimeter.
-Player-tracking data confirms the offensive-rebound conversion advantage is still declining rather than structurally fixed, meaning effort and roster decisions can still move it.
-The turnover category (27% of the decline) has a component separate from three-point volume as well; pressure defense at home, where crowd noise compounds visiting teams' communication problems, targets it directly.
-On crowd: the pandemic data shows that even a few thousand fans restores nearly the full crowd effect, but larger crowds add little beyond that.
-
-For an away team, three-point heavy shot selection has already largely equalized the shooting category, and the data confirms this.
-The offensive glass is where the road disadvantage persists most and where no current strategic trend is closing the gap.
-On rest: when the away team enters better-rested than the home team, home win rate falls about 2.6 percentage points below the baseline, a scheduling-available advantage the data supports consistently across every decade.
 
 ---
 
@@ -541,7 +537,7 @@ Its error on seasons it had never seen is about 1 percentage point in the regula
 The same frozen model reconstructs the steeper modern playoff decline too.
 The mechanism predicts data it was not built from.
 
-![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast .collapsible}
+![Actual home win % across all seasons (regular season left, playoffs right) with the four-category model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast .collapsible}
 
 **The breakdown was re-run with no straight-line assumption.** The split of the decline across the four categories comes from a model that adds them up in a straight line.
 A second, more flexible model that lets the categories bend and feed off each other reaches the same split: shooting, rebounding, and turnovers each carry a substantial share and fouls the smallest at about 14% (the straight-line table put it a little higher, near 18%), adding back to the same total drop.
