@@ -596,3 +596,56 @@ def test_cache_path():
     assert data.cache_path(2026, "Playoffs").endswith("cache/2025-26_Playoffs.csv")
     # spaces in the season type become underscores in the filename
     assert "Regular_Season" in data.cache_path(2026, "Regular Season")
+
+
+def _field16():
+    """16-team field with a clear favorite (West 1-seed), for the bracket sim.
+
+    Regular season is a full round-robin with margins equal to the strength
+    difference, so each team's SRS recovers its strength (centered). Seeds run
+    1..8 within each conference in strength order.
+    """
+    west_str = [20, 9, 8, 7, 6, 5, 4, 3]   # W1 clearly dominant
+    east_str = [10, 9, 8, 7, 6, 5, 4, 3]
+    teams = ([(100 + i, "West", i + 1, west_str[i]) for i in range(8)] +
+             [(108 + i, "East", i + 1, east_str[i]) for i in range(8)])
+    standings = pd.DataFrame([
+        {"TeamID": tid, "TeamCity": f"City{tid}", "TeamName": f"Team{tid}",
+         "Conference": conf, "PlayoffRank": seed}
+        for tid, conf, seed, _ in teams])
+    strength = {tid: s for tid, _, _, s in teams}
+    ids = [t[0] for t in teams]
+
+    rows, gid = [], 0
+    for i in range(len(ids)):
+        for j in range(i + 1, len(ids)):
+            a, b = ids[i], ids[j]
+            gid += 1
+            m = strength[a] - strength[b]
+            rows.append({"GAME_ID": f"R{gid}", "TEAM_ID": a, "PLUS_MINUS": float(m), "PTS": 100 + m})
+            rows.append({"GAME_ID": f"R{gid}", "TEAM_ID": b, "PLUS_MINUS": float(-m), "PTS": 100})
+    reg = pd.DataFrame(rows)
+
+    po_rows = []
+    for k in range(0, 16, 2):
+        po_rows.append({"GAME_ID": f"P{k}", "TEAM_ID": ids[k], "PLUS_MINUS": 1.0, "PTS": 101, "MATCHUP": "x"})
+        po_rows.append({"GAME_ID": f"P{k}", "TEAM_ID": ids[k + 1], "PLUS_MINUS": -1.0, "PTS": 100, "MATCHUP": "x"})
+    po = pd.DataFrame(po_rows)
+    return po, reg, standings
+
+
+def test_full_field_title_odds_basic():
+    po, reg, standings = _field16()
+    odds = data.simulate_full_field_title_odds(po, reg, standings, n_sims=20000, seed=0)
+
+    # one row per playoff team, probabilities form a proper distribution
+    assert len(odds) == 16
+    assert abs(odds["p_title"].sum() - 1.0) < 1e-9
+    assert (odds["p_title"] >= 0).all()
+
+    # the strongest team (West 1-seed, id 100) is the clear favorite
+    fav = odds.iloc[0]
+    assert int(fav["team_id"]) == 100
+    assert fav["p_title"] > 0.3
+    # sorted descending by title odds
+    assert list(odds["p_title"]) == sorted(odds["p_title"], reverse=True)

@@ -147,6 +147,12 @@ Update when findings prose or RESULTS change.
 - Reading the shape: scores are bell-shaped, not a power law. Mean +3.29, 65% within 1 SD; Knicks sit +2.0 SD above the mean (the expected spot for the best of 43 draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
 - knicks_2026_historic_results.md refs: §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 
+## Appendix C: The Full-Field Title Odds
+
+- Forward bracket sim of all 16 playoff teams (generalizes §12's realized-path model): seeds into the fixed bracket, plays every round from reg-season SRS. Favorite = Oklahoma City Thunder at 54.5%, more than triple any rival.
+- Knicks only 3.5% as the East 3-seed, far below the realized-path 14.7% (§12); gap is the bracket draw (East 1/2 seeds upset before NY met them), not play. Neither knows they would elevate.
+- knicks_2026_historic_results.md refs: §20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)
+
 ---
 
 ## Key Numbers Registry
@@ -200,3 +206,4 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%) |
 | K43 | §12 | field's strongest reg-season team was Oklahoma City Thunder (+11.04 SRS) | §18 SERIES-LEVEL WIN-PROBABILITY (field note) | strongest field SRS +11.04 vs. Spurs +8.28 |
 | K44 | App.B | champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out | §19 APPENDIX RANKING (shape) | mean +3.29, SD 3.38, 65% within 1 SD |
+| K45 | App.C | full-field favorite Oklahoma City Thunder 54.5%, Knicks 3.5% | §20 FULL-FIELD TITLE ODDS | favorite 54.5%, Knicks 3.5% (seed 3), Spurs 14.2% |

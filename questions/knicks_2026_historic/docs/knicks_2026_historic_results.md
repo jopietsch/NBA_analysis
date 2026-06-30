@@ -488,6 +488,41 @@ field was Oklahoma City Thunder (+11.04), ahead of the Spurs (+8.28).
 The model never scores Thunder because they exited before the
 Finals; the Spurs are the only rival it rates, since New York played them.
 
+─── §20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM) ────────────────────
+Seeds all 16 playoff teams into the fixed bracket (1v8, 4v5, 3v6, 2v7;
+better seed hosts in-conference, better SRS hosts the Finals) and plays
+every best-of-7 forward from regular-season SRS, same per-game model as
+§18. Unlike §18 it does not follow the Knicks' realized path, so it scores
+the whole field. Reg-season SRS only; it does not know any team would
+elevate in May.
+
+ #  Team                     Conf  Seed  Reg SRS  Title%
+────────────────────────────────────────────────────────
+ 1  Oklahoma City Thunder    West     1   +11.04   54.5%
+ 2  San Antonio Spurs        West     2    +8.28   14.2%
+ 3  Detroit Pistons          East     1    +7.53   13.5%
+ 4  Boston Celtics           East     2    +7.37   10.8%
+ 5  New York Knicks          East     3    +6.05    3.5%  ← Knicks
+ 6  Denver Nuggets           West     3    +4.97    1.2%
+ 7  Houston Rockets          West     5    +4.87    1.0%
+ 8  Cleveland Cavaliers      East     4    +3.77    0.7%
+ 9  Toronto Raptors          East     5    +2.75    0.2%
+10  Minnesota Timberwolves   West     6    +3.07    0.2%
+11  Atlanta Hawks            East     6    +2.38    0.1%
+12  Los Angeles Lakers       West     4    +1.68    0.0%
+13  Phoenix Suns             West     7    +1.75    0.0%
+14  Orlando Magic            East     8    +0.81    0.0%
+15  Philadelphia 76ers       East     7    -0.27    0.0%
+16  Portland Trail Blazers   West     8    -0.28    0.0%
+
+Favorite: Oklahoma City Thunder at 54.5%, more than triple any rival.
+The Knicks were the East 3-seed and only 3.5% to win it all here,
+far below the 14.7% the §18 realized-path model gave them.
+The gap is the bracket draw: §18 conditions on the opponents New York
+actually drew (the East's top seeds were upset before they met), while
+this sim makes them run the seed-expected gauntlet through Detroit and
+Boston. Neither model knows they would elevate.
+
 ─── §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING ──────────────
 Opponent-and-pace-adjusted regular-season margin (pts/game) for all
 43 champions, most dominant first. Raw = scoring margin; OppAdj =

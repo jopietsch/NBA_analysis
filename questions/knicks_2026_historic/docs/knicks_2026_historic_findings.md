@@ -299,6 +299,7 @@ We built a simple forecaster that knows only each team's regular-season strength
 The forecast was not kind.
 Because the Spurs out-rated the Knicks over the regular season, the model made New York a Finals underdog (about a 31% chance to win that series) and gave them only about a **15% chance to win the title at all**.
 This forecast follows only the Knicks' actual bracket, not the whole field: the strongest regular-season team was Oklahoma City Thunder (+11.04 SRS, ahead of the Spurs' +8.28), but the Thunder lost before the Finals, so the Spurs are the only rival the model ever weighs.
+Run the whole bracket forward instead (Appendix C) and the Thunder are a runaway title favorite at 54.5%, while the Knicks, seeded 3rd in the East behind Detroit and Boston, were just 3.5% before a game was played.
 A run as clean as 16-3, losing just three games across four rounds, was rarer still: only about **7% of the model's championship runs were that tidy**, and barely **1%** of all simulated seasons produced both a title and three or fewer losses.
 
 Almost nothing about the Knicks' regular season predicted this.
@@ -460,3 +461,39 @@ The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to
 The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).
 That matters for reading the #1 claim: the Knicks' top score sits about +2.0 standard deviations above the average champion, which is high but exactly where the single best of 43 bell-curve draws is expected to land.
 The best champion is the leading edge of an ordinary spread, not a breed apart, which is the statistical echo of §10's conclusion that first place is real but not settled.
+
+---
+
+## Appendix C: The Full-Field Title Odds
+
+§12 measures the Knicks' run along the path they actually drew.
+The companion question is who the field favored before any of it was played.
+This simulation seeds all 16 playoff teams into the bracket and plays every round forward from regular-season strength, the same game-by-game model as §12, so every team gets a title number instead of just the Knicks.
+
+| # | Team | Conf | Seed | Reg SRS | Title % |
+|--:|---|:--|--:|--:|--:|
+| 1 | Oklahoma City Thunder | West | 1 | +11.04 | 54.5% |
+| 2 | San Antonio Spurs | West | 2 | +8.28 | 14.2% |
+| 3 | Detroit Pistons | East | 1 | +7.53 | 13.5% |
+| 4 | Boston Celtics | East | 2 | +7.37 | 10.8% |
+| 5 | **New York Knicks** | East | 3 | +6.05 | 3.5% |
+| 6 | Denver Nuggets | West | 3 | +4.97 | 1.2% |
+| 7 | Houston Rockets | West | 5 | +4.87 | 1.0% |
+| 8 | Cleveland Cavaliers | East | 4 | +3.77 | 0.7% |
+| 9 | Toronto Raptors | East | 5 | +2.75 | 0.2% |
+| 10 | Minnesota Timberwolves | West | 6 | +3.07 | 0.2% |
+| 11 | Atlanta Hawks | East | 6 | +2.38 | 0.1% |
+| 12 | Los Angeles Lakers | West | 4 | +1.68 | 0.0% |
+| 13 | Phoenix Suns | West | 7 | +1.75 | 0.0% |
+| 14 | Orlando Magic | East | 8 | +0.81 | 0.0% |
+| 15 | Philadelphia 76ers | East | 7 | -0.27 | 0.0% |
+| 16 | Portland Trail Blazers | West | 8 | -0.28 | 0.0% |
+
+The Thunder were the runaway favorite at 54.5%, more than triple any other team, on the strength of the league's best regular-season rating by a wide margin.
+The Knicks were only the 3rd seed in the East, behind Detroit and Boston, so the bracket handed them a hard expected road: just 3.5% to win it all.
+That is far below the 14.7% the realized-path model gave them in §12, and the gap is the draw, not their play.
+The East's top two seeds were both upset before New York would have met them, so the teams the Knicks actually faced were softer than their seed line predicted.
+Neither number knows the Knicks would elevate in May, and both say the title was a long shot; the full-field view just says it was a longer one.
+
+The same caveat as §12 applies: this rests on one assumed game-to-game swing and on regular-season ratings, nothing from the playoffs themselves.
+Widen or narrow that swing and the favorites bunch up or spread out, but the order is stable: Oklahoma City first by a wide margin, the Knicks a distant longshot.

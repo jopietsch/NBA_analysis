@@ -29,6 +29,11 @@
     "ok": true,
     "value": 11.483801655515112
   },
+  "fullfield.favorite_is_okc": {
+    "claim": "the full-field favorite is Oklahoma City, well ahead of the Knicks",
+    "ok": true,
+    "value": "Oklahoma City Thunder 54.5% vs Knicks 3.5%"
+  },
   "gap.east_not_historically_weak": {
     "claim": "the East was not historically weak (West dominance below 80th percentile)",
     "ok": true,

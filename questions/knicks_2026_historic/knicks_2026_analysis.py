@@ -72,6 +72,7 @@ from knicks_2026_data import (
     compute_per100_margin,
     build_possession_table,
     simulate_title_run,
+    simulate_full_field_title_odds,
     build_title_run_specs,
 )
 
@@ -1654,6 +1655,75 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
                 f"skew={skew:+.2f}, exkurt={exkurt:+.2f}, shapiro_p={sw_p:.3f}")
 
 
+def run_full_field_odds(po_2026: pd.DataFrame,
+                        reg_2026: pd.DataFrame,
+                        standings_2026: pd.DataFrame,
+                        out: io.StringIO) -> None:
+    """Full-bracket title odds for all 16 teams (generalizes the §18 path model)."""
+    print(_hdr("§20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)"), file=out)
+
+    odds = simulate_full_field_title_odds(po_2026, reg_2026, standings_2026)
+    odds = odds.reset_index(drop=True)
+    odds["rank"] = odds.index + 1
+
+    print(
+        "Seeds all 16 playoff teams into the fixed bracket (1v8, 4v5, 3v6, 2v7;\n"
+        "better seed hosts in-conference, better SRS hosts the Finals) and plays\n"
+        "every best-of-7 forward from regular-season SRS, same per-game model as\n"
+        "§18. Unlike §18 it does not follow the Knicks' realized path, so it scores\n"
+        "the whole field. Reg-season SRS only; it does not know any team would\n"
+        "elevate in May.\n",
+        file=out,
+    )
+    ohdr = f"{'#':>2}  {'Team':<24} {'Conf':<5} {'Seed':>4} {'Reg SRS':>8} {'Title%':>7}"
+    print(ohdr, file=out)
+    print("─" * len(ohdr), file=out)
+    for _, r in odds.iterrows():
+        marker = "  ← Knicks" if int(r["team_id"]) == KNICKS_TEAM_ID else ""
+        print(f"{int(r['rank']):>2}  {r['name']:<24} {r['conference']:<5} "
+              f"{int(r['seed']):>4} {r['reg_srs']:>+8.2f} {r['p_title']*100:>6.1f}%{marker}",
+              file=out)
+
+    fav = odds.iloc[0]
+    knicks = odds[odds["team_id"] == KNICKS_TEAM_ID].iloc[0]
+    _spurs_row = odds[odds["name"].str.contains("Spurs")]
+    spurs_pct = float(_spurs_row["p_title"].iloc[0]) * 100 if not _spurs_row.empty else float("nan")
+    fav_pct = float(fav["p_title"]) * 100
+    knicks_pct = float(knicks["p_title"]) * 100
+    knicks_seed = int(knicks["seed"])
+    print(
+        f"\nFavorite: {fav['name']} at {fav_pct:.1f}%, more than triple any rival.\n"
+        f"The Knicks were the East {knicks_seed}-seed and only {knicks_pct:.1f}% to win it all here,\n"
+        f"far below the {FACTS.get('winprob.p_title')}% the §18 realized-path model gave them.\n"
+        "The gap is the bracket draw: §18 conditions on the opponents New York\n"
+        "actually drew (the East's top seeds were upset before they met), while\n"
+        "this sim makes them run the seed-expected gauntlet through Detroit and\n"
+        "Boston. Neither model knows they would elevate.",
+        file=out,
+    )
+
+    # ── Facts: full-field odds table (string) + headline scalars ─────────────
+    _orows = ["| # | Team | Conf | Seed | Reg SRS | Title % |",
+              "|--:|---|:--|--:|--:|--:|"]
+    for _, r in odds.iterrows():
+        _nm = f"**{r['name']}**" if int(r["team_id"]) == KNICKS_TEAM_ID else r["name"]
+        _orows.append(
+            f"| {int(r['rank'])} | {_nm} | {r['conference']} | {int(r['seed'])} | "
+            f"{r['reg_srs']:+.2f} | {r['p_title']*100:.1f}% |"
+        )
+    FACTS.set("fullfield.odds_table", "\n".join(_orows),
+              note="Full-field forward title odds, markdown table")
+    FACTS.set("fullfield.favorite_team", str(fav["name"]), note="Full-field title favorite")
+    FACTS.set("fullfield.favorite_pct",  fav_pct,    "{:.1f}", note="Favorite's title odds, %")
+    FACTS.set("fullfield.knicks_pct",    knicks_pct, "{:.1f}", note="Knicks full-field title odds, %")
+    FACTS.set("fullfield.knicks_seed",   knicks_seed, "{:d}",  note="Knicks 2026 East seed")
+    FACTS.set("fullfield.spurs_pct",     spurs_pct,  "{:.1f}", note="Spurs full-field title odds, %")
+    FACTS.guard("fullfield.favorite_is_okc",
+                "Thunder" in str(fav["name"]) and fav_pct > knicks_pct,
+                "the full-field favorite is Oklahoma City, well ahead of the Knicks",
+                f"{fav['name']} {fav_pct:.1f}% vs Knicks {knicks_pct:.1f}%")
+
+
 # ── Main ─────────────────────────────────────────────────────────────────────
 
 def main() -> None:
@@ -1708,6 +1778,7 @@ def main() -> None:
     run_bt_check(bt_table, champions, out)
     run_pace_possessions(champions, poss_table, out)
     run_series_winprob(po_2026, reg_2026, standings_2026, out)
+    run_full_field_odds(po_2026, reg_2026, standings_2026, out)
     run_appendix_ranking(champions, out)
 
     body = out.getvalue()

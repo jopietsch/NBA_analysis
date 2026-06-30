@@ -1364,6 +1364,80 @@ def simulate_title_run(champ_srs: float,
     }
 
 
+def simulate_full_field_title_odds(po_2026: pd.DataFrame,
+                                   reg_2026: pd.DataFrame,
+                                   standings_2026: pd.DataFrame,
+                                   sigma: float = 12.0,
+                                   hca: float = 3.0,
+                                   n_sims: int = 50000,
+                                   seed: int = 0) -> pd.DataFrame:
+    """Forward Monte-Carlo of the whole 2026 bracket from regular-season SRS.
+
+    Generalizes ``simulate_title_run``: instead of following one team's realized
+    path, it seeds all 16 playoff teams into the fixed NBA bracket (1v8, 4v5,
+    3v6, 2v7 per conference; the better seed hosts in-conference; the better SRS
+    hosts the Finals) and plays every best-of-7 forward with the same per-game
+    model, ``p = Phi((SRS_a − SRS_b ± hca)/sigma)`` on the 2-2-1-1-1 home pattern.
+    Every team therefore gets a title probability the realized-path model never
+    assigns.  Returns a DataFrame (team_id, name, conference, seed, reg_srs,
+    p_title) sorted by p_title descending.
+    """
+    from scipy.stats import norm
+
+    rng = np.random.default_rng(seed)
+    srs = compute_srs(reg_2026)
+    playoff_ids = [int(t) for t in po_2026["TEAM_ID"].unique()]
+    st = standings_2026[standings_2026["TeamID"].isin(playoff_ids)].copy()
+    name_map = standings_2026.set_index("TeamID").apply(
+        lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1).to_dict()
+
+    teams = [int(t) for t in st["TeamID"]]
+    idx_of = {tid: i for i, tid in enumerate(teams)}
+    srs_arr = np.array([float(srs.get(t, float("nan"))) for t in teams])
+    seed_of = {int(r["TeamID"]): int(r["PlayoffRank"]) for _, r in st.iterrows()}
+    seed_arr = np.array([seed_of[t] for t in teams])
+    conf_of = {int(r["TeamID"]): r["Conference"] for _, r in st.iterrows()}
+    home_pat = np.array(_BO7_HOME_PATTERN)
+
+    def battle(idx_a: np.ndarray, idx_b: np.ndarray, cross_conf: bool) -> np.ndarray:
+        sa, sb = srs_arr[idx_a], srs_arr[idx_b]
+        a_home = (sa >= sb) if cross_conf else (seed_arr[idx_a] <= seed_arr[idx_b])
+        a_home_games = np.where(a_home[:, None], home_pat[None, :], ~home_pat[None, :])
+        sign = np.where(a_home_games, hca, -hca)
+        p = norm.cdf(((sa - sb)[:, None] + sign) / sigma)
+        w = rng.random((n_sims, 7)) < p
+        cum_w = np.cumsum(w, axis=1)
+        cum_l = np.cumsum(~w, axis=1)
+        a_reach = np.where(cum_w[:, -1] >= 4, np.argmax(cum_w >= 4, axis=1), 99)
+        b_reach = np.where(cum_l[:, -1] >= 4, np.argmax(cum_l >= 4, axis=1), 99)
+        return np.where(a_reach < b_reach, idx_a, idx_b)
+
+    conf_champ = {}
+    for conf in ("East", "West"):
+        cst = st[st["Conference"] == conf]
+        s = {int(r["PlayoffRank"]): idx_of[int(r["TeamID"])] for _, r in cst.iterrows()}
+        const = lambda i: np.full(n_sims, i, dtype=int)
+        sf1 = battle(battle(const(s[1]), const(s[8]), False),
+                     battle(const(s[4]), const(s[5]), False), False)
+        sf2 = battle(battle(const(s[3]), const(s[6]), False),
+                     battle(const(s[2]), const(s[7]), False), False)
+        conf_champ[conf] = battle(sf1, sf2, False)
+    champ = battle(conf_champ["East"], conf_champ["West"], True)
+
+    p_title = np.bincount(champ, minlength=len(teams)) / n_sims
+    rows = [{
+        "team_id":    tid,
+        "name":       name_map.get(tid, f"Team {tid}"),
+        "conference": conf_of[tid],
+        "seed":       int(seed_arr[i]),
+        "reg_srs":    float(srs_arr[i]),
+        "p_title":    float(p_title[i]),
+    } for i, tid in enumerate(teams)]
+    return (pd.DataFrame(rows)
+            .sort_values("p_title", ascending=False)
+            .reset_index(drop=True))
+
+
 # ── Hierarchical (partial-pooling) ranking ───────────────────────────────────
 
 def build_adjusted_margin_samples(start_year: int = START_YEAR,

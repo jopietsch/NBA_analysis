@@ -909,6 +909,48 @@
     "unit": null,
     "value": 5
   },
+  "fullfield.favorite_pct": {
+    "display": "54.5",
+    "fmt": "{:.1f}",
+    "note": "Favorite's title odds, %",
+    "unit": null,
+    "value": 54.484
+  },
+  "fullfield.favorite_team": {
+    "display": "Oklahoma City Thunder",
+    "fmt": null,
+    "note": "Full-field title favorite",
+    "unit": null,
+    "value": "Oklahoma City Thunder"
+  },
+  "fullfield.knicks_pct": {
+    "display": "3.5",
+    "fmt": "{:.1f}",
+    "note": "Knicks full-field title odds, %",
+    "unit": null,
+    "value": 3.508
+  },
+  "fullfield.knicks_seed": {
+    "display": "3",
+    "fmt": "{:d}",
+    "note": "Knicks 2026 East seed",
+    "unit": null,
+    "value": 3
+  },
+  "fullfield.odds_table": {
+    "display": "| # | Team | Conf | Seed | Reg SRS | Title % |\n|--:|---|:--|--:|--:|--:|\n| 1 | Oklahoma City Thunder | West | 1 | +11.04 | 54.5% |\n| 2 | San Antonio Spurs | West | 2 | +8.28 | 14.2% |\n| 3 | Detroit Pistons | East | 1 | +7.53 | 13.5% |\n| 4 | Boston Celtics | East | 2 | +7.37 | 10.8% |\n| 5 | **New York Knicks** | East | 3 | +6.05 | 3.5% |\n| 6 | Denver Nuggets | West | 3 | +4.97 | 1.2% |\n| 7 | Houston Rockets | West | 5 | +4.87 | 1.0% |\n| 8 | Cleveland Cavaliers | East | 4 | +3.77 | 0.7% |\n| 9 | Toronto Raptors | East | 5 | +2.75 | 0.2% |\n| 10 | Minnesota Timberwolves | West | 6 | +3.07 | 0.2% |\n| 11 | Atlanta Hawks | East | 6 | +2.38 | 0.1% |\n| 12 | Los Angeles Lakers | West | 4 | +1.68 | 0.0% |\n| 13 | Phoenix Suns | West | 7 | +1.75 | 0.0% |\n| 14 | Orlando Magic | East | 8 | +0.81 | 0.0% |\n| 15 | Philadelphia 76ers | East | 7 | -0.27 | 0.0% |\n| 16 | Portland Trail Blazers | West | 8 | -0.28 | 0.0% |",
+    "fmt": null,
+    "note": "Full-field forward title odds, markdown table",
+    "unit": null,
+    "value": "| # | Team | Conf | Seed | Reg SRS | Title % |\n|--:|---|:--|--:|--:|--:|\n| 1 | Oklahoma City Thunder | West | 1 | +11.04 | 54.5% |\n| 2 | San Antonio Spurs | West | 2 | +8.28 | 14.2% |\n| 3 | Detroit Pistons | East | 1 | +7.53 | 13.5% |\n| 4 | Boston Celtics | East | 2 | +7.37 | 10.8% |\n| 5 | **New York Knicks** | East | 3 | +6.05 | 3.5% |\n| 6 | Denver Nuggets | West | 3 | +4.97 | 1.2% |\n| 7 | Houston Rockets | West | 5 | +4.87 | 1.0% |\n| 8 | Cleveland Cavaliers | East | 4 | +3.77 | 0.7% |\n| 9 | Toronto Raptors | East | 5 | +2.75 | 0.2% |\n| 10 | Minnesota Timberwolves | West | 6 | +3.07 | 0.2% |\n| 11 | Atlanta Hawks | East | 6 | +2.38 | 0.1% |\n| 12 | Los Angeles Lakers | West | 4 | +1.68 | 0.0% |\n| 13 | Phoenix Suns | West | 7 | +1.75 | 0.0% |\n| 14 | Orlando Magic | East | 8 | +0.81 | 0.0% |\n| 15 | Philadelphia 76ers | East | 7 | -0.27 | 0.0% |\n| 16 | Portland Trail Blazers | West | 8 | -0.28 | 0.0% |"
+  },
+  "fullfield.spurs_pct": {
+    "display": "14.2",
+    "fmt": "{:.1f}",
+    "note": "Spurs full-field title odds, %",
+    "unit": null,
+    "value": 14.244000000000002
+  },
   "gap.ci.hi": {
     "display": "+1.34",
     "fmt": "{:+.2f}",
