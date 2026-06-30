@@ -38,19 +38,31 @@ def _mini_player(n: int = 5) -> pd.DataFrame:
         "BLK": [20.0, 15.0, 100.0, 30.0, 5.0],
         "TOV": [200.0, 150.0, 180.0, 80.0, 30.0],
         "PF": [150.0, 120.0, 180.0, 100.0, 50.0],
-        # Team totals (merged columns for shooting_rates)
-        "TEAM_FGA": [3100.0, 3100.0, 2650.0, 2650.0, 2650.0],
-        "TEAM_FTA": [600.0, 600.0, 370.0, 370.0, 370.0],
-        "TEAM_TOV": [680.0, 680.0, 490.0, 490.0, 490.0],
+        # Team totals (merged columns for shooting_rates). FGA/FTA/TOV match
+        # _mini_team()'s season totals per team (7000/1400/1200 for team 1,
+        # 6800/1100/1050 for team 2) and MIN is realistic game-minutes
+        # (82 games x 48 minutes), so USG% comes out at a sane ~0.20-0.30
+        # rather than reading off an internally-inconsistent team total.
+        "TEAM_FGA": [7000.0, 7000.0, 6800.0, 6800.0, 6800.0],
+        "TEAM_FTA": [1400.0, 1400.0, 1100.0, 1100.0, 1100.0],
+        "TEAM_TOV": [1200.0, 1200.0, 1050.0, 1050.0, 1050.0],
+        "TEAM_MIN": [3936.0, 3936.0, 3936.0, 3936.0, 3936.0],
     })
 
 
-def _mini_team() -> pd.DataFrame:
-    return pd.DataFrame({
+def _mini_team(plus_minus=None) -> pd.DataFrame:
+    """Synthetic team-totals DataFrame. MIN is game-minutes (82 games x 48).
+
+    plus_minus, if given, is a 2-element list of season PLUS_MINUS totals for
+    teams 1 and 2; it adds a PLUS_MINUS column used by the BPM team-margin
+    anchor test. Omitted by default so existing BPM tests (which rely on the
+    zero-margin default when PLUS_MINUS is absent) are unaffected.
+    """
+    d = {
         "TEAM_ID": [1, 2],
         "TEAM_NAME": ["Alpha", "Beta"],
         "GP": [82, 82],
-        "MIN": [19680.0, 19680.0],
+        "MIN": [3936.0, 3936.0],
         "PTS": [9000.0, 10000.0],
         "FGM": [3300.0, 3200.0],
         "FGA": [7000.0, 6800.0],
@@ -66,7 +78,10 @@ def _mini_team() -> pd.DataFrame:
         "BLK": [250.0, 400.0],
         "TOV": [1200.0, 1050.0],
         "PF": [1500.0, 1600.0],
-    })
+    }
+    if plus_minus is not None:
+        d["PLUS_MINUS"] = plus_minus
+    return pd.DataFrame(d)
 
 
 def _mini_league() -> dict:
@@ -119,6 +134,15 @@ def test_shooting_rates_usg_pct():
     out = shooting_rates(df)
     # USG% present when team columns are available
     assert out["USG_PCT"].notna().sum() > 0
+
+
+def test_shooting_rates_usg_pct_sane_range():
+    """USG% is a fraction (~0.15-0.45), not the old ~1.0/missing-minutes-term bug."""
+    df = _mini_player()
+    out = shooting_rates(df)
+    # Player 0 is the highest-volume player in the fixture.
+    assert 0.15 < out.iloc[0]["USG_PCT"] < 0.45
+    assert out["USG_PCT"].between(0.15, 0.45).all()
 
 
 # ── game_score ────────────────────────────────────────────────────────────────
@@ -222,6 +246,29 @@ def test_bpm_league_average_near_zero():
     assert abs(weighted_avg) < 0.5, f"BPM league avg = {weighted_avg:.3f}"
 
 
+def test_bpm_team_margin_anchor():
+    """Each team's minutes-weighted BPM x 5 should equal its point margin per 100.
+
+    This is BPM's defining property: a team's players sum to the team's point
+    differential. team1 is given a +300 season PLUS_MINUS, team2 a -300.
+    """
+    df = _mini_player()
+    team_df = _mini_team(plus_minus=[300.0, -300.0])
+    bpm_df = bpm(df, team_df, _mini_league())
+
+    team_idx = team_df.set_index("TEAM_ID")
+    for tid, grp in bpm_df.groupby("TEAM_ID"):
+        w = grp["MIN"]
+        weighted_bpm = (grp["BPM"] * w).sum() / w.sum()
+        trow = team_idx.loc[tid]
+        team_poss = trow["FGA"] + 0.44 * trow["FTA"] - trow["OREB"] + trow["TOV"]
+        margin_per100 = trow["PLUS_MINUS"] / team_poss * 100
+        assert abs(weighted_bpm * 5 - margin_per100) < 0.5, (
+            f"team {tid}: weighted BPM*5 = {weighted_bpm * 5:.3f}, "
+            f"margin/100 = {margin_per100:.3f}"
+        )
+
+
 # ── VORP ────────────────────────────────────────────────────────────────────────
 
 def test_vorp_positive_for_above_replacement():
@@ -242,6 +289,20 @@ def test_vorp_zero_at_replacement_level():
     }])
     v = vorp(df)
     assert abs(v.iloc[0]) < 0.001
+
+
+def test_vorp_realistic_scale_for_full_season_star():
+    """A full-season star (BPM 8.0, 2800 minutes) lands in single digits.
+
+    Locks in the fix for the ~20x inflation bug: VORP leaders should land
+    around 6-9, not ~20x that.
+    """
+    df = pd.DataFrame([{
+        "PLAYER_ID": 1, "PLAYER_NAME": "Star", "TEAM_ID": 1,
+        "BPM": 8.0, "MIN": 2800.0, "GP": 82,
+    }])
+    v = vorp(df, games_in_season=82)
+    assert 3 < v.iloc[0] < 10, f"VORP = {v.iloc[0]:.2f}"
 
 
 # ── Crosswalk ────────────────────────────────────────────────────────────────

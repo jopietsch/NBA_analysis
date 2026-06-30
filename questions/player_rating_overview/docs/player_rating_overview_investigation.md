@@ -42,7 +42,7 @@ The full correlation matrix is in `player_rating_overview_results.md`; the patte
 
 The box-score systems form a tight cluster.
 Game Score and PER rank players almost identically (r = 0.86), PER and Win Shares closely (r = 0.77), Game Score and Win Shares nearly as much (r = 0.67).
-This project's recomputed BPM is the loose thread: it agrees with PER only at r = 0.51 and with Game Score at r = 0.43, below published BPM, because the approximate recompute runs the same box inputs through a noisier formula.
+This project's recomputed BPM is the loose thread: it agrees with PER only at r = 0.51 and with Game Score at r = 0.43, below how tightly the box scores agree among themselves, because BPM weighs team point margin and defense that those scoring-led metrics leave out.
 VORP tracks BPM almost perfectly (r = 0.97), which is no surprise since VORP is BPM scaled by minutes.
 
 The box scores and the single-season RAPM barely agree.
@@ -63,6 +63,30 @@ The systems agree most where they share inputs and least where they don't.
 The box scores cluster because they read the same box totals; they part from RAPM because RAPM reads lineup results the box scores never see.
 A correlation at 0.7 or above means two systems are largely measuring the same quality from different angles; below 0.4 means they genuinely disagree about who is contributing.
 The single-season RAPM's near-zero agreement with everything is mostly noise, not insight: the multi-year, prior-informed RAPM+prior is the version to compare against the field, and it agrees with the field far more.
+
+### How we built and checked BPM
+
+This project's earlier BPM was broken: low-minute players topped the list, usage rates came back near 1.0, and VORP ran into the hundreds.
+It has been rebuilt and checked player-by-player against Basketball-Reference's published values.
+
+The rebuild runs in two steps.
+First, a trend line: OBPM and DBPM are each a weighted sum of standard box-score rate stats (usage, assists, turnovers, rebounds, steals, blocks, shooting efficiency), with the weights fit to reproduce Basketball-Reference's own OBPM and DBPM.
+Second, a team anchor: within each team the OBPM and DBPM are shifted so the players, weighted by minutes, sum to the team's actual point differential.
+The anchor is what BPM is built to do, and it sets the scale.
+
+The check matches every qualified player to Basketball-Reference for 2025-26.
+Across the 361 matched players the recompute moves almost one-for-one with the published numbers: the correlation is 0.946 for OBPM, 0.877 for DBPM, 0.930 for combined BPM, and 0.961 for the cumulative VORP.
+The typical player sits 0.80 points off the published BPM; Jalen Brunson, for one, comes out at 3.4 here against 3.1 at Basketball-Reference.
+DBPM is the weakest match, which is honest rather than alarming: box-score defense is hard to capture, and Basketball-Reference's own DBPM carries the same limit.
+The recompute also compresses the very top a little, so the league's best land just under their published BPM; the ordering and the strong agreement are what the rest of this report leans on.
+
+### Known issue: the RAPM metrics are still broken
+
+One family of metrics here is not yet fixed, and it is worth saying so plainly.
+The bare possession-based RAPM still produces leaders that cannot be right: low-minute players top the league, as in 2025-26 when Moussa Cisse at +12.5 per 100 led it.
+That is a known bug in how the possession data feeds the model, not a real finding, and it is flagged as a separate follow-on fix.
+The prior-informed version, RAPM+prior, leans on OBPM and DBPM as its starting point, so this session's BPM fix did improve it; the bare RAPM underneath still needs its own repair.
+Until then, read every RAPM-family number here as provisional: the multi-year, prior-shrunk RAPM+prior is the more trustworthy of the two, and even it still spikes a few low-minute players at the very top.
 
 ---
 
@@ -85,8 +109,8 @@ Win Shares (0.68) and WS/48 (0.62) carry more of their own, and the metrics buil
 
 That ordering matches intuition: a measure that only reshuffles box-score totals largely echoes the others, while one that reaches for defense or on-court impact picks up something they miss.
 One caveat blunts the conclusion.
-This project's BPM, VORP, and RAPM are approximate recomputes, and a noisy rating shows low overlap for a dull reason: its noise lines up with nothing, so it cannot be reconstructed from anything.
-Part of the impact metrics' apparent independence is therefore recompute slack, not signal, and the clean test waits on exact or published impact metrics.
+This project's BPM and VORP are now validated against Basketball-Reference (see "How we built and checked BPM" above), so their low overlap reads as real signal, but the RAPM family is still an approximate recompute, and a noisy rating shows low overlap for a dull reason: its noise lines up with nothing, so it cannot be reconstructed from anything.
+Part of RAPM's apparent independence is therefore recompute slack, not signal, and the clean test waits on a fixed RAPM or a published impact metric.
 
 ---
 
@@ -112,7 +136,7 @@ Where they part is instructive: the wins-predictive rating lifts Nikola Jokić (
 A sharper test than fitting wins is rebuilding them.
 Each system's player ratings, minutes-weighted to the team level, are fit to team point differential and scored out of sample by holding one team out at a time (CV R²).
 PER, which never sees who won, rebuilds 73% of the team-margin spread (CV R² = 0.73), ahead of the team-adjusted box metrics (BPM 0.55, Win Shares 0.54, VORP 0.49) and the multi-year RAPM+prior (0.30).
-That ordering carries a caveat: this project's BPM, VORP, and RAPM are approximate recomputes, so part of their gap behind PER is recompute noise, not proof PER is the better rating.
+That ordering carries a caveat: this project's RAPM is still an approximate recompute, so part of its gap behind PER is recompute noise, not proof PER is the better rating, while BPM and VORP, now validated against Basketball-Reference, rebuild team margin on numbers we trust.
 
 Describing a season and forecasting the next are different jobs, and they reward different systems.
 Carrying each rating onto the next season's rosters and predicting that season's team margin, PER falls the furthest, from 0.73 describing to 0.37 forecasting, while Game Score barely moves (0.47 to 0.40) and ends up the best forecaster of the group.

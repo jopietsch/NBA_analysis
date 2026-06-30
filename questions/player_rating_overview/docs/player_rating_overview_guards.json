@@ -1,48 +1,68 @@
 {
-  "blind_rating_tops_retrodiction": {
-    "claim": "an outcome-blind box rating tops the team point-differential retrodiction, ahead of the team-adjusted metrics",
+  "blind_rating_rebuilds_team_diff": {
+    "claim": "among ratings that never saw who won, PER rebuilds the most team point differential (73% out of sample)",
     "ok": true,
     "value": "PER"
+  },
+  "bpm_val_strong": {
+    "claim": "our BPM reproduces Basketball-Reference BPM (r > 0.85)",
+    "ok": true,
+    "value": 0.9304684848481363
   },
   "bpm_vorp_tight": {
     "claim": "BPM and VORP are tightly linked (r > 0.95)",
     "ok": true,
-    "value": 0.9715904754572756
+    "value": 0.9642655790413046
   },
   "consensus_stable_yoy": {
     "claim": "the consensus order is largely stable from one season to the next (year-over-year rank agreement above 0.6)",
     "ok": true,
-    "value": 0.6663700540126969
+    "value": 0.7453720184462401
   },
   "consensus_top_fell_in_playoffs": {
     "claim": "the regular-season consensus #1 (Nikola Joki\u0107) fell in the playoffs",
     "ok": true,
-    "value": -1.640337953011792
+    "value": -2.462073915850377
+  },
+  "cumulative_are_power_laws": {
+    "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
+    "ok": true,
+    "value": "WS/48, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior"
   },
   "cumulative_steeper_than_rate": {
     "claim": "cumulative VORP falls off more steeply than rate-metric PER",
     "ok": true,
-    "value": 0.1562211340895105
+    "value": 0.2309018518214333
+  },
+  "example_defense_is_defense_led": {
+    "claim": "the defense example (Victor Wembanyama) draws more than a third of its BPM from defense",
+    "ok": true,
+    "value": 0.4391221469344051
+  },
+  "example_reps_distinct": {
+    "claim": "the example archetypes resolve to distinct players",
+    "ok": true,
+    "value": "Nikola Joki\u0107; Victor Wembanyama; Pascal Siakam; Jayson Tatum; Jalen Brunson"
+  },
+  "example_split_per_over_bpm": {
+    "claim": "counting stats rate the split scorer (Pascal Siakam) well above where impact-aware BPM puts him",
+    "ok": true,
+    "value": "PER 45 vs BPM 126"
   },
   "forecast_top_differs_from_description_top": {
     "claim": "the metric that best forecasts next season is not the one that best describes the season just played",
     "ok": true,
-    "value": "Game Score vs PER"
+    "value": "VORP vs BPM"
   },
   "jokic_tops_consensus": {
     "claim": "Nikola Joki\u0107 tops the consensus rating",
     "ok": true,
     "value": "Nikola Joki\u0107"
   },
-  "obpm_bends": {
-    "claim": "Offensive BPM bends rather than holding a straight power law",
-    "ok": true,
-    "value": 0.7779187262171282
-  },
   "panel_forecast_top_differs_from_describe_top": {
     "claim": "across the full panel the best forecaster is not the best describer",
     "ok": true,
-    "value": "Game Score vs PER"
+    "value": "VORP vs BPM"
   },
   "panel_per_describes_better_than_forecasts": {
     "claim": "across the full panel PER describes better than it forecasts",
@@ -60,19 +80,29 @@
     "value": 0.8619138824761607
   },
   "playoff_top_faller_negative": {
-    "claim": "the top playoff faller (Jalen Duren) lost ground on the pool",
+    "claim": "the top playoff faller (Nikola Joki\u0107) lost ground on the pool",
     "ok": true,
-    "value": "Jalen Duren"
+    "value": "Nikola Joki\u0107"
   },
   "playoff_top_riser_positive": {
     "claim": "the top playoff riser (Jayson Tatum) gained on the pool",
     "ok": true,
     "value": "Jayson Tatum"
   },
+  "pwv_brunson_not_top5": {
+    "claim": "even with the playoffs weighted heavily Brunson stays outside the top 5 of the playoff pool",
+    "ok": true,
+    "value": 7
+  },
+  "pwv_brunson_rises_with_playoffs": {
+    "claim": "weighting the playoffs more lifts Brunson's combined rank (from 15th to 7th)",
+    "ok": true,
+    "value": "15 -> 7"
+  },
   "rapm_diverges_from_box": {
     "claim": "single-season RAPM diverges from the box-score systems (mean rank agreement below 0.40)",
     "ok": true,
-    "value": 0.1390805301277506
+    "value": 0.17878223300841808
   },
   "rapm_in_impact_panel": {
     "claim": "RAPM is scored across the impact-era panel alongside the box scores",
@@ -82,17 +112,22 @@
   "rapm_less_skewed_than_vorp": {
     "claim": "RAPM is far less skewed than the right-skewed accumulation metric VORP",
     "ok": true,
-    "value": 1.5364867828430149
+    "value": 1.9095130633875856
   },
   "rapm_my_beats_bare_consensus": {
     "claim": "RAPM_MY tracks the consensus better than bare RAPM",
     "ok": true,
-    "value": "0.48 vs 0.25"
+    "value": "0.54 vs 0.30"
   },
   "rapm_my_forecasts_better_than_bare": {
     "claim": "RAPM_MY forecasts next-season team results better than bare RAPM",
     "ok": true,
-    "value": "0.236 vs 0.169"
+    "value": "0.321 vs 0.169"
+  },
+  "rapm_not_power_law": {
+    "claim": "the impact metric RAPM bends rather than holding a straight power law: it is a symmetric spread, not a one-sided tail of stars",
+    "ok": true,
+    "value": 0.9473100071571364
   },
   "rapm_symmetric_not_powerlaw": {
     "claim": "RAPM is a near-symmetric bell (skew near zero), not the heavy-tailed shape a power law needs",
@@ -102,31 +137,41 @@
   "stability_min_retention_beats_chance": {
     "claim": "even the lowest elite-tier retention is several times the chance level: every system's top tier is far stickier than random",
     "ok": true,
-    "value": 0.3982758620689655
+    "value": 0.3879310344827586
   },
   "stability_per_stickier_than_bpm": {
     "claim": "PER is more stable year to year than BPM, the opposite of their forecasting order",
     "ok": true,
-    "value": 0.10617415503447025
+    "value": 0.05279010391012895
   },
   "strong_consensus_wins_corr": {
     "claim": "the two ratings agree very closely (r > 0.90)",
     "ok": true,
-    "value": 0.9532164678193248
+    "value": 0.963319528054311
+  },
+  "team_anchored_box_is_mechanical": {
+    "claim": "the team-anchored box metrics top this test only mechanically (BPM is built to equal team point differential)",
+    "ok": true,
+    "value": "BPM CV R\u00b2=1.00"
   },
   "uber_concentration_moderate": {
     "claim": "by center-robust steepness the consensus rating sits between the flattest metric (PER) and the steepest (Offensive BPM)",
     "ok": true,
-    "value": 0.31304509294883226
+    "value": 0.3762798522754313
   },
   "vorp_more_concentrated_than_per": {
     "claim": "VORP top-5% share far exceeds PER",
     "ok": true,
-    "value": 0.2906869701957748
+    "value": 0.24480184963717974
   },
   "vorp_more_concentrated_than_ws": {
     "claim": "VORP concentrates value more steeply than Win Shares",
     "ok": true,
-    "value": 0.2906869701957748
+    "value": 0.24480184963717974
+  },
+  "vorp_val_strong": {
+    "claim": "our VORP reproduces Basketball-Reference VORP (r > 0.90)",
+    "ok": true,
+    "value": 0.9607150902111112
   }
 }

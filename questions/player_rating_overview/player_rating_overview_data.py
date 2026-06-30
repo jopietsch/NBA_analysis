@@ -272,6 +272,32 @@ def load_playoff_deltas(end_year: int, *,
     return df
 
 
+# How many times a playoff minute counts vs a regular-season minute in the
+# blended Playoff-Weighted Value. 2 = the postseason counts double per minute.
+PLAYOFF_VALUE_WEIGHT = 2
+
+
+def playoff_weighted_value(deltas: pd.DataFrame,
+                           k: int = PLAYOFF_VALUE_WEIGHT) -> pd.Series:
+    """Blend regular-season and playoff BPM into one rating, playoffs weighted k×.
+
+    deltas is a load_playoff_deltas() frame (it carries BPM_reg, BPM_po, MIN_reg,
+    MIN_po). Returns a Series, aligned to deltas.index, of the minutes-weighted
+    blend in which each playoff minute counts k times a regular-season minute:
+
+        PWV = (BPM_reg·MIN_reg + BPM_po·MIN_po·k) / (MIN_reg + MIN_po·k)
+
+    BPM is points per 100 possessions above an average player and is validated
+    against Basketball-Reference, so the blend stays on a real, interpretable
+    scale. k = 1 is the plain minutes-weighted season; larger k leans on the
+    postseason. Only players already in the playoff pool (>= MIN_PLAYOFF_MINUTES
+    playoff minutes) appear, so this ranks playoff participants.
+    """
+    w_reg = deltas["MIN_reg"]
+    w_po = deltas["MIN_po"] * k
+    return (deltas["BPM_reg"] * w_reg + deltas["BPM_po"] * w_po) / (w_reg + w_po)
+
+
 # ── Team outcomes (for retrodiction) ──────────────────────────────────────────
 
 def load_team_outcomes(end_year: int) -> pd.DataFrame:
@@ -557,6 +583,72 @@ def fetch_all_nba(end_year: int) -> pd.DataFrame | None:
                          "season_end_year": end_year} for n, p in rows.items()])
     df.to_csv(path, index=False)
     return df if not df.empty else None
+
+
+def fetch_bbr_advanced(end_year: int,
+                       season_type: str = REGULAR_SEASON) -> pd.DataFrame | None:
+    """Scrape Basketball-Reference's published OBPM/DBPM/BPM/VORP for one season.
+
+    Used only to validate our recomputed BPM family against an authoritative
+    source (see the BPM-validation section in the analysis). Returns a
+    crosswalk-ready DataFrame with columns player_name, team, mp, obpm, dbpm,
+    bpm, vorp, season_end_year — one row per player (the season total, i.e. the
+    max-minutes row for players who were traded). Returns None when the page is
+    unavailable (e.g. BBR throttling), so the caller can skip gracefully.
+
+    Cached at cache/bbr_advanced_{season}_{reg|po}.csv.
+    """
+    tag = "po" if season_type == PLAYOFFS else "reg"
+    path = _cache(f"bbr_advanced_{season_str(end_year)}_{tag}.csv")
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+            return df if not df.empty else None
+        except pd.errors.EmptyDataError:
+            return None
+
+    from nbakit.bbr import get_soup
+    base = "https://www.basketball-reference.com"
+    url = (f"{base}/playoffs/NBA_{end_year}_advanced.html" if season_type == PLAYOFFS
+           else f"{base}/leagues/NBA_{end_year}_advanced.html")
+    soup = get_soup(url)
+    table = soup.find("table", {"id": "advanced"}) if soup is not None else None
+    if table is None:
+        # Do not cache a throttled/missing page; let a later run retry.
+        return None
+
+    def _num(cells, key):
+        try:
+            return float(cells.get(key, ""))
+        except ValueError:
+            return None
+
+    rows = []
+    for tr in table.find("tbody").find_all("tr"):
+        if "thead" in (tr.get("class") or []):
+            continue
+        cells = {td.get("data-stat"): td.get_text(strip=True)
+                 for td in tr.find_all(["td", "th"])}
+        # BBR's current schema names the player cell "name_display" and the team
+        # cell "team_name_abbr".
+        name = cells.get("name_display")
+        if not name:
+            continue
+        rows.append({"player_name": name, "team": cells.get("team_name_abbr"),
+                     "mp": _num(cells, "mp"), "obpm": _num(cells, "obpm"),
+                     "dbpm": _num(cells, "dbpm"), "bpm": _num(cells, "bpm"),
+                     "vorp": _num(cells, "vorp"), "season_end_year": end_year})
+
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return None
+    # Traded players appear once per team plus a combined-season row; keep the
+    # season total (the largest-minutes row) for each player.
+    df = (df.sort_values("mp", ascending=False)
+            .drop_duplicates("player_name", keep="first")
+            .reset_index(drop=True))
+    df.to_csv(path, index=False)
+    return df
 
 
 # ── Computed RAPM ─────────────────────────────────────────────────────────────

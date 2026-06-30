@@ -63,38 +63,55 @@ Rate stat.
 
 Reference: Basketball-Reference methodology at <https://www.basketball-reference.com/about/ws.html>
 
-### Box Plus/Minus (BPM 2.0)
+### Box Plus/Minus (BPM)
 
-BPM estimates a player's contribution per 100 possessions relative to an average player, derived from per-100-possession box rates plus team context.
+BPM estimates a player's points per 100 possessions above a league-average player, built from box-score rate stats plus team context.
+This project's BPM is recomputed in two stages and validated against the published Basketball-Reference values.
 
-**Offensive BPM (OBPM):**
-```
-OBPM = 0.7884*AST/10 − 0.8691*TOV% + 0.4234*(USG% − 20) + 0.7083*ORB%*10
-       + 2.2192*(eFG% − 0.5)*10 + 0.5765*(FT_rate − 0.25)*10
-       + role_coefficient
-```
+**Stage 1: a linear model fit to Basketball-Reference.** First we compute standard advanced rate stats for each player, minutes- and pace-aware, approximating the opponent with the league-average team: usage rate (USG%), assist rate (AST%), turnover rate (TOV%), offensive and defensive rebound rates (ORB%, DRB%), steal and block rates (STL%, BLK%), and a scoring-efficiency term built from true shooting (TS%).
+Offensive BPM (OBPM) and Defensive BPM (DBPM) are each a weighted sum of those rates.
+The weights are not Myers's published coefficients; they were fit by ordinary least squares (the straight-line fit that minimizes squared error) to reproduce Basketball-Reference's own published OBPM and DBPM for 2025-26.
+That fit is the source of the weights.
 
-**Defensive BPM (DBPM):**
-```
-DBPM = 0.7837*DRB%*10 + 1.7432*STL%*100 + 0.9371*BLK%*100 + role_coefficient
-```
+**Stage 2: the team-margin anchor.** Within each team, OBPM is shifted by a single constant so its minutes-weighted average equals the team's offensive point margin per 100 possessions, and DBPM is shifted so its average equals the defensive margin.
+A team's players, weighted by minutes, then sum to the team's point differential.
+This is the defining property of BPM, and Basketball-Reference anchors the same way.
+Because the anchor sets the scale, the intercepts from the Stage 1 fit are dropped.
 
-Coefficients are published by Daniel Myers at Basketball-Reference.
-The role coefficient adjusts for the fact that low-usage players face lower average competition.
-After computing raw OBPM and DBPM, both are normalized so that the minutes-weighted league average BPM = 0.
+**How well it matches.** On the 361 qualified players matched to Basketball-Reference, the recompute reproduces the published values closely.
+Pearson correlation (how tightly two sets of numbers track a straight line, where 1.0 is identical) runs 0.946 for OBPM, 0.877 for DBPM, and 0.930 for combined BPM, with a mean absolute BPM gap of 0.80 points.
+For Jalen Brunson the recompute gives 3.4, against Basketball-Reference's 3.1.
+DBPM is the weakest of the three, and that is expected: box-score defense is genuinely hard to pin down, and Basketball-Reference's own DBPM is a limited signal.
+The recompute also compresses the very top a little, so the best handful of players land slightly below their published BPM; the ordering and the correlation hold.
 
 Reference: <https://www.basketball-reference.com/about/bpm2.html>
 
 ### VORP (Value Over Replacement Player)
 
-VORP converts BPM from a rate (per 100 possessions) to a cumulative value:
+VORP turns BPM from a per-100-possession rate into a season-long cumulative value:
 
 ```
-VORP = (BPM − (−2.0)) × (MIN / (team_games × 5 × 48)) × team_games
+VORP = (BPM − (−2.0)) × (MIN / (team_games × 48)) × (team_games / 82)
 ```
 
-The replacement level is −2.0 BPM (a marginal roster player available from the waiver wire is assumed to perform at −2.0 per 100 possessions).
-Multiplying by the fraction of team possessions played gives the total value above replacement over the season.
+The replacement level is −2.0 BPM: a freely available roster filler is assumed to produce −2.0 per 100 possessions.
+`MIN / (team_games × 48)` is the player's share of a roster slot's minutes (about 0.66 for a full-time star), and `team_games / 82` prorates a partial season.
+VORP inherits BPM's validation; against Basketball-Reference it tracks at Pearson r = 0.961.
+
+### Playoff-Weighted Value (PWV)
+
+PWV asks a different question from the season-long metrics: who was most valuable once the games that decide titles are weighted up?
+It is a minutes-weighted blend of each player's regular-season and playoff BPM, with playoff minutes counted more heavily:
+
+```
+PWV = (reg_BPM × reg_MIN + po_BPM × po_MIN × w) / (reg_MIN + po_MIN × w)
+```
+
+The playoff weight `w` is 2 in the primary version, so each playoff minute counts double a regular-season one.
+The pool is the 103 players with at least 150 playoff minutes.
+Because both inputs are BPM, PWV inherits BPM's validation and adds no estimation of its own.
+At the primary weight the leaders are Nikola Jokić (10.2), Victor Wembanyama (8.8), and Shai Gilgeous-Alexander (8.6).
+The weight matters most for players who raise their game in the playoffs: Jalen Brunson goes from +3.4 in the regular season to +4.6 in the playoffs, which lifts him from 15th in the pool at equal weight to 7th once playoff minutes are doubled.
 
 ---
 

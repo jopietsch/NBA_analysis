@@ -48,6 +48,7 @@ def main() -> None:
         plot_panel_describe_vs_forecast,
         plot_rating_stability,
         plot_season_comparison,
+        plot_playoff_weighted_value,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -139,6 +140,7 @@ def main() -> None:
 
     # Regular-season vs playoff risers/fallers
     plot_playoff_shift(load_playoff_deltas(end_year))
+    plot_playoff_weighted_value(load_playoff_deltas(end_year))
 
     # Season-over-season consensus movers (most recent full-season pair)
     plot_season_comparison(season_comparison(end_year - 1, end_year))

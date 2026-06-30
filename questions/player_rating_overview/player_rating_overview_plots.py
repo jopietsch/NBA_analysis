@@ -26,6 +26,7 @@ import pandas as pd
 from scipy import stats
 
 from nbakit.viz import BLUE, GREEN, RED, GRAY, LGRAY, BG, PANEL, save_chart, style_axes, new_fig
+from player_rating_overview_data import playoff_weighted_value, PLAYOFF_VALUE_WEIGHT
 
 plt.rcParams["svg.fonttype"] = "path"
 
@@ -1228,3 +1229,78 @@ def plot_season_comparison(comp: dict, top_n: int = 8) -> str:
 
     fig.tight_layout()
     return save_chart("season_comparison.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart: playoff-weighted value dumbbell (regular season vs playoff BPM) ────
+
+BRUNSON_PLAYER_ID = 1628973
+
+
+def plot_playoff_weighted_value(deltas: pd.DataFrame, top_n: int = 12,
+                                highlight_id: int = BRUNSON_PLAYER_ID) -> str:
+    """Dumbbell of regular-season vs playoff BPM for the top playoff-weighted-value players.
+
+    Expects the frame from load_playoff_deltas() (BPM_reg, BPM_po, MIN_reg, MIN_po).
+    Computes playoff_weighted_value(), the minutes-weighted blend of regular-season
+    and playoff BPM in which a playoff minute counts PLAYOFF_VALUE_WEIGHT times a
+    regular-season minute, and shows the top_n players by that blend. Each row is a
+    line from the regular-season BPM (blue dot) to the playoff BPM (green dot), so
+    a rightward line reads as a player who raised his game in the postseason.
+    Jalen Brunson (highlight_id) is called out in bold; every other label is muted
+    grey, since he is the argument: the playoff weighting lifts him into this top
+    class without vaulting him past the league's clear top tier.
+    """
+    if deltas is None or deltas.empty or "BPM_reg" not in deltas.columns:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No playoff data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("playoff_weighted_value.svg", OUTPUT_DIR, fig=fig)
+
+    df = deltas.copy()
+    df["PWV"] = playoff_weighted_value(df)
+    ranked = df.sort_values("PWV", ascending=False).reset_index(drop=True)
+    sel = ranked.head(top_n).sort_values("PWV")  # ascending so the best plots at top
+
+    names = sel["PLAYER_NAME"].tolist()
+    reg = sel["BPM_reg"].tolist()
+    po = sel["BPM_po"].tolist()
+    ids = sel["PLAYER_ID"].tolist()
+
+    fig, ax = plt.subplots(figsize=(7.5, max(5, len(sel) * 0.4)), facecolor=BG)
+    ax.set_facecolor(PANEL)
+    y = np.arange(len(sel))
+
+    for yi, r, p in zip(y, reg, po):
+        ax.plot([r, p], [yi, yi], color=GRAY, linewidth=1.6, alpha=0.6, zorder=2)
+    ax.scatter(reg, y, color=BLUE, s=55, zorder=3, label="Regular-season BPM")
+    ax.scatter(po, y, color=GREEN, s=55, zorder=3, label="Playoff BPM")
+
+    ax.set_yticks(y)
+    ax.set_yticklabels(names, fontsize=8.5)
+    for tick, pid in zip(ax.get_yticklabels(), ids):
+        if pid == highlight_id:
+            tick.set_color("#222")
+            tick.set_fontweight("bold")
+        else:
+            tick.set_color(GRAY)
+
+    ax.axvline(0, color="#ccc", linewidth=0.8, zorder=1)
+    ax.set_xlabel("BPM (points per 100 possessions vs. an average player)",
+                  fontsize=9, color=GRAY)
+    ax.set_title(
+        "Brunson raised his game in the playoffs, but not into the top five",
+        fontsize=12, color="#222", pad=26
+    )
+    ax.text(0.5, 1.01,
+            "Regular-season vs playoff BPM, top "
+            f"{len(sel)} players by playoff-weighted value "
+            f"(postseason minutes count {PLAYOFF_VALUE_WEIGHT}x toward the blend)",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
+    ax.legend(loc="lower right", fontsize=8, frameon=False)
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    ax.spines["left"].set_visible(False)
+    ax.grid(axis="x", color="#e0dfd8", linewidth=0.7, zorder=0)
+
+    fig.tight_layout()
+    return save_chart("playoff_weighted_value.svg", OUTPUT_DIR, fig=fig)
