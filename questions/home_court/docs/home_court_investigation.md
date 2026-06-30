@@ -57,6 +57,11 @@ A battery of break-detection tests agrees on the shape: the decline bent once, g
 It never reversed.
 The regular-season figures rest on tens of thousands of games and are solid; the playoff figures share the same direction but, on far fewer games, pin down the size less precisely.
 
+**It is league-wide, not a few fading franchises.** Give every franchise its own decline rate and the spread across them is all noise: 100% of the variation between teams is the random bounce of short panels, leaving essentially no true difference.
+Strip that out and all 31 franchises with a long enough record collapse onto a single shared decline rate, and not one is rising.
+The slide is not Sacramento or Phoenix handing back an old edge while the rest hold; it is the whole league drifting down together.
+Even when the model is told exactly which teams are hosting and which are visiting each game, the size of the era drop barely changes (the biggest era moves by 0.5 pp), so it is not an artifact of which franchises happened to play more home games in which decade.
+
 **Where it is heading.** A separate test asks what happens if the recent slope simply continues: let the underlying level drift forward and forecast the next five seasons, with intervals that widen the further out they reach.
 The central regular-season path falls from about 54.9% to 53.5% by 2031, 95% interval [48.4%, 58.6%]; the playoffs fall from about 58.8% to 57.1%, with a far wider 95% interval [44.9%, 69.3%] because each postseason holds so few games.
 The forecast is a what-if on the current trend, not a prediction about future rules; its value is that even the upper edge of the regular-season interval stays below where home court sat in the mid-1980s.
@@ -108,13 +113,15 @@ If the relationship survives stripping out the shared 40-year trend, it is much 
 **What the data showed.** It survives.
 The within-era effect is -2.27 points of home win rate per 10 points of three-point rate, 95% CI [-3.08, -1.45], p < 0.001, barely below the unadjusted -2.64 (95% CI [-3.07, -2.20]).
 The playoffs show an even stronger within-era effect (-3.12 per 10 points, 95% CI [-5.89, -0.36], p = 0.027).
-The home effective-field-goal advantage fell from about 1.6 points to roughly 0.7-1.0.
+The home effective-field-goal advantage fell from about 1.6 points to roughly 0.9-1.0.
 And when three-point rate is held in the picture, the home shooting trend vanishes entirely: the fading shooting advantage *is* the three-point story.
 Shooting accounts for 21% of the regular-season decline, 95% CI [11, 28]%.
 
 **Why it holds.** A check of whether that link is a genuine long-run tie or just two series trending across the same 40 years comes back as mostly trend: the raw season-level association (about -0.90) is two lines drifting opposite each other, not a real connection.
 But the within-era, game-by-game effect is real and significant, and it points the same way in the playoffs.
 The mechanism is compositional: threes are taken from spots where home comfort and familiar rims matter less than they do on interior shots, so as both teams shifted outward, the home shooting advantage had less room to operate.
+One last guard against reading too much into the shared trend: a year-by-year lead test asks whether a season's three-point rate forecasts the *next* season's home court, and it finds nothing.
+The perimeter shift does not lead the decline season to season; the link that carries the story is the within-game one, where the higher-three-point games are the lower-home-court games inside the same era.
 
 ## The Rebounding Collapse
 
@@ -135,6 +142,8 @@ The pace-free share metric collapses too, so this is not a side effect of the le
 It is independent of the three-point shift: holding three-point rate in the picture absorbs only about 8% of the rebounding trend, and it stays highly significant (p < 0.001), a genuinely separate strand.
 And it tracks the league-wide retreat from offensive rebounding as teams traded crashing the glass for getting back on defense.
 That last link is a season-level association (about +0.82) that the same long-run check flags as mostly parallel trend, so the independent within-channel evidence is what carries the conclusion, not the raw number.
+One more, from a different camera: where modern player-tracking data exists (roughly 2014 on), it shows the same fade up close.
+The home edge in converting available offensive boards is small and slipping (averaging +0.71 pp over the tracking years), and home teams hold no measurable box-out edge at all, exactly what you would see if the offensive-glass advantage had largely collapsed before the cameras were installed.
 
 ## The Turnover Edge
 
@@ -169,6 +178,12 @@ To erase the foul link, such a cause would have to explain at least 28.9% of the
 For shooting the bar is higher still, 60.5%.
 Those are demanding thresholds, so the foul and shooting strands are hard to explain away with one omitted cause.
 This only bounds how robust the links are; it does not prove the channels cause home wins.
+
+**Does the breakdown predict a decline it never saw?** The strongest test of whether this is the real machinery is to make it forecast blind.
+The four-channel win model was frozen on the seasons through 2013, then asked to call each later season's home win rate from that season's box-score edges alone, with no peek at the result.
+On the held-out seasons 2014–2026 it misses each season's home win rate by about a point on average (0.95 percentage points in the regular season), beating both a flat guess (off by 5.48) and a naive extension of the early trend line (off by 1.45), and it even catches the 2021 dip the trend line sails past.
+The playoffs are noisier but point the same way: the channel model misses by 3.87 points against 7.30 for the trend line.
+A mechanism fit only on the earlier seasons that then reconstructs the later ones it was never shown is a stable one, not a story fitted to hindsight.
 
 ---
 

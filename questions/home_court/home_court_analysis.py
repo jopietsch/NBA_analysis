@@ -565,6 +565,16 @@ def run_multilevel_decline(df: pd.DataFrame) -> None:
     print(f"   Franchises with a positive (rising) raw slope: {n_pos}/{len(teams)}")
     print(f"   After EB shrinkage every franchise collapses to ≈{d['league_slope']:+.2f} pp/yr.\n")
 
+    FACTS.set("leaguewide.slope", d["league_slope"], "{:+.2f}", unit="pp/yr",
+              note="Pooled cluster-robust per-franchise HCA-gap slope (league-wide decline)")
+    FACTS.set("leaguewide.noise_share", d["noise_share"] * 100, "{:.0f}%",
+              note="Share of per-franchise slope spread that is sampling noise")
+    FACTS.set("leaguewide.n_modeled", d["n_modeled"], "{:d}",
+              note="Franchises with a fitted per-team HCA slope (≥10 seasons)")
+    FACTS.guard("leaguewide_all_decline", n_pos == 0,
+                claim="every franchise with a long enough record shows a declining home-court edge",
+                value=f"{n_pos}/{len(teams)} franchises have a rising raw slope")
+
     if d["true_sd"] > abs(d["league_slope"]) and d["noise_share"] < 0.5:
         print("   ► Franchises differ meaningfully in how fast their edge faded — the")
         print("     decline is concentrated, not a uniform league-wide drift.")
@@ -2419,6 +2429,17 @@ def run_oos_forecast(df: pd.DataFrame) -> None:
                       note="Reg. held-out RMSE of the frozen channel model (pp)")
             FACTS.set("oos.rmse_naive", d["rmse_naive"], "{:.0f}",
                       note="Reg. held-out RMSE of a flat training-mean guess (pp)")
+            FACTS.set("oos.rmse_trend", d["rmse_trend"], "{:.2f}",
+                      note="Reg. held-out RMSE of extrapolating the training trend line (pp)")
+            FACTS.set("oos.test_start", te0, "{:d}",
+                      note="Out-of-sample forecast: first held-out season")
+            FACTS.set("oos.test_end", te1, "{:d}",
+                      note="Out-of-sample forecast: last held-out season")
+        elif key == "po":
+            FACTS.set("oos.rmse_channel_po", d["rmse_channel"], "{:.2f}",
+                      note="Playoff held-out RMSE of the frozen channel model (pp)")
+            FACTS.set("oos.rmse_trend_po", d["rmse_trend"], "{:.2f}",
+                      note="Playoff held-out RMSE of extrapolating the training trend line (pp)")
         print(f"   {ctx_label}  (train {tr0}–{tr1}, test {te0}–{te1})\n")
         print(f"   {'Season':>7}  {'Actual':>8}  {'Channel pred':>13}  {'Trend pred':>11}")
         print(f"   {'─'*7}  {'─'*8}  {'─'*13}  {'─'*11}")
@@ -2628,6 +2649,8 @@ def run_tracking_rebound_analysis(seasons: list, stats: dict) -> None:
         FACTS.guard("tracking_oreb_shrank", _oce[0] >= 1.0 and _oce[-1] < 0.3,
                     claim="the tracking offensive-rebound edge fell from ~1.2-1.3 in the mid-2010s to under 0.2 today",
                     value=f"{_oce[0]:.1f} -> {_oce[-1]:.1f}")
+        FACTS.set("track.oreb_conv_edge", float(np.mean(_oce)), "{:+.2f}", unit="pp",
+                  note="Mean home offensive-rebound conversion edge, tracking era")
 
     print()
     print("   ► The home edge is small and flat-to-declining across the tracking era —")
@@ -3276,9 +3299,11 @@ def run_attendance_analysis(
               note="2020-21 empty-arena home win % (one decimal)")
     FACTS.set("crowd.fans_precise", 100 * float(crowd["home_win"].mean()), "{:.1f}%",
               note="2020-21 fans-present home win % (one decimal)")
+    FACTS.set("crowd.fans_median", float(crowd["attendance"].median()), "{:,.0f}",
+              note="2020-21 median attendance among fans-present games")
     print(f"   2020-21 home win %:  empty arena {100*empty['home_win'].mean():.1f}% "
           f"(n={len(empty)})  vs.  fans present {100*crowd['home_win'].mean():.1f}% "
-          f"(n={len(crowd)})")
+          f"(n={len(crowd)}, median attendance {crowd['attendance'].median():.0f})")
 
     d = dose_df.copy()
     d["att_k"] = d["attendance"] / 1000.0  # coefficient = effect per 1,000 fans
@@ -5239,6 +5264,7 @@ def _run_granger_3pa(df: pd.DataFrame) -> None:
     # Fact for stats_explainer.md §11 (Granger).
     FACTS.set("granger.n", len(data_arr), "{:d}", note="Granger test: differenced observations")
 
+    lead_ps: list[float] = []
     for direction, d_arr, y_lbl, x_lbl in [
         ("3PA rate → HCA (does 3PA lead the decline?)",
          data_arr,
@@ -5258,10 +5284,17 @@ def _run_granger_3pa(df: pd.DataFrame) -> None:
                 F = gc_res[lag][0]["ssr_ftest"][0]
                 p = gc_res[lag][0]["ssr_ftest"][1]
                 verdict = "leads" if p < 0.05 else "no Granger effect"
+                if x_lbl == "Δ 3PA rate":
+                    lead_ps.append(float(p))
                 print(f"   {lag:>4}  {F:>8.3f}  {_fmt_p(p):>10}  {verdict:>28}  {_stars(p).strip()}")
         except Exception as exc:
             print(f"   Test failed: {exc}")
         print()
+
+    if lead_ps:
+        FACTS.guard("granger_no_lead", all(p >= 0.05 for p in lead_ps),
+                    claim="a season's three-point rate does not predict the next season's home court beyond home court's own past",
+                    value="3PA→HCA Granger p = " + ", ".join(f"{p:.2f}" for p in lead_ps))
 
 
 # ── Analysis: Channel-specific ITS around 1994-95 ────────────────────────────
@@ -5420,6 +5453,8 @@ def run_team_quality_robustness(df: pd.DataFrame) -> None:
     print(f"\n   McFadden R²: baseline = {r2_b:.4f}  →  with team FE = {r2_fe:.4f}  "
           f"(Δ = +{r2_fe - r2_b:.4f})")
     print(f"   Max era coefficient shift across eras: {max_shift:.1f} pp")
+    FACTS.set("teamfe.max_shift", max_shift, "{:.1f}", unit="pp",
+              note="Largest era-coefficient change after adding home/away team fixed effects")
     verdict = "stable" if max_shift < 1.5 else "shifted"
     not_str = "not " if verdict == "stable" else ""
     print(f"   ► Era coefficients are {verdict} under team FE — the decline is")

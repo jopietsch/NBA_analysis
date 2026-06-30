@@ -118,6 +118,13 @@
     "unit": null,
     "value": 58.544839255499156
   },
+  "crowd.fans_median": {
+    "display": "3,280",
+    "fmt": "{:,.0f}",
+    "note": "2020-21 median attendance among fans-present games",
+    "unit": null,
+    "value": 3280.0
+  },
   "crowd.fans_plain": {
     "display": "58%",
     "fmt": null,
@@ -615,6 +622,27 @@
     "unit": null,
     "value": 0.06001411610816602
   },
+  "leaguewide.n_modeled": {
+    "display": "31",
+    "fmt": "{:d}",
+    "note": "Franchises with a fitted per-team HCA slope (\u226510 seasons)",
+    "unit": null,
+    "value": 31
+  },
+  "leaguewide.noise_share": {
+    "display": "100%",
+    "fmt": "{:.0f}%",
+    "note": "Share of per-franchise slope spread that is sampling noise",
+    "unit": null,
+    "value": 100.0
+  },
+  "leaguewide.slope": {
+    "display": "-0.49 pp/yr",
+    "fmt": "{:+.2f}",
+    "note": "Pooled cluster-robust per-franchise HCA-gap slope (league-wide decline)",
+    "unit": "pp/yr",
+    "value": -0.49030839393665854
+  },
   "margin.spread_po": {
     "display": "0.3",
     "fmt": "{:.1f}",
@@ -650,12 +678,47 @@
     "unit": null,
     "value": 0.9526330989535617
   },
+  "oos.rmse_channel_po": {
+    "display": "3.87",
+    "fmt": "{:.2f}",
+    "note": "Playoff held-out RMSE of the frozen channel model (pp)",
+    "unit": null,
+    "value": 3.870553420683162
+  },
   "oos.rmse_naive": {
     "display": "5",
     "fmt": "{:.0f}",
     "note": "Reg. held-out RMSE of a flat training-mean guess (pp)",
     "unit": null,
     "value": 5.479227713165135
+  },
+  "oos.rmse_trend": {
+    "display": "1.45",
+    "fmt": "{:.2f}",
+    "note": "Reg. held-out RMSE of extrapolating the training trend line (pp)",
+    "unit": null,
+    "value": 1.4458813528711465
+  },
+  "oos.rmse_trend_po": {
+    "display": "7.30",
+    "fmt": "{:.2f}",
+    "note": "Playoff held-out RMSE of extrapolating the training trend line (pp)",
+    "unit": null,
+    "value": 7.30048544706789
+  },
+  "oos.test_end": {
+    "display": "2026",
+    "fmt": "{:d}",
+    "note": "Out-of-sample forecast: last held-out season",
+    "unit": null,
+    "value": 2026
+  },
+  "oos.test_start": {
+    "display": "2014",
+    "fmt": "{:d}",
+    "note": "Out-of-sample forecast: first held-out season",
+    "unit": null,
+    "value": 2014
   },
   "oos.train_end": {
     "display": "2013",
@@ -1763,6 +1826,13 @@
     "unit": null,
     "value": -13.395441796578105
   },
+  "teamfe.max_shift": {
+    "display": "0.5 pp",
+    "fmt": "{:.1f}",
+    "note": "Largest era-coefficient change after adding home/away team fixed effects",
+    "unit": "pp",
+    "value": 0.47704431304852335
+  },
   "tpa.detrend_loss": {
     "display": "42%",
     "fmt": "{:.0f}%",
@@ -1930,6 +2000,13 @@
     "note": "Regular season: within-era 3PA effect p-value (display)",
     "unit": null,
     "value": "< 0.001"
+  },
+  "track.oreb_conv_edge": {
+    "display": "+0.71 pp",
+    "fmt": "{:+.2f}",
+    "note": "Mean home offensive-rebound conversion edge, tracking era",
+    "unit": "pp",
+    "value": 0.7089743589743591
   },
   "travel.per_100mi": {
     "display": "0.07",

@@ -9,6 +9,16 @@
     "ok": true,
     "value": "foul RV 28.9% vs partial R\u00b2 10.5%"
   },
+  "granger_no_lead": {
+    "claim": "a season's three-point rate does not predict the next season's home court beyond home court's own past",
+    "ok": true,
+    "value": "3PA\u2192HCA Granger p = 0.23, 0.27"
+  },
+  "leaguewide_all_decline": {
+    "claim": "every franchise with a long enough record shows a declining home-court edge",
+    "ok": true,
+    "value": "0/31 franchises have a rising raw slope"
+  },
   "net_reg_drop_over_third": {
     "claim": "the regular-season net-rating advantage shrank by more than a third",
     "ok": true,
