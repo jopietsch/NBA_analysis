@@ -77,7 +77,7 @@ The playoffs point the same way, from about << f("forecast.po_current_level") >>
 The takeaway is the direction, not the decimal: nothing in the recent data points back up.
 The low end of that range even dips below the level Section 6 argues is the likely floor, a reminder that this is a straight-line projection, not a forecast that knows where the decline runs out of room.
 
-![Season-by-season home win %, its smoothed trend, and a forecast for the next five seasons. The shaded fan is the range the rate could plausibly land in, wider for the playoffs because each postseason rests on far fewer games. Regular season in blue, playoffs in green.](../generated/images/home_court_hca_forecast.svg){#fig-hca-forecast}
+![Season-by-season home win %, its smoothed trend, and a forecast for the next five seasons. The shaded fan is the range the rate could plausibly land in, wider for the playoffs because each postseason rests on far fewer games. Regular season in blue, playoffs in green.](../generated/images/home_court_hca_forecast.svg){#fig-hca-forecast .collapsible}
 
 ---
 
@@ -367,7 +367,7 @@ But the playoff slide was already underway before 2014 and continued at the same
 The playoff drop would have arrived on roughly the same schedule regardless.
 Format was not the cause.
 
-![Home win % averaged over each playoff format period, for both the regular season and the playoffs. The regular season never changed format, so the fact that both series decline at similar rates across the same periods means the format change is not driving the playoff drop.](../generated/images/home_court_advantage_format_bars.svg){#fig-advantage-format-bars width=50%}
+![Home win % averaged over each playoff format period, for both the regular season and the playoffs. The regular season never changed format, so the fact that both series decline at similar rates across the same periods means the format change is not driving the playoff drop.](../generated/images/home_court_advantage_format_bars.svg){#fig-advantage-format-bars width=50% .collapsible}
 
 **A best-of-7 absorbs most of home court, and most of its decline.** A single home game and a seven-game series are very different things.
 To see how the per-game advantage translates into who wins a series, I ran a simulation: take the home win rate for a single game and play out 200,000 best-of-7 series between two otherwise-equal teams, with the home-court team hosting Games 1, 2, 5, 6, and 7.
@@ -523,7 +523,7 @@ Its error on seasons it had never seen is about << f("oos.rmse_channel") >> perc
 The same frozen model reconstructs the steeper modern playoff decline too.
 The mechanism predicts data it was not built from.
 
-![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast}
+![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast .collapsible}
 
 **The breakdown was re-run with no straight-line assumption.** The split of the decline across the four categories comes from a model that adds them up in a straight line.
 A second, more flexible model that lets the categories bend and feed off each other reaches the same split: shooting, rebounding, and turnovers each carry a substantial share and fouls the smallest at about << f("shap.reg_fouls_pct") >> (the straight-line table put it a little higher, near << f("share.fouls.decline") >>), adding back to the same total drop.
