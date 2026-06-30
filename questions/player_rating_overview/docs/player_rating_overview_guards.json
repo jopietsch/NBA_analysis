@@ -17,7 +17,7 @@
   "cumulative_are_power_laws": {
     "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
     "ok": true,
-    "value": "WS/48, BPM, OBPM"
+    "value": "WS/48, BPM, OBPM, RAPM, O-RAPM"
   },
   "cumulative_steeper_than_rate": {
     "claim": "cumulative VORP falls off more steeply than rate-metric PER",
@@ -47,7 +47,7 @@
   "panel_per_describes_better_than_forecasts": {
     "claim": "across the full panel PER describes better than it forecasts",
     "ok": true,
-    "value": 0.38329087800024597
+    "value": 0.38329087800024575
   },
   "per_describes_better_than_predicts": {
     "claim": "PER describes the season far better than it forecasts the next",
@@ -69,6 +69,16 @@
     "ok": true,
     "value": "Gary Trent Jr."
   },
+  "rapm_diverges_from_box": {
+    "claim": "single-season RAPM diverges from the box-score systems (mean rank agreement below 0.40)",
+    "ok": true,
+    "value": 0.22187249213031443
+  },
+  "rapm_in_impact_panel": {
+    "claim": "RAPM is scored across the impact-era panel alongside the box scores",
+    "ok": true,
+    "value": "12 pairs"
+  },
   "stability_min_retention_beats_chance": {
     "claim": "even the lowest elite-tier retention is several times the chance level: every system's top tier is far stickier than random",
     "ok": true,
@@ -80,14 +90,14 @@
     "value": 0.10617415503447025
   },
   "strong_consensus_wins_corr": {
-    "claim": "the two ratings agree very closely (r > 0.95)",
+    "claim": "the two ratings agree very closely (r > 0.90)",
     "ok": true,
-    "value": 0.9778914552281261
+    "value": 0.9384762771646377
   },
   "uber_concentration_between_rate_and_cumulative": {
     "claim": "by center-robust steepness the consensus rating sits between PER and VORP",
     "ok": true,
-    "value": 0.31456499970627394
+    "value": 0.31353495551474514
   },
   "vorp_more_concentrated_than_per": {
     "claim": "VORP top-5% share far exceeds PER",

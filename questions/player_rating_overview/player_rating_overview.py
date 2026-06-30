@@ -62,6 +62,9 @@ def main() -> None:
         PANEL_SYSTEMS,
         PANEL_START_YEAR,
         PANEL_END_YEAR,
+        RAPM_PANEL_SYSTEMS,
+        RAPM_PANEL_START_YEAR,
+        RAPM_PANEL_END_YEAR,
         OUTCOME_CALIBRATED,
     )
 
@@ -113,6 +116,12 @@ def main() -> None:
     # Pooled describe-vs-forecast across every cached season-pair
     panel = panel_retrodiction(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)
     plot_panel_describe_vs_forecast(panel)
+
+    # Parallel impact-era panel: box scores + RAPM over the same RAPM-coverage seasons
+    impact_panel = panel_retrodiction(RAPM_PANEL_START_YEAR, RAPM_PANEL_END_YEAR,
+                                      RAPM_PANEL_SYSTEMS)
+    plot_panel_describe_vs_forecast(
+        impact_panel, out_name="impact_panel_describe_vs_forecast.svg")
 
     # Year-over-year player-rating stability across every cached season-pair
     stab = rating_stability(PANEL_START_YEAR, PANEL_END_YEAR, PANEL_SYSTEMS)

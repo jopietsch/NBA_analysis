@@ -503,3 +503,85 @@ def test_rating_stability_persistent_vs_noise(monkeypatch):
     # The same five players stay in the top five every year for STABLE.
     assert np.mean(st["retention"]["STABLE"]) == pytest.approx(1.0)
     assert np.mean(st["retention"]["STABLE"]) > np.mean(st["retention"]["NOISE"])
+
+
+# ── compute_rapm column rename / orchestration ────────────────────────────────
+
+def _mini_possessions(n: int = 200, rng=None) -> pd.DataFrame:
+    """Synthetic possession table as emitted by reconstruct_possessions.
+
+    Uses off_player_1..5 / def_player_1..5 column names (pre-rename),
+    which is what compute_rapm receives before bridging to rapm().
+    """
+    if rng is None:
+        rng = np.random.default_rng(0)
+    # Two lineups (10 distinct players total per "team pair")
+    off_ids = [[101, 102, 103, 104, 105]] * (n // 2) + [[106, 107, 108, 109, 110]] * (n // 2)
+    def_ids = [[106, 107, 108, 109, 110]] * (n // 2) + [[101, 102, 103, 104, 105]] * (n // 2)
+    records = []
+    for off, dfd in zip(off_ids, def_ids):
+        records.append({
+            "game_id": "0000000001",
+            "period": 1,
+            "off_team_id": 1,
+            "off_player_1": off[0], "off_player_2": off[1], "off_player_3": off[2],
+            "off_player_4": off[3], "off_player_5": off[4],
+            "def_player_1": dfd[0], "def_player_2": dfd[1], "def_player_3": dfd[2],
+            "def_player_4": dfd[3], "def_player_5": dfd[4],
+            "points": int(rng.choice([0, 2, 3], p=[0.6, 0.3, 0.1])),
+            "possession": 1,
+        })
+    return pd.DataFrame(records)
+
+
+def test_compute_rapm_column_rename_and_output(monkeypatch, tmp_path):
+    """compute_rapm renames off_player_1..5/def_player_1..5→off1..5/def1..5
+    before calling rapm(), and returns RAPM/O_RAPM/D_RAPM indexed by player_id.
+    Uses a synthetic possession table; no network calls.
+    """
+    import player_rating_overview_data as D
+    from nbakit.data import REGULAR_SEASON
+
+    poss = _mini_possessions()
+
+    # Monkeypatch: supply fake game logs, fake cached PBP, and redirect cache.
+    fake_logs = pd.DataFrame({"GAME_ID": ["0000000001"]})
+    monkeypatch.setattr(D, "fetch_game_logs", lambda *a, **k: fake_logs)
+    monkeypatch.setattr(D, "CACHE_DIR", str(tmp_path))
+
+    # Write the synthetic PBP as a stub (won't actually be read since we also
+    # patch reconstruct_possessions — but the file must exist for the glob).
+    pbp_stub_path = tmp_path / "pbp_v3_0000000001.csv"
+    poss.to_csv(pbp_stub_path, index=False)  # file presence triggers pickup
+
+    # Patch reconstruct_possessions to return our synthetic possession table.
+    monkeypatch.setattr(D, "reconstruct_possessions", lambda pbp, **k: poss)
+
+    result = D.compute_rapm(2025, REGULAR_SEASON)
+
+    assert not result.empty, "compute_rapm returned empty on a non-empty possession table"
+    for col in ["player_id", "RAPM", "O_RAPM", "D_RAPM"]:
+        assert col in result.columns, f"Missing column: {col}"
+
+    # All 10 synthetic players should appear.
+    expected_pids = {101, 102, 103, 104, 105, 106, 107, 108, 109, 110}
+    assert expected_pids == set(result["player_id"].tolist())
+
+    # RAPM = O_RAPM + D_RAPM (sign convention)
+    diff = (result["RAPM"] - result["O_RAPM"] - result["D_RAPM"]).abs()
+    assert diff.max() < 0.01, "RAPM != O_RAPM + D_RAPM"
+
+
+def test_compute_rapm_no_pbp_returns_empty(monkeypatch, tmp_path):
+    """compute_rapm returns an empty DataFrame (correct columns) when no PBP cached."""
+    import player_rating_overview_data as D
+
+    fake_logs = pd.DataFrame({"GAME_ID": ["0022400001", "0022400002"]})
+    monkeypatch.setattr(D, "fetch_game_logs", lambda *a, **k: fake_logs)
+    monkeypatch.setattr(D, "CACHE_DIR", str(tmp_path))  # empty dir, no pbp files
+
+    result = D.compute_rapm(2025)
+
+    assert result.empty
+    for col in ["player_id", "RAPM", "O_RAPM", "D_RAPM"]:
+        assert col in result.columns

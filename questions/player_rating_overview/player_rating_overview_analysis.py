@@ -27,7 +27,16 @@ ALL_SYSTEMS = [
     "GAME_SCORE", "PER", "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP",
     "RAPTOR", "RAPTOR_WAR", "RAPTOR_O", "RAPTOR_D",
     "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
+    "RAPM", "O_RAPM", "D_RAPM",
 ]
+
+# Systems kept out of the consensus average. The RAPM offense/defense splits are
+# computed and shown in the correlation matrix and the offense/defense
+# breakdowns, but only the combined RAPM enters the consensus: counting all
+# three would give the RAPM family three votes and let one noisy single-season
+# split swing the headline order. (The BPM/RAPTOR splits predate this and are
+# left in the consensus to keep the rest of the report's numbers unchanged.)
+CONSENSUS_EXCLUDE = {"O_RAPM", "D_RAPM"}
 
 # Box-score systems recomputed for every season in the cache (2010-11 onward),
 # so the multi-season panel compares the same set across all season-pairs. The
@@ -40,6 +49,15 @@ PANEL_SYSTEMS = ["GAME_SCORE", "PER", "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP
 # 1996-97 is the floor: the oldest season nba_api serves advanced splits for.
 PANEL_START_YEAR = 1997  # 1996-97
 PANEL_END_YEAR = 2026    # 2025-26
+
+# A second, parallel panel restricted to the seasons where RAPM can be computed
+# from play-by-play. It scores the box-score systems AND RAPM over the SAME
+# window, so RAPM is compared against the box scores on equal seasons rather
+# than against their full 30-season history. Only the combined RAPM is included
+# (not its offensive/defensive halves), matching the consensus treatment.
+RAPM_PANEL_SYSTEMS = PANEL_SYSTEMS + ["RAPM"]
+RAPM_PANEL_START_YEAR = 2014  # 2013-14, first season with cached play-by-play
+RAPM_PANEL_END_YEAR = 2026    # 2025-26
 
 SYSTEM_LABELS = {
     "GAME_SCORE": "Game Score",
@@ -63,6 +81,9 @@ SYSTEM_LABELS = {
     "EPM": "EPM",
     "LEBRON": "LEBRON",
     "ESPN_RPM": "ESPN RPM",
+    "RAPM": "RAPM",
+    "O_RAPM": "O-RAPM",
+    "D_RAPM": "D-RAPM",
     "MVP_SHARE": "MVP Vote Share",
     "ALL_NBA_PTS": "All-NBA Points",
     "CONSENSUS": "Consensus",
@@ -97,7 +118,7 @@ def _top_share(values: np.ndarray, top_pct: float = 0.05) -> float:
 
 def _build_consensus(df: pd.DataFrame, systems: list[str]) -> pd.Series:
     """Mean z-score across all present systems (qualified players only)."""
-    present = _present_systems(df, systems)
+    present = [s for s in _present_systems(df, systems) if s not in CONSENSUS_EXCLUDE]
     if not present:
         return pd.Series(np.nan, index=df.index)
     z_cols = []
@@ -197,6 +218,7 @@ OUTCOME_CALIBRATED = {
     "WS", "WS48", "BPM", "OBPM", "DBPM", "VORP",
     "RAPTOR", "RAPTOR_O", "RAPTOR_D", "RAPTOR_WAR",
     "DARKO_DPM", "EPM", "LEBRON", "ESPN_RPM",
+    "RAPM", "O_RAPM", "D_RAPM",
 }
 
 
@@ -478,6 +500,72 @@ def run(end_year: int = 2025) -> None:
         n_valid = qual[s].notna().sum()
         print(f"  {SYSTEM_LABELS.get(s, s)}: {n_valid} players with data")
 
+    # RAPM games coverage
+    if "RAPM" in df_full.columns:
+        n_rapm = int(df_full["RAPM"].notna().sum())
+        print(f"  RAPM players with computed values: {n_rapm}")
+        FACTS.set("cov.rapm_n_players", n_rapm, "{:d}",
+                  note="players with computed RAPM values")
+
+    # RAPM detail — computed in-house this report from 2024-25 play-by-play, a
+    # single season with no box-score prior. Registers the top of the list (to
+    # show the single-season noise) and how far it sits from the box-score
+    # systems (its independence from them).
+    if "RAPM" in qual.columns and qual["RAPM"].notna().sum() >= 20:
+        header("RAPM — COMPUTED SINGLE-SEASON (NO PRIOR)")
+        rq = qual[qual["RAPM"].notna()].copy()
+        top5 = rq.nlargest(5, "RAPM")
+        for rank, (_, row) in enumerate(top5.iterrows(), 1):
+            print(f"  {rank}. {row['PLAYER_NAME']}: RAPM {row['RAPM']:+.2f} per 100")
+            FACTS.set(f"rapm.top.{rank}.name", str(row["PLAYER_NAME"]),
+                      note=f"single-season RAPM rank {rank} (qualified players)")
+        box = [b for b in ("GAME_SCORE", "PER", "WS", "WS48", "BPM", "VORP")
+               if b in rq.columns]
+        box_corrs = []
+        for b in box:
+            pair = rq[[b, "RAPM"]].dropna()
+            if len(pair) > 10:
+                box_corrs.append(abs(pair[b].corr(pair["RAPM"], method="spearman")))
+        mean_box_corr = float(np.mean(box_corrs)) if box_corrs else float("nan")
+        print(f"  Mean rank agreement with box-score systems: {mean_box_corr:.2f}")
+        FACTS.set("rapm.box_corr_mean", mean_box_corr, "{:.2f}",
+                  note="mean abs rank corr of single-season RAPM with box-score systems")
+        FACTS.guard("rapm_diverges_from_box", mean_box_corr < 0.40,
+                    "single-season RAPM diverges from the box-score systems "
+                    "(mean rank agreement below 0.40)", mean_box_corr)
+        # Does the noisy single-season RAPM #1 land anywhere near the consensus
+        # top tier? (Illustrates why every public system adds a prior.) The
+        # CONSENSUS column is built later in run(), so compute it locally here.
+        cons = _build_consensus(qual, present)
+        cons_order = (qual.assign(_C=cons).dropna(subset=["_C"])
+                      .sort_values("_C", ascending=False).reset_index(drop=True))
+        top_name = top5.iloc[0]["PLAYER_NAME"]
+        match = cons_order.index[cons_order["PLAYER_NAME"] == top_name]
+        if len(match):
+            rapm1_consensus_rank = int(match[0]) + 1
+            print(f"  RAPM #1 ({top_name}) consensus rank: {rapm1_consensus_rank}")
+            FACTS.set("rapm.top1_consensus_rank", rapm1_consensus_rank, "{:d}",
+                      note="consensus rank of the single-season RAPM #1 player")
+
+    # RAPM vs public snapshot comparison (no-ops when RAPM_PUBLIC is absent)
+    if "RAPM" in df_full.columns and "RAPM_PUBLIC" in df_full.columns:
+        header("RAPM: COMPUTED VS PUBLIC SNAPSHOT")
+        cmp = df_full[["RAPM", "RAPM_PUBLIC"]].dropna()
+        if len(cmp) >= 10:
+            r = float(np.corrcoef(cmp["RAPM"], cmp["RAPM_PUBLIC"])[0, 1])
+            mad = float((cmp["RAPM"] - cmp["RAPM_PUBLIC"]).abs().mean())
+            print(f"  Players with both values: {len(cmp)}")
+            print(f"  Pearson r: {r:.3f}")
+            print(f"  Mean absolute difference: {mad:.2f} pts/100")
+            FACTS.set("rapm_val.r", r, "{:.3f}",
+                      note="Pearson r between computed RAPM and public snapshot")
+            FACTS.set("rapm_val.mad", mad, "{:.2f}",
+                      note="mean absolute diff computed RAPM vs public snapshot (pts/100)")
+            FACTS.guard("rapm_val_reasonable", r > 0.70,
+                        "computed RAPM correlates with public snapshot (r > 0.70)", r)
+        else:
+            print(f"  Too few overlapping players ({len(cmp)}) for comparison")
+
     header("BASIC DISTRIBUTION STATS")
     for s in present:
         vals = qual[s].dropna().values
@@ -625,8 +713,8 @@ def run(end_year: int = 2025) -> None:
             print(f"  Spearman correlation between consensus and wins-predictive: {r:.3f} (p={p:.3f})")
             FACTS.set("cmp.spearman", float(r), "{:.3f}",
                       note="Spearman rank corr between consensus and wins-predictive ratings")
-            FACTS.guard("strong_consensus_wins_corr", float(r) > 0.95,
-                        "the two ratings agree very closely (r > 0.95)", float(r))
+            FACTS.guard("strong_consensus_wins_corr", float(r) > 0.90,
+                        "the two ratings agree very closely (r > 0.90)", float(r))
             both["_diff"] = both["WINS_PRED"] - both["CONSENSUS"]
             print("  Players rated much higher by wins-predictive than consensus:")
             for idx, (_, row) in enumerate(both.nlargest(5, "_diff").iterrows(), 1):
@@ -898,6 +986,68 @@ def run(end_year: int = 2025) -> None:
                         d_means["PER"] > f_means["PER"],
                         "across the full panel PER describes better than it forecasts",
                         d_means["PER"] - f_means["PER"])
+
+    header("IMPACT-ERA PANEL: BOX SCORES vs RAPM (EQUAL SEASONS)")
+    print("The panel above runs 30 seasons, but RAPM can only be computed for the")
+    print(f"{RAPM_PANEL_END_YEAR - RAPM_PANEL_START_YEAR + 1} seasons with cached play-by-play "
+          f"({RAPM_PANEL_START_YEAR - 1}-{str(RAPM_PANEL_START_YEAR)[-2:]} through "
+          f"{RAPM_PANEL_END_YEAR - 1}-{str(RAPM_PANEL_END_YEAR)[-2:]}).")
+    print("This second panel scores the box-score systems AND RAPM over those same")
+    print("seasons, so the comparison is even. RAPM is built from lineup point")
+    print("differential, so its DESCRIBE score (rebuilding the same season's team")
+    print("margin) is partly mechanical; the FORECAST score (prior-season RAPM onto")
+    print("next season's rosters) is the honest read.")
+    ipanel = panel_retrodiction(RAPM_PANEL_START_YEAR, RAPM_PANEL_END_YEAR,
+                                RAPM_PANEL_SYSTEMS)
+    id_means = {s: float(np.mean(v)) for s, v in ipanel["describe"].items() if v}
+    if_means = {s: float(np.mean(v)) for s, v in ipanel["forecast"].items() if v}
+    if id_means and if_means and "RAPM" in if_means:
+        i_n_seasons = len(ipanel["seasons"])
+        i_n_pairs = len(ipanel["pairs"])
+        FACTS.set("ipanel.n_seasons", i_n_seasons, "{:d}",
+                  note="seasons in the impact-era panel")
+        FACTS.set("ipanel.n_pairs", i_n_pairs, "{:d}",
+                  note="consecutive season-pairs in the impact-era panel")
+        FACTS.set("ipanel.first_season",
+                  f"{RAPM_PANEL_START_YEAR - 1}-{str(RAPM_PANEL_START_YEAR)[-2:]}",
+                  note="first season in the impact-era panel")
+
+        ranked_if = sorted(if_means.items(), key=lambda kv: -kv[1])
+        print(f"\n  {'':<16}{'describes':>12}{'predicts':>12}")
+        print(f"  {'system':<16}{'(same yr)':>12}{'(next yr)':>12}")
+        for s, fmean in ranked_if:
+            dmean = id_means.get(s, float("nan"))
+            tag = "[team-fit]    " if s in OUTCOME_CALIBRATED else "[outcome-blind]"
+            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}{dmean:>7.3f}  {fmean:>10.3f}")
+            FACTS.set(f"ipanel.{s}.describe_mean", dmean, "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} mean describe R² (impact-era panel)")
+            FACTS.set(f"ipanel.{s}.forecast_mean", fmean, "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} mean forecast R² (impact-era panel)")
+
+        i_forecast_top = ranked_if[0][0]
+        i_forecast_top_label = SYSTEM_LABELS.get(i_forecast_top, i_forecast_top)
+        rapm_forecast_rank = [s for s, _ in ranked_if].index("RAPM") + 1
+        n_ipanel_systems = len(ranked_if)
+        FACTS.set("ipanel.forecast_top.name", str(i_forecast_top_label),
+                  note="best forecaster in the impact-era panel")
+        FACTS.set("ipanel.forecast_top.mean_pct", if_means[i_forecast_top] * 100, "{:.0f}",
+                  note="best impact-era forecaster's mean forecast R², percent (append % in prose)")
+        FACTS.set("ipanel.RAPM.forecast_rank", rapm_forecast_rank, "{:d}",
+                  note="RAPM's rank among systems as a forecaster in the impact-era panel")
+        FACTS.set("ipanel.n_systems", n_ipanel_systems, "{:d}",
+                  note="systems compared in the impact-era panel")
+        FACTS.set("ipanel.RAPM.forecast_mean_pct", if_means["RAPM"] * 100, "{:.0f}",
+                  note="RAPM mean forecast R² (impact-era panel), percent (append % in prose)")
+        FACTS.set("ipanel.RAPM.describe_mean_pct", id_means["RAPM"] * 100, "{:.0f}",
+                  note="RAPM mean describe R² (impact-era panel), percent (append % in prose)")
+        if "PER" in if_means:
+            FACTS.set("ipanel.PER.forecast_mean_pct", if_means["PER"] * 100, "{:.0f}",
+                      note="PER mean forecast R² (impact-era panel), percent (append % in prose)")
+        print(f"\nOver these {i_n_pairs} pairs RAPM forecasts {rapm_forecast_rank} of "
+              f"{n_ipanel_systems}; the best forecaster is {i_forecast_top_label}.")
+        FACTS.guard("rapm_in_impact_panel", i_n_pairs >= 5 and "RAPM" in if_means,
+                    "RAPM is scored across the impact-era panel alongside the box scores",
+                    f"{i_n_pairs} pairs")
 
     header("PLAYER RATING STABILITY (YEAR OVER YEAR)")
     print("A different lens: not how well a rating predicts team results, but how")

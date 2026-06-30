@@ -23,6 +23,8 @@ from nbakit.data import (
     fetch_player_season_per100,
     fetch_team_season_totals,
     fetch_league_averages,
+    fetch_game_logs,
+    reconstruct_possessions,
     REGULAR_SEASON,
     PLAYOFFS,
     season_str,
@@ -34,6 +36,7 @@ from nbakit.ratings import (
     win_shares as compute_win_shares,
     bpm as compute_bpm,
     vorp as compute_vorp,
+    rapm as compute_rapm_fit,
 )
 from nbakit.player_crosswalk import (
     build_crosswalk,
@@ -556,6 +559,135 @@ def fetch_all_nba(end_year: int) -> pd.DataFrame | None:
     return df if not df.empty else None
 
 
+# ── Computed RAPM ─────────────────────────────────────────────────────────────
+
+def compute_rapm(end_year: int,
+                 season_type: str = REGULAR_SEASON) -> pd.DataFrame:
+    """Compute RAPM from cached PBP data for one season.
+
+    Reads all cached pbp_v3_{game_id}.csv files for the season, reconstructs
+    possessions, and fits a ridge-regression RAPM. Results are cached at
+    cache/rapm_computed_{season}.csv.
+
+    Returns a DataFrame with columns player_id, RAPM, O_RAPM, D_RAPM.
+    Returns an empty DataFrame (with those columns) if no PBP is cached yet.
+    """
+    cache_path = _cache(f"rapm_computed_{season_str(end_year)}.csv")
+    empty = pd.DataFrame(columns=["player_id", "RAPM", "O_RAPM", "D_RAPM"])
+
+    # Enumerate game IDs for this season from the cached game log.
+    try:
+        logs = fetch_game_logs(end_year, season_type)
+    except Exception as e:
+        print(f"  RAPM: could not load game logs: {e} — skipping")
+        return empty
+
+    game_ids = sorted(logs["GAME_ID"].dropna().unique())
+    if not game_ids:
+        print(f"  RAPM: no game IDs found for {season_str(end_year)} — skipping")
+        return empty
+
+    # Collect cached PBP files.
+    pbp_dfs: list[pd.DataFrame] = []
+    for gid in game_ids:
+        gid_str = f"{int(float(gid)):010d}"
+        path = os.path.join(CACHE_DIR, f"pbp_v3_{gid_str}.csv")
+        if not os.path.exists(path):
+            continue
+        try:
+            df = pd.read_csv(path)
+        except pd.errors.EmptyDataError:
+            continue
+        if not df.empty:
+            pbp_dfs.append(df)
+
+    if not pbp_dfs:
+        print(f"  RAPM: no PBP games cached for {season_str(end_year)} — skipping")
+        return empty
+
+    pbp_all = pd.concat(pbp_dfs, ignore_index=True)
+
+    # Box-score starters sharpen period-start lineups. Read only the cached
+    # boxscore_trad_{game_id}.csv files (do not fetch here, so the pipeline never
+    # blocks on a large download); fall back to action-based inference when none
+    # are cached. fetch_pbp_players() populates these in the background.
+    player_dfs: list[pd.DataFrame] = []
+    for gid in game_ids:
+        gid_str = f"{int(float(gid)):010d}"
+        bpath = os.path.join(CACHE_DIR, f"boxscore_trad_{gid_str}.csv")
+        if not os.path.exists(bpath):
+            continue
+        try:
+            bdf = pd.read_csv(bpath)
+        except pd.errors.EmptyDataError:
+            continue
+        if not bdf.empty:
+            player_dfs.append(bdf)
+    players_df = pd.concat(player_dfs, ignore_index=True) if player_dfs else None
+
+    # Reading from CSV strips the zero-padded game IDs to ints, so pbp "gameId"
+    # and box "game_id" both load as e.g. 22400001. reconstruct_possessions
+    # matches players_df by str(gameId), which would never line up across the two
+    # frames. Normalize both to the same zero-padded string so the starter join
+    # actually fires (otherwise it silently falls back to lineup inference).
+    if "gameId" in pbp_all.columns:
+        pbp_all["gameId"] = pbp_all["gameId"].apply(lambda g: f"{int(float(g)):010d}")
+    if players_df is not None:
+        players_df = players_df.copy()
+        players_df["game_id"] = players_df["game_id"].apply(lambda g: f"{int(float(g)):010d}")
+        print(f"  RAPM: using box-score starters for {len(player_dfs)} games")
+
+    # Reconstruct possessions; emits off_player_1..5 / def_player_1..5.
+    poss = reconstruct_possessions(pbp_all, players_df=players_df)
+    if poss.empty:
+        print(f"  RAPM: possession reconstruction returned empty for {season_str(end_year)}")
+        return empty
+
+    # Bridge column-name mismatch: rapm() wants off1..off5 / def1..def5.
+    rename_map = {}
+    for i in range(1, 6):
+        rename_map[f"off_player_{i}"] = f"off{i}"
+        rename_map[f"def_player_{i}"] = f"def{i}"
+    poss = poss.rename(columns=rename_map)
+
+    try:
+        result = compute_rapm_fit(poss)
+    except Exception as e:
+        print(f"  RAPM: fit failed for {season_str(end_year)}: {e}")
+        return empty
+
+    result = result.reset_index().rename(columns={"index": "player_id"})
+    # rapm() returns index named player_id when indexed
+    if "player_id" not in result.columns:
+        result = result.reset_index()
+        result.columns.values[0] = "player_id"
+
+    result["player_id"] = result["player_id"].astype(int)
+    result.to_csv(cache_path, index=False)
+    n_games = len(pbp_dfs)
+    print(f"  RAPM computed from {n_games} games ({season_str(end_year)}) → {cache_path}")
+    return result[["player_id", "RAPM", "O_RAPM", "D_RAPM"]]
+
+
+def _load_rapm_snapshot(end_year: int) -> pd.DataFrame | None:
+    """Load a public RAPM snapshot CSV for cross-validation.
+
+    Place the downloaded CSV at cache/rapm_snapshot_{season}.csv with at
+    minimum: player_name, rapm (or RAPM_PUBLIC).
+
+    Returns None (with a skip message) when the file is absent.
+    """
+    path = _cache(f"rapm_snapshot_{season_str(end_year)}.csv")
+    if not os.path.exists(path):
+        print(f"  RAPM snapshot not found at {path} — skipping")
+        return None
+    try:
+        df = pd.read_csv(path)
+        return df if not df.empty else None
+    except pd.errors.EmptyDataError:
+        return None
+
+
 # ── Unified ratings table ─────────────────────────────────────────────────────
 
 def load_unified_ratings(end_year: int, *,
@@ -637,6 +769,37 @@ def load_unified_ratings(end_year: int, *,
         ext_small["player_id"] = ext_small["player_id"].astype(int)
 
         merged = merged.merge(ext_small, on="player_id", how="left")
+
+    # 3b. Computed RAPM — joins directly by player_id (PBP carries nba_api IDs).
+    # Columns are always added (all-NaN when no PBP has been fetched yet).
+    rapm_df = compute_rapm(end_year)
+    if not rapm_df.empty:
+        rapm_df = rapm_df.dropna(subset=["player_id"]).copy()
+        rapm_df["player_id"] = rapm_df["player_id"].astype(int)
+        merged = merged.merge(rapm_df[["player_id", "RAPM", "O_RAPM", "D_RAPM"]],
+                              on="player_id", how="left")
+    else:
+        for col in ("RAPM", "O_RAPM", "D_RAPM"):
+            merged[col] = np.nan
+
+    # 3c. Public RAPM snapshot for validation — uses crosswalk
+    rapm_snap = _load_rapm_snapshot(end_year)
+    if rapm_snap is not None and not rapm_snap.empty:
+        rapm_snap = rapm_snap.copy()
+        if "season_end_year" not in rapm_snap.columns:
+            rapm_snap["season_end_year"] = end_year
+        snap_col = "rapm" if "rapm" in rapm_snap.columns else (
+            "RAPM_PUBLIC" if "RAPM_PUBLIC" in rapm_snap.columns else None)
+        if snap_col and "player_name" in rapm_snap.columns:
+            snap_matched = apply_crosswalk(rapm_snap, xwalk,
+                                           name_col="player_name",
+                                           season_col="season_end_year")
+            crosswalk_coverage_report(snap_matched, "rapm_snapshot")
+            snap_small = snap_matched[["player_id", snap_col]].copy()
+            snap_small = snap_small.rename(columns={snap_col: "RAPM_PUBLIC"})
+            snap_small = snap_small.dropna(subset=["player_id"])
+            snap_small["player_id"] = snap_small["player_id"].astype(int)
+            merged = merged.merge(snap_small, on="player_id", how="left")
 
     # 4. Human rankings
     mvp_df = fetch_mvp_votes(end_year)

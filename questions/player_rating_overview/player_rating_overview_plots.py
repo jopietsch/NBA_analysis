@@ -914,7 +914,9 @@ def plot_next_season_retrodiction(same: dict, nxt: dict) -> str:
     return save_chart("next_season_retrodiction.svg", OUTPUT_DIR, fig=fig)
 
 
-def plot_panel_describe_vs_forecast(panel: dict) -> str:
+def plot_panel_describe_vs_forecast(
+        panel: dict,
+        out_name: str = "panel_describe_vs_forecast.svg") -> str:
     """Pooled describe-vs-forecast across every season-pair in the cache.
 
     `panel` is the dict from analysis.panel_retrodiction: {"describe": {sys:
@@ -931,7 +933,7 @@ def plot_panel_describe_vs_forecast(panel: dict) -> str:
         fig, ax = new_fig()
         ax.text(0.5, 0.5, "No panel data", ha="center", va="center",
                 transform=ax.transAxes)
-        return save_chart("panel_describe_vs_forecast.svg", OUTPUT_DIR, fig=fig)
+        return save_chart(out_name, OUTPUT_DIR, fig=fig)
 
     f_mean = {s: float(np.mean(forecast[s])) for s in systems}
     systems.sort(key=lambda s: -f_mean[s])
@@ -981,7 +983,7 @@ def plot_panel_describe_vs_forecast(panel: dict) -> str:
     ax.legend(loc="upper right", fontsize=8, frameon=False)
 
     fig.tight_layout()
-    return save_chart("panel_describe_vs_forecast.svg", OUTPUT_DIR, fig=fig)
+    return save_chart(out_name, OUTPUT_DIR, fig=fig)
 
 
 def plot_rating_stability(stab: dict, top_n: int = 20, chance: float | None = None) -> str:

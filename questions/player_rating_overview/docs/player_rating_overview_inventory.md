@@ -156,5 +156,5 @@ The analysis focuses on 2024–25 as the primary test season. Multi-season cover
 
 ## Open items
 
-- RAPM (Regularized Adjusted Plus/Minus): requires play-by-play stint-level data + ridge regression. Deferred to Phase 4 — attempt recompute from pbpstats.com data; fall back to public RAPM snapshots (e.g., Krishna Narsu's public RAPM) if play-by-play volume is prohibitive for one season.
+- RAPM (Regularized Adjusted Plus/Minus): computed in-house for 2024-25 from nba_api play-by-play (PlayByPlayV3), reconstructed into five-on-five possessions and fit with cross-validated ridge regression (single season, zero-mean prior). Still open: backfilling earlier seasons (that play-by-play is being assembled), adding a box-score prior to cut the single-season noise, and loading a public RAPM snapshot to validate the computed values.
 - Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2024–25; adjusted for multi-season pools.

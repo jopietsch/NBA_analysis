@@ -33,6 +33,7 @@ _RESULTS = os.path.join(_DOCS, "player_rating_overview_results.md")
 ALLOW_ABSENT: set[str] = {
     "cov.n_systems",
     "powerlaw.n_systems",
+    "ipanel.n_systems",
     "stability.chance_pct",
 }
 
