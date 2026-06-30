@@ -737,7 +737,7 @@ def plot_distribution_shape(df: pd.DataFrame, rate_sys: str = "RAPM",
         ax.spines["right"].set_visible(False)
         ax.legend(fontsize=7.5, frameon=False, loc="upper left")
 
-    axes[0].set_ylabel("Share of qualified players", fontsize=9, color=GRAY)
+    axes[0].set_ylabel("Share of qualified player-seasons", fontsize=9, color=GRAY)
     fig.suptitle(
         "RAPM is symmetric, so it has no heavy tail to be a power law; VORP is right-skewed",
         fontsize=11, color="#222", y=1.0)

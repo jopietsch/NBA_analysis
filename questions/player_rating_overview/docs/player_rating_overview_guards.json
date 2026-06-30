@@ -82,7 +82,7 @@
   "rapm_less_skewed_than_vorp": {
     "claim": "RAPM is far less skewed than the right-skewed accumulation metric VORP",
     "ok": true,
-    "value": 1.442778675284059
+    "value": 1.5364867828430149
   },
   "rapm_my_beats_bare_consensus": {
     "claim": "RAPM_MY tracks the consensus better than bare RAPM",
@@ -97,7 +97,7 @@
   "rapm_symmetric_not_powerlaw": {
     "claim": "RAPM is a near-symmetric bell (skew near zero), not the heavy-tailed shape a power law needs",
     "ok": true,
-    "value": 0.021737024761672222
+    "value": 0.04493371329203869
   },
   "stability_min_retention_beats_chance": {
     "claim": "even the lowest elite-tier retention is several times the chance level: every system's top tier is far stickier than random",

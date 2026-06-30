@@ -3534,6 +3534,48 @@
     "unit": null,
     "value": "Ivica Zubac"
   },
+  "rapm_shape.exkurt": {
+    "display": "+0.10",
+    "fmt": "{:+.2f}",
+    "note": "pooled RAPM excess kurtosis (0 = normal)",
+    "unit": null,
+    "value": 0.09622615124560507
+  },
+  "rapm_shape.frac_neg": {
+    "display": "49",
+    "fmt": "{:.0f}",
+    "note": "pooled RAPM share of qualified player-seasons below zero (percent)",
+    "unit": null,
+    "value": 48.71740059854639
+  },
+  "rapm_shape.n": {
+    "display": "4678",
+    "fmt": "{:d}",
+    "note": "qualified player-seasons in the pooled RAPM distribution",
+    "unit": null,
+    "value": 4678
+  },
+  "rapm_shape.n_seasons": {
+    "display": "13",
+    "fmt": "{:d}",
+    "note": "play-by-play seasons pooled for the RAPM distribution shape",
+    "unit": null,
+    "value": 13
+  },
+  "rapm_shape.skew": {
+    "display": "+0.04",
+    "fmt": "{:+.2f}",
+    "note": "pooled RAPM skewness (near zero = symmetric)",
+    "unit": null,
+    "value": 0.04493371329203869
+  },
+  "rapm_shape.vorp_skew": {
+    "display": "+1.58",
+    "fmt": "{:+.2f}",
+    "note": "pooled VORP skewness (right-skewed accumulation metric)",
+    "unit": null,
+    "value": 1.5814204961350535
+  },
   "retro.BPM.cv_r2": {
     "display": "0.623",
     "fmt": "{:.3f}",

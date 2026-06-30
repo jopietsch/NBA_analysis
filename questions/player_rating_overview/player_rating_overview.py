@@ -78,7 +78,12 @@ def main() -> None:
     plot_ordinal_vs_value_gap(qual)
     plot_powerlaw_fits(qual, present)
     plot_powerlaw_small_multiples(qual, present)
-    plot_distribution_shape(qual)
+    # Distribution-shape panel uses RAPM pooled across every play-by-play season,
+    # since one season of RAPM is too sparse to read as a bell.
+    from player_rating_overview_data import pooled_qualified_values
+    pooled_shape = pooled_qualified_values(RAPM_PANEL_START_YEAR, RAPM_PANEL_END_YEAR,
+                                           ["RAPM", "VORP"])
+    plot_distribution_shape(pooled_shape)
 
     # Compute uber ratings first so they can be included in the Gini and
     # distribution charts (highlighted, since they are the combined ratings).

@@ -129,6 +129,9 @@ D-RAPM (MY) (n=375):
   Gini: 0.442  Top-5% share: 14.5%
   Skew: +0.03  Excess kurtosis: +0.59  Below zero: 14%
 
+RAPM distribution shape, pooled over 13 seasons (n=4678 player-seasons):
+  Skew: +0.04  Excess kurtosis: +0.10  Below zero: 49%
+
 ─── POWER-LAW FIT (VALUE VS RANK, LOG-LOG) ──────────────────────
 A system's top-50 value-vs-rank curve is a power law when the
 log-log fit clears R^2 >= 0.95 (a straight line on log-log axes).

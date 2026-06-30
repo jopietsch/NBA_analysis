@@ -13,6 +13,7 @@ from player_rating_overview_data import (
     load_unified_ratings,
     load_team_outcomes,
     load_playoff_deltas,
+    pooled_qualified_values,
     MIN_MINUTES_QUALIFIER,
     MIN_PLAYOFF_MINUTES,
     PLAYOFF_DELTA_METRICS,
@@ -652,19 +653,42 @@ def run(end_year: int = 2025) -> None:
         _per_top5 = _top_share(qual["PER"].dropna().values, 0.05)
         FACTS.guard("vorp_more_concentrated_than_per", _vorp_top5 > _per_top5,
                     "VORP top-5% share far exceeds PER", _vorp_top5)
-    # Guard: RAPM is a near-symmetric, roughly Gaussian rate, not a power law.
-    # A power law needs a heavy one-sided tail (large positive skew). RAPM's skew
-    # sits near zero; VORP, an accumulation metric, carries the right-skew tail.
-    if "RAPM" in qual.columns and qual["RAPM"].notna().sum() >= 20:
-        _rapm_vals = qual["RAPM"].dropna().values
+    # RAPM distribution shape, pooled across every play-by-play season. One
+    # season of RAPM is too sparse to read as a bell, so the shape facts (and the
+    # distribution-shape figure) pool all the cached seasons. A power law needs a
+    # heavy one-sided tail (large positive skew); RAPM's skew sits near zero,
+    # while VORP, an accumulation metric, carries the right-skew tail.
+    _shape = pooled_qualified_values(RAPM_PANEL_START_YEAR, RAPM_PANEL_END_YEAR,
+                                     ["RAPM", "VORP"])
+    if "RAPM" in _shape.columns and _shape["RAPM"].notna().sum() >= 100:
+        _rapm_vals = _shape["RAPM"].dropna().values
+        _n_seasons = RAPM_PANEL_END_YEAR - RAPM_PANEL_START_YEAR + 1
         _rapm_skew = float(stats.skew(_rapm_vals))
+        _rapm_exkurt = float(stats.kurtosis(_rapm_vals))
+        _rapm_fracneg = float(np.mean(_rapm_vals < 0))
+        print(f"\nRAPM distribution shape, pooled over {_n_seasons} seasons "
+              f"(n={len(_rapm_vals)} player-seasons):")
+        print(f"  Skew: {_rapm_skew:+.2f}  Excess kurtosis: {_rapm_exkurt:+.2f}  "
+              f"Below zero: {_rapm_fracneg*100:.0f}%")
+        FACTS.set("rapm_shape.n", len(_rapm_vals), "{:d}",
+                  note="qualified player-seasons in the pooled RAPM distribution")
+        FACTS.set("rapm_shape.n_seasons", _n_seasons, "{:d}",
+                  note="play-by-play seasons pooled for the RAPM distribution shape")
+        FACTS.set("rapm_shape.skew", _rapm_skew, "{:+.2f}",
+                  note="pooled RAPM skewness (near zero = symmetric)")
+        FACTS.set("rapm_shape.exkurt", _rapm_exkurt, "{:+.2f}",
+                  note="pooled RAPM excess kurtosis (0 = normal)")
+        FACTS.set("rapm_shape.frac_neg", _rapm_fracneg * 100, "{:.0f}",
+                  note="pooled RAPM share of qualified player-seasons below zero (percent)")
         FACTS.guard("rapm_symmetric_not_powerlaw",
                     abs(_rapm_skew) < 0.5,
                     "RAPM is a near-symmetric bell (skew near zero), not the "
                     "heavy-tailed shape a power law needs",
                     _rapm_skew)
-        if "VORP" in qual.columns:
-            _vorp_skew = float(stats.skew(qual["VORP"].dropna().values))
+        if "VORP" in _shape.columns and _shape["VORP"].notna().sum() >= 100:
+            _vorp_skew = float(stats.skew(_shape["VORP"].dropna().values))
+            FACTS.set("rapm_shape.vorp_skew", _vorp_skew, "{:+.2f}",
+                      note="pooled VORP skewness (right-skewed accumulation metric)")
             FACTS.guard("rapm_less_skewed_than_vorp",
                         abs(_rapm_skew) < abs(_vorp_skew),
                         "RAPM is far less skewed than the right-skewed accumulation metric VORP",

@@ -313,6 +313,25 @@ def test_powerlaw_fit_drops_nonpositive_tail():
     assert fit["n_points"] == 5
 
 
+def test_pooled_qualified_values_stacks_and_filters(monkeypatch):
+    import player_rating_overview_data as data
+
+    def fake_load(year):
+        return pd.DataFrame({
+            "RAPM": [year - 2000.0, -1.0, 99.0],
+            "VORP": [1.0, 2.0, 3.0],
+            "QUALIFIED": [True, True, False],  # third row dropped
+        })
+
+    monkeypatch.setattr(data, "load_unified_ratings", fake_load)
+    out = data.pooled_qualified_values(2014, 2016, ["RAPM", "VORP"])
+    # 3 seasons * 2 qualified rows each = 6 rows; unqualified row excluded.
+    assert len(out) == 6
+    assert (out["QUALIFIED"] == True).all()
+    assert 99.0 not in out["RAPM"].values
+    assert list(out.columns).count("RAPM") == 1
+
+
 def test_powerlaw_fit_too_few_points_returns_none():
     from player_rating_overview_data import powerlaw_fit
     assert powerlaw_fit(np.array([3.0, 2.0, -1.0]), top_n=50) is None

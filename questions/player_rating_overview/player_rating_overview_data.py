@@ -977,3 +977,30 @@ def load_unified_ratings(end_year: int, *,
     merged.to_csv(path, index=False)
     print(f"Unified ratings table: {len(merged)} players → {path}")
     return merged
+
+
+def pooled_qualified_values(start_year: int, end_year: int,
+                            columns: list[str]) -> pd.DataFrame:
+    """Stack qualified-player rows for the given columns across a season range.
+
+    Reads each season's cached unified-ratings table, keeps qualified players,
+    and concatenates the requested columns into one long frame (one row per
+    player-season). Used for distribution-shape views that need more than a
+    single season to settle, RAPM in particular, whose one-season histogram is
+    too sparse to read. The returned frame carries QUALIFIED=True so the plots
+    that filter on it treat every pooled row as already qualified. Seasons whose
+    cache is missing are skipped.
+    """
+    frames = []
+    for yr in range(start_year, end_year + 1):
+        d = load_unified_ratings(yr)
+        if "QUALIFIED" in d.columns:
+            d = d[d["QUALIFIED"] == True]
+        keep = [c for c in columns if c in d.columns]
+        if keep:
+            frames.append(d[keep])
+    if not frames:
+        return pd.DataFrame(columns=list(columns))
+    out = pd.concat(frames, ignore_index=True)
+    out["QUALIFIED"] = True
+    return out
