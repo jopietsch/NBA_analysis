@@ -14,7 +14,7 @@
 
 They went << f("raw.wins") >>-<< f("raw.losses") >> (<< f("raw.win_rate_pct", "{:.0f}") >>th percentile win rate among all << f("raw.n_champions") >> champions since 1983–84) and outscored opponents by an average of **<< f("raw.margin") >> points per game**, the highest raw playoff margin in the dataset.
 Across the game-to-game swing of a 19-game run, that margin could sit anywhere from << f("raw.margin_ci.lo") >> to << f("raw.margin_ci.hi") >>: even at the unlucky end, the run would still rank above the historical average.
-2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total- scoring version drops it to 3rd).
+2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-scoring version drops it to 3rd).
 After adjusting for opponent strength, the margin of **<< f("adj.margin", "{:+.1f}") >> pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, being the single best is far from settled, see §10–§11); on the same pace-neutral basis the opponent-adjusted margin is also first.
 The East was **not** historically weak: the West-East SRS gap in 2025–26 was only << f("gap.west_east") >> pts/game (<< f("gap.pct", "{:.0f}") >>th percentile of West dominance); in << f("gap.pct_more_dominant") >> of seasons since 1984, the West was even *more* dominant than this.
 
