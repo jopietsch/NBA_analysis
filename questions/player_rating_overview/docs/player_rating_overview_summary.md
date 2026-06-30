@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-The rating that best describes a finished NBA season is the worst at predicting the next one: across the 30 seasons tested, PER rebuilds about 64% of the gaps between teams in a season just played but forecasts the next at only about 25%.
+The rating that best describes a finished NBA season is one of the worst at predicting the next one: across the 30 seasons tested, PER rebuilds about 64% of the gaps between teams in a season just played but forecasts the next at only about 25%.
 That is one sign of a larger truth: there is no single best way to rate NBA players, and the systems disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
 This report recomputes the box-score systems for 2024-25, adds a from-scratch RAPM built from a full season of play-by-play, and puts three questions to them:

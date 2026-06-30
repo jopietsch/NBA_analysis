@@ -8,7 +8,7 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-The rating that best describes a finished NBA season is the worst at predicting the next one.
+The rating that best describes a finished NBA season is one of the worst at predicting the next one.
 Averaged across the 30 seasons tested, PER, the oldest and simplest box score, rebuilds about 64% of the gaps between teams in a season just played, more than the plus/minus metrics built to track exactly that, yet it forecasts the next at only about 25%.
 That split is one thread of a larger problem: every "top players" list uses a different method, and they disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
@@ -206,7 +206,7 @@ The lesson is the one every projection system runs into: describing what happene
 PER is a faithful scoreboard of a finished season but a poor crystal ball.
 Which rating is "better" depends on the question.
 
-![Each system's same-season fit (grey) against how well its prior-season version forecasts this season (blue). PER describes best but forecasts worst; the plus/minus metrics hold more of their predictive signal.](../generated/images/next_season_retrodiction.svg){#fig-next-season}
+![Each system's same-season fit (grey) against how well its prior-season version forecasts this season (blue). PER describes best but forecasts among the worst; the plus/minus metrics hold more of their predictive signal.](../generated/images/next_season_retrodiction.svg){#fig-next-season}
 
 One pair of seasons could be a fluke, so we ran the same two tests on every season back to 1996-97: 30 seasons for the describe test and 29 year-to-year handoffs for the forecast test.
 The shape repeats.
