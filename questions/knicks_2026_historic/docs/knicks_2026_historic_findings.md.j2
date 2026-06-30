@@ -15,8 +15,8 @@
 They went << f("raw.wins") >>-<< f("raw.losses") >> (<< f("raw.win_rate_pct", "{:.0f}") >>th percentile win rate among all << f("raw.n_champions") >> champions since 1983–84) and outscored opponents by an average of **<< f("raw.margin") >> points per game**, the highest raw playoff margin in the dataset.
 Across the game-to-game swing of a 19-game run, that margin could sit anywhere from << f("raw.margin_ci.lo") >> to << f("raw.margin_ci.hi") >>: even at the unlucky end, the run would still rank above the historical average.
 2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-scoring version drops it to 3rd).
-After adjusting for opponent strength, the margin of **<< f("adj.margin", "{:+.1f}") >> pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, or each is graded against its own era's spread of teams, being the single best is far from settled: a top-five run, see §10–§11 and §14); on the same pace-neutral basis the opponent-adjusted margin is also first.
-The East was **not** historically weak: the West-East SRS gap in 2025–26 was only << f("gap.west_east") >> pts/game (<< f("gap.pct", "{:.0f}") >>th percentile of West dominance); in << f("gap.pct_more_dominant") >> of seasons since 1984, the West was even *more* dominant than this.
+After adjusting for opponent strength, the margin of **<< f("adj.margin", "{:+.1f}") >> pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, or each is graded against its own era's spread of teams, being the single best is far from settled: the fairest uncertainty test leaves them the most likely #1 but not a lock (§10–§11), and grading on the era's spread of teams ranks them a top-five run rather than a clear first (§14)); on the same pace-neutral basis the opponent-adjusted margin is also first.
+The East was **not** historically weak: the West-East gap in team strength (SRS, a team's scoring margin adjusted for schedule) in 2025–26 was only << f("gap.west_east") >> pts/game (<< f("gap.pct", "{:.0f}") >>th percentile of West dominance); in << f("gap.pct_more_dominant") >> of seasons since 1984, the West was even *more* dominant than this.
 
 There is a possible nuance in the East record: the 76ers and Cavaliers played a touch *below* their regular-season ratings in their other playoff games, so some of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks excellence, though that gap is small enough to be random (the Hawks played only the Knicks, so there is no independent read on them; see §5).
 The Finals tells the opposite story: the Spurs were the most improved of the Knicks' four opponents, climbing from a regular-season SRS of << f("field.spurs.reg_srs") >> to a playoff SRS of << f("field.spurs.po_srs") >> (the second-biggest rise of any team in the whole 2026 field, behind only the Knicks themselves; see §6).
@@ -61,7 +61,7 @@ The Finals were tight: four of the five games were decided by 4 points or fewer.
 
 **No, not historically.** The West-East SRS gap in 2025–26 was only **<< f("gap.west_east") >> pts/game**: << f("gap.pct", "{:.0f}") >>th percentile of West dominance, and well within the normal season-to-season swing.
 The East inter-conference win rate was << f("gap.east_h2h") >> (near parity).
-By any formal measure, the East in 2025–26 was unremarkable (if anything, slightly more competitive than the 42-year average).
+By any formal measure, the East in 2025–26 was unremarkable (if anything, slightly more competitive than the historical average).
 
 The three most West-dominant seasons on record were 2013–14 (<< f("gap.top1.srs") >>), 2003–04 (<< f("gap.top2.srs") >>), and 2000–01 (<< f("gap.top3.srs") >>), all much larger gaps.
 The 2025–26 East was competitive.
@@ -175,7 +175,7 @@ These playoff ratings rest on a few weeks of games, so the exact figures carry t
 **How historic was the rise?** Set it against every champion since 1983-84, and two different yardsticks land on the same answer.
 The first, *elevation*, is the plain version: playoff rating minus regular-season rating.
 The Knicks' jump of **<< f("elev.knicks.elevation") >>** (regular-season SRS << f("elev.knicks.reg_srs") >> up to a playoff << f("elev.knicks.po_srs") >>) ranks **<< f("elev.knicks_rank") >>nd of << f("elev.n") >>**, behind only the << f("elev.best_season") >> Lakers (<< f("elev.best") >>).
-The second, *overperformance*, asks the same thing but nets out the schedule: how far the Knicks' actual playoff margin (<< f("raw.margin") >>) beat what their own regular-season rating predicted against the teams they drew (<< f("knicks.expected_margin") >> per game).
+The second, *overperformance*, asks the same thing after subtracting out the schedule: how far the Knicks' actual playoff margin (<< f("raw.margin") >>) beat what their own regular-season rating predicted against the teams they drew (<< f("knicks.expected_margin") >> per game).
 That **<< f("overperf.margin") >>**-per-game outperformance also ranks **<< f("overperf.knicks_rank") >>nd**, behind the same << f("overperf.best_season") >> Lakers.
 Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and the second-biggest any champion has produced.
 
@@ -183,7 +183,7 @@ Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and 
 
 **What the rise is made of.** It is not spread evenly across the run.
 The first three rounds against the East were demolitions: raw margins of << f("round.r1.raw") >>, << f("round.r2.raw") >>, and << f("round.cf.raw") >>.
-The Finals were a near-even fight (<< f("round.finals.raw") >>), and once the Spurs' own playoff form is netted out, the Knicks actually came out behind on the scoreboard math (§5).
+The Finals were a near-even fight (<< f("round.finals.raw") >>), and once the Spurs' own playoff form is subtracted out, the Knicks actually came out behind on the scoreboard math (§5).
 So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen even further than the Knicks pushed to the hardest test of the run.
 
 **Is there anything behind the jump we can actually see?** One thing shows up in who was on the floor.
@@ -208,6 +208,8 @@ They also played more close games than a typical champion: << f("clutch.rate", "
 **Home/away splits:**
 - Home: << f("home.games") >> games, << f("home.wr", "{:.1%}") >> win rate (<< f("home.wr_pct", "{:.0f}") >>rd percentile vs. champions, relatively weak at home for a champion)
 - Away: << f("away.games") >> games, << f("away.wr", "{:.1%}") >> win rate (<< f("away.wr_pct", "{:.0f}") >>th percentile)
+
+It is an unusual profile for a champion: ordinary at home, nearly untouchable on the road.
 
 ---
 
@@ -239,7 +241,7 @@ Against the Spurs in the Finals, the market had them as slight underdogs (<< f("
 
 The market saw the two halves differently before either began: modest East favorites who then won by roughly 17 to 22 a round, and a near-even Finals against a healthy, elite Spurs team that the Knicks won by grinding out close games.
 
-![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
+![Market expectations vs. actual margins: Knicks beat the spread by 20+ points a round against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
 
 ---
 
@@ -292,14 +294,14 @@ When we pull every champion's number back toward the historical average based on
 They land in the top three about << f("hier.p_top3", "{:.0f}") >>% of the time and the top five about << f("hier.p_top5", "{:.0f}") >>%; their most likely spot is near the bottom of the top ten, with a range that runs from 1st to deep in the pack.
 
 The gap between << f("boot.p_rank1", "{:.0f}") >>% and << f("hier.p_rank1", "{:.0f}") >>% comes from two factors.
-The Knicks' run was streaky: huge blowouts in the sweeps next to a << f("finals.raw") >> Finals.
+The Knicks' run was streaky: the two sweeps came by << f("round.r2.raw") >> and << f("round.cf.raw") >> next to a << f("finals.raw") >> Finals.
 A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from << f("adj.margin", "{:+.1f}") >> down to about << f("hier.post_mean", "{:+.1f}") >>, rather than the << f("shrink.post_mean", "{:+.1f}") >> of the second check (which ignored streakiness).
 And several rivals, the 1990-91 Bulls, the 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier evidence, so once everyone's wobble is in play they overtake the Knicks often.
 
 The bottom line across these checks: the 2025-26 Knicks own the best raw opponent-adjusted number of any champion, and they are very likely one of the best handful of title runs ever, but the data cannot crown them the single best.
 Their chance of being the true #1 runs from roughly << f("boot.p_rank1", "{:.0f}") >>% (with the rest of history left at its exact numbers) down to about << f("hier.p_rank1", "{:.0f}") >>% (the fairest test, where every champion is allowed to be as uncertain as the Knicks).
 
-![After fair shrinkage the champion field bunches together: the Knicks are about 9% to be the true #1](../generated/images/knicks_2026_hierarchical_posterior.svg){#fig-hierarchical-posterior width=100%}
+![Pulling every champion's number back toward the historical average bunches the field together: the Knicks are about 9% to be the true #1](../generated/images/knicks_2026_hierarchical_posterior.svg){#fig-hierarchical-posterior width=100%}
 
 ---
 
@@ -324,7 +326,7 @@ It rated the Knicks' opponents tougher than SRS did, because the teams New York 
 A tougher-rated schedule means a bigger adjustment, so the Knicks' Elo-adjusted margin is **<< f("elo.adj_margin", "{:+.1f}") >> per game, third-best**, behind the 2016-17 Warriors and 1990-91 Bulls.
 
 All four systems rank the Knicks in the top three, and across champions their adjusted margins track closely together.
-The one thing that moves the Knicks off #1 is not switching from margins to wins, or capping blowouts, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
+Among the rating systems, the one thing that moves the Knicks off #1 is not switching from margins to wins, or capping blowouts, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
 
 ![The Knicks rank #1 under three of four rating systems, season margin, wins-only, and blowout-capped; only recency-weighted Elo drops them to #3](../generated/images/knicks_2026_rating_systems.svg){#fig-rating-systems width=100%}
 
@@ -384,9 +386,9 @@ Per possession the Knicks' raw margin (<< f("pace.raw_per100", "{:+.1f}") >>) an
 So the level of scoring, however you handle it, does not knock the opponent-adjusted run off the top.
 
 **Then, the spread.** This is the adjustment that does.
-Today's league is far more top-heavy than the 1980s: the gap between the best and worst teams, measured in points, has nearly doubled since 1984, with the spread of team ratings growing from about << f("spread.sd_start") >> to << f("spread.sd_2026") >>.
+Today's league is far more top-heavy than the 1980s: the spread of team strength has nearly doubled since 1984, with the typical distance of a team from the league average growing from about << f("spread.sd_start") >> to << f("spread.sd_2026") >> points.
 A given margin is a smaller achievement when many teams are extreme than when the league is bunched together.
-Grade each champion against its own era's spread, counting how many standard deviations above an average team it stood, and the Knicks come in **<< f("spread.knicks_rank") >>th**, at << f("spread.knicks_z") >> standard deviations.
+Grade each champion against its own era's spread, measuring how far above an average team it stood relative to how spread out that season's teams were, and the Knicks come in **<< f("spread.knicks_rank") >>th**, standing << f("spread.knicks_z") >> standard deviations clear of an average team.
 The 2016-17 Warriors lead at << f("spread.top_z") >>, the 1986-87 Lakers and 2022-23 Nuggets just behind: smaller margins in raw points, but towering over flatter fields.
 
 Stacking the lenses tells the whole story at a glance:
@@ -395,7 +397,7 @@ Stacking the lenses tells the whole story at a glance:
 |---|---|---|
 | Raw scoring margin | nothing | 1st of << f("raw.n_champions") >> |
 | Opponent-adjusted | strength of schedule | << f("ladder.rank_oppadj") >>st |
-| + scoring-share | the era's scoring level | << f("ladder.rank_scoringshare") >>st |
+| + scoring-share | the era's scoring level | << f("ladder.rank_scoringshare") >>st (the raw margin alone slips to 3rd) |
 | + per possession | the era's pace | 1st |
 | + graded on the era's spread | how top-heavy the league was | << f("spread.knicks_rank") >>th |
 | Recency-weighted opponents (Elo) | schedule, weighting late form | << f("elo.rank") >>rd |
@@ -406,7 +408,7 @@ The two lenses that move them, grading on the era's spread (<< f("spread.knicks_
 Neither reading is wrong.
 They answer different questions, and an honest "most dominant ever" has to say which one it means.
 
-![Ranked by opponent-adjusted margin the Knicks lead; ranked by era-spread z-score they sit << f("spread.knicks_rank") >>th behind the 2016-17 Warriors. But in both orderings the top champions' 90% intervals, taken from the spread of each team's own playoff games, overlap heavily, so the gap between the leaders is within the noise of a short playoff run.](../generated/images/knicks_2026_rank_vs_z_intervals.svg){#fig-rank-vs-z width=100%}
+![Ranked by opponent-adjusted margin the Knicks lead; ranked by how far they stood clear of their own era's field they sit << f("spread.knicks_rank") >>th behind the 2016-17 Warriors. But in both orderings the top champions' 90% intervals, taken from the spread of each team's own playoff games, overlap heavily, so the gap between the leaders is within the noise of a short playoff run.](../generated/images/knicks_2026_rank_vs_z_intervals.svg){#fig-rank-vs-z width=100%}
 
 Read the bars, not the order.
 Whichever metric sets the ranking, the leaders' intervals sit on top of one another: the ordering is real, but the distance between the top few is not something 19 games can resolve.
@@ -415,7 +417,7 @@ Whichever metric sets the ranking, the leaders' intervals sit on top of one anot
 
 ## 15. Limitations
 
-**Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin ([<< f("raw.margin_ci.lo") >>, << f("raw.margin_ci.hi") >>]).
+**Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin (<< f("raw.margin_ci.lo") >> to << f("raw.margin_ci.hi") >>).
 The comparison set is also only << f("raw.n_champions") >> champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all measure closely related things; treat them as different angles on one story, not independent votes.
 §10 puts numbers on how solid the #1 rank is, and that uncertainty, not any objection in §13, is what keeps first place from being settled.
@@ -472,7 +474,7 @@ All files are in the same folder as this PDF (`generated/`).
 ## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
 
 The headline rankings throughout this report quote percentiles and the top few names.
-Here is the full list: all << f("raw.n_champions") >> champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §2 and §14.
+Here is the full list: all << f("raw.n_champions") >> champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §4 and §14.
 Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
 The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era's scoring.
 The last two take a different route to the same era problem: **Z** grades each opponent-adjusted margin against how spread out team strength was that season (§14), and **Z-rank** is where that order places the champion.
@@ -488,8 +490,8 @@ The last two take a different route to the same era problem: **Z** grades each o
 :::
 
 Two things the full list makes plain.
-The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are netted out.
-And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with the 2018-19 Raptors just above the line.
+The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are subtracted out.
+And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with a cluster of teams including the 2018-19 Raptors only just above the line.
 The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to call a tie, which is the same verdict §10 reaches the harder way.
 The **Z-rank** column tells the one story that breaks that tie against them: graded against how spread out their league was, the Knicks fall to << f("spread.knicks_rank") >>th while the 2016-17 Warriors lead, the single adjustment in the table that unseats them (§14).
 Sort by **Z** and the order pivots on era rather than margin.
