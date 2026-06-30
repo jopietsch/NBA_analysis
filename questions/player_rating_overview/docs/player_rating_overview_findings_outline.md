@@ -54,9 +54,9 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Consensus vs. wins-predictive Spearman 0.953. Top riser Nikola Jokić +1.76; top faller Kam Jones -0.81. Wins-predictive lifts stars on winning teams, discounts production on losing teams.
 
 ### § 6. Stars matter more than rank implies (distribution section)
-- Rate metrics spread evenly: PER top-5% share 8.6%. Cumulative top-heavy: WS top-5% ~15%, VORP ~32%.
-- Power-law steepness (alpha): PER 0.14 (shallowest); the cumulative metrics and uber ratings cluster higher (VORP 0.30, Consensus 0.31, Wins-Pred 0.34), up to the noisy plus/minus halves. Two groups: straight-line power laws vs. benders (plus/minus rate metrics).
-- RAPM full distribution (13 seasons, 4678 player-seasons, 49% below 0) is a symmetric bell, not a power law; VORP leans right (the tail a power law needs).
+- Rate metrics spread evenly: PER top-5% share 8.6%. Cumulative top-heavy: WS top-5% 13.8%, VORP 29.1%.
+- Power-law steepness (alpha): PER 0.14 (shallowest); the cumulative metrics and uber ratings cluster higher (VORP 0.30, Consensus 0.31, Wins-Pred 0.34), up to the noisy plus/minus halves. Two groups by R² fit: straight-line power laws (incl. WS, BPM) vs. benders (per-possession metrics; VORP is the bending exception, concentrated but just short of the line).
+- RAPM full distribution (13 seasons, 4678 player-seasons, 49% below 0) is a symmetric bell, not a power law (lacks the one-sided tail); VORP leans right (the precondition a power law's shape needs), though its own top-50 curve bends just short.
 - Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini 0.736 > WS 0.362, an artifact, not real top-heaviness).
 - Charts: all-systems distributions, distribution shape, power-law small multiples, power-law fits, gini, rank-value curves, ordinal-vs-value gap.
 

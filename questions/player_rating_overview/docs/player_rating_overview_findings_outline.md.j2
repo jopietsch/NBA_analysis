@@ -54,9 +54,9 @@ Reflects the current pipeline: << f("cov.n_systems") >> recomputed box-score sys
 - Consensus vs. wins-predictive Spearman << f("cmp.spearman") >>. Top riser << f("cmp.higher.1.name") >> +<< f("cmp.higher.1.diff") >>; top faller << f("cmp.lower.1.name") >> << f("cmp.lower.1.diff") >>. Wins-predictive lifts stars on winning teams, discounts production on losing teams.
 
 ### § 6. Stars matter more than rank implies (distribution section)
-- Rate metrics spread evenly: PER top-5% share << f("dist.PER.top5pct", "{:.1f}%") >>. Cumulative top-heavy: WS top-5% ~15%, VORP ~32%.
-- Power-law steepness (alpha): PER << f("powerlaw.PER.alpha") >> (shallowest); the cumulative metrics and uber ratings cluster higher (VORP << f("powerlaw.VORP.alpha") >>, Consensus << f("powerlaw.CONSENSUS.alpha") >>, Wins-Pred << f("powerlaw.WINS_PRED.alpha") >>), up to the noisy plus/minus halves. Two groups: straight-line power laws vs. benders (plus/minus rate metrics).
-- RAPM full distribution (<< f("rapm_shape.n_seasons") >> seasons, << f("rapm_shape.n") >> player-seasons, << f("rapm_shape.frac_neg") >>% below 0) is a symmetric bell, not a power law; VORP leans right (the tail a power law needs).
+- Rate metrics spread evenly: PER top-5% share << f("dist.PER.top5pct", "{:.1f}%") >>. Cumulative top-heavy: WS top-5% << f("dist.WS.top5pct", "{:.1f}%") >>, VORP << f("dist.VORP.top5pct", "{:.1f}%") >>.
+- Power-law steepness (alpha): PER << f("powerlaw.PER.alpha") >> (shallowest); the cumulative metrics and uber ratings cluster higher (VORP << f("powerlaw.VORP.alpha") >>, Consensus << f("powerlaw.CONSENSUS.alpha") >>, Wins-Pred << f("powerlaw.WINS_PRED.alpha") >>), up to the noisy plus/minus halves. Two groups by R² fit: straight-line power laws (incl. WS, BPM) vs. benders (per-possession metrics; VORP is the bending exception, concentrated but just short of the line).
+- RAPM full distribution (<< f("rapm_shape.n_seasons") >> seasons, << f("rapm_shape.n") >> player-seasons, << f("rapm_shape.frac_neg") >>% below 0) is a symmetric bell, not a power law (lacks the one-sided tail); VORP leans right (the precondition a power law's shape needs), though its own top-50 curve bends just short.
 - Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini << f("dist.CONSENSUS.gini") >> > WS << f("dist.WS.gini") >>, an artifact, not real top-heaviness).
 - Charts: all-systems distributions, distribution shape, power-law small multiples, power-law fits, gini, rank-value curves, ordinal-vs-value gap.
 

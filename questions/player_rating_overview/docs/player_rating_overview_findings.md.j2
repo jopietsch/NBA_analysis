@@ -87,8 +87,8 @@ The systems mostly differ in how that prior is built and what data feeds it.
 FiveThirtyEight shut down its sports coverage in April 2023, so RAPTOR has no 2025-26 values.
 Historical data is downloadable from their GitHub.
 
-**EPM** (dunksandthrees) uses a RAPM calculation with a Bayesian prior built from a highly optimized Statistical Plus/Minus model that incorporates player-tracking data.
-EPM is the only public metric that directly optimizes the weighting of each underlying stat by how quickly it stabilizes, which is one reason it tends to perform well in retrodiction tests.
+**EPM** (dunksandthrees) uses a RAPM calculation with a prior built from a highly optimized Statistical Plus/Minus model that incorporates player-tracking data.
+EPM is the only public metric that directly optimizes the weighting of each underlying stat by how quickly it stabilizes, which is one reason it tends to perform well in retrodiction tests (checking each rating against games it has not yet seen).
 
 **LEBRON** (BBall-Index) also uses a luck-adjusted RAPM with a box-score prior.
 "Luck adjustment" means the on/off data strips out the swing from whether shots happened to fall, rather than crediting the player for it.
@@ -132,7 +132,7 @@ They are described here because they are part of how players actually get rated,
 
 ## 2. Do the systems agree?
 
-![Agreement between each pair of systems: darker squares mean stronger rank correlation.](../generated/images/rank_agreement_heatmap.svg){#fig-agreement}
+![Agreement between each pair of systems: darker squares mean the two systems rank players more alike.](../generated/images/rank_agreement_heatmap.svg){#fig-agreement}
 
 The box-score systems mostly move in the same direction, but how tightly varies a lot by pair.
 PER and Game Score track closely (<< f("corr.GAME_SCORE_PER", "{:.2f}") >> on a 0-to-1 scale, among qualified 2025-26 players).
@@ -154,7 +154,7 @@ This is why every published impact metric (EPM, LEBRON, DARKO) pulls its RAPM to
 
 The report also builds that fixed version.
 RAPM_MY pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
-The effect shows up in the aggregate: its order agrees with the consensus at about << f("rapm_my.consensus_corr") >> on the 0-to-1 scale, up from << f("rapm.consensus_corr") >> for the bare version, nearly double.
+The effect shows up in the aggregate: its order agrees with the consensus at about << f("rapm_my.consensus_corr") >>, up from << f("rapm.consensus_corr") >> for the bare version measured against that same consensus, nearly double.
 The lift is in the broad order, not a clean top tier: in 2025-26 a few low-minute players, << f("rapm_my.top.1.name") >> among them, still spike above the established stars.
 It is RAPM_MY, not the bare version, that feeds the consensus rating.
 How it is built is in Section 12; whether it forecasts team results any better is tested in Section 3.
@@ -250,7 +250,7 @@ Only << f("stability.most_stable.name") >> sits near the top of both lists, stea
 
 Not all systems add independent information, and they split sharply on how much.
 The simplest all-in-one box scores are the most redundant: about << f("overlap.PER.r2", "{:.0%}") >> of PER and << f("overlap.GAME_SCORE.r2", "{:.0%}") >> of Game Score can be rebuilt from the other systems, so each mostly repeats what the field already says.
-The metrics built to isolate defense and lineup impact carry the most of their own: Defensive BPM, BPM, and the RAPM family leave roughly half of their ranking unexplained by the rest.
+The metrics built to isolate defense and lineup impact carry the most of their own: Defensive BPM and BPM leave roughly half of their ranking unexplained by the rest, and the RAPM family carries somewhat less of its own, in the 30-40% range.
 One caveat keeps that from being a clean verdict: this report's BPM, VORP, and RAPM are approximate recomputes, and a noisy rating looks independent simply because its noise lines up with nothing, so part of their low overlap may be recompute slack rather than real signal.
 The measure holds each metric's own components out of the comparison, so BPM is never counted as "explained" by its own offensive and defensive halves (see results for the full breakdown).
 
@@ -300,7 +300,7 @@ PER spreads relatively evenly among qualified 2025-26 players: the top 5% accoun
 The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
 
 Win Shares and VORP tell a different story.
-The top 5% of players hold about 15% of total Win Shares, and VORP concentrates far more steeply still: its top 5% hold about 32% of all positive value.
+The top 5% of players hold << f("dist.WS.top5pct", "{:.1f}") >>% of total Win Shares, and VORP concentrates far more steeply still: its top 5% hold << f("dist.VORP.top5pct", "{:.1f}") >>% of all positive value.
 Both lean toward the top because they multiply a rate by minutes played, and the best players lead in both.
 
 These drop-offs are sometimes called power laws.
@@ -313,13 +313,13 @@ By that test the systems fall into two groups, and the split lines up with the c
 Holding close to a straight line: << f("powerlaw.systems") >>.
 Bending instead: << f("powerlaw.non_systems") >>.
 
-Win Shares and VORP are the steep power laws.
+Win Shares is the steep power law, and VORP concentrates value just as hard, though its top-50 curve bends rather than holding the straight line.
 Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down.
 PER and Game Score are power laws too, but so shallow that the line is nearly flat, which is the same reason their top 50 sit bunched close together in value.
 
-The benders are the plus/minus rate metrics: << f("powerlaw.non_systems") >>.
-These measure how far above average a player is per possession, a quantity that is roughly even on both sides of the middle and has a natural size to it.
-Their best player is not a runaway: the top of the curve sits below where a straight power law would put it, and OBPM bends the most.
+Most of the benders are per-possession metrics.
+They measure how far above average a player is per possession, a quantity that is roughly even on both sides of the middle and has a natural size to it, so their best player is not a runaway: the top of the curve sits below where a straight power law would put it, and OBPM bends the most.
+VORP is the exception in this group: it concentrates value as hard as a power law, but its top-50 curve still bends just short of a clean straight line.
 
 RAPM, the impact metric built for this report, is the clearest case, and it answers a natural question: no, RAPM is not a power law.
 The log-log test above only reads the top 50 players, but RAPM's whole distribution settles it.
@@ -327,9 +327,9 @@ Pooled across all << f("rapm_shape.n_seasons") >> seasons with play-by-play (<< 
 A power law needs a long one-sided tail of standout values.
 RAPM has none, because a per-possession impact is scored against the average player and runs about as far into the minus as the plus.
 VORP, set beside it, leans to the right: a handful of stars trail a long tail above the pack.
-That lean toward the top, not where zero falls, is what makes a power law.
+That lean toward the top, not a hump centered on zero, is the precondition a power law needs, the one RAPM lacks entirely; VORP has it, even though its own top-50 curve bends just short of a clean line.
 
-![RAPM's full distribution against VORP's. RAPM is a symmetric bell with no heavy tail, so it cannot be a power law; VORP leans right, the tail of stars a power law needs.](../generated/images/distribution_shape.svg){#fig-distribution-shape}
+![RAPM's full distribution against VORP's. RAPM is a symmetric bell with no heavy tail, so it cannot be a power law at all; VORP leans right, with the one-sided tail of stars a power law's shape needs.](../generated/images/distribution_shape.svg){#fig-distribution-shape}
 
 So the shape tells you what the metric measures.
 A metric that piles up accumulated value tilts toward a few players at the top; a metric that scores distance from average has a built-in size and does not run away.
@@ -338,7 +338,7 @@ The small panels below make the difference visible: the blue curves hold a strai
 ![One small panel per system: blue curves are power laws (a straight line on a log scale), grey curves bend. Ordered by how steeply value falls, steepest first.](../generated/images/powerlaw_small_multiples.svg){#fig-powerlaw-sm}
 
 Two cautions.
-The cutoff between "power law" and "bends" is a convention, and the systems sitting right at it (DBPM just clears the line, BPM just misses) are really the same shape.
+The cutoff between "power law" and "bends" is a convention, and the systems sitting right at it (BPM just clears the line, DBPM just misses) are really the same shape.
 And this is a description of 50 players in one season, not a formal test: it shows which curves are straight and which bend, not a proven law.
 The reliable read is the two groups and their order, not the label on any single borderline system.
 
@@ -348,7 +348,7 @@ An older, more familiar way to put a single number on concentration is the Gini 
 It is kept here only as a cross-check, because it has a real limit: it works for metrics that pile up a quantity that cannot drop below zero, like Win Shares or VORP, but not for the 0-centered metrics.
 On those (the BPM family and the two combined ratings) it counts every below-average player as a zero and inflates the score, which is why Consensus shows a Gini of << f("dist.CONSENSUS.gini") >>, above Win Shares at << f("dist.WS.gini") >>, an ordering that is not real.
 The steepness read above is the one to trust.
-By it the combined ratings land in the middle of the pack: Consensus at << f("powerlaw.CONSENSUS.alpha") >> and Wins-Predictive at << f("powerlaw.WINS_PRED.alpha") >>, steeper than PER at << f("powerlaw.PER.alpha") >> but flatter than VORP at << f("powerlaw.VORP.alpha") >>.
+By it the combined ratings sit in the upper-middle of the pack: Consensus at << f("powerlaw.CONSENSUS.alpha") >> and Wins-Predictive at << f("powerlaw.WINS_PRED.alpha") >>, steeper than PER at << f("powerlaw.PER.alpha") >> and a touch steeper than VORP at << f("powerlaw.VORP.alpha") >>.
 
 ![Gini coefficient by system, kept as a cross-check. It ranks the 0-centered metrics (the BPM family and the two combined ratings, outlined) near the top, but that is an artifact of how Gini handles below-average players, not real top-heaviness.](../generated/images/gini_by_system.svg){#fig-gini .collapsible}
 
@@ -363,23 +363,23 @@ The data is consistent with the explanation that elite talent is worth more than
 
 ## 7. Who lands in the top 20
 
-The table below shows the top 20 players under each system and their raw score.
+The raw top 20 makes Section 6's split concrete: under VORP and Win Shares the rank-1 player sits far above rank 20, while under PER the twenty bunch close in value.
 The gap between rank 1 and rank 20 is the most direct read on how concentrated value is: a large gap means the top player is in a different tier from the rest; a small gap means the list is relatively flat.
 
 ![Top 20 players and their raw scores under each of the eight rating systems. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
 
 ## 8. Who rose and fell in the playoffs
 
-The box-score rate metrics can be computed a second time using only playoff games, which makes a direct before-and-after read possible: did a player's production climb or sink once the postseason started?
-This works only for the box-score systems.
-The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way.
+Recompute the box-score rate metrics on playoff games only, and a direct before-and-after read falls out: who climbed once the postseason started, and who sank.
+The biggest risers were << f("playoff.riser.1.name") >>, << f("playoff.riser.2.name") >>, and << f("playoff.riser.3.name") >>.
+The biggest fallers were << f("playoff.faller.1.name") >>, << f("playoff.faller.2.name") >>, and << f("playoff.faller.3.name") >>.
+The drop reached even the regular-season consensus number one, << f("playoff.consensus1.name") >>, whose box-score rates slipped as Denver lost in the first round.
 
+This read works only for the box-score systems.
+The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way.
 Among the << f("playoff.n_qualified") >> players who logged at least << f("playoff.min_floor") >> playoff minutes in 2025-26, each player's change is measured against the rest of that group.
 That strips out the leaguewide dip that comes from tougher defense and facing the same opponent night after night, so what is left is who rose or fell relative to the other rotation players who also advanced.
 
-The biggest risers were << f("playoff.riser.1.name") >>, << f("playoff.riser.2.name") >>, and << f("playoff.riser.3.name") >>.
-The biggest fallers were << f("playoff.faller.1.name") >>, << f("playoff.faller.2.name") >>, and << f("playoff.faller.3.name") >>.
-The fallers also include the regular-season consensus number one, << f("playoff.consensus1.name") >>, whose box-score rates slipped as Denver lost in the first round.
 The list rewards players whose game travels into a grind-it-out playoff series and marks down those who leaned on production that dried up against a focused defense.
 It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
 
@@ -429,7 +429,7 @@ The most precisely recomputed metric is PER: the league-average normalization pr
 The Win Shares and BPM formulas use simplified versions of the defensive credit and team-context adjustments, and the resulting absolute values differ from Basketball-Reference's published figures.
 The relative rankings within each system are directionally correct.
 
-A Phase 3 planned improvement is to spot-check the recomputed values against BBR for 5-10 known players, and to tighten the BPM per-100-possession rate computation (currently using player-possession-based denominators rather than the team-possession-based denominators BBR uses).
+A planned improvement is to spot-check the recomputed values against Basketball-Reference (BBR) for 5-10 known players, and to tighten the BPM per-100-possession rate computation (currently using player-possession-based denominators rather than the team-possession-based denominators BBR uses).
 For comparison purposes (which system ranks whom higher or lower), the current implementation is sufficient.
 For absolute values, treat the recomputed BPM/VORP as approximations.
 
@@ -441,7 +441,7 @@ His more modest standing in the rate metrics tells a more representative story o
 
 The same inflation affects other high-steal defenders in 2025-26: Ausar Thompson (146 steals across the season) and Kris Dunn (131) both carry VORP values in this dataset that exceed their BBR equivalents.
 Their Win Shares figures (around 4 to 5, about right for a productive role player) are the more representative number.
-This is not a separate bug from the Daniels case; it is the same per-100 denominator approximation applied to any player with a high steal rate relative to their minutes.
+This is not a separate bug from the Wallace case; it is the same per-100 denominator approximation applied to any player with a high steal rate relative to their minutes.
 
 ## 12. Limitations
 
@@ -475,7 +475,7 @@ The blind spot is acknowledged.
 Comparing playoff performance to regular season performance is done for the box-score systems in Section 8, where the rate metrics are recomputed from postseason games and compared directly.
 The limit is the impact metrics: RAPM-based systems cannot do this reliably.
 A first-round exit provides roughly 6 games of lineup data; even a Finals run provides only 20 to 24 games.
-That sample is too small for the lineup regression to stabilize, regardless of how good the prior is.
+That sample is too small for the lineup-based estimate to stabilize, regardless of how good the prior is.
 The small-sample problem is not a solvable data-engineering issue; it is a fundamental limit of how RAPM works.
 
 ## 13. What a Bayesian lens would add
