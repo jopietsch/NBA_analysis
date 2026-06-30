@@ -2782,7 +2782,7 @@ vertical-align: -.125em;
 <section id="open-items" class="level2">
 <h2 class="anchored" data-anchor-id="open-items">Open items</h2>
 <ul>
-<li>RAPM (Regularized Adjusted Plus/Minus): computed in-house for 2024-25 from nba_api play-by-play (PlayByPlayV3), reconstructed into five-on-five possessions and fit with cross-validated ridge regression (single season, zero-mean prior). Still open: backfilling earlier seasons (that play-by-play is being assembled), adding a box-score prior to cut the single-season noise, and loading a public RAPM snapshot to validate the computed values.</li>
+<li>RAPM (Regularized Adjusted Plus/Minus): computed in-house from nba_api play-by-play (PlayByPlayV3) for 2013-14 through 2025-26, reconstructed into five-on-five possessions and fit with cross-validated ridge regression. Two versions: a bare single-season RAPM (zero-mean prior) kept to show the raw noise, and RAPM_MY, which pools three seasons with recency weights and shrinks each player toward a BPM prior (offense toward OBPM, defense toward DBPM). RAPM_MY feeds the consensus. Still open: loading a public RAPM snapshot to validate the values, and a luck adjustment / tracking-based prior to approach EPM or LEBRON (the player-tracking inputs are not publicly available).</li>
 <li>Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2024–25; adjusted for multi-season pools.</li>
 </ul>
 </section>
