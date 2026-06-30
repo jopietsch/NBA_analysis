@@ -1,6 +1,9 @@
 # TODO: Title — The Investigation
 
-*Companion to [TODO: Title — Findings](PROJECT_report.html). The findings report tells the story; this document shows the tests behind it. Part 1 covers what actually drives the result and the evidence each driver is real. Part 2 covers the explanations that sounded reasonable but did not survive a direct test.*
+*Companion to [TODO: Title — Findings](PROJECT_report.html).
+The findings report tells the story; this document shows the tests behind it.
+Part 1 covers what actually drives the result and the evidence each driver is real.
+Part 2 covers the explanations that sounded reasonable but did not survive a direct test.*
 
 ---
 
@@ -8,7 +11,9 @@
 
 Every test here carries two measures of how seriously to take it.
 
-A **p-value** answers one question: if there were truly no effect, how often would random chance alone produce a result at least this strong? A small p means chance is an unlikely explanation. The stars in the tables are the conventional thresholds:
+A **p-value** answers one question: if there were truly no effect, how often would random chance alone produce a result at least this strong?
+A small p means chance is an unlikely explanation.
+The stars in the tables are the conventional thresholds:
 
 | stars | p-value | rough meaning |
 |-------|---------|---------------|
@@ -17,21 +22,30 @@ A **p-value** answers one question: if there were truly no effect, how often wou
 | `***` | < 0.001 | extremely unlikely |
 | (none)| ≥ 0.05  | can't rule out chance |
 
-A **confidence interval (CI)** is the more useful of the two, and the one to read first. A "95% CI" is the range the true value is likely to sit in, given the data available. A whole band on one side of zero means the effect has a clear direction; a narrow band means its size is well pinned down. A "significant" result with a band of [+0.5, +20] is barely detected and wildly uncertain; the same star count with [+8.0, +8.4] is precisely measured. Same stars, very different findings. Report a CI next to every p-value.
+A **confidence interval (CI)** is the more useful of the two, and the one to read first.
+A "95% CI" is the range the true value is likely to sit in, given the data available.
+A whole band on one side of zero means the effect has a clear direction; a narrow band means its size is well pinned down.
+A "significant" result with a band of [+0.5, +20] is barely detected and wildly uncertain; the same star count with [+8.0, +8.4] is precisely measured.
+Same stars, very different findings.
+Report a CI next to every p-value.
 
-TODO: One caution sized to this project. With a large enough sample, even a trivially small effect can clear the significance bar, so always check the size of the effect, not just the stars. State the sample size here.
+TODO: One caution sized to this project.
+With a large enough sample, even a trivially small effect can clear the significance bar, so always check the size of the effect, not just the stars.
+State the sample size here.
 
 ---
 
 # Part 1: What Drives the Result
 
-TODO: One or two sentences framing the confirmed story. Then one section per driver, each following the claim / test / what the data showed / why it holds pattern below.
+TODO: One or two sentences framing the confirmed story.
+Then one section per driver, each following the claim / test / what the data showed / why it holds pattern below.
 
 ## TODO: Driver name
 
 **The claim.** TODO: what this driver is and what it does.
 
-**The test.** TODO: what was tested and how. Name the test in plain terms, not the estimator.
+**The test.** TODO: what was tested and how.
+Name the test in plain terms, not the estimator.
 
 **What the data showed.** TODO: the result, with a p-value and a 95% CI for each effect.
 
@@ -41,7 +55,8 @@ TODO: One or two sentences framing the confirmed story. Then one section per dri
 
 # Part 2: What We Ruled Out
 
-TODO: One sentence framing the ruled-out hypotheses. Then one section per hypothesis, each following the pattern below.
+TODO: One sentence framing the ruled-out hypotheses.
+Then one section per hypothesis, each following the pattern below.
 
 ## TODO: Ruled-out hypothesis
 
@@ -49,6 +64,7 @@ TODO: One sentence framing the ruled-out hypotheses. Then one section per hypoth
 
 **The test.** TODO: what was tested and how.
 
-**What the data showed.** TODO: the result, with a p-value and a 95% CI. If the effect is statistically detectable but too small to matter, say so and give the size.
+**What the data showed.** TODO: the result, with a p-value and a 95% CI.
+If the effect is statistically detectable but too small to matter, say so and give the size.
 
 **Verdict.** TODO: ruled out, and why.

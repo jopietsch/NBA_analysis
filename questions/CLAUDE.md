@@ -130,6 +130,12 @@ All new docs start as drafts. Add the following block immediately after the `#` 
 
 Remove the block only when the analysis and prose are finalized.
 
+## One sentence per source line
+
+In every `.md.j2` template, write prose so each sentence is on its own source line. This keeps diffs sentence-level instead of reflowing a whole paragraph when one clause changes. Don't hard-wrap a sentence across multiple lines; one sentence, one line, however long.
+
+You don't have to format this by hand: `render_docs.py` runs `nbakit.sentence_split` over every template before rendering, which reflows prose to one sentence per line. It is idempotent and render-neutral (a single newline inside a paragraph renders as a space, so the PDF/HTML is byte-for-byte unchanged), and it leaves non-prose verbatim: headings, tables, image captions, lists, fenced code, indented code, `:::` divs, raw HTML, and any block using hard line breaks (trailing two spaces). So just write naturally and let the render step normalize; the convention exists so hand-written prose matches what the tool produces.
+
 ## Standard document workflow
 
 Each project uses this naming convention:
@@ -214,7 +220,7 @@ Each project follows a four-module pipeline plus two report generators plus the 
 - **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/<project>_results.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`. Register named facts with `FACTS.set()` next to each `print()` call that emits a cited number. Register qualitative claims with `FACTS.guard()`. At the end of `run()`, call `FACTS.dump(_FACTS_PATH)` and `FACTS.dump_guards(_GUARDS_PATH)`.
 - **`<project>_facts.py`** — a thin shim over `nbakit.facts`: re-exports the shared `Fact`/`Facts`/`load_displays`/`load_guards` model, instantiates the project's `FACTS` singleton, and pins the `_FACTS_PATH`/`_GUARDS_PATH` constants. The `Fact`/`Facts` class itself lives in `nbakit/nbakit/facts.py` (one copy, shared across projects); `Fact.display` renders a number with `fmt`+`unit` or passes a plain-language string through unchanged.
 - **`<project>.py`** (or `<project>_<name>.py`) — pipeline orchestration only; sequences data → plots → analysis; imports the analysis module inside `main()` to avoid circular imports.
-- **`render_docs.py`** — a thin shim over `nbakit.docs`: pins the project's facts.json path and reference-table title, then delegates to the shared render engine. Renders `docs/*.md.j2` templates to `docs/*.md` using the facts JSON. Template delimiter: `<< f("fact.name") >>`. Run after the pipeline (which writes facts.json) and before building PDFs. `generate_report.py` calls `render_all()` automatically. The render engine itself lives in `nbakit/nbakit/docs.py` (one copy, shared across projects).
+- **`render_docs.py`** — a thin shim over `nbakit.docs`: pins the project's facts.json path and reference-table title, then delegates to the shared render engine. Renders `docs/*.md.j2` templates to `docs/*.md` using the facts JSON. Template delimiter: `<< f("fact.name") >>`. Run after the pipeline (which writes facts.json) and before building PDFs. `generate_report.py` calls `render_all()` automatically. Before rendering, `render_all` normalizes each template to one sentence per source line via `nbakit.sentence_split` (idempotent and render-neutral; see "One sentence per source line" above). The render engine itself lives in `nbakit/nbakit/docs.py` (one copy, shared across projects).
 - **`generate_report.py`** — calls `render_all()` first, then assembles `docs/<project>_findings.md` prose and charts into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
 - **`../generate_doc_pdf.py`** — shared Markdown-to-PDF renderer for standalone docs (headings, lists, tables, code fences, images, `--appendix` flag); lives at `questions/` level, not per-project.
 

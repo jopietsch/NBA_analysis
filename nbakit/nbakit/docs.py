@@ -27,6 +27,8 @@ import time
 
 import jinja2
 
+from nbakit.sentence_split import normalize_file
+
 DEFAULT_DOCS_DIR = "docs"
 
 
@@ -88,6 +90,9 @@ def render_all(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
         if annotate:
             out_path = tpl_path[: -len(".md.j2")] + ".annotated.md"
         else:
+            # Keep templates in house style (one sentence per source line)
+            # before rendering. Idempotent and render-neutral.
+            normalize_file(tpl_path)
             out_path = tpl_path[: -len(".j2")]
         template = env.get_template(os.path.basename(tpl_path))
         with open(out_path, "w") as fh:
@@ -102,6 +107,7 @@ def render_all(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
         if annotate:
             out_path = tpl_path[: -len(".md.j2")] + ".annotated.md"
         else:
+            normalize_file(tpl_path)
             out_path = tpl_path[: -len(".j2")]
         with open(tpl_path) as fh:
             template = env.from_string(fh.read())
