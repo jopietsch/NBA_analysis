@@ -438,6 +438,12 @@ Each score is points per game above an average team, after stripping out strengt
 The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era's scoring.
 The last two take a different route to the same era problem: **Z** grades each opponent-adjusted margin against how spread out team strength was that season (§14), and **Z-rank** is where that order places the champion.
 
+::: {.content-visible when-format="html"}
+*Click any column header to re-sort the table by it; click again to reverse.*
+:::
+
+::: {.sortable}
+
 | # | Season | Champion | Raw | Opp-adj | Opp+Pace | Z | Z-rank |
 |--:|---|---|--:|--:|--:|--:|--:|
 | 1 | 25–26 | **New York Knicks** | +14.89 | +11.23 | +10.05 | +1.90 | 5 |
@@ -483,6 +489,8 @@ The last two take a different route to the same era problem: **Z** grades each o
 | 41 | 01–02 | Los Angeles Lakers | +3.79 | -1.94 | -2.10 | -0.48 | 41 |
 | 42 | 99–00 | Los Angeles Lakers | +2.39 | -2.42 | -2.58 | -0.54 | 42 |
 | 43 | 94–95 | Houston Rockets | +2.77 | -2.99 | -3.06 | -0.64 | 43 |
+
+:::
 
 Two things the full list makes plain.
 The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are netted out.
