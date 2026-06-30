@@ -83,7 +83,7 @@ In the Finals the market made them slight underdogs (<< f("ats.finals.spread") >
 
 **Why it holds.** Two cautions keep this from being independent proof.
 The << f("ats.n_total") >> games are really four series and move together, so the effective sample is about << f("ats.n_eff") >>; and an against-the-spread margin is mostly the same scoreline read from the bookmaker's side, not a separate measurement of strength.
-Even crediting that clustering, the cover record still clears a fair-coin null (p ≈ << f("ats.p_clust", "{:.2f}") >>), though with only four series that reads as suggestive, not conclusive.
+Even crediting that clustering, the cover record still beats what a coin flip would produce (about a 1-in-25 chance it is a fluke, p ≈ << f("ats.p_clust", "{:.2f}") >>), though with only four series that reads as suggestive, not conclusive.
 But the split is the point: the market, pricing in everything known at the time, saw a team that overwhelmed the East and faced a near-coin-flip in the Finals, the same two-sided run the ratings describe.
 
 ![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
@@ -107,7 +107,7 @@ The gap between a roughly << f("winprob.p_title", "{:.0f}") >>% title chance and
 # Part 2: The Objections That Don't Diminish It
 
 A << f("raw.wins") >>-<< f("raw.losses") >> playoff run with a << f("raw.margin") >> average margin looks historic on its face.
-But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the early-round opponents were fading, the opponents were hurt, the high-scoring era inflated the margin, or the scoreboard was padded.
+But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the early-round opponents were fading, the scoreboard was padded, the high-scoring era inflated the margin, or the opponents were hurt.
 Each of these is a fair objection, and each is testable rather than something to wave off.
 
 ---
@@ -215,8 +215,7 @@ On a true pace-neutral basis the #1 claim survives; the opponent adjustment also
 
 **The test.** For each opponent, the share of their rotation players (those averaging at least 15 minutes a game across the playoffs) who actually appeared in each game of the Knicks series.
 
-**The result.** Average availability was << f("health.avg") >>% across the four opponents.
-The Hawks and the Spurs were at << f("health.hawks") >>%.
+**The result.** Average availability was << f("health.avg") >>% across the four opponents, with the Hawks and the Spurs both at << f("health.hawks") >>%.
 The Spurs, the team that gave the Knicks their tightest series, were fully intact.
 
 ![Opponent key-player availability across the 2025-26 Knicks playoff run](../generated/images/knicks_2026_opponent_health.svg){#fig-opponent-health width=100%}
@@ -229,13 +228,14 @@ The close Finals margin reflects genuine competition against a whole team, not a
 
 ## What actually does temper the claim
 
-None of the objections above survives contact with the data, but one genuine caveat does, and it has nothing to do with the opponents.
+None of the deflation objections above survives contact with the data, but one genuine caveat does, and it has nothing to do with the opponents.
 It is the shortness of the run itself.
 
 The "best opponent-adjusted margin of any champion" claim rests on << f("ats.n_total") >> games.
 That is a small sample, and the other 42 champions are measured with the same kind of uncertainty.
 When every champion is allowed to be as uncertain as the Knicks, and the field is judged all at once, the Knicks come out as the single best only about << f("hier.p_rank1", "{:.0f}") >>% of the time, and in the top five about a third of the time.
 The run is clearly among the better champions, but the data cannot crown them the outright #1 that a single rating suggests.
+There is a second, separate reason the #1 is not secure, and it is not about sample size: weight opponents by recent form (Elo) or grade the margin against how top-heavy today's league is, and the Knicks read as a top-three to top-five run rather than a clear first.
 
 The honest position is not that the run was less dominant than it looked: the deflation objections all fail.
 It is that << f("ats.n_total") >> games is too short to settle a first-place tie against << f("raw.n_champions") >> years of champions.

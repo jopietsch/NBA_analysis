@@ -77,7 +77,7 @@ The `ascending=True` convention means higher values are better (a value at the 9
 No distributional assumptions are made; only counting.
 With 43 data points, the finest percentile resolution is 1/43 ≈ 2.3 percentage points; exact ties are counted as "≤", so achieving the best historical value yields 100th percentile.
 
-**What the results mean.** Win rate 0.842 sits at the 88th percentile (better than 38 of 43 champions; best ever is the 2016–17 Warriors at 0.941).
+**What the results mean.** Win rate 0.842 sits at the 88th percentile (better than all but five champions; best ever is the 2016–17 Warriors at 0.941).
 Average margin +14.9 pts/game is the 100th percentile, the highest ever recorded in the dataset.
 The margin claim is the strongest of the two raw numbers.
 
@@ -304,11 +304,12 @@ Both playoff and regular-season SRS are expressed in points per game in the same
 - Knicks regular-season SRS: +6.05, a strong team, but not historically dominant.
 - Knicks playoff SRS: +17.53, among the highest playoff SRS values ever.
 - Elevation: +11.48, 97.7th percentile (2nd all-time, behind 2000–01 Lakers +12.58).
-- The 2016–17 Warriors, the most dominant regular-season team (+11.35 SRS),
+- The 2016–17 Warriors, one of the most dominant regular-season teams (+11.35 SRS),
   had a lower elevation (+8.83) because their regular-season baseline was so high.
 - The mean elevation across 43 champions is +4.43, confirming that playoff
-  performance typically outpaces regular-season baselines (home-court advantage,
-  higher effort, bracket-specific preparation).
+  performance typically outpaces regular-season baselines, plausibly from some mix
+  of home-court advantage, higher effort, and bracket-specific preparation, though
+  this section does not isolate which.
 
 **Why this metric.** Playoff SRS elevation directly answers whether a team "showed up" in the playoffs or merely coasted on regular-season talent.
 It complements the overperformance metric (§5) and is independently derived; if both metrics agree, the conclusion is robust.
@@ -428,11 +429,12 @@ The z-score is computed as `(k − np) / sqrt(np(1−p))` = `(16 − 9.5) / sqrt
 The question ("was this ATS performance unusual?") is directional.
 
 **What the results mean (iid).** Z = +2.98, p = 0.0022.
+Here "iid" is short for independent and identically distributed: each game is treated as a separate, equally likely coin flip.
 A team covering 16 of 19 games under a fair-coin null has only a 0.22% probability.
 The East-opponent performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
 
-**Adjusting for series correlation (`clustered_cover_significance`).** The iid binomial assumes 19 independent Bernoulli trials, but the games cluster into 4 series, and covers within a series are correlated (same matchup, same direction of pricing error).
-We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.75 here).
+**Adjusting for series correlation (`clustered_cover_significance`).** The iid binomial assumes 19 independent Bernoulli (coin-flip) trials, but the games cluster into 4 series, and covers within a series are correlated (same matchup, same direction of pricing error).
+We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA (analysis of variance, here splitting cover-outcome variation into between-series and within-series parts) across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.75 here).
 That gives an effective sample size `N / deff` and a p-value computed on it:
 
 - ICC ≈ 0.49 (covers are strongly clustered: three series are 100% covers, one is 2/5)
@@ -477,7 +479,8 @@ The posterior mean is the precision-weighted average (precision = 1/variance, so
 - weight on the 19-game data ≈ 41% (playoff margins are noisy, so 19 games carry
   less than half the estimate)
 - posterior (shrunken) adjusted margin ≈ +6.5 pts/game, 95% credible interval
-  ≈ [+1.5, +11.5]
+  ≈ [+1.5, +11.5] (a credible interval is the Bayesian
+  counterpart to the §3 confidence interval: the range with a 95% chance of holding the true value, given the model)
 - even shrunken it still exceeds ~83% of champions
 
 This is deliberately conservative in two ways: only the subject is shrunk (the other champions keep their own noisy point estimates), and `prior_var` is the *observed* between-champion variance, which still contains each champion's own sampling noise and so shrinks a little less than a noise-free prior would.
@@ -509,7 +512,9 @@ theta_c       ~ Normal(mu, tau^2)        # population of true dominance
 ```
 
 - `tau^2` (between-champion variance) is estimated by **DerSimonian–Laird**, the
-  method-of-moments estimator from random-effects meta-analysis:
+  method-of-moments estimator (it matches the formula to the data's observed spread
+  rather than maximizing a likelihood) from random-effects meta-analysis (the standard
+  toolkit for combining noisy estimates from many separate samples):
   `tau^2 = max(0, (Q − (k−1)) / c)` where `Q = Σ w_c (y_c − ȳ)²`,
   `w_c = 1/v_c`, and `c = Σw_c − Σw_c²/Σw_c`. Crucially, DL subtracts the
   sampling noise from the observed spread, so `tau` (≈ 2.0) is smaller than the
@@ -702,7 +707,7 @@ As in §16, the lone disagreement remains Elo's recency weighting, not anything 
 **The data.** Each champion's opponent-adjusted margin (§5) and the standard deviation of all teams' SRS in that champion's season (`season_srs_sd`, added in `build_champions_table`).
 
 **Why a dispersion adjustment.** §9 and §17 correct the *level* of the scoring environment (total scoring, pace); neither touches its *dispersion*.
-But the spread of team strengths has widened sharply: the SD of team SRS rose from 3.1 in 1983-84 to 5.90 in 2025-26.
+But the spread of team strengths has nearly doubled: the SD of team SRS rose from 3.1 in 1983-84 to 5.90 in 2025-26.
 In a more top-heavy league a given margin is a smaller distance above the field, so a level adjustment alone leaves recent dominance overstated relative to older, bunched-up eras.
 
 **The computation.** `z = adj_margin / season_srs_sd`: the opponent-adjusted margin expressed in standard deviations of that season's team-strength distribution.
