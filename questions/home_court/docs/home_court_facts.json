@@ -300,6 +300,20 @@
     "unit": null,
     "value": 2.595444885560284
   },
+  "era.drop_1995_ci_hi": {
+    "display": "4.6",
+    "fmt": "{:.1f}",
+    "note": "1994-95 reg-season level-shift drop 95% CI high (pp, magnitude)",
+    "unit": null,
+    "value": 4.561835332259285
+  },
+  "era.drop_1995_ci_lo": {
+    "display": "0.6",
+    "fmt": "{:.1f}",
+    "note": "1994-95 reg-season level-shift drop 95% CI low (pp, magnitude)",
+    "unit": null,
+    "value": 0.6290544388612823
+  },
   "era.drop_1995_p": {
     "display": "= 0.010",
     "fmt": null,
@@ -313,6 +327,20 @@
     "note": "1994-95 immediate foul-diff level shift (pp)",
     "unit": null,
     "value": 0.4363237850962154
+  },
+  "event.foul_jump_ci_hi": {
+    "display": "+0.74",
+    "fmt": "{:+.2f}",
+    "note": "1994-95 foul-diff level shift 95% CI high",
+    "unit": null,
+    "value": 0.7447547932723559
+  },
+  "event.foul_jump_ci_lo": {
+    "display": "+0.13",
+    "fmt": "{:+.2f}",
+    "note": "1994-95 foul-diff level shift 95% CI low",
+    "unit": null,
+    "value": 0.1278927769200749
   },
   "event.foul_jump_p": {
     "display": "= 0.007",
@@ -811,6 +839,20 @@
     "unit": null,
     "value": -0.04557033740844524
   },
+  "po.reb_share_trend_ci_hi": {
+    "display": "-0.015",
+    "fmt": "{:+.3f}",
+    "note": "po: rebound share-edge trend 95% CI high (per year)",
+    "unit": null,
+    "value": -0.014690468087733742
+  },
+  "po.reb_share_trend_ci_lo": {
+    "display": "-0.076",
+    "fmt": "{:+.3f}",
+    "note": "po: rebound share-edge trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.07645020672915673
+  },
   "po.reb_share_trend_mag": {
     "display": "0.046",
     "fmt": "{:.3f}",
@@ -1139,6 +1181,20 @@
     "note": "reg: pace-free rebound share-edge trend per year",
     "unit": null,
     "value": -0.05210638134451215
+  },
+  "reg.reb_share_trend_ci_hi": {
+    "display": "-0.044",
+    "fmt": "{:+.3f}",
+    "note": "reg: rebound share-edge trend 95% CI high (per year)",
+    "unit": null,
+    "value": -0.04420981079615083
+  },
+  "reg.reb_share_trend_ci_lo": {
+    "display": "-0.060",
+    "fmt": "{:+.3f}",
+    "note": "reg: rebound share-edge trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.06000295189287347
   },
   "reg.reb_share_trend_mag": {
     "display": "0.052",
@@ -1812,6 +1868,20 @@
     "unit": null,
     "value": -3.120508135146302
   },
+  "tpa.within_po_ci_hi": {
+    "display": "-0.36",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: within-era 3PA effect 95% CI high (per 10pp)",
+    "unit": null,
+    "value": -0.3559398701934713
+  },
+  "tpa.within_po_ci_lo": {
+    "display": "-5.89",
+    "fmt": "{:+.2f}",
+    "note": "Playoffs: within-era 3PA effect 95% CI low (per 10pp)",
+    "unit": null,
+    "value": -5.885076400099134
+  },
   "tpa.within_po_mag": {
     "display": "3.12",
     "fmt": "{:.2f}",
@@ -1832,6 +1902,20 @@
     "note": "Regular season: within-era HCA effect per 10pp of 3PA rate",
     "unit": null,
     "value": -2.266491684226839
+  },
+  "tpa.within_reg_ci_hi": {
+    "display": "-1.45",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: within-era 3PA effect 95% CI high (per 10pp)",
+    "unit": null,
+    "value": -1.454954034302908
+  },
+  "tpa.within_reg_ci_lo": {
+    "display": "-3.08",
+    "fmt": "{:+.2f}",
+    "note": "Regular season: within-era 3PA effect 95% CI low (per 10pp)",
+    "unit": null,
+    "value": -3.0780293341507696
   },
   "tpa.within_reg_mag": {
     "display": "2.27",
@@ -1889,6 +1973,20 @@
     "unit": null,
     "value": 0.02215040038961857
   },
+  "trend.fouls_ci_hi": {
+    "display": "+0.028",
+    "fmt": "{:+.3f}",
+    "note": "Reg: Foul diff trend 95% CI high (per year)",
+    "unit": null,
+    "value": 0.02754005277801632
+  },
+  "trend.fouls_ci_lo": {
+    "display": "+0.017",
+    "fmt": "{:+.3f}",
+    "note": "Reg: Foul diff trend 95% CI low (per year)",
+    "unit": null,
+    "value": 0.01676074800122082
+  },
   "trend.fouls_mag": {
     "display": "0.022",
     "fmt": "{:.3f}",
@@ -1902,6 +2000,20 @@
     "note": "Reg: REB diff home-minus-away trend per year",
     "unit": null,
     "value": -0.04433661639181967
+  },
+  "trend.rebounding_ci_hi": {
+    "display": "-0.037",
+    "fmt": "{:+.3f}",
+    "note": "Reg: REB diff trend 95% CI high (per year)",
+    "unit": null,
+    "value": -0.03697885151731352
+  },
+  "trend.rebounding_ci_lo": {
+    "display": "-0.052",
+    "fmt": "{:+.3f}",
+    "note": "Reg: REB diff trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.05169438126632582
   },
   "trend.rebounding_mag": {
     "display": "0.044",
@@ -1917,6 +2029,20 @@
     "unit": null,
     "value": -0.015091174670611307
   },
+  "trend.shooting_ci_hi": {
+    "display": "-0.008",
+    "fmt": "{:+.3f}",
+    "note": "Reg: eFG% diff (pp) trend 95% CI high (per year)",
+    "unit": null,
+    "value": -0.007819785514198617
+  },
+  "trend.shooting_ci_lo": {
+    "display": "-0.022",
+    "fmt": "{:+.3f}",
+    "note": "Reg: eFG% diff (pp) trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.022362563827023996
+  },
   "trend.shooting_mag": {
     "display": "0.015",
     "fmt": "{:.3f}",
@@ -1930,6 +2056,20 @@
     "note": "Reg: TOV diff home-minus-away trend per year",
     "unit": null,
     "value": 0.01926122664520689
+  },
+  "trend.turnovers_ci_hi": {
+    "display": "+0.024",
+    "fmt": "{:+.3f}",
+    "note": "Reg: TOV diff trend 95% CI high (per year)",
+    "unit": null,
+    "value": 0.02435228813073531
+  },
+  "trend.turnovers_ci_lo": {
+    "display": "+0.014",
+    "fmt": "{:+.3f}",
+    "note": "Reg: TOV diff trend 95% CI low (per year)",
+    "unit": null,
+    "value": 0.014170165159678469
   },
   "trend.turnovers_mag": {
     "display": "0.019",
@@ -1945,6 +2085,20 @@
     "unit": null,
     "value": 0.020412996941935012
   },
+  "trend_po.fouls_ci_hi": {
+    "display": "+0.034",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: Foul diff trend 95% CI high (per year)",
+    "unit": null,
+    "value": 0.033853194429616415
+  },
+  "trend_po.fouls_ci_lo": {
+    "display": "+0.007",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: Foul diff trend 95% CI low (per year)",
+    "unit": null,
+    "value": 0.006972799454253607
+  },
   "trend_po.fouls_mag": {
     "display": "0.020",
     "fmt": "{:.3f}",
@@ -1958,6 +2112,20 @@
     "note": "Playoffs: REB diff home-minus-away trend per year",
     "unit": null,
     "value": -0.0374065719909799
+  },
+  "trend_po.rebounding_ci_hi": {
+    "display": "-0.012",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: REB diff trend 95% CI high (per year)",
+    "unit": null,
+    "value": -0.011796024622421738
+  },
+  "trend_po.rebounding_ci_lo": {
+    "display": "-0.063",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: REB diff trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.06301711935953806
   },
   "trend_po.rebounding_mag": {
     "display": "0.037",
@@ -1973,6 +2141,20 @@
     "unit": null,
     "value": -0.008722495886194585
   },
+  "trend_po.shooting_ci_hi": {
+    "display": "+0.012",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: eFG% diff (pp) trend 95% CI high (per year)",
+    "unit": null,
+    "value": 0.011595599831397024
+  },
+  "trend_po.shooting_ci_lo": {
+    "display": "-0.029",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: eFG% diff (pp) trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.029040591603786192
+  },
   "trend_po.shooting_mag": {
     "display": "0.009",
     "fmt": "{:.3f}",
@@ -1986,6 +2168,20 @@
     "note": "Playoffs: TOV diff home-minus-away trend per year",
     "unit": null,
     "value": 0.006560634217434065
+  },
+  "trend_po.turnovers_ci_hi": {
+    "display": "+0.022",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: TOV diff trend 95% CI high (per year)",
+    "unit": null,
+    "value": 0.021753884812459455
+  },
+  "trend_po.turnovers_ci_lo": {
+    "display": "-0.009",
+    "fmt": "{:+.3f}",
+    "note": "Playoffs: TOV diff trend 95% CI low (per year)",
+    "unit": null,
+    "value": -0.008632616377591327
   },
   "trend_po.turnovers_mag": {
     "display": "0.007",

@@ -895,6 +895,15 @@ def run_era_analysis(df: pd.DataFrame) -> None:
                           note="Rule-change era model: 1994-95 (hand-checking) reg-season level shift (pp)")
                 FACTS.set("era.drop_1995_p", "< 0.001" if pval < 0.001 else f"= {pval:.3f}",
                           note="1994-95 era level-shift p-value (display)")
+                _dlo, _dhi = _ci_lo_hi(m_era, name, p_bar)
+                _dmag = sorted([abs(_dlo), abs(_dhi)])
+                FACTS.set("era.drop_1995_ci_lo", _dmag[0], "{:.1f}",
+                          note="1994-95 reg-season level-shift drop 95% CI low (pp, magnitude)")
+                FACTS.set("era.drop_1995_ci_hi", _dmag[1], "{:.1f}",
+                          note="1994-95 reg-season level-shift drop 95% CI high (pp, magnitude)")
+                print(f"   → 1994-95 (1995–01) level shift: {_pp(coef, p_bar):+.1f} pp  "
+                      f"95% CI [{_dlo:+.1f}, {_dhi:+.1f}] pp  "
+                      f"(drop magnitude [{_dmag[0]:.1f}, {_dmag[1]:.1f}])")
 
         lr    = 2.0 * (m_era.llf - m_year.llf)
         dfree = int(m_era.df_model - m_year.df_model)
@@ -1569,11 +1578,13 @@ def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
         mediated = 0.0
         for k, tl, clab in channels:
             gamma = chan_trends[k].params["year"]
+            g_lo, g_hi = _ci_lo_hi(chan_trends[k], "year")
             contrib = m_full.params[k] * 100 * gamma
             mediated += contrib
             trend_rows.append({
                 "key": k, "table_label": tl, "chart_label": clab,
-                "gamma": gamma, "contrib": contrib, "pct": 100 * contrib / t_total,
+                "gamma": gamma, "gamma_ci_lo": g_lo, "gamma_ci_hi": g_hi,
+                "contrib": contrib, "pct": 100 * contrib / t_total,
                 "stars": _stars(chan_trends[k].pvalues["year"]).strip(),
             })
 
@@ -1792,12 +1803,13 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
         print(f"\n   Trend decomposition  (pp of home win % per year):")
         print(f"   Total trend (home_win ~ year): {t_total:+.3f} pp/yr  "
               f"(p = {_fmt_p(ctx['trend_total_p'])}  {_stars(ctx['trend_total_p']).strip()})\n")
-        print(f"   {'Channel':<16}  {'Trend in diff/yr':>16}  {'Contribution':>15}  "
-              f"{'% of trend':>10}")
-        print(f"   {'─'*16}  {'─'*16}  {'─'*15}  {'─'*10}")
+        print(f"   {'Channel':<16}  {'Trend in diff/yr':>16}  {'95% CI (diff/yr)':>22}  "
+              f"{'Contribution':>15}  {'% of trend':>10}")
+        print(f"   {'─'*16}  {'─'*16}  {'─'*22}  {'─'*15}  {'─'*10}")
         for r in ctx["trend"]:
+            _ci = f"[{r['gamma_ci_lo']:+.4f}, {r['gamma_ci_hi']:+.4f}]"
             print(f"   {r['table_label']:<16}  {r['gamma']:>+12.4f} {r['stars']:<3}  "
-                  f"{r['contrib']:>+9.4f} pp/yr  {r['pct']:>9.0f}%")
+                  f"{_ci:>22}  {r['contrib']:>+9.4f} pp/yr  {r['pct']:>9.0f}%")
         mu = ctx["trend_unmediated"]
         mediated_pp = sum(r["contrib"] for r in ctx["trend"])
         mediated_pct = sum(r["pct"] for r in ctx["trend"])
@@ -1824,6 +1836,10 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                           note=f"Reg: {r['table_label']} home-minus-away trend per year")
                 FACTS.set(f"trend.{_short[r['key']]}_mag", abs(r["gamma"]), "{:.3f}",
                           note=f"Reg: {r['table_label']} trend magnitude per year")
+                FACTS.set(f"trend.{_short[r['key']]}_ci_lo", r["gamma_ci_lo"], "{:+.3f}",
+                          note=f"Reg: {r['table_label']} trend 95% CI low (per year)")
+                FACTS.set(f"trend.{_short[r['key']]}_ci_hi", r["gamma_ci_hi"], "{:+.3f}",
+                          note=f"Reg: {r['table_label']} trend 95% CI high (per year)")
             FACTS.set("share.fourfactors.adv", ctx["pct_level"], "{:.0f}%",
                       note="Reg. season: all four channels' share of the HCA level")
             FACTS.set("share.fourfactors.decline", ctx["pct_trend"], "{:.0f}%",
@@ -1849,6 +1865,10 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
                           note=f"Playoffs: {r['table_label']} home-minus-away trend per year")
                 FACTS.set(f"trend_po.{_shortp[r['key']]}_mag", abs(r["gamma"]), "{:.3f}",
                           note=f"Playoffs: {r['table_label']} trend magnitude per year")
+                FACTS.set(f"trend_po.{_shortp[r['key']]}_ci_lo", r["gamma_ci_lo"], "{:+.3f}",
+                          note=f"Playoffs: {r['table_label']} trend 95% CI low (per year)")
+                FACTS.set(f"trend_po.{_shortp[r['key']]}_ci_hi", r["gamma_ci_hi"], "{:+.3f}",
+                          note=f"Playoffs: {r['table_label']} trend 95% CI high (per year)")
             FACTS.set("share.fourfactors_po.adv", ctx["pct_level"], "{:.0f}%",
                       note="Playoffs: all four channels' share of the HCA level")
             print("   ► Note: playoff differentials fold in the seed-quality gap (the")
@@ -2483,9 +2503,16 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
                       note=f"{_rc}: pace-free rebound share-edge trend per year")
             FACTS.set(f"{_rc}.reb_share_trend_mag", abs(_sm.params["year"]), "{:.3f}",
                       note=f"{_rc}: rebound share-edge trend magnitude per year")
+            _slo, _shi = _ci_lo_hi(_sm, "year")
+            FACTS.set(f"{_rc}.reb_share_trend_ci_lo", _slo, "{:+.3f}",
+                      note=f"{_rc}: rebound share-edge trend 95% CI low (per year)")
+            FACTS.set(f"{_rc}.reb_share_trend_ci_hi", _shi, "{:+.3f}",
+                      note=f"{_rc}: rebound share-edge trend 95% CI high (per year)")
             _sp = _sm.pvalues["year"]
             FACTS.set(f"{_rc}.reb_share_p", "< 0.001" if _sp < 0.001 else f"= {_sp:.3f}",
                       note=f"{_rc}: rebound share-edge trend p-value (display)")
+            print(f"   {_rc}: reb-share-edge trend/yr = {_sm.params['year']:+.3f}  "
+                  f"95% CI [{_slo:+.3f}, {_shi:+.3f}]  (p = {_fmt_p(_sp)})")
         _e0r, _eNr = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
         _em = lambda era: float(_rsub[(_rsub["year"] >= era[1]) & (_rsub["year"] <= era[2])]["reb_share_edge"].mean())
         FACTS.set(f"{_rc}.reb_share_early", _em(_e0r), "{:+.2f}",
@@ -3875,8 +3902,10 @@ def _run_league_metric_analysis(
             pval_e  = m_era.pvalues[col]
             pval_e_s = _fmt_p(pval_e)
             pp_era = _pp(coef_e, p_bar) * 10
+            _wlo_e, _whi_e = _ci_lo_hi(m_era, col, p_bar)
             print(f"\n   Controlling for era (within-era game-level effect):")
             print(f"   coef = {coef_e:+.4f}  (≈ {pp_era:+.2f} pp {era_coef_desc})  "
+                  f"95% CI [{_wlo_e*10:+.2f}, {_whi_e*10:+.2f}]  "
                   f"p = {pval_e_s}  {_stars(pval_e).strip()}")
             if "3PA" in metric_header:
                 _tctx = "po" if ctx_label == "Playoffs" else "reg"
@@ -3887,6 +3916,11 @@ def _run_league_metric_analysis(
                 FACTS.set(f"tpa.within_{_tctx}_p",
                           "< 0.001" if pval_e < 0.001 else f"= {pval_e:.3f}",
                           note=f"{ctx_label}: within-era 3PA effect p-value (display)")
+                _wlo, _whi = _ci_lo_hi(m_era, col, p_bar)
+                FACTS.set(f"tpa.within_{_tctx}_ci_lo", _wlo * 10, "{:+.2f}",
+                          note=f"{ctx_label}: within-era 3PA effect 95% CI low (per 10pp)")
+                FACTS.set(f"tpa.within_{_tctx}_ci_hi", _whi * 10, "{:+.2f}",
+                          note=f"{ctx_label}: within-era 3PA effect 95% CI high (per 10pp)")
             if note_lines:
                 for line in note_lines:
                     print(line)
@@ -5290,9 +5324,11 @@ def run_channel_event_study(df: pd.DataFrame) -> None:
                 slope_chg  = float(m.params.get("time_since", np.nan))
                 p_level    = float(m.pvalues.get("post95",    np.nan))
                 p_slope    = float(m.pvalues.get("time_since", np.nan))
+                _ls_lo, _ls_hi = _ci_lo_hi(m, "post95")
                 print(f"   {label:<18}  {pre_slope:>+13.3f}  {level_shift:>+12.3f}  "
                       f"{slope_chg:>+13.3f}  {_fmt_p(p_level):>8}  {_fmt_p(p_slope):>8}  "
                       f"{_stars(p_level).strip()}/{_stars(p_slope).strip()}")
+                print(f"        level-shift 95% CI [{_ls_lo:+.2f}, {_ls_hi:+.2f}]")
                 # Statistical detail for investigation.md: the 1994-95 fingerprint
                 # is an immediate foul jump while shooting shows none.
                 if is_po == 0 and key == "foul_diff":
@@ -5300,6 +5336,11 @@ def run_channel_event_study(df: pd.DataFrame) -> None:
                               note="1994-95 immediate foul-diff level shift (pp)")
                     FACTS.set("event.foul_jump_p", "< 0.001" if p_level < 0.001 else f"= {p_level:.3f}",
                               note="1994-95 foul jump p-value (display)")
+                    _flo, _fhi = _ci_lo_hi(m, "post95")
+                    FACTS.set("event.foul_jump_ci_lo", _flo, "{:+.2f}",
+                              note="1994-95 foul-diff level shift 95% CI low")
+                    FACTS.set("event.foul_jump_ci_hi", _fhi, "{:+.2f}",
+                              note="1994-95 foul-diff level shift 95% CI high")
                 if is_po == 0 and key == "efg_pct_diff":
                     FACTS.set("event.shooting_jump_p", "< 0.001" if p_level < 0.001 else f"= {p_level:.3f}",
                               note="1994-95 shooting jump p-value (display)")
