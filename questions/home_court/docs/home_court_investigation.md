@@ -112,7 +112,7 @@ The home effective-field-goal advantage fell from about 1.6 points to roughly 0.
 And when three-point rate is held in the picture, the home shooting trend vanishes entirely: the fading shooting advantage *is* the three-point story.
 Shooting accounts for 21% of the regular-season decline, 95% CI [11, 28]%.
 
-**Why it holds.** A formal cointegration test confirms the raw season-level correlation (about -0.90) is mostly two series drifting in opposite directions, not a genuine long-run link.
+**Why it holds.** A check of whether that link is a genuine long-run tie or just two series trending across the same 40 years comes back as mostly trend: the raw season-level association (about -0.90) is two lines drifting opposite each other, not a real connection.
 But the within-era, game-by-game effect is real and significant, and it points the same way in the playoffs.
 The mechanism is compositional: threes are taken from spots where home comfort and familiar rims matter less than they do on interior shots, so as both teams shifted outward, the home shooting advantage had less room to operate.
 
@@ -134,7 +134,7 @@ The playoffs show the same shape (share advantage +2.74 down to +0.70, trend -0.
 The pace-free share metric collapses too, so this is not a side effect of the league playing faster or slower.
 It is independent of the three-point shift: holding three-point rate in the picture absorbs only about 8% of the rebounding trend, and it stays highly significant (p < 0.001), a genuinely separate strand.
 And it tracks the league-wide retreat from offensive rebounding as teams traded crashing the glass for getting back on defense.
-That last link is a season-level correlation (about +0.82) that a cointegration test flags as partly parallel-trend, so the independent within-channel evidence is what carries the conclusion, not the raw correlation.
+That last link is a season-level association (about +0.82) that the same long-run check flags as mostly parallel trend, so the independent within-channel evidence is what carries the conclusion, not the raw number.
 
 ## The Turnover Edge
 
@@ -188,7 +188,7 @@ The statistical detail behind every test is in `home_court_results.md`; the char
 The era shading makes each boundary visible.
 It would be natural to read one or more of those transitions as explaining where home court bent.
 
-**The test.** A piecewise regression with indicator variables at each rule-change boundary, asking whether any boundary caused a statistically significant one-time shift in home win percentage beyond the ongoing secular trend.
+**The test.** I tested whether each rule-change year produced a one-time step in home win percentage on top of the ongoing slide, the kind of jump a trend alone would not predict.
 
 **The result.** Exactly one boundary registers: 1994-95, worth a genuine one-time drop of about 2.6 points beyond the trend (95% CI [0.6, 4.6] pp, p = 0.010).
 Every other change passed through the trend line with no significant step: zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, and the take-foul rule.
@@ -210,8 +210,7 @@ The rule reshapes the game; it doesn't reshape who benefits from playing in thei
 The 1994-95 exception works for a specific reason.
 Hand-checking affected referee discretion, and referee behavior toward home teams is one of the few things that can shift asymmetrically.
 When referees were directed to call tighter games, the home-favoring foul bias compressed: not because home teams were less protected by the rule, but because tighter calling narrowed the gap across all calls.
-Foul calls responded immediately at the 1994-95 boundary (p=0.007).
-The shooting channel showed no significant immediate response (p=0.327).
+Foul calls responded immediately at the 1994-95 boundary (a +0.44 step, 95% CI [+0.13, +0.74], p = 0.007), while the shooting channel showed no such step.
 That asymmetry is the fingerprint of referee behavior, not shot-selection rules.
 
 One complication: the three-point line was also shortened in 1994-95 through 1996-97, and the two changes can't be fully separated at the season level.
@@ -231,7 +230,7 @@ Only one era boundary corresponds to a detectable break in the trend, and even t
 Teams now charter private planes, travel with larger staffs, and follow more sophisticated recovery protocols.
 If away teams in 1984 arrived meaningfully more fatigued, better travel conditions should have gradually closed part of the home-court gap.
 
-**The test.** I regressed game outcomes on great-circle travel distance between the two cities and on time-zone crossings, controlling for era, rest, and altitude.
+**The test.** I measured how game outcomes move with great-circle travel distance between the two cities and with time-zone crossings, within each era, rest level, and altitude.
 
 **The result.** Travel distance has a measurable but negligibly small effect in the regular season: about 0.07 percentage points of home win rate per 100 miles, 95% CI [-0.13, -0.02].
 The band clears zero, but the size is the story, and the effect is so small that its sign barely means anything: it actually runs slightly negative, so if anything more travel goes with the home team winning a touch *less*, not more.
@@ -270,7 +269,7 @@ Denver and Utah add about 8 percentage points to their regular-season home win r
 It existed in the 1980s and it exists now; it did not shrink as home court faded.
 Altitude's effect is confined to two franchises and has actually weakened somewhat in recent years; it can't explain a league-wide trend.
 In the playoffs, rest is confounded with team quality: extra days between rounds almost always mean you swept the previous series, making you likely the stronger team regardless.
-Control for team quality and the playoff rest advantage largely disappears.
+Separate out which team was the better seed, and the playoff rest advantage largely disappears.
 Neither factor moved in the direction or at the scale needed to drive the decline.
 
 ---
@@ -312,8 +311,8 @@ Either way, the pace swings were large and visible.
 **The test.** Season-by-season plots of pace (possessions per game) against home win rate, plus within-era regressions for both regular season and playoffs.
 
 **The result.** No meaningful relationship in either direction.
+Season to season the two barely move together: a near-zero +0.24 in the regular season and -0.14 in the playoffs, the signs even pointing opposite ways.
 Pace fell for two decades and home court held roughly flat, then fell; pace rose sharply after 2015 and home court kept falling.
-The two series move independently.
 Within any given era, higher-pace seasons do not consistently produce higher or lower home win rates.
 The same holds in the playoffs.
 
@@ -354,7 +353,7 @@ It is a reasonable structural argument.
 **The test.** I measured competitive balance as the standard deviation of team win percentages each season and plotted it against home win rate.
 I then ran a regression after removing the shared long-run trend from both series to avoid spurious correlation.
 
-**The result.** The raw season-level correlation between parity and home court advantage is near zero.
+**The result.** Parity and home court advantage barely track each other from season to season.
 The era breakdown actually contradicts the theory: the most unequal era (1995-01) had already seen HCA fall sharply from its 1980s peak, while the most balanced era (2002-04) saw HCA tick back up briefly.
 After removing the shared downtrend from both series, a small year-to-year association does emerge, but the effect is modest and nowhere near large enough to explain the 40-year decline.
 

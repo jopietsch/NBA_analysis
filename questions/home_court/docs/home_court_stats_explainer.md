@@ -51,10 +51,11 @@ Playoff rest is earned by winning series quickly, so rest and team strength are 
 1. *Primary:* a **binomial GLM** with (wins, losses) per season as the outcome.
    This models the win count directly, so seasons with more games automatically
    get more weight and the variance is correct for proportion data. The slope
-   comes out in log-odds per year and is converted to percentage points at the
-   mean win rate for readability.
+   comes out in log-odds per year (log-odds is ln(p / (1 − p)), where 0 is a
+   coin flip and positive values favor the home team) and is converted to
+   percentage points at the mean win rate for readability.
 2. *Cross-check:* **OLS of the season percentage on year with Newey–West HAC
-   standard errors** (one lag). Season win rates are autocorrelated (a high-HCA
+   (heteroskedasticity- and autocorrelation-consistent) standard errors** (one lag). Season win rates are autocorrelated (a high-HCA
    season tends to follow a high-HCA season), which makes naive OLS standard
    errors too small. HAC standard errors stay honest about that.
 
@@ -84,7 +85,7 @@ This section asks a different question: *where does the data itself see the stro
 **The data.** The same season-level home win % series: 43 regular-season seasons and 42 playoff seasons.
 
 **The approach.** The **QLR (Quandt Likelihood-Ratio, or supremum Chow) test**, the standard econometric test for an unknown break point.
-For each candidate year *t* (the outer 15% trimmed to ensure both sub-samples have at least a handful of seasons), a **Chow F-test** asks: does fitting two separate regression lines (before *t* and after *t*) reduce the residual sum of squares enough to be noteworthy?
+For each candidate year *t* (the outer 15% trimmed to ensure both sub-samples have at least a handful of seasons), a **Chow F-test** asks: does fitting two separate regression lines (before *t* and after *t*) reduce the residual sum of squares (the total squared distance from the data points to the fitted line) enough to be noteworthy?
 The F-statistic at each candidate is
 
 > F(t) = [(RSS_full − RSS_before(t) − RSS_after(t)) / k] / [(RSS_before(t) + RSS_after(t)) / (n − 2k)]
@@ -134,7 +135,7 @@ Regular season only; too few playoff seasons to support a k=2 model reliably.
 
 **The approach.** Four nested piecewise models: k=0 (a single linear trend), k=1 (two segments, one break), k=2 (three segments, two breaks), and k=3 (four segments, three breaks).
 Each model is estimated by **weighted least squares (WLS)** with game counts as weights; within each segment the fit is an intercept plus slope.
-For a given k, break locations are treated as latent: every valid configuration (minimum 3 seasons per segment) is evaluated, and the marginal likelihood is approximated using the **BIC**:
+For a given k, break locations are treated as latent: every valid configuration (minimum 3 seasons per segment) is evaluated, and the marginal likelihood is approximated using the **BIC** (Bayesian Information Criterion, which rewards fit while charging a penalty for each added parameter, so a model with more breaks only wins when the extra fit outweighs the cost):
 
 > log Z_k ≈ logsumexp(−BIC(τ)/2 over all configurations τ) − log(n_configurations)
 
@@ -927,7 +928,7 @@ The era decline is **not** an artifact of which teams happen to host games in wh
 But HCA was *also* declining smoothly throughout, so any late-period dummy would look negative even if the format change did nothing.
 Step 3 separates the two stories: if the format dummies still matter after the year trend is in the model, the change had its own effect; if not, the drop is just the trend passing through the boundary.
 
-**What the results mean.** Once the year trend is controlled, no format dummy is significant (all p ≈ 0.30) and the LR test for the dummies jointly is p = 0.197.
+**What the results mean.** Once the year trend is controlled, no format dummy is significant (all p between 0.24 and 0.30) and the LR test for the dummies jointly is p = 0.197.
 The post-2014 playoff drop is fully consistent with the secular decline; the format change itself is exonerated.
 
 **Why this chart.** The format periods are shown as paired regular-season/playoff bars: discrete periods call for bars, not a line.
@@ -957,7 +958,7 @@ Shrinkage produces rankings you'd actually bet on, and the variance decompositio
 
 **What the results mean.** The two contexts give opposite answers.
 In the regular season, true between-franchise spread is real: observed SD 4.9 pp, only 30% of it sampling noise, true SD ≈ 4.1 pp. Denver (+26.8 shrunken) and Utah (+25.7) genuinely top the table, consistent with the altitude finding in Section 9.
-In the playoffs, sampling noise accounts for 100% of the observed spread: true between-franchise SD ≈ 0, and shrinkage collapses every franchise to the league mean (+26.9 pp). Utah's raw +39.7 playoff HCA and the Clippers' raw −3.6 are both indistinguishable from the same underlying value.
+In the playoffs, sampling noise accounts for 101% of the observed spread: true between-franchise SD ≈ 0, and shrinkage collapses every franchise to the league mean (+26.9 pp). Utah's raw +39.7 playoff HCA and the Clippers' raw −3.6 are both indistinguishable from the same underlying value.
 No franchise has demonstrably special playoff home court.
 
 **Why this chart.** Two panels.

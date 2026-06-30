@@ -107,7 +107,7 @@ The cost is that log-odds aren't intuitive, which is why we always translate the
  log-odds       -inf ........ 0 .......... +inf   <- the modeling scale
 ```
 
-When the results doc says a coefficient is "+0.065 log-odds per day" of rest and then "~+1.6 pp," it computed the log-odds first and translated to percentage points for you.
+When the results doc says a coefficient (the number the model multiplies a factor by, here the change it produces per one-unit step) is "+0.065 log-odds per day" of rest and then "~+1.6 pp," it computed the log-odds first and translated to percentage points for you.
 §2.2 shows exactly how.
 
 ## 0.2 Percentage points (pp) vs. percent
@@ -182,7 +182,7 @@ All three point at the same late-1990s bend, but only the last one licenses "mos
 
 **Why the project is mostly frequentist.** The frequentist tools need no prior assumption and are the default language of the field, so they carry the bulk of the analysis.
 Bayesian methods earn their keep in exactly one place: *model comparison*.
-"How many breaks does the decline have, none, one, or two?" is a question about which model is most probable, and a posterior over models answers it cleanly (§7.12).
+"How many breaks does the decline have, none, one, two, or three?" is a question about which model is most probable, and a posterior over models answers it cleanly (§7.12).
 The switch is practical, not philosophical.
 
 ---
@@ -223,7 +223,7 @@ Is the gap between them more than chance?
 The z-test asks whether the gap between the two rates is large *relative to that fuzziness*.
 Big gap + lots of games = confident the difference is real.
 
-**The mechanics (lightly).** Pool the two groups to estimate a common rate p_pool, compute the standard error of the difference, and form
+**The mechanics (lightly).** Pool the two groups to estimate a common rate p_pool, compute the standard error of the difference (how far that gap would typically bounce from one sample to the next), and form
 
 ```
         p1 - p2
@@ -507,7 +507,7 @@ The era section asks: beyond the smooth year-by-year drift, did specific rule-ch
 
 Same logic exonerates the 2014 playoff format change: the raw z-test showed a scary **-6.8 pp** drop at 2014, but once the year trend is in the model the LR test for the format dummies is **p = 0.197**: the "drop" is just the steady decline passing through that year, not the schedule change doing anything.
 
-**The trap it avoids.** It separates "this period is lower" (a raw difference, which the ever-present downward trend guarantees) from "this boundary *itself* moved the needle." If you remember one idea from this tutorial, make it this one: it recurs in the era, format, and (implicitly) the decomposition sections.
+**The trap it avoids.** It separates "this period is lower" (a raw difference, which the ever-present downward trend guarantees) from "this boundary *itself* moved the needle." That distinction is the spine of the project: it recurs in the era, format, and (implicitly) the decomposition sections.
 
 ## 4.2 Splitting up R²: sequential vs. Shapley
 
@@ -666,7 +666,8 @@ Same lineage, different target.
 **A worked example.** Regular season, model accuracy **0.93**.
 The SHAP decline decomposition (early 1984–94 minus late 2023–26) gives shooting **+3.3 pp** (35%, the top channel), rebounding **+2.6 pp** (28%), turnovers **+2.2 pp** (23%), and fouls the smallest at **+1.4 pp** (14%).
 The four sum to **9.4 pp**, essentially the actual 9.3 pp decline.
-That is the same ranking the linear mediation found: shooting, rebounding, and turnovers large, fouls smallest.
+The linear mediation (§4.3) makes the same four-way split: shooting, rebounding, and turnovers each carry a large slice and fouls clearly the smallest.
+The two methods disagree on which of the big three leads, so read the grouping, not the exact order.
 Because the two methods share no assumptions, their agreement says the breakdown is a feature of the games, not of the straight-line form.
 (The playoffs split the same way: shooting and rebounding largest, fouls and turnovers smaller.)
 
@@ -778,7 +779,7 @@ Subtract it from the observed spread and what's left is an estimate of the **tru
   4.1^2 = 16.8, so noise = 7.2 = 30% of 24.0.) Real differences exist: Denver
   and Utah genuinely have stronger home court (the altitude finding).
 - **Playoff franchises:** observed SD = 8.0 pp, but sampling noise accounts for
-  **100%** of it; true SD ~**0**. The entire playoff leaderboard spread is luck.
+  **101%** of it; true SD ~**0**. The entire playoff leaderboard spread is luck.
   No franchise has a *demonstrably* special playoff home court: the samples
   (20-220 games) are just too small.
 
@@ -944,7 +945,7 @@ The correct benchmarks are from **Andrews (1993)**, who worked out the distribut
 The single-line OLS: RSS_full = some number.
 Try every year from 1991 (15% trimmed) to 2019.
 The supremum Chow F hits **10.22 at 1999**, which clears the 5% Andrews threshold (8.85).
-Before 1999, the RS slope was −0.65 pp/yr (steep); after 1999, −0.26 pp/yr (gradual).
+Before 1999, the RS slope was −0.65 pp/yr (steep); after 1999, −0.25 pp/yr (gradual).
 The data sees 1999 as the clearest break, not 1995 (the rule-change year) and not 2014.
 A bootstrap on the break year (500 residual resamples) puts its 95% CI at 1993–2002, so the honest reading is "somewhere in the late 1990s," not a single pinpointed season.
 
@@ -1231,10 +1232,10 @@ When you can't randomize, you look for a shock that did the randomizing for you.
 
 **The question.** QLR (§7.5) assumes there is exactly one break and finds where it best fits.
 CUSUM (§7.6) asks only whether a single straight line holds up.
-Neither answers the prior question: *how many* breaks does the decline actually support, none, one, or two, and how confident are we about the location?
+Neither answers the prior question: *how many* breaks does the decline actually support, none, one, two, or three, and how confident are we about the location?
 This is the project's one Bayesian analysis; §0.5 lays out how its posterior probabilities differ from the p-values everywhere else.
 
-**The intuition.** Fit three competing pictures of the 43-season series: k=0 (one straight line, no break), k=1 (two segments joined at one break), k=2 (three segments, two breaks).
+**The intuition.** Fit four competing pictures of the 43-season series: k=0 (one straight line, no break), k=1 (two segments joined at one break), k=2 (three segments, two breaks), k=3 (four segments, three breaks).
 More segments always fit the wiggles better, so the method penalizes complexity and asks which picture is *most probable* once that penalty is paid.
 The output is a posterior probability on each k, and for k=1 a full probability distribution over which year the break sits in.
 
@@ -1247,21 +1248,24 @@ For k=1, the per-year BIC scores give a posterior over the break year: the highe
 
 | model | Bayes factor vs. k=0 | posterior P |
 |---|---|---|
-| k=0 (no break) | 1.0 | 1.8% |
-| k=1 (one break) | 18.0 | 31.9% |
-| k=2 (two breaks) | 37.4 | 66.3% |
+| k=0 (no break) | 1.0 | 1.4% |
+| k=1 (one break) | 14.2 | 19.3% |
+| k=2 (two breaks) | 29.9 | 40.5% |
+| k=3 (three breaks) | 28.6 | 38.8% |
 
-The single straight line is effectively ruled out (1.8%).
-One break is strongly supported (Bayes factor 18 over no break); two breaks are favored overall (66%), with MAP breaks at **1992 and 2003**.
-For the one-break model the MAP year is **1999** (95% HPD **1992–2003**), and 1999 alone carries 50.6% of the posterior.
+The single straight line is effectively ruled out (1.4%).
+One break is strongly supported (Bayes factor 14.2 over no break), but the posterior keeps climbing: two breaks (40.5%) and three (38.8%) come out almost tied, so the data clearly wants more than one bend without settling how many.
+The two-break model places its breaks at **1992 and 2020**, the three-break model at **1988, 1998, and 2020**.
+For the one-break model the MAP year is **1999** (95% HPD **1992–2003**), and 1999 alone carries 50.1% of the posterior.
 
 **Why it matters: it resolves the QLR–CUSUM tension.** §7.6 left a loose end: QLR found a real break near 1999, yet CUSUM saw a stable line.
 The Bayesian model explains why both are right.
-The one-break signal is dominant and lands on 1999, matching QLR.
-But the breaks are slope *moderations*, not level jumps, which is exactly what CUSUM has little power to flag.
-And the extra pull toward k=2 (a secondary kink around 1992–2003) brackets the 1994–95 rule-change adjustment, the same boundary the era test (§4.1) and ITS (§7.7) keep landing on.
+Within the one-break model the break lands on 1999, exactly where QLR put it.
+And every break the models find is a slope *moderation*, not a level jump, which is just what CUSUM has little power to flag.
+The pull toward more breaks comes from two kinks the multi-break models keep finding: an early one in the late-1980s-to-mid-1990s window, around the hand-checking era the era test (§4.1) and ITS (§7.7) also flag, and a later one near 2020, the empty-arena COVID season and the steeper modern slide.
+The data wants at least one bend but won't commit on whether there are two or three.
 
-**How to read it in the results doc.** The Bayesian change-point block prints the posterior P(k) for k=0/1/2, the Bayes factors, and the top break-year probabilities for k=1 (with the MAP year and HPD).
+**How to read it in the results doc.** The Bayesian change-point block prints the posterior P(k) for k=0/1/2/3, the Bayes factors, and the top break-year probabilities for k=1 (with the MAP year and HPD).
 Read the posteriors as model-selection guidance, not exact truth: with only 43 seasons the BIC marginal likelihood is an approximation.
 
 **The trap it avoids.** Picking the break count by eye, or by whichever model fits best, overfits: more segments always fit better.
@@ -1433,9 +1437,9 @@ Now the systems can be averaged.
 The **consensus rating** is the simple average of a player's z-scores across every system that has data for them (a player missing from one system just has it left out of their average).
 Equal weight, no system privileged.
 
-**A worked example.** Nikola Jokić tops the 2024-25 consensus at **z = 3.13**: averaged across systems he sits about three standard deviations above the league.
-Shai Gilgeous-Alexander follows at 2.72, Giannis at 2.29.
-Because the scale is now "SD above average," you can read 3.13 directly, and the 0.41 SD gap down to SGA is real separation, not a rounding artifact.
+**A worked example.** Nikola Jokić tops the 2024-25 consensus at **z = 2.92**: averaged across systems he sits nearly three standard deviations above the league.
+Shai Gilgeous-Alexander follows at 2.72, Giannis at 2.31.
+Because the scale is now "SD above average," you can read 2.92 directly, and the 0.20 SD gap down to SGA is real separation, not a rounding artifact.
 
 **The trap it avoids, and its own limit.** Averaging raw ratings would let VORP (SD ≈ 68) swamp PER (SD ≈ 4); z-scoring fixes that.
 But equal weighting has its own bias: if most of the systems are box-score cousins and only one is an impact metric, the consensus quietly *over-weights the box score*, because the redundant systems vote together.
@@ -1446,7 +1450,7 @@ That redundancy is what §9.2 and the unique-variance check try to correct for.
 **The question:** instead of weighting every system equally, which *combination* of systems best predicts how many games a team actually won?
 That weighting gives a "wins-predictive" rating.
 
-**Why plain OLS (§1.1) breaks here.** Aggregate each system to the team level (minutes-weighted average of its players' z-scores) and you have 30 teams and eight predictors that all move together: BPM and VORP rank players almost identically (Spearman **0.972**).
+**Why plain OLS (§1.1) breaks here.** Aggregate each system to the team level (minutes-weighted average of its players' z-scores) and you have 30 teams and 14 predictors that all move together: BPM and VORP rank players almost identically (Spearman **0.972**).
 With so few rows and predictors this correlated, ordinary least squares can't tell them apart; it hands one a large positive weight and its twin a large negative one, and the weights swing wildly if a single team changes.
 This is **multicollinearity**.
 
@@ -1456,10 +1460,10 @@ The penalty λ (here **5.0**) pulls every weight toward zero, so the model can't
 It trades a little bias for a large cut in variance, a good deal on 30 noisy rows.
 The price: the weights are *directional evidence, not precise estimates*, so read which systems get more weight, not the exact coefficient.
 
-**A worked example.** The wins-predictive top three are the same names as the consensus (Jokić 3.90, SGA 3.87, Giannis 3.30), and the two ratings rank players almost identically (Spearman **0.978**).
-The disagreements are the interesting part: the wins-predictive rating lifts SGA (+1.14 versus his consensus), Giannis (+1.00), and defense-and-finishing big men like Daniel Gafford (+0.92), Victor Wembanyama (+0.82), and Alex Caruso (+0.80), whose teams won more than the box-score average expects.
+**A worked example.** The wins-predictive top three are the same three names as the consensus, reordered: Giannis (3.72), SGA (3.45), Jokić (3.24), and the two ratings rank players almost identically (Spearman **0.925**).
+The disagreements are the interesting part: the wins-predictive rating lifts Giannis (+1.41 versus his consensus), Victor Wembanyama (+1.39), and winning-team role players like Isaiah Joe (+0.97), Evan Mobley (+0.91), and Brandon Clarke (+0.90), whose teams won more than the box-score average expects.
 
-**How to read it.** When the wins-predictive and consensus lists agree at 0.978, the headline ranking is robust to *how* you combine the systems.
+**How to read it.** When the wins-predictive and consensus lists agree at 0.925, the headline ranking is robust to *how* you combine the systems.
 Read the per-player gaps, not the order, for where "what helps your team win" parts from "what the box score likes."
 
 **The trap.** With only 30 teams this is thin data, and λ was not tuned by cross-validation.
@@ -1502,7 +1506,7 @@ Win Shares posts a Gini of **0.363** and VORP **0.749**: VORP is far more top-he
 **The trap, and it is a real one here.** Gini is trustworthy only for metrics that *accumulate a quantity that can't go below zero* (Win Shares, VORP).
 The metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) have many negative values, and the implementation clips them to zero before computing Gini.
 That counts every below-average player as a flat zero and **inflates** the score.
-The consensus rating shows a Gini of **0.763**, which would rank it as more top-heavy than Win Shares (0.363), an ordering that is an artifact of the clipping, not a fact about basketball.
+The consensus rating shows a Gini of **0.756**, which would rank it as more top-heavy than Win Shares (0.363), an ordering that is an artifact of the clipping, not a fact about basketball.
 For 0-centered metrics, ignore Gini and use the power-law exponent (§9.5), which doesn't care where zero sits.
 
 ## 9.5 Power laws and the log-log fit
@@ -1523,7 +1527,7 @@ Value drops by a factor of 10^0.36 ≈ **2.3** from rank 1 to rank 10, so the te
 The plus/minus *rate* metrics bend instead: OBPM has the worst straight-line fit (R² = 0.878) because "above average per possession" has a natural size on both sides of zero, so its best player is not a runaway.
 
 **Why α and not Gini.** α is the honest cross-system steepness measure because it doesn't depend on where zero sits, unlike Gini (§9.4).
-On α the two combined ratings land mid-pack: consensus **0.31**, wins-predictive **0.28**, steeper than flat PER (0.13) but well short of VORP (0.36).
+On α the two combined ratings land mid-pack: consensus **0.31**, wins-predictive **0.32**, steeper than flat PER (0.13) but well short of VORP (0.36).
 
 **The trap.** The 0.95 cutoff is a convention, not a hypothesis test, and this describes 50 players in one season, not a proven law.
 Systems sitting right at the line (DBPM clears it at R² = 0.957, BPM just misses at 0.935) are really the same shape.
@@ -1621,25 +1625,25 @@ Read the grouping and the order of α, not the label on any single borderline sy
 
 **And from the Knicks analysis:**
 
-4. **Percentile rank is just counting.** "100th percentile" means best in the
+1. **Percentile rank is just counting.** "100th percentile" means best in the
    dataset, not statistically proven best ever. Read it as a clean historical
    fact, not an inference. (§8.1)
-5. **SRS makes schedule difficulty commensurable.** A +14.9 raw margin and a +11.4
+2. **SRS makes schedule difficulty commensurable.** A +14.9 raw margin and a +11.4
    adjusted margin tell the same story here, but in a different year against
    weaker opponents, the gap could be large enough to reverse a ranking. Always
    check both. (§8.2, §8.3)
 
 **And from the player rating systems analysis:**
 
-6. **Standardize before you average.** Systems on different scales can't be
+1. **Standardize before you average.** Systems on different scales can't be
    blended directly; z-scoring puts them all in "SD above average" first. But
    equal weighting double-counts redundant systems, so a consensus is only as
    balanced as its ingredient list. (§9.1, §9.2)
-7. **Regularize when predictors are few and correlated.** With 30 teams and
+2. **Regularize when predictors are few and correlated.** With 30 teams and
    systems that move together, OLS weights are unstable; ridge trades a little
    bias for far less variance, and the same penalty is a Bayesian prior in
    disguise, the idea underneath every impact metric. (§9.2, §9.3)
-8. **A concentration number is only as honest as its zero point.** Gini inflates
+3. **A concentration number is only as honest as its zero point.** Gini inflates
    for metrics centered on zero because it clips negatives; the power-law exponent
    α doesn't depend on where zero sits, so it is the fair cross-system read.
    (§9.4, §9.5)
