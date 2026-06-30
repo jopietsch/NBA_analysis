@@ -8,11 +8,9 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-The 2025–26 New York Knicks went 16-3 in the playoffs.
-This summary answers four questions: **Was the run historic and against real competition?
-Does it hold up after adjusting for era and schedule?
-What made the Finals so different from the first three rounds?
-And how unlikely was a title run from where the Knicks started the playoffs?**
+In 43 years of NBA champions, none outscored its playoff opponents by more than the 2025–26 New York Knicks.
+They went 16-3, posting the highest raw and opponent-adjusted margins on record, and they did it as underdogs: their regular season gave them only a 15% chance to win the title at all.
+This summary works through four questions: was the run historic and against real competition, does it hold up after adjusting for era and schedule, what made the Finals so different from the first three rounds, and how unlikely was a title run from where the Knicks started?
 
 ---
 
@@ -28,11 +26,13 @@ The more accurate possessions-based version, which isolates actual pace from the
 The win rate of 0.842 ranks 88th percentile.
 That #1 is the best single guess but not a lock: re-drawing the 19 games leaves them first about 60% of the time when the rest of history is left at its exact numbers.
 Under the fairest test, which treats every past champion's number as just as uncertain as the Knicks', their chance of being the single best ever falls to about 9% (and roughly a third to be top-five).
-Swapping out the rating system points the same way: judged purely on who beat whom, with scores ignored entirely, they still rank first, and only when opponents are credited for late-season form do they slip to third: one of the best handful of title runs ever, most likely the best by the raw numbers, but not provably the single best.
+Swapping the rating system tells the same story.
+Judged purely on who beat whom, with scores ignored, they still rank first; only when opponents are credited for late-season form do they slip to third.
+The verdict: one of the best handful of title runs ever, most likely the best by the raw numbers, but not provably the single best.
 
 The East was **not historically weak**.
 The West-East strength gap in 2025–26 was only +0.39 points per game, 37th percentile of West dominance; in 63% of prior seasons, the West held a larger edge.
-The Knicks' playoff opponents had an average SRS of +3.67, right at the historical median for champions.
+The Knicks' playoff opponents had an average SRS (each team's season-long scoring margin, adjusted for schedule) of +3.67, right at the historical median for champions.
 All four opponents were essentially fully healthy (98% average availability).
 
 ---
@@ -49,8 +49,8 @@ This split is not just a story about opponent quality.
 The two teams that improved most from the regular season met in the Finals: the Knicks rose further than any team in the 2026 field, and the Spurs were second, climbing from a regular-season SRS of +8.28 to +15.13 across the playoffs (+14.48 against teams other than the Knicks).
 The 76ers and Cavaliers played slightly below their regular-season ratings against other opponents.
 The Knicks dominated East opponents who may have been a touch below their season-long level (the data is too thin to be sure), then beat the best-performing team they faced in a genuine series.
-The betting market saw the same split before any of it was played: modest Knicks favorites (-3 to -4) in the three East rounds, then slight Knicks underdogs (+2.5) in the Finals.
-They cleared the East spreads by 21 to 26 points a round, went 14-0 against the spread against the East, and landed dead-on in the Finals (+2.4 actual).
+The betting market priced the same split before any of it was played: modest Knicks favorites (a spread of -3 to -4, the margin they were expected to win by) in the three East rounds, then slight Knicks underdogs (+2.5) in the Finals.
+They cleared the East spreads by roughly 21 to 26 points a round, went 14-0 against the spread there, and landed dead-on in the Finals (+2.4 actual).
 The two halves are different in kind, not just in margin.
 
 ---
@@ -67,15 +67,15 @@ Only about 7% of the model's title runs lost three or fewer games, and barely **
 Almost nothing about the regular season predicted this.
 The Knicks were "supposed" to lose six or seven games on the way to a title they were not favored to win.
 They lost three, and were seriously tested only in the Finals.
-That is the dominance story told in wins and losses: they played far above their regular-season level when it counted.
 
 ---
 
 ## The bottom line
 
-The 2026 Knicks' playoff run ranks at or near the top by every adjusted measure tested, and they were not even favored to get there.
-The dominant first three rounds were real: the schedule was average rather than soft, opponents were healthy, and the East was competitive.
-The tight Finals were real too: the Spurs were the best-performing team the Knicks faced, and New York won a series that could have gone either way.
+By every adjusted measure tested, the 2026 Knicks rank at or near the top, and they were not even favored to get there.
+The dominant first three rounds were real: the schedule was average, opponents were healthy, and the East was competitive.
+The Spurs were the best-performing team they faced, and the Finals could have gone either way.
+New York won it anyway.
 
 ---
 

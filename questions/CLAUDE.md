@@ -98,6 +98,18 @@ The rules above are mostly prohibitions; on their own they pull prose toward the
 
 These are moves, not quotas. A section that is already vivid does not need more of them; the point is that a flat section has a fix that is *not* "add drama."
 
+## Document arc for question-driven reports
+
+The "Reach for these" moves above are sentence- and section-level. This is the document-level shape they assemble into, and it is what keeps a long report from losing the reader. Most projects here answer a small set of questions ("did X change? what makes it up? what drove the change? what didn't?"), and that shape carries them well. The template's `*_findings.md.j2` and `*_summary.md.j2` ship with this arc as commented scaffolding; adapt the question set to the project, but keep the order.
+
+- **Front-load the conclusions.** A long report that withholds its answers until the end loses readers before they get there. Put the headline answers in the intro: lead with the hook (the one finding that earns attention, with a concrete number, not a topic definition), then the rest of the contract below.
+- **State the questions, in bold, in the intro.** They are the contract the body must keep, and they set the section order. `/check-coherence` reads the intro as that contract.
+- **Settle the reader's assumptions up front, as Yes/No bullets.** "Was it smaller crowds? No: arenas are as full as ever." Answering what readers walk in believing, before the body, is what earns their attention for the detail.
+- **One `##` section per question, in the intro's order.** Each opens with its finding and closes on a conclusion matching what the intro promised.
+- **Give "what did NOT cause this" its own section** when the project has ruled-out factors. The "what is NOT behind it" device (above) works best as a standalone section, not scattered asides.
+- **Close with a Summary that re-answers the same questions in the same order**, resolving the contract the intro opened.
+- **The one-page summary mirrors this arc**, never introduces a direction or magnitude the body doesn't carry, and is phone-first: prefer one hero chart plus a compact table over several charts.
+
 ## Verify narrative matches data
 
 Before finalizing prose, make sure what is written actually matches the data from <project>_results.md and the generated charts. Don't put specific coefficients or percentages in prose that will go stale; describe direction and relative magnitude, and reference <project>_results.md for exact figures.

@@ -17,7 +17,6 @@ Across the game-to-game swing of a 19-game run, that margin could sit anywhere f
 2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total- scoring version drops it to 3rd).
 After adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, being the single best is far from settled, see §10–§11); on the same pace-neutral basis the opponent-adjusted margin is also first.
 The East was **not** historically weak: the West-East SRS gap in 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of seasons since 1984, the West was even *more* dominant than this.
-The Knicks earned this, on a real schedule, against real competition.
 
 There is a possible nuance in the East record: the 76ers and Cavaliers played a touch *below* their regular-season ratings in their other playoff games, so some of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks excellence, though that gap is small enough to be random (the Hawks played only the Knicks, so there is no independent read on them; see §5).
 The Finals tells the opposite story: the Spurs were the most improved of the Knicks' four opponents, climbing from a regular-season SRS of +8.28 to a playoff SRS of +15.13 (the second-biggest rise of any team in the whole 2026 field, behind only the Knicks themselves; see §6).
@@ -162,7 +161,6 @@ The regular-season rating leader, Oklahoma City (+11.04), barely changed in the 
 And the Finals paired the two teams that had improved the most since October: the field's two hottest teams, not its two best regular-season teams.
 
 These playoff ratings rest on a few weeks of games, so the exact figures carry the same small-sample caution as the rest of the run (see §10).
-The order is clear, though: both finalists rose further than anyone else.
 
 ![Regular-season to playoff jump in team rating: the Knicks rose more than any 2025-26 playoff team, the Spurs second](../generated/images/knicks_2026_field_elevation.svg){width=100%}
 
@@ -170,14 +168,12 @@ The order is clear, though: both finalists rose further than anyone else.
 
 ## 7. Other Context
 
-**Clutch/close games:** 31.6% of Knicks playoff games were decided by 5 points or fewer (84th percentile, more clutch than average champions).
+The Knicks won 90.0% of their road playoff games, better than all but one champion in 43 years.
+They also played more close games than a typical champion: 31.6% of their playoff games were decided by 5 points or fewer, the 84th percentile.
 
 **Home/away splits:**
-- Home: 9 games, 77.8% win rate (23rd percentile vs. champions, relatively
-  weak at home for a champion)
+- Home: 9 games, 77.8% win rate (23rd percentile vs. champions, relatively weak at home for a champion)
 - Away: 10 games, 90.0% win rate (98th percentile)
-
-The Knicks won 90.0% of their road games, better than all but one champion in the dataset.
 
 ---
 
@@ -203,11 +199,11 @@ The signal comes entirely from the first three rounds: 14-0 against the spread v
 | CF | Cavaliers | Knicks -2.8 | +19.2 | +22.0 | **4/4** |
 | **Finals** | **Spurs** | **NYK +2.5** | **+2.4** | **−0.1** | **2/5** |
 
-Against the three East opponents, the Knicks exceeded market expectations by 21–26 points per round.
-The market priced them as modest favorites (-3 to -4) and they won by 17-22.
+Against the three East opponents, the Knicks exceeded market expectations by roughly 21 to 26 points per round.
+The market priced them as modest favorites (-3 to -4) and they won by roughly 17 to 22.
 Against the Spurs in the Finals, the market had them as slight underdogs (+2.5) and they won by an average of exactly +2.4, essentially a coin-flip that they won 4-1 in games.
 
-The market saw the two halves differently before either began: modest East favorites who then won by 17 to 22 a round, and a near-even Finals against a healthy, elite Spurs team that the Knicks won by grinding out close games.
+The market saw the two halves differently before either began: modest East favorites who then won by roughly 17 to 22 a round, and a near-even Finals against a healthy, elite Spurs team that the Knicks won by grinding out close games.
 
 ![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){width=100%}
 
@@ -244,7 +240,6 @@ To see how solid the top spot is, we re-played the run 20,000 times by re-drawin
 The Knicks finish #1 in about 60% of those re-runs, in the top three in 70%, and in the top five in 82%.
 Their single most likely finish is #1, but across re-draws the rank ranges from 1st to roughly 11th, and the opponent-adjusted margin itself lands anywhere from +5.1 to +17.7 (best estimate +11.2).
 
-A second check pushes the same way.
 A 19-game number that stands out partly stands out by luck, so we pulled the Knicks' adjusted margin back toward what championship runs normally look like (the other 42 champions average about +3 per game).
 Because playoff margins swing so much, 19 games only pin down about 40% of the estimate; the rest gets pulled toward the pack.
 That pulled-back margin lands at **+6.5 per game**, with a plausible range of roughly +1.5 to +11.5.
@@ -267,7 +262,7 @@ The Knicks' run was streaky: huge blowouts in the sweeps next to a +2.4 Finals.
 A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from +11.2 down to about +4.7, rather than the +6.5 of the second check (which ignored streakiness).
 And several rivals, the 1990-91 Bulls, the 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier evidence, so once everyone's wobble is in play they overtake the Knicks often.
 
-The honest bottom line across all of these checks: the 2025-26 Knicks own the best raw opponent-adjusted number of any champion, and they are very likely one of the best handful of title runs ever, but the data cannot crown them the single best.
+The bottom line across these checks: the 2025-26 Knicks own the best raw opponent-adjusted number of any champion, and they are very likely one of the best handful of title runs ever, but the data cannot crown them the single best.
 Their chance of being the true #1 runs from roughly 60% (with the rest of history left at its exact numbers) down to about 9% (the fairest test, where every champion is allowed to be as uncertain as the Knicks).
 
 ![After fair shrinkage the champion field bunches together: the Knicks are about 9% to be the true #1](../generated/images/knicks_2026_hierarchical_posterior.svg){width=100%}
@@ -289,7 +284,7 @@ Stripping margins out entirely does not knock them off the top, so the dominance
 It rated the Knicks' opponents tougher than SRS did, because the teams New York drew were playing well down the stretch (Elo pegs the Spurs at +10.7 points above average, against SRS's +8.3).
 A tougher-rated schedule means a bigger adjustment, so the Knicks' Elo-adjusted margin is **+9.4 per game, third-best**, behind the 2016-17 Warriors and 1990-91 Bulls.
 
-Put together, the three systems agree more than they disagree (all rank the Knicks in the top three, and across champions their adjusted margins move very closely together).
+All three systems rank the Knicks in the top three, and across champions their adjusted margins track closely together.
 The one thing that moves the Knicks off #1 is not switching from margins to wins, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
 
 ![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){width=100%}
