@@ -18,16 +18,22 @@ This summary works through four questions: was the run historic and against real
 
 ![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
-The Knicks' raw average margin of +14.9 points per game is the highest in 43 years of data.
-Adjusted for opponent strength, their +11.2 margin ranks first all-time, ahead of the 2016–17 Warriors (+10.2) and the 1986–87 Lakers (+9.5).
-The one adjustment that dents this is a deliberately harsh one that scales by total scoring (2025–26 has the most points per game in the dataset): it drops the raw margin from first to third.
-But high scoring is mostly sharper shooting, not a faster game.
-The more accurate possessions-based version, which isolates actual pace from the three-point scoring boom, keeps the opponent-adjusted margin at +11.0 and clearly first.
-The win rate of 0.842 ranks 88th percentile.
-That #1 is the best single guess but not a lock: re-drawing the 19 games leaves them first about 60% of the time when the rest of history is left at its exact numbers.
-Under the fairest test, which treats every past champion's number as just as uncertain as the Knicks', their chance of being the single best ever falls to about 9% (and roughly a third to be top-five).
-Swapping the rating system tells the same story.
-Judged purely on who beat whom, with scores ignored, they still rank first; only when opponents are credited for late-season form do they slip to third.
+The Knicks' raw average margin of +14.9 points per game is the highest in 43 years of data, and adjusted for opponent strength their +11.2 margin still ranks first, ahead of the 2016–17 Warriors (+10.2) and 1986–87 Lakers (+9.5).
+So how solid is that #1?
+Six ways to measure dominance, six answers:
+
+| How you measure dominance | What it adjusts for | Knicks rank |
+|---|---|---|
+| Raw scoring margin | nothing | 1st of 43 |
+| Opponent-adjusted | strength of schedule | 1st |
+| Per possession | the era's pace | 1st |
+| Scoring-share | the era's scoring level (a harsh take) | 3rd |
+| Era's spread | how top-heavy the league was | 5th |
+| Recency-weighted opponents (Elo) | opponents' late-season form | 3rd |
+
+Every *absolute* measure puts them first; the two *relative* ones, which grade against a deeper, more spread-out field than any champion faced, make it a top-five run rather than a clear first.
+The scoring-share row is the crudest knock: 2025–26's high scoring is mostly sharper shooting, not a faster game, and the more accurate per-possession version keeps them clearly first (+11.0).
+That #1 is the best single guess, not a lock: re-drawing the 19 games leaves them first about 60% of the time, and the fairest test, which treats every past champion as just as uncertain as the Knicks, puts their chance of being the single best ever at about 9% (roughly a third to be top-five).
 The verdict: one of the best handful of title runs ever, most likely the best by the raw numbers, but not provably the single best.
 
 The East was **not historically weak**.
@@ -72,7 +78,7 @@ They lost three, and were seriously tested only in the Finals.
 
 ## The bottom line
 
-By every adjusted measure tested, the 2026 Knicks rank at or near the top, and they were not even favored to get there.
+By every adjusted measure tested, the 2026 Knicks rank at or near the top of NBA history, and their regular season gave them only a 15% chance to get there.
 The dominant first three rounds were real: the schedule was average, opponents were healthy, and the East was competitive.
 The Spurs were the best-performing team they faced, and the Finals could have gone either way.
 New York won it anyway.
@@ -85,7 +91,7 @@ New York won it anyway.
 | Document | Description |
 |---|---|
 | [Full Report](knicks_2026_historic_report.html) | Complete findings with all charts and section-by-section analysis. |
-| [Stats Explainer](knicks_2026_historic_stats_explainer.html) | Guide to the statistical methods, written for a general audience. |
+| [Stats Explainer](knicks_2026_historic_stats_explainer.html) | Guide to the statistical methods, written for a reader who knows some statistics. |
 :::
 
 ::: {.content-visible when-format="typst"}
@@ -94,5 +100,5 @@ All files are in the same folder as this PDF (`generated/`).
 | Document | File | Description |
 |---|---|---|
 | Full Report | `knicks_2026_historic_report.pdf` | Complete findings with all charts and section-by-section analysis. |
-| Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods, written for a general audience. |
+| Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods, written for a reader who knows some statistics. |
 :::

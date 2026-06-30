@@ -15,8 +15,8 @@
 They went 16-3 (88th percentile win rate among all 43 champions since 1983–84) and outscored opponents by an average of **+14.9 points per game**, the highest raw playoff margin in the dataset.
 Across the game-to-game swing of a 19-game run, that margin could sit anywhere from +7.4 to +22.4: even at the unlucky end, the run would still rank above the historical average.
 2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-scoring version drops it to 3rd).
-After adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, or each is graded against its own era's spread of teams, being the single best is far from settled: a top-five run, see §10–§11 and §14); on the same pace-neutral basis the opponent-adjusted margin is also first.
-The East was **not** historically weak: the West-East SRS gap in 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of seasons since 1984, the West was even *more* dominant than this.
+After adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, or each is graded against its own era's spread of teams, being the single best is far from settled: the fairest uncertainty test leaves them the most likely #1 but not a lock (§10–§11), and grading on the era's spread of teams ranks them a top-five run rather than a clear first (§14)); on the same pace-neutral basis the opponent-adjusted margin is also first.
+The East was **not** historically weak: the West-East gap in team strength (SRS, a team's scoring margin adjusted for schedule) in 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of seasons since 1984, the West was even *more* dominant than this.
 
 There is a possible nuance in the East record: the 76ers and Cavaliers played a touch *below* their regular-season ratings in their other playoff games, so some of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks excellence, though that gap is small enough to be random (the Hawks played only the Knicks, so there is no independent read on them; see §5).
 The Finals tells the opposite story: the Spurs were the most improved of the Knicks' four opponents, climbing from a regular-season SRS of +8.28 to a playoff SRS of +15.13 (the second-biggest rise of any team in the whole 2026 field, behind only the Knicks themselves; see §6).
@@ -61,7 +61,7 @@ The Finals were tight: four of the five games were decided by 4 points or fewer.
 
 **No, not historically.** The West-East SRS gap in 2025–26 was only **+0.39 pts/game**: 37th percentile of West dominance, and well within the normal season-to-season swing.
 The East inter-conference win rate was 0.487 (near parity).
-By any formal measure, the East in 2025–26 was unremarkable (if anything, slightly more competitive than the 42-year average).
+By any formal measure, the East in 2025–26 was unremarkable (if anything, slightly more competitive than the historical average).
 
 The three most West-dominant seasons on record were 2013–14 (+4.08), 2003–04 (+3.73), and 2000–01 (+3.11), all much larger gaps.
 The 2025–26 East was competitive.
@@ -175,7 +175,7 @@ These playoff ratings rest on a few weeks of games, so the exact figures carry t
 **How historic was the rise?** Set it against every champion since 1983-84, and two different yardsticks land on the same answer.
 The first, *elevation*, is the plain version: playoff rating minus regular-season rating.
 The Knicks' jump of **+11.48** (regular-season SRS +6.05 up to a playoff +17.53) ranks **2nd of 43**, behind only the 00–01 Lakers (+12.58).
-The second, *overperformance*, asks the same thing but nets out the schedule: how far the Knicks' actual playoff margin (+14.9) beat what their own regular-season rating predicted against the teams they drew (+2.38 per game).
+The second, *overperformance*, asks the same thing after subtracting out the schedule: how far the Knicks' actual playoff margin (+14.9) beat what their own regular-season rating predicted against the teams they drew (+2.38 per game).
 That **+12.52**-per-game outperformance also ranks **2nd**, behind the same 00–01 Lakers.
 Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and the second-biggest any champion has produced.
 
@@ -183,7 +183,7 @@ Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and 
 
 **What the rise is made of.** It is not spread evenly across the run.
 The first three rounds against the East were demolitions: raw margins of +17.5, +22.2, and +19.2.
-The Finals were a near-even fight (+2.4), and once the Spurs' own playoff form is netted out, the Knicks actually came out behind on the scoreboard math (§5).
+The Finals were a near-even fight (+2.4), and once the Spurs' own playoff form is subtracted out, the Knicks actually came out behind on the scoreboard math (§5).
 So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen even further than the Knicks pushed to the hardest test of the run.
 
 **Is there anything behind the jump we can actually see?** One thing shows up in who was on the floor.
@@ -208,6 +208,8 @@ They also played more close games than a typical champion: 31.6% of their playof
 **Home/away splits:**
 - Home: 9 games, 77.8% win rate (23rd percentile vs. champions, relatively weak at home for a champion)
 - Away: 10 games, 90.0% win rate (98th percentile)
+
+It is an unusual profile for a champion: ordinary at home, nearly untouchable on the road.
 
 ---
 
@@ -239,7 +241,7 @@ Against the Spurs in the Finals, the market had them as slight underdogs (+2.5) 
 
 The market saw the two halves differently before either began: modest East favorites who then won by roughly 17 to 22 a round, and a near-even Finals against a healthy, elite Spurs team that the Knicks won by grinding out close games.
 
-![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
+![Market expectations vs. actual margins: Knicks beat the spread by 20+ points a round against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
 
 ---
 
@@ -292,14 +294,14 @@ When we pull every champion's number back toward the historical average based on
 They land in the top three about 23% of the time and the top five about 34%; their most likely spot is near the bottom of the top ten, with a range that runs from 1st to deep in the pack.
 
 The gap between 60% and 9% comes from two factors.
-The Knicks' run was streaky: huge blowouts in the sweeps next to a +2.4 Finals.
+The Knicks' run was streaky: the two sweeps came by +22.2 and +19.2 next to a +2.4 Finals.
 A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from +11.2 down to about +4.7, rather than the +6.5 of the second check (which ignored streakiness).
 And several rivals, the 1990-91 Bulls, the 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier evidence, so once everyone's wobble is in play they overtake the Knicks often.
 
 The bottom line across these checks: the 2025-26 Knicks own the best raw opponent-adjusted number of any champion, and they are very likely one of the best handful of title runs ever, but the data cannot crown them the single best.
 Their chance of being the true #1 runs from roughly 60% (with the rest of history left at its exact numbers) down to about 9% (the fairest test, where every champion is allowed to be as uncertain as the Knicks).
 
-![After fair shrinkage the champion field bunches together: the Knicks are about 9% to be the true #1](../generated/images/knicks_2026_hierarchical_posterior.svg){#fig-hierarchical-posterior width=100%}
+![Pulling every champion's number back toward the historical average bunches the field together: the Knicks are about 9% to be the true #1](../generated/images/knicks_2026_hierarchical_posterior.svg){#fig-hierarchical-posterior width=100%}
 
 ---
 
@@ -324,7 +326,7 @@ It rated the Knicks' opponents tougher than SRS did, because the teams New York 
 A tougher-rated schedule means a bigger adjustment, so the Knicks' Elo-adjusted margin is **+9.4 per game, third-best**, behind the 2016-17 Warriors and 1990-91 Bulls.
 
 All four systems rank the Knicks in the top three, and across champions their adjusted margins track closely together.
-The one thing that moves the Knicks off #1 is not switching from margins to wins, or capping blowouts, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
+Among the rating systems, the one thing that moves the Knicks off #1 is not switching from margins to wins, or capping blowouts, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
 
 ![The Knicks rank #1 under three of four rating systems, season margin, wins-only, and blowout-capped; only recency-weighted Elo drops them to #3](../generated/images/knicks_2026_rating_systems.svg){#fig-rating-systems width=100%}
 
@@ -384,9 +386,9 @@ Per possession the Knicks' raw margin (+14.6) and opponent-adjusted margin (+11.
 So the level of scoring, however you handle it, does not knock the opponent-adjusted run off the top.
 
 **Then, the spread.** This is the adjustment that does.
-Today's league is far more top-heavy than the 1980s: the gap between the best and worst teams, measured in points, has nearly doubled since 1984, with the spread of team ratings growing from about 3.1 to 5.90.
+Today's league is far more top-heavy than the 1980s: the spread of team strength has nearly doubled since 1984, with the typical distance of a team from the league average growing from about 3.1 to 5.90 points.
 A given margin is a smaller achievement when many teams are extreme than when the league is bunched together.
-Grade each champion against its own era's spread, counting how many standard deviations above an average team it stood, and the Knicks come in **5th**, at +1.90 standard deviations.
+Grade each champion against its own era's spread, measuring how far above an average team it stood relative to how spread out that season's teams were, and the Knicks come in **5th**, standing +1.90 standard deviations clear of an average team.
 The 2016-17 Warriors lead at +2.48, the 1986-87 Lakers and 2022-23 Nuggets just behind: smaller margins in raw points, but towering over flatter fields.
 
 Stacking the lenses tells the whole story at a glance:
@@ -395,7 +397,7 @@ Stacking the lenses tells the whole story at a glance:
 |---|---|---|
 | Raw scoring margin | nothing | 1st of 43 |
 | Opponent-adjusted | strength of schedule | 1st |
-| + scoring-share | the era's scoring level | 1st |
+| + scoring-share | the era's scoring level | 1st (the raw margin alone slips to 3rd) |
 | + per possession | the era's pace | 1st |
 | + graded on the era's spread | how top-heavy the league was | 5th |
 | Recency-weighted opponents (Elo) | schedule, weighting late form | 3rd |
@@ -406,7 +408,7 @@ The two lenses that move them, grading on the era's spread (5th) and weighting o
 Neither reading is wrong.
 They answer different questions, and an honest "most dominant ever" has to say which one it means.
 
-![Ranked by opponent-adjusted margin the Knicks lead; ranked by era-spread z-score they sit 5th behind the 2016-17 Warriors. But in both orderings the top champions' 90% intervals, taken from the spread of each team's own playoff games, overlap heavily, so the gap between the leaders is within the noise of a short playoff run.](../generated/images/knicks_2026_rank_vs_z_intervals.svg){#fig-rank-vs-z width=100%}
+![Ranked by opponent-adjusted margin the Knicks lead; ranked by how far they stood clear of their own era's field they sit 5th behind the 2016-17 Warriors. But in both orderings the top champions' 90% intervals, taken from the spread of each team's own playoff games, overlap heavily, so the gap between the leaders is within the noise of a short playoff run.](../generated/images/knicks_2026_rank_vs_z_intervals.svg){#fig-rank-vs-z width=100%}
 
 Read the bars, not the order.
 Whichever metric sets the ranking, the leaders' intervals sit on top of one another: the ordering is real, but the distance between the top few is not something 19 games can resolve.
@@ -415,7 +417,7 @@ Whichever metric sets the ranking, the leaders' intervals sit on top of one anot
 
 ## 15. Limitations
 
-**Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin ([+7.4, +22.4]).
+**Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin (+7.4 to +22.4).
 The comparison set is also only 43 champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all measure closely related things; treat them as different angles on one story, not independent votes.
 §10 puts numbers on how solid the #1 rank is, and that uncertainty, not any objection in §13, is what keeps first place from being settled.
@@ -472,7 +474,7 @@ All files are in the same folder as this PDF (`generated/`).
 ## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
 
 The headline rankings throughout this report quote percentiles and the top few names.
-Here is the full list: all 43 champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §2 and §14.
+Here is the full list: all 43 champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §4 and §14.
 Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
 The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era's scoring.
 The last two take a different route to the same era problem: **Z** grades each opponent-adjusted margin against how spread out team strength was that season (§14), and **Z-rank** is where that order places the champion.
@@ -532,8 +534,8 @@ The last two take a different route to the same era problem: **Z** grades each o
 :::
 
 Two things the full list makes plain.
-The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are netted out.
-And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with the 2018-19 Raptors just above the line.
+The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are subtracted out.
+And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with a cluster of teams including the 2018-19 Raptors only just above the line.
 The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to call a tie, which is the same verdict §10 reaches the harder way.
 The **Z-rank** column tells the one story that breaks that tie against them: graded against how spread out their league was, the Knicks fall to 5th while the 2016-17 Warriors lead, the single adjustment in the table that unseats them (§14).
 Sort by **Z** and the order pivots on era rather than margin.
