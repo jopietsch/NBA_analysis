@@ -87,6 +87,8 @@ The schedule was not unusually easy or hard.
 
 Top 5 adjusted-margin champions:
 
+::: {.sortable}
+
 | Season | Raw | Opp SRS | Adj |
 |--------|-----|---------|-----|
 | **2025–26 Knicks** | **<< f("raw.margin") >>** | **<< f("opp.srs_weighted") >>** | **<< f("adj.margin", "{:+.1f}") >>** |
@@ -94,6 +96,8 @@ Top 5 adjusted-margin champions:
 | 1986–87 Lakers | +10.8 | +1.32 | << f("adj.top3.margin", "{:+.1f}") >> |
 | 1990–91 Bulls | +11.7 | +2.51 | << f("adj.top4.margin", "{:+.1f}") >> |
 | 1985–86 Celtics | +10.6 | +2.83 | << f("adj.top5.margin", "{:+.1f}") >> |
+
+:::
 
 All << f("raw.n_champions") >> champion seasons are included.
 For pre-1997 seasons where nba_api returns null PLUS_MINUS, margins are derived from PTS (both team rows per game).
@@ -150,12 +154,16 @@ They climbed to << f("field.spurs.po_srs") >> in the playoffs, a rise of **<< f(
 The Spurs entered the Finals both very good to begin with and getting better, which is part of why the series was close.
 (This << f("field.spurs.po_srs") >> covers all of their playoff games, including the Finals against the Knicks, so it sits a little above the << f("round.finals.opp_po_srs") >> in §5, which leaves the Knicks series out to judge the Spurs independently.)
 
+::: {.sortable}
+
 | Team | Reg-season rating | Playoff rating | Jump |
 |------|-------------------|----------------|------|
 | **New York Knicks** | << f("field.knicks.reg_srs") >> | << f("field.knicks.po_srs") >> | **<< f("field.knicks.elevation") >>** |
 | **San Antonio Spurs** | << f("field.spurs.reg_srs") >> | << f("field.spurs.po_srs") >> | **<< f("field.spurs.elevation") >>** |
 | Portland Trail Blazers | << f("field.blazers.reg_srs") >> | << f("field.blazers.po_srs") >> | << f("field.blazers.elevation") >> |
 | Oklahoma City Thunder | << f("field.thunder.reg_srs") >> | << f("field.thunder.po_srs") >> | << f("field.thunder.elevation") >> |
+
+:::
 
 The regular-season rating leader, Oklahoma City (<< f("field.thunder.reg_srs") >>), barely changed in the playoffs (<< f("field.thunder.elevation") >>) and finished well behind both finalists.
 And the Finals paired the two teams that had improved the most since October: the field's two hottest teams, not its two best regular-season teams.
@@ -467,7 +475,11 @@ The best champion is the leading edge of an ordinary spread, not a breed apart, 
 The companion question is who the field favored before any of it was played.
 This simulation seeds all 16 playoff teams into the bracket and plays every round forward from regular-season strength, the same game-by-game model as §12, so every team gets a title number instead of just the Knicks.
 
+::: {.sortable}
+
 << f("fullfield.odds_table") >>
+
+:::
 
 The Thunder were the runaway favorite at << f("fullfield.favorite_pct") >>%, more than triple any other team, on the strength of the league's best regular-season rating by a wide margin.
 The Knicks were only the << f("fullfield.knicks_seed") >>rd seed in the East, behind Detroit and Boston, so the bracket handed them a hard expected road: just << f("fullfield.knicks_pct") >>% to win it all.

@@ -53,7 +53,7 @@ format:
              click toggles direction. PDF/Typst ignores the class. -->
         <script>
         document.addEventListener("DOMContentLoaded", function () {
-          var numRe = /^[-+]?\d*\.?\d+$/;
+          var numRe = /^[-+]?\d*\.?\d+%?$/;
           document.querySelectorAll(".sortable table").forEach(function (table) {
             var ths = table.querySelectorAll("thead th");
             var dirs = {};

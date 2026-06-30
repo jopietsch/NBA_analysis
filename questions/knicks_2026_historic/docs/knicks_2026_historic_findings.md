@@ -87,6 +87,8 @@ The schedule was not unusually easy or hard.
 
 Top 5 adjusted-margin champions:
 
+::: {.sortable}
+
 | Season | Raw | Opp SRS | Adj |
 |--------|-----|---------|-----|
 | **2025–26 Knicks** | **+14.9** | **+3.67** | **+11.2** |
@@ -94,6 +96,8 @@ Top 5 adjusted-margin champions:
 | 1986–87 Lakers | +10.8 | +1.32 | +9.5 |
 | 1990–91 Bulls | +11.7 | +2.51 | +9.2 |
 | 1985–86 Celtics | +10.6 | +2.83 | +7.7 |
+
+:::
 
 All 43 champion seasons are included.
 For pre-1997 seasons where nba_api returns null PLUS_MINUS, margins are derived from PTS (both team rows per game).
@@ -150,12 +154,16 @@ They climbed to +15.13 in the playoffs, a rise of **+6.85**.
 The Spurs entered the Finals both very good to begin with and getting better, which is part of why the series was close.
 (This +15.13 covers all of their playoff games, including the Finals against the Knicks, so it sits a little above the +14.48 in §5, which leaves the Knicks series out to judge the Spurs independently.)
 
+::: {.sortable}
+
 | Team | Reg-season rating | Playoff rating | Jump |
 |------|-------------------|----------------|------|
 | **New York Knicks** | +6.05 | +17.53 | **+11.48** |
 | **San Antonio Spurs** | +8.28 | +15.13 | **+6.85** |
 | Portland Trail Blazers | -0.28 | +2.73 | +3.01 |
 | Oklahoma City Thunder | +11.04 | +11.42 | +0.38 |
+
+:::
 
 The regular-season rating leader, Oklahoma City (+11.04), barely changed in the playoffs (+0.38) and finished well behind both finalists.
 And the Finals paired the two teams that had improved the most since October: the field's two hottest teams, not its two best regular-season teams.
@@ -511,6 +519,8 @@ The best champion is the leading edge of an ordinary spread, not a breed apart, 
 The companion question is who the field favored before any of it was played.
 This simulation seeds all 16 playoff teams into the bracket and plays every round forward from regular-season strength, the same game-by-game model as §12, so every team gets a title number instead of just the Knicks.
 
+::: {.sortable}
+
 | # | Team | Conf | Seed | Reg SRS | Title % |
 |--:|---|:--|--:|--:|--:|
 | 1 | Oklahoma City Thunder | West | 1 | +11.04 | 54.5% |
@@ -529,6 +539,8 @@ This simulation seeds all 16 playoff teams into the bracket and plays every roun
 | 14 | Orlando Magic | East | 8 | +0.81 | 0.0% |
 | 15 | Philadelphia 76ers | East | 7 | -0.27 | 0.0% |
 | 16 | Portland Trail Blazers | West | 8 | -0.28 | 0.0% |
+
+:::
 
 The Thunder were the runaway favorite at 54.5%, more than triple any other team, on the strength of the league's best regular-season rating by a wide margin.
 The Knicks were only the 3rd seed in the East, behind Detroit and Boston, so the bracket handed them a hard expected road: just 3.5% to win it all.
