@@ -152,7 +152,7 @@ Update when findings prose or RESULTS change.
 
 ## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
 
-- Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie).
+- Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace, plus Z and Z-rank for the era-spread normalization). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie); on Z-rank the Knicks fall to 5th and the Warriors lead.
 - Reading the shape: scores are bell-shaped, not a power law. Mean +3.29, 65% within 1 SD; Knicks sit +2.0 SD above the mean (the expected spot for the best of 43 draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
 - knicks_2026_historic_results.md refs: §20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 

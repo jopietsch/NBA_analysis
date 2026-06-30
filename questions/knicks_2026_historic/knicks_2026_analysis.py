@@ -1684,15 +1684,20 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     df = df.sort_values("pace_adj_adj_margin", ascending=False).reset_index(drop=True)
     df["rank"] = df.index + 1
     df["name"] = df["champion_id"].map(lambda i: nm.get(int(i), f"Team {int(i)}"))
+    # Parallel era normalization: rank by spread-standardized z-score (§22).
+    df["z_rank"] = df["z_adj_margin"].rank(ascending=False, method="min").astype(int)
 
     print(
         "Opponent-and-pace-adjusted regular-season margin (pts/game) for all\n"
         f"{len(df)} champions, most dominant first. Raw = scoring margin; OppAdj =\n"
         "after strength-of-schedule; Opp+Pace = also scaled to a common scoring\n"
-        "environment so eras compare on one ruler.\n",
+        "environment so eras compare on one ruler. Z = the same opponent-adjusted\n"
+        "margin graded against that season's spread of team strength (§22), with\n"
+        "Z# its rank on that order.\n",
         file=out,
     )
-    thdr = f"{'#':>2}  {'Season':<7} {'Champion':<24} {'Raw':>6} {'OppAdj':>7} {'Opp+Pace':>9}"
+    thdr = (f"{'#':>2}  {'Season':<7} {'Champion':<24} {'Raw':>6} {'OppAdj':>7} "
+            f"{'Opp+Pace':>9} {'Z':>6} {'Z#':>3}")
     print(thdr, file=out)
     print("─" * len(thdr), file=out)
     for _, r in df.iterrows():
@@ -1700,7 +1705,8 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
         print(
             f"{int(r['rank']):>2}  {short_label(int(r['year'])):<7} {r['name']:<24} "
             f"{r['avg_margin']:>+6.2f} {r['adj_margin']:>+7.2f} "
-            f"{r['pace_adj_adj_margin']:>+9.2f}{marker}",
+            f"{r['pace_adj_adj_margin']:>+9.2f} {r['z_adj_margin']:>+6.2f} "
+            f"{int(r['z_rank']):>3}{marker}",
             file=out,
         )
 
@@ -1733,13 +1739,14 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     )
 
     # ── Facts: appendix ranking table (string) + distribution scalars ────────
-    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Pace |",
-             "|--:|---|---|--:|--:|--:|"]
+    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Z | Z-rank |",
+             "|--:|---|---|--:|--:|--:|--:|--:|"]
     for _, r in df.iterrows():
         _nm = f"**{r['name']}**" if int(r["champion_id"]) == KNICKS_TEAM_ID else r["name"]
         _rows.append(
             f"| {int(r['rank'])} | {short_label(int(r['year']))} | {_nm} | "
-            f"{r['avg_margin']:+.2f} | {r['adj_margin']:+.2f} | {r['pace_adj_adj_margin']:+.2f} |"
+            f"{r['avg_margin']:+.2f} | {r['adj_margin']:+.2f} | {r['pace_adj_adj_margin']:+.2f} | "
+            f"{r['z_adj_margin']:+.2f} | {int(r['z_rank'])} |"
         )
     FACTS.set("appendix.ranking_table", "\n".join(_rows),
               note="Full opp+pace-adjusted champion ranking, markdown table")

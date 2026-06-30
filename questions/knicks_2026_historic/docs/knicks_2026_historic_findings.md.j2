@@ -435,7 +435,8 @@ All files are in the same folder as this PDF (`generated/`).
 The headline rankings throughout this report quote percentiles and the top few names.
 Here is the full list: all << f("raw.n_champions") >> champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §2 and §14.
 Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
-The three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era.
+The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era's scoring.
+The last two take a different route to the same era problem: **Z** grades each opponent-adjusted margin against how spread out team strength was that season (§14), and **Z-rank** is where that order places the champion.
 
 << f("appendix.ranking_table") >>
 
@@ -443,6 +444,7 @@ Two things the full list makes plain.
 The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came in a low-scoring era that scales up, while several teams with gaudy raw numbers slide once their schedules are netted out.
 And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with the 2018-19 Raptors just above the line.
 The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to call a tie, which is the same verdict §10 reaches the harder way.
+The **Z-rank** column tells the one story that breaks that tie against them: graded against how spread out their league was, the Knicks fall to << f("spread.knicks_rank") >>th while the 2016-17 Warriors lead, the single adjustment in the table that unseats them (§14).
 
 **The scores form a bell curve, not a handful of runaway giants.** The average champion sits at << f("appendix.dist.mean") >> points per game, and about << f("appendix.dist.within1sd_pct") >>% of them fall within one standard deviation (the typical spread of the scores) of that average.
 The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).
