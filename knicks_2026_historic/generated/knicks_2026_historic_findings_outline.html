@@ -2187,8 +2187,9 @@ vertical-align: -.125em;
   <li><a href="#a-second-opinion-other-rating-systems" id="toc-a-second-opinion-other-rating-systems" class="nav-link" data-scroll-target="#a-second-opinion-other-rating-systems">§11. A Second Opinion: Other Rating Systems</a></li>
   <li><a href="#how-unlikely-was-a-16-3-run" id="toc-how-unlikely-was-a-16-3-run" class="nav-link" data-scroll-target="#how-unlikely-was-a-16-3-run">§12. How Unlikely Was a 16-3 Run?</a></li>
   <li><a href="#what-does-not-diminish-the-run" id="toc-what-does-not-diminish-the-run" class="nav-link" data-scroll-target="#what-does-not-diminish-the-run">§13. What Does NOT Diminish the Run</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§14. Limitations</a></li>
-  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">§15. Methodology</a></li>
+  <li><a href="#comparing-across-eras-how-much-of-1-survives" id="toc-comparing-across-eras-how-much-of-1-survives" class="nav-link" data-scroll-target="#comparing-across-eras-how-much-of-1-survives">§14. Comparing Across Eras: How Much of #1 Survives?</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§15. Limitations</a></li>
+  <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">§16. Methodology</a></li>
   <li><a href="#appendix-a-companion-documents" id="toc-appendix-a-companion-documents" class="nav-link" data-scroll-target="#appendix-a-companion-documents">Appendix A: Companion Documents</a></li>
   <li><a href="#appendix-b-every-champion-opponent-and-pace-adjusted" id="toc-appendix-b-every-champion-opponent-and-pace-adjusted" class="nav-link" data-scroll-target="#appendix-b-every-champion-opponent-and-pace-adjusted">Appendix B: Every Champion, Opponent-and-Pace-Adjusted</a></li>
   <li><a href="#appendix-c-the-full-field-title-odds" id="toc-appendix-c-the-full-field-title-odds" class="nav-link" data-scroll-target="#appendix-c-the-full-field-title-odds">Appendix C: The Full-Field Title Odds</a></li>
@@ -2370,17 +2371,27 @@ vertical-align: -.125em;
 <li>knicks_2026_historic_results.md refs: none new (points to §3, §4, §5, §9, §11, §13, §14 of RESULTS via the cited findings sections).</li>
 </ul>
 </section>
+<section id="comparing-across-eras-how-much-of-1-survives" class="level2">
+<h2 class="anchored" data-anchor-id="comparing-across-eras-how-much-of-1-survives">§14. Comparing Across Eras: How Much of #1 Survives?</h2>
+<ul>
+<li>The cross-era goal made first-class: “most dominant ever” depends on the yardstick. Lays the techniques side by side.</li>
+<li>Level adjustments leave the Knicks #1: scoring-share drops the raw margin to 3rd but the opp-adjusted margin stays #1; per-100 possessions (pace only) also #1 (2025-26 pace just ~4% above average, the scoring is efficiency).</li>
+<li>Dispersion adjustment is the one that changes it: SRS spread grew from 3.1 (1984) to 5.90 (2026); graded on the era’s spread (z = adj_margin / season SRS SD), Knicks are +1.90 SD, rank #5 of 43; 16–17 Warriors lead (z +2.48).</li>
+<li>Ladder of ranks: raw 1st, opp-adj 1st, + scoring-share 1st, + per-100 1st, + spread-standardized 5th, Elo (recency) 3rd. Absolute measures → #1; relative measures (spread, recency) → top-five.</li>
+<li>knicks_2026_historic_results.md refs: §22 SPREAD-STANDARDIZED DOMINANCE (Z-SCORE); §9 ERA/PACE, §17 POSSESSIONS</li>
+</ul>
+</section>
 <section id="limitations" class="level2">
-<h2 class="anchored" data-anchor-id="limitations">§14. Limitations</h2>
+<h2 class="anchored" data-anchor-id="limitations">§15. Limitations</h2>
 <ul>
 <li>19 games: wide CI. Comparison set only 43 champions.</li>
 <li>Pre-1997: PLUS_MINUS null; derived from PTS (algebraically exact for game margins).</li>
-<li>Era scoring: 2025-26 at 115.6 pts/team/game (historical mean 103.5). Scoring-share adjustment drops raw margin from #1 to #3; possessions-based (correct) keeps it #1.</li>
+<li>Era comparisons rest on §14 choices; spread-standardized z mixes playoff margin with regular-season spread, so the exact rank (~#5) is not settled though the direction is robust.</li>
 <li>Playoff-SRS adjustment for §5 (opponent independent form) excludes Hawks (no independent data). Hawks series reads as raw only.</li>
 </ul>
 </section>
 <section id="methodology" class="level2">
-<h2 class="anchored" data-anchor-id="methodology">§15. Methodology</h2>
+<h2 class="anchored" data-anchor-id="methodology">§16. Methodology</h2>
 <ul>
 <li>Python (pandas, numpy). Data via nba_api (LeagueGameFinder, LeagueStandingsV3).</li>
 <li>SRS: least-squares system (I − A) @ srs = mean_margin, constrained to sum = 0.</li>
@@ -2753,6 +2764,20 @@ vertical-align: -.125em;
 <td>capped-margin SRS: Knicks adj +11.93, #1 of 43</td>
 <td>§21 CAPPED-MARGIN (ROBUST) SRS</td>
 <td>cap ±15, adj +11.93, rank #1, corr SRS +0.996</td>
+</tr>
+<tr class="odd">
+<td>K47</td>
+<td>§14</td>
+<td>spread-standardized: Knicks +1.90 SD, #5 of 43</td>
+<td>§22 SPREAD-STANDARDIZED DOMINANCE</td>
+<td>z +1.90, rank #5; leader 16–17 z +2.48; SD 1984 3.1 → 2026 5.90</td>
+</tr>
+<tr class="even">
+<td>K48</td>
+<td>§14</td>
+<td>era-adjustment ladder: opp-adj #1, scoring-share #1, spread #5</td>
+<td>§22 SPREAD-STANDARDIZED + §9 + §17</td>
+<td>ladder ranks oppadj 1, scoring-share 1, z 5</td>
 </tr>
 </tbody>
 </table>
