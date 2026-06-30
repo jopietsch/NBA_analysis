@@ -32,7 +32,7 @@ Each section below states a claim, the test that checked it, what the data showe
 
 **What the data showed.** The +14.9 average margin is the highest in 43 years, the 100th percentile of the champion set.
 The .842 win rate sits at the 88th percentile, behind a small group led by the 2016–17 Warriors (.941).
-Re-drawing the 19 games leaves the average margin anywhere from +7.4 to +22.4.
+Re-drawing the 19 games leaves the average margin anywhere from +7.4 to +22.4 (a 95% range).
 
 **Why it holds.** Even at the unlucky end of that range, the run would still rank above the average champion.
 The +14.9 is not the work of one or two blowouts that happened to land in a short sample: it is the best raw margin on record and stays elite across the re-draws.
@@ -48,8 +48,9 @@ After crediting opponents for their quality, the Knicks still rank first.
 
 **What the data showed.** The opponent-adjusted margin was +11.2 per game, first all-time, ahead of the 2016–17 Warriors (+10.2) and the 1986–87 Lakers (+9.5).
 
-**Why it holds.** The ranking does not hinge on the rating chosen.
+**Why it holds.** The ranking does not hinge on whether margins or wins drive the rating.
 A wins-only system that never sees a single point margin also puts them first (Part 2, "the margins are garbage-time padding"), and the schedule they faced was a median champion's rather than a soft one (Part 2, "the bracket was soft"), so the adjustment is not propping up a weak slate.
+The one rating that does move them, off the top to third, is Elo, which weights recent form and rates their late-peaking opponents tougher (Part 2, "the early-round opponents were fading").
 
 ![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
 
@@ -82,6 +83,7 @@ In the Finals the market made them slight underdogs (+2.5), and they won by an a
 
 **Why it holds.** Two cautions keep this from being independent proof.
 The 19 games are really four series and move together, so the effective sample is about 6.7; and an against-the-spread margin is mostly the same scoreline read from the bookmaker's side, not a separate measurement of strength.
+Even crediting that clustering, the cover record still clears a fair-coin null (p ≈ 0.04), though with only four series that reads as suggestive, not conclusive.
 But the split is the point: the market, pricing in everything known at the time, saw a team that overwhelmed the East and faced a near-coin-flip in the Finals, the same two-sided run the ratings describe.
 
 ![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){width=100%}
@@ -105,7 +107,7 @@ The gap between a roughly 15% title chance and the actual 16-3 title is the same
 # Part 2: The Objections That Don't Diminish It
 
 A 16-3 playoff run with a +14.9 average margin looks historic on its face.
-But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the opponents were hurt, or the scoreboard was padded.
+But a record that good invites deflation: maybe the conference was weak, the bracket was soft, the early-round opponents were fading, the opponents were hurt, the high-scoring era inflated the margin, or the scoreboard was padded.
 Each of these is a fair objection, and each is testable rather than something to wave off.
 
 ---

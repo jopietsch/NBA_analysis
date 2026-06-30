@@ -75,7 +75,7 @@ This is the **empirical percentile rank**: the fraction of 43 champions whose va
 The `ascending=True` convention means higher values are better (a value at the 95th percentile is better than 95% of champions).
 
 No distributional assumptions are made; only counting.
-With 43 data points, the finest percentile resolution is 1/43 ≈ 2.3 pp; exact ties are counted as "≤", so achieving the best historical value yields 100th percentile.
+With 43 data points, the finest percentile resolution is 1/43 ≈ 2.3 percentage points; exact ties are counted as "≤", so achieving the best historical value yields 100th percentile.
 
 **What the results mean.** Win rate 0.842 sits at the 88th percentile (better than 38 of 43 champions; best ever is the 2016–17 Warriors at 0.941).
 Average margin +14.9 pts/game is the 100th percentile, the highest ever recorded in the dataset.
@@ -138,7 +138,7 @@ Three "most West-dominant" and three "most East-dominant" seasons are also repor
 **What the results mean.** Z = −0.21: the 2025–26 gap (+0.39) is only 0.21 standard deviations below the historical mean gap (+0.78).
 This is well within normal variation (|z| < 1), formally confirming the percentile-based conclusion.
 The historical mean of the gap is +0.78; the West has typically been stronger than the East, but 2025–26 was slightly below that average (more East-competitive than normal), though not significantly so.
-The "easy conference" narrative is ruled out not just by ranking (37th percentile) but by formal significance testing.
+The "easy conference" narrative is ruled out not just by ranking (37th percentile) but by the Z-score: at Z = −0.21 the 2025–26 gap is nowhere near the |z| > 1.96 a conventionally significant departure would require, so the season's conference gap is statistically ordinary.
 
 **Why this chart (conference gap line).** The conference gap is a time series (43 data points, one per season), so a line is the natural form.
 It shows the gap oscillating over time rather than trending, which is the important visual point.
@@ -152,8 +152,8 @@ The 2025–26 dot and annotation show exactly where the subject season falls on 
 
 **The data.** 2025–26 playoff logs, 2025–26 regular-season SRS, and the `champions` table.
 
-**The approach.** `compute_avg_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)` finds all unique opponents (by GAME_ID inspection, as in §2) and averages their regular-season SRS values.
-That single number (+3.54) is then ranked via `_pct_rank` against `champions["avg_opp_srs"]`, the same metric for all 43 champions.
+**The approach.** `compute_games_weighted_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)` finds all unique opponents (by GAME_ID inspection, as in §2) and takes a per-game average of their regular-season SRS values (each playoff game contributes its opponent's SRS once).
+That single number (+3.67) is then ranked via `_pct_rank` against `champions["avg_opp_srs"]`, the same metric for all 43 champions.
 
 **Why regular-season SRS for opponents, not playoff SRS.** Playoff SRS could be computed, but it would be circular: a team's playoff SRS reflects partly who they faced, which again includes the Knicks.
 Regular-season SRS measures each opponent's strength on an independent baseline (all 82 games before the playoffs began), making it a cleaner gauge of how hard the Knicks' draw was.
@@ -189,7 +189,6 @@ This is a direct additive correction asking: "how dominant would this team look 
 ```
 overperformance = mean(actual_margin_per_game − expected_margin_per_game)
                 = raw_margin − champion_SRS + games_weighted_opp_srs
-                = adj_margin − champion_SRS
 ```
 where expected_margin_per_game = champion_SRS − opp_SRS_for_that_game.
 This measures how much better a champion performed than a team of their regular-season quality was expected to perform against those opponents.
@@ -205,7 +204,7 @@ The overperformance metric additionally subtracts the champion's own regular-sea
 A more elaborate model could regress playoff margin on opponent SRS across all champions, but with 43 data points and one adjustment variable, the direct subtraction and its ranking are the right level of complexity.
 
 **What the results mean.** Adjusted margin +11.2 is the 100th percentile of 43 champions, the highest ever even after correcting for schedule difficulty.
-The comparison with 2016–17 Golden State (+10.2) and 1986–87 Los Angeles Lakers (+9.5) provides the natural peer group for "all-time dominant playoff runs." The overperformance metric (+12.5 pts/game, 97.7th percentile) is notably different from adjusted margin: the 2016–17 Warriors, who had a much higher regular-season SRS (~+10), rank lower on overperformance because they *expected* to dominate.
+The comparison with 2016–17 Golden State (+10.2) and 1986–87 Los Angeles Lakers (+9.5) provides the natural peer group for "all-time dominant playoff runs." The overperformance metric (+12.5 pts/game, 97.7th percentile) is notably different from adjusted margin: the 2016–17 Warriors, who had a much higher regular-season SRS (~+11), rank lower on overperformance because they *expected* to dominate.
 The Knicks elevated more relative to their regular-season baseline.
 The 2000–01 Lakers rank 1st (+14.5) on overperformance: they had a strong but not historically dominant regular season and then dominated the playoffs.
 
@@ -317,7 +316,7 @@ They do agree: the Knicks are 2nd all-time on both, and the 2000–01 Lakers ran
 
 ---
 
-## 9. Era/Pace Adjustment (`run_pace_era`)
+## 9. Era Adjustment by Scoring Share (`run_pace_era`)
 
 **The data.** The `champions` table (which now includes `league_scoring`: the average pts per team per game in each season's regular season) and the 2025–26 regular-season game logs.
 
@@ -331,19 +330,21 @@ pace_adj_adj_margin = adj_margin  × (ref_scoring / season_scoring)
 where `ref_scoring` is the historical mean of `league_scoring` across all 43 seasons and `season_scoring` is that season's average.
 A season with higher scoring than the historical mean (like 2025–26) gets a discount; a low-scoring era gets a boost.
 The scale factor is applied to both raw and adjusted margins.
+This is a scoring-share adjustment, not a true pace adjustment: dividing by points per game lumps together pace (possessions per game) and efficiency (points per possession), so a high-efficiency, normal-pace season like 2025–26 is over-penalized.
+§17 isolates pace by dividing by estimated possessions instead, and is the more accurate era control; §9 is kept as the deliberately conservative bound.
 
 **Why this normalization.** Point margins are not dimensionless: a +10 margin in a 115-pt era is fewer standard deviations above zero than a +10 in a 92-pt era.
-Dividing by the scoring average (or equivalently multiplying by the ratio to the reference) converts margins to "units of average team output," making comparisons across 42 seasons more apples-to-apples.
+Dividing by the scoring average (or equivalently multiplying by the ratio to the reference) converts margins to "units of average team output," making comparisons across 43 seasons more apples-to-apples.
 Note that the opponent-adjusted margin (`adj_margin`) already partially controls for era because both the champion's raw margin and opponents' SRS are expressed in the same season's point-differential units.
 But the inflation is not fully cancelled: `adj_margin = raw − opp_SRS`, and if both raw and opp_SRS are inflated proportionally, adj_margin is inflated too.
 
 **What the results mean.**
 - 2025–26 is the highest-scoring era since 1984 (115.6 pts/team/game; historical
   mean 103.5). Scale factor: 0.896 (a ~10% discount).
-- Pace-adjusted raw margin: +13.3 pts/game (95th pct, 3rd all-time); the raw
+- Scoring-adjusted raw margin: +13.3 pts/game (95th pct, 3rd all-time); the raw
   "best ever" claim doesn't survive era adjustment. The 2000–01 Lakers (+13.9)
   and 2016–17 Warriors (+13.4) both rank above on this metric.
-- Pace+opp-adjusted margin: +10.1 pts/game (100th pct), still first, but by
+- Scoring+opp-adjusted margin: +10.1 pts/game (100th pct), still first, but by
   a razor's edge over the 2016–17 Warriors (+10.0). These two runs are
   statistically indistinguishable on the most complete metric.
 
@@ -431,7 +432,7 @@ A team covering 16 of 19 games under a fair-coin null has only a 0.22% probabili
 The East-opponent performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
 
 **Adjusting for series correlation (`clustered_cover_significance`).** The iid binomial assumes 19 independent Bernoulli trials, but the games cluster into 4 series, and covers within a series are correlated (same matchup, same direction of pricing error).
-We estimate the intraclass correlation (ICC) of the cover indicator via one-way ANOVA across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the (variance-style) average cluster size.
+We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.75 here).
 That gives an effective sample size `N / deff` and a p-value computed on it:
 
 - ICC ≈ 0.49 (covers are strongly clustered: three series are 100% covers, one is 2/5)
@@ -469,8 +470,9 @@ This is an iid game bootstrap; games within a series are correlated, so the true
 Interpretation: most-likely #1, near-certain top five, but the exact #1 is roughly a 60/40 call.
 
 **(b) Empirical-Bayes shrinkage (`shrink_adjusted_margin`).** An extreme value chosen because it is extreme is biased upward (selection / regression to the mean).
-A normal–normal conjugate update regularizes it: the prior is the other champions' adjusted-margin distribution N(prior_mean ≈ +3.2, prior_var = observed between-champion variance); the likelihood is the 19-game sample mean with sampling variance `s²/n`.
-The posterior mean is the precision-weighted average.
+Empirical Bayes means the prior is built from the data itself, here the other 42 champions' distribution, then treated as fixed for the update.
+A normal–normal conjugate update regularizes it (conjugate means prior and posterior are both normal, so the posterior has a closed form): the prior is the other champions' adjusted-margin distribution N(prior_mean ≈ +3.2, prior_var = observed between-champion variance); the likelihood is the 19-game sample mean with sampling variance `s²/n`.
+The posterior mean is the precision-weighted average (precision = 1/variance, so a noisier estimate counts for less).
 
 - weight on the 19-game data ≈ 41% (playoff margins are noisy, so 19 games carry
   less than half the estimate)
@@ -497,7 +499,7 @@ This is the same `g_i = margin_i − opp_reg_SRS_i` used in §13, now computed f
 
 **Why this section exists (what §13 could not do).** The §13 bootstrap and shrinkage both held the *other* 42 champions at their point estimates.
 That is unfair in two opposite ways: it never lets a rival's true value exceed its noisy estimate, and (in the shrinkage) it pulls only the subject toward the mean.
-To ask the actual question — "what is the probability the Knicks have the highest *true* adjusted margin?" — every champion must be shrunk and must carry posterior uncertainty simultaneously.
+To ask the actual question ("what is the probability the Knicks have the highest *true* adjusted margin?"), every champion must be shrunk and must carry posterior uncertainty simultaneously.
 
 **The model (Gaussian random-effects / hierarchical).**
 
@@ -511,7 +513,7 @@ theta_c       ~ Normal(mu, tau^2)        # population of true dominance
   `tau^2 = max(0, (Q − (k−1)) / c)` where `Q = Σ w_c (y_c − ȳ)²`,
   `w_c = 1/v_c`, and `c = Σw_c − Σw_c²/Σw_c`. Crucially, DL subtracts the
   sampling noise from the observed spread, so `tau` (≈ 2.0) is smaller than the
-  raw SD of the champions' `adj_mean` — this is why shrinkage here is stronger
+  raw SD of the champions' `adj_mean`. This is why shrinkage here is stronger
   than the §13 shrinkage, which used the noise-inflated observed variance as its
   prior.
 - `mu` (≈ +3.1) is the inverse-variance weighted mean using weights `1/(v_c+tau^2)`.
@@ -520,9 +522,9 @@ theta_c       ~ Normal(mu, tau^2)        # population of true dominance
   `post_mean_c = post_var_c·(y_c/v_c + mu/tau^2)`.
 
 We then draw all `theta_c` jointly 40,000 times and record the subject's rank each draw.
-Hyperparameters are treated as fixed (empirical Bayes), which ignores hyperparameter uncertainty — modest with 43 seasons.
+Hyperparameters are treated as fixed (empirical Bayes), which ignores hyperparameter uncertainty (modest with 43 seasons).
 
-**What the results mean (the headline finding).** The Knicks' raw adjusted margin (+11.2, 1st) shrinks to a posterior mean of about **+4.7**, which ranks roughly 4th by posterior mean — and because the credible intervals overlap heavily, **P(Knicks are the true #1) ≈ 9%**, P(top 3) ≈ 23%, P(top 5) ≈ 34%, with a median posterior rank near 9.
+**What the results mean (the headline finding).** The Knicks' raw adjusted margin (+11.2, 1st) shrinks to a posterior mean of about **+4.7**, which ranks roughly 4th by posterior mean, and because the credible intervals overlap heavily, **P(Knicks are the true #1) ≈ 9%**, P(top 3) ≈ 23%, P(top 5) ≈ 34%, with a median posterior rank near 9.
 Two mechanisms drive the gap from §13's ~60%:
 
 1. *Stronger, fairer shrinkage.* The Knicks' per-game adjusted margins are highly
@@ -536,9 +538,9 @@ Two mechanisms drive the gap from §13's ~60%:
 This is the most complete answer to "best ever?": most likely a top-handful run, but only ~9% to be the single best once the comparison is made fair.
 
 **Why this chart (posterior caterpillar).** Posterior mean ± 90% credible interval for the top dozen champions, with each raw (pre-shrink) point estimate marked as a tick.
-It shows two things at once: how far each champion is pulled in from its raw number, and how completely the intervals overlap — the visual reason no champion is a clear #1.
+It shows two things at once: how far each champion is pulled in from its raw number, and how completely the intervals overlap, the visual reason no champion is a clear #1.
 
-**Caveat — reconciling §13 and §14.** These are not contradictory; they answer different questions.
+**Caveat: reconciling §13 and §14.** These are not contradictory; they answer different questions.
 §13 asks "given the rest of history as fixed truth, where does the Knicks' resampled run land?" (~60% #1).
 §14 asks "accounting for every champion's uncertainty, are the Knicks the best?" (~9%).
 The §14 framing is the honest answer to the all-time-best question; the §13 framing is the right one for "how repeatable was *this* run."
@@ -555,12 +557,12 @@ Re-running with a structurally different rating tests that.
 Elo is the natural choice: sequential and recency-weighted rather than season-aggregate.
 
 **The Elo model.** FiveThirtyEight's NBA parameters: start every team at 1500, process games in date order, K = 20, 100-Elo home-court bump, and the margin-of-victory multiplier `ln(|margin|+1) · 2.2/(0.001·Δelo_winner + 2.2)` (the Δelo term damps blowouts by favorites).
-The final Elo is centered at the league mean and divided by ≈28 Elo-per-point to land on the same points-above- average scale as SRS, so it slots into the identical games-weighted opponent machinery.
+The final Elo is centered at the league mean and divided by ≈28 Elo-per-point to land on the same points-above-average scale as SRS, so it slots into the identical games-weighted opponent machinery.
 
 **What the results mean (an instructive disagreement).** Across all 43 champions the Elo-adjusted and SRS-adjusted margins are almost the same ordering (correlation ≈ +0.96), so the two systems broadly agree.
 But they differ on the Knicks specifically: Elo rates the Knicks' opponents *tougher* (games-weighted +5.5 vs SRS's +3.7), because Elo weights recent form and New York's opponents (notably the Spurs: Elo +10.7 vs SRS +8.3) were playing well late.
 A larger opponent adjustment lowers the Knicks' Elo-adjusted margin to +9.4, ranking **3rd** (behind 2016–17 Golden State and 1990–91 Chicago) rather than 1st.
-The takeaway matches §14: the #1 is rating-dependent; under a defensible alternative the Knicks are a top-three, not unique-#1, run.
+The takeaway points the same way as §14, by a different route: §14 unseats the #1 through small-sample uncertainty, while here it is the choice of rating that does it, but both land on the same place, that the #1 is not secure and under a defensible alternative the Knicks are a top-three, not unique-#1, run.
 
 **Why no new chart.** The result is a single rank shift (1st → 3rd) plus a high correlation; the §4 adjusted-margin bar already visualizes the SRS ranking, and a second near-identical bar would add length without insight.
 The opponent SRS-vs-Elo table in the appendix carries the one number that matters (the Knicks' schedule looks harder under Elo).
@@ -574,9 +576,10 @@ The opponent SRS-vs-Elo table in the appendix carries the one number that matter
 **Why a wins-only rating.** SRS and Elo are both built from point margins, so neither rules out the worry that the Knicks' margin is padded (blowouts, garbage time).
 Bradley–Terry is fit from win/loss only, sharing no information with the margin, so it isolates that concern: if the Knicks still rank first when margins are stripped from the *opponent* side, the dominance is not a margin artifact.
 
-**The model.** `P(i beats j) = pi_i/(pi_i+pi_j)`, fit by Hunter's (2004) minorization–maximization iteration `pi_i ← (W_i+reg) / (Σ_j n_ij/(pi_i+pi_j) + 2·reg/(pi_i+1))`.
+**The model.** `P(i beats j) = pi_i/(pi_i+pi_j)`, fit by Hunter's (2004) minorization–maximization (MM) iteration `pi_i ← (W_i+reg) / (Σ_j n_ij/(pi_i+pi_j) + 2·reg/(pi_i+1))`.
+MM is an iterative recipe that is guaranteed to improve the fit (raise the likelihood) at every step until it converges.
 The `reg = 1` term is one phantom win and loss against a league-average anchor, which keeps undefeated/winless teams finite; `pi` is renormalized to mean 1 each step.
-The fitted log-strength `log(pi)` is centered and multiplied by ≈6.2 points per natural-log-odds — the conversion implied by the Elo convention (400 Elo per base-10 odds ÷ 28 Elo per point), **not** fit to any margins.
+The fitted log-strength `log(pi)` is centered and multiplied by ≈6.2 points per natural-log-odds, the conversion implied by the Elo convention (400 Elo per base-10 odds ÷ 28 Elo per point), **not** fit to any margins.
 Only the units borrow that constant; the ordering is 100% wins-based.
 
 **A note on units.** Subtracting a log-odds rating from a point margin would be dimensionally meaningless, which is why the 6.2 scaling is applied.
@@ -602,7 +605,7 @@ Dividing by estimated possessions isolates pace, which is what an era adjustment
 **The computation.** For each champion, `margin_per100 = margin · 100 / poss` and likewise for the opponent-adjusted margin.
 This is the pace-neutral (per-100- possessions, i.e. net-rating-style) form of the margin, then ranked across the 43 champions as usual.
 
-**What the results mean (the §9 number was too harsh).** 2025–26 is estimated at 101.8 possessions/game, only ≈3.8 above the 98.0 historical mean — a ~4% pace premium, versus the ~12% scoring premium §9 used.
+**What the results mean (the §9 number was too harsh).** 2025–26 is estimated at 101.8 possessions/game, only ≈3.8 above the 98.0 historical mean: a ~4% pace premium, versus the ~12% scoring premium §9 used.
 Per 100 possessions the Knicks' raw margin (+14.6) and opponent-adjusted margin (+11.0) both rank **1st**, where the §9 scoring-share adjustment had dropped the raw margin to 3rd.
 The honest read is that most of 2025–26's scoring surplus is efficiency (threes), not pace, so on a true pace-neutral basis the #1 raw-and-adjusted margin survives.
 §9 is retained as the deliberately conservative bound; §17 is the more accurate one.
@@ -616,19 +619,19 @@ The honest read is that most of 2025–26's scoring surplus is efficiency (three
 **The data.** The Knicks' regular-season SRS, each opponent's regular-season SRS (in round order), and which team hosted each series opener (for home court), all read from the cached logs.
 
 **Why a forward model.** §4–§9 are retrospective: they score what happened.
-This asks the complementary forward question — given only the Knicks' regular season, how likely was this outcome? — so the gap between forecast and reality is a clean measure of playoff overperformance in win-loss terms, parallel to the margin-based overperformance in §5.
+This asks the complementary forward question (given only the Knicks' regular season, how likely was this outcome?), so the gap between forecast and reality is a clean measure of playoff overperformance in win-loss terms, parallel to the margin-based overperformance in §5.
 
-**The model.** A single game's win probability is `p = Φ((SRS_NYK − SRS_opp ± hca)/σ)`, with `σ = 12` (the single-game point-margin SD), `hca = 3` (home points), `+hca` at home and `−hca` away.
+**The model.** A single game's win probability is `p = Φ((SRS_NYK − SRS_opp ± hca)/σ)`, where Φ is the standard normal CDF (the probability a standard normal value falls below the argument), with `σ = 12` (the single-game point-margin SD), `hca = 3` (home points), `+hca` at home and `−hca` away.
 Each round is a best-of-7 with the 2-2-1-1-1 home pattern; the simulator plays 40,000 full brackets and records the title rate, per-series win rates, and the loss distribution.
 Because all four rounds are best-of-7, every title run is exactly 16 wins, so a run's quality reduces to its loss count (16-3 ⇒ 3 losses).
 
 **What the results mean.** From their own regular season the Knicks were a Finals underdog (P(beat Spurs) ≈ 31%, since the Spurs out-rated them) and only ≈15% to win the title.
 The model expects ≈6.5 losses in a title run; the Knicks lost 3.
 A title as clean as 16-3 occurs in ≈7% of the model's championship runs, and ≈1% of all simulated seasons.
-So the run sat far out on the favorable tail of what their regular season predicted — the same elevation §5 and §9 found, here in win-loss units.
+So the run sat far out on the favorable tail of what their regular season predicted: the same elevation §5 and §9 found, here in win-loss units.
 
-**Assumptions and robustness.** `σ` and `hca` are standard NBA values; varying them within reason (σ ∈ [11,13], hca ∈ [2.5,3.5]) moves the percentages by a few points but not the conclusion (large overperformance, Finals underdog).
-The model deliberately uses regular-season SRS and is blind to the Knicks' playoff elevation — that blindness is the point, since the elevation is exactly what we are trying to size.
+**Assumptions and robustness.** `σ` and `hca` are standard NBA values; the pipeline runs only the σ = 12, hca = 3 base case, but as an analyst judgment, varying them within reason (σ ∈ [11,13], hca ∈ [2.5,3.5]) should move the percentages by a few points without changing the conclusion (large overperformance, Finals underdog).
+The model deliberately uses regular-season SRS and is blind to the Knicks' playoff elevation; that blindness is the point, since the elevation is exactly what we are trying to size.
 
 **Why no new chart.** The story is three or four scalar probabilities and a small per-round table, already in the appendix; a chart would not add resolution.
 
