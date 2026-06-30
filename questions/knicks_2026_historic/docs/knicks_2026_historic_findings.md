@@ -24,7 +24,7 @@ Winning that series 4-1, even narrowly (+2.4 avg margin), was the hardest test o
 
 All four opponents were essentially fully healthy when they played the Knicks (average availability 98%; the Spurs and Hawks were at 100%), so injuries are not an explanation for any of it.
 
-![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
+![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions, the best single estimate though not a settled #1 (see §10).](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
 
 ---
 

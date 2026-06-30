@@ -16,7 +16,7 @@ This summary works through four questions: was the run historic and against real
 
 ## 1. Yes, it was historic
 
-![Opponent-adjusted playoff dominance: 2025-26 Knicks rank first all-time among 43 champions since 1983-84.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
+![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
 
 The Knicks' raw average margin of +14.9 points per game is the highest in 43 years of data.
 Adjusted for opponent strength, their +11.2 margin ranks first all-time, ahead of the 2016–17 Warriors (+10.2) and the 1986–87 Lakers (+9.5).
