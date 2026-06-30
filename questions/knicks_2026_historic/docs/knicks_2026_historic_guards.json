@@ -74,6 +74,16 @@
     "ok": true,
     "value": 100.0
   },
+  "spread.not_first": {
+    "claim": "standardizing by era spread moves the Knicks off the #1 spot",
+    "ok": true,
+    "value": 5
+  },
+  "spread.top_is_warriors": {
+    "claim": "the 2016-17 Warriors lead the spread-standardized ranking",
+    "ok": true,
+    "value": 2017
+  },
   "winprob.field_best_not_finalist": {
     "claim": "the field's strongest reg-season team reached neither the Finals nor was the Knicks",
     "ok": true,

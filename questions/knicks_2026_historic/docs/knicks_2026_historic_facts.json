@@ -1231,6 +1231,27 @@
     "unit": null,
     "value": 6.04551382067535
   },
+  "ladder.rank_oppadj": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "Knicks rank: opponent-adjusted margin",
+    "unit": null,
+    "value": 1
+  },
+  "ladder.rank_scoringshare": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "Knicks rank: opp-adj + scoring-share",
+    "unit": null,
+    "value": 1
+  },
+  "ladder.rank_zscore": {
+    "display": "5",
+    "fmt": "{:d}",
+    "note": "Knicks rank: spread-standardized",
+    "unit": null,
+    "value": 5
+  },
   "opp.srs_mean": {
     "display": "+3.68",
     "fmt": "{:+.2f}",
@@ -1678,6 +1699,55 @@
     "note": "Weight on 19-game data, \u00d7100",
     "unit": null,
     "value": 41.30683443843992
+  },
+  "spread.knicks_rank": {
+    "display": "5",
+    "fmt": "{:d}",
+    "note": "Knicks rank by spread-standardized dominance",
+    "unit": null,
+    "value": 5
+  },
+  "spread.knicks_z": {
+    "display": "+1.90",
+    "fmt": "{:+.2f}",
+    "note": "Knicks z-score (adj margin / season SRS SD)",
+    "unit": null,
+    "value": 1.9029900322338307
+  },
+  "spread.n": {
+    "display": "43",
+    "fmt": "{:d}",
+    "note": "Champions ranked by z",
+    "unit": null,
+    "value": 43
+  },
+  "spread.sd_2026": {
+    "display": "5.90",
+    "fmt": "{:.2f}",
+    "note": "2025-26 SRS spread (SD of team SRS)",
+    "unit": null,
+    "value": 5.899618573319846
+  },
+  "spread.sd_start": {
+    "display": "3.1",
+    "fmt": "{:.1f}",
+    "note": "1983-84 SRS spread (SD of team SRS)",
+    "unit": null,
+    "value": 3.1111328756200116
+  },
+  "spread.top_season": {
+    "display": "16\u201317",
+    "fmt": null,
+    "note": "Spread-standardized #1 season",
+    "unit": null,
+    "value": "16\u201317"
+  },
+  "spread.top_z": {
+    "display": "+2.48",
+    "fmt": "{:+.2f}",
+    "note": "Spread-standardized #1 z-score",
+    "unit": null,
+    "value": 2.48416170430634
   },
   "winprob.cf.p_series": {
     "display": "68.7",

@@ -697,10 +697,31 @@ As in §16, the lone disagreement remains Elo's recency weighting, not anything 
 
 ---
 
-## Rating systems at a glance
+## 22. Spread-Standardized Dominance (`run_spread_standardized`)
 
-The report never rests on one rating.
-The opponent adjustment is recomputed under four systems, each stressing a different assumption, plus two methods that vary the aggregation rather than the rating.
+**The data.** Each champion's opponent-adjusted margin (§5) and the standard deviation of all teams' SRS in that champion's season (`season_srs_sd`, added in `build_champions_table`).
+
+**Why a dispersion adjustment.** §9 and §17 correct the *level* of the scoring environment (total scoring, pace); neither touches its *dispersion*.
+But the spread of team strengths has widened sharply: the SD of team SRS rose from 3.1 in 1983-84 to 5.90 in 2025-26.
+In a more top-heavy league a given margin is a smaller distance above the field, so a level adjustment alone leaves recent dominance overstated relative to older, bunched-up eras.
+
+**The computation.** `z = adj_margin / season_srs_sd`: the opponent-adjusted margin expressed in standard deviations of that season's team-strength distribution.
+This is the ordinary z-score (a value's distance from its distribution mean in SD units), using the league's own spread as the yardstick.
+The construction mixes a playoff-derived margin with a regular-season spread, so it answers "how many regular-season-team-strength units was this playoff dominance", a defensible but not unique choice; the exact rank is mildly sensitive to it.
+
+**What the results mean.** The Knicks' +11.23 adjusted margin is the largest in raw points, but 2025-26 also has the widest spread in the dataset (5.90), so their z-score is +1.90 SD, ranking **#5 of 43**.
+The 16–17 Warriors lead at +2.48.
+Standardizing by dispersion is the only era adjustment that unseats the Knicks from #1; §9 (scoring), §17 (pace), and the wins-only and capped ratings do not.
+It points the same direction as Elo's recency weighting (§15): both are *relative* measures that grade against the specific league faced, rather than absolute ones.
+
+---
+
+## Comparing teams across eras
+
+The hardest thing this report does is rank a 2025-26 team against a 1986-87 one, and there is no single correct way to do it.
+Two independent choices have to be made, and the report works through both.
+
+**Axis 1: how you rate the opponents.** Every opponent adjustment is recomputed under four rating systems, each stressing a different assumption.
 
 | System | Section | Data it uses | What it stresses | Knicks rank |
 |---|---|---|---|---|
@@ -709,8 +730,28 @@ The opponent adjustment is recomputed under four systems, each stressing a diffe
 | Bradley-Terry | §16 | win/loss only | margin vs. wins (blowout padding) | 1st |
 | Capped-margin SRS | §21 | clipped margins + schedule | single-game leverage | 1st |
 
-Three of the four put the Knicks 1st; only Elo's recency weighting moves them to 3rd, and §16 and §21 localize the cause to recency, not to margins.
-Two further methods round out the picture without changing the rating formula: the hierarchical model (§14) adds *uncertainty*, which is what actually unseats a settled #1, and the possessions adjustment (§17) varies *pace*.
+Three of the four put the Knicks 1st; only Elo's recency weighting moves them to 3rd, and §16 and §21 localize the cause to recency, not margins.
+Two further methods vary the aggregation rather than the rating: the hierarchical model (§14, *uncertainty*) is what actually unseats a settled #1, and possessions (§17) varies *pace*.
+
+**Axis 2: how you put the eras on one scale.** Margins are not comparable across eras untouched, because both the scoring *level* and the *spread* of team quality have changed.
+Three normalizations, applied to the opponent-adjusted margin:
+
+| Normalization | Section | What it neutralizes | Knicks rank |
+|---|---|---|---|
+| None | §5 | nothing (raw points, schedule only) | 1st |
+| Scoring-share | §9 | total scoring (pace + efficiency) | 1st |
+| Per-100 possessions | §17 | pace only | 1st |
+| Spread-standardized (z) | §22 | dispersion of team strengths | 5th |
+
+Scoring-share scales by points/game and over-corrects, discounting real efficiency gains as if they were inflation; per-100 divides by possessions and is the more accurate *level* adjustment, isolating pace.
+Neither addresses *spread*: only the z-score does, by dividing by the era's SD of team strengths.
+The level adjustments leave the Knicks 1st; the dispersion adjustment drops them to 5th.
+
+**Putting it together.** The two axes agree on the shape of the answer.
+By absolute measures, on any opponent rating and any level normalization, the 2025-26 Knicks are the most dominant champion in the dataset.
+The two adjustments that move them, recency-weighted opponents (Elo, 3rd) and spread-standardization (z, 5th), are both *relative*: they grade against the specific, unusually deep league the Knicks faced.
+Which number is "right" depends on the question.
+"Biggest edge in points" is absolute and the answer is #1; "most exceptional relative to peers" is relative and the answer is top-five.
 
 **Methods deliberately not used here.** A few standard families are absent for concrete reasons.
 Recency with explicit uncertainty (Glicko) collapses to roughly Elo once reduced to a single point rating, so it adds little over §15.

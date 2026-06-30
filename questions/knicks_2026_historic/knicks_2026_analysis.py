@@ -1430,6 +1430,76 @@ def run_capped_srs_check(capped_table: pd.DataFrame,
                     _cap_rank)
 
 
+def run_spread_standardized(champions: pd.DataFrame, out: io.StringIO) -> None:
+    """Rank champions by dominance relative to their era's spread of teams.
+
+    §9 and §17 adjust for the *level* of the scoring environment (total scoring,
+    pace).  This adjusts for its *dispersion*: divide each champion's
+    opponent-adjusted margin by the standard deviation of all teams' SRS that
+    season, giving a z-score (standard deviations above an average team).  A big
+    raw margin in a top-heavy era counts for less here.
+    """
+    print(_hdr("§22 SPREAD-STANDARDIZED DOMINANCE (Z-SCORE)"), file=out)
+    print(
+        "adj_margin already removes schedule (§5) and §9/§17 the scoring level.\n"
+        "But the spread of team strengths has widened: SRS standard deviation rose\n"
+        "from ~3.1 (1984) to ~5.9 (2025-26), so the same +10 margin is a smaller\n"
+        "share of a modern, top-heavy league.  z = adj_margin / (season SRS SD)\n"
+        "expresses dominance in standard deviations above an average team, the\n"
+        "dispersion analogue of the level adjustments.\n",
+        file=out,
+    )
+    df = champions.dropna(subset=["z_adj_margin"]).copy()
+    df = df.sort_values("z_adj_margin", ascending=False).reset_index(drop=True)
+    df["rank"] = df.index + 1
+
+    _subj = df[df["year"] == SUBJECT_YEAR]
+    z_val = float(_subj["z_adj_margin"].iloc[0])
+    z_rank = int(_subj["rank"].iloc[0])
+    sd_2026 = float(_subj["season_srs_sd"].iloc[0])
+    adj_rank = int((champions["adj_margin"].dropna() > float(_subj["adj_margin"].iloc[0])).sum()) + 1
+
+    print(f"  Knicks adjusted margin:        {float(_subj['adj_margin'].iloc[0]):+.2f} pts/game "
+          f"(rank #{adj_rank} on raw points)", file=out)
+    print(f"  2025-26 SRS spread (SD):       {sd_2026:.2f} (widest in the dataset)", file=out)
+    print(f"  Knicks z-score:                {z_val:+.2f} SD above an average team", file=out)
+    print(f"  Rank among champions by z:     #{z_rank} of {len(df)}", file=out)
+    print(f"\n  Top 8 by spread-standardized dominance:", file=out)
+    for _, r in df.head(8).iterrows():
+        marker = "  ← Knicks" if int(r["year"]) == SUBJECT_YEAR else ""
+        print(f"    {short_label(int(r['year'])):<8} adj {r['adj_margin']:+.2f}  "
+              f"SRS SD {r['season_srs_sd']:.2f}  z {r['z_adj_margin']:+.2f}{marker}", file=out)
+    top = df.iloc[0]
+    print(f"\n  Spread-standardized leader: {short_label(int(top['year']))} "
+          f"(z {float(top['z_adj_margin']):+.2f}).", file=out)
+    print("  Standardizing by era dispersion is the one adjustment that unseats the\n"
+          "  Knicks from #1; §9, §17, and the wins-only and capped ratings do not.",
+          file=out)
+
+    # ── Facts ─────────────────────────────────────────────────────────────────
+    FACTS.set("spread.knicks_z",     z_val,    "{:+.2f}", note="Knicks z-score (adj margin / season SRS SD)")
+    FACTS.set("spread.knicks_rank",  z_rank,   "{:d}",    note="Knicks rank by spread-standardized dominance")
+    FACTS.set("spread.sd_2026",      sd_2026,  "{:.2f}",  note="2025-26 SRS spread (SD of team SRS)")
+    _sd_start_row = champions[champions["year"] == START_YEAR]
+    if not _sd_start_row.empty:
+        FACTS.set("spread.sd_start", float(_sd_start_row["season_srs_sd"].iloc[0]), "{:.1f}",
+                  note=f"{START_YEAR-1}-{str(START_YEAR)[2:]} SRS spread (SD of team SRS)")
+    FACTS.set("spread.top_season",   short_label(int(top["year"])), note="Spread-standardized #1 season")
+    FACTS.set("spread.top_z",        float(top["z_adj_margin"]), "{:+.2f}", note="Spread-standardized #1 z-score")
+    FACTS.set("spread.n",            len(df),  "{:d}",    note="Champions ranked by z")
+    # Ladder ranks (opponent-adjusted base, each era normalization applied)
+    FACTS.set("ladder.rank_oppadj",  adj_rank, "{:d}",    note="Knicks rank: opponent-adjusted margin")
+    _ss_rank = int((champions["pace_adj_adj_margin"].dropna()
+                    > float(_subj["pace_adj_adj_margin"].iloc[0])).sum()) + 1
+    FACTS.set("ladder.rank_scoringshare", _ss_rank, "{:d}", note="Knicks rank: opp-adj + scoring-share")
+    FACTS.set("ladder.rank_zscore",  z_rank,   "{:d}",    note="Knicks rank: spread-standardized")
+    FACTS.guard("spread.not_first", z_rank > 1,
+                "standardizing by era spread moves the Knicks off the #1 spot",
+                z_rank)
+    FACTS.guard("spread.top_is_warriors", int(top["year"]) == 2017,
+                "the 2016-17 Warriors lead the spread-standardized ranking", int(top["year"]))
+
+
 # ── Section 17: Possessions-based pace adjustment ────────────────────────────
 
 def run_pace_possessions(champions: pd.DataFrame,
@@ -1814,6 +1884,7 @@ def main() -> None:
     run_full_field_odds(po_2026, reg_2026, standings_2026, out)
     run_appendix_ranking(champions, out)
     run_capped_srs_check(capped_table, champions, out)
+    run_spread_standardized(champions, out)
 
     body = out.getvalue()
 

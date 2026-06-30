@@ -1035,6 +1035,7 @@ def build_champions_table(start_year: int = START_YEAR,
             "league_scoring":      league_scoring,
             "avg_opp_playoff_srs": avg_opp_playoff,
             "adj_playoff_margin":  adj_playoff,
+            "season_srs_sd":       float(srs.std(ddof=0)),
         })
 
     df = pd.DataFrame(rows)
@@ -1056,6 +1057,13 @@ def build_champions_table(start_year: int = START_YEAR,
             ),
             axis=1,
         )
+        # Spread-standardized (z-score) dominance: the opponent-adjusted margin
+        # expressed in units of that season's spread of team strengths (the SD of
+        # all teams' SRS). Scoring-share and per-100 adjust the *level* of the
+        # scoring environment; this adjusts for its *dispersion*, asking how many
+        # standard deviations clear of an average team the champion was. A high
+        # raw margin in a top-heavy era (wide SRS spread) scores lower here.
+        df["z_adj_margin"] = df["adj_margin"] / df["season_srs_sd"]
     return df
 
 

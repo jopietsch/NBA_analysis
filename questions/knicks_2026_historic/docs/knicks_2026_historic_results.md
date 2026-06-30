@@ -611,4 +611,31 @@ single rout can distort it.
     86–87    raw +10.83  opp +1.25  adj +9.58
     85–86    raw +10.56  opp +1.97  adj +8.58
 
+─── §22 SPREAD-STANDARDIZED DOMINANCE (Z-SCORE) ────────────────────────
+adj_margin already removes schedule (§5) and §9/§17 the scoring level.
+But the spread of team strengths has widened: SRS standard deviation rose
+from ~3.1 (1984) to ~5.9 (2025-26), so the same +10 margin is a smaller
+share of a modern, top-heavy league.  z = adj_margin / (season SRS SD)
+expresses dominance in standard deviations above an average team, the
+dispersion analogue of the level adjustments.
+
+  Knicks adjusted margin:        +11.23 pts/game (rank #1 on raw points)
+  2025-26 SRS spread (SD):       5.90 (widest in the dataset)
+  Knicks z-score:                +1.90 SD above an average team
+  Rank among champions by z:     #5 of 43
+
+  Top 8 by spread-standardized dominance:
+    16–17    adj +10.23  SRS SD 4.12  z +2.48
+    86–87    adj +9.52  SRS SD 4.49  z +2.12
+    22–23    adj +7.68  SRS SD 3.79  z +2.03
+    85–86    adj +7.72  SRS SD 3.95  z +1.96
+    25–26    adj +11.23  SRS SD 5.90  z +1.90  ← Knicks
+    90–91    adj +9.20  SRS SD 4.83  z +1.90
+    84–85    adj +7.21  SRS SD 3.84  z +1.88
+    00–01    adj +7.26  SRS SD 4.35  z +1.67
+
+  Spread-standardized leader: 16–17 (z +2.48).
+  Standardizing by era dispersion is the one adjustment that unseats the
+  Knicks from #1; §9, §17, and the wins-only and capped ratings do not.
+
 ```

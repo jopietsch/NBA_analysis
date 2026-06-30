@@ -15,7 +15,7 @@
 They went 16-3 (88th percentile win rate among all 43 champions since 1983–84) and outscored opponents by an average of **+14.9 points per game**, the highest raw playoff margin in the dataset.
 Across the game-to-game swing of a 19-game run, that margin could sit anywhere from +7.4 to +22.4: even at the unlucky end, the run would still rank above the historical average.
 2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-scoring version drops it to 3rd).
-After adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, being the single best is far from settled, see §10–§11); on the same pace-neutral basis the opponent-adjusted margin is also first.
+After adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, or each is graded against its own era's spread of teams, being the single best is far from settled: a top-five run, see §10–§11 and §14); on the same pace-neutral basis the opponent-adjusted margin is also first.
 The East was **not** historically weak: the West-East SRS gap in 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of seasons since 1984, the West was even *more* dominant than this.
 
 There is a possible nuance in the East record: the 76ers and Cavaliers played a touch *below* their regular-season ratings in their other playoff games, so some of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks excellence, though that gap is small enough to be random (the Hawks played only the Knicks, so there is no independent read on them; see §5).
@@ -336,7 +336,45 @@ Each objection is treated in full, with why it seemed plausible and exactly what
 
 ---
 
-## 14. Limitations
+## 14. Comparing Across Eras: How Much of #1 Survives?
+
+"The most dominant champion in 43 years" is only as solid as the yardstick behind it, and basketball has no single one.
+Comparing a 2025-26 team to a 1986-87 team means choosing what to hold equal: the schedule, the scoring level, the pace, or how top-heavy the league was.
+Each choice gives a different answer, so the honest move is to lay them side by side.
+
+**First, the scoring level.** 2025-26 has the most points per game in the dataset (115.6 vs. a historical mean of 103.5), which looks like a reason to discount the margin.
+But high scoring is not the same as a fast game, and the two pull in opposite directions.
+Scale margins by total points (the *scoring-share* adjustment, a deliberately harsh take that treats the whole scoring boom as inflation) and the raw margin slips from 1st to 3rd (+13.3, behind the 2000-01 Lakers and 2016-17 Warriors).
+Scale instead by estimated possessions, which separate pace from shooting, and 2025-26 ran only about 4% faster than average (101.8 possessions vs. 98.0): the extra points are better three-point shooting, not more trips down the floor.
+Per possession the Knicks' raw margin (+14.6) and opponent-adjusted margin (+11.0) both stay **1st**.
+So the level of scoring, however you handle it, does not knock the opponent-adjusted run off the top.
+
+**Then, the spread.** This is the adjustment that does.
+Today's league is far more top-heavy than the 1980s: the gap between the best and worst teams, measured in points, has nearly doubled since 1984, with the spread of team ratings growing from about 3.1 to 5.90.
+A given margin is a smaller achievement when many teams are extreme than when the league is bunched together.
+Grade each champion against its own era's spread, counting how many standard deviations above an average team it stood, and the Knicks come in **5th**, at +1.90 standard deviations.
+The 2016-17 Warriors lead at +2.48, the 1986-87 Lakers and 2022-23 Nuggets just behind: smaller margins in raw points, but towering over flatter fields.
+
+Stacking the lenses tells the whole story at a glance:
+
+| How you measure dominance | What it holds equal | Knicks rank |
+|---|---|---|
+| Raw scoring margin | nothing | 1st of 43 |
+| Opponent-adjusted | strength of schedule | 1st |
+| + scoring-share | the era's scoring level | 1st |
+| + per possession | the era's pace | 1st |
+| + graded on the era's spread | how top-heavy the league was | 5th |
+| Recency-weighted opponents (Elo) | schedule, weighting late form | 3rd |
+
+The pattern is clean.
+Every *absolute* measure, biggest margin, toughest-adjusted margin, per-possession margin, puts the 2025-26 Knicks first.
+The two lenses that move them, grading on the era's spread (5th) and weighting opponents by recent form (Elo, 3rd, from §11), are both *relative* ones: they ask not "how big was the margin" but "how far clear of this particular league did they stand." Against a deeper, more spread-out field than any champion before them faced, the answer is a top-five run rather than a clear-cut first.
+Neither reading is wrong.
+They answer different questions, and an honest "most dominant ever" has to say which one it means.
+
+---
+
+## 15. Limitations
 
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin ([+7.4, +22.4]).
 The comparison set is also only 43 champions.
@@ -346,29 +384,15 @@ Several of the metrics here (adjusted margin, overperformance, elevation) all me
 **Opponent SRS** for the reg-season-adjusted metrics is from regular-season performance.
 For the playoff-adjusted metrics (§5), each opponent's playoff SRS is computed from games *excluding* the Knicks series to avoid circularity; the Hawks had no such games and are excluded from that adjustment.
 
-**Era: scoring vs. pace.** The 2025–26 season has the most points per game in the dataset (115.6 vs. historical mean 103.5), which looks like a reason to discount the Knicks' margin.
-But high scoring is not the same as a fast game.
-Two ways to adjust for it pull in different directions:
-
-- *Scoring-share* (scale margins by points/game): a deliberately harsh take that
-  treats the whole scoring boom as inflation. On this basis the raw margin drops
-  from 1st to 3rd (+13.3, behind the 2000–01 Lakers and 2016–17 Warriors).
-- *Possessions* (scale by estimated possessions, which isolate pace from
-  shooting): the more correct adjustment. By this measure 2025–26 ran only about
-  4% faster than average (101.8 possessions vs. 98.0), because the extra points
-  come mostly from better three-point shooting, not more trips down the floor.
-  Per 100 possessions the Knicks' raw margin (+14.6) and opponent-adjusted margin
-  (+11.0) both stay **1st**.
-
-So the era objection is weaker than the scoring-share number suggested: most of 2025–26's scoring is efficiency, not pace, and on a true pace-neutral basis the margin claim survives at #1.
-The opponent adjustment also already absorbs some era effect, since a champion's margins and its opponents' ratings are measured in the same environment.
+**Era comparisons** rest on the choices in §14: the spread-standardized ranking divides the playoff-era margin by a regular-season spread, a defensible but not unique construction, and the exact order shifts a little with it.
+The direction is robust, since the spread nearly doubled, but the precise rank (about 5th) is not a settled figure.
 
 **Pre-1997 data:** PLUS_MINUS is null in the older NBA.com data.
 We derive it from PTS (both team rows per game), which is algebraically exact for game margins but may differ if box-score point totals differ from game records.
 
 ---
 
-## 15. Methodology
+## 16. Methodology
 
 All analysis uses Python (pandas, numpy).
 Data from NBA.com via nba_api (LeagueGameFinder for game logs, LeagueStandingsV3 for standings).

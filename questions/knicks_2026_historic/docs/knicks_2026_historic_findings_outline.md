@@ -124,14 +124,22 @@ Update when findings prose or RESULTS change.
 - Full per-objection treatment lives in the companion doc `knicks_2026_historic_investigation.md`.
 - knicks_2026_historic_results.md refs: none new (points to §3, §4, §5, §9, §11, §13, §14 of RESULTS via the cited findings sections).
 
-## §14. Limitations
+## §14. Comparing Across Eras: How Much of #1 Survives?
+
+- The cross-era goal made first-class: "most dominant ever" depends on the yardstick. Lays the techniques side by side.
+- Level adjustments leave the Knicks #1: scoring-share drops the raw margin to 3rd but the opp-adjusted margin stays #1; per-100 possessions (pace only) also #1 (2025-26 pace just ~4% above average, the scoring is efficiency).
+- Dispersion adjustment is the one that changes it: SRS spread grew from 3.1 (1984) to 5.90 (2026); graded on the era's spread (z = adj_margin / season SRS SD), Knicks are +1.90 SD, rank #5 of 43; 16–17 Warriors lead (z +2.48).
+- Ladder of ranks: raw 1st, opp-adj 1st, + scoring-share 1st, + per-100 1st, + spread-standardized 5th, Elo (recency) 3rd. Absolute measures → #1; relative measures (spread, recency) → top-five.
+- knicks_2026_historic_results.md refs: §22 SPREAD-STANDARDIZED DOMINANCE (Z-SCORE); §9 ERA/PACE, §17 POSSESSIONS
+
+## §15. Limitations
 
 - 19 games: wide CI. Comparison set only 43 champions.
 - Pre-1997: PLUS_MINUS null; derived from PTS (algebraically exact for game margins).
-- Era scoring: 2025-26 at 115.6 pts/team/game (historical mean 103.5). Scoring-share adjustment drops raw margin from #1 to #3; possessions-based (correct) keeps it #1.
+- Era comparisons rest on §14 choices; spread-standardized z mixes playoff margin with regular-season spread, so the exact rank (~#5) is not settled though the direction is robust.
 - Playoff-SRS adjustment for §5 (opponent independent form) excludes Hawks (no independent data). Hawks series reads as raw only.
 
-## §15. Methodology
+## §16. Methodology
 
 - Python (pandas, numpy). Data via nba_api (LeagueGameFinder, LeagueStandingsV3).
 - SRS: least-squares system (I − A) @ srs = mean_margin, constrained to sum = 0.
@@ -209,3 +217,5 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K44 | App.B | champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out | §20 APPENDIX RANKING (shape) | mean +3.29, SD 3.38, 65% within 1 SD |
 | K45 | App.C | full-field favorite Oklahoma City Thunder 54.5%, Knicks 3.5% | §19 FULL-FIELD TITLE ODDS | favorite 54.5%, Knicks 3.5% (seed 3), Spurs 14.2% |
 | K46 | §11 | capped-margin SRS: Knicks adj +11.93, #1 of 43 | §21 CAPPED-MARGIN (ROBUST) SRS | cap ±15, adj +11.93, rank #1, corr SRS +0.996 |
+| K47 | §14 | spread-standardized: Knicks +1.90 SD, #5 of 43 | §22 SPREAD-STANDARDIZED DOMINANCE | z +1.90, rank #5; leader 16–17 z +2.48; SD 1984 3.1 → 2026 5.90 |
+| K48 | §14 | era-adjustment ladder: opp-adj #1, scoring-share #1, spread #5 | §22 SPREAD-STANDARDIZED + §9 + §17 | ladder ranks oppadj 1, scoring-share 1, z 5 |

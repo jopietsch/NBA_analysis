@@ -1,6 +1,7 @@
 # a plan to get this projet jump started
 
 - create  a plan to deep dive into our primary question "did the 2025–26 New York Knicks have a historic playoff run?" People have said that it is because they had such a good record of 16-3. However, another explanation could be that the easter conference was much weaker than the west conference and so they had an exaggerated record. There might also be other explanations for why it's not as historically significant as people naively seem.
+- a second, broader goal has emerged: use this project as a worked study of **how to compare teams across eras**. The report should clearly explain the different techniques (opponent rating systems: SRS, Elo, Bradley-Terry, capped-margin SRS; and era normalizations: scoring-share, per-100 possessions, spread-standardized z-score) and what each one produces. The two axes are "how you rate opponents" and "how you put eras on one scale"; absolute measures put the Knicks #1, relative ones (recency, era spread) put them top-five. Findings §14 and the stats explainer's "Comparing teams across eras" carry this.
 - We want to get data from nba_api that will help us answer all our questions. 
 - as part of this examination, we want to know if the eastern conference was weaker than the western conference and how much that contributed to the schedule
 - what graphs and statistical analysis will allow us to answer these questions? start with the data from nba_api.
