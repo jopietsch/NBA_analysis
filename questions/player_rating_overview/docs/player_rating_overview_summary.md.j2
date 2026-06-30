@@ -23,7 +23,7 @@ Below the top tier they part: Win Shares favors efficient big men on good teams 
 The from-scratch RAPM, built only from which lineups outscored their opponents, barely moves with the box scores (about << f("rapm.box_corr_mean") >> on a 0-to-1 scale), which is the point of an impact metric, though one season of it is too noisy to trust raw: its raw 2024-25 list puts a reserve, << f("rapm.top.1.name") >>, on top.
 
 **What does each uniquely capture?
-Less than it looks.** Each system tilts toward a player type, but most of what any one says can be rebuilt from the others, so the eight box-score systems are closer to several views of one thing than to independent opinions.
+It depends.** Each system tilts toward a player type, but the simplest box scores (PER, Game Score) are nearly reconstructable from the others, while the metrics built for defense and lineup impact (BPM, Defensive BPM, RAPM) carry the most of their own, part of which may be recompute noise.
 
 **How should they be combined?
 Into two ratings that answer different questions.** A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.

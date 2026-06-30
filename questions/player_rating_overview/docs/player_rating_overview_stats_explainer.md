@@ -109,14 +109,14 @@ Unlike Pearson correlation, Spearman does not assume linearity; it only requires
 Values range from -1 (perfect disagreement) to +1 (perfect agreement).
 A value of 0.7 or above among NBA players typically means the two systems identify largely the same group of players as above-average.
 
-### Overlap variance (reported as "unique R²")
+### Overlap variance (overlap R²)
 
-For each system S, we regress S on all other present systems using ordinary least squares (OLS).
-The model's R² is the share of S the others can reconstruct: its overlap with the rest of the field.
-The pipeline prints and stores this R² under the label "unique R²," which is a misnomer worth flagging: the number is the overlap, so a high value means the system is largely redundant and a low value means it carries independent signal.
-A box-score system at R² = 0.89 leaves only about 11% of its variation that the others cannot rebuild.
-The impact metrics hit R² = 1.00 mechanically, not because they echo the box scores: each (BPM, RAPM) sits in the pool alongside its own offensive and defensive halves and is their exact sum, so it is reconstructable by construction.
-Holding each metric's components out of its predictor set, a Phase 6 item, would give the honest figure.
+For each system S, we regress S on all other present systems using ordinary least squares (OLS) and take the regression R².
+That R² is the share of S the others can reconstruct: its overlap with the rest of the field, so a high value means the system is largely redundant and a low value means it carries independent signal.
+Each system's own algebraic kin are held out of the predictor set: a metric and its offensive/defensive halves, or a rescaling of itself.
+Without that, BPM (which is OBPM plus DBPM) would be reconstructed exactly from its own components and post a meaningless R² = 1.00; holding the kin out measures overlap against genuinely different systems instead.
+The result splits the field: the simple box scores are the most redundant (PER and Game Score near R² = 0.89), while BPM and Defensive BPM carry the most of their own (near 0.52).
+One reading caveat: an approximate recompute looks independent partly because its noise correlates with nothing, so a low overlap is not by itself proof of unique signal.
 
 ### Consensus rating (z-score average)
 

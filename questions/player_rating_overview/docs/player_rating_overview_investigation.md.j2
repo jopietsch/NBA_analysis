@@ -72,21 +72,21 @@ The single-season RAPM's near-zero agreement with everything is mostly noise, no
 
 For each system, we measured how much of its rating can be rebuilt from all the other systems together, fitting a trend line on the rest.
 The share that can be reconstructed is the overlap: a high overlap means the system mostly repeats what the others already say; a low overlap means it carries something of its own.
-The results doc labels this number "unique R²," but the value it reports is the overlap share, so a high number means heavily redundant, not highly distinct.
+Each system's own algebraic kin are held out of the comparison, so BPM is never "explained" by its own offensive and defensive halves, which would otherwise force its overlap to a meaningless 1.00.
 
 One caveat: high overlap does not make a system useless.
 A reliable, well-validated system that moves in lockstep with the others is still worth trusting; it just is not adding a separate piece of information.
 
 ### Results
 
-Among the systems that are not built out of each other, the box scores overlap heavily: PER 0.89, Game Score 0.89, Win Shares 0.87, WS/48 0.84.
-Each can be rebuilt to within roughly a tenth of its variation by the others, so only about 11 to 16 percent of any box-score system is its own.
+The systems split sharply.
+The simple all-in-one box scores are the most redundant: PER sits at 0.89 overlap and Game Score at 0.89, each almost fully reconstructable from the rest.
+Win Shares (0.68) and WS/48 (0.61) carry more of their own, and the metrics built to isolate defense and lineup impact carry the most: BPM 0.53, Defensive BPM 0.52, VORP 0.59, and the RAPM family between 0.58 and 0.72.
 
-The impact metrics post a perfect 1.00 overlap, but that is an artifact, not a finding.
-BPM is OBPM plus DBPM, and RAPM is its offensive plus defensive halves, and all of those pieces sit in the same pool, so each is reconstructable from its own components by definition.
-VORP, which is BPM stretched by minutes, lands at 0.87.
-The honest read is the one the findings draw: each system captures less that is truly its own than its billing suggests.
-A cleaner test, holding each metric's own components out of its predictor set, is a Phase 6 item.
+That ordering matches intuition: a measure that only reshuffles box-score totals largely echoes the others, while one that reaches for defense or on-court impact picks up something they miss.
+One caveat blunts the conclusion.
+This project's BPM, VORP, and RAPM are approximate recomputes, and a noisy rating shows low overlap for a dull reason: its noise lines up with nothing, so it cannot be reconstructed from anything.
+Part of the impact metrics' apparent independence is therefore recompute slack, not signal, and the clean test waits on exact or published impact metrics.
 
 ---
 

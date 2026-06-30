@@ -2897,6 +2897,104 @@
     "unit": null,
     "value": 50.12190752079213
   },
+  "overlap.BPM.r2": {
+    "display": "0.526",
+    "fmt": "{:.3f}",
+    "note": "BPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.5260558282266404
+  },
+  "overlap.DBPM.r2": {
+    "display": "0.516",
+    "fmt": "{:.3f}",
+    "note": "DBPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.5157446915267352
+  },
+  "overlap.D_RAPM.r2": {
+    "display": "0.579",
+    "fmt": "{:.3f}",
+    "note": "D-RAPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.5787785558117489
+  },
+  "overlap.D_RAPM_MY.r2": {
+    "display": "0.702",
+    "fmt": "{:.3f}",
+    "note": "D-RAPM (MY) overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.7024337130359746
+  },
+  "overlap.GAME_SCORE.r2": {
+    "display": "0.890",
+    "fmt": "{:.3f}",
+    "note": "Game Score overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.8898039658851972
+  },
+  "overlap.OBPM.r2": {
+    "display": "0.878",
+    "fmt": "{:.3f}",
+    "note": "OBPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.878115585149638
+  },
+  "overlap.O_RAPM.r2": {
+    "display": "0.676",
+    "fmt": "{:.3f}",
+    "note": "O-RAPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.675653335016489
+  },
+  "overlap.O_RAPM_MY.r2": {
+    "display": "0.724",
+    "fmt": "{:.3f}",
+    "note": "O-RAPM (MY) overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.7243068346036896
+  },
+  "overlap.PER.r2": {
+    "display": "0.893",
+    "fmt": "{:.3f}",
+    "note": "PER overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.892860115268503
+  },
+  "overlap.RAPM.r2": {
+    "display": "0.661",
+    "fmt": "{:.3f}",
+    "note": "RAPM overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.6605838637628163
+  },
+  "overlap.RAPM_MY.r2": {
+    "display": "0.722",
+    "fmt": "{:.3f}",
+    "note": "RAPM (multi-yr+prior) overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.7222792439466055
+  },
+  "overlap.VORP.r2": {
+    "display": "0.586",
+    "fmt": "{:.3f}",
+    "note": "VORP overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.5864630312579052
+  },
+  "overlap.WS.r2": {
+    "display": "0.683",
+    "fmt": "{:.3f}",
+    "note": "Win Shares overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.6831150835365314
+  },
+  "overlap.WS48.r2": {
+    "display": "0.612",
+    "fmt": "{:.3f}",
+    "note": "WS/48 overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "unit": null,
+    "value": 0.6122154162034235
+  },
   "panel.BPM.describe_mean": {
     "display": "0.297",
     "fmt": "{:.3f}",
@@ -3988,104 +4086,6 @@
     "note": "Win Shares skewness (positive values only)",
     "unit": null,
     "value": 1.4504314817843078
-  },
-  "uniq.BPM.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "BPM unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.DBPM.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "DBPM unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.D_RAPM.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "D-RAPM unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.D_RAPM_MY.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "D-RAPM (MY) unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.GAME_SCORE.r2": {
-    "display": "0.890",
-    "fmt": "{:.3f}",
-    "note": "Game Score unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 0.8898039658851972
-  },
-  "uniq.OBPM.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "OBPM unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.O_RAPM.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "O-RAPM unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.O_RAPM_MY.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "O-RAPM (MY) unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.PER.r2": {
-    "display": "0.893",
-    "fmt": "{:.3f}",
-    "note": "PER unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 0.892860115268503
-  },
-  "uniq.RAPM.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "RAPM unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.RAPM_MY.r2": {
-    "display": "1.000",
-    "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 1.0
-  },
-  "uniq.VORP.r2": {
-    "display": "0.873",
-    "fmt": "{:.3f}",
-    "note": "VORP unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 0.8725437456789094
-  },
-  "uniq.WS.r2": {
-    "display": "0.868",
-    "fmt": "{:.3f}",
-    "note": "Win Shares unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 0.8683433813262759
-  },
-  "uniq.WS48.r2": {
-    "display": "0.839",
-    "fmt": "{:.3f}",
-    "note": "WS/48 unique R\u00b2: variance beyond what other systems explain",
-    "unit": null,
-    "value": 0.8388865975501854
   },
   "wins_pred.top.1.name": {
     "display": "Giannis Antetokounmpo",

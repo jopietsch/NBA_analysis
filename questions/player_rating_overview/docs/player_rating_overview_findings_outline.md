@@ -45,7 +45,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Charts: retrodiction, next-season retrodiction, panel describe-vs-forecast, impact panel, rating stability.
 
 ### § 4. What each system uniquely sees
-- Unique R² (heavy overlap): BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.
+- Overlap R² (own kin held out; high = redundant): most redundant PER 0.893, Game Score 0.890; mid WS 0.683, VORP 0.586; least redundant BPM 0.526, DBPM 0.516. Caveat: BPM/VORP/RAPM are approximate recomputes, so low overlap may be noise, not signal.
 - System-outliers chart: who each system rates above/below consensus.
 
 ### § 5. The two uber ratings
@@ -97,5 +97,5 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Consensus top 5: Nikola Jokić 2.92, Shai Gilgeous-Alexander 2.72, Giannis Antetokounmpo 2.31, Tyrese Haliburton 1.65, James Harden 1.62.
 - Consensus vs. wins-predictive Spearman: 0.925. Top riser Giannis Antetokounmpo +1.41; top faller Dillon Jones -1.23.
 - Concentration: PER top-5% 8.5%; Gini cross-check Consensus 0.756 vs WS 0.363 (artifact).
-- Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.
+- Overlap R² (own kin held out; high = redundant): PER 0.893, Game Score 0.890 most redundant; BPM 0.526, DBPM 0.516 least; WS 0.683, VORP 0.586 mid. Recompute-noise caveat on BPM/VORP/RAPM.
 - Playoffs: 96 players ≥ 150 min; top riser Gary Trent Jr., top faller Michael Porter Jr..

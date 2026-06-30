@@ -274,21 +274,24 @@ Bend instead of a straight line: WS/48, BPM, OBPM, RAPM, O-RAPM, RAPM (multi-yr+
   RAPM (multi-yr+prior) vs D-RAPM (MY): r=0.644
   O-RAPM (MY) vs D-RAPM (MY): r=-0.151
 
-─── WHAT EACH SYSTEM UNIQUELY CAPTURES ──────────────────────────
-  BPM: unique R² = 1.000
-  OBPM: unique R² = 1.000
-  DBPM: unique R² = 1.000
-  RAPM: unique R² = 1.000
-  O-RAPM: unique R² = 1.000
-  D-RAPM: unique R² = 1.000
-  RAPM (multi-yr+prior): unique R² = 1.000
-  O-RAPM (MY): unique R² = 1.000
-  D-RAPM (MY): unique R² = 1.000
-  PER: unique R² = 0.893
-  Game Score: unique R² = 0.890
-  VORP: unique R² = 0.873
-  Win Shares: unique R² = 0.868
-  WS/48: unique R² = 0.839
+─── HOW MUCH EACH SYSTEM OVERLAPS THE OTHERS ────────────────────
+Regression R² of each system on all others, with its own algebraic
+kin (offense/defense halves, rescalings) held out. High = redundant;
+low = carries signal the other systems miss.
+  PER: overlap R² = 0.893
+  Game Score: overlap R² = 0.890
+  OBPM: overlap R² = 0.878
+  O-RAPM (MY): overlap R² = 0.724
+  RAPM (multi-yr+prior): overlap R² = 0.722
+  D-RAPM (MY): overlap R² = 0.702
+  Win Shares: overlap R² = 0.683
+  O-RAPM: overlap R² = 0.676
+  RAPM: overlap R² = 0.661
+  WS/48: overlap R² = 0.612
+  VORP: overlap R² = 0.586
+  D-RAPM: overlap R² = 0.579
+  BPM: overlap R² = 0.526
+  DBPM: overlap R² = 0.516
 
 ─── CONSENSUS RATING — TOP 20 ───────────────────────────────────
    1. Nikola Jokić                    Consensus z = 2.92

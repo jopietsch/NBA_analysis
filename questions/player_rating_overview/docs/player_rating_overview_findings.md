@@ -26,7 +26,7 @@ A few things to settle up front:
 
 The short answers run through the report.
 The box-score systems move together but only loosely track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them, agreeing with the box scores at about 0.22 on a 0-to-1 scale.
-Each system tilts toward a player type, yet most of what any one says can be rebuilt from the others, so they are closer to several views of one thing than to independent opinions.
+Each system tilts toward a player type, and the simplest box scores (PER, Game Score) prove largely redundant, nearly rebuilt from the others, while the metrics built for defense and lineup impact carry more of their own.
 And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (0.93 on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
 
 The testbed is the 2024-25 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
@@ -247,11 +247,11 @@ Only Game Score sits near the top of both lists, steady and predictive at once.
 
 ## 4. What each system uniquely sees
 
-Not all systems add independent information.
-Measuring what each one adds beyond the others shows the eight box-score systems overlap heavily: most of what any single system says can be rebuilt from the rest.
-Offensive and Defensive BPM are the clearest case, since regular BPM is just their sum, so once you have two of the three the third tells you nothing new.
-Win Shares and WS/48 hold the most signal of their own, but even they share the large majority of their ranking with the field.
-The eight are closer to several views of one underlying thing than to eight independent opinions (see results for the full breakdown).
+Not all systems add independent information, and they split sharply on how much.
+The simplest all-in-one box scores are the most redundant: about 89% of PER and 89% of Game Score can be rebuilt from the other systems, so each mostly repeats what the field already says.
+The metrics built to isolate defense and lineup impact carry the most of their own: Defensive BPM, BPM, and the RAPM family leave roughly half of their ranking unexplained by the rest.
+One caveat keeps that from being a clean verdict: this report's BPM, VORP, and RAPM are approximate recomputes, and a noisy rating looks independent simply because its noise lines up with nothing, so part of their low overlap may be recompute slack rather than real signal.
+The measure holds each metric's own components out of the comparison, so BPM is never counted as "explained" by its own offensive and defensive halves (see results for the full breakdown).
 
 The "system outliers" chart shows the players each system rates most above and below the consensus.
 This is where methodological differences become visible: a system that captures defensive value heavily will love rim protectors; a system that penalizes inefficient volume scoring will discount high-usage players with middling true shooting.
@@ -390,9 +390,9 @@ It describes one postseason, not proof that any of these players is reliably bet
 The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about 0.22 on a 0-to-1 scale), which is the point of an impact metric and also why one season of it is too noisy to trust raw.
 No system is best at everything: PER describes a finished season better than any other (about 64% of the gaps between teams) yet forecasts the next among the worst (about 25%), a split that holds across all 30 seasons tested.
 
-**What does each system uniquely capture?** Less than it looks.
-Each tilts toward a player type, Win Shares toward efficient bigs on winning teams, PER toward high-usage scorers, the impact metrics toward off-ball and defensive value the box score misses, but most of what any one system says can be rebuilt from the others.
-The eight box-score systems are closer to several views of one underlying thing than to eight independent opinions.
+**What does each system uniquely capture?** It depends on the system.
+Each tilts toward a player type, Win Shares toward efficient bigs on winning teams, PER toward high-usage scorers, the impact metrics toward off-ball and defensive value the box score misses.
+But how much each adds beyond the rest splits sharply: the simplest all-in-one box scores, PER and Game Score, are nearly reconstructable from the other systems, while BPM, Defensive BPM, and the RAPM family hold the most of their own, with the caveat that this report's approximate recomputes can look independent partly because they are noisy.
 
 **How should they be combined?** Into two ratings that answer different questions.
 A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.

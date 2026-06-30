@@ -41,6 +41,20 @@ ALL_SYSTEMS = [
 # keep the rest of the report's numbers unchanged.)
 CONSENSUS_EXCLUDE = {"RAPM", "O_RAPM", "D_RAPM", "O_RAPM_MY", "D_RAPM_MY"}
 
+# Systems that are algebraic kin: a metric together with its own offensive/
+# defensive halves, or with a rescaling of itself. The overlap measure
+# (_overlap_r2) holds a system's own kin out of its predictor set, so a metric
+# is never trivially "explained" by its own components. Without this, BPM =
+# OBPM + DBPM forces BPM's overlap to 1.0, which says nothing about whether BPM
+# echoes the other, genuinely different systems.
+COMPONENT_FAMILIES = [
+    {"BPM", "OBPM", "DBPM", "VORP"},
+    {"WS", "WS48"},
+    {"RAPM", "O_RAPM", "D_RAPM"},
+    {"RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"},
+    {"RAPTOR", "RAPTOR_O", "RAPTOR_D", "RAPTOR_WAR"},
+]
+
 # Box-score systems recomputed for every season in the cache (2010-11 onward),
 # so the multi-season panel compares the same set across all season-pairs. The
 # third-party impact metrics (RAPTOR etc.) cover only some years, so they are
@@ -457,11 +471,23 @@ def rating_stability(start_year: int, end_year: int,
     return {"corr": corr, "retention": retention, "pairs": pairs}
 
 
-def _unique_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
-    """For each system, estimate unique variance it explains beyond the others.
+def _kin(system: str) -> set[str]:
+    """Return the algebraic-kin family containing `system` (itself if none)."""
+    for fam in COMPONENT_FAMILIES:
+        if system in fam:
+            return fam
+    return {system}
 
-    Method: regress each system on all others; the residual R² is the
-    unique signal. Returns {system: unique_r2}.
+
+def _overlap_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
+    """For each system, the share of its variance the OTHER systems can rebuild.
+
+    Method: regress each system on all others (with an intercept) and take the
+    regression R². That R² is the system's overlap with the field: high means it
+    is largely redundant, low means it carries independent signal. A system's own
+    algebraic kin (its offensive/defensive halves, or a rescaling of it) are held
+    out of the predictor set, so a metric is never trivially explained by its own
+    components. Returns {system: overlap_r2}.
     """
     present = _present_systems(df, systems)
     if len(present) < 3:
@@ -469,8 +495,12 @@ def _unique_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
 
     result = {}
     for s in present:
-        others = [o for o in present if o != s]
-        sub = df[present].dropna()
+        kin = _kin(s)
+        others = [o for o in present if o not in kin]
+        if len(others) < 2:
+            result[s] = 0.0
+            continue
+        sub = df[[s] + others].dropna()
         if len(sub) < 20:
             result[s] = 0.0
             continue
@@ -766,12 +796,15 @@ def run(end_year: int = 2025) -> None:
                     FACTS.set(f"corr.{si}_{sj}", float(r), "{:.3f}",
                               note=f"Spearman rank corr: {label_i} vs {label_j}")
 
-    header("WHAT EACH SYSTEM UNIQUELY CAPTURES")
-    uniq = _unique_r2(qual, present)
-    for s, r2 in sorted(uniq.items(), key=lambda x: -x[1]):
-        print(f"  {SYSTEM_LABELS.get(s, s)}: unique R² = {r2:.3f}")
-        FACTS.set(f"uniq.{s}.r2", float(r2), "{:.3f}",
-                  note=f"{SYSTEM_LABELS.get(s, s)} unique R²: variance beyond what other systems explain")
+    header("HOW MUCH EACH SYSTEM OVERLAPS THE OTHERS")
+    print("Regression R² of each system on all others, with its own algebraic")
+    print("kin (offense/defense halves, rescalings) held out. High = redundant;")
+    print("low = carries signal the other systems miss.")
+    overlap = _overlap_r2(qual, present)
+    for s, r2 in sorted(overlap.items(), key=lambda x: -x[1]):
+        print(f"  {SYSTEM_LABELS.get(s, s)}: overlap R² = {r2:.3f}")
+        FACTS.set(f"overlap.{s}.r2", float(r2), "{:.3f}",
+                  note=f"{SYSTEM_LABELS.get(s, s)} overlap R²: share of its variance the other systems (kin excluded) can reconstruct")
 
     header("CONSENSUS RATING — TOP 20")
     qual["CONSENSUS"] = _build_consensus(qual, present)
