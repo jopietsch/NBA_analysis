@@ -8,9 +8,10 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-Internal outline. Cross-referenced to player_rating_overview_results.md.
-Technical shorthand fine here. Reflects the current 14-box-score-system pipeline
-(human rankings removed; impact metrics surveyed but not recomputed).
+Internal outline.
+Cross-referenced to player_rating_overview_results.md.
+Technical shorthand fine here.
+Reflects the current 14-box-score-system pipeline (human rankings removed; impact metrics surveyed but not recomputed).
 
 ---
 

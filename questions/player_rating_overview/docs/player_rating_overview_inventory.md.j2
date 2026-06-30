@@ -8,7 +8,10 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-This catalog lists every major NBA player rating system, how each is acquired, what seasons it covers, and what kind of availability it has. "Recompute" means we run the formula on public data we fetch ourselves. "Results-only" means we download a published snapshot. "Proprietary" means neither the data nor the methodology is publicly available.
+This catalog lists every major NBA player rating system, how each is acquired, what seasons it covers, and what kind of availability it has.
+"Recompute" means we run the formula on public data we fetch ourselves.
+"Results-only" means we download a published snapshot.
+"Proprietary" means neither the data nor the methodology is publicly available.
 
 ---
 
@@ -52,7 +55,8 @@ These use standard box-score totals (points, rebounds, assists, steals, blocks, 
 
 ## Results-only systems (auto-download)
 
-Published values are available as structured files. We download and cache; no recomputation.
+Published values are available as structured files.
+We download and cache; no recomputation.
 
 | System | Availability | Coverage | Acquisition | Snapshot date |
 |---|---|---|---|---|
@@ -75,7 +79,8 @@ Systems that are no longer updated but whose methodology influenced current metr
 
 ## Results-only systems (snapshot)
 
-Values must be scraped or copied from a web page. We store the snapshot with acquisition date and URL.
+Values must be scraped or copied from a web page.
+We store the snapshot with acquisition date and URL.
 
 | System | Availability | Coverage | Acquisition | Snapshot date |
 |---|---|---|---|---|
@@ -87,7 +92,8 @@ Values must be scraped or copied from a web page. We store the snapshot with acq
 
 ## Human / reputation rankings
 
-Awards and media rankings measure perception and reputation, not just on-court production. Included as a distinct category to compare against model-based systems.
+Awards and media rankings measure perception and reputation, not just on-court production.
+Included as a distinct category to compare against model-based systems.
 
 | System | Availability | Coverage | Acquisition | Notes |
 |---|---|---|---|---|
@@ -101,7 +107,9 @@ Awards and media rankings measure perception and reputation, not just on-court p
 
 ## Proprietary systems (blind spot)
 
-These are mentioned for completeness. We cannot access the data or methodology. The analysis will note this gap where relevant.
+These are mentioned for completeness.
+We cannot access the data or methodology.
+The analysis will note this gap where relevant.
 
 | System | Organization | Why unavailable | Acknowledged blind spot |
 |---|---|---|---|
@@ -113,7 +121,8 @@ These are mentioned for completeness. We cannot access the data or methodology. 
 
 ## Source registry
 
-Exact acquisition paths for each auto-download or snapshot source. Updated as each is pulled.
+Exact acquisition paths for each auto-download or snapshot source.
+Updated as each is pulled.
 
 | Source | URL / path | Acquisition method | Coverage | Last pulled |
 |---|---|---|---|---|
@@ -132,7 +141,9 @@ Exact acquisition paths for each auto-download or snapshot source. Updated as ea
 
 ## Coverage summary
 
-The analysis focuses on 2024–25 as the primary test season. Multi-season coverage extends as far back as each source allows. The crosswalk (player identity reconciliation across systems) is keyed on `(player_normalized_name, season, team_abbr)` with a hand-maintained override table for collisions.
+The analysis focuses on 2024–25 as the primary test season.
+Multi-season coverage extends as far back as each source allows.
+The crosswalk (player identity reconciliation across systems) is keyed on `(player_normalized_name, season, team_abbr)` with a hand-maintained override table for collisions.
 
 | Recompute systems | Active as of 2024–25 | How far back |
 |---|---|---|

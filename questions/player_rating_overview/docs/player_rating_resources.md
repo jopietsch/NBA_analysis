@@ -1,12 +1,15 @@
 # NBA Player Rating Resources
 
-A curated reading list of the best blog posts, methodology writeups, forum threads, and reviews of NBA player rating systems. Organized by topic. Each entry includes a one-paragraph summary of what it covers and why it is worth reading.
+A curated reading list of the best blog posts, methodology writeups, forum threads, and reviews of NBA player rating systems.
+Organized by topic.
+Each entry includes a one-paragraph summary of what it covers and why it is worth reading.
 
 ---
 
 ## Primary methodology documents
 
-These are the original introductions or official methodology pages for each major metric. Read these before anything else.
+These are the original introductions or official methodology pages for each major metric.
+Read these before anything else.
 
 ### Box Plus/Minus (BPM) — original 2014 introduction
 **URL:** <https://www.sports-reference.com/blog/2014/10/introducing-box-plusminus-bpm-2/>  
@@ -83,7 +86,8 @@ These posts compare multiple metrics head-to-head or survey practitioners on wha
 
 ## RAPM — the technical backbone
 
-Most modern all-in-one metrics (EPM, LEBRON, DARKO, RPM, RAPTOR) build on RAPM as either a target or a component. These posts explain RAPM itself.
+Most modern all-in-one metrics (EPM, LEBRON, DARKO, RPM, RAPTOR) build on RAPM as either a target or a component.
+These posts explain RAPM itself.
 
 ### Nylon Calculus 101: Plus-Minus and Adjusted Plus-Minus
 **URL:** <https://fansided.com/2014/09/25/glossary-plus-minus-adjusted-plus-minus/>  
