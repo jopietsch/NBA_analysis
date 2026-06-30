@@ -2185,7 +2185,7 @@ vertical-align: -.125em;
   <li><a href="#cross-system-comparison-methods" id="toc-cross-system-comparison-methods" class="nav-link" data-scroll-target="#cross-system-comparison-methods">Cross-system comparison methods</a>
   <ul class="collapse">
   <li><a href="#spearman-rank-correlation" id="toc-spearman-rank-correlation" class="nav-link" data-scroll-target="#spearman-rank-correlation">Spearman rank correlation</a></li>
-  <li><a href="#unique-variance-unique-r²" id="toc-unique-variance-unique-r²" class="nav-link" data-scroll-target="#unique-variance-unique-r²">Unique variance (unique R²)</a></li>
+  <li><a href="#overlap-variance-overlap-r²" id="toc-overlap-variance-overlap-r²" class="nav-link" data-scroll-target="#overlap-variance-overlap-r²">Overlap variance (overlap R²)</a></li>
   <li><a href="#consensus-rating-z-score-average" id="toc-consensus-rating-z-score-average" class="nav-link" data-scroll-target="#consensus-rating-z-score-average">Consensus rating (z-score average)</a></li>
   <li><a href="#wins-predictive-rating-ridge-regression" id="toc-wins-predictive-rating-ridge-regression" class="nav-link" data-scroll-target="#wins-predictive-rating-ridge-regression">Wins-predictive rating (ridge regression)</a></li>
   </ul></li>
@@ -2199,7 +2199,7 @@ vertical-align: -.125em;
   <li><a href="#bayesian-foundations-of-impact-metrics" id="toc-bayesian-foundations-of-impact-metrics" class="nav-link" data-scroll-target="#bayesian-foundations-of-impact-metrics">Bayesian foundations of impact metrics</a>
   <ul class="collapse">
   <li><a href="#prior-likelihood-and-posterior" id="toc-prior-likelihood-and-posterior" class="nav-link" data-scroll-target="#prior-likelihood-and-posterior">Prior, likelihood, and posterior</a></li>
-  <li><a href="#ridge-regression-as-map-estimation" id="toc-ridge-regression-as-map-estimation" class="nav-link" data-scroll-target="#ridge-regression-as-map-estimation">Ridge regression as MAP estimation</a></li>
+  <li><a href="#ridge-regression-as-maximum-a-posteriori-map-estimation" id="toc-ridge-regression-as-maximum-a-posteriori-map-estimation" class="nav-link" data-scroll-target="#ridge-regression-as-maximum-a-posteriori-map-estimation">Ridge regression as maximum a posteriori (MAP) estimation</a></li>
   <li><a href="#sequential-updating-the-kalman-filter" id="toc-sequential-updating-the-kalman-filter" class="nav-link" data-scroll-target="#sequential-updating-the-kalman-filter">Sequential updating: the Kalman filter</a></li>
   <li><a href="#what-is-missing-posterior-uncertainty-intervals" id="toc-what-is-missing-posterior-uncertainty-intervals" class="nav-link" data-scroll-target="#what-is-missing-posterior-uncertainty-intervals">What is missing: posterior uncertainty intervals</a></li>
   <li><a href="#bayesian-model-averaging-for-the-consensus" id="toc-bayesian-model-averaging-for-the-consensus" class="nav-link" data-scroll-target="#bayesian-model-averaging-for-the-consensus">Bayesian model averaging for the consensus</a></li>
@@ -2296,9 +2296,9 @@ vertical-align: -.125em;
 <p>Spearman rank correlation measures the monotone association between two rankings. For each pair of systems, players are assigned percentile ranks within each system, then the Pearson correlation of those ranks is computed. Unlike Pearson correlation, Spearman does not assume linearity; it only requires that the two systems agree on ordering.</p>
 <p>Values range from -1 (perfect disagreement) to +1 (perfect agreement). A value of 0.7 or above among NBA players typically means the two systems identify largely the same group of players as above-average.</p>
 </section>
-<section id="unique-variance-unique-r²" class="level3">
-<h3 class="anchored" data-anchor-id="unique-variance-unique-r²">Unique variance (unique R²)</h3>
-<p>For each system S, we regress S on all other present systems using ordinary least squares (OLS). The model’s R² measures how much of S can be explained by the others. The unique R² is defined here as the residual variance fraction: <code>1 − R²</code>. A system with unique R² of 0.40 means 40% of its variation cannot be reconstructed from the other systems; it is carrying independent signal.</p>
+<section id="overlap-variance-overlap-r²" class="level3">
+<h3 class="anchored" data-anchor-id="overlap-variance-overlap-r²">Overlap variance (overlap R²)</h3>
+<p>For each system S, we regress S on all other present systems using ordinary least squares (OLS) and take the regression R². That R² is the share of S the others can reconstruct: its overlap with the rest of the field, so a high value means the system is largely redundant and a low value means it carries independent signal. Each system’s own algebraic kin are held out of the predictor set: a metric and its offensive/defensive halves, or a rescaling of itself. Without that, BPM (which is OBPM plus DBPM) would be reconstructed exactly from its own components and post a meaningless R² = 1.00; holding the kin out measures overlap against genuinely different systems instead. The result splits the field: the simple box scores are the most redundant (PER and Game Score near R² = 0.89), while BPM and Defensive BPM carry the most of their own (near 0.52). One reading caveat: an approximate recompute looks independent partly because its noise correlates with nothing, so a low overlap is not by itself proof of unique signal.</p>
 </section>
 <section id="consensus-rating-z-score-average" class="level3">
 <h3 class="anchored" data-anchor-id="consensus-rating-z-score-average">Consensus rating (z-score average)</h3>
@@ -2307,7 +2307,7 @@ vertical-align: -.125em;
 </section>
 <section id="wins-predictive-rating-ridge-regression" class="level3">
 <h3 class="anchored" data-anchor-id="wins-predictive-rating-ridge-regression">Wins-predictive rating (ridge regression)</h3>
-<p>To find the combination of systems that best predicts team wins: 1. Standardize each system’s values per player (z-score, same as consensus). 2. Aggregate to team level: for each team, compute the minutes-weighted average of each system’s player z-scores. 3. Regress actual team wins on these team-level ratings using ridge regression (L2 penalty, α = 5.0) to handle multicollinearity. 4. The regression coefficients define the importance weight for each system in predicting wins. 5. Apply the same weights per-player to construct the per-player wins-predictive rating.</p>
+<p>To find the combination of systems that best predicts team wins: 1. Standardize each system’s values per player (z-score, same as consensus). 2. Aggregate to team level: for each team, compute the minutes-weighted average of each system’s player z-scores. 3. Regress actual team wins on these team-level ratings using ridge regression (L2 penalty, α = 5.0) to handle multicollinearity (the instability that arises when predictors are highly correlated with each other, which makes individual OLS coefficients swing wildly). 4. The regression coefficients define the importance weight for each system in predicting wins. 5. Apply the same weights per-player to construct the per-player wins-predictive rating.</p>
 <p><strong>Ridge regression</strong> is OLS with a penalty term that shrinks large coefficients toward zero. With 30 data points (teams) and many correlated predictors (systems), OLS coefficients are unreliable. Ridge stabilizes them at the cost of some bias. The α = 5.0 penalty is not tuned by cross-validation for this application; the resulting weights should be taken as directional evidence, not precise estimates.</p>
 <p>With only 30 teams per season, the wins-predictive weights are estimated on thin data. A proper evaluation would require holding out seasons and testing whether the weights estimated on past seasons predict future-season team wins. That analysis is deferred to a Phase 6 extension.</p>
 <hr>
@@ -2328,7 +2328,7 @@ vertical-align: -.125em;
 <p>The Gini coefficient measures inequality in a distribution. For player ratings, a Gini of 0 means every player has the same rating (perfect equality); a Gini of 1 means one player has all the rating value and the rest have zero. Computed as:</p>
 <pre><code>Gini = (2 * Σ(rank_i * value_i) / (n * Σ(value_i))) − (n+1)/n</code></pre>
 <p>where players are sorted ascending by value and rank_i runs from 1 to n.</p>
-<p>Gini is reliable only for metrics that accumulate a quantity that cannot drop below zero (Win Shares, VORP). The implementation here clips negative values to zero, so for metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) every below-average player is counted as a flat zero. That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.76, above Win Shares near 0.36, an ordering that the power-law exponents reverse and that is not real. Gini is therefore reported only as a cross-check; the power-law exponent is the measure to trust when comparing systems.</p>
+<p>Gini is reliable only for metrics that accumulate a quantity that cannot drop below zero (Win Shares, VORP). The implementation here clips negative values to zero, so for metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) every below-average player is counted as a flat zero. That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.76, above Win Shares near 0.36, an ordering the power-law exponents nearly erase (consensus 0.31 vs Win Shares 0.23), so the fair measure shows the two similarly concentrated rather than the wide gap Gini implies. Gini is therefore reported only as a cross-check; the power-law exponent is the measure to trust when comparing systems.</p>
 </section>
 <section id="top-5-share" class="level3">
 <h3 class="anchored" data-anchor-id="top-5-share">Top-5% share</h3>
@@ -2351,8 +2351,8 @@ vertical-align: -.125em;
 <li><strong>Posterior:</strong> the RAPM estimate that blends prior and likelihood, weighted by how much evidence exists. Heavy-minute players in stable lineups get posteriors that move substantially toward what the data shows. Bench players with few possessions get posteriors that remain close to the prior.</li>
 </ul>
 </section>
-<section id="ridge-regression-as-map-estimation" class="level3">
-<h3 class="anchored" data-anchor-id="ridge-regression-as-map-estimation">Ridge regression as MAP estimation</h3>
+<section id="ridge-regression-as-maximum-a-posteriori-map-estimation" class="level3">
+<h3 class="anchored" data-anchor-id="ridge-regression-as-maximum-a-posteriori-map-estimation">Ridge regression as maximum a posteriori (MAP) estimation</h3>
 <p>Ridge regression is RAPM’s estimator. It minimizes:</p>
 <pre><code>Σ (observed_diff − X β)² + λ Σ βᵢ²</code></pre>
 <p>where X is the design matrix of stint-level player indicators (one column per player, one row per stint), β is the vector of player values, and λ is the regularization penalty. This is identical to maximum a posteriori (MAP) estimation under a Bayesian model with two assumptions: (1) observed point differentials are Gaussian around the true lineup value, and (2) each player’s true value βᵢ is drawn from a zero-mean Gaussian with variance σ²/λ.</p>
@@ -2382,7 +2382,7 @@ vertical-align: -.125em;
 <section id="bayesian-model-averaging-for-the-consensus" class="level3">
 <h3 class="anchored" data-anchor-id="bayesian-model-averaging-for-the-consensus">Bayesian model averaging for the consensus</h3>
 <p>The consensus rating in this project uses equal-weighted z-scores. A Bayesian alternative is Bayesian model averaging (BMA): treat each system as a model of the latent true player value, assign each model a weight proportional to its evidence (how well it explains the data), and compute the posterior over player value as the weighted average of the per-model posteriors.</p>
-<p>Without published posterior variances from the third-party systems, a tractable proxy weights each system inversely by its disagreement with the others. The unique R² values computed in the cross-system comparison, how much of each system’s variance is not explained by the other systems, approximate this disagreement. A system with low unique R² is either very consistent with the others (high reliability) or measuring the same thing (redundant). Distinguishing those two interpretations requires a retrodiction test: a system that is consistent with the others AND predicts game outcomes well is reliable; a system that is merely consistent but does not predict is just echoing shared biases.</p>
+<p>Without published posterior variances from the third-party systems, a tractable proxy weights each system inversely by its disagreement with the others. The overlap R² values computed in the cross-system comparison, how much of each system’s variance the others can explain, approximate this agreement directly: high overlap means a system mostly tracks the field. A system with high overlap is either very consistent with the others (high reliability) or measuring the same thing (redundant). Distinguishing those two interpretations requires a retrodiction test: a system that is consistent with the others AND predicts game outcomes well is reliable; a system that is merely consistent but does not predict is just echoing shared biases.</p>
 <hr>
 </section>
 </section>

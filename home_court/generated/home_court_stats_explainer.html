@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-29">
+<meta name="dcterms.date" content="2026-06-30">
 
 <title>Statistical Explainer: home_court_analysis.py</title>
 <style>
@@ -2237,7 +2237,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2026</p>
+      <p class="date">June 30, 2026</p>
     </div>
   </div>
   
@@ -2281,8 +2281,8 @@ vertical-align: -.125em;
 <p><strong>The data.</strong> Games aggregated to one row per season: wins, games, home win %. 43 regular seasons and 42 playoff seasons (lockout/COVID playoff gaps skipped).</p>
 <p><strong>The approach.</strong> Two regressions of home win rate on year, run separately for regular season and playoffs, plus the same pair re-run within each rule-change era:</p>
 <ol type="1">
-<li><em>Primary:</em> a <strong>binomial GLM</strong> with (wins, losses) per season as the outcome. This models the win count directly, so seasons with more games automatically get more weight and the variance is correct for proportion data. The slope comes out in log-odds per year and is converted to percentage points at the mean win rate for readability.</li>
-<li><em>Cross-check:</em> <strong>OLS of the season percentage on year with Newey–West HAC standard errors</strong> (one lag). Season win rates are autocorrelated (a high-HCA season tends to follow a high-HCA season), which makes naive OLS standard errors too small. HAC standard errors stay honest about that.</li>
+<li><em>Primary:</em> a <strong>binomial GLM</strong> with (wins, losses) per season as the outcome. This models the win count directly, so seasons with more games automatically get more weight and the variance is correct for proportion data. The slope comes out in log-odds per year (log-odds is ln(p / (1 − p)), where 0 is a coin flip and positive values favor the home team) and is converted to percentage points at the mean win rate for readability.</li>
+<li><em>Cross-check:</em> <strong>OLS of the season percentage on year with Newey–West HAC (heteroskedasticity- and autocorrelation-consistent) standard errors</strong> (one lag). Season win rates are autocorrelated (a high-HCA season tends to follow a high-HCA season), which makes naive OLS standard errors too small. HAC standard errors stay honest about that.</li>
 </ol>
 <p><strong>Why two methods.</strong> The GLM is the statistically right model for binomial data; the OLS/HAC line is the familiar “fit a line through the points” everyone can picture, with autocorrelation-robust inference. When both agree, the finding doesn’t depend on modeling choices.</p>
 <p><strong>What the results mean.</strong> They agree almost exactly: the regular season declines about −0.25 pp/year (≈ −10 pp over 43 seasons, p &lt; 0.001 in both, OLS R² = 0.74: year alone explains nearly three-quarters of season-to-season variation in HCA). The playoffs decline at a similar rate (−0.22 pp/yr, total ≈ −9.5 pp) but with much wider confidence intervals and a far lower R² (0.19), because each playoff season is only ~80 games of data. The per-era table shows the decline was not uniform: in the regular season the steepest significant declines were in 1984–94 (−0.52 pp/yr) and 2018–22 (−1.18 pp/yr); the 2023–26 slope (−0.77 pp/yr) is gentler and rests on only 4 seasons and isn’t significant (p = 0.223), with a flat-to-positive plateau between 1995 and 2004. No individual playoff era reaches significance: single playoff eras are just 3–13 small seasons, so the playoff conclusion rests on the full 42-season trend.</p>
@@ -2294,7 +2294,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="structural-break-test-run_structural_break_test">2. Structural Break Test (<code>run_structural_break_test</code>)</h2>
 <p><strong>The question.</strong> Section 1 shows the overall 40-year decline and Section 14 tests whether rule-change boundaries produced discrete steps. This section asks a different question: <em>where does the data itself see the strongest break</em>, with no prior assumption about which year matters?</p>
 <p><strong>The data.</strong> The same season-level home win % series: 43 regular-season seasons and 42 playoff seasons.</p>
-<p><strong>The approach.</strong> The <strong>QLR (Quandt Likelihood-Ratio, or supremum Chow) test</strong>, the standard econometric test for an unknown break point. For each candidate year <em>t</em> (the outer 15% trimmed to ensure both sub-samples have at least a handful of seasons), a <strong>Chow F-test</strong> asks: does fitting two separate regression lines (before <em>t</em> and after <em>t</em>) reduce the residual sum of squares enough to be noteworthy? The F-statistic at each candidate is</p>
+<p><strong>The approach.</strong> The <strong>QLR (Quandt Likelihood-Ratio, or supremum Chow) test</strong>, the standard econometric test for an unknown break point. For each candidate year <em>t</em> (the outer 15% trimmed to ensure both sub-samples have at least a handful of seasons), a <strong>Chow F-test</strong> asks: does fitting two separate regression lines (before <em>t</em> and after <em>t</em>) reduce the residual sum of squares (the total squared distance from the data points to the fitted line) enough to be noteworthy? The F-statistic at each candidate is</p>
 <blockquote class="blockquote">
 <p>F(t) = [(RSS_full − RSS_before(t) − RSS_after(t)) / k] / [(RSS_before(t) + RSS_after(t)) / (n − 2k)]</p>
 </blockquote>
@@ -2316,7 +2316,7 @@ vertical-align: -.125em;
 <h2 class="anchored" data-anchor-id="a.-bayesian-change-point-model-compute_bayesian_changepoint">3a. Bayesian Change-Point Model (<code>compute_bayesian_changepoint</code>)</h2>
 <p><strong>The question.</strong> Sections 2 and 3 run two frequentist tests with an apparent tension: the QLR finds a significant slope change near 1999, while CUSUM finds no structural instability. This section reconciles them by asking a broader question: how many slope breaks does the 40-year series actually need, integrating over all possible break locations?</p>
 <p><strong>The data.</strong> Season-level home win % series, 43 regular-season observations, weighted by games per season. Regular season only; too few playoff seasons to support a k=2 model reliably.</p>
-<p><strong>The approach.</strong> Four nested piecewise models: k=0 (a single linear trend), k=1 (two segments, one break), k=2 (three segments, two breaks), and k=3 (four segments, three breaks). Each model is estimated by <strong>weighted least squares (WLS)</strong> with game counts as weights; within each segment the fit is an intercept plus slope. For a given k, break locations are treated as latent: every valid configuration (minimum 3 seasons per segment) is evaluated, and the marginal likelihood is approximated using the <strong>BIC</strong>:</p>
+<p><strong>The approach.</strong> Four nested piecewise models: k=0 (a single linear trend), k=1 (two segments, one break), k=2 (three segments, two breaks), and k=3 (four segments, three breaks). Each model is estimated by <strong>weighted least squares (WLS)</strong> with game counts as weights; within each segment the fit is an intercept plus slope. For a given k, break locations are treated as latent: every valid configuration (minimum 3 seasons per segment) is evaluated, and the marginal likelihood is approximated using the <strong>BIC</strong> (Bayesian Information Criterion, which rewards fit while charging a penalty for each added parameter, so a model with more breaks only wins when the extra fit outweighs the cost):</p>
 <blockquote class="blockquote">
 <p>log Z_k ≈ logsumexp(−BIC(τ)/2 over all configurations τ) − log(n_configurations)</p>
 </blockquote>
@@ -2651,7 +2651,7 @@ vertical-align: -.125em;
 <li>A <strong>logistic regression</strong> of <code>home_win ~ year + format_period</code>, plus a <strong>likelihood-ratio (LR) test</strong> comparing it against <code>home_win ~ year</code> alone.</li>
 </ol>
 <p><strong>Why.</strong> The raw comparison (step 2) shows a big, significant drop at the 2014 boundary (−6.8 pp, p = 0.002). But HCA was <em>also</em> declining smoothly throughout, so any late-period dummy would look negative even if the format change did nothing. Step 3 separates the two stories: if the format dummies still matter after the year trend is in the model, the change had its own effect; if not, the drop is just the trend passing through the boundary.</p>
-<p><strong>What the results mean.</strong> Once the year trend is controlled, no format dummy is significant (all p ≈ 0.30) and the LR test for the dummies jointly is p = 0.197. The post-2014 playoff drop is fully consistent with the secular decline; the format change itself is exonerated.</p>
+<p><strong>What the results mean.</strong> Once the year trend is controlled, no format dummy is significant (all p between 0.24 and 0.30) and the LR test for the dummies jointly is p = 0.197. The post-2014 playoff drop is fully consistent with the secular decline; the format change itself is exonerated.</p>
 <p><strong>Why this chart.</strong> The format periods are shown as paired regular-season/playoff bars: discrete periods call for bars, not a line. The bars make the raw post-2014 drop look alarming on purpose; the section’s whole point is that the drop is just the secular trend passing through the boundary, which is why those bar levels are read against the year-trend model in the text rather than taken at face value. This is the canonical example in this project of why “raw difference between periods” and “effect of the boundary” are different questions: the same logic the era analysis (Section 14) applies to rule changes.</p>
 <hr>
 </section>
@@ -2665,7 +2665,7 @@ vertical-align: -.125em;
 <li><strong>Empirical-Bayes shrinkage</strong>: each franchise’s estimate is pulled toward the league mean in proportion to how noisy it is: weight = true_var / (true_var + sampling_var). Noisy estimates (few games) get pulled hard; precise ones barely move.</li>
 </ol>
 <p><strong>Why.</strong> Raw franchise HCA tables are leaderboard bait: small-sample franchises land at the extremes purely by luck (the Kansas City Kings’ +35.4 raw HCA rests on 82 home games). Shrinkage produces rankings you’d actually bet on, and the variance decomposition says upfront whether <em>any</em> real franchise differences exist before ranking them.</p>
-<p><strong>What the results mean.</strong> The two contexts give opposite answers. In the regular season, true between-franchise spread is real: observed SD 4.9 pp, only 30% of it sampling noise, true SD ≈ 4.1 pp. Denver (+26.8 shrunken) and Utah (+25.7) genuinely top the table, consistent with the altitude finding in Section 9. In the playoffs, sampling noise accounts for 100% of the observed spread: true between-franchise SD ≈ 0, and shrinkage collapses every franchise to the league mean (+26.9 pp). Utah’s raw +39.7 playoff HCA and the Clippers’ raw −3.6 are both indistinguishable from the same underlying value. No franchise has demonstrably special playoff home court.</p>
+<p><strong>What the results mean.</strong> The two contexts give opposite answers. In the regular season, true between-franchise spread is real: observed SD 4.9 pp, only 30% of it sampling noise, true SD ≈ 4.1 pp. Denver (+26.8 shrunken) and Utah (+25.7) genuinely top the table, consistent with the altitude finding in Section 9. In the playoffs, sampling noise accounts for 101% of the observed spread: true between-franchise SD ≈ 0, and shrinkage collapses every franchise to the league mean (+26.9 pp). Utah’s raw +39.7 playoff HCA and the Clippers’ raw −3.6 are both indistinguishable from the same underlying value. No franchise has demonstrably special playoff home court.</p>
 <p><strong>Why this chart.</strong> Two panels. A horizontal bar chart of franchise HCA, sorted and carrying 95% confidence whiskers, shows both the ranking <em>and</em> how much of it is noise: the whiskers are the visual antidote to leaderboard-reading. A reg-vs-playoff scatter with a y=x line shows whether the same franchises lead in both contexts (Section 30’s question), and the points’ error bars make the playoff cloud’s collapse to noise visible.</p>
 <hr>
 </section>
