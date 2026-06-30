@@ -676,6 +676,73 @@ def plot_hierarchical_posterior(posterior_df: pd.DataFrame, p_rank1: float,
     return path
 
 
+# ── 13b. Rank vs. z-rank, both with credible intervals ───────────────────────
+
+def plot_rank_vs_z_intervals(posterior_df: pd.DataFrame, top_n: int = 10) -> str:
+    """Two-panel interval dot plot of the top champions ordered by
+    opponent-adjusted margin (left) and by era-spread z-score (right), the same
+    point estimates as Appendix B. Each point is the champion's margin (or z)
+    with a 90% interval from the spread of its own playoff games, and a faint
+    band marks the leader's interval. The heavy overlap at the top of both
+    panels is the visual statement that the gaps between the leaders are within
+    the noise, whichever metric sets the order."""
+    need = {"adj_mean", "samp_var", "season_srs_sd", "year"}
+    if posterior_df is None or posterior_df.empty or not need <= set(posterior_df.columns):
+        return ""
+
+    z90 = 1.6448536
+    d0 = posterior_df.copy()
+    d0["margin"] = d0["adj_mean"]
+    d0["margin_half"] = z90 * np.sqrt(d0["samp_var"])
+    d0["z"] = d0["adj_mean"] / d0["season_srs_sd"]
+    d0["z_half"] = z90 * np.sqrt(d0["samp_var"]) / d0["season_srs_sd"]
+
+    fig, (axL, axR) = plt.subplots(
+        1, 2, figsize=(12, max(4.5, top_n * 0.42)), facecolor=BG)
+
+    def _panel(ax, value_col, half_col, xlabel, subtitle):
+        d = (d0.sort_values(value_col, ascending=False)
+             .head(top_n).iloc[::-1].reset_index(drop=True))
+        knicks_rank = int((d0[value_col] > float(
+            d0.loc[d0["year"] == SUBJECT_YEAR, value_col].iloc[0])).sum()) + 1
+        y = np.arange(len(d))
+        colors = [KNICKS_BLUE if k else GRAY for k in (d["year"] == SUBJECT_YEAR)]
+        lead = d.iloc[-1]   # best is last after the reverse
+        ax.axvspan(lead[value_col] - lead[half_col], lead[value_col] + lead[half_col],
+                   color=KNICKS_BLUE, alpha=0.06, zorder=0)
+        for yi, (_, r), c in zip(y, d.iterrows(), colors):
+            ax.errorbar(r[value_col], yi, xerr=r[half_col], fmt="none",
+                        ecolor=c, elinewidth=2.4, capsize=3, zorder=2)
+        ax.scatter(d[value_col], y, color=colors, s=42, zorder=3)
+        ax.set_yticks(y)
+        ax.set_yticklabels([short_label(int(yr)) for yr in d["year"]], fontsize=8.5)
+        ax.set_xlabel(xlabel, fontsize=9.5)
+        ax.set_title(subtitle, fontsize=10, fontweight="bold", color="#2c2c2a", pad=14)
+        ax.text(0.5, 1.006, f"Knicks rank #{knicks_rank} of {len(d0)} here",
+                transform=ax.transAxes, ha="center", va="bottom",
+                fontsize=8.5, color=GRAY)
+        _style(ax)
+        ax.grid(axis="y", visible=False)
+
+    _panel(axL, "margin", "margin_half",
+           "Opponent-adjusted margin (pts/game)", "By margin")
+    _panel(axR, "z", "z_half",
+           "Era-spread z-score (SD above an average team)", "By era spread (z)")
+
+    fig.suptitle("Ranked by margin or by era spread, the leaders' intervals overlap",
+                 fontsize=12, fontweight="bold", color="#2c2c2a", y=1.02)
+    handles = [
+        mpatches.Patch(color=KNICKS_BLUE, label="2025-26 Knicks"),
+        mpatches.Patch(color=GRAY, label="Other champions"),
+        mpatches.Patch(color=KNICKS_BLUE, alpha=0.12, label="Leader's 90% interval"),
+    ]
+    axR.legend(handles=handles, fontsize=8, framealpha=0.85, edgecolor="#ddd",
+               loc="lower right")
+    fig.tight_layout()
+    path = save_chart("knicks_2026_rank_vs_z_intervals.svg", OUTPUT_DIR, fig=fig)
+    return path
+
+
 # ── Orchestrator ─────────────────────────────────────────────────────────────
 
 # ── 12. Reg→playoff SRS elevation across the 2025-26 field ───────────────────
@@ -915,6 +982,9 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
             paths.append(p)
     if posterior_df is not None and not posterior_df.empty and p_rank1 is not None:
         p = plot_hierarchical_posterior(posterior_df, p_rank1)
+        if p:
+            paths.append(p)
+        p = plot_rank_vs_z_intervals(posterior_df)
         if p:
             paths.append(p)
     if (elo_table is not None and not elo_table.empty

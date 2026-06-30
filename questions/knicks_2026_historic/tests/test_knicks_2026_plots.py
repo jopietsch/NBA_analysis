@@ -212,6 +212,22 @@ def test_plot_hierarchical_posterior_empty(tmp_path, monkeypatch):
     assert plots.plot_hierarchical_posterior(pd.DataFrame(), p_rank1=0.1) == ""
 
 
+def test_plot_rank_vs_z_intervals(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    df = _mini_posterior_df().assign(
+        samp_var=[1.6, 1.4, 1.5, 1.3],
+        season_srs_sd=[5.9, 3.5, 4.6, 4.1],
+    )
+    path = plots.plot_rank_vs_z_intervals(df)
+    assert os.path.isfile(path)
+
+
+def test_plot_rank_vs_z_intervals_missing_cols(tmp_path, monkeypatch):
+    monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
+    # No samp_var / season_srs_sd columns → returns "" rather than raising.
+    assert plots.plot_rank_vs_z_intervals(_mini_posterior_df()) == ""
+
+
 def _mini_series_df() -> pd.DataFrame:
     return pd.DataFrame([
         {"opp_id": OPP1_ID, "n_games": 4, "raw_margin": 20.0,

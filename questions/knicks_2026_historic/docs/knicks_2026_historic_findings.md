@@ -380,6 +380,11 @@ The two lenses that move them, grading on the era's spread (5th) and weighting o
 Neither reading is wrong.
 They answer different questions, and an honest "most dominant ever" has to say which one it means.
 
+![Ranked by opponent-adjusted margin the Knicks lead; ranked by era-spread z-score they sit 5th behind the 2016-17 Warriors. But in both orderings the top champions' 90% intervals, taken from the spread of each team's own playoff games, overlap heavily, so the gap between the leaders is within the noise of a short playoff run.](../generated/images/knicks_2026_rank_vs_z_intervals.svg){#fig-rank-vs-z width=100%}
+
+Read the bars, not the order.
+Whichever metric sets the ranking, the leaders' intervals sit on top of one another: the ordering is real, but the distance between the top few is not something 19 games can resolve.
+
 ---
 
 ## 15. Limitations
@@ -505,6 +510,10 @@ The adjustments reshuffle it: the 2000-01 Lakers climb because their margin came
 And the bottom is mostly champions who won on a playoff run, not a dominant regular season: the 1999-2000 and 2001-02 Lakers and both mid-90s Rockets titles sit below zero, average-or-worse on paper before they caught fire in the spring, with the 2018-19 Raptors just above the line.
 The Knicks and the 2016-17 Warriors sit a hair apart at the top, close enough to call a tie, which is the same verdict §10 reaches the harder way.
 The **Z-rank** column tells the one story that breaks that tie against them: graded against how spread out their league was, the Knicks fall to 5th while the 2016-17 Warriors lead, the single adjustment in the table that unseats them (§14).
+Sort by **Z** and the order pivots on era rather than margin.
+Champions who stood far clear of a tightly-bunched league rise: the 2022-23 Nuggets and 1985-86 Celtics, ordinary on raw points, climb past teams that outscored them.
+The ones that slide are the big-margin champions from spread-out eras, where a wider field makes the same gap count for less: the Knicks themselves, the 1990-91 Bulls, the 2000-01 Lakers.
+It is the mirror image of the schedule-and-pace reshuffle above, and why §14 treats the spread as the one lens that unseats the Knicks.
 
 **The scores form a bell curve, not a handful of runaway giants.** The average champion sits at +3.29 points per game, and about 65% of them fall within one standard deviation (the typical spread of the scores) of that average.
 The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).

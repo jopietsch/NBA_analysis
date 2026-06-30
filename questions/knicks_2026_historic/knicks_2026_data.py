@@ -1477,7 +1477,9 @@ def build_adjusted_margin_samples(start_year: int = START_YEAR,
     hierarchical model: the mean is the point estimate, the sampling variance
     says how trustworthy each champion's mean is given how many games it rests on.
 
-    Columns: year, champion_id, adj_mean, n_games, samp_var.
+    Columns: year, champion_id, adj_mean, n_games, samp_var, season_srs_sd.
+    season_srs_sd is that season's spread of team SRS (§22), so the hierarchical
+    model can also express each champion's dominance in z-score terms.
     """
     rows = []
     for year in range(start_year, end_year + 1):
@@ -1493,11 +1495,12 @@ def build_adjusted_margin_samples(start_year: int = START_YEAR,
         if g.size < 2:
             continue
         rows.append({
-            "year":        year,
-            "champion_id": champ,
-            "adj_mean":    float(g.mean()),
-            "n_games":     int(g.size),
-            "samp_var":    float(g.var(ddof=1) / g.size),
+            "year":          year,
+            "champion_id":   champ,
+            "adj_mean":      float(g.mean()),
+            "n_games":       int(g.size),
+            "samp_var":      float(g.var(ddof=1) / g.size),
+            "season_srs_sd": float(srs.std(ddof=0)),
         })
     return pd.DataFrame(rows)
 
