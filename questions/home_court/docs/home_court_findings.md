@@ -15,9 +15,10 @@ What drove it down?
 And what didn't?**
 
 A few things people assume, settled up front:
- - Did the rise in three-point shooting play a part? Yes, a big one.
- - Was it better travel, or load management? Only a little.
- - Was it smaller crowds? No: arenas are as full as ever.
+
+- Did the rise in three-point shooting play a part? Yes, a big one.
+- Was it better travel, or load management? Only a little.
+- Was it smaller crowds? No: arenas are as full as ever.
 
 The home team's win rate has fallen from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs.
 Most of that is a slow, steady fade, with two stretches where it briefly sped up.
