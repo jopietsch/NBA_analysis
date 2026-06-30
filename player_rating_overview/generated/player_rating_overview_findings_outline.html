@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-29">
+<meta name="dcterms.date" content="2026-06-30">
 
 <title>Player Rating Overview: Findings Outline</title>
 <style>
@@ -2174,19 +2174,21 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#structure-matches-the-11-sections-in-the-findings" id="toc-structure-matches-the-11-sections-in-the-findings" class="nav-link active" data-scroll-target="#structure-matches-the-11-sections-in-the-findings">Structure (matches the 11 sections in the findings)</a>
+  <li><a href="#structure-matches-the-12-sections-in-the-findings" id="toc-structure-matches-the-12-sections-in-the-findings" class="nav-link active" data-scroll-target="#structure-matches-the-12-sections-in-the-findings">Structure (matches the 12 sections in the findings)</a>
   <ul class="collapse">
-  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">§ 1. Introduction</a></li>
-  <li><a href="#the-landscape-of-player-rating" id="toc-the-landscape-of-player-rating" class="nav-link" data-scroll-target="#the-landscape-of-player-rating">§ 2. The landscape of player rating</a></li>
-  <li><a href="#do-the-systems-agree" id="toc-do-the-systems-agree" class="nav-link" data-scroll-target="#do-the-systems-agree">§ 3. Do the systems agree?</a></li>
-  <li><a href="#what-the-field-has-learned-about-evaluating-metrics" id="toc-what-the-field-has-learned-about-evaluating-metrics" class="nav-link" data-scroll-target="#what-the-field-has-learned-about-evaluating-metrics">§ 4. What the field has learned about evaluating metrics</a></li>
-  <li><a href="#what-each-system-uniquely-sees" id="toc-what-each-system-uniquely-sees" class="nav-link" data-scroll-target="#what-each-system-uniquely-sees">§ 5. What each system uniquely sees</a></li>
-  <li><a href="#the-two-uber-ratings" id="toc-the-two-uber-ratings" class="nav-link" data-scroll-target="#the-two-uber-ratings">§ 6. The two uber ratings</a></li>
-  <li><a href="#stars-matter-more-than-rank-implies-distribution-section" id="toc-stars-matter-more-than-rank-implies-distribution-section" class="nav-link" data-scroll-target="#stars-matter-more-than-rank-implies-distribution-section">§ 7. Stars matter more than rank implies (distribution section)</a></li>
-  <li><a href="#who-lands-in-the-top-20" id="toc-who-lands-in-the-top-20" class="nav-link" data-scroll-target="#who-lands-in-the-top-20">§ 8. Who lands in the top 20</a></li>
-  <li><a href="#a-note-on-the-recomputed-formulas" id="toc-a-note-on-the-recomputed-formulas" class="nav-link" data-scroll-target="#a-note-on-the-recomputed-formulas">§ 9. A note on the recomputed formulas</a></li>
-  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§ 10. Limitations</a></li>
-  <li><a href="#what-a-bayesian-lens-would-add" id="toc-what-a-bayesian-lens-would-add" class="nav-link" data-scroll-target="#what-a-bayesian-lens-would-add">§ 11. What a Bayesian lens would add</a></li>
+  <li><a href="#intro-question-driven-before-1" id="toc-intro-question-driven-before-1" class="nav-link" data-scroll-target="#intro-question-driven-before-1">Intro (question-driven; before §1)</a></li>
+  <li><a href="#the-landscape-of-player-rating" id="toc-the-landscape-of-player-rating" class="nav-link" data-scroll-target="#the-landscape-of-player-rating">§ 1. The landscape of player rating</a></li>
+  <li><a href="#do-the-systems-agree" id="toc-do-the-systems-agree" class="nav-link" data-scroll-target="#do-the-systems-agree">§ 2. Do the systems agree?</a></li>
+  <li><a href="#what-the-field-has-learned-about-evaluating-these-metrics" id="toc-what-the-field-has-learned-about-evaluating-these-metrics" class="nav-link" data-scroll-target="#what-the-field-has-learned-about-evaluating-these-metrics">§ 3. What the field has learned about evaluating these metrics</a></li>
+  <li><a href="#what-each-system-uniquely-sees" id="toc-what-each-system-uniquely-sees" class="nav-link" data-scroll-target="#what-each-system-uniquely-sees">§ 4. What each system uniquely sees</a></li>
+  <li><a href="#the-two-uber-ratings" id="toc-the-two-uber-ratings" class="nav-link" data-scroll-target="#the-two-uber-ratings">§ 5. The two uber ratings</a></li>
+  <li><a href="#stars-matter-more-than-rank-implies-distribution-section" id="toc-stars-matter-more-than-rank-implies-distribution-section" class="nav-link" data-scroll-target="#stars-matter-more-than-rank-implies-distribution-section">§ 6. Stars matter more than rank implies (distribution section)</a></li>
+  <li><a href="#who-lands-in-the-top-20" id="toc-who-lands-in-the-top-20" class="nav-link" data-scroll-target="#who-lands-in-the-top-20">§ 7. Who lands in the top 20</a></li>
+  <li><a href="#who-rose-and-fell-in-the-playoffs" id="toc-who-rose-and-fell-in-the-playoffs" class="nav-link" data-scroll-target="#who-rose-and-fell-in-the-playoffs">§ 8. Who rose and fell in the playoffs</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">§ 9. Summary</a></li>
+  <li><a href="#a-note-on-the-recomputed-formulas" id="toc-a-note-on-the-recomputed-formulas" class="nav-link" data-scroll-target="#a-note-on-the-recomputed-formulas">§ 10. A note on the recomputed formulas</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">§ 11. Limitations</a></li>
+  <li><a href="#what-a-bayesian-lens-would-add" id="toc-what-a-bayesian-lens-would-add" class="nav-link" data-scroll-target="#what-a-bayesian-lens-would-add">§ 12. What a Bayesian lens would add</a></li>
   </ul></li>
   <li><a href="#key-numbers-from-results.md" id="toc-key-numbers-from-results.md" class="nav-link" data-scroll-target="#key-numbers-from-results.md">Key numbers (from results.md)</a></li>
   </ul>
@@ -2213,7 +2215,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 29, 2026</p>
+      <p class="date">June 30, 2026</p>
     </div>
   </div>
   
@@ -2228,91 +2230,112 @@ vertical-align: -.125em;
 <p style="text-align:center">
 <em>Draft</em>
 </p>
-<p>Internal outline. Cross-referenced to player_rating_overview_results.md. Technical shorthand fine here. Reflects the current 14-box-score-system pipeline (human rankings removed; impact metrics surveyed but not recomputed).</p>
+<p>Internal outline. Cross-referenced to player_rating_overview_results.md. Technical shorthand fine here. Reflects the current pipeline: 14 recomputed box-score systems plus a from-scratch RAPM (bare single-season + prior-informed multi-year RAPM_MY); other impact metrics and human rankings surveyed but not recomputed.</p>
 <hr>
-<section id="structure-matches-the-11-sections-in-the-findings" class="level2">
-<h2 class="anchored" data-anchor-id="structure-matches-the-11-sections-in-the-findings">Structure (matches the 11 sections in the findings)</h2>
-<section id="introduction" class="level3">
-<h3 class="anchored" data-anchor-id="introduction">§ 1. Introduction</h3>
+<section id="structure-matches-the-12-sections-in-the-findings" class="level2">
+<h2 class="anchored" data-anchor-id="structure-matches-the-12-sections-in-the-findings">Structure (matches the 12 sections in the findings)</h2>
+<section id="intro-question-driven-before-1" class="level3">
+<h3 class="anchored" data-anchor-id="intro-question-driven-before-1">Intro (question-driven; before §1)</h3>
 <ul>
-<li>Hook: ordinal rank compresses; the gap between #1 and #10 is not the gap between #10 and #20.</li>
-<li>Thesis: two combined ratings answer two questions, what the systems agree on vs. which combination best predicts team wins.</li>
-<li>Testbed: 2024-25; 14 box-score systems recomputed; impact metrics and human rankings surveyed but not included.</li>
+<li>Hook: the rating that best describes a finished season forecasts the next worst. PER ~64% describe vs ~25% forecast, averaged across 30 seasons.</li>
+<li>Three questions: (1) do the systems agree? (2) what does each uniquely capture? (3) how should they be combined?</li>
+<li>Settled up front: no single best system; agree at the top, diverge below; value is top-heavy (gap #1→#10 &gt;&gt; #10→#50).</li>
+<li>Testbed 2024-25; 14 box-score systems + RAPM/RAPM_MY recomputed; other impact + human rankings surveyed only. Two panels span 30 seasons back to 1996-97.</li>
 </ul>
 </section>
 <section id="the-landscape-of-player-rating" class="level3">
-<h3 class="anchored" data-anchor-id="the-landscape-of-player-rating">§ 2. The landscape of player rating</h3>
+<h3 class="anchored" data-anchor-id="the-landscape-of-player-rating">§ 1. The landscape of player rating</h3>
 <ul>
 <li>Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.</li>
-<li>Impact metrics (surveyed, not recomputed): RAPTOR, EPM, LEBRON, DARKO, DRIP, ESPN RPM. RAPM backbone + box-score prior; noise/regularization.</li>
+<li>Impact metrics (surveyed): RAPTOR, EPM, LEBRON, DARKO, DRIP, ESPN RPM. RAPM backbone + box-score prior; noise/regularization.</li>
 <li>Human rankings (surveyed, not included): MVP votes, All-NBA, media top-100.</li>
 <li>Practitioner trust (external, cited in resources bibliography): HoopsHype survey of 29 execs, DARKO top at 8 votes; Dunks &amp; Threes retrodiction order EPM &gt; RPM &gt; RAPTOR &gt; BPM 2.0.</li>
 </ul>
 </section>
 <section id="do-the-systems-agree" class="level3">
-<h3 class="anchored" data-anchor-id="do-the-systems-agree">§ 3. Do the systems agree?</h3>
+<h3 class="anchored" data-anchor-id="do-the-systems-agree">§ 2. Do the systems agree?</h3>
 <ul>
 <li>Spearman matrix. Tight: PER-Game Score 0.831, BPM-VORP 0.972. Moderate: PER-WS 0.759, WS-WS/48 0.695. Loose: PER-BPM 0.489, Game Score-BPM 0.469.</li>
-<li>Player-level divergence even where overall correlation is high: WS favors efficient bigs (Sabonis +2.66, Zubac +2.18 vs. consensus); PER favors high-usage scorers (Zion +1.97, Porziņģis +1.53).</li>
+<li>Player-level divergence even where overall correlation is high: WS favors efficient bigs (Domantas Sabonis, Nikola Jokić); PER favors high-usage scorers (Zion Williamson, Anthony Davis).</li>
+<li>RAPM sits apart: agrees with box scores at 0.22; bare 2024-25 puts reserve Isaiah Joe at #201 in consensus. Fixed RAPM_MY agrees with consensus 0.58 (up from 0.37), top Shai Gilgeous-Alexander/Giannis Antetokounmpo; RAPM_MY (combined only) feeds the consensus.</li>
 <li>Chart: rank-agreement heatmap.</li>
 </ul>
 </section>
-<section id="what-the-field-has-learned-about-evaluating-metrics" class="level3">
-<h3 class="anchored" data-anchor-id="what-the-field-has-learned-about-evaluating-metrics">§ 4. What the field has learned about evaluating metrics</h3>
+<section id="what-the-field-has-learned-about-evaluating-these-metrics" class="level3">
+<h3 class="anchored" data-anchor-id="what-the-field-has-learned-about-evaluating-these-metrics">§ 3. What the field has learned about evaluating these metrics</h3>
 <ul>
-<li>Two tests: retrodiction (first half predicts second half) and team-wins prediction.</li>
-<li>Both reward RAPM backbone + calibrated box-score prior.</li>
-<li>Academic caveat: complex metrics do not reliably beat simple ones as inputs to downstream salary/wins models.</li>
+<li>Two community tests: retrodiction (1st-half → 2nd-half outcomes) and team-wins prediction; both reward a RAPM backbone + calibrated box-score prior. Academic caveat: complex metrics don’t reliably beat simple ones as inputs to downstream salary/wins models.</li>
+<li>Direct describe test (held-out teams, 2024-25): PER best, ~72% of team point-diff, above the plus/minus metrics.</li>
+<li>Forecast test (prior-season ratings predict this season): order flips, PER ~15%, plus/minus best (BPM ~50%). Coverage ~89%.</li>
+<li>Multi-season panel (30 seasons / 29 handoffs back to 1996-97): PER describes ~64%, forecasts ~25%; best forecaster Game Score ~42%; BPM beats PER forecasting 20/29 handoffs.</li>
+<li>Impact-era panel (13 seasons from 2013-14, box scores vs RAPM): bare RAPM forecasts 9/10 (~17%, describe ~34% but mechanical), RAPM_MY 8/10 (~24%), both below box scores; top Game Score ~45%.</li>
+<li>Stability (year-over-year): Game Score retains 68% of its top 20, PER 64% (chance ~5%); steadiest Game Score 0.85, jumpiest BPM 0.70; 29 pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; BPM jumpy but better).</li>
+<li>Charts: retrodiction, next-season retrodiction, panel describe-vs-forecast, impact panel, rating stability.</li>
 </ul>
 </section>
 <section id="what-each-system-uniquely-sees" class="level3">
-<h3 class="anchored" data-anchor-id="what-each-system-uniquely-sees">§ 5. What each system uniquely sees</h3>
+<h3 class="anchored" data-anchor-id="what-each-system-uniquely-sees">§ 4. What each system uniquely sees</h3>
 <ul>
-<li>Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.</li>
-<li>System-outliers chart: who each system rates above/below consensus (e.g. DBPM discounts the offensive stars: Jokić -3.44, Giannis -3.38, SGA -3.27).</li>
+<li>Unique R² (heavy overlap): BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.</li>
+<li>System-outliers chart: who each system rates above/below consensus.</li>
 </ul>
 </section>
 <section id="the-two-uber-ratings" class="level3">
-<h3 class="anchored" data-anchor-id="the-two-uber-ratings">§ 6. The two uber ratings</h3>
+<h3 class="anchored" data-anchor-id="the-two-uber-ratings">§ 5. The two uber ratings</h3>
 <ul>
-<li>Consensus (average normalized score). Top 5: Jokić 2.92, SGA 2.72, Giannis 2.31, Harden 1.65, Young 1.62.</li>
-<li>Wins-predictive (weighted by team-wins prediction). Top 5: Jokić 3.72, SGA 3.45, Giannis 3.24, Harden 2.42, Daniels 2.37.</li>
-<li>Consensus vs. wins-predictive Spearman 0.925. Risers: SGA +1.41, Giannis +1.39, Gafford +0.97, Wembanyama +0.91, Caruso +0.90. Fallers: Micic -1.23, AJ Johnson -1.14, Cody Williams -1.04.</li>
-<li>Illustration: Jokić tops both; SGA close second and the largest riser into wins-predictive.</li>
+<li>Consensus (average normalized score). Top 5: Nikola Jokić 2.92, Shai Gilgeous-Alexander 2.72, Giannis Antetokounmpo 2.31, Tyrese Haliburton 1.65, James Harden 1.62.</li>
+<li>Wins-predictive (weighted by team-wins prediction). Top: Giannis Antetokounmpo 3.72, Shai Gilgeous-Alexander 3.45.</li>
+<li>Consensus vs. wins-predictive Spearman 0.925. Top riser Giannis Antetokounmpo +1.41; top faller Dillon Jones -1.23. Wins-predictive lifts stars on winning teams, discounts production on losing teams.</li>
 </ul>
 </section>
 <section id="stars-matter-more-than-rank-implies-distribution-section" class="level3">
-<h3 class="anchored" data-anchor-id="stars-matter-more-than-rank-implies-distribution-section">§ 7. Stars matter more than rank implies (distribution section)</h3>
+<h3 class="anchored" data-anchor-id="stars-matter-more-than-rank-implies-distribution-section">§ 6. Stars matter more than rank implies (distribution section)</h3>
 <ul>
-<li>Rate metrics spread evenly: PER top-5% share 8.5% (Gini 0.159). Cumulative metrics top-heavy: WS top-5% 14.8% (Gini 0.363), VORP 31.9% (Gini 0.749); BPM also high (32.2%, Gini 0.767).</li>
-<li>Charts: all-systems distributions, Gini by system, rank-value curves, ordinal-vs-value gap.</li>
-<li>Point: cumulative metrics’ high Gini is how much they disagree with ordinal rank.</li>
+<li>Rate metrics spread evenly: PER top-5% share 8.5%. Cumulative top-heavy: WS top-5% ~15%, VORP ~32%.</li>
+<li>Power-law steepness (alpha): PER 0.13 (shallow), Consensus 0.31, Wins-Pred 0.32, VORP 0.36 (steepest). Two groups: straight-line power laws vs. benders (plus/minus rate metrics).</li>
+<li>RAPM full distribution (13 seasons, 4678 player-seasons, 49% below 0) is a symmetric bell, not a power law; VORP leans right (the tail a power law needs).</li>
+<li>Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini 0.756 &gt; WS 0.363, an artifact, not real top-heaviness).</li>
+<li>Charts: all-systems distributions, distribution shape, power-law small multiples, power-law fits, gini, rank-value curves, ordinal-vs-value gap.</li>
 </ul>
 </section>
 <section id="who-lands-in-the-top-20" class="level3">
-<h3 class="anchored" data-anchor-id="who-lands-in-the-top-20">§ 8. Who lands in the top 20</h3>
+<h3 class="anchored" data-anchor-id="who-lands-in-the-top-20">§ 7. Who lands in the top 20</h3>
 <ul>
 <li>Top-20-by-system table across the 14 systems; rank-1-to-rank-20 gap as a concentration read.</li>
 </ul>
 </section>
-<section id="a-note-on-the-recomputed-formulas" class="level3">
-<h3 class="anchored" data-anchor-id="a-note-on-the-recomputed-formulas">§ 9. A note on the recomputed formulas</h3>
+<section id="who-rose-and-fell-in-the-playoffs" class="level3">
+<h3 class="anchored" data-anchor-id="who-rose-and-fell-in-the-playoffs">§ 8. Who rose and fell in the playoffs</h3>
 <ul>
-<li>PER cleanest (mean ~15, Jokić high 20s). WS/BPM/VORP are approximations; absolute values differ from BBR.</li>
-<li>VORP inflation for high-steal defenders: VORP rates Daniels further above consensus than any player (+2.98); per-100 denominator uses player-possessions not team-possessions. Also Ellis, Wallace, Dunn.</li>
+<li>Box-score rate metrics recomputed on playoff games only (impact metrics can’t: a playoff run is too few games). 96 players ≥ 150 playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).</li>
+<li>Risers: Gary Trent Jr., Kawhi Leonard, Paolo Banchero. Fallers: Michael Porter Jr., Austin Reaves, Miles McBride, incl. regular-season consensus #1 Nikola Jokić. One postseason, not proof.</li>
+</ul>
+</section>
+<section id="summary" class="level3">
+<h3 class="anchored" data-anchor-id="summary">§ 9. Summary</h3>
+<ul>
+<li>Re-answers the three questions: agree at the top / each captures less uniquely than it looks (heavy overlap) / two combined ratings agreeing at 0.925.</li>
+<li>Through-line: value is top-heavy. Caveat: single-season cross-system comparison is a snapshot; the describe-vs-forecast and stability panels (30 seasons) are the firmer results.</li>
+</ul>
+</section>
+<section id="a-note-on-the-recomputed-formulas" class="level3">
+<h3 class="anchored" data-anchor-id="a-note-on-the-recomputed-formulas">§ 10. A note on the recomputed formulas</h3>
+<ul>
+<li>PER cleanest (mean ~15, Jokić low 30s). WS/BPM/VORP are approximations; absolute values differ from BBR.</li>
+<li>VORP inflation for high-steal defenders: VORP rates Dyson Daniels further above consensus than any player (per-100 denominator uses player-possessions not team-possessions). Also Ellis, Wallace, Dunn.</li>
 </ul>
 </section>
 <section id="limitations" class="level3">
-<h3 class="anchored" data-anchor-id="limitations">§ 10. Limitations</h3>
+<h3 class="anchored" data-anchor-id="limitations">§ 11. Limitations</h3>
 <ul>
-<li>Single-season testbed; multi-season needed for stability.</li>
-<li>RAPM not recomputed; only impact signal is BPM as a box-score proxy.</li>
-<li>Proprietary/tracking blind spot (Second Spectrum, Synergy, franchise models).</li>
+<li>Single-season cross-system testbed; only the describe-vs-forecast and stability panels reach across 30 seasons.</li>
+<li>RAPM now computed from play-by-play (2024-25 back to 2013-14, 554 players in 2024-25): bare = noisy, no prior; RAPM_MY = 3 pooled seasons + BPM prior (consensus corr 0.58); neither beats box scores at forecasting. No tracking data, so can’t match EPM/LEBRON.</li>
+<li>Tracking/team-internal blind spot (Second Spectrum, Synergy, franchise models).</li>
 <li>Playoff small-sample limit for RAPM-based metrics.</li>
 </ul>
 </section>
 <section id="what-a-bayesian-lens-would-add" class="level3">
-<h3 class="anchored" data-anchor-id="what-a-bayesian-lens-would-add">§ 11. What a Bayesian lens would add</h3>
+<h3 class="anchored" data-anchor-id="what-a-bayesian-lens-would-add">§ 12. What a Bayesian lens would add</h3>
 <ul>
 <li>Uncertainty ranges: single-number metrics hide a ~2-3 pts/100 band; apparent 8th-vs-12th disputes often within it.</li>
 <li>Playoff vs. regular season: update the full-season prior with playoff lineup data; posterior barely shifts on 6 games, more on a Finals run.</li>
@@ -2324,13 +2347,15 @@ vertical-align: -.125em;
 <section id="key-numbers-from-results.md" class="level2">
 <h2 class="anchored" data-anchor-id="key-numbers-from-results.md">Key numbers (from results.md)</h2>
 <ul>
-<li>Players: 569 total, 375 qualified (&gt;= 500 min). Systems present: 14.</li>
+<li>Players: 569 total, 375 qualified (≥ 500 min). Systems present: 14.</li>
 <li>Correlations: PER-Game Score 0.831, PER-WS 0.759, WS-WS/48 0.695, PER-BPM 0.489, Game Score-BPM 0.469, BPM-VORP 0.972.</li>
-<li>Consensus top 5: Jokić 2.92, SGA 2.72, Giannis 2.31, Harden 1.65, Young 1.62.</li>
-<li>Wins-predictive top 5: Jokić 3.72, SGA 3.45, Giannis 3.24, Harden 2.42, Daniels 2.37.</li>
-<li>Consensus vs. wins-predictive Spearman: 0.925. Top riser SGA +1.41; top faller Micic -1.23.</li>
-<li>Concentration (top-5% share / Gini): PER 8.5% / 0.159, WS 14.8% / 0.363, VORP 31.9% / 0.749, BPM 32.2% / 0.767.</li>
+<li>RAPM: box-score corr 0.22 (bare), consensus corr 0.37 (bare) → 0.58 (RAPM_MY).</li>
+<li>Describe vs forecast (panel, 30 seasons): PER 64% / 25%; best forecaster Game Score 42%.</li>
+<li>Consensus top 5: Nikola Jokić 2.92, Shai Gilgeous-Alexander 2.72, Giannis Antetokounmpo 2.31, Tyrese Haliburton 1.65, James Harden 1.62.</li>
+<li>Consensus vs. wins-predictive Spearman: 0.925. Top riser Giannis Antetokounmpo +1.41; top faller Dillon Jones -1.23.</li>
+<li>Concentration: PER top-5% 8.5%; Gini cross-check Consensus 0.756 vs WS 0.363 (artifact).</li>
 <li>Unique R²: BPM/OBPM/DBPM 1.000; PER 0.893; Game Score 0.890; VORP 0.873; WS 0.868; WS/48 0.839.</li>
+<li>Playoffs: 96 players ≥ 150 min; top riser Gary Trent Jr., top faller Michael Porter Jr..</li>
 </ul>
 </section>
 
