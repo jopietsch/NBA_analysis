@@ -8,27 +8,20 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-A guide to every analysis that produces output in `knicks_2026_historic_results.md`: the data it uses,
-the statistical approach, why that approach was chosen, what the results mean, and
-(where a section has one) **why its figure takes the form it does**. Sections appear
-in the same order as `knicks_2026_historic_results.md`. The figures themselves are embedded in `knicks_2026_historic_findings.md`;
-here we only explain the reasoning behind each choice. Unlike `knicks_2026_historic_findings.md`, this
-document uses statistical terminology freely; it is the methods companion, not the
-narrative report.
+A guide to every analysis that produces output in `knicks_2026_historic_results.md`: the data it uses, the statistical approach, why that approach was chosen, what the results mean, and (where a section has one) **why its figure takes the form it does**.
+Sections appear in the same order as `knicks_2026_historic_results.md`.
+The figures themselves are embedded in `knicks_2026_historic_findings.md`; here we only explain the reasoning behind each choice.
+Unlike `knicks_2026_historic_findings.md`, this document uses statistical terminology freely; it is the methods companion, not the narrative report.
 
 ---
 
 ## 0. The Comparison Dataset (`build_champions_table`, `build_conference_gap_table`)
 
-**The data.** Every comparison (Sections 1, 4–9) runs against one of two
-tables built by looping over all << f("raw.n_champions") >> NBA seasons from 1983–84 through 2025–26:
+**The data.** Every comparison (Sections 1, 4–9) runs against one of two tables built by looping over all << f("raw.n_champions") >> NBA seasons from 1983–84 through 2025–26:
 
-Note that the 2025-26 Knicks won the title (`identify_champion` returns the
-Knicks for 2026), so they are themselves one of the << f("raw.n_champions") >> rows. Every percentile in
-the report ranks the Knicks against a set that *includes their own season*: the
-count and the denominator both contain them. This is why a "100th percentile /
-1st of << f("raw.n_champions") >>" reads as "no other champion did better," not "better than << f("raw.n_champions") >> other
-teams."
+Note that the 2025-26 Knicks won the title (`identify_champion` returns the Knicks for 2026), so they are themselves one of the << f("raw.n_champions") >> rows.
+Every percentile in the report ranks the Knicks against a set that *includes their own season*: the count and the denominator both contain them.
+This is why a "100th percentile / 1st of << f("raw.n_champions") >>" reads as "no other champion did better," not "better than << f("raw.n_champions") >> other teams."
 
 `build_champions_table` produces one row per season with:
 
@@ -56,63 +49,49 @@ teams."
 - `srs_gap`: `west_srs − east_srs` (positive = West stronger)
 - `east_h2h_wr`: East win rate in games played cross-conference
 
-**Why loop from cache, not from the API.** All CSVs were pre-fetched once by
-`fetch_data.py` and stored in `nba_analysis/cache/`. The loop reads from disk
-only. This makes the analysis fully reproducible offline and fast enough to
-re-run in under a minute.
+**Why loop from cache, not from the API.** All CSVs were pre-fetched once by `fetch_data.py` and stored in `nba_analysis/cache/`.
+The loop reads from disk only.
+This makes the analysis fully reproducible offline and fast enough to re-run in under a minute.
 
-**Pre-1997 PLUS_MINUS.** The NBA.com API (`LeagueGameFinder`) returns null
-PLUS_MINUS for seasons before 1997. The helper `fill_plus_minus` (in
-`nbakit/data.py`) fills these from `PTS`: for each `GAME_ID`, the two rows are
-swapped to give each team the opponent's score, and `PLUS_MINUS = PTS − OPP_PTS`
-is computed exactly. This is algebraically exact for game margins. Without this
-fix, 13 of 43 seasons would have NaN margins and could not appear in the
-percentile comparisons.
+**Pre-1997 PLUS_MINUS.** The NBA.com API (`LeagueGameFinder`) returns null PLUS_MINUS for seasons before 1997.
+The helper `fill_plus_minus` (in `nbakit/data.py`) fills these from `PTS`: for each `GAME_ID`, the two rows are swapped to give each team the opponent's score, and `PLUS_MINUS = PTS − OPP_PTS` is computed exactly.
+This is algebraically exact for game margins.
+Without this fix, 13 of 43 seasons would have NaN margins and could not appear in the percentile comparisons.
 
 ---
 
 ## 1. The Raw Claim (`run_raw_claim`)
 
-**The data.** The Knicks' 2025–26 playoff game log (from cache) and the
-`champions` table spanning 43 seasons.
+**The data.** The Knicks' 2025–26 playoff game log (from cache) and the `champions` table spanning 43 seasons.
 
-**The approach.** Two metrics (win rate and average margin) are computed for
-the Knicks and each is fed to `_pct_rank`:
+**The approach.** Two metrics (win rate and average margin) are computed for the Knicks and each is fed to `_pct_rank`:
 
 ```
 _pct_rank(series, value, ascending=True)
     → (series ≤ value).mean() × 100
 ```
 
-This is the **empirical percentile rank**: the fraction of << f("raw.n_champions") >> champions whose
-value is at or below the Knicks' value, expressed as a percentage. The
-`ascending=True` convention means higher values are better (a value at the 95th
-percentile is better than 95% of champions).
+This is the **empirical percentile rank**: the fraction of << f("raw.n_champions") >> champions whose value is at or below the Knicks' value, expressed as a percentage.
+The `ascending=True` convention means higher values are better (a value at the 95th percentile is better than 95% of champions).
 
-No distributional assumptions are made; only counting. With << f("raw.n_champions") >> data points, the
-finest percentile resolution is 1/43 ≈ 2.3 pp; exact ties are counted as "≤",
-so achieving the best historical value yields 100th percentile.
+No distributional assumptions are made; only counting.
+With << f("raw.n_champions") >> data points, the finest percentile resolution is 1/43 ≈ 2.3 pp; exact ties are counted as "≤", so achieving the best historical value yields 100th percentile.
 
-**What the results mean.** Win rate << f("raw.win_rate") >> sits at the << f("raw.win_rate_pct", "{:.0f}") >>th percentile (better
-than 38 of << f("raw.n_champions") >> champions; best ever is the 2016–17 Warriors at << f("raw.win_rate_best") >>). Average
-margin << f("raw.margin") >> pts/game is the << f("raw.margin_pct", "{:.0f}") >>th percentile, the highest ever recorded in the
-dataset. The margin claim is the strongest of the two raw numbers.
+**What the results mean.** Win rate << f("raw.win_rate") >> sits at the << f("raw.win_rate_pct", "{:.0f}") >>th percentile (better than 38 of << f("raw.n_champions") >> champions; best ever is the 2016–17 Warriors at << f("raw.win_rate_best") >>).
+Average margin << f("raw.margin") >> pts/game is the << f("raw.margin_pct", "{:.0f}") >>th percentile, the highest ever recorded in the dataset.
+The margin claim is the strongest of the two raw numbers.
 
-**Why these two charts.** Both are horizontal bar charts of all << f("raw.n_champions") >> champions
-ranked from lowest to highest on the metric, with the Knicks bar highlighted in
-blue. A ranked bar chart answers two questions simultaneously: "where does this
-team rank?" (bar position) and "how unusual is the gap from the next-best?"
-(spacing). Horizontal orientation keeps the << f("raw.n_champions") >> season labels readable. Vertical
-wouldn't; << f("raw.n_champions") >> narrow columns of year labels would overlap. The Knicks bar is
-labeled with the value; the chart is the main visual for the report's §2 "The
-Raw Numbers."
+**Why these two charts.** Both are horizontal bar charts of all << f("raw.n_champions") >> champions ranked from lowest to highest on the metric, with the Knicks bar highlighted in blue.
+A ranked bar chart answers two questions simultaneously: "where does this team rank?" (bar position) and "how unusual is the gap from the next-best?" (spacing).
+Horizontal orientation keeps the << f("raw.n_champions") >> season labels readable.
+Vertical wouldn't; << f("raw.n_champions") >> narrow columns of year labels would overlap.
+The Knicks bar is labeled with the value; the chart is the main visual for the report's §2 "The Raw Numbers."
 
 ---
 
 ## 2. Conference Context, 2025-26 (`run_east_weakness`)
 
-**The data.** 2025–26 regular-season game logs and standings (one row per team
-with `TeamID`, `Conference`, `TeamCity`, `TeamName`).
+**The data.** 2025–26 regular-season game logs and standings (one row per team with `TeamID`, `Conference`, `TeamCity`, `TeamName`).
 
 **The approach.** Three computations using that season's data only:
 
@@ -125,23 +104,17 @@ with `TeamID`, `Conference`, `TeamCity`, `TeamName`).
    the standings `Conference` column), and counts East wins divided by total
    cross-conference games. Each game contributes one East-win or one West-win.
 
-Additionally, `compute_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)` is used
-here to show the Knicks' specific opponents and their SRS values. It finds every
-unique opponent TEAM_ID by inspecting the two-row-per-GAME_ID structure of the
-playoff logs: for each game, all team IDs except `KNICKS_TEAM_ID` are collected,
-then each opponent's SRS is looked up from the regular-season series.
+Additionally, `compute_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)` is used here to show the Knicks' specific opponents and their SRS values.
+It finds every unique opponent TEAM_ID by inspecting the two-row-per-GAME_ID structure of the playoff logs: for each game, all team IDs except `KNICKS_TEAM_ID` are collected, then each opponent's SRS is looked up from the regular-season series.
 
-**What the results mean.** The East SRS average was << f("gap.conf.east") |tm >> pts/game vs. West
-<< f("gap.conf.west") >> (gap << f("gap.west_east") >>). The inter-conference win rate was << f("gap.east_h2h") >>, very close to parity.
+**What the results mean.** The East SRS average was << f("gap.conf.east") |tm >> pts/game vs. West << f("gap.conf.west") >> (gap << f("gap.west_east") >>).
+The inter-conference win rate was << f("gap.east_h2h") >>, very close to parity.
 The Knicks' opponents had SRS values from << f("field.76ers.reg_srs") |tm >> (76ers) to << f("field.spurs.reg_srs") >> (Spurs).
 
-**Why this chart (team SRS bar).** The team SRS bar chart (all 30 teams on one
-axis, East bars in green, West in blue) is the direct visualization of the
-conference-averages computation. The eye instantly compares the two conference
-clouds. An alternative (two box plots, one per conference) would show distributions
-better but would obscure where specific opponents (the Spurs, Cavaliers) sit.
-Because the Knicks' opponents are all identified by name in the text, the
-full-team bar chart gives context for where each one sits relative to all 30 teams.
+**Why this chart (team SRS bar).** The team SRS bar chart (all 30 teams on one axis, East bars in green, West in blue) is the direct visualization of the conference-averages computation.
+The eye instantly compares the two conference clouds.
+An alternative (two box plots, one per conference) would show distributions better but would obscure where specific opponents (the Spurs, Cavaliers) sit.
+Because the Knicks' opponents are all identified by name in the text, the full-team bar chart gives context for where each one sits relative to all 30 teams.
 
 ---
 
@@ -158,69 +131,44 @@ full-team bar chart gives context for where each one sits relative to all 30 tea
    - 95% CI on the mean gap (t-distribution with df = n-1): shows the range of
      plausible "true average" West-East gaps given 43 observations.
 
-The `scipy.stats.t.ppf(0.975, df=42)` critical value is used for the CI half-width:
-`ci_half = t * std / sqrt(n)`.
+The `scipy.stats.t.ppf(0.975, df=42)` critical value is used for the CI half-width: `ci_half = t * std / sqrt(n)`.
 
-Three "most West-dominant" and three "most East-dominant" seasons are also
-reported as concrete anchors.
+Three "most West-dominant" and three "most East-dominant" seasons are also reported as concrete anchors.
 
-**What the results mean.** Z = << f("gap.z_score") |tm >>: the 2025–26 gap (<< f("gap.west_east") >>) is only 0.21
-standard deviations below the historical mean gap (<< f("gap.mean") >>). This is well within
-normal variation (|z| < 1), formally confirming the percentile-based conclusion.
-The historical mean of the gap is << f("gap.mean") >>; the West has typically been stronger
-than the East, but 2025–26 was slightly below that average (more East-competitive
-than normal), though not significantly so. The "easy conference" narrative is
-ruled out not just by ranking (<< f("gap.pct", "{:.0f}") >>th percentile) but by formal significance testing.
+**What the results mean.** Z = << f("gap.z_score") |tm >>: the 2025–26 gap (<< f("gap.west_east") >>) is only 0.21 standard deviations below the historical mean gap (<< f("gap.mean") >>).
+This is well within normal variation (|z| < 1), formally confirming the percentile-based conclusion.
+The historical mean of the gap is << f("gap.mean") >>; the West has typically been stronger than the East, but 2025–26 was slightly below that average (more East-competitive than normal), though not significantly so.
+The "easy conference" narrative is ruled out not just by ranking (<< f("gap.pct", "{:.0f}") >>th percentile) but by formal significance testing.
 
-**Why this chart (conference gap line).** The conference gap is a time series (<< f("raw.n_champions") >> data points, one per season), so a line is the natural form. It shows the gap
-oscillating over time rather than trending, which is the important visual point.
-A bar chart could work (one bar per season, positive = West dominant) but would
-look cluttered with << f("raw.n_champions") >> bars. The shading above/below zero makes East vs. West
-dominance immediately readable. The 2025–26 dot and annotation show exactly
-where the subject season falls on that multi-decade chart.
+**Why this chart (conference gap line).** The conference gap is a time series (<< f("raw.n_champions") >> data points, one per season), so a line is the natural form.
+It shows the gap oscillating over time rather than trending, which is the important visual point.
+A bar chart could work (one bar per season, positive = West dominant) but would look cluttered with << f("raw.n_champions") >> bars.
+The shading above/below zero makes East vs. West dominance immediately readable.
+The 2025–26 dot and annotation show exactly where the subject season falls on that multi-decade chart.
 
 ---
 
 ## 4. Opponent Quality (`run_opponent_quality`)
 
-**The data.** 2025–26 playoff logs, 2025–26 regular-season SRS, and the
-`champions` table.
+**The data.** 2025–26 playoff logs, 2025–26 regular-season SRS, and the `champions` table.
 
-**The approach.** `compute_avg_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)`
-finds all unique opponents (by GAME_ID inspection, as in §2) and averages their
-regular-season SRS values. That single number (+3.54) is then ranked via
-`_pct_rank` against `champions["avg_opp_srs"]`, the same metric for all << f("raw.n_champions") >>
-champions.
+**The approach.** `compute_avg_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)` finds all unique opponents (by GAME_ID inspection, as in §2) and averages their regular-season SRS values.
+That single number (+3.54) is then ranked via `_pct_rank` against `champions["avg_opp_srs"]`, the same metric for all << f("raw.n_champions") >> champions.
 
-**Why regular-season SRS for opponents, not playoff SRS.** Playoff SRS could be
-computed, but it would be circular: a team's playoff SRS reflects partly who they
-faced, which again includes the Knicks. Regular-season SRS measures each
-opponent's strength on an independent baseline (all 82 games before the playoffs
-began), making it a cleaner gauge of how hard the Knicks' draw was.
+**Why regular-season SRS for opponents, not playoff SRS.** Playoff SRS could be computed, but it would be circular: a team's playoff SRS reflects partly who they faced, which again includes the Knicks.
+Regular-season SRS measures each opponent's strength on an independent baseline (all 82 games before the playoffs began), making it a cleaner gauge of how hard the Knicks' draw was.
 
-**Why games-weighted, not unique-opponent average.** `avg_opp_srs` is computed
-as a per-game average across all playoff games (each game contributes one opponent
-SRS data point), not as a simple average of four unique opponents.  This matches
-the basis of `avg_margin`, which is also a per-game average.  When the same
-formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are
-expressed on the same per-game scale, making the subtraction internally consistent:
-"how dominant per game after accounting for per-game opponent quality?"  A unique-
-opponent average could give equal weight to a 4-game first-round opponent and a
-7-game Finals opponent, which would misstate the actual per-game opponent quality
-experienced.
+**Why games-weighted, not unique-opponent average.** `avg_opp_srs` is computed as a per-game average across all playoff games (each game contributes one opponent SRS data point), not as a simple average of four unique opponents.
+This matches the basis of `avg_margin`, which is also a per-game average.
+When the same formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are expressed on the same per-game scale, making the subtraction internally consistent: "how dominant per game after accounting for per-game opponent quality?"  A unique- opponent average could give equal weight to a 4-game first-round opponent and a 7-game Finals opponent, which would misstate the actual per-game opponent quality experienced.
 
-**What the results mean.** Games-weighted average opponent SRS << f("opp.srs_weighted") >> sits at the
-<< f("opp.srs_pct", "{:.0f}") >>th percentile among << f("raw.n_champions") >> champions, right at the historical median. The schedule
-was not unusually easy or hard. Champions who faced the weakest opponents
-(2022–23 Nuggets +0.62, 1986–87 Lakers +1.32) faced average SRS values more than
-2 pts/game below the Knicks'.
+**What the results mean.** Games-weighted average opponent SRS << f("opp.srs_weighted") >> sits at the << f("opp.srs_pct", "{:.0f}") >>th percentile among << f("raw.n_champions") >> champions, right at the historical median.
+The schedule was not unusually easy or hard.
+Champions who faced the weakest opponents (2022–23 Nuggets +0.62, 1986–87 Lakers +1.32) faced average SRS values more than 2 pts/game below the Knicks'.
 
-**Why two charts here.** The opponent-SRS ranking bar (all << f("raw.n_champions") >> champions) and the
-opponent-by-round bar (four Knicks opponents) answer different questions. The
-ranking says "relative to history, was the schedule hard?" The round-by-round bar
-says "which specific opponents were strong and which were weak?": it shows that
-the Spurs (<< f("field.spurs.reg_srs") >>) in the Finals were elite while the 76ers (<< f("field.76ers.reg_srs") |tm >>) in the second
-round were below average. A reader needs both to understand the Knicks' path.
+**Why two charts here.** The opponent-SRS ranking bar (all << f("raw.n_champions") >> champions) and the opponent-by-round bar (four Knicks opponents) answer different questions.
+The ranking says "relative to history, was the schedule hard?" The round-by-round bar says "which specific opponents were strong and which were weak?": it shows that the Spurs (<< f("field.spurs.reg_srs") >>) in the Finals were elite while the 76ers (<< f("field.76ers.reg_srs") |tm >>) in the second round were below average.
+A reader needs both to understand the Knicks' path.
 
 ---
 
@@ -228,17 +176,14 @@ round were below average. A reader needs both to understand the Knicks' path.
 
 **The data.** 2025–26 playoff logs, regular-season SRS, and the `champions` table.
 
-**The approach.** A two-step analysis: adjusted margin (opponent quality) plus
-overperformance (playoff elevation relative to own regular-season baseline).
+**The approach.** A two-step analysis: adjusted margin (opponent quality) plus overperformance (playoff elevation relative to own regular-season baseline).
 
 *Adjusted margin:*
 ```
 adj_margin = raw_margin − avg_opp_srs
 ```
-where `avg_opp_srs` is games-weighted (see §4).  This is a direct additive
-correction asking: "how dominant would this team look if they had faced average-SRS
-opponents?"  The assumption (one SRS point of opponent quality = one margin point)
-is natural because the SRS system is defined in point-differential space.
+where `avg_opp_srs` is games-weighted (see §4).
+This is a direct additive correction asking: "how dominant would this team look if they had faced average-SRS opponents?"  The assumption (one SRS point of opponent quality = one margin point) is natural because the SRS system is defined in point-differential space.
 
 *Overperformance (playoff elevation):*
 ```
@@ -246,117 +191,68 @@ overperformance = mean(actual_margin_per_game − expected_margin_per_game)
                 = raw_margin − champion_SRS + games_weighted_opp_srs
                 = adj_margin − champion_SRS
 ```
-where expected_margin_per_game = champion_SRS − opp_SRS_for_that_game.  This
-measures how much better a champion performed than a team of their regular-season
-quality was expected to perform against those opponents.  Positive = elevated in
-playoffs; negative = underperformed.
+where expected_margin_per_game = champion_SRS − opp_SRS_for_that_game.
+This measures how much better a champion performed than a team of their regular-season quality was expected to perform against those opponents.
+Positive = elevated in playoffs; negative = underperformed.
 
 Both values are ranked via `_pct_rank` against the `champions` table.
 
-**Why this specific adjustment.** The SRS system is built around the identity
-that a team with SRS +X is expected to outscore a 0-SRS opponent by X points per
-game. Subtracting the games-weighted average opponent SRS "returns" the champion
-to a neutral-schedule baseline. The overperformance metric additionally subtracts
-the champion's own regular-season SRS, capturing "playoff elevation": the amount
-by which the champion exceeded what their regular-season quality predicted.
+**Why this specific adjustment.** The SRS system is built around the identity that a team with SRS +X is expected to outscore a 0-SRS opponent by X points per game.
+Subtracting the games-weighted average opponent SRS "returns" the champion to a neutral-schedule baseline.
+The overperformance metric additionally subtracts the champion's own regular-season SRS, capturing "playoff elevation": the amount by which the champion exceeded what their regular-season quality predicted.
 
-**Limitations.** The adjustment assumes opponents' regular-season SRS accurately
-reflects playoff-mode strength; it doesn't account for injuries, resting veterans,
-or playoff-specific preparation. A more elaborate model could regress playoff
-margin on opponent SRS across all champions, but with << f("raw.n_champions") >> data points and one
-adjustment variable, the direct subtraction and its ranking are the right level
-of complexity.
+**Limitations.** The adjustment assumes opponents' regular-season SRS accurately reflects playoff-mode strength; it doesn't account for injuries, resting veterans, or playoff-specific preparation.
+A more elaborate model could regress playoff margin on opponent SRS across all champions, but with << f("raw.n_champions") >> data points and one adjustment variable, the direct subtraction and its ranking are the right level of complexity.
 
-**What the results mean.** Adjusted margin << f("adj.margin", "{:+.1f}") >> is the << f("adj.margin_pct", "{:.0f}") >>th percentile of << f("raw.n_champions") >>
-champions, the highest ever even after correcting for schedule difficulty. The
-comparison with 2016–17 Golden State (<< f("adj.top2.margin", "{:+.1f}") >>) and 1986–87 Los Angeles Lakers
-(<< f("adj.top3.margin", "{:+.1f}") >>) provides the natural peer group for "all-time dominant playoff runs."
-The overperformance metric (<< f("overperf.margin", "{:+.1f}") >> pts/game, << f("overperf.pct") >>th percentile) is notably
-different from adjusted margin: the 2016–17 Warriors, who had a much higher
-regular-season SRS (~+10), rank lower on overperformance because they
-*expected* to dominate. The Knicks elevated more relative to their regular-season
-baseline. The 2000–01 Lakers rank 1st (<< f("overperf.best", "{:+.1f}") >>) on overperformance: they had a
-strong but not historically dominant regular season and then dominated
-the playoffs.
+**What the results mean.** Adjusted margin << f("adj.margin", "{:+.1f}") >> is the << f("adj.margin_pct", "{:.0f}") >>th percentile of << f("raw.n_champions") >> champions, the highest ever even after correcting for schedule difficulty.
+The comparison with 2016–17 Golden State (<< f("adj.top2.margin", "{:+.1f}") >>) and 1986–87 Los Angeles Lakers (<< f("adj.top3.margin", "{:+.1f}") >>) provides the natural peer group for "all-time dominant playoff runs." The overperformance metric (<< f("overperf.margin", "{:+.1f}") >> pts/game, << f("overperf.pct") >>th percentile) is notably different from adjusted margin: the 2016–17 Warriors, who had a much higher regular-season SRS (~+10), rank lower on overperformance because they *expected* to dominate.
+The Knicks elevated more relative to their regular-season baseline.
+The 2000–01 Lakers rank 1st (<< f("overperf.best", "{:+.1f}") >>) on overperformance: they had a strong but not historically dominant regular season and then dominated the playoffs.
 
-**Why this is the headline chart.** The adjusted margin ranking is the single
-number that answers the central question ("historically dominant?") most fully.
-Win rate alone doesn't account for the quality of opponents; raw margin doesn't
-either. Adjusted margin does both. The bar chart annotates the Knicks' position
-explicitly with the value (<< f("adj.margin", "{:+.1f}") >>) and the legend says "#1 of << f("raw.n_champions") >>." It is the chart
-that tells the whole story in one panel.
+**Why this is the headline chart.** The adjusted margin ranking is the single number that answers the central question ("historically dominant?") most fully.
+Win rate alone doesn't account for the quality of opponents; raw margin doesn't either.
+Adjusted margin does both.
+The bar chart annotates the Knicks' position explicitly with the value (<< f("adj.margin", "{:+.1f}") >>) and the legend says "#1 of << f("raw.n_champions") >>." It is the chart that tells the whole story in one panel.
 
 ---
 
 ## 6. Round-by-Round: Raw vs. Opponent-Adjusted (`run_round_split`)
 
-**The data.** 2025–26 playoff logs, 2025–26 regular-season SRS, each opponent's
-*playoff* SRS computed from games that exclude the Knicks series
-(`compute_opponent_playoff_srs_excl`), and the `champions` table (column
-`adj_playoff_margin`).
+**The data.** 2025–26 playoff logs, 2025–26 regular-season SRS, each opponent's *playoff* SRS computed from games that exclude the Knicks series (`compute_opponent_playoff_srs_excl`), and the `champions` table (column `adj_playoff_margin`).
 
-**Why this section exists (what §5 could not do).** §4 and §5 adjust for opponent
-quality using *regular-season* SRS, fixed before the playoffs began. That leaves
-one objection unanswered: maybe the East opponents were weaker *in the playoffs*
-than their regular season implied, so the Knicks beat up on teams already
-collapsing. This section recomputes each opponent's strength from their own
-postseason form and re-runs the adjustment, both per round and for the full run.
+**Why this section exists (what §5 could not do).** §4 and §5 adjust for opponent quality using *regular-season* SRS, fixed before the playoffs began.
+That leaves one objection unanswered: maybe the East opponents were weaker *in the playoffs* than their regular season implied, so the Knicks beat up on teams already collapsing.
+This section recomputes each opponent's strength from their own postseason form and re-runs the adjustment, both per round and for the full run.
 
-**The two opponent measures.** For each series the section reports two adjusted
-margins:
+**The two opponent measures.** For each series the section reports two adjusted margins:
 
 ```
 reg-adj = raw margin − opponent regular-season SRS
 po-adj  = raw margin − opponent playoff SRS (games excluding the Knicks series)
 ```
 
-The playoff SRS is deliberately computed from each opponent's games against
-*other* teams. Using their games against the Knicks would be circular (an
-opponent looks weak partly because the Knicks beat them). A team whose only
-playoff games were against the Knicks (the Hawks, a first-round loser) has no
-independent playoff data, so their playoff SRS is NaN and their po-adj margin is
-undefined.
+The playoff SRS is deliberately computed from each opponent's games against *other* teams.
+Using their games against the Knicks would be circular (an opponent looks weak partly because the Knicks beat them).
+A team whose only playoff games were against the Knicks (the Hawks, a first-round loser) has no independent playoff data, so their playoff SRS is NaN and their po-adj margin is undefined.
 
-**Why playoff SRS is the harder test.** When `po-adj > reg-adj` for an opponent,
-that opponent played *below* their regular-season level against the rest of the
-field, so the Knicks' raw margin against them flatters the Knicks. When the gap
-*persists* after switching to playoff SRS, the dominance is not an artifact of
-opponents fading. The exception is the Spurs: their playoff SRS (<< f("round.finals.opp_po_srs") >>) was far
-above their regular-season << f("round.finals.opp_reg_srs") >> because they tore through the West bracket, so
-the Knicks' Finals margin looks *worse* after this adjustment, not better. That
-is the honest direction: the Knicks' best opponent got better in May, and the
-Finals were genuinely close.
+**Why playoff SRS is the harder test.** When `po-adj > reg-adj` for an opponent, that opponent played *below* their regular-season level against the rest of the field, so the Knicks' raw margin against them flatters the Knicks.
+When the gap *persists* after switching to playoff SRS, the dominance is not an artifact of opponents fading.
+The exception is the Spurs: their playoff SRS (<< f("round.finals.opp_po_srs") >>) was far above their regular-season << f("round.finals.opp_reg_srs") >> because they tore through the West bracket, so the Knicks' Finals margin looks *worse* after this adjustment, not better.
+That is the honest direction: the Knicks' best opponent got better in May, and the Finals were genuinely close.
 
-**The full-run ranking.** `adj_playoff_margin` in the `champions` table is
-`raw margin − games-weighted opponent playoff SRS`, the playoff-SRS analogue of
-the §5 adjusted margin, computed for every champion. The Knicks' value (<< f("adj_po.margin") >>)
-is ranked via `_pct_rank` against all << f("raw.n_champions") >>. Even on this stricter opponent measure
-(which credits their opponents' postseason form), the Knicks rank << f("adj_po.margin_pct", "{:.0f}") >>th
-percentile, edging the 1986–87 Lakers (+8.99).
+**The full-run ranking.** `adj_playoff_margin` in the `champions` table is `raw margin − games-weighted opponent playoff SRS`, the playoff-SRS analogue of the §5 adjusted margin, computed for every champion.
+The Knicks' value (<< f("adj_po.margin") >>) is ranked via `_pct_rank` against all << f("raw.n_champions") >>.
+Even on this stricter opponent measure (which credits their opponents' postseason form), the Knicks rank << f("adj_po.margin_pct", "{:.0f}") >>th percentile, edging the 1986–87 Lakers (+8.99).
 
-**The playoff-field elevation table.** As context, the section also lists every
-2025–26 playoff team's regular-season SRS, full playoff SRS (all of that team's
-playoff games, including any against the Knicks), and the elevation between them
-(`compute_playoff_field_elevation`). This is descriptive, not a ranked test: it
-shows the Knicks (<< f("field.knicks.elevation") >>) and Spurs (<< f("field.spurs.elevation") >>) were the field's two big risers while
-most teams declined, which is the backdrop for why the bracket played out as it
-did.
+**The playoff-field elevation table.** As context, the section also lists every 2025–26 playoff team's regular-season SRS, full playoff SRS (all of that team's playoff games, including any against the Knicks), and the elevation between them (`compute_playoff_field_elevation`).
+This is descriptive, not a ranked test: it shows the Knicks (<< f("field.knicks.elevation") >>) and Spurs (<< f("field.spurs.elevation") >>) were the field's two big risers while most teams declined, which is the backdrop for why the bracket played out as it did.
 
-**What the results mean.** The pre-Finals series were lopsided on every measure
-(raw << f("prefinals.raw") >>, reg-adj << f("prefinals.reg_adj") >>, po-adj << f("prefinals.po_adj") >> across R1–CF), and the Finals were tight
-on every measure (raw << f("finals.raw") >>, reg-adj << f("finals.reg_adj") |tm >>, po-adj << f("finals.po_adj") |tm >>). Switching from
-regular-season to playoff opponent strength does not erase the dominance: it
-sharpens the same story §6 in `knicks_2026_historic_results.md` tells, that the headline margin was
-built before the Finals against opponents who were not collapsing, and the Finals
-were a real contest against a Spurs team peaking.
+**What the results mean.** The pre-Finals series were lopsided on every measure (raw << f("prefinals.raw") >>, reg-adj << f("prefinals.reg_adj") >>, po-adj << f("prefinals.po_adj") >> across R1–CF), and the Finals were tight on every measure (raw << f("finals.raw") >>, reg-adj << f("finals.reg_adj") |tm >>, po-adj << f("finals.po_adj") |tm >>).
+Switching from regular-season to playoff opponent strength does not erase the dominance: it sharpens the same story §6 in `knicks_2026_historic_results.md` tells, that the headline margin was built before the Finals against opponents who were not collapsing, and the Finals were a real contest against a Spurs team peaking.
 
-**Why these charts.** Two figures carry this section. The grouped per-round bar
-(`plot_round_split`) places raw, reg-adj, and po-adj side by side for each series,
-so the reader sees both the pre-Finals/Finals split and how little the two
-opponent adjustments move the pre-Finals bars. The playoff-field elevation bar
-(`plot_playoff_field_elevation`) ranks all 16 playoff teams by reg→playoff SRS
-change with the Knicks and Spurs highlighted, giving the "who actually rose"
-context the round bars can't.
+**Why these charts.** Two figures carry this section.
+The grouped per-round bar (`plot_round_split`) places raw, reg-adj, and po-adj side by side for each series, so the reader sees both the pre-Finals/Finals split and how little the two opponent adjustments move the pre-Finals bars.
+The playoff-field elevation bar (`plot_playoff_field_elevation`) ranks all 16 playoff teams by reg→playoff SRS change with the Knicks and Spurs highlighted, giving the "who actually rose" context the round bars can't.
 
 ---
 
@@ -365,68 +261,45 @@ context the round bars can't.
 
 **The data.** 2025–26 Knicks playoff game logs and the `champions` table.
 
-**The approach.** Three "deflator" checks that could reduce the historicity claim,
-each ranked against champions:
+**The approach.** Three "deflator" checks that could reduce the historicity claim, each ranked against champions:
 
-**Clutch rate.** `compute_clutch_rate(po_2026, KNICKS_TEAM_ID)` takes the mean of
-`(|PLUS_MINUS| ≤ 5)` across the Knicks' 19 games. This is the fraction of games
-decided by 5 points or fewer. A low clutch rate (lots of blowouts) inflates the
-raw margin number; a high rate means the dominance was built on close wins.
-`_pct_rank` with `ascending=True` is used here: a team that wins many close games
-("clutch" in the common sense) scores higher than one that blows teams out.
+**Clutch rate.** `compute_clutch_rate(po_2026, KNICKS_TEAM_ID)` takes the mean of `(|PLUS_MINUS| ≤ 5)` across the Knicks' 19 games.
+This is the fraction of games decided by 5 points or fewer.
+A low clutch rate (lots of blowouts) inflates the raw margin number; a high rate means the dominance was built on close wins.
+`_pct_rank` with `ascending=True` is used here: a team that wins many close games ("clutch" in the common sense) scores higher than one that blows teams out.
 
-**Home/away split.** `compute_home_away_split` uses the `MATCHUP` string to split
-home games (`"vs."` in matchup) from road games (`"@"` in matchup). Win rates
-are computed separately. These are ranked against `champions["home_wr"]` and
-`champions["away_wr"]` via `_pct_rank`. The away win rate is the more meaningful
-deflator check: a champion who only wins at home is more fragile than one who
-dominates on the road.
+**Home/away split.** `compute_home_away_split` uses the `MATCHUP` string to split home games (`"vs."` in matchup) from road games (`"@"` in matchup).
+Win rates are computed separately.
+These are ranked against `champions["home_wr"]` and `champions["away_wr"]` via `_pct_rank`.
+The away win rate is the more meaningful deflator check: a champion who only wins at home is more fragile than one who dominates on the road.
 
-**Round-by-round breakdown.** Rather than a statistical test, this is a
-descriptive accounting: for each unique opponent (grouped from the playoff log by
-`OPP_ID`, which is derived by finding the non-Knicks TEAM_ID in each GAME_ID),
-the series wins, losses, and mean `PLUS_MINUS` are printed in chronological order.
-This shows *where* the margins came from: the sweeps inflated the headline number
-while the Finals were contested.
+**Round-by-round breakdown.** Rather than a statistical test, this is a descriptive accounting: for each unique opponent (grouped from the playoff log by `OPP_ID`, which is derived by finding the non-Knicks TEAM_ID in each GAME_ID), the series wins, losses, and mean `PLUS_MINUS` are printed in chronological order.
+This shows *where* the margins came from: the sweeps inflated the headline number while the Finals were contested.
 
-**What the results mean.** Clutch rate << f("clutch.rate", "{:.1%}") >> is the << f("clutch.pct", "{:.0f}") >>th percentile; the Knicks
-played *more* close games than most champions, not fewer. The blowout narrative
-(the margins were "just garbage time") is unsupported: they also won tight games
-at an above-average rate. Away win rate << f("away.wr", "{:.1%}") >> is the << f("away.wr_pct", "{:.0f}") >>th percentile; only one
-other champion in << f("raw.n_champions") >> years won road games at a higher clip. Home win rate << f("home.wr", "{:.1%}") >>
-is the << f("home.wr_pct", "{:.0f}") >>rd percentile, so the Knicks were an unusual champion: dominant on the
-road, relatively ordinary at home.
+**What the results mean.** Clutch rate << f("clutch.rate", "{:.1%}") >> is the << f("clutch.pct", "{:.0f}") >>th percentile; the Knicks played *more* close games than most champions, not fewer.
+The blowout narrative (the margins were "just garbage time") is unsupported: they also won tight games at an above-average rate.
+Away win rate << f("away.wr", "{:.1%}") >> is the << f("away.wr_pct", "{:.0f}") >>th percentile; only one other champion in << f("raw.n_champions") >> years won road games at a higher clip.
+Home win rate << f("home.wr", "{:.1%}") >> is the << f("home.wr_pct", "{:.0f}") >>rd percentile, so the Knicks were an unusual champion: dominant on the road, relatively ordinary at home.
 
-**Why this chart (game margins).** The 19-game bar chart (one bar per game in
-chronological order, blue for wins, red for losses, with the average overlaid)
-shows both the blowouts (tall blue bars in rounds 2 and 3) and the close games
-(annotated small-margin games near the zero line). A histogram of margins would
-show the distribution but would hide the chronological narrative (that the
-margins were tightest in the Finals). The bar-per-game form preserves the "film"
-of the run.
+**Why this chart (game margins).** The 19-game bar chart (one bar per game in chronological order, blue for wins, red for losses, with the average overlaid) shows both the blowouts (tall blue bars in rounds 2 and 3) and the close games (annotated small-margin games near the zero line).
+A histogram of margins would show the distribution but would hide the chronological narrative (that the margins were tightest in the Finals).
+The bar-per-game form preserves the "film" of the run.
 
 ---
 
 ## 8. Playoff SRS and Elevation (`run_playoff_srs`)
 
-**The data.** 2025–26 playoff and regular-season game logs; the `champions` table
-(which now includes `champion_po_srs` and `playoff_elevation`).
+**The data.** 2025–26 playoff and regular-season game logs; the `champions` table (which now includes `champion_po_srs` and `playoff_elevation`).
 
-**The approach.** `compute_playoff_srs` applies `compute_srs` to the playoff game
-log only.  The SRS algorithm (see Recurring Methods) solves the same
-`(I − A) @ srs = mean_margin_vector` system from the playoff bracket graph.
-Because the bracket is sparser than the regular season (not every team plays
-every other team), the solution is a least-squares approximation; the same
-`numpy.linalg.lstsq` call handles this naturally.
+**The approach.** `compute_playoff_srs` applies `compute_srs` to the playoff game log only.
+The SRS algorithm (see Recurring Methods) solves the same `(I − A) @ srs = mean_margin_vector` system from the playoff bracket graph.
+Because the bracket is sparser than the regular season (not every team plays every other team), the solution is a least-squares approximation; the same `numpy.linalg.lstsq` call handles this naturally.
 
-*Elevation* = playoff_SRS − regular_season_SRS.  A positive value means the
-champion performed at a higher level in the playoffs than their 82-game baseline
-predicted.  Both playoff and regular-season SRS are expressed in points per game
-in the same season's scoring environment, so the difference is directly
-interpretable.
+*Elevation* = playoff_SRS − regular_season_SRS.
+A positive value means the champion performed at a higher level in the playoffs than their 82-game baseline predicted.
+Both playoff and regular-season SRS are expressed in points per game in the same season's scoring environment, so the difference is directly interpretable.
 
-`playoff_elevation` is added as a column in `build_champions_table` for each of
-the << f("raw.n_champions") >> champion seasons.
+`playoff_elevation` is added as a column in `build_champions_table` for each of the << f("raw.n_champions") >> champion seasons.
 
 **What the results mean.**
 - Knicks regular-season SRS: << f("elev.knicks.reg_srs") >>, a strong team, but not historically dominant.
@@ -438,42 +311,31 @@ the << f("raw.n_champions") >> champion seasons.
   performance typically outpaces regular-season baselines (home-court advantage,
   higher effort, bracket-specific preparation).
 
-**Why this metric.** Playoff SRS elevation directly answers whether a team
-"showed up" in the playoffs or merely coasted on regular-season talent. It
-complements the overperformance metric (§5) and is independently derived;
-if both metrics agree, the conclusion is robust. They do agree: the Knicks are
-2nd all-time on both, and the 2000–01 Lakers rank 1st on both.
+**Why this metric.** Playoff SRS elevation directly answers whether a team "showed up" in the playoffs or merely coasted on regular-season talent.
+It complements the overperformance metric (§5) and is independently derived; if both metrics agree, the conclusion is robust.
+They do agree: the Knicks are 2nd all-time on both, and the 2000–01 Lakers rank 1st on both.
 
 ---
 
 ## 9. Era/Pace Adjustment (`run_pace_era`)
 
-**The data.** The `champions` table (which now includes `league_scoring`: the
-average pts per team per game in each season's regular season) and the 2025–26
-regular-season game logs.
+**The data.** The `champions` table (which now includes `league_scoring`: the average pts per team per game in each season's regular season) and the 2025–26 regular-season game logs.
 
-**The approach.** Two-step normalization applied to both raw margin and
-opponent-adjusted margin:
+**The approach.** Two-step normalization applied to both raw margin and opponent-adjusted margin:
 
 ```
 pace_adj_margin     = raw_margin  × (ref_scoring / season_scoring)
 pace_adj_adj_margin = adj_margin  × (ref_scoring / season_scoring)
 ```
 
-where `ref_scoring` is the historical mean of `league_scoring` across all 43
-seasons and `season_scoring` is that season's average.  A season with higher
-scoring than the historical mean (like 2025–26) gets a discount; a low-scoring
-era gets a boost.  The scale factor is applied to both raw and adjusted margins.
+where `ref_scoring` is the historical mean of `league_scoring` across all 43 seasons and `season_scoring` is that season's average.
+A season with higher scoring than the historical mean (like 2025–26) gets a discount; a low-scoring era gets a boost.
+The scale factor is applied to both raw and adjusted margins.
 
-**Why this normalization.** Point margins are not dimensionless: a +10 margin in
-a 115-pt era is fewer standard deviations above zero than a +10 in a 92-pt era.
-Dividing by the scoring average (or equivalently multiplying by the ratio to the
-reference) converts margins to "units of average team output," making comparisons
-across 42 seasons more apples-to-apples.  Note that the opponent-adjusted margin
-(`adj_margin`) already partially controls for era because both the champion's raw
-margin and opponents' SRS are expressed in the same season's point-differential
-units. But the inflation is not fully cancelled: `adj_margin = raw − opp_SRS`, and
-if both raw and opp_SRS are inflated proportionally, adj_margin is inflated too.
+**Why this normalization.** Point margins are not dimensionless: a +10 margin in a 115-pt era is fewer standard deviations above zero than a +10 in a 92-pt era.
+Dividing by the scoring average (or equivalently multiplying by the ratio to the reference) converts margins to "units of average team output," making comparisons across 42 seasons more apples-to-apples.
+Note that the opponent-adjusted margin (`adj_margin`) already partially controls for era because both the champion's raw margin and opponents' SRS are expressed in the same season's point-differential units.
+But the inflation is not fully cancelled: `adj_margin = raw − opp_SRS`, and if both raw and opp_SRS are inflated proportionally, adj_margin is inflated too.
 
 **What the results mean.**
 - 2025–26 is the highest-scoring era since 1984 (<< f("scoring.2026") >> pts/team/game; historical
@@ -489,13 +351,9 @@ if both raw and opp_SRS are inflated proportionally, adj_margin is inflated too.
 
 ## 10. The Verdict (`run_verdict`)
 
-**The data.** All of the above; this section re-computes the key metrics from
-scratch to produce a single summary table and a text verdict.
+**The data.** All of the above; this section re-computes the key metrics from scratch to produce a single summary table and a text verdict.
 
-**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin,
-pace-adjusted margin, opp+pace-adjusted margin, overperformance, SRS gap) are
-pulled, their percentile ranks computed, and a branching verdict string is
-assembled using thresholds:
+**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin, pace-adjusted margin, opp+pace-adjusted margin, overperformance, SRS gap) are pulled, their percentile ranks computed, and a branching verdict string is assembled using thresholds:
 
 ```python
 if wr_pct >= 85:   dom = "elite"
@@ -507,33 +365,25 @@ elif adj_pct >= 50: adj_verdict = "is somewhat deflated by opponent adjustment"
 else:              adj_verdict = "is significantly deflated by a weak schedule"
 ```
 
-The east_context clause fires only if `gap_pct >= 80`, meaning the East was
-genuinely historically weak (top-quintile West dominance). Since 2025–26 is at
-the << f("gap.pct", "{:.0f}") >>th percentile (West dominance was below average), no caveat fires.
+The east_context clause fires only if `gap_pct >= 80`, meaning the East was genuinely historically weak (top-quintile West dominance).
+Since 2025–26 is at the << f("gap.pct", "{:.0f}") >>th percentile (West dominance was below average), no caveat fires.
 
-**What the results mean.** Win rate << f("raw.win_rate_pct", "{:.0f}") >>th percentile → "elite." Adjusted margin
-<< f("adj.margin_pct", "{:.0f}") >>th percentile → "holds up well." East weakness at << f("gap.pct", "{:.0f}") >>th percentile → no caveat.
-The verdict is: the run was elite, and the schedule was at the historical median,
-so the dominance is real.
+**What the results mean.** Win rate << f("raw.win_rate_pct", "{:.0f}") >>th percentile → "elite." Adjusted margin << f("adj.margin_pct", "{:.0f}") >>th percentile → "holds up well." East weakness at << f("gap.pct", "{:.0f}") >>th percentile → no caveat.
+The verdict is: the run was elite, and the schedule was at the historical median, so the dominance is real.
 
-**Why no new chart.** The verdict section's job is to synthesize the previous
-sections, not introduce new data. The metrics already have their charts in
-Sections 1–9; a summary radar or scorecard would duplicate them. The paragraph
-verdict is the right form for a synthesis.
+**Why no new chart.** The verdict section's job is to synthesize the previous sections, not introduce new data.
+The metrics already have their charts in Sections 1–9; a summary radar or scorecard would duplicate them.
+The paragraph verdict is the right form for a synthesis.
 
 ---
 
 ## 11. Opponent Player Availability (`run_opponent_health`)
 
-**The data.** Player-level 2025–26 playoff game logs (`player_po_logs`, minutes
-per player per game), the Knicks' playoff logs, and the 2025–26 standings for
-team names. `compute_opponent_health` joins them.
+**The data.** Player-level 2025–26 playoff game logs (`player_po_logs`, minutes per player per game), the Knicks' playoff logs, and the 2025–26 standings for team names.
+`compute_opponent_health` joins them.
 
-**Why this section exists.** The largest non-statistical deflator for any title
-run is opponent injuries: a dominant margin is discounted if the teams beaten were
-missing their stars. This section checks each Knicks opponent's key-player
-availability so the dominance claim can be read against who was actually on the
-floor.
+**Why this section exists.** The largest non-statistical deflator for any title run is opponent injuries: a dominant margin is discounted if the teams beaten were missing their stars.
+This section checks each Knicks opponent's key-player availability so the dominance claim can be read against who was actually on the floor.
 
 **The approach.** For each opponent the metric is built in two steps:
 
@@ -547,33 +397,24 @@ floor.
    means every key player suited up every game; lower values flag a depleted
    opponent.
 
-This is descriptive accounting, not a ranked percentile test: there is no
-historical health series to rank against, so the section reports the four
-opponents' scores, the average, and the most- and least-depleted opponent, then
-flags the Finals specifically.
+This is descriptive accounting, not a ranked percentile test: there is no historical health series to rank against, so the section reports the four opponents' scores, the average, and the most- and least-depleted opponent, then flags the Finals specifically.
 
-**What the results mean.** Average opponent health was << f("health.avg") >>%. The most depleted
-opponent (76ers, << f("health.76ers") >>%) was a second-round sweep, so the missing player did not
-prop up the margin. The Spurs, the one Finals-quality opponent, were at << f("health.spurs") >>%: the
-close Finals (<< f("finals.raw") >> margin) was against a fully healthy team, so the result stands
-without an injury asterisk. The headline dominance is not explained by hurt
-opponents.
+**What the results mean.** Average opponent health was << f("health.avg") >>%.
+The most depleted opponent (76ers, << f("health.76ers") >>%) was a second-round sweep, so the missing player did not prop up the margin.
+The Spurs, the one Finals-quality opponent, were at << f("health.spurs") >>%: the close Finals (<< f("finals.raw") >> margin) was against a fully healthy team, so the result stands without an injury asterisk.
+The headline dominance is not explained by hurt opponents.
 
-**Why this chart.** The per-opponent health bar (`plot_opponent_health`) shows
-all four series on one axis, colored by a fixed health threshold (green ≥ 90%,
-orange 75–90%, red below), so a skimming reader sees at a glance that every bar is
-green. The chart's job is to make the absence of an injury story visible.
+**Why this chart.** The per-opponent health bar (`plot_opponent_health`) shows all four series on one axis, colored by a fixed health threshold (green ≥ 90%, orange 75–90%, red below), so a skimming reader sees at a glance that every bar is green.
+The chart's job is to make the absence of an injury story visible.
 
 ---
 
 ## 12. Betting-Market Significance (`run_betting_market`)
 
-**The data.** Game-level ATS data from the ESPN core API, merged with actual
-margins from the playoff game log.
+**The data.** Game-level ATS data from the ESPN core API, merged with actual margins from the playoff game log.
 
-**The approach.** The << f("ats.n_covered") >>-<< f("raw.losses") >> ATS record is tested against a null hypothesis of
-50% coverage (the efficient market expectation: if spreads are fair, any team
-covers ~50% of games). A one-tailed binomial test computes P(X ≥ << f("ats.n_covered") >> | n=<< f("ats.n_total") >>, p=0.5):
+**The approach.** The << f("ats.n_covered") >>-<< f("raw.losses") >> ATS record is tested against a null hypothesis of 50% coverage (the efficient market expectation: if spreads are fair, any team covers ~50% of games).
+A one-tailed binomial test computes P(X ≥ << f("ats.n_covered") >> | n=<< f("ats.n_total") >>, p=0.5):
 
 ```python
 from scipy.stats import binom
@@ -582,76 +423,54 @@ p_value = binom.sf(15, 19, 0.5)   # P(X >= 16) = 1 - CDF(15)
 
 The z-score is computed as `(k − np) / sqrt(np(1−p))` = `(16 − 9.5) / sqrt(4.75)`.
 
-**Why a one-tailed test.** We are testing whether the Knicks covered *more* than
-expected, not whether they differed from 50% in either direction. The question
-("was this ATS performance unusual?") is directional.
+**Why a one-tailed test.** We are testing whether the Knicks covered *more* than expected, not whether they differed from 50% in either direction.
+The question ("was this ATS performance unusual?") is directional.
 
-**What the results mean (iid).** Z = +2.98, p = << f("ats.p_iid") >>.  A team covering << f("ats.n_covered") >> of << f("ats.n_total") >>
-games under a fair-coin null has only a << f("ats.p_iid", "{:.2%}") >> probability. The East-opponent
-performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS)
-was exactly what the efficient market predicted.
+**What the results mean (iid).** Z = +2.98, p = << f("ats.p_iid") >>.
+A team covering << f("ats.n_covered") >> of << f("ats.n_total") >> games under a fair-coin null has only a << f("ats.p_iid", "{:.2%}") >> probability.
+The East-opponent performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
 
-**Adjusting for series correlation (`clustered_cover_significance`).** The iid
-binomial assumes << f("ats.n_total") >> independent Bernoulli trials, but the games cluster into 4
-series, and covers within a series are correlated (same matchup, same direction
-of pricing error). We estimate the intraclass correlation (ICC) of the cover
-indicator via one-way ANOVA across the four series and inflate the variance by
-the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the (variance-style)
-average cluster size. That gives an effective sample size `N / deff` and a
-p-value computed on it:
+**Adjusting for series correlation (`clustered_cover_significance`).** The iid binomial assumes << f("ats.n_total") >> independent Bernoulli trials, but the games cluster into 4 series, and covers within a series are correlated (same matchup, same direction of pricing error).
+We estimate the intraclass correlation (ICC) of the cover indicator via one-way ANOVA across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the (variance-style) average cluster size.
+That gives an effective sample size `N / deff` and a p-value computed on it:
 
 - ICC ≈ << f("ats.icc") >> (covers are strongly clustered: three series are 100% covers, one is 2/5)
 - design effect ≈ << f("ats.deff") >>, so effective N ≈ << f("ats.n_eff") >> (not << f("ats.n_total") >>)
 - adjusted z ≈ +1.78, one-tailed p ≈ << f("ats.p_clust", "{:.3f}") >>
 
-Still beyond chance, but an order of magnitude weaker than the iid << f("ats.p_iid") >>. With
-only four clusters the ICC is itself imprecise, so treat << f("ats.p_clust", "{:.3f}") >> as "weakened but
-still suggestive," not a sharp figure.
+Still beyond chance, but an order of magnitude weaker than the iid << f("ats.p_iid") >>.
+With only four clusters the ICC is itself imprecise, so treat << f("ats.p_clust", "{:.3f}") >> as "weakened but still suggestive," not a sharp figure.
 
-**ATS is not independent evidence.** The ATS margin is the actual margin minus a
-spread that averaged about −2 (near zero), so the cover record is largely the raw
-dominance result re-expressed, not a separate confirmation of it.
+**ATS is not independent evidence.** The ATS margin is the actual margin minus a spread that averaged about −2 (near zero), so the cover record is largely the raw dominance result re-expressed, not a separate confirmation of it.
 
-**An important caveat.** Both p-values apply to one team in one playoff run,
-chosen because it was interesting (the champion). An unbiased "how often do
-champions cover this much?" question would need historical ATS data for all << f("raw.n_champions") >>
-champions. Read these as "the ATS outperformance against East opponents was
-systematic, not luck," not as an unbiased claim across all possible runs.
+**An important caveat.** Both p-values apply to one team in one playoff run, chosen because it was interesting (the champion).
+An unbiased "how often do champions cover this much?" question would need historical ATS data for all << f("raw.n_champions") >> champions.
+Read these as "the ATS outperformance against East opponents was systematic, not luck," not as an unbiased claim across all possible runs.
 
 ---
 
 ## 13. Robustness of the #1 Ranking (`run_robustness`)
 
-**The data.** The Knicks' << f("ats.n_total") >> per-game opponent-adjusted contributions
-`g_i = margin_i − opp_reg_SRS_i` (mean = the << f("adj.margin") >> adjusted margin from §5), the
-other 42 champions' `adj_margin` values, and the 2025–26 regular-season margin
-standard errors.
+**The data.** The Knicks' << f("ats.n_total") >> per-game opponent-adjusted contributions `g_i = margin_i − opp_reg_SRS_i` (mean = the << f("adj.margin") >> adjusted margin from §5), the other 42 champions' `adj_margin` values, and the 2025–26 regular-season margin standard errors.
 
-**Why this section exists.** Sections 1–10 report point estimates and percentile
-ranks. A << f("ats.n_total") >>-game run is a small sample, and the headline "1st of << f("raw.n_champions") >> on adjusted
-margin" is a point estimate with no stated uncertainty. This section quantifies
-how fragile that #1 is, three ways.
+**Why this section exists.** Sections 1–10 report point estimates and percentile ranks.
+A << f("ats.n_total") >>-game run is a small sample, and the headline "1st of << f("raw.n_champions") >> on adjusted margin" is a point estimate with no stated uncertainty.
+This section quantifies how fragile that #1 is, three ways.
 
-**(a) Game-level bootstrap of the rank (`bootstrap_adjusted_margin_rank`).**
-Resample the << f("ats.n_total") >> values `g_i` with replacement 20,000 times; each resample mean is
-a draw from the sampling distribution of the adjusted margin. Rank each draw
-against the *fixed* other-champion `adj_margin` set (the subject's own season is
-excluded so the rank is not self-referential). Results:
+**(a) Game-level bootstrap of the rank (`bootstrap_adjusted_margin_rank`).** Resample the << f("ats.n_total") >> values `g_i` with replacement 20,000 times; each resample mean is a draw from the sampling distribution of the adjusted margin.
+Rank each draw against the *fixed* other-champion `adj_margin` set (the subject's own season is excluded so the rank is not self-referential).
+Results:
 
 - P(rank 1) ≈ << f("boot.p_rank1", "{:.0f}") >>%, P(top 3) ≈ << f("boot.p_top3", "{:.0f}") >>%, P(top 5) ≈ << f("boot.p_top5", "{:.0f}") >>%
 - median rank << f("boot.rank_median") >>, 90% rank interval 1–11
 - 90% interval on the adjusted margin itself: roughly [+5, +18]
 
-This is an iid game bootstrap; games within a series are correlated, so the true
-spread is modestly wider. Interpretation: most-likely #1, near-certain top five,
-but the exact #1 is roughly a 60/40 call.
+This is an iid game bootstrap; games within a series are correlated, so the true spread is modestly wider.
+Interpretation: most-likely #1, near-certain top five, but the exact #1 is roughly a 60/40 call.
 
-**(b) Empirical-Bayes shrinkage (`shrink_adjusted_margin`).** An extreme value
-chosen because it is extreme is biased upward (selection / regression to the
-mean). A normal–normal conjugate update regularizes it: the prior is the other
-champions' adjusted-margin distribution N(prior_mean ≈ << f("shrink.prior_mean", "{:+.1f}") >>, prior_var = observed
-between-champion variance); the likelihood is the << f("ats.n_total") >>-game sample mean with
-sampling variance `s²/n`. The posterior mean is the precision-weighted average.
+**(b) Empirical-Bayes shrinkage (`shrink_adjusted_margin`).** An extreme value chosen because it is extreme is biased upward (selection / regression to the mean).
+A normal–normal conjugate update regularizes it: the prior is the other champions' adjusted-margin distribution N(prior_mean ≈ << f("shrink.prior_mean", "{:+.1f}") >>, prior_var = observed between-champion variance); the likelihood is the << f("ats.n_total") >>-game sample mean with sampling variance `s²/n`.
+The posterior mean is the precision-weighted average.
 
 - weight on the << f("ats.n_total") >>-game data ≈ << f("shrink.weight_data") >>% (playoff margins are noisy, so << f("ats.n_total") >> games carry
   less than half the estimate)
@@ -659,44 +478,26 @@ sampling variance `s²/n`. The posterior mean is the precision-weighted average.
   ≈ [<< f("shrink.ci.lo", "{:+.1f}") >>, << f("shrink.ci.hi", "{:+.1f}") >>]
 - even shrunken it still exceeds ~<< f("shrink.pct_above") >>% of champions
 
-This is deliberately conservative in two ways: only the subject is shrunk (the
-other champions keep their own noisy point estimates), and `prior_var` is the
-*observed* between-champion variance, which still contains each champion's own
-sampling noise and so shrinks a little less than a noise-free prior would.
+This is deliberately conservative in two ways: only the subject is shrunk (the other champions keep their own noisy point estimates), and `prior_var` is the *observed* between-champion variance, which still contains each champion's own sampling noise and so shrinks a little less than a noise-free prior would.
 
-**(c) Opponent-strength uncertainty (`compute_srs_se`,
-`bootstrap_adjusted_margin_rank_srs_error`).** Opponent SRS is itself estimated
-from ~82 games. We approximate each team's SE(SRS) by the sampling error of its
-mean margin, `sd(margin)/√n_games` (the schedule term is comparatively stable, so
-this captures the dominant source while slightly understating total uncertainty).
-The bootstrap is re-run with an added Normal(0, SE) shock to each opponent's SRS
-per iteration (one shock per opponent, shared across that opponent's games).
-P(rank 1) moves from ~<< f("boot.p_rank1") >>% to ~<< f("se_boot.p_rank1") >>% and the margin interval barely widens:
-the ranking's uncertainty is overwhelmingly the << f("ats.n_total") >>-game sample size, not doubt
-about opponent strength.
+**(c) Opponent-strength uncertainty (`compute_srs_se`, `bootstrap_adjusted_margin_rank_srs_error`).** Opponent SRS is itself estimated from ~82 games.
+We approximate each team's SE(SRS) by the sampling error of its mean margin, `sd(margin)/√n_games` (the schedule term is comparatively stable, so this captures the dominant source while slightly understating total uncertainty).
+The bootstrap is re-run with an added Normal(0, SE) shock to each opponent's SRS per iteration (one shock per opponent, shared across that opponent's games).
+P(rank 1) moves from ~<< f("boot.p_rank1") >>% to ~<< f("se_boot.p_rank1") >>% and the margin interval barely widens: the ranking's uncertainty is overwhelmingly the << f("ats.n_total") >>-game sample size, not doubt about opponent strength.
 
-**Why this chart (bootstrap histogram).** The histogram of the 20,000 resampled
-adjusted margins, with the two nearest rivals (2016–17 Warriors, 1986–87 Lakers)
-drawn as reference lines, makes the rank fragility visual: the share of the
-distribution lying left of the Warriors line is `1 − P(rank 1)`. The title states
-P(rank 1) directly so a skimming reader gets the headline.
+**Why this chart (bootstrap histogram).** The histogram of the 20,000 resampled adjusted margins, with the two nearest rivals (2016–17 Warriors, 1986–87 Lakers) drawn as reference lines, makes the rank fragility visual: the share of the distribution lying left of the Warriors line is `1 − P(rank 1)`.
+The title states P(rank 1) directly so a skimming reader gets the headline.
 
 ---
 
 ## 14. Hierarchical Partial-Pooling Rank (`run_hierarchical`)
 
-**The data.** `build_adjusted_margin_samples` returns, for every champion, the
-per-game opponent-adjusted margins summarized as `(adj_mean, n_games, samp_var)`
-with `samp_var = var(g)/n`. This is the same `g_i = margin_i − opp_reg_SRS_i`
-used in §13, now computed for all 43 champions, not just the Knicks.
+**The data.** `build_adjusted_margin_samples` returns, for every champion, the per-game opponent-adjusted margins summarized as `(adj_mean, n_games, samp_var)` with `samp_var = var(g)/n`.
+This is the same `g_i = margin_i − opp_reg_SRS_i` used in §13, now computed for all 43 champions, not just the Knicks.
 
-**Why this section exists (what §13 could not do).** The §13 bootstrap and
-shrinkage both held the *other* 42 champions at their point estimates. That is
-unfair in two opposite ways: it never lets a rival's true value exceed its noisy
-estimate, and (in the shrinkage) it pulls only the subject toward the mean. To
-ask the actual question — "what is the probability the Knicks have the highest
-*true* adjusted margin?" — every champion must be shrunk and must carry posterior
-uncertainty simultaneously.
+**Why this section exists (what §13 could not do).** The §13 bootstrap and shrinkage both held the *other* 42 champions at their point estimates.
+That is unfair in two opposite ways: it never lets a rival's true value exceed its noisy estimate, and (in the shrinkage) it pulls only the subject toward the mean.
+To ask the actual question — "what is the probability the Knicks have the highest *true* adjusted margin?" — every champion must be shrunk and must carry posterior uncertainty simultaneously.
 
 **The model (Gaussian random-effects / hierarchical).**
 
@@ -718,15 +519,11 @@ theta_c       ~ Normal(mu, tau^2)        # population of true dominance
   `post_var_c = 1/(1/v_c + 1/tau^2)` and
   `post_mean_c = post_var_c·(y_c/v_c + mu/tau^2)`.
 
-We then draw all `theta_c` jointly 40,000 times and record the subject's rank
-each draw. Hyperparameters are treated as fixed (empirical Bayes), which ignores
-hyperparameter uncertainty — modest with << f("raw.n_champions") >> seasons.
+We then draw all `theta_c` jointly 40,000 times and record the subject's rank each draw.
+Hyperparameters are treated as fixed (empirical Bayes), which ignores hyperparameter uncertainty — modest with << f("raw.n_champions") >> seasons.
 
-**What the results mean (the headline finding).** The Knicks' raw adjusted margin
-(<< f("adj.margin", "{:+.1f}") >>, 1st) shrinks to a posterior mean of about **<< f("hier.post_mean", "{:+.1f}") >>**, which ranks roughly
-4th by posterior mean — and because the credible intervals overlap heavily,
-**P(Knicks are the true #1) ≈ << f("hier.p_rank1", "{:.0f}") >>%**, P(top 3) ≈ << f("hier.p_top3", "{:.0f}") >>%, P(top 5) ≈ << f("hier.p_top5", "{:.0f}") >>%, with a median
-posterior rank near << f("hier.rank_median") >>. Two mechanisms drive the gap from §13's ~<< f("boot.p_rank1", "{:.0f}") >>%:
+**What the results mean (the headline finding).** The Knicks' raw adjusted margin (<< f("adj.margin", "{:+.1f}") >>, 1st) shrinks to a posterior mean of about **<< f("hier.post_mean", "{:+.1f}") >>**, which ranks roughly 4th by posterior mean — and because the credible intervals overlap heavily, **P(Knicks are the true #1) ≈ << f("hier.p_rank1", "{:.0f}") >>%**, P(top 3) ≈ << f("hier.p_top3", "{:.0f}") >>%, P(top 5) ≈ << f("hier.p_top5", "{:.0f}") >>%, with a median posterior rank near << f("hier.rank_median") >>.
+Two mechanisms drive the gap from §13's ~<< f("boot.p_rank1", "{:.0f}") >>%:
 
 1. *Stronger, fairer shrinkage.* The Knicks' per-game adjusted margins are highly
    variable (blowout sweeps next to a << f("finals.raw") >> Finals), so `v_c` is large and the
@@ -736,233 +533,137 @@ posterior rank near << f("hier.rank_median") >>. Two mechanisms drive the gap fr
    2016–17 Warriors have posterior means at or above the Knicks' and can win any
    given draw.
 
-This is the most complete answer to "best ever?": most likely a top-handful run,
-but only ~<< f("hier.p_rank1", "{:.0f}") >>% to be the single best once the comparison is made fair.
+This is the most complete answer to "best ever?": most likely a top-handful run, but only ~<< f("hier.p_rank1", "{:.0f}") >>% to be the single best once the comparison is made fair.
 
-**Why this chart (posterior caterpillar).** Posterior mean ± 90% credible
-interval for the top dozen champions, with each raw (pre-shrink) point estimate
-marked as a tick. It shows two things at once: how far each champion is pulled in
-from its raw number, and how completely the intervals overlap — the visual reason
-no champion is a clear #1.
+**Why this chart (posterior caterpillar).** Posterior mean ± 90% credible interval for the top dozen champions, with each raw (pre-shrink) point estimate marked as a tick.
+It shows two things at once: how far each champion is pulled in from its raw number, and how completely the intervals overlap — the visual reason no champion is a clear #1.
 
-**Caveat — reconciling §13 and §14.** These are not contradictory; they answer
-different questions. §13 asks "given the rest of history as fixed truth, where
-does the Knicks' resampled run land?" (~<< f("boot.p_rank1", "{:.0f}") >>% #1). §14 asks "accounting for every
-champion's uncertainty, are the Knicks the best?" (~<< f("hier.p_rank1", "{:.0f}") >>%). The §14 framing is the
-honest answer to the all-time-best question; the §13 framing is the right one for
-"how repeatable was *this* run."
+**Caveat — reconciling §13 and §14.** These are not contradictory; they answer different questions.
+§13 asks "given the rest of history as fixed truth, where does the Knicks' resampled run land?" (~<< f("boot.p_rank1", "{:.0f}") >>% #1).
+§14 asks "accounting for every champion's uncertainty, are the Knicks the best?" (~<< f("hier.p_rank1", "{:.0f}") >>%).
+The §14 framing is the honest answer to the all-time-best question; the §13 framing is the right one for "how repeatable was *this* run."
 
 ---
 
 ## 15. Elo Opponent-Rating Cross-Check (`run_elo_check`)
 
-**The data.** Each season's regular-season game logs. `compute_elo_ratings`
-produces an end-of-season rating per team; `build_alt_rating_adjusted_table`
-recomputes `adj = raw_margin − games_weighted_opponent_rating` for every champion
-with Elo in place of SRS.
+**The data.** Each season's regular-season game logs.
+`compute_elo_ratings` produces an end-of-season rating per team; `build_alt_rating_adjusted_table` recomputes `adj = raw_margin − games_weighted_opponent_rating` for every champion with Elo in place of SRS.
 
-**Why a second rating system.** Every opponent adjustment in §4–§14 uses SRS, so
-the rankings could in principle be an artifact of SRS's assumptions (linear,
-margin-based, season-aggregate). Re-running with a structurally different rating
-tests that. Elo is the natural choice: sequential and recency-weighted rather
-than season-aggregate.
+**Why a second rating system.** Every opponent adjustment in §4–§14 uses SRS, so the rankings could in principle be an artifact of SRS's assumptions (linear, margin-based, season-aggregate).
+Re-running with a structurally different rating tests that.
+Elo is the natural choice: sequential and recency-weighted rather than season-aggregate.
 
-**The Elo model.** FiveThirtyEight's NBA parameters: start every team at 1500,
-process games in date order, K = 20, 100-Elo home-court bump, and the
-margin-of-victory multiplier `ln(|margin|+1) · 2.2/(0.001·Δelo_winner + 2.2)`
-(the Δelo term damps blowouts by favorites). The final Elo is centered at the
-league mean and divided by ≈28 Elo-per-point to land on the same points-above-
-average scale as SRS, so it slots into the identical games-weighted opponent
-machinery.
+**The Elo model.** FiveThirtyEight's NBA parameters: start every team at 1500, process games in date order, K = 20, 100-Elo home-court bump, and the margin-of-victory multiplier `ln(|margin|+1) · 2.2/(0.001·Δelo_winner + 2.2)` (the Δelo term damps blowouts by favorites).
+The final Elo is centered at the league mean and divided by ≈28 Elo-per-point to land on the same points-above- average scale as SRS, so it slots into the identical games-weighted opponent machinery.
 
-**What the results mean (an instructive disagreement).** Across all << f("raw.n_champions") >> champions
-the Elo-adjusted and SRS-adjusted margins are almost the same ordering
-(correlation ≈ << f("elo.corr_srs", "{:+.2f}") >>), so the two systems broadly agree. But they differ on the
-Knicks specifically: Elo rates the Knicks' opponents *tougher* (games-weighted
-<< f("elo.opp_rating", "{:+.1f}") >> vs SRS's << f("opp.srs_weighted", "{:+.1f}") >>), because Elo weights recent form and New York's opponents
-(notably the Spurs: Elo +10.7 vs SRS << f("field.spurs.reg_srs", "{:+.1f}") >>) were playing well late. A larger
-opponent adjustment lowers the Knicks' Elo-adjusted margin to << f("elo.adj_margin", "{:+.1f}") >>, ranking **<< f("elo.rank") >>rd**
-(behind 2016–17 Golden State and 1990–91 Chicago) rather than 1st. The takeaway
-matches §14: the #1 is rating-dependent; under a defensible alternative the Knicks
-are a top-three, not unique-#1, run.
+**What the results mean (an instructive disagreement).** Across all << f("raw.n_champions") >> champions the Elo-adjusted and SRS-adjusted margins are almost the same ordering (correlation ≈ << f("elo.corr_srs", "{:+.2f}") >>), so the two systems broadly agree.
+But they differ on the Knicks specifically: Elo rates the Knicks' opponents *tougher* (games-weighted << f("elo.opp_rating", "{:+.1f}") >> vs SRS's << f("opp.srs_weighted", "{:+.1f}") >>), because Elo weights recent form and New York's opponents (notably the Spurs: Elo +10.7 vs SRS << f("field.spurs.reg_srs", "{:+.1f}") >>) were playing well late.
+A larger opponent adjustment lowers the Knicks' Elo-adjusted margin to << f("elo.adj_margin", "{:+.1f}") >>, ranking **<< f("elo.rank") >>rd** (behind 2016–17 Golden State and 1990–91 Chicago) rather than 1st.
+The takeaway matches §14: the #1 is rating-dependent; under a defensible alternative the Knicks are a top-three, not unique-#1, run.
 
-**Why no new chart.** The result is a single rank shift (1st → 3rd) plus a
-high correlation; the §4 adjusted-margin bar already visualizes the SRS ranking,
-and a second near-identical bar would add length without insight. The opponent
-SRS-vs-Elo table in the appendix carries the one number that matters (the Knicks'
-schedule looks harder under Elo).
+**Why no new chart.** The result is a single rank shift (1st → 3rd) plus a high correlation; the §4 adjusted-margin bar already visualizes the SRS ranking, and a second near-identical bar would add length without insight.
+The opponent SRS-vs-Elo table in the appendix carries the one number that matters (the Knicks' schedule looks harder under Elo).
 
 ---
 
 ## 16. Wins-Only Bradley–Terry Cross-Check (`run_bt_check`)
 
-**The data.** Same `build_alt_rating_adjusted_table` machinery as §15, with
-`compute_bradley_terry_ratings` supplying the opponent rating.
+**The data.** Same `build_alt_rating_adjusted_table` machinery as §15, with `compute_bradley_terry_ratings` supplying the opponent rating.
 
-**Why a wins-only rating.** SRS and Elo are both built from point margins, so
-neither rules out the worry that the Knicks' margin is padded (blowouts, garbage
-time). Bradley–Terry is fit from win/loss only, sharing no information with the
-margin, so it isolates that concern: if the Knicks still rank first when margins
-are stripped from the *opponent* side, the dominance is not a margin artifact.
+**Why a wins-only rating.** SRS and Elo are both built from point margins, so neither rules out the worry that the Knicks' margin is padded (blowouts, garbage time).
+Bradley–Terry is fit from win/loss only, sharing no information with the margin, so it isolates that concern: if the Knicks still rank first when margins are stripped from the *opponent* side, the dominance is not a margin artifact.
 
-**The model.** `P(i beats j) = pi_i/(pi_i+pi_j)`, fit by Hunter's (2004)
-minorization–maximization iteration `pi_i ← (W_i+reg) / (Σ_j n_ij/(pi_i+pi_j) +
-2·reg/(pi_i+1))`. The `reg = 1` term is one phantom win and loss against a
-league-average anchor, which keeps undefeated/winless teams finite; `pi` is
-renormalized to mean 1 each step. The fitted log-strength `log(pi)` is centered
-and multiplied by ≈6.2 points per natural-log-odds — the conversion implied by
-the Elo convention (400 Elo per base-10 odds ÷ 28 Elo per point), **not** fit to
-any margins. Only the units borrow that constant; the ordering is 100% wins-based.
+**The model.** `P(i beats j) = pi_i/(pi_i+pi_j)`, fit by Hunter's (2004) minorization–maximization iteration `pi_i ← (W_i+reg) / (Σ_j n_ij/(pi_i+pi_j) + 2·reg/(pi_i+1))`.
+The `reg = 1` term is one phantom win and loss against a league-average anchor, which keeps undefeated/winless teams finite; `pi` is renormalized to mean 1 each step.
+The fitted log-strength `log(pi)` is centered and multiplied by ≈6.2 points per natural-log-odds — the conversion implied by the Elo convention (400 Elo per base-10 odds ÷ 28 Elo per point), **not** fit to any margins.
+Only the units borrow that constant; the ordering is 100% wins-based.
 
-**A note on units.** Subtracting a log-odds rating from a point margin would be
-dimensionally meaningless, which is why the 6.2 scaling is applied. The scaling is
-a fixed convention rather than a per-season fit, so it does not smuggle margin
-information back in; it only puts the wins-based ordering on a points axis so the
-same `adj = raw − opp_rating` subtraction is interpretable.
+**A note on units.** Subtracting a log-odds rating from a point margin would be dimensionally meaningless, which is why the 6.2 scaling is applied.
+The scaling is a fixed convention rather than a per-season fit, so it does not smuggle margin information back in; it only puts the wins-based ordering on a points axis so the same `adj = raw − opp_rating` subtraction is interpretable.
 
-**What the results mean.** Bradley–Terry rates the Knicks' schedule at << f("bt.opp_rating", "{:+.1f}") >>
-(essentially identical to SRS's << f("opp.srs_weighted", "{:+.1f}") >>) and leaves their adjusted margin at << f("bt.adj_margin", "{:+.1f}") >>,
-**1st of << f("raw.n_champions") >>** (correlation with the SRS-adjusted margin across champions ≈ << f("bt.corr_srs", "{:+.2f}") >>).
-So the wins-only check agrees with SRS, not with Elo. The decisive factor in the
-§15 disagreement was therefore *recency weighting* (Elo crediting opponents' late
-form), not margin-vs-wins: on full-season opponent quality, by either margins
-(SRS) or wins (Bradley–Terry), the Knicks are #1; only Elo's recency weighting
-moves them to 3rd. This also cleanly rebuts the "padded by blowouts" objection.
+**What the results mean.** Bradley–Terry rates the Knicks' schedule at << f("bt.opp_rating", "{:+.1f}") >> (essentially identical to SRS's << f("opp.srs_weighted", "{:+.1f}") >>) and leaves their adjusted margin at << f("bt.adj_margin", "{:+.1f}") >>, **1st of << f("raw.n_champions") >>** (correlation with the SRS-adjusted margin across champions ≈ << f("bt.corr_srs", "{:+.2f}") >>).
+So the wins-only check agrees with SRS, not with Elo.
+The decisive factor in the §15 disagreement was therefore *recency weighting* (Elo crediting opponents' late form), not margin-vs-wins: on full-season opponent quality, by either margins (SRS) or wins (Bradley–Terry), the Knicks are #1; only Elo's recency weighting moves them to 3rd.
+This also cleanly rebuts the "padded by blowouts" objection.
 
 ---
 
 ## 17. Possessions-Based Pace Adjustment (`run_pace_possessions`)
 
-**The data.** `build_possession_table` estimates regular-season possessions per
-team per game for each season from the box score:
-`poss = FGA − OREB + TOV + 0.44·FTA` (the standard estimator), averaged over all
-team-games. These columns are present in the cache for all 43 seasons.
+**The data.** `build_possession_table` estimates regular-season possessions per team per game for each season from the box score: `poss = FGA − OREB + TOV + 0.44·FTA` (the standard estimator), averaged over all team-games.
+These columns are present in the cache for all 43 seasons.
 
-**Why this supersedes §9's scoring-share adjustment.** §9 scales margins by
-points per game. That conflates two different things: *pace* (how many
-possessions a game has) and *efficiency* (points scored per possession). The
-3-point era raises points per possession without raising possessions, so scaling
-by total scoring over-penalizes a high-efficiency, normal-pace season like
-2025–26. Dividing by estimated possessions isolates pace, which is what an era
-adjustment should neutralize.
+**Why this supersedes §9's scoring-share adjustment.** §9 scales margins by points per game.
+That conflates two different things: *pace* (how many possessions a game has) and *efficiency* (points scored per possession).
+The 3-point era raises points per possession without raising possessions, so scaling by total scoring over-penalizes a high-efficiency, normal-pace season like 2025–26.
+Dividing by estimated possessions isolates pace, which is what an era adjustment should neutralize.
 
-**The computation.** For each champion, `margin_per100 = margin · 100 / poss` and
-likewise for the opponent-adjusted margin. This is the pace-neutral (per-100-
-possessions, i.e. net-rating-style) form of the margin, then ranked across the
-<< f("raw.n_champions") >> champions as usual.
+**The computation.** For each champion, `margin_per100 = margin · 100 / poss` and likewise for the opponent-adjusted margin.
+This is the pace-neutral (per-100- possessions, i.e. net-rating-style) form of the margin, then ranked across the << f("raw.n_champions") >> champions as usual.
 
-**What the results mean (the §9 number was too harsh).** 2025–26 is estimated at
-<< f("pace.poss_2026") >> possessions/game, only ≈<< f("pace.poss_diff", "{:.1f}") >> above the << f("pace.poss_mean") >> historical mean — a ~4% pace
-premium, versus the ~12% scoring premium §9 used. Per 100 possessions the Knicks'
-raw margin (<< f("pace.raw_per100", "{:+.1f}") >>) and opponent-adjusted margin (<< f("pace.adj_per100", "{:+.1f}") >>) both rank **1st**, where
-the §9 scoring-share adjustment had dropped the raw margin to 3rd. The honest read
-is that most of 2025–26's scoring surplus is efficiency (threes), not pace, so on
-a true pace-neutral basis the #1 raw-and-adjusted margin survives. §9 is retained
-as the deliberately conservative bound; §17 is the more accurate one.
+**What the results mean (the §9 number was too harsh).** 2025–26 is estimated at << f("pace.poss_2026") >> possessions/game, only ≈<< f("pace.poss_diff", "{:.1f}") >> above the << f("pace.poss_mean") >> historical mean — a ~4% pace premium, versus the ~12% scoring premium §9 used.
+Per 100 possessions the Knicks' raw margin (<< f("pace.raw_per100", "{:+.1f}") >>) and opponent-adjusted margin (<< f("pace.adj_per100", "{:+.1f}") >>) both rank **1st**, where the §9 scoring-share adjustment had dropped the raw margin to 3rd.
+The honest read is that most of 2025–26's scoring surplus is efficiency (threes), not pace, so on a true pace-neutral basis the #1 raw-and-adjusted margin survives.
+§9 is retained as the deliberately conservative bound; §17 is the more accurate one.
 
-**Why no new chart.** The finding is a rank correction (3rd → 1st) driven by one
-contrast (4% pace premium vs 12% scoring premium); it is carried fully by those
-two numbers in the appendix, and the existing adjusted-margin bar already shows
-the ranking.
+**Why no new chart.** The finding is a rank correction (3rd → 1st) driven by one contrast (4% pace premium vs 12% scoring premium); it is carried fully by those two numbers in the appendix, and the existing adjusted-margin bar already shows the ranking.
 
 ---
 
 ## 18. Series-Level Win-Probability Model (`run_series_winprob`)
 
-**The data.** The Knicks' regular-season SRS, each opponent's regular-season SRS
-(in round order), and which team hosted each series opener (for home court), all
-read from the cached logs.
+**The data.** The Knicks' regular-season SRS, each opponent's regular-season SRS (in round order), and which team hosted each series opener (for home court), all read from the cached logs.
 
-**Why a forward model.** §4–§9 are retrospective: they score what happened. This
-asks the complementary forward question — given only the Knicks' regular season,
-how likely was this outcome? — so the gap between forecast and reality is a clean
-measure of playoff overperformance in win-loss terms, parallel to the
-margin-based overperformance in §5.
+**Why a forward model.** §4–§9 are retrospective: they score what happened.
+This asks the complementary forward question — given only the Knicks' regular season, how likely was this outcome? — so the gap between forecast and reality is a clean measure of playoff overperformance in win-loss terms, parallel to the margin-based overperformance in §5.
 
-**The model.** A single game's win probability is `p = Φ((SRS_NYK − SRS_opp ±
-hca)/σ)`, with `σ = 12` (the single-game point-margin SD), `hca = 3` (home
-points), `+hca` at home and `−hca` away. Each round is a best-of-7 with the
-2-2-1-1-1 home pattern; the simulator plays 40,000 full brackets and records the
-title rate, per-series win rates, and the loss distribution. Because all four
-rounds are best-of-7, every title run is exactly 16 wins, so a run's quality
-reduces to its loss count (16-3 ⇒ 3 losses).
+**The model.** A single game's win probability is `p = Φ((SRS_NYK − SRS_opp ± hca)/σ)`, with `σ = 12` (the single-game point-margin SD), `hca = 3` (home points), `+hca` at home and `−hca` away.
+Each round is a best-of-7 with the 2-2-1-1-1 home pattern; the simulator plays 40,000 full brackets and records the title rate, per-series win rates, and the loss distribution.
+Because all four rounds are best-of-7, every title run is exactly 16 wins, so a run's quality reduces to its loss count (16-3 ⇒ 3 losses).
 
-**What the results mean.** From their own regular season the Knicks were a Finals
-underdog (P(beat Spurs) ≈ << f("winprob.finals.p_series", "{:.0f}") >>%, since the Spurs out-rated them) and only ≈<< f("winprob.p_title", "{:.0f}") >>% to
-win the title. The model expects ≈<< f("winprob.exp_losses") >> losses in a title run; the Knicks lost 3.
-A title as clean as 16-3 occurs in ≈<< f("winprob.p_le3_given_title", "{:.0f}") >>% of the model's championship runs, and
-≈<< f("winprob.p_title_and_le3", "{:.0f}") >>% of all simulated seasons. So the run sat far out on the favorable tail of
-what their regular season predicted — the same elevation §5 and §9 found, here in
-win-loss units.
+**What the results mean.** From their own regular season the Knicks were a Finals underdog (P(beat Spurs) ≈ << f("winprob.finals.p_series", "{:.0f}") >>%, since the Spurs out-rated them) and only ≈<< f("winprob.p_title", "{:.0f}") >>% to win the title.
+The model expects ≈<< f("winprob.exp_losses") >> losses in a title run; the Knicks lost 3.
+A title as clean as 16-3 occurs in ≈<< f("winprob.p_le3_given_title", "{:.0f}") >>% of the model's championship runs, and ≈<< f("winprob.p_title_and_le3", "{:.0f}") >>% of all simulated seasons.
+So the run sat far out on the favorable tail of what their regular season predicted — the same elevation §5 and §9 found, here in win-loss units.
 
-**Assumptions and robustness.** `σ` and `hca` are standard NBA values; varying
-them within reason (σ ∈ [11,13], hca ∈ [2.5,3.5]) moves the percentages by a few
-points but not the conclusion (large overperformance, Finals underdog). The model
-deliberately uses regular-season SRS and is blind to the Knicks' playoff
-elevation — that blindness is the point, since the elevation is exactly what we
-are trying to size.
+**Assumptions and robustness.** `σ` and `hca` are standard NBA values; varying them within reason (σ ∈ [11,13], hca ∈ [2.5,3.5]) moves the percentages by a few points but not the conclusion (large overperformance, Finals underdog).
+The model deliberately uses regular-season SRS and is blind to the Knicks' playoff elevation — that blindness is the point, since the elevation is exactly what we are trying to size.
 
-**Why no new chart.** The story is three or four scalar probabilities and a small
-per-round table, already in the appendix; a chart would not add resolution.
+**Why no new chart.** The story is three or four scalar probabilities and a small per-round table, already in the appendix; a chart would not add resolution.
 
 ---
 
 ## Recurring Methods: Quick Reference
 
-**`_pct_rank(series, value, ascending=True)`**
-The single statistical primitive used throughout. Definition:
-`(series.dropna() ≤ value).mean() × 100` when `ascending=True`;
-`(series.dropna() ≥ value).mean() × 100` when `ascending=False`.
-This is the empirical CDF evaluated at `value`. With << f("raw.n_champions") >> seasons, resolution is
-~2.3 pp. A value equal to the best historical value yields 100th percentile
-(since it is ≤ itself and every other value). No smoothing, no interpolation.
+**`_pct_rank(series, value, ascending=True)`** The single statistical primitive used throughout.
+Definition: `(series.dropna() ≤ value).mean() × 100` when `ascending=True`; `(series.dropna() ≥ value).mean() × 100` when `ascending=False`.
+This is the empirical CDF evaluated at `value`.
+With << f("raw.n_champions") >> seasons, resolution is ~2.3 pp. A value equal to the best historical value yields 100th percentile (since it is ≤ itself and every other value).
+No smoothing, no interpolation.
 
-**SRS (Simple Rating System): `compute_srs` in `nbakit.data`**
-SRS solves a system of linear equations that makes each team's rating equal its
-average point margin per game plus an adjustment for opponent strength. The system
-is:
+**SRS (Simple Rating System): `compute_srs` in `nbakit.data`** SRS solves a system of linear equations that makes each team's rating equal its average point margin per game plus an adjustment for opponent strength.
+The system is:
 
 ```
 (I − A) @ srs = mean_margin_vector
 ```
 
-where `A[i, j]` = fraction of team `i`'s games against team `j` (the
-normalized schedule matrix), and `mean_margin_vector[i]` is team `i`'s average
-per-game margin across all regular-season games. The constraint `sum(srs) = 0` is
-imposed so the solution is unique and ratings are relative rather than absolute.
-This is solved via `numpy.linalg.lstsq` on the augmented system (adding a row
-for the constraint). An SRS of +5 means "this team outperforms a 0-SRS schedule
-by 5 points per game"; a << f("field.spurs.reg_srs") >> SRS for San Antonio (the Finals opponent) places
-them among the elite regular-season teams in 2025–26.
+where `A[i, j]` = fraction of team `i`'s games against team `j` (the normalized schedule matrix), and `mean_margin_vector[i]` is team `i`'s average per-game margin across all regular-season games.
+The constraint `sum(srs) = 0` is imposed so the solution is unique and ratings are relative rather than absolute.
+This is solved via `numpy.linalg.lstsq` on the augmented system (adding a row for the constraint).
+An SRS of +5 means "this team outperforms a 0-SRS schedule by 5 points per game"; a << f("field.spurs.reg_srs") >> SRS for San Antonio (the Finals opponent) places them among the elite regular-season teams in 2025–26.
 
-**`identify_champion`**
-Counts wins per team in the playoff game log and returns the team with the most.
-This is unambiguous: the actual Finals winner has more wins than every other team
-by construction (they won the championship). For seasons where the data is
-complete and consistent, this is always the same as the documented champion.
+**`identify_champion`** Counts wins per team in the playoff game log and returns the team with the most.
+This is unambiguous: the actual Finals winner has more wins than every other team by construction (they won the championship).
+For seasons where the data is complete and consistent, this is always the same as the documented champion.
 
-**`fill_plus_minus`**
-For pre-1997 seasons where `PLUS_MINUS` is NaN, the helper uses the two-row
-structure of the game log (one row per team per game) to compute margins from
-`PTS`. For each `GAME_ID`, the `PTS` column is reversed within the group (using
-`transform(lambda s: s.iloc[::-1].values)`) to give each row the opponent's
-points, and `PLUS_MINUS = PTS − OPP_PTS` is filled where null. This is
-algebraically exact under the assumption that the box-score `PTS` totals match
-the official game score (they do).
+**`fill_plus_minus`** For pre-1997 seasons where `PLUS_MINUS` is NaN, the helper uses the two-row structure of the game log (one row per team per game) to compute margins from `PTS`.
+For each `GAME_ID`, the `PTS` column is reversed within the group (using `transform(lambda s: s.iloc[::-1].values)`) to give each row the opponent's points, and `PLUS_MINUS = PTS − OPP_PTS` is filled where null.
+This is algebraically exact under the assumption that the box-score `PTS` totals match the official game score (they do).
 
-**Percentile vs. rank.** The report uses "Nth percentile" rather than "Kth of << f("raw.n_champions") >>"
-because percentile is more intuitive at this sample size and because it is
-comparable across sections with slightly different sample sizes (some metrics
-have fewer than << f("raw.n_champions") >> valid values due to NaN, e.g. in pre-1997 margins before the
-fill).
+**Percentile vs. rank.** The report uses "Nth percentile" rather than "Kth of << f("raw.n_champions") >>" because percentile is more intuitive at this sample size and because it is comparable across sections with slightly different sample sizes (some metrics have fewer than << f("raw.n_champions") >> valid values due to NaN, e.g. in pre-1997 margins before the fill).
 
-**Why no regression.** The core analysis is descriptive: it ranks a single team
-against a historical distribution. A regression of playoff margin on opponent SRS
-would add complexity (outcome variable? controls?) without better answering "where
-does this run rank?" The adjusted margin is the closest thing to a structural
-model; it makes one explicit functional-form assumption (opponent adjustment =
-direct subtraction), motivated by the SRS identity rather than fit from data.
-What §13 adds is not a predictive model but uncertainty quantification on that
-descriptive rank: bootstrap resampling, empirical-Bayes shrinkage, and
-error-propagation, each chosen because the headline rests on a << f("ats.n_total") >>-game sample and
-the point-estimate rank alone hides how wide that uncertainty is.
+**Why no regression.** The core analysis is descriptive: it ranks a single team against a historical distribution.
+A regression of playoff margin on opponent SRS would add complexity (outcome variable? controls?) without better answering "where does this run rank?" The adjusted margin is the closest thing to a structural model; it makes one explicit functional-form assumption (opponent adjustment = direct subtraction), motivated by the SRS identity rather than fit from data.
+What §13 adds is not a predictive model but uncertainty quantification on that descriptive rank: bootstrap resampling, empirical-Bayes shrinkage, and error-propagation, each chosen because the headline rests on a << f("ats.n_total") >>-game sample and the point-estimate rank alone hides how wide that uncertainty is.

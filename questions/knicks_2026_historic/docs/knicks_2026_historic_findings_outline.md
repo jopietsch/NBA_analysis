@@ -8,7 +8,9 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-Internal analyst reference. Cross-referenced to `knicks_2026_historic_results.md`. Update when findings prose or RESULTS change.
+Internal analyst reference.
+Cross-referenced to `knicks_2026_historic_results.md`.
+Update when findings prose or RESULTS change.
 
 ---
 
