@@ -111,6 +111,7 @@ Update when findings prose or RESULTS change.
 
 - Forward model (reg-season SRS only): Knicks given only 14.7% title probability (Spurs out-rated them in regular season).
 - Expected losses in title run: 6.5 (actual: 3). P(championship run losing <=3 games): 6.7%. P(title AND <=3 losses): 1.0%.
+- Path-only caveat: model follows only the Knicks' realized bracket, not the full field. Strongest reg-season team was Oklahoma City Thunder (+11.04 SRS), ahead of the Spurs (+8.28); OKC exited before the Finals so only the Spurs are scored.
 - Echoes the margin overperformance in §4: the Knicks played far above their regular-season level.
 - knicks_2026_historic_results.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL
 
@@ -139,6 +140,12 @@ Update when findings prose or RESULTS change.
 
 - Findings now end with "Appendix A: Companion Documents" linking the standalone Regression Results (RESULTS), The Investigation, the one-page Summary, the Stats Explainer, and this Outline.
 - The report is built with `include_appendix=False`: RESULTS is no longer inlined as a report appendix; it is a linked companion doc.
+
+## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
+
+- Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie).
+- Reading the shape: scores are bell-shaped, not a power law. Mean +3.29, 65% within 1 SD; Knicks sit +2.0 SD above the mean (the expected spot for the best of 43 draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
+- knicks_2026_historic_results.md refs: §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 
 ---
 
@@ -191,3 +198,5 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K40 | §12 L408 | only 7% of model championship runs that clean | §18 SERIES-LEVEL WIN-PROBABILITY | P(title run <=3 losses) = 6.7% |
 | K41 | §12 L409 | barely 1% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = 1.0% |
 | K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%) |
+| K43 | §12 | field's strongest reg-season team was Oklahoma City Thunder (+11.04 SRS) | §18 SERIES-LEVEL WIN-PROBABILITY (field note) | strongest field SRS +11.04 vs. Spurs +8.28 |
+| K44 | App.B | champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out | §19 APPENDIX RANKING (shape) | mean +3.29, SD 3.38, 65% within 1 SD |

@@ -111,6 +111,7 @@ Update when findings prose or RESULTS change.
 
 - Forward model (reg-season SRS only): Knicks given only << f("winprob.p_title") >>% title probability (Spurs out-rated them in regular season).
 - Expected losses in title run: << f("winprob.exp_losses") >> (actual: << f("raw.losses") >>). P(championship run losing <=3 games): << f("winprob.p_le3_given_title") >>%. P(title AND <=3 losses): << f("winprob.p_title_and_le3") >>%.
+- Path-only caveat: model follows only the Knicks' realized bracket, not the full field. Strongest reg-season team was << f("winprob.field_best_team") >> (<< f("winprob.field_best_srs") >> SRS), ahead of the Spurs (<< f("field.spurs.reg_srs") >>); OKC exited before the Finals so only the Spurs are scored.
 - Echoes the margin overperformance in §4: the Knicks played far above their regular-season level.
 - knicks_2026_historic_results.md refs: §18 SERIES-LEVEL WIN-PROBABILITY MODEL
 
@@ -139,6 +140,12 @@ Update when findings prose or RESULTS change.
 
 - Findings now end with "Appendix A: Companion Documents" linking the standalone Regression Results (RESULTS), The Investigation, the one-page Summary, the Stats Explainer, and this Outline.
 - The report is built with `include_appendix=False`: RESULTS is no longer inlined as a report appendix; it is a linked companion doc.
+
+## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
+
+- Full ranked table of all << f("raw.n_champions") >> champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace). Knicks << f("pace_era.paa_adj") >> #1, 2016-17 Warriors a hair behind (effective tie).
+- Reading the shape: scores are bell-shaped, not a power law. Mean << f("appendix.dist.mean") >>, << f("appendix.dist.within1sd_pct") >>% within 1 SD; Knicks sit << f("appendix.dist.knicks_z") >> SD above the mean (the expected spot for the best of << f("raw.n_champions") >> draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
+- knicks_2026_historic_results.md refs: §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 
 ---
 
@@ -191,3 +198,5 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K40 | §12 L408 | only << f("winprob.p_le3_given_title", "{:.0f}") >>% of model championship runs that clean | §18 SERIES-LEVEL WIN-PROBABILITY | P(title run <=3 losses) = << f("winprob.p_le3_given_title") >>% |
 | K41 | §12 L409 | barely << f("winprob.p_title_and_le3", "{:.0f}") >>% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = << f("winprob.p_title_and_le3") >>% |
 | K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace << f("pace.poss_2026") >> vs. mean << f("pace.poss_mean") >> = << f("pace.poss_diff") >>/game (~4%) |
+| K43 | §12 | field's strongest reg-season team was << f("winprob.field_best_team") >> (<< f("winprob.field_best_srs") >> SRS) | §18 SERIES-LEVEL WIN-PROBABILITY (field note) | strongest field SRS << f("winprob.field_best_srs") >> vs. Spurs << f("field.spurs.reg_srs") >> |
+| K44 | App.B | champion scores bell-shaped, mean << f("appendix.dist.mean") >>, Knicks << f("appendix.dist.knicks_z") >> SD out | §19 APPENDIX RANKING (shape) | mean << f("appendix.dist.mean") >>, SD << f("appendix.dist.sd") >>, << f("appendix.dist.within1sd_pct") >>% within 1 SD |
