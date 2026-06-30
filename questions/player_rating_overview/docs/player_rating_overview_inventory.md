@@ -30,6 +30,8 @@ This catalog lists every major NBA player rating system, how each is acquired, w
 
 These use standard box-score totals (points, rebounds, assists, steals, blocks, turnovers, field-goal attempts, free-throw attempts, minutes) plus league and team context, all fetchable from nba_api.
 
+The Coverage column below is the era each metric is *defined* for; the Coverage summary near the end of this doc gives the narrower range this project can actually fetch and compute (1983–84 on, where nba_api's box-score totals begin).
+
 | System | Components | Coverage | Source | Notes |
 |---|---|---|---|---|
 | **Game Score** (Hollinger) | PTS, FGM, FGA, FTA, FTM, OREB, DREB, STL, AST, BLK, TO | 1983–84 to present | nba_api `LeagueDashPlayerStats` | Simple single-game quality measure; per-game average used for season ranking |
@@ -39,7 +41,7 @@ These use standard box-score totals (points, rebounds, assists, steals, blocks, 
 | **USG%** (Usage Rate) | FGA, FTA, TO, team totals | 1983–84 to present | nba_api | Approximate using `(FGA + 0.44*FTA + TO) / (team_FGA + 0.44*team_FTA + team_TO) * 5` |
 | **Win Shares** (OWS / DWS / WS / WS/48) | Full box + team + league | 1946–47 to present | nba_api + Basketball-Reference methodology | Separate offensive and defensive components; WS/48 normalizes for playing time |
 | **BPM 2.0** (Box Plus/Minus, OBPM / DBPM) | Per-100-possession box rates + team + role adjustments | 1973–74 to present | nba_api + BBR-published regression coefficients | Estimates on/off impact from box stats; team context adjusts team-quality bias |
-| **VORP** (Value Over Replacement Player) | BPM, minutes, team games | 1973–74 to present | Derived from BPM | `VORP = (BPM - (-2.0)) × (pct_team_minutes) × (team_games / 82)` |
+| **VORP** (Value Over Replacement Player) | BPM, minutes, team games | 1973–74 to present | Derived from BPM | `VORP = (BPM - (-2.0)) × (share of team minutes played)`; the recompute does not apply the standard `/82` season prorate (see stats explainer) |
 
 ### Data endpoints used for recompute
 
@@ -62,7 +64,7 @@ We download and cache; no recomputation.
 |---|---|---|---|---|
 | **RAPTOR** (FiveThirtyEight) | Results-only (auto) | 2013–14 to 2022–23 (FTE shut down April 2023) | GitHub: `fivethirtyeight/data` → `nba-raptor/` CSVs; one file per season | See source registry below |
 | **DARKO DPM** (Kostya Medvedovsky) | Results-only (snapshot) | 2013–14 to present | <https://darko.basketball> public results page; downloadable CSV or API query | Projection system (like PECOTA/Steamer), not a season average: weights recent games more heavily, updates daily. Compare with caution against season-average metrics. |
-| **DRIP** (Opta Analyst) | Results-only (auto) | 2021–22 to present | <https://theanalyst.com> — DRIP player ratings page; structured download available | Daily-updated like DARKO: now-casts current true talent rather than averaging the full season. Offensive and defensive components. |
+| **DRIP** (Opta Analyst) | Results-only (auto) | 2021–22 to present | <https://theanalyst.com>, DRIP player ratings page; structured download available | Daily-updated like DARKO: now-casts current true talent rather than averaging the full season. Offensive and defensive components. |
 
 ---
 

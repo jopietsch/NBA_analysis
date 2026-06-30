@@ -109,12 +109,14 @@ Unlike Pearson correlation, Spearman does not assume linearity; it only requires
 Values range from -1 (perfect disagreement) to +1 (perfect agreement).
 A value of 0.7 or above among NBA players typically means the two systems identify largely the same group of players as above-average.
 
-### Unique variance (unique R²)
+### Overlap variance (reported as "unique R²")
 
 For each system S, we regress S on all other present systems using ordinary least squares (OLS).
-The model's R² measures how much of S can be explained by the others.
-The unique R² is defined here as the residual variance fraction: `1 − R²`.
-A system with unique R² of 0.40 means 40% of its variation cannot be reconstructed from the other systems; it is carrying independent signal.
+The model's R² is the share of S the others can reconstruct: its overlap with the rest of the field.
+The pipeline prints and stores this R² under the label "unique R²," which is a misnomer worth flagging: the number is the overlap, so a high value means the system is largely redundant and a low value means it carries independent signal.
+A box-score system at R² = 0.89 leaves only about 11% of its variation that the others cannot rebuild.
+The impact metrics hit R² = 1.00 mechanically, not because they echo the box scores: each (BPM, RAPM) sits in the pool alongside its own offensive and defensive halves and is their exact sum, so it is reconstructable by construction.
+Holding each metric's components out of its predictor set, a Phase 6 item, would give the honest figure.
 
 ### Consensus rating (z-score average)
 
@@ -130,7 +132,7 @@ The limitation is that it can be dominated by systems that measure the same thin
 To find the combination of systems that best predicts team wins:
 1. Standardize each system's values per player (z-score, same as consensus).
 2. Aggregate to team level: for each team, compute the minutes-weighted average of each system's player z-scores.
-3. Regress actual team wins on these team-level ratings using ridge regression (L2 penalty, α = 5.0) to handle multicollinearity.
+3. Regress actual team wins on these team-level ratings using ridge regression (L2 penalty, α = 5.0) to handle multicollinearity (the instability that arises when predictors are highly correlated with each other, which makes individual OLS coefficients swing wildly).
 4. The regression coefficients define the importance weight for each system in predicting wins.
 5. Apply the same weights per-player to construct the per-player wins-predictive rating.
 
@@ -184,7 +186,7 @@ where players are sorted ascending by value and rank_i runs from 1 to n.
 
 Gini is reliable only for metrics that accumulate a quantity that cannot drop below zero (Win Shares, VORP).
 The implementation here clips negative values to zero, so for metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) every below-average player is counted as a flat zero.
-That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.76, above Win Shares near 0.36, an ordering that the power-law exponents reverse and that is not real.
+That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.76, above Win Shares near 0.36, an ordering the power-law exponents nearly erase (consensus 0.31 vs Win Shares 0.23), so the fair measure shows the two similarly concentrated rather than the wide gap Gini implies.
 Gini is therefore reported only as a cross-check; the power-law exponent is the measure to trust when comparing systems.
 
 ### Top-5% share
@@ -212,7 +214,7 @@ Define the three components:
 - **Likelihood:** the on/off stint data. Each stint is a window of possessions during which a specific lineup was on the floor, producing an observed point differential. Across a full season these stints are the evidence that updates the prior.
 - **Posterior:** the RAPM estimate that blends prior and likelihood, weighted by how much evidence exists. Heavy-minute players in stable lineups get posteriors that move substantially toward what the data shows. Bench players with few possessions get posteriors that remain close to the prior.
 
-### Ridge regression as MAP estimation
+### Ridge regression as maximum a posteriori (MAP) estimation
 
 Ridge regression is RAPM's estimator.
 It minimizes:
@@ -283,8 +285,8 @@ The consensus rating in this project uses equal-weighted z-scores.
 A Bayesian alternative is Bayesian model averaging (BMA): treat each system as a model of the latent true player value, assign each model a weight proportional to its evidence (how well it explains the data), and compute the posterior over player value as the weighted average of the per-model posteriors.
 
 Without published posterior variances from the third-party systems, a tractable proxy weights each system inversely by its disagreement with the others.
-The unique R² values computed in the cross-system comparison, how much of each system's variance is not explained by the other systems, approximate this disagreement.
-A system with low unique R² is either very consistent with the others (high reliability) or measuring the same thing (redundant).
+The overlap R² values computed in the cross-system comparison, how much of each system's variance the others can explain, approximate this agreement directly: high overlap means a system mostly tracks the field.
+A system with high overlap is either very consistent with the others (high reliability) or measuring the same thing (redundant).
 Distinguishing those two interpretations requires a retrodiction test: a system that is consistent with the others AND predicts game outcomes well is reliable; a system that is merely consistent but does not predict is just echoing shared biases.
 
 ---

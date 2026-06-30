@@ -11,16 +11,21 @@
 ## How to read the numbers
 
 This document shows the evidence behind the claims in the main findings doc.
-It uses p-values and confidence intervals to characterize how reliable the patterns are.
+Most of that evidence is rank correlations and explained-variance scores, with reliability shown by cross-validation and by how steady a number stays from season to season.
 
-**p-value:** the probability of seeing a result at least this large if there were actually no real effect.
-A p-value below 0.05 is the conventional threshold for "this is unlikely to be noise." Below 0.01 is stronger; below 0.001 is very strong.
-
-**Confidence interval (CI):** a range within which the true value likely falls.
-A 95% CI means that if you ran the same study many times, 95% of the CIs computed that way would contain the true value.
-
-**Spearman rank correlation (r):** a measure of how consistently two rankings agree, from -1 (perfect disagreement) to +1 (perfect agreement).
+**Spearman rank correlation (r):** how consistently two rankings agree, from -1 (perfect disagreement) to +1 (perfect agreement).
 0.7 or above is strong agreement; 0.4-0.7 is moderate; below 0.4 is weak.
+
+**R² and cross-validated R² (CV R²):** R² is the share of one thing's variation that another set of numbers can reconstruct, from 0 (none) to 1 (all).
+Plain R² is measured on the same data it was fit to, so it flatters the fit.
+CV R² refits with one team held out at a time and scores only the held-out team, so it is the honest out-of-sample read and always the lower, more trustworthy number.
+
+**Season-to-season range [low, high]:** where a result is averaged over many seasons, the bracket gives the lowest and highest single-season value.
+A tight range means the pattern is steady and not a one-year fluke; a wide range means it swings.
+This range stands in for a formal confidence interval, which the thin single-season samples here (30 teams) do not support.
+
+**p-value:** the probability of seeing a result at least this large if there were no real effect; below 0.05 is the usual "unlikely to be noise" threshold.
+One p-value appears in this document, where two ratings are compared head to head; everywhere else the cross-validation and the season range carry the reliability.
 
 ---
 
@@ -28,49 +33,60 @@ A 95% CI means that if you ran the same study many times, 95% of the CIs compute
 
 ### Method
 
-For each pair of rating systems with at least 20 players in common, Spearman rank correlations were computed among qualified players (500+ minutes).
-Because we are examining many pairs simultaneously, we report the full matrix rather than fishing for a single significant comparison.
+For each pair of rating systems, Spearman rank correlations were computed among qualified players (500+ minutes), all 375 of whom carry every recomputed system.
+Because we are examining many pairs at once, we read the full matrix rather than fishing for a single comparison that clears a threshold.
 
 ### Results
 
-Full correlation matrix: see `player_rating_overview_results.md`.
+The full correlation matrix is in `player_rating_overview_results.md`; the patterns below are its spine.
 
-Box-score systems (PER, WS, BPM) show high mutual correlations: PER and Win Shares typically correlate above r = 0.75 because they share inputs.
-PER and BPM share the same box-score inputs but process them through different formulas, so their correlation is usually 0.65-0.80.
+The box-score systems form a tight cluster.
+Game Score and PER rank players almost identically (r = 0.83), PER and Win Shares closely (r = 0.76), Game Score and Win Shares nearly as much (r = 0.70).
+This project's recomputed BPM is the loose thread: it agrees with PER only at r = 0.49 and with Game Score at r = 0.47, below published BPM, because the approximate recompute runs the same box inputs through a noisier formula.
+VORP tracks BPM almost perfectly (r = 0.97), which is no surprise since VORP is BPM scaled by minutes.
 
-The correlation between box-score systems and impact metrics depends on the season and which players qualify.
-Typically: BPM vs. RAPTOR r ≈ 0.55-0.70 (BPM uses similar inputs to RAPTOR's box prior); Win Shares vs. RAPTOR r ≈ 0.45-0.60 (Win Shares credits play differently).
+The box scores and the single-season RAPM barely agree.
+PER vs RAPM is r = 0.22, Win Shares vs RAPM r = 0.28, BPM vs RAPM r = 0.20.
+The bare one-season RAPM is so noisy that its top-rated player, Isaiah Joe at +13.1 per 100, sits 201st in the consensus.
+Its average rank agreement with the box-score systems is just 0.22.
 
-Human rankings show the highest correlation with box systems among the top-25 players and meaningfully lower correlation in the broader qualified pool.
+RAPM_MY, the multi-year version shrunk toward a box-score prior, pulls that agreement up to 0.37 and lands at 0.58 with the consensus.
+Its top names, Shai Gilgeous-Alexander and Giannis Antetokounmpo, are players the box scores also rate highly, where bare RAPM's leaders are not.
+The multi-year pooling and the prior, not the raw lineup data, are what bring it into line.
 
-These figures are approximate before the pipeline runs; the results doc has the exact values for 2024-25.
+Offense and defense move independently.
+O-RAPM and D-RAPM correlate at -0.06, essentially unrelated, and the box-score halves push against each other too: OBPM vs DBPM is -0.46, and Game Score, a scoring-led measure, ranks players nearly opposite to DBPM (r = -0.45).
 
 ### Interpretation
 
-Correlations above 0.6 indicate the systems are measuring largely the same underlying quality signal but from different angles.
-Correlations below 0.5 indicate genuine methodological divergence — the systems disagree about who is contributing.
+The systems agree most where they share inputs and least where they don't.
+The box scores cluster because they read the same box totals; they part from RAPM because RAPM reads lineup results the box scores never see.
+A correlation at 0.7 or above means two systems are largely measuring the same quality from different angles; below 0.4 means they genuinely disagree about who is contributing.
+The single-season RAPM's near-zero agreement with everything is mostly noise, not insight: the multi-year, prior-informed RAPM_MY is the version to compare against the field, and it agrees with the field far more.
 
 ---
 
-## 2. Unique signal analysis
+## 2. Overlap: how much each system repeats the others
 
 ### Method
 
-For each system, we fit a linear model of that system's values on all other present systems.
-The fraction of variance the system explains beyond what the others capture is the unique R².
-This is an approximation of how redundant each system is: a high unique R² means the system adds independent information; a low unique R² means it is largely a function of the other systems.
+For each system, we measured how much of its rating can be rebuilt from all the other systems together, fitting a trend line on the rest.
+The share that can be reconstructed is the overlap: a high overlap means the system mostly repeats what the others already say; a low overlap means it carries something of its own.
+The results doc labels this number "unique R²," but the value it reports is the overlap share, so a high number means heavily redundant, not highly distinct.
 
-One caveat: low unique R² does not mean a system is useless.
-It means it does not add information beyond what the others collectively carry.
-A highly reliable, well-validated system with low unique R² is still worth trusting; it is simply correlated with others.
+One caveat: high overlap does not make a system useless.
+A reliable, well-validated system that moves in lockstep with the others is still worth trusting; it just is not adding a separate piece of information.
 
 ### Results
 
-Expected pattern: BPM and RAPTOR will show higher unique R² than PER and Win Shares, because the impact metrics incorporate on/off lineup data that box stats do not.
-VORP will have low unique R² because it is derived directly from BPM.
-Game Score will have low unique R² because it is a linear combination of box-score inputs that the other box systems also use.
+Among the systems that are not built out of each other, the box scores overlap heavily: PER 0.89, Game Score 0.89, Win Shares 0.87, WS/48 0.84.
+Each can be rebuilt to within roughly a tenth of its variation by the others, so only about 11 to 16 percent of any box-score system is its own.
 
-Exact figures: `player_rating_overview_results.md`.
+The impact metrics post a perfect 1.00 overlap, but that is an artifact, not a finding.
+BPM is OBPM plus DBPM, and RAPM is its offensive plus defensive halves, and all of those pieces sit in the same pool, so each is reconstructable from its own components by definition.
+VORP, which is BPM stretched by minutes, lands at 0.87.
+The honest read is the one the findings draw: each system captures less that is truly its own than its billing suggests.
+A cleaner test, holding each metric's own components out of its predictor set, is a Phase 6 item.
 
 ---
 
@@ -79,18 +95,30 @@ Exact figures: `player_rating_overview_results.md`.
 ### Method
 
 Player ratings for each system were aggregated to the team level using a minutes-weighted average (each player's z-score weighted by their share of team minutes).
-These team-level ratings were then used as predictors of actual team wins in a ridge regression.
-Ridge regression adds a penalty on large coefficients, which prevents overfitting when the predictors are highly correlated (as they are here).
+These team-level ratings were then used to predict actual team wins, with a penalty on large weights that keeps any one system from dominating when the systems overlap as heavily as they do here.
 
-A non-negative constraint was not enforced in the current implementation; the ridge penalty alone handles the multicollinearity.
+No system was forced to a positive weight; the penalty alone handles the overlap between the closely related systems.
 
-Because we have only 30 teams per season, the wins-predictive regression is estimated on small data.
-The coefficients should be interpreted as directional evidence of which systems track team performance, not as precise weights.
+Because we have only 30 teams per season, the wins-predictive fit is estimated on thin data.
+The weights should be read as directional evidence of which systems track team performance, not as precise estimates.
 Out-of-sample validation (held-out seasons) would be needed to trust the weights beyond 2024-25; that is planned as a Phase 6 extension.
 
 ### Results
 
-The correlation between the consensus rating and the wins-predictive rating is in `player_rating_overview_results.md`, along with the five players most divergently ranked by the two approaches.
+The consensus rating and the wins-predictive rating rank players almost the same way: their rankings correlate at 0.93 (the one place a direct significance test applies, p < 0.001).
+Reweighting the systems to chase team wins barely moves the order from simply averaging them.
+Where they part is instructive: the wins-predictive rating lifts Giannis Antetokounmpo (+1.4 versus consensus), Victor Wembanyama (+1.4), and Evan Mobley (+0.9), all heavy two-way bigs, and marks down low-minute role players like Dillon Jones and KJ Martin.
+
+A sharper test than fitting wins is rebuilding them.
+Each system's player ratings, minutes-weighted to the team level, are fit to team point differential and scored out of sample by holding one team out at a time (CV R²).
+PER, which never sees who won, rebuilds 72% of the team-margin spread (CV R² = 0.72), ahead of the team-adjusted box metrics (BPM 0.62, VORP 0.55, Win Shares 0.46) and the multi-year RAPM_MY (0.58).
+That ordering carries a caveat: this project's BPM, VORP, and RAPM are approximate recomputes, so part of their gap behind PER is recompute noise, not proof PER is the better rating.
+
+Describing a season and forecasting the next are different jobs, and they reward different systems.
+Carrying each rating onto the next season's rosters and predicting that season's team margin, PER collapses from 0.72 describing to 0.15 forecasting, while BPM holds far better (0.62 to 0.50) and Game Score actually rises.
+Pooled across 29 season-pairs back to 1996-97 the same flip holds: PER averages 0.64 describing but 0.25 forecasting, and BPM forecasts better than PER in 20 of 29 pairs.
+Over the 13 seasons with play-by-play, RAPM_MY forecasts 8 of 10 pairs, just behind bare RAPM's 9, so the multi-year prior does not yet beat the box scores at forecasting here.
+The lesson for the combined rating: the metric that best describes the season just played is not automatically the one that best predicts the next.
 
 ---
 
@@ -98,18 +126,24 @@ The correlation between the consensus rating and the wins-predictive rating is i
 
 ### Method
 
-For each system, we computed:
-- **Gini coefficient:** measures inequality of value distribution among qualified players. 0 = perfectly equal; 1 = one player holds all value.
+For each system, we measured how concentrated value is at the top, with these views:
+- **Top-of-the-ranks drop-off:** how fast a system's value falls from the best player down the ranks. A steeper drop-off means the top is heavier relative to the rest. This is the measure to compare across systems, because it does not depend on where a system places its zero point.
+- **Gini coefficient:** the standard inequality measure, where 0 means every player is equal and 1 means one player holds all the value. We keep it only as a cross-check: it is distorted for systems centered on zero (the BPM family, the consensus), where it counts every below-average player as a flat zero and so reads as more top-heavy than the system really is.
 - **Top-5% share:** the fraction of total positive value held by the top 5% of qualified players.
-- **Skewness:** a statistical measure of how much the distribution pulls to the right (positive values above the mean) or left.
+- **Skewness:** how far the distribution leans toward the high-value side.
 
-We tested the hypothesis that cumulative metrics (Win Shares, VORP) are more right-skewed than rate metrics (PER, BPM) because value = rate × minutes, and the distribution of minutes × performance compounds the inequality.
+We tested the hypothesis that cumulative metrics (Win Shares, VORP) are more top-heavy than rate metrics (PER, BPM), because value = rate × minutes, so minutes and performance compound.
 
 ### Results
 
 The full distribution statistics are in `player_rating_overview_results.md`.
-The hypothesis is expected to hold for WS and VORP vs. PER and BPM.
-The report states whether it held for each metric in the 2024-25 data.
+The drop-off measure and the Gini coefficient can disagree sharply: the consensus rating and Win Shares have similar drop-offs (0.31 vs 0.23), yet their Gini scores look far apart (0.76 vs 0.36) because Gini penalizes the consensus rating's zero-centered scale.
+When the two conflict, the drop-off is the one to trust.
+
+The cumulative-versus-rate hypothesis holds where it can be read cleanly.
+Win Shares and VORP are right-skewed (skew 1.45 and 1.54), with the top 5% of players holding 15% and 32% of all value; the rate metric PER is far flatter (skew 0.73, top 5% holding just 9%).
+Value built as rate times minutes piles up at the top, because the best players are both efficient and heavily used.
+BPM, the other rate metric, looks deceptively top-heavy here (top 5% at 32%) for the same zero-centering reason that inflates its Gini: a scale artifact, not real concentration.
 
 ![Rating value versus rank for cumulative and rate metrics: cumulative metrics fall steeply among the top players; rate metrics stay flatter.](../generated/images/rank_value_distributions.svg){#fig-distributions}
 
@@ -117,9 +151,9 @@ The report states whether it held for each metric in the 2024-25 data.
 
 ## 5. Crosswalk coverage
 
-Third-party sources are joined to the nba_api player list by normalized name + season.
-The match rates for each source are reported in `player_rating_overview_results.md`.
-Unmatched players are listed.
+The 14 systems analyzed here are all recomputed in-house or built from play-by-play, so they share the nba_api player list and need no name matching.
+The crosswalk matters only for the third-party snapshots (RAPTOR, EPM, LEBRON, DARKO), which are joined to the nba_api player list by normalized name plus season.
+None of those are loaded yet, so no match rates appear in `player_rating_overview_results.md`; they will once a snapshot is cached.
 
-Match rates below 90% indicate a name-normalization issue in the source data (common with accented names and suffixes) or a player whose normalized name is shared by another player in the same season (an ambiguous collision).
+When they are, a match rate below 90% will flag a name-normalization issue (common with accented names and suffixes) or a player whose normalized name is shared by another player in the same season (an ambiguous collision).
 The crosswalk handles accents and suffixes automatically; collisions require a hand entry in the OVERRIDES table.
