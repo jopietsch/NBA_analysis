@@ -37,7 +37,7 @@ Re-drawing the << f("ats.n_total") >> games leaves the average margin anywhere f
 **Why it holds.** Even at the unlucky end of that range, the run would still rank above the average champion.
 The << f("raw.margin") >> is not the work of one or two blowouts that happened to land in a short sample: it is the best raw margin on record and stays elite across the re-draws.
 
-![Average playoff margin, all 43 champions ranked](../generated/images/knicks_2026_margin_ranking.svg){width=100%}
+![Average playoff margin, all 43 champions ranked](../generated/images/knicks_2026_margin_ranking.svg){#fig-margin-ranking width=100%}
 
 ## It Survives Adjusting for Opponent Strength
 
@@ -52,7 +52,7 @@ After crediting opponents for their quality, the Knicks still rank first.
 A wins-only system that never sees a single point margin also puts them first (Part 2, "the margins are garbage-time padding"), and the schedule they faced was a median champion's rather than a soft one (Part 2, "the bracket was soft"), so the adjustment is not propping up a weak slate.
 The one rating that does move them, off the top to third, is Elo, which weights recent form and rates their late-peaking opponents tougher (Part 2, "the early-round opponents were fading").
 
-![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
+![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
 ## They Played Far Above Their Own Level
 
@@ -69,7 +69,7 @@ The Finals paired the field's two most-improved teams, which is part of why the 
 **Why it holds.** The elevation shows up in two separate measures, the overperformance against their own forecast and the raw rating jump, both near the top of the field and the historical set.
 It also lines up with where the run was actually tested: the Knicks beat the field's best-performing team, fully healthy, in a Finals decided by a << f("finals.raw") >> average margin, not just soft early-round opponents.
 
-![Regular-season to playoff jump in team rating: the Knicks rose more than any 2025-26 playoff team, the Spurs second](../generated/images/knicks_2026_field_elevation.svg){width=100%}
+![Regular-season to playoff jump in team rating: the Knicks rose more than any 2025-26 playoff team, the Spurs second](../generated/images/knicks_2026_field_elevation.svg){#fig-field-elevation width=100%}
 
 ## The Market Saw the Same Two-Sided Run
 
@@ -86,7 +86,7 @@ The << f("ats.n_total") >> games are really four series and move together, so th
 Even crediting that clustering, the cover record still clears a fair-coin null (p ≈ << f("ats.p_clust", "{:.2f}") >>), though with only four series that reads as suggestive, not conclusive.
 But the split is the point: the market, pricing in everything known at the time, saw a team that overwhelmed the East and faced a near-coin-flip in the Finals, the same two-sided run the ratings describe.
 
-![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){width=100%}
+![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
 
 ## The Run Beat Its Own Forecast
 
@@ -100,7 +100,7 @@ A run as clean as << f("raw.wins") >>-<< f("raw.losses") >> was rarer still: onl
 **Why it holds.** The forecast is built only from regular-season strength, so it captures what was knowable before a single playoff game.
 The gap between a roughly << f("winprob.p_title", "{:.0f}") >>% title chance and the actual << f("raw.wins") >>-<< f("raw.losses") >> title is the same overperformance measured above, told in wins and losses instead of point margins.
 
-![How rare a 16-3 run was: from the Knicks' regular season the model gave them a 15% title shot, and a run this clean about 1%](../generated/images/knicks_2026_title_run_rarity.svg){width=100%}
+![How rare a 16-3 run was: from the Knicks' regular season the model gave them a 15% title shot, and a run this clean about 1%](../generated/images/knicks_2026_title_run_rarity.svg){#fig-title-run-rarity width=100%}
 
 ---
 
@@ -124,7 +124,7 @@ In << f("gap.pct_more_dominant") >> of seasons since 1984 the West led by more t
 The East's inter-conference win rate was << f("gap.east_h2h") >>, near even.
 The three most West-tilted seasons on record (2013–14 at << f("gap.top1.srs") >>, 2003–04 at << f("gap.top2.srs") >>, 2000–01 at << f("gap.top3.srs") >>) are several times larger than this one.
 
-![Conference strength gap (West − East SRS), 2025-26 flagged](../generated/images/knicks_2026_conference_gap.svg){width=100%}
+![Conference strength gap (West − East SRS), 2025-26 flagged](../generated/images/knicks_2026_conference_gap.svg){#fig-conference-gap width=100%}
 
 **How much it explains away.** Essentially none.
 By any league-wide measure the 2025–26 East was unremarkable, if anything slightly more balanced than the 42-year average.
@@ -143,7 +143,7 @@ If the specific teams the Knicks drew were below the usual championship caliber,
 **The result.** The opponents averaged << f("opp.srs_weighted") >>, the << f("opp.srs_pct", "{:.0f}") >>th percentile, essentially the median champion's schedule.
 Cleveland (<< f("field.cavaliers.reg_srs") >>) was a genuine title contender, and the Spurs entered the Finals as one of the strongest teams in the field (<< f("field.spurs.reg_srs") >> in the regular season, second only to Oklahoma City among playoff teams).
 
-![Strength of schedule, avg opponent SRS per champion](../generated/images/knicks_2026_opponent_srs_ranking.svg){width=100%}
+![Strength of schedule, avg opponent SRS per champion](../generated/images/knicks_2026_opponent_srs_ranking.svg){#fig-opponent-srs-ranking width=100%}
 
 **How much it explains away.** Nothing.
 The schedule was neither unusually easy nor unusually hard; it sat at the historical middle.
@@ -165,7 +165,7 @@ But each of those reads rests on only a handful of games, so a gap that small is
 The Spurs moved the opposite way: from << f("field.spurs.reg_srs") >> in the regular season to << f("round.finals.opp_po_srs") >> in their non-Finals playoff games, a +6.2 rise, the largest of any Knicks opponent.
 Adjusting the whole run for opponents' actual playoff form still leaves the Knicks at << f("adj_po.margin") >> per game, narrowly the best on record (effectively tied with the 1986–87 Lakers at +8.99).
 
-![Per-round raw vs. opponent-adjusted margins: adjustment using playoff SRS shifts the Finals story](../generated/images/knicks_2026_round_split.svg){width=100%}
+![Per-round raw vs. opponent-adjusted margins: adjustment using playoff SRS shifts the Finals story](../generated/images/knicks_2026_round_split.svg){#fig-round-split width=100%}
 
 **How much it explains away.** A little, at the edges, and only in the rounds the Knicks won most easily.
 The toughest opponent of the run went the other way and was playing above its season form.
@@ -182,7 +182,7 @@ Any rating built on point margins would reward that padding.
 
 **The result.** On a pure wins-only basis the Knicks' opponent-adjusted dominance still ranks first of << f("raw.n_champions") >>, and it grades their schedule almost exactly as the margin-based rating does.
 
-![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){width=100%}
+![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){#fig-rating-systems width=100%}
 
 **How much it explains away.** None.
 Stripping margins out entirely does not knock them off the top, so the dominance lives in who they beat, not just by how much.
@@ -219,7 +219,7 @@ On a true pace-neutral basis the #1 claim survives; the opponent adjustment also
 The Hawks and the Spurs were at << f("health.hawks") >>%.
 The Spurs, the team that gave the Knicks their tightest series, were fully intact.
 
-![Opponent key-player availability across the 2025-26 Knicks playoff run](../generated/images/knicks_2026_opponent_health.svg){width=100%}
+![Opponent key-player availability across the 2025-26 Knicks playoff run](../generated/images/knicks_2026_opponent_health.svg){#fig-opponent-health width=100%}
 
 **How much it explains away.** None.
 The close Finals margin reflects genuine competition against a whole team, not a depleted one.

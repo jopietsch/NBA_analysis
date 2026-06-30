@@ -16,7 +16,7 @@ This summary works through four questions: was the run historic and against real
 
 ## 1. Yes, it was historic
 
-![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among << f("raw.n_champions") >> champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
+![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among << f("raw.n_champions") >> champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
 The Knicks' raw average margin of << f("raw.margin") >> points per game is the highest in << f("raw.n_champions") >> years of data.
 Adjusted for opponent strength, their << f("adj.margin", "{:+.1f}") >> margin ranks first all-time, ahead of the 2016–17 Warriors (<< f("adj.top2.margin", "{:+.1f}") >>) and the 1986–87 Lakers (<< f("adj.top3.margin", "{:+.1f}") >>).
@@ -39,7 +39,7 @@ All four opponents were essentially fully healthy (<< f("health.avg") >>% averag
 
 ## 2. Two stories in one run
 
-![Per-round raw margins vs. opponent-adjusted margins using each opponent's playoff form against other teams. The Finals adjustment is large because the Spurs elevated from SRS << f("field.spurs.reg_srs") >> to << f("round.finals.opp_po_srs") >> through the West bracket.](../generated/images/knicks_2026_round_split.svg){width=100%}
+![Per-round raw margins vs. opponent-adjusted margins using each opponent's playoff form against other teams. The Finals adjustment is large because the Spurs elevated from SRS << f("field.spurs.reg_srs") >> to << f("round.finals.opp_po_srs") >> through the West bracket.](../generated/images/knicks_2026_round_split.svg){#fig-round-split width=100%}
 
 The run has two distinct halves.
 Against the East (Hawks, 76ers, Cavaliers) the Knicks went << f("east.wins") >>-<< f("east.losses") >> with an average margin of << f("east.margin") >> points.
@@ -57,7 +57,7 @@ The two halves are different in kind, not just in margin.
 
 ## 3. Their regular season gave them a << f("winprob.p_title", "{:.0f}") >>% title chance
 
-![How rare a << f("raw.wins") >>-<< f("raw.losses") >> run was: from the Knicks' regular season the model gave them a << f("winprob.p_title", "{:.0f}") >>% title shot, and a run this clean about << f("winprob.p_title_and_le3", "{:.0f}") >>%.](../generated/images/knicks_2026_title_run_rarity.svg){width=100%}
+![How rare a << f("raw.wins") >>-<< f("raw.losses") >> run was: from the Knicks' regular season the model gave them a << f("winprob.p_title", "{:.0f}") >>% title shot, and a run this clean about << f("winprob.p_title_and_le3", "{:.0f}") >>%.](../generated/images/knicks_2026_title_run_rarity.svg){#fig-title-run-rarity width=100%}
 
 Forget what happened and ask what the Knicks' regular season predicted.
 A forecaster that knows only each team's regular-season strength and who had home court made New York a Finals underdog: the Spurs out-rated them over 82 games, so the model gave the Knicks about a << f("winprob.finals.p_series", "{:.0f}") >>% chance to win that series and only about a **<< f("winprob.p_title", "{:.0f}") >>% chance to win the title at all**.

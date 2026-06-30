@@ -16,7 +16,7 @@ This summary works through four questions: was the run historic and against real
 
 ## 1. Yes, it was historic
 
-![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){width=100%}
+![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
 The Knicks' raw average margin of +14.9 points per game is the highest in 43 years of data.
 Adjusted for opponent strength, their +11.2 margin ranks first all-time, ahead of the 2016–17 Warriors (+10.2) and the 1986–87 Lakers (+9.5).
@@ -39,7 +39,7 @@ All four opponents were essentially fully healthy (98% average availability).
 
 ## 2. Two stories in one run
 
-![Per-round raw margins vs. opponent-adjusted margins using each opponent's playoff form against other teams. The Finals adjustment is large because the Spurs elevated from SRS +8.28 to +14.48 through the West bracket.](../generated/images/knicks_2026_round_split.svg){width=100%}
+![Per-round raw margins vs. opponent-adjusted margins using each opponent's playoff form against other teams. The Finals adjustment is large because the Spurs elevated from SRS +8.28 to +14.48 through the West bracket.](../generated/images/knicks_2026_round_split.svg){#fig-round-split width=100%}
 
 The run has two distinct halves.
 Against the East (Hawks, 76ers, Cavaliers) the Knicks went 12-2 with an average margin of +19.4 points.
@@ -57,7 +57,7 @@ The two halves are different in kind, not just in margin.
 
 ## 3. Their regular season gave them a 15% title chance
 
-![How rare a 16-3 run was: from the Knicks' regular season the model gave them a 15% title shot, and a run this clean about 1%.](../generated/images/knicks_2026_title_run_rarity.svg){width=100%}
+![How rare a 16-3 run was: from the Knicks' regular season the model gave them a 15% title shot, and a run this clean about 1%.](../generated/images/knicks_2026_title_run_rarity.svg){#fig-title-run-rarity width=100%}
 
 Forget what happened and ask what the Knicks' regular season predicted.
 A forecaster that knows only each team's regular-season strength and who had home court made New York a Finals underdog: the Spurs out-rated them over 82 games, so the model gave the Knicks about a 31% chance to win that series and only about a **15% chance to win the title at all**.
