@@ -229,7 +229,7 @@
 
 ---
 
-## Appendix A — How We Know This Isn't Made Up
+## Appendix B — How We Know This Isn't Made Up
 Consolidated robustness/credibility appendix: gathers the validation battery in plain (findings-tier) language so a reader can see the findings were stress-tested, not cherry-picked. Folds in the old out-of-sample appendix. Each item points to the Investigation doc / RESULTS for full numbers. Bolded mini-sections:
 - **Break date triangulated:** sup-Chow QLR (sb.reg_break=1999) + CUSUM stability + Bayesian changepoint (changepoint.map_year=1999, HPD [1992, 2003]) all agree → the bend is real, not a line-drawing artifact. *RESULTS: STRUCTURAL BREAK / CUSUM / BAYESIAN CHANGE-POINT.*
 - **Placebo tests:** fake breaks at dozens of no-change years; only 1994-95 stands out (era.drop_1995=2.6 pp). *RESULTS: PLACEBO TESTS.*

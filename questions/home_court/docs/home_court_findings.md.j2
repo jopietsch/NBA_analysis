@@ -25,7 +25,7 @@ Home teams have always shot a little better, grabbed more rebounds, turned the b
 
 **What is not behind it** is just as interesting: rule changes (with the single real exception of 1994–95), travel, time zones, pace of play, crowd size, and the playoff format changes, including the much-blamed 2014 switch. Two more nearly make the list. Teams play fewer back-to-backs than they used to, so visitors arrive less tired, but that schedule change accounts for only about << f("b2b.freq_share") >> of the decline. And competitive balance: in a year when the league's teams bunch closer in quality, home court dips a little, but parity has risen and fallen for 40 years while home court has fallen steadily, so it can't explain the long decline. Each factor is tested; only 1994–95 registers a genuine effect, and it is accounted for above.
 
-Throughout, the regular season and the playoffs are tracked separately. They share a similar shape and pattern, but the playoffs are behind the regular season in this decline. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size. The analysis covers about 52,000 regular-season and playoff games; see Appendix D for companion documents including the full statistical tables, and Appendix B for additional findings.
+Throughout, the regular season and the playoffs are tracked separately. They share a similar shape and pattern, but the playoffs are behind the regular season in this decline. The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size. The analysis covers about 52,000 regular-season and playoff games; see Appendix D for companion documents including the full statistical tables, and Appendix A for additional findings.
 
 
 ---
@@ -127,7 +127,7 @@ The playoffs point the same way on rebounding: the home rebound-share advantage 
 
 ![Why the home rebounding and turnover advantages faded. Left: home and away offensive-rebound rates over time; the lines converge and cross, meaning home teams no longer crash the offensive glass more than visitors. Center-left: raw OREB and DREB differentials (home minus away per game) over time; both declined, with the defensive advantage falling more in absolute terms. Center-right: seasons with a larger total home rebounding advantage tend to be seasons where home teams win more (these move together, but that does not mean one causes the other). Right: the home turnover advantage (away minus home turnovers per game) has declined from about 0.4 to near zero.](../generated/images/home_court_rebounding.svg){#fig-rebounding .collapsible}
 
-Player-tracking cameras, in use since 2013–14, corroborate this for the modern window: the home advantage in converting offensive-rebound chances kept shrinking and home teams show no box-out advantage, though by the time the cameras arrived most of the decline had already happened (Appendix B).
+Player-tracking cameras, in use since 2013–14, corroborate this for the modern window: the home advantage in converting offensive-rebound chances kept shrinking and home teams show no box-out advantage, though by the time the cameras arrived most of the decline had already happened (Appendix A).
 
 ### Officiating got fairer and more uniform
 
@@ -139,19 +139,11 @@ Three-point shooting played a direct role too. Three-point attempts draw fewer f
 
 ![Distribution of per-official home foul bias by era, playoffs. The spread has compressed: newer officials are not only less biased on average but more uniform in their calling. Chart covers 1995 onward, the earliest era with sufficient per-official playoff data.](../generated/images/home_court_referee_era.svg){#fig-referee-era}
 
-### Does the box-score story hold up?
+### What the three-point shift explains, and what it doesn't
 
 Could rebounding and turnovers just be the three-point shift in disguise? No. When games with similar three-point rates are compared directly, the **shooting** decline disappears entirely: the shooting gap closed because of the perimeter shift, not any separate cause. The **rebounding** decline barely moves and stays the surest of the four. Fouls and turnovers each land in between: roughly half of each category's trend is explained by rising three-point volume, leaving the other half separate from the perimeter shift. The categories doing the most work to drag home court down, rebounding and the part of turnovers separate from threes, are doing it for reasons the three-point boom does not explain. (In the playoffs the same comparison is too thin on games to read clearly; only the rebounding decline clears the bar. So this is a regular-season verdict.)
 
 ![How much of each category's decline turns out to be the move to threes. Each category's pull on the home-court decline is shown in win-percentage-points per decade, before (open dot) and after (filled dot) games are compared at the same number of threes. A filled dot pulled to zero means the move to threes explains that category's whole decline; one that stays put declined for its own reasons. In the regular season (left) shooting drops to zero and crosses to the far side, which still means the move to threes explains all of it, not that shooting now helps the home team; rebounding barely moves, so its decline is its own; fouls and turnovers each pull about halfway. The playoff panel (right) has too few games to read (greyed); only rebounding stands out clearly, and its decline holds up there too.](../generated/images/home_court_3pa_control.svg){#fig-3pa-control .collapsible}
-
-A further check guards against the worry that this account was simply fit to the whole history. Train the same box-score model on pre-2014 seasons only, freeze it, and let it predict the years it never saw: it tracks the modern decline closely in both the regular season and the playoffs, so the story is not just hindsight (Appendix A).
-
-The breakdown also holds when the straight-line assumption behind it is dropped. A more flexible win model, one that lets the four factors bend and feed off each other instead of adding up in a straight line, splits each game's result among them and then reads off how much each factor's advantage shrank over 40 years. It lands on the same picture: shooting, rebounding, and turnovers each carry a substantial slice of the regular-season decline, fouls the smallest at about << f("shap.reg_fouls_pct") >> (the straight-line table put it a little higher, near << f("share.fouls.decline") >>), and the slices add back to the same total drop. The playoffs split the same way. Because this method shares none of the simpler one's assumptions, the fact that both reach the same split means it is a feature of the games themselves, not a result of the calculation method.
-
-![How the home-court decline splits across the four box-score factors when a flexible win model, free of any straight-line assumption, does the splitting. Each era's stacked bars are the factors' contributions to that season's home edge; the tall early-1980s stack shrinks toward zero in the recent seasons, and that shrinking stack is the decline. Regular season and playoffs split it across the same factors, with shooting and rebounding the largest pieces.](../generated/images/home_court_shap_channels.svg){#fig-shap-channels .collapsible}
-
-A last worry: maybe the categories just stand in for some hidden cause the data never recorded. A standard check measures how big such a hidden cause would have to be to explain a category's link to winning away. For fouls it would have to be more strongly tied to both fouls and winning than the foul advantage itself is, explaining more than << f("sens.reg_fouls_rv") >> of the gap the box-score factors don't already cover; for shooting the bar is higher still, << f("sens.reg_efg_rv") >>. Both are hard to dismiss this way. This shows how much a hidden cause would have to explain before it could undercut the story; it does not prove the categories cause home wins.
 
 One plausible explanation is that analytical tools for shot selection, scouting, and preparation have reached every team at roughly the same pace. When all 30 teams land on the same approaches regardless of venue, the home team's preparation advantage has nowhere to go but down.
 
@@ -217,7 +209,7 @@ Two cautions on the simulation. The playoff per-game rate mixes home court with 
 
 ![Two panels translating the per-game home advantage into a best-of-7 series advantage via simulation. Left: a single-game home win rate (x-axis) maps to a much smaller series win rate (y-axis) for the home-court team, far below the dashed 1:1 line; era dots sit on the curve and drift toward the 50% coin flip over time. Right: the simulated series-level home advantage by era for the regular season and the playoffs, both ending just above 50%, with the per-game rates shown muted above for contrast.](../generated/images/home_court_series_simulation.svg){#fig-series-simulation .collapsible}
 
-Additional findings, including individual referee rankings, franchise-level comparisons, and the blowout-margin trend, are in Appendix B.
+Additional findings, including individual referee rankings, franchise-level comparisons, and the blowout-margin trend, are in Appendix A.
 
 ---
 
@@ -246,31 +238,7 @@ The playoffs have followed the same path with nearly a two-decade lag, on far fe
 
 ---
 
-## Appendix A: How We Know This Isn't Made Up
-
-Most claims in this report are the kind that are easy to get wrong by accident, or to talk yourself into: pick the right years, fit a model to a story you already believe, and run enough tests and something will always look real. So the findings were put through a battery of checks built to make them fail. They held. Here is what was tried, in plain terms. The Investigation companion (Appendix D) lays out each test with its full numbers.
-
-**The slowdown was dated several different ways, and they agreed.** The decline bent once, gently, in the late 1990s, then kept drifting. A bend like that can be an illusion of where you draw the line, so it was located with methods that share no assumptions: one that checks every possible break year for the sharpest change, one that watches the trend for drift as the seasons pile up, and one that weighs whether the record is better described by no bend, one bend, or two. They all land on about << f("sb.reg_break") >>, inside a range of roughly << f("changepoint.hpd_lo") >> to << f("changepoint.hpd_hi") >>. When independent methods agree, the bend is in the data, not in the choice of line.
-
-**The result was attacked on purpose.** A favorite way to fool yourself is to find an "effect" at a moment when nothing actually happened. So fake rule changes were planted at dozens of years where nothing changed, to see whether the method would invent an effect anyway. It didn't: the only year that stands out as a genuine one-time shift is the real 1994-95 hand-checking crackdown, a drop of about << f("era.drop_1995") >> points. The decline is not an artifact of where the breaks were placed.
-
-**The explanation was frozen on old seasons and made to predict the rest.** A fair worry about any after-the-fact story is that it was fit to the whole history, so of course it lines up. To test that, the four-category box-score model was trained only on seasons through << f("oos.train_end") >>, then used unchanged to predict each later season's home win rate. Its error on seasons it had never seen is about << f("oos.rmse_channel") >> percentage point in the regular season, against more than << f("oos.rmse_naive") >> for a flat guess, and it even catches the 2021 dip a simple trend line misses. The same frozen model reconstructs the steeper modern playoff decline too. The mechanism predicts data it was not built from.
-
-![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast}
-
-**The breakdown was re-run with no straight-line assumption.** The split of the decline across the four categories comes from a model that adds them up in a straight line. A second, more flexible model that lets the categories bend and feed off each other reaches the same split: shooting, rebounding, and turnovers each carry a substantial share and fouls the smallest, adding back to the same total drop. Because the two methods share no assumptions, reaching the same split means it is a feature of the games themselves, not of the simpler model.
-
-**The drivers were tested against a hidden cause.** Maybe a category is just standing in for something the box score never recorded. There is a standard way to ask how strong such a hidden cause would have to be to explain a link away: it would have to be tied to both the category and winning. For the shooting link, a hidden cause would have to explain more than << f("sens.reg_efg_rv") >> of everything left unexplained in both the shooting gap and who wins; for the foul link, more than << f("sens.reg_fouls_rv") >>. Those are demanding thresholds, so the strongest links are hard to wish away. This measures how hard the links are to explain away; it does not prove the categories cause home wins.
-
-**Running many tests was corrected for.** Test enough things and a few will look real by chance alone. After the standard correction for having run a whole battery of tests at once, the central results, the decline and its main drivers, still clear the bar. They are not the lucky few.
-
-**It wasn't just which teams happened to host.** The era decline could be a trick of composition, if the stronger home teams happened to host more in the early years. When each franchise is checked on its own, the era-by-era decline barely moves. It is not an artifact of which teams played at home in which decade.
-
-For every test above with its full numbers and the range each result could shift within on the games available, see the Investigation companion (Appendix D); the raw statistical output is in the Results file.
-
----
-
-## Appendix B: Additional Findings
+## Appendix A: Additional Findings
 
 A few results surfaced along the way that don't bear directly on the four questions.
 
@@ -301,6 +269,32 @@ A few results surfaced along the way that don't bear directly on the four questi
 **The box-score breakdown points to what each team can still do.** For a home team, rebounding is the one category it can still control: it carries << f("share.rebounding.decline") >> of the regular-season decline, is almost entirely separate from three-point volume, and has not been equalized by the league-wide strategic shift to the perimeter. Player-tracking data confirms the offensive-rebound conversion advantage is still declining rather than structurally fixed, meaning effort and roster decisions can still move it. The turnover category (<< f("share.turnovers.decline") >> of the decline) has a component separate from three-point volume as well; pressure defense at home, where crowd noise compounds visiting teams' communication problems, targets it directly. On crowd: the pandemic data shows that even a few thousand fans restores nearly the full crowd effect, but larger crowds add little beyond that.
 
 For an away team, three-point heavy shot selection has already largely equalized the shooting category, and the data confirms this. The offensive glass is where the road disadvantage persists most and where no current strategic trend is closing the gap. On rest: when the away team enters better-rested than the home team, home win rate falls about << f("rest.away_vs_baseline") >> percentage points below the baseline, a scheduling-available advantage the data supports consistently across every decade.
+
+---
+
+## Appendix B: How We Know This Isn't Made Up
+
+Most claims in this report are the kind that are easy to get wrong by accident, or to talk yourself into: pick the right years, fit a model to a story you already believe, and run enough tests and something will always look real. So the findings were put through a battery of checks built to make them fail. They held. Here is what was tried, in plain terms. The Investigation companion (Appendix D) lays out each test with its full numbers.
+
+**The slowdown was dated several different ways, and they agreed.** The decline bent once, gently, in the late 1990s, then kept drifting. A bend like that can be an illusion of where you draw the line, so it was located with methods that share no assumptions: one that checks every possible break year for the sharpest change, one that watches the trend for drift as the seasons pile up, and one that weighs whether the record is better described by no bend, one bend, or two. They all land on about << f("sb.reg_break") >>, inside a range of roughly << f("changepoint.hpd_lo") >> to << f("changepoint.hpd_hi") >>. When independent methods agree, the bend is in the data, not in the choice of line.
+
+**The result was attacked on purpose.** A favorite way to fool yourself is to find an "effect" at a moment when nothing actually happened. So fake rule changes were planted at dozens of years where nothing changed, to see whether the method would invent an effect anyway. It didn't: the only year that stands out as a genuine one-time shift is the real 1994-95 hand-checking crackdown, a drop of about << f("era.drop_1995") >> points. The decline is not an artifact of where the breaks were placed.
+
+**The explanation was frozen on old seasons and made to predict the rest.** A fair worry about any after-the-fact story is that it was fit to the whole history, so of course it lines up. To test that, the four-category box-score model was trained only on seasons through << f("oos.train_end") >>, then used unchanged to predict each later season's home win rate. Its error on seasons it had never seen is about << f("oos.rmse_channel") >> percentage point in the regular season, against more than << f("oos.rmse_naive") >> for a flat guess, and it even catches the 2021 dip a simple trend line misses. The same frozen model reconstructs the steeper modern playoff decline too. The mechanism predicts data it was not built from.
+
+![Actual home win % across all seasons (regular season left, playoffs right) with the channel-model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast}
+
+**The breakdown was re-run with no straight-line assumption.** The split of the decline across the four categories comes from a model that adds them up in a straight line. A second, more flexible model that lets the categories bend and feed off each other reaches the same split: shooting, rebounding, and turnovers each carry a substantial share and fouls the smallest at about << f("shap.reg_fouls_pct") >> (the straight-line table put it a little higher, near << f("share.fouls.decline") >>), adding back to the same total drop. The playoffs split the same way. Because the two methods share no assumptions, reaching the same split means it is a feature of the games themselves, not of the simpler model.
+
+![How the home-court decline splits across the four box-score factors when a flexible win model, free of any straight-line assumption, does the splitting. Each era's stacked bars are the factors' contributions to that season's home edge; the tall early-1980s stack shrinks toward zero in the recent seasons, and that shrinking stack is the decline. Regular season and playoffs split it across the same factors, with shooting and rebounding the largest pieces.](../generated/images/home_court_shap_channels.svg){#fig-shap-channels .collapsible}
+
+**The drivers were tested against a hidden cause.** Maybe a category is just standing in for something the box score never recorded. There is a standard way to ask how strong such a hidden cause would have to be to explain a link away: it would have to be tied to both the category and winning. For the shooting link, a hidden cause would have to explain more than << f("sens.reg_efg_rv") >> of everything left unexplained in both the shooting gap and who wins; for the foul link, more than << f("sens.reg_fouls_rv") >>. Those are demanding thresholds, so the strongest links are hard to wish away. This measures how hard the links are to explain away; it does not prove the categories cause home wins.
+
+**Running many tests was corrected for.** Test enough things and a few will look real by chance alone. After the standard correction for having run a whole battery of tests at once, the central results, the decline and its main drivers, still clear the bar. They are not the lucky few.
+
+**It wasn't just which teams happened to host.** The era decline could be a trick of composition, if the stronger home teams happened to host more in the early years. When each franchise is checked on its own, the era-by-era decline barely moves. It is not an artifact of which teams played at home in which decade.
+
+For every test above with its full numbers and the range each result could shift within on the games available, see the Investigation companion (Appendix D); the raw statistical output is in the Results file.
 
 ---
 
