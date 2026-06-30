@@ -737,21 +737,26 @@ def plot_playoff_field_elevation(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
 # ── 15. Second opinion: the Knicks under three rating systems ─────────────────
 
 def plot_rating_systems(champions: pd.DataFrame, elo_table: pd.DataFrame,
-                        bt_table: pd.DataFrame, top_n: int = 6) -> str:
-    """Where the Knicks rank under three different opponent ratings.
+                        bt_table: pd.DataFrame,
+                        capped_table: pd.DataFrame | None = None,
+                        top_n: int = 6) -> str:
+    """Where the Knicks rank under different opponent ratings.
 
     The whole #1 claim leans on SRS.  This re-runs the opponent adjustment with a
-    wins-only rating (Bradley-Terry) and a recency-weighted one (Elo) and shows
-    the top champions under each, Knicks highlighted, so the reader sees the
-    answer holds: top-3 every way, #1 on two of the three.
+    wins-only rating (Bradley-Terry), a blowout-capped margin rating, and a
+    recency-weighted one (Elo), and shows the top champions under each, Knicks
+    highlighted, so the reader sees the answer holds: top-3 every way, #1 on all
+    but the recency-weighted one.
     """
     panels = [
         ("By season margin (SRS)", champions),
         ("By wins only (Bradley-Terry)", bt_table),
+        ("By capped margins (no blowouts)", capped_table),
         ("By recent form (Elo)", elo_table),
     ]
+    panels = [(lbl, tbl) for lbl, tbl in panels if tbl is not None and not tbl.empty]
 
-    fig, axes = plt.subplots(1, 3, figsize=(11, 4.2), sharex=True)
+    fig, axes = plt.subplots(1, len(panels), figsize=(3.7 * len(panels), 4.2), sharex=True)
     fig.patch.set_facecolor(BG)
 
     for ax, (label, table) in zip(axes, panels):
@@ -781,10 +786,10 @@ def plot_rating_systems(champions: pd.DataFrame, elo_table: pd.DataFrame,
 
     axes[0].set_xlabel("")
     fig.supxlabel("Opponent-adjusted playoff margin (pts/game)", fontsize=10, y=0.02)
-    fig.suptitle("All three rating systems put the Knicks among the best title runs ever",
+    fig.suptitle("Every rating system puts the Knicks among the best title runs ever",
                  fontsize=12, fontweight="bold", color="#2c2c2a", y=1.0)
     fig.text(0.5, 0.92,
-             "Top 6 champions under each system; switching margins for wins keeps them #1, only recent-form weighting drops them to #3",
+             "Top 6 champions under each system; switching margins for wins or capping blowouts keeps them #1, only recent-form weighting drops them to #3",
              ha="center", fontsize=8.5, color=GRAY)
     fig.tight_layout(rect=(0, 0.04, 1, 0.9))
     return save_chart("knicks_2026_rating_systems.svg", OUTPUT_DIR, fig=fig)
@@ -878,7 +883,8 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
              posterior_df: pd.DataFrame | None = None,
              p_rank1: float | None = None,
              elo_table: pd.DataFrame | None = None,
-             bt_table: pd.DataFrame | None = None) -> list:
+             bt_table: pd.DataFrame | None = None,
+             capped_table: pd.DataFrame | None = None) -> list:
     from knicks_2026_data import compute_srs
     reg_srs = compute_srs(reg_2026)
 
@@ -913,7 +919,7 @@ def plot_all(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
             paths.append(p)
     if (elo_table is not None and not elo_table.empty
             and bt_table is not None and not bt_table.empty):
-        p = plot_rating_systems(champions, elo_table, bt_table)
+        p = plot_rating_systems(champions, elo_table, bt_table, capped_table)
         if p:
             paths.append(p)
     return paths

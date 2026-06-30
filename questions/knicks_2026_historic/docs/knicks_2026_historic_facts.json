@@ -412,6 +412,48 @@
     "unit": null,
     "value": 1
   },
+  "capped.adj_margin": {
+    "display": "+11.93",
+    "fmt": "{:+.2f}",
+    "note": "Knicks capped-SRS-adj margin",
+    "unit": null,
+    "value": 11.93120267249764
+  },
+  "capped.cap": {
+    "display": "15",
+    "fmt": "{:.0f}",
+    "note": "Margin cap (points) for the robust SRS",
+    "unit": null,
+    "value": 15.0
+  },
+  "capped.corr_srs": {
+    "display": "+0.996",
+    "fmt": "{:+.3f}",
+    "note": "capped-SRS vs SRS adj-margin correlation",
+    "unit": null,
+    "value": 0.9960082028518675
+  },
+  "capped.opp_rating": {
+    "display": "+2.96",
+    "fmt": "{:+.2f}",
+    "note": "Knicks games-wtd opp capped-SRS rating",
+    "unit": null,
+    "value": 2.963534169607623
+  },
+  "capped.pct": {
+    "display": "100.0",
+    "fmt": "{:.1f}",
+    "note": "Knicks capped-SRS-adj margin percentile",
+    "unit": null,
+    "value": 100.0
+  },
+  "capped.rank": {
+    "display": "1",
+    "fmt": "{:d}",
+    "note": "Knicks rank by capped-SRS-adj margin",
+    "unit": null,
+    "value": 1
+  },
   "clutch.mean": {
     "display": "0.256",
     "fmt": "{:.3f}",

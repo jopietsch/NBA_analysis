@@ -103,9 +103,10 @@ Update when findings prose or RESULTS change.
 ## §11. A Second Opinion: Other Rating Systems
 
 - Bradley-Terry (wins-only, no margins): Knicks adj margin +11.37, rank #1 of 43. Correlation with SRS-adjusted: +0.990. Blowouts are not an artifact — dominance is real.
+- Capped-margin SRS (clip each game at ±15, robust to blowouts): adj margin +11.93, rank #1 of 43, corr with SRS +0.996. Schedule strength isn't a blowout artifact either.
 - Elo (recency-weighted): opp rating +5.53 (tougher than SRS's +3.67 — opponents played well down the stretch). Elo-adjusted margin +9.36, rank #3 of 43 (behind 2016-17 Warriors and 1990-91 Bulls).
-- All three systems put Knicks in top three. What shifts them off #1 is crediting opponents' recent form (Elo), not stripping out margins (BT).
-- knicks_2026_historic_results.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §17 POSSESSIONS-BASED PACE
+- All four systems put Knicks in top three (#1 on three; #3 only on Elo). What shifts them off #1 is crediting opponents' recent form (Elo), not stripping out margins (BT) or capping blowouts.
+- knicks_2026_historic_results.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §21 CAPPED-MARGIN (ROBUST) SRS CROSS-CHECK
 
 ## §12. How Unlikely Was a 16-3 Run?
 
@@ -145,13 +146,13 @@ Update when findings prose or RESULTS change.
 
 - Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie).
 - Reading the shape: scores are bell-shaped, not a power law. Mean +3.29, 65% within 1 SD; Knicks sit +2.0 SD above the mean (the expected spot for the best of 43 draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
-- knicks_2026_historic_results.md refs: §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
+- knicks_2026_historic_results.md refs: §20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 
 ## Appendix C: The Full-Field Title Odds
 
 - Forward bracket sim of all 16 playoff teams (generalizes §12's realized-path model): seeds into the fixed bracket, plays every round from reg-season SRS. Favorite = Oklahoma City Thunder at 54.5%, more than triple any rival.
 - Knicks only 3.5% as the East 3-seed, far below the realized-path 14.7% (§12); gap is the bracket draw (East 1/2 seeds upset before NY met them), not play. Neither knows they would elevate.
-- knicks_2026_historic_results.md refs: §20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)
+- knicks_2026_historic_results.md refs: §19 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)
 
 ---
 
@@ -205,5 +206,6 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K41 | §12 L409 | barely 1% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = 1.0% |
 | K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%) |
 | K43 | §12 | field's strongest reg-season team was Oklahoma City Thunder (+11.04 SRS) | §18 SERIES-LEVEL WIN-PROBABILITY (field note) | strongest field SRS +11.04 vs. Spurs +8.28 |
-| K44 | App.B | champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out | §19 APPENDIX RANKING (shape) | mean +3.29, SD 3.38, 65% within 1 SD |
-| K45 | App.C | full-field favorite Oklahoma City Thunder 54.5%, Knicks 3.5% | §20 FULL-FIELD TITLE ODDS | favorite 54.5%, Knicks 3.5% (seed 3), Spurs 14.2% |
+| K44 | App.B | champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out | §20 APPENDIX RANKING (shape) | mean +3.29, SD 3.38, 65% within 1 SD |
+| K45 | App.C | full-field favorite Oklahoma City Thunder 54.5%, Knicks 3.5% | §19 FULL-FIELD TITLE ODDS | favorite 54.5%, Knicks 3.5% (seed 3), Spurs 14.2% |
+| K46 | §11 | capped-margin SRS: Knicks adj +11.93, #1 of 43 | §21 CAPPED-MARGIN (ROBUST) SRS | cap ±15, adj +11.93, rank #1, corr SRS +0.996 |

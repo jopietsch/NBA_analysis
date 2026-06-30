@@ -103,9 +103,10 @@ Update when findings prose or RESULTS change.
 ## §11. A Second Opinion: Other Rating Systems
 
 - Bradley-Terry (wins-only, no margins): Knicks adj margin << f("bt.adj_margin") >>, rank #<< f("bt.rank") >> of << f("raw.n_champions") >>. Correlation with SRS-adjusted: << f("bt.corr_srs") >>. Blowouts are not an artifact — dominance is real.
+- Capped-margin SRS (clip each game at ±<< f("capped.cap") >>, robust to blowouts): adj margin << f("capped.adj_margin") >>, rank #<< f("capped.rank") >> of << f("raw.n_champions") >>, corr with SRS << f("capped.corr_srs") >>. Schedule strength isn't a blowout artifact either.
 - Elo (recency-weighted): opp rating << f("elo.opp_rating") >> (tougher than SRS's << f("opp.srs_weighted") >> — opponents played well down the stretch). Elo-adjusted margin << f("elo.adj_margin") >>, rank #<< f("elo.rank") >> of << f("raw.n_champions") >> (behind 2016-17 Warriors and 1990-91 Bulls).
-- All three systems put Knicks in top three. What shifts them off #1 is crediting opponents' recent form (Elo), not stripping out margins (BT).
-- knicks_2026_historic_results.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §17 POSSESSIONS-BASED PACE
+- All four systems put Knicks in top three (#1 on three; #3 only on Elo). What shifts them off #1 is crediting opponents' recent form (Elo), not stripping out margins (BT) or capping blowouts.
+- knicks_2026_historic_results.md refs: §15 ELO CROSS-CHECK, §16 WINS-ONLY (BRADLEY-TERRY) CROSS-CHECK, §21 CAPPED-MARGIN (ROBUST) SRS CROSS-CHECK
 
 ## §12. How Unlikely Was a 16-3 Run?
 
@@ -145,13 +146,13 @@ Update when findings prose or RESULTS change.
 
 - Full ranked table of all << f("raw.n_champions") >> champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace). Knicks << f("pace_era.paa_adj") >> #1, 2016-17 Warriors a hair behind (effective tie).
 - Reading the shape: scores are bell-shaped, not a power law. Mean << f("appendix.dist.mean") >>, << f("appendix.dist.within1sd_pct") >>% within 1 SD; Knicks sit << f("appendix.dist.knicks_z") >> SD above the mean (the expected spot for the best of << f("raw.n_champions") >> draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
-- knicks_2026_historic_results.md refs: §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
+- knicks_2026_historic_results.md refs: §20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 
 ## Appendix C: The Full-Field Title Odds
 
 - Forward bracket sim of all 16 playoff teams (generalizes §12's realized-path model): seeds into the fixed bracket, plays every round from reg-season SRS. Favorite = << f("fullfield.favorite_team") >> at << f("fullfield.favorite_pct") >>%, more than triple any rival.
 - Knicks only << f("fullfield.knicks_pct") >>% as the East << f("fullfield.knicks_seed") >>-seed, far below the realized-path << f("winprob.p_title") >>% (§12); gap is the bracket draw (East 1/2 seeds upset before NY met them), not play. Neither knows they would elevate.
-- knicks_2026_historic_results.md refs: §20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)
+- knicks_2026_historic_results.md refs: §19 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)
 
 ---
 
@@ -205,5 +206,6 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K41 | §12 L409 | barely << f("winprob.p_title_and_le3", "{:.0f}") >>% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = << f("winprob.p_title_and_le3") >>% |
 | K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace << f("pace.poss_2026") >> vs. mean << f("pace.poss_mean") >> = << f("pace.poss_diff") >>/game (~4%) |
 | K43 | §12 | field's strongest reg-season team was << f("winprob.field_best_team") >> (<< f("winprob.field_best_srs") >> SRS) | §18 SERIES-LEVEL WIN-PROBABILITY (field note) | strongest field SRS << f("winprob.field_best_srs") >> vs. Spurs << f("field.spurs.reg_srs") >> |
-| K44 | App.B | champion scores bell-shaped, mean << f("appendix.dist.mean") >>, Knicks << f("appendix.dist.knicks_z") >> SD out | §19 APPENDIX RANKING (shape) | mean << f("appendix.dist.mean") >>, SD << f("appendix.dist.sd") >>, << f("appendix.dist.within1sd_pct") >>% within 1 SD |
-| K45 | App.C | full-field favorite << f("fullfield.favorite_team") >> << f("fullfield.favorite_pct") >>%, Knicks << f("fullfield.knicks_pct") >>% | §20 FULL-FIELD TITLE ODDS | favorite << f("fullfield.favorite_pct") >>%, Knicks << f("fullfield.knicks_pct") >>% (seed << f("fullfield.knicks_seed") >>), Spurs << f("fullfield.spurs_pct") >>% |
+| K44 | App.B | champion scores bell-shaped, mean << f("appendix.dist.mean") >>, Knicks << f("appendix.dist.knicks_z") >> SD out | §20 APPENDIX RANKING (shape) | mean << f("appendix.dist.mean") >>, SD << f("appendix.dist.sd") >>, << f("appendix.dist.within1sd_pct") >>% within 1 SD |
+| K45 | App.C | full-field favorite << f("fullfield.favorite_team") >> << f("fullfield.favorite_pct") >>%, Knicks << f("fullfield.knicks_pct") >>% | §19 FULL-FIELD TITLE ODDS | favorite << f("fullfield.favorite_pct") >>%, Knicks << f("fullfield.knicks_pct") >>% (seed << f("fullfield.knicks_seed") >>), Spurs << f("fullfield.spurs_pct") >>% |
+| K46 | §11 | capped-margin SRS: Knicks adj << f("capped.adj_margin") >>, #<< f("capped.rank") >> of << f("raw.n_champions") >> | §21 CAPPED-MARGIN (ROBUST) SRS | cap ±<< f("capped.cap") >>, adj << f("capped.adj_margin") >>, rank #<< f("capped.rank") >>, corr SRS << f("capped.corr_srs") >> |

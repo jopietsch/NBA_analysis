@@ -178,7 +178,8 @@ def _mini_alt_table(adj_subject: float) -> pd.DataFrame:
 def test_plot_rating_systems(tmp_path, monkeypatch):
     monkeypatch.setattr(plots, "OUTPUT_DIR", str(tmp_path))
     path = plots.plot_rating_systems(
-        _mini_champions(), _mini_alt_table(11.0), _mini_alt_table(9.4)
+        _mini_champions(), _mini_alt_table(11.0), _mini_alt_table(9.4),
+        _mini_alt_table(11.9)
     )
     assert os.path.exists(path)
 

@@ -649,3 +649,33 @@ def test_full_field_title_odds_basic():
     assert fav["p_title"] > 0.3
     # sorted descending by title odds
     assert list(odds["p_title"]) == sorted(odds["p_title"], reverse=True)
+
+
+def test_compute_capped_srs_bounds_blowouts():
+    """A team with one 60-point blowout rates lower under capped SRS than raw SRS,
+    while a team winning the same games by modest margins is barely affected."""
+    rows = []
+    # round-robin among 4 teams; team A wins all, one win is a huge blowout
+    sched = [
+        ("g1", 100, 101, 60),   # A beats B by 60 (the blowout)
+        ("g2", 100, 102, 8),    # A beats C by 8
+        ("g3", 100, 103, 8),    # A beats D by 8
+        ("g4", 101, 102, 4),    # B beats C by 4
+        ("g5", 101, 103, 4),    # B beats D by 4
+        ("g6", 102, 103, 4),    # C beats D by 4
+    ]
+    for gid, w, l, m in sched:
+        rows.append({"GAME_ID": gid, "TEAM_ID": w, "PLUS_MINUS": float(m),
+                     "PTS": 100 + m, "WL": "W", "MATCHUP": "W vs. L"})
+        rows.append({"GAME_ID": gid, "TEAM_ID": l, "PLUS_MINUS": float(-m),
+                     "PTS": 100, "WL": "L", "MATCHUP": "L @ W"})
+    reg = pd.DataFrame(rows)
+
+    srs = data.compute_srs(reg)
+    capped = data.compute_capped_srs(reg, cap=15.0)
+
+    # capping pulls the blowout team's rating down toward the field
+    assert capped[100] < srs[100]
+    # both still rank team A first; ratings remain zero-sum
+    assert srs.idxmax() == 100 and capped.idxmax() == 100
+    assert abs(capped.sum()) < 1e-9

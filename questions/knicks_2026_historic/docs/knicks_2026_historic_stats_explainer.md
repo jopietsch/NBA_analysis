@@ -637,6 +637,88 @@ The model deliberately uses regular-season SRS and is blind to the Knicks' playo
 
 ---
 
+## 19. Full-Field Title Odds (`run_full_field_odds`)
+
+**The data.** All 16 playoff teams' regular-season SRS, plus each team's conference and playoff seed (from `LeagueStandingsV3`'s `PlayoffRank`), read from the cached logs.
+
+**Why generalize §18.** §18 follows only the Knicks' realized path, so it scores a single team.
+Seeding every team into the bracket and playing it forward yields a title probability for all 16, which answers "who was actually favored?" rather than "how did this one run rate?"
+
+**The model.** The same per-game probability as §18, `p = Φ((SRS_a − SRS_b ± hca)/σ)` with `σ = 12` and `hca = 3` on the 2-2-1-1-1 best-of-7 home pattern.
+The fixed NBA bracket (1v8, 4v5, 3v6, 2v7 per conference, no reseeding) is resolved by Monte Carlo: 50,000 simulated postseasons, each carrying its own per-simulation winners forward so a team's later-round opponent varies across draws.
+The better seed hosts in-conference; the better regular-season SRS hosts the Finals, since seeds are not comparable across conferences.
+A team's title probability is the share of simulations it wins; the 16 shares sum to 1 by construction.
+
+**What the results mean.** Oklahoma City, the league's best SRS by a wide margin, is the runaway favorite at 54.5%, more than triple any rival.
+The Knicks, only the East 3-seed, are 3.5%, far below the 14.7% the realized-path model gave them in §18.
+That is not a contradiction: §18 conditions on the opponents New York actually drew (the East's top two seeds were upset before they would have met), while this sim makes them run the seed-expected gauntlet through Detroit and Boston.
+Neither model knows the Knicks would elevate; both call the title a long shot, and the full-field view a longer one.
+
+**Assumptions.** The same `σ`/`hca` caveat as §18, plus the fixed-bracket, SRS-only forward assumption.
+Widening or narrowing `σ` bunches or separates the favorites but leaves the order (Oklahoma City first, the Knicks a distant longshot) intact.
+
+---
+
+## 20. Full Champion Ranking and Its Shape (`run_appendix_ranking`)
+
+**The data.** The opponent-and-pace-adjusted margin (the §5 schedule adjustment carried onto the §17 pace-neutral scale) for all 43 champions, ranked.
+
+**Two things it reports.** First, the complete ranked table behind the "1st of 43" headline, so every champion's adjusted score is visible, not only the top five.
+Second, the *shape* of those scores, which is what licenses the order-statistic reading of the #1 claim.
+
+**The distribution.** Mean +3.29 points/game, standard deviation 3.38, with 65% of champions inside one SD of the mean (close to the ≈68% a normal predicts).
+Skewness is near zero and the excess kurtosis is negative, meaning tails *thinner* than a normal curve, the opposite of the heavy tail that defines a power law.
+A Shapiro-Wilk test (the standard test of whether a sample could plausibly come from a normal distribution) does not reject normality; the exact W and p are in the results companion, §20.
+So the champion-dominance scores are approximately Gaussian, not scale-free.
+
+**Why the shape matters.** Under a normal with this mean and spread, the single largest of 43 draws is *expected* to land roughly 2 SD above the mean.
+The Knicks' top score is +2.0 SD out, essentially that expected maximum.
+The best champion is therefore the leading edge of an ordinary spread, the top order statistic of a bell curve, not a different kind of team.
+This is the distributional restatement of the §13–§14 conclusion that #1 is real but not a settled outlier.
+
+---
+
+## 21. Capped-Margin (Robust) SRS Cross-Check (`run_capped_srs_check`)
+
+**The data.** The same `build_alt_rating_adjusted_table` machinery as §15–§16, with `compute_capped_srs` supplying the opponent rating.
+
+**Why a third rating axis.** §15 (Elo) varies recency; §16 (Bradley-Terry) varies margin-versus-wins.
+The remaining concern is leverage: ordinary SRS weights a 40-point win like a 4-point one, so a few garbage-time blowouts can move a team's season rating and with it the schedule adjustment.
+Capping isolates exactly that.
+
+**The method.** Clip every game's point margin to ±15 before solving the identical SRS linear system.
+The schedule structure (who played whom) is untouched; only each result's magnitude is bounded.
+The rating sits between SRS (full margin) and Bradley-Terry (no margin): margin still counts, but no single rout dominates.
+Output is the same TEAM_ID-indexed points-above-average series, so it drops straight into the unchanged `adj = raw − games_weighted_opponent_rating`.
+
+**What the results mean.** Capping leaves the Knicks' schedule at +2.96 and their adjusted margin at +11.93, **1st of 43** (correlation with the SRS-adjusted margin across champions ≈ +0.996).
+A blowout-robust opponent rating therefore agrees with SRS and Bradley-Terry, not with Elo: the schedule-strength estimate is not an artifact of a few lopsided opponent games.
+As in §16, the lone disagreement remains Elo's recency weighting, not anything about margins or blowouts.
+
+---
+
+## Rating systems at a glance
+
+The report never rests on one rating.
+The opponent adjustment is recomputed under four systems, each stressing a different assumption, plus two methods that vary the aggregation rather than the rating.
+
+| System | Section | Data it uses | What it stresses | Knicks rank |
+|---|---|---|---|---|
+| SRS | §5 | margins + schedule (linear) | the baseline | 1st |
+| Elo | §15 | margins, sequential | recency / late-season form | 3rd |
+| Bradley-Terry | §16 | win/loss only | margin vs. wins (blowout padding) | 1st |
+| Capped-margin SRS | §21 | clipped margins + schedule | single-game leverage | 1st |
+
+Three of the four put the Knicks 1st; only Elo's recency weighting moves them to 3rd, and §16 and §21 localize the cause to recency, not to margins.
+Two further methods round out the picture without changing the rating formula: the hierarchical model (§14) adds *uncertainty*, which is what actually unseats a settled #1, and the possessions adjustment (§17) varies *pace*.
+
+**Methods deliberately not used here.** A few standard families are absent for concrete reasons.
+Recency with explicit uncertainty (Glicko) collapses to roughly Elo once reduced to a single point rating, so it adds little over §15.
+Market-implied ratings (betting spreads) price in injuries and rest that results-only systems cannot see, but the cached odds cover only the Knicks' 2025-26 playoff games, and historical futures for the other 43-minus-one champions do not exist in the cache, so a market rating cannot feed the all-champions framework.
+Bottom-up player aggregation (summing player-impact ratings such as RAPTOR or EPM by minutes) is a genuinely different data source and the subject of a separate project, not this team-results one.
+
+---
+
 ## Recurring Methods: Quick Reference
 
 **`_pct_rank(series, value, ascending=True)`** The single statistical primitive used throughout.

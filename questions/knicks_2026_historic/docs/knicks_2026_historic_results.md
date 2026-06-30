@@ -488,7 +488,7 @@ field was Oklahoma City Thunder (+11.04), ahead of the Spurs (+8.28).
 The model never scores Thunder because they exited before the
 Finals; the Spurs are the only rival it rates, since New York played them.
 
-─── §20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM) ────────────────────
+─── §19 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM) ────────────────────
 Seeds all 16 playoff teams into the fixed bracket (1v8, 4v5, 3v6, 2v7;
 better seed hosts in-conference, better SRS hosts the Finals) and plays
 every best-of-7 forward from regular-season SRS, same per-game model as
@@ -523,7 +523,7 @@ actually drew (the East's top seeds were upset before they met), while
 this sim makes them run the seed-expected gauntlet through Detroit and
 Boston. Neither model knows they would elevate.
 
-─── §19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING ──────────────
+─── §20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING ──────────────
 Opponent-and-pace-adjusted regular-season margin (pts/game) for all
 43 champions, most dominant first. Raw = scoring margin; OppAdj =
 after strength-of-schedule; Opp+Pace = also scaled to a common scoring
@@ -588,5 +588,27 @@ The scores form a bell-shaped spread, not a heavy-tailed power law: near-
 symmetric, tails no fatter than a normal curve, and a normality test it
 passes comfortably. The Knicks are the top order statistic of an ordinary
 bell curve, about 2 SD out, right where the best of 43 draws is expected.
+
+─── §21 CAPPED-MARGIN (ROBUST) SRS CROSS-CHECK ─────────────────────────
+SRS treats a 40-point win like a 4-point one, so a few garbage-time
+blowouts can swing a team's season rating.  This caps every game's margin
+at ±15 before solving the same SRS system, bounding any one result's
+leverage while keeping the schedule adjustment.  It sits between SRS (full
+margin) and Bradley–Terry (no margin): a third opponent-rating axis that
+asks whether the Knicks' schedule-strength estimate survives when no
+single rout can distort it.
+
+  Knicks games-wtd opp rating (capped-SRS): +2.96 pts/game
+  Knicks capped-SRS-adjusted margin:        +11.93 pts/game
+  Rank among champions:               #1 of 43 (100.0th pct)
+  For comparison, SRS-adjusted rank:  #1 of 43
+  Correlation with SRS-adjusted margin (all champions): +0.996
+
+  Top 5 by capped-SRS-adjusted margin:
+    25–26    raw +14.89  opp +2.96  adj +11.93  ← Knicks
+    16–17    raw +13.65  opp +2.71  adj +10.94
+    90–91    raw +11.71  opp +1.98  adj +9.72
+    86–87    raw +10.83  opp +1.25  adj +9.58
+    85–86    raw +10.56  opp +1.97  adj +8.58
 
 ```

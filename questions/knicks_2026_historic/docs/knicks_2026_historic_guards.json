@@ -24,6 +24,11 @@
     "ok": true,
     "value": 1
   },
+  "capped.rank_is_first": {
+    "claim": "blowout-capped SRS ranks the Knicks #1 all-time among champions",
+    "ok": true,
+    "value": 1
+  },
   "field.knicks_rose_most": {
     "claim": "the Knicks elevated most from reg-season to playoffs of any 2026 playoff team",
     "ok": true,

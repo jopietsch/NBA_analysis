@@ -273,21 +273,26 @@ Their chance of being the true #1 runs from roughly << f("boot.p_rank1", "{:.0f}
 
 Every opponent adjustment so far leans on one rating, SRS, which grades teams by their season-long scoring margins.
 If the Knicks' #1 hinges on that single choice, it is shaky.
-So we re-ran the whole opponent adjustment with two very different ratings and checked whether the answer held.
+So we re-ran the whole opponent adjustment with three very different ratings and checked whether the answer held.
 
 **Wins-only rating.** This system is fit from nothing but who beat whom; it never sees a single point margin.
 That makes it the cleanest test of one worry, that the Knicks' record margins are padded by garbage-time blowouts.
 They are not: on a pure wins-only basis the Knicks' opponent-adjusted dominance still ranks **first of << f("raw.n_champions") >>**, and it rates their schedule almost exactly as SRS does.
 Stripping margins out entirely does not knock them off the top, so the dominance is real, not a scoreboard illusion.
 
+**Blowout-capped rating.** A middle option keeps margins but caps each game at << f("capped.cap") >> points, so a 40-point rout counts no more than a << f("capped.cap") >>-point win when rating a team's schedule.
+That bounds the damage any single lopsided game can do.
+It barely moves the verdict: the Knicks' capped-margin dominance is **<< f("capped.adj_margin") >> per game, still first of << f("raw.n_champions") >>**, and across all << f("raw.n_champions") >> champions the capped and full-margin rankings track in near-lockstep.
+So the schedule strength is not the work of a few blowouts either.
+
 **Elo (recency-weighted).** Elo, the running rating popularized by FiveThirtyEight, is also margin-based but weights recent games more heavily.
 It rated the Knicks' opponents tougher than SRS did, because the teams New York drew were playing well down the stretch (Elo pegs the Spurs at +10.7 points above average, against SRS's << f("field.spurs.reg_srs", "{:+.1f}") >>).
 A tougher-rated schedule means a bigger adjustment, so the Knicks' Elo-adjusted margin is **<< f("elo.adj_margin", "{:+.1f}") >> per game, third-best**, behind the 2016-17 Warriors and 1990-91 Bulls.
 
-All three systems rank the Knicks in the top three, and across champions their adjusted margins track closely together.
-The one thing that moves the Knicks off #1 is not switching from margins to wins, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
+All four systems rank the Knicks in the top three, and across champions their adjusted margins track closely together.
+The one thing that moves the Knicks off #1 is not switching from margins to wins, or capping blowouts, it is crediting opponents for late-season form: on full-season opponent quality the Knicks are first, and only when recent form is weighted heavily do they slip to third.
 
-![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){width=100%}
+![The Knicks rank #1 under three of four rating systems, season margin, wins-only, and blowout-capped; only recency-weighted Elo drops them to #3](../generated/images/knicks_2026_rating_systems.svg){width=100%}
 
 ---
 

@@ -67,6 +67,7 @@ from knicks_2026_data import (
     hierarchical_adjusted_margin_rank,
     compute_elo_ratings,
     compute_bradley_terry_ratings,
+    compute_capped_srs,
     build_alt_rating_adjusted_table,
     compute_possessions_per_game,
     compute_per100_margin,
@@ -1402,6 +1403,33 @@ def run_bt_check(bt_table: pd.DataFrame,
                     "Bradley-Terry (wins-only) ranks the Knicks #1 all-time among champions", _bt_rank)
 
 
+def run_capped_srs_check(capped_table: pd.DataFrame,
+                         champions: pd.DataFrame,
+                         out: io.StringIO,
+                         cap: float = 15.0) -> None:
+    """Re-rank with a blowout-capped SRS: a robust-margin opponent rating."""
+    print(_hdr("§21 CAPPED-MARGIN (ROBUST) SRS CROSS-CHECK"), file=out)
+    print(
+        f"SRS treats a 40-point win like a 4-point one, so a few garbage-time\n"
+        f"blowouts can swing a team's season rating.  This caps every game's margin\n"
+        f"at ±{cap:.0f} before solving the same SRS system, bounding any one result's\n"
+        f"leverage while keeping the schedule adjustment.  It sits between SRS (full\n"
+        f"margin) and Bradley–Terry (no margin): a third opponent-rating axis that\n"
+        f"asks whether the Knicks' schedule-strength estimate survives when no\n"
+        f"single rout can distort it.\n",
+        file=out,
+    )
+    _alt_rating_ranking(capped_table, champions, "capped-SRS", out, facts_namespace="capped")
+    FACTS.set("capped.cap", cap, "{:.0f}", note="Margin cap (points) for the robust SRS")
+    _cap_subj = capped_table[capped_table["year"] == SUBJECT_YEAR]
+    if not _cap_subj.empty:
+        _cap_adj = float(_cap_subj["adj_margin"].iloc[0])
+        _cap_rank = int((capped_table["adj_margin"].dropna() > _cap_adj).sum()) + 1
+        FACTS.guard("capped.rank_is_first", _cap_rank == 1,
+                    "blowout-capped SRS ranks the Knicks #1 all-time among champions",
+                    _cap_rank)
+
+
 # ── Section 17: Possessions-based pace adjustment ────────────────────────────
 
 def run_pace_possessions(champions: pd.DataFrame,
@@ -1579,7 +1607,7 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     from nba_api.stats.static import teams as _static_teams
     from scipy import stats as _stats
 
-    print(_hdr("§19 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING"), file=out)
+    print(_hdr("§20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING"), file=out)
 
     nm = {t["id"]: t["full_name"] for t in _static_teams.get_teams()}
     df = champions.dropna(subset=["pace_adj_adj_margin"]).copy()
@@ -1660,7 +1688,7 @@ def run_full_field_odds(po_2026: pd.DataFrame,
                         standings_2026: pd.DataFrame,
                         out: io.StringIO) -> None:
     """Full-bracket title odds for all 16 teams (generalizes the §18 path model)."""
-    print(_hdr("§20 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)"), file=out)
+    print(_hdr("§19 FULL-FIELD TITLE ODDS (FORWARD BRACKET SIM)"), file=out)
 
     odds = simulate_full_field_title_odds(po_2026, reg_2026, standings_2026)
     odds = odds.reset_index(drop=True)
@@ -1750,6 +1778,11 @@ def main() -> None:
         compute_bradley_terry_ratings, START_YEAR, END_YEAR
     )
 
+    print("Building capped-margin SRS-adjusted table (all seasons)...")
+    capped_table = build_alt_rating_adjusted_table(
+        compute_capped_srs, START_YEAR, END_YEAR
+    )
+
     print("Building possession table (all seasons)...")
     poss_table = build_possession_table(START_YEAR, END_YEAR)
 
@@ -1780,6 +1813,7 @@ def main() -> None:
     run_series_winprob(po_2026, reg_2026, standings_2026, out)
     run_full_field_odds(po_2026, reg_2026, standings_2026, out)
     run_appendix_ranking(champions, out)
+    run_capped_srs_check(capped_table, champions, out)
 
     body = out.getvalue()
 

@@ -1211,6 +1211,24 @@ def compute_bradley_terry_ratings(reg_logs: pd.DataFrame,
     return pd.Series(rating * points_scale, index=teams, dtype=float)
 
 
+def compute_capped_srs(reg_logs: pd.DataFrame, cap: float = 15.0) -> pd.Series:
+    """SRS computed on blowout-capped margins: a robust margin rating.
+
+    Plain SRS weights a 40-point win the same as a 4-point one, so a handful of
+    garbage-time blowouts can swing a team's season rating.  Capping each game's
+    margin at ``±cap`` before solving the SRS system keeps the schedule-adjusted
+    structure but bounds any one result's leverage, so the rating reflects
+    *how often and against whom* a team won big, not the size of its largest
+    routs.  It sits between SRS (full margin) and Bradley-Terry (no margin): a
+    third opponent-rating axis to cross-check the schedule-strength estimate.
+
+    Returns the same TEAM_ID-indexed points-above-average Series as ``compute_srs``.
+    """
+    logs = _nba.fill_plus_minus(reg_logs).copy()
+    logs["PLUS_MINUS"] = logs["PLUS_MINUS"].clip(-cap, cap)
+    return compute_srs(logs)
+
+
 def build_alt_rating_adjusted_table(rating_fn,
                                     start_year: int = START_YEAR,
                                     end_year: int = END_YEAR,
