@@ -8,11 +8,32 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-## 1. Introduction
+<!-- DOCUMENT ARC (question-driven report). See "Document arc for question-driven reports" in ../CLAUDE.md. Delete these comments as you fill each part. -->
 
-TODO: State the main finding upfront so readers don't have to reach the end.
+<!-- INTRO (everything before the first ##; do not add an "## Introduction" heading). This is the contract the body must keep. In order:
+  1. Open with the hook: the single finding that earns attention, stated vividly with a concrete number, not a definition of the topic.
+  2. State the report's questions in **bold**. These drive the section order below.
+  3. Settle the assumptions readers arrive with, as Yes/No bullets ("Was it X? No." / "Did Y matter? Yes, a lot."). Front-loading the answers is what keeps a long report from losing the reader.
+  4. Give the headline answers in a sentence or two so a skimmer who stops here still leaves with the conclusions.
+  5. Note the data scope and where it's precise vs. only directional. -->
 
-## 2. TODO
+TODO: hook sentence, then the bold questions, then the Yes/No assumption bullets, then the headline answers.
+
+<!-- One ## section PER QUESTION, in the same order the intro listed them. Each section opens with its finding (not a topic definition) and closes on a conclusion that matches what the intro promised. -->
+
+## 1. TODO (answers the first question)
+
+TODO
+
+<!-- If the project has a "what did NOT cause this" angle, give it its own section: the "what is NOT behind it" device is house style (see ../CLAUDE.md "Reach for these"). -->
+
+## N. What Didn't Drive the Change
+
+TODO: the ruled-out factors, each named concretely.
+
+<!-- Close with a Summary section that re-answers the same questions in the same order, so the doc resolves the contract it opened with. -->
+
+## Summary
 
 TODO
 
