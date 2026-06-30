@@ -9,7 +9,7 @@
 :::
 
 The rating that best describes a finished NBA season is the worst at predicting the next one.
-PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in the season just played, more than the plus/minus metrics built to track exactly that, yet it forecasts the next season at only about << f("panel.PER.forecast_mean_pct") >>%.
+Averaged across the << f("panel.n_seasons") >> seasons tested, PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in a season just played, more than the plus/minus metrics built to track exactly that, yet it forecasts the next at only about << f("panel.PER.forecast_mean_pct") >>%.
 That split is one thread of a larger problem: every "top players" list uses a different method, and they disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
 This report surveys how NBA players get rated and puts three questions to the systems:
@@ -149,7 +149,7 @@ RAPM, the one impact metric computed here, sits apart from all of them.
 It is built only from which lineups outscored their opponents, with no box-score inputs at all, so it shares little with the rest: its rank order agrees with the box-score systems at about << f("rapm.box_corr_mean") >> on the same 0-to-1 scale, well below how tightly those systems track each other.
 That distance is the whole point of an impact metric, since it is meant to catch what the box score misses.
 But a single season of lineup data is noisy, and it shows.
-The bare 2024-25 RAPM puts reserves and rookies near the top, led by << f("rapm.top.1.name") >>, who lands << f("rapm.top1_consensus_rank") >>th in the consensus that the box-score systems build.
+The bare 2024-25 RAPM puts reserves and rookies near the top, led by << f("rapm.top.1.name") >>, who lands at number << f("rapm.top1_consensus_rank") >> in the consensus that the box-score systems build.
 This is why every published impact metric (EPM, LEBRON, DARKO) pulls its RAPM toward a box-score prior rather than using it raw.
 
 The report also builds that fixed version.
