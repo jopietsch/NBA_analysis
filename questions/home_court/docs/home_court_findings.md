@@ -576,7 +576,7 @@ Most of them match.
 The disagreements are instructive.
 
 **Where we agree.** The overall decline, the foul-call story, the irrelevance of travel and pace: all consistent across two independent pipelines.
-One check that neither analysis is fabricating results: Sparkle's home-court figures for the two altitude teams, Denver and Utah, land within a tenth of a point of mine.
+One sign both pipelines are measuring the same thing: Sparkle's home-court figures for the two altitude teams, Denver and Utah, land within a tenth of a point of mine.
 
 **Where we differ, and why.** The blog names the three-point revolution as the primary cause, drawing on a 40-year near-mirror image: as three-point attempts rose, home win percentage fell.
 I ran a tighter test and found about 42% of that lockstep is just two trends drifting the same way over time, not one causing the other.
@@ -602,7 +602,7 @@ The magnitude doesn't hold.
 Separating the schedule change from the rest puts the schedule effect at roughly 8% of the decline.
 The other 92% is the home advantage shrinking within every rest situation alike, regardless of how tired the visitor is.
 
-**What I found the blog missed.** The rebounding decline is the biggest gap.
+**What I found the blog missed.** The rebounding decline is the biggest thing the blog leaves out.
 The blog's box-score account has no rebounding term; I find it is the largest driver, separate from the three-point shift, carrying 30% of the regular-season decline, and it holds up when games have similar three-point rates.
 The fading turnover advantage (another 27%) is also unaccounted for.
 The blog's breakdown points at something real.
