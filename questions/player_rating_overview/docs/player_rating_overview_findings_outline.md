@@ -11,7 +11,7 @@
 Internal outline.
 Cross-referenced to player_rating_overview_results.md.
 Technical shorthand fine here.
-Reflects the current pipeline: 14 recomputed box-score systems plus a from-scratch RAPM (bare single-season + prior-informed multi-year RAPM_MY); other impact metrics and human rankings surveyed but not recomputed.
+Reflects the current pipeline: 14 recomputed box-score systems plus a from-scratch RAPM (bare single-season + prior-informed multi-year RAPM+prior); other impact metrics and human rankings surveyed but not recomputed.
 
 ---
 
@@ -21,7 +21,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Hook: the rating that best describes a finished season forecasts the next worst. PER ~64% describe vs ~25% forecast, averaged across 30 seasons.
 - Three questions: (1) do the systems agree? (2) what does each uniquely capture? (3) how should they be combined?
 - Settled up front: no single best system; agree at the top, diverge below; value is top-heavy (gap #1→#10 >> #10→#50).
-- Testbed 2025-26; 14 box-score systems + RAPM/RAPM_MY recomputed; other impact + human rankings surveyed only. Two panels span 30 seasons back to 1996-97.
+- Testbed 2025-26; 14 box-score systems + RAPM/RAPM+prior recomputed; other impact + human rankings surveyed only. Two panels span 30 seasons back to 1996-97.
 
 ### § 1. The landscape of player rating
 - Box-score (recomputed, present): Game Score, PER, Win Shares, WS/48, BPM, OBPM, DBPM, VORP.
@@ -32,7 +32,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 ### § 2. Do the systems agree?
 - Spearman matrix. Tight: PER-Game Score 0.862, BPM-VORP 0.972. Moderate: PER-WS 0.768, WS-WS/48 0.796. Loose: PER-BPM 0.511, Game Score-BPM 0.428.
 - Player-level divergence even where overall correlation is high: WS favors efficient bigs (Donovan Clingan, Nikola Jokić); PER favors high-usage scorers (Giannis Antetokounmpo, Joel Embiid).
-- RAPM sits apart: agrees with box scores at 0.14; bare 2025-26 puts reserve Moussa Cisse at #37 in consensus. Fixed RAPM_MY agrees with consensus 0.48 (up from 0.25, ~double) but very top still catches low-minute noise (Moussa Cisse); RAPM_MY (combined only) feeds the consensus.
+- RAPM sits apart: agrees with box scores at 0.14; bare 2025-26 puts reserve Moussa Cisse at #37 in consensus. Fixed RAPM+prior agrees with consensus 0.48 (up from 0.25, ~double) but very top still catches low-minute noise (Moussa Cisse); RAPM+prior (combined only) feeds the consensus.
 - Chart: rank-agreement heatmap.
 
 ### § 3. What the field has learned about evaluating these metrics
@@ -40,7 +40,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Direct describe test (held-out teams, 2025-26): PER best, ~73% of team point-diff, above the plus/minus metrics.
 - Forecast test (prior-season ratings predict this season): order flips, PER ~37%, best forecaster Game Score ~40%. Coverage ~88%.
 - Multi-season panel (30 seasons / 29 handoffs back to 1996-97): PER describes ~64%, forecasts ~25%; best forecaster Game Score ~42%; BPM beats PER forecasting 20/29 handoffs.
-- Impact-era panel (13 seasons from 2013-14, box scores vs RAPM): bare RAPM forecasts 9/10 (~17%, describe ~34% but mechanical), RAPM_MY 8/10 (~24%), both below box scores; top Game Score ~45%.
+- Impact-era panel (13 seasons from 2013-14, box scores vs RAPM): bare RAPM forecasts 9/10 (~17%, describe ~34% but mechanical), RAPM+prior 8/10 (~24%), both below box scores; top Game Score ~45%.
 - Stability (year-over-year): Game Score retains 68% of its top 20, PER 64% (chance ~5%); steadiest Game Score 0.85, jumpiest BPM 0.70; 29 pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; BPM jumpy but better).
 - Charts: retrodiction, next-season retrodiction, panel describe-vs-forecast, impact panel, rating stability.
 
@@ -81,7 +81,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 
 ### § 12. Limitations
 - Single-season cross-system testbed; only the describe-vs-forecast and stability panels reach across 30 seasons.
-- RAPM now computed from play-by-play (2025-26 back to 2013-14, 572 players in 2025-26): bare = noisy, no prior; RAPM_MY = 3 pooled seasons + BPM prior (consensus corr 0.48); neither beats box scores at forecasting. No tracking data, so can't match EPM/LEBRON.
+- RAPM now computed from play-by-play (2025-26 back to 2013-14, 572 players in 2025-26): bare = noisy, no prior; RAPM+prior = 3 pooled seasons + BPM prior (consensus corr 0.48); neither beats box scores at forecasting. No tracking data, so can't match EPM/LEBRON.
 - Tracking/team-internal blind spot (Second Spectrum, Synergy, franchise models).
 - Playoff small-sample limit for RAPM-based metrics.
 
@@ -96,7 +96,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 
 - Players: 582 total, 378 qualified (≥ 500 min). Systems present: 14.
 - Correlations: PER-Game Score 0.862, PER-WS 0.768, WS-WS/48 0.796, PER-BPM 0.511, Game Score-BPM 0.428, BPM-VORP 0.972.
-- RAPM: box-score corr 0.14 (bare), consensus corr 0.25 (bare) → 0.48 (RAPM_MY).
+- RAPM: box-score corr 0.14 (bare), consensus corr 0.25 (bare) → 0.48 (RAPM+prior).
 - Describe vs forecast (panel, 30 seasons): PER 64% / 25%; best forecaster Game Score 42%.
 - Consensus top 5: Nikola Jokić 2.79, Shai Gilgeous-Alexander 2.11, Mitchell Robinson 2.08, Luka Dončić 2.00, Victor Wembanyama 1.79.
 - Consensus vs. wins-predictive Spearman: 0.953. Top riser Nikola Jokić +1.76; top faller Kam Jones -0.81.

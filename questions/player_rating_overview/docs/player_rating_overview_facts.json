@@ -492,7 +492,7 @@
   "corr.BPM_D_RAPM_MY": {
     "display": "0.305",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: BPM vs D-RAPM (MY)",
+    "note": "Spearman rank corr: BPM vs D-RAPM+prior",
     "unit": null,
     "value": 0.3054694878004859
   },
@@ -513,7 +513,7 @@
   "corr.BPM_O_RAPM_MY": {
     "display": "0.044",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: BPM vs O-RAPM (MY)",
+    "note": "Spearman rank corr: BPM vs O-RAPM+prior",
     "unit": null,
     "value": 0.043715087569149984
   },
@@ -527,7 +527,7 @@
   "corr.BPM_RAPM_MY": {
     "display": "0.294",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: BPM vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: BPM vs RAPM+prior",
     "unit": null,
     "value": 0.2940497769903647
   },
@@ -548,7 +548,7 @@
   "corr.DBPM_D_RAPM_MY": {
     "display": "0.436",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: DBPM vs D-RAPM (MY)",
+    "note": "Spearman rank corr: DBPM vs D-RAPM+prior",
     "unit": null,
     "value": 0.43613517064522433
   },
@@ -562,7 +562,7 @@
   "corr.DBPM_O_RAPM_MY": {
     "display": "-0.235",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: DBPM vs O-RAPM (MY)",
+    "note": "Spearman rank corr: DBPM vs O-RAPM+prior",
     "unit": null,
     "value": -0.2349671376147584
   },
@@ -576,7 +576,7 @@
   "corr.DBPM_RAPM_MY": {
     "display": "0.170",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: DBPM vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: DBPM vs RAPM+prior",
     "unit": null,
     "value": 0.1697571628424144
   },
@@ -590,21 +590,21 @@
   "corr.D_RAPM_D_RAPM_MY": {
     "display": "0.759",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: D-RAPM vs D-RAPM (MY)",
+    "note": "Spearman rank corr: D-RAPM vs D-RAPM+prior",
     "unit": null,
     "value": 0.7592424660025424
   },
   "corr.D_RAPM_O_RAPM_MY": {
     "display": "-0.122",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: D-RAPM vs O-RAPM (MY)",
+    "note": "Spearman rank corr: D-RAPM vs O-RAPM+prior",
     "unit": null,
     "value": -0.12154500035493576
   },
   "corr.D_RAPM_RAPM_MY": {
     "display": "0.525",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: D-RAPM vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: D-RAPM vs RAPM+prior",
     "unit": null,
     "value": 0.5249564273310975
   },
@@ -632,7 +632,7 @@
   "corr.GAME_SCORE_D_RAPM_MY": {
     "display": "0.038",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: Game Score vs D-RAPM (MY)",
+    "note": "Spearman rank corr: Game Score vs D-RAPM+prior",
     "unit": null,
     "value": 0.038284292765231716
   },
@@ -653,7 +653,7 @@
   "corr.GAME_SCORE_O_RAPM_MY": {
     "display": "0.241",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: Game Score vs O-RAPM (MY)",
+    "note": "Spearman rank corr: Game Score vs O-RAPM+prior",
     "unit": null,
     "value": 0.24051724415658543
   },
@@ -674,7 +674,7 @@
   "corr.GAME_SCORE_RAPM_MY": {
     "display": "0.225",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: Game Score vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: Game Score vs RAPM+prior",
     "unit": null,
     "value": 0.22484919118528435
   },
@@ -716,7 +716,7 @@
   "corr.OBPM_D_RAPM_MY": {
     "display": "-0.013",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: OBPM vs D-RAPM (MY)",
+    "note": "Spearman rank corr: OBPM vs D-RAPM+prior",
     "unit": null,
     "value": -0.012742249208448827
   },
@@ -730,7 +730,7 @@
   "corr.OBPM_O_RAPM_MY": {
     "display": "0.260",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: OBPM vs O-RAPM (MY)",
+    "note": "Spearman rank corr: OBPM vs O-RAPM+prior",
     "unit": null,
     "value": 0.25983663623550807
   },
@@ -744,7 +744,7 @@
   "corr.OBPM_RAPM_MY": {
     "display": "0.206",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: OBPM vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: OBPM vs RAPM+prior",
     "unit": null,
     "value": 0.20602171007047723
   },
@@ -765,28 +765,28 @@
   "corr.O_RAPM_D_RAPM_MY": {
     "display": "-0.157",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: O-RAPM vs D-RAPM (MY)",
+    "note": "Spearman rank corr: O-RAPM vs D-RAPM+prior",
     "unit": null,
     "value": -0.15720943398133827
   },
   "corr.O_RAPM_MY_D_RAPM_MY": {
     "display": "-0.185",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: O-RAPM (MY) vs D-RAPM (MY)",
+    "note": "Spearman rank corr: O-RAPM+prior vs D-RAPM+prior",
     "unit": null,
     "value": -0.18476111379395885
   },
   "corr.O_RAPM_O_RAPM_MY": {
     "display": "0.772",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: O-RAPM vs O-RAPM (MY)",
+    "note": "Spearman rank corr: O-RAPM vs O-RAPM+prior",
     "unit": null,
     "value": 0.7715158000846292
   },
   "corr.O_RAPM_RAPM_MY": {
     "display": "0.434",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: O-RAPM vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: O-RAPM vs RAPM+prior",
     "unit": null,
     "value": 0.4335007585849184
   },
@@ -814,7 +814,7 @@
   "corr.PER_D_RAPM_MY": {
     "display": "0.117",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: PER vs D-RAPM (MY)",
+    "note": "Spearman rank corr: PER vs D-RAPM+prior",
     "unit": null,
     "value": 0.11668876822184074
   },
@@ -835,7 +835,7 @@
   "corr.PER_O_RAPM_MY": {
     "display": "0.237",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: PER vs O-RAPM (MY)",
+    "note": "Spearman rank corr: PER vs O-RAPM+prior",
     "unit": null,
     "value": 0.2369556665799046
   },
@@ -849,7 +849,7 @@
   "corr.PER_RAPM_MY": {
     "display": "0.288",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: PER vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: PER vs RAPM+prior",
     "unit": null,
     "value": 0.28835880705592287
   },
@@ -884,21 +884,21 @@
   "corr.RAPM_D_RAPM_MY": {
     "display": "0.468",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: RAPM vs D-RAPM (MY)",
+    "note": "Spearman rank corr: RAPM vs D-RAPM+prior",
     "unit": null,
     "value": 0.46846820725448696
   },
   "corr.RAPM_MY_D_RAPM_MY": {
     "display": "0.652",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: RAPM (multi-yr+prior) vs D-RAPM (MY)",
+    "note": "Spearman rank corr: RAPM+prior vs D-RAPM+prior",
     "unit": null,
     "value": 0.6517128177577636
   },
   "corr.RAPM_MY_O_RAPM_MY": {
     "display": "0.567",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: RAPM (multi-yr+prior) vs O-RAPM (MY)",
+    "note": "Spearman rank corr: RAPM+prior vs O-RAPM+prior",
     "unit": null,
     "value": 0.5669232757759735
   },
@@ -912,14 +912,14 @@
   "corr.RAPM_O_RAPM_MY": {
     "display": "0.431",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: RAPM vs O-RAPM (MY)",
+    "note": "Spearman rank corr: RAPM vs O-RAPM+prior",
     "unit": null,
     "value": 0.43052107568530096
   },
   "corr.RAPM_RAPM_MY": {
     "display": "0.718",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: RAPM vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: RAPM vs RAPM+prior",
     "unit": null,
     "value": 0.7184236319892766
   },
@@ -933,7 +933,7 @@
   "corr.VORP_D_RAPM_MY": {
     "display": "0.285",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: VORP vs D-RAPM (MY)",
+    "note": "Spearman rank corr: VORP vs D-RAPM+prior",
     "unit": null,
     "value": 0.2852378163996761
   },
@@ -947,7 +947,7 @@
   "corr.VORP_O_RAPM_MY": {
     "display": "0.060",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: VORP vs O-RAPM (MY)",
+    "note": "Spearman rank corr: VORP vs O-RAPM+prior",
     "unit": null,
     "value": 0.05966308986962249
   },
@@ -961,7 +961,7 @@
   "corr.VORP_RAPM_MY": {
     "display": "0.288",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: VORP vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: VORP vs RAPM+prior",
     "unit": null,
     "value": 0.28790888849118307
   },
@@ -989,7 +989,7 @@
   "corr.WS48_D_RAPM_MY": {
     "display": "0.207",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: WS/48 vs D-RAPM (MY)",
+    "note": "Spearman rank corr: WS/48 vs D-RAPM+prior",
     "unit": null,
     "value": 0.20653117341316776
   },
@@ -1010,7 +1010,7 @@
   "corr.WS48_O_RAPM_MY": {
     "display": "0.167",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: WS/48 vs O-RAPM (MY)",
+    "note": "Spearman rank corr: WS/48 vs O-RAPM+prior",
     "unit": null,
     "value": 0.16688234985023268
   },
@@ -1024,7 +1024,7 @@
   "corr.WS48_RAPM_MY": {
     "display": "0.305",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: WS/48 vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: WS/48 vs RAPM+prior",
     "unit": null,
     "value": 0.304676964580522
   },
@@ -1059,7 +1059,7 @@
   "corr.WS_D_RAPM_MY": {
     "display": "0.169",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: Win Shares vs D-RAPM (MY)",
+    "note": "Spearman rank corr: Win Shares vs D-RAPM+prior",
     "unit": null,
     "value": 0.16895064215599198
   },
@@ -1080,7 +1080,7 @@
   "corr.WS_O_RAPM_MY": {
     "display": "0.242",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: Win Shares vs O-RAPM (MY)",
+    "note": "Spearman rank corr: Win Shares vs O-RAPM+prior",
     "unit": null,
     "value": 0.24192387844466817
   },
@@ -1094,7 +1094,7 @@
   "corr.WS_RAPM_MY": {
     "display": "0.343",
     "fmt": "{:.3f}",
-    "note": "Spearman rank corr: Win Shares vs RAPM (multi-yr+prior)",
+    "note": "Spearman rank corr: Win Shares vs RAPM+prior",
     "unit": null,
     "value": 0.3434235070118975
   },
@@ -1703,70 +1703,70 @@
   "dist.D_RAPM_MY.exkurt": {
     "display": "+0.11",
     "fmt": "{:+.2f}",
-    "note": "D-RAPM (MY) excess kurtosis (0 = normal)",
+    "note": "D-RAPM+prior excess kurtosis (0 = normal)",
     "unit": null,
     "value": 0.11241824688878443
   },
   "dist.D_RAPM_MY.frac_neg": {
     "display": "14",
     "fmt": "{:.0f}",
-    "note": "D-RAPM (MY) share of qualified players below zero (percent)",
+    "note": "D-RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
     "value": 14.285714285714285
   },
   "dist.D_RAPM_MY.gini": {
     "display": "0.438",
     "fmt": "{:.3f}",
-    "note": "D-RAPM (MY) Gini coefficient",
+    "note": "D-RAPM+prior Gini coefficient",
     "unit": null,
     "value": 0.4375738705802321
   },
   "dist.D_RAPM_MY.max": {
     "display": "24.99",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) max",
+    "note": "D-RAPM+prior max",
     "unit": null,
     "value": 24.99499308431596
   },
   "dist.D_RAPM_MY.mean": {
     "display": "6.39",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) mean",
+    "note": "D-RAPM+prior mean",
     "unit": null,
     "value": 6.386071761265755
   },
   "dist.D_RAPM_MY.median": {
     "display": "6.28",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) median",
+    "note": "D-RAPM+prior median",
     "unit": null,
     "value": 6.281325987493503
   },
   "dist.D_RAPM_MY.min": {
     "display": "-9.86",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) min",
+    "note": "D-RAPM+prior min",
     "unit": null,
     "value": -9.864772931966383
   },
   "dist.D_RAPM_MY.skew": {
     "display": "+0.14",
     "fmt": "{:+.2f}",
-    "note": "D-RAPM (MY) skewness",
+    "note": "D-RAPM+prior skewness",
     "unit": null,
     "value": 0.140725437478567
   },
   "dist.D_RAPM_MY.std": {
     "display": "5.97",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) std dev",
+    "note": "D-RAPM+prior std dev",
     "unit": null,
     "value": 5.974887623953704
   },
   "dist.D_RAPM_MY.top5pct": {
     "display": "14.5 %",
     "fmt": "{:.1f}",
-    "note": "D-RAPM (MY) top-5% share of total value",
+    "note": "D-RAPM+prior top-5% share of total value",
     "unit": "%",
     "value": 14.485631247962965
   },
@@ -1983,70 +1983,70 @@
   "dist.O_RAPM_MY.exkurt": {
     "display": "+1.02",
     "fmt": "{:+.2f}",
-    "note": "O-RAPM (MY) excess kurtosis (0 = normal)",
+    "note": "O-RAPM+prior excess kurtosis (0 = normal)",
     "unit": null,
     "value": 1.0170074737086612
   },
   "dist.O_RAPM_MY.frac_neg": {
     "display": "94",
     "fmt": "{:.0f}",
-    "note": "O-RAPM (MY) share of qualified players below zero (percent)",
+    "note": "O-RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
     "value": 94.17989417989418
   },
   "dist.O_RAPM_MY.gini": {
     "display": "0.967",
     "fmt": "{:.3f}",
-    "note": "O-RAPM (MY) Gini coefficient",
+    "note": "O-RAPM+prior Gini coefficient",
     "unit": null,
     "value": 0.9668343699819062
   },
   "dist.O_RAPM_MY.max": {
     "display": "12.76",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) max",
+    "note": "O-RAPM+prior max",
     "unit": null,
     "value": 12.758677771735323
   },
   "dist.O_RAPM_MY.mean": {
     "display": "-8.79",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) mean",
+    "note": "O-RAPM+prior mean",
     "unit": null,
     "value": -8.786513956362764
   },
   "dist.O_RAPM_MY.median": {
     "display": "-8.99",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) median",
+    "note": "O-RAPM+prior median",
     "unit": null,
     "value": -8.992518013367603
   },
   "dist.O_RAPM_MY.min": {
     "display": "-20.91",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) min",
+    "note": "O-RAPM+prior min",
     "unit": null,
     "value": -20.910107388775454
   },
   "dist.O_RAPM_MY.skew": {
     "display": "+0.48",
     "fmt": "{:+.2f}",
-    "note": "O-RAPM (MY) skewness",
+    "note": "O-RAPM+prior skewness",
     "unit": null,
     "value": 0.4774092677291686
   },
   "dist.O_RAPM_MY.std": {
     "display": "5.62",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) std dev",
+    "note": "O-RAPM+prior std dev",
     "unit": null,
     "value": 5.624369110936913
   },
   "dist.O_RAPM_MY.top5pct": {
     "display": "97.8 %",
     "fmt": "{:.1f}",
-    "note": "O-RAPM (MY) top-5% share of total value",
+    "note": "O-RAPM+prior top-5% share of total value",
     "unit": "%",
     "value": 97.79900838831372
   },
@@ -2193,70 +2193,70 @@
   "dist.RAPM_MY.exkurt": {
     "display": "+1.94",
     "fmt": "{:+.2f}",
-    "note": "RAPM (multi-yr+prior) excess kurtosis (0 = normal)",
+    "note": "RAPM+prior excess kurtosis (0 = normal)",
     "unit": null,
     "value": 1.9425607752303664
   },
   "dist.RAPM_MY.frac_neg": {
     "display": "66",
     "fmt": "{:.0f}",
-    "note": "RAPM (multi-yr+prior) share of qualified players below zero (percent)",
+    "note": "RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
     "value": 66.13756613756614
   },
   "dist.RAPM_MY.gini": {
     "display": "0.818",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) Gini coefficient",
+    "note": "RAPM+prior Gini coefficient",
     "unit": null,
     "value": 0.8183058335989666
   },
   "dist.RAPM_MY.max": {
     "display": "37.52",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) max",
+    "note": "RAPM+prior max",
     "unit": null,
     "value": 37.51523949212577
   },
   "dist.RAPM_MY.mean": {
     "display": "-2.40",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) mean",
+    "note": "RAPM+prior mean",
     "unit": null,
     "value": -2.400442195097009
   },
   "dist.RAPM_MY.median": {
     "display": "-2.29",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) median",
+    "note": "RAPM+prior median",
     "unit": null,
     "value": -2.2915560733828233
   },
   "dist.RAPM_MY.min": {
     "display": "-23.27",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) min",
+    "note": "RAPM+prior min",
     "unit": null,
     "value": -23.274095408292588
   },
   "dist.RAPM_MY.skew": {
     "display": "+0.38",
     "fmt": "{:+.2f}",
-    "note": "RAPM (multi-yr+prior) skewness",
+    "note": "RAPM+prior skewness",
     "unit": null,
     "value": 0.383951164669597
   },
   "dist.RAPM_MY.std": {
     "display": "7.30",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) std dev",
+    "note": "RAPM+prior std dev",
     "unit": null,
     "value": 7.30068078446356
   },
   "dist.RAPM_MY.top5pct": {
     "display": "38.4 %",
     "fmt": "{:.1f}",
-    "note": "RAPM (multi-yr+prior) top-5% share of total value",
+    "note": "RAPM+prior top-5% share of total value",
     "unit": "%",
     "value": 38.43447886486985
   },
@@ -2599,14 +2599,14 @@
   "ipanel.RAPM_MY.describe_mean": {
     "display": "0.281",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) mean describe R\u00b2 (impact-era panel)",
+    "note": "RAPM+prior mean describe R\u00b2 (impact-era panel)",
     "unit": null,
     "value": 0.2812856759183946
   },
   "ipanel.RAPM_MY.forecast_mean": {
     "display": "0.236",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) mean forecast R\u00b2 (impact-era panel)",
+    "note": "RAPM+prior mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
     "value": 0.2359485200803899
   },
@@ -3068,7 +3068,7 @@
   "nextretro.D_RAPM_MY.r2": {
     "display": "0.018",
     "fmt": "{:.3f}",
-    "note": "D-RAPM (MY) next-season retrodiction R\u00b2 (predict 2025->2026)",
+    "note": "D-RAPM+prior next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
     "value": 0.017812996105948553
   },
@@ -3096,7 +3096,7 @@
   "nextretro.O_RAPM_MY.r2": {
     "display": "0.194",
     "fmt": "{:.3f}",
-    "note": "O-RAPM (MY) next-season retrodiction R\u00b2 (predict 2025->2026)",
+    "note": "O-RAPM+prior next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
     "value": 0.19358983475124136
   },
@@ -3124,7 +3124,7 @@
   "nextretro.RAPM_MY.r2": {
     "display": "0.195",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) next-season retrodiction R\u00b2 (predict 2025->2026)",
+    "note": "RAPM+prior next-season retrodiction R\u00b2 (predict 2025->2026)",
     "unit": null,
     "value": 0.19535742177551685
   },
@@ -3201,7 +3201,7 @@
   "overlap.D_RAPM_MY.r2": {
     "display": "0.733",
     "fmt": "{:.3f}",
-    "note": "D-RAPM (MY) overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "note": "D-RAPM+prior overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
     "value": 0.7327401983519677
   },
@@ -3229,7 +3229,7 @@
   "overlap.O_RAPM_MY.r2": {
     "display": "0.663",
     "fmt": "{:.3f}",
-    "note": "O-RAPM (MY) overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "note": "O-RAPM+prior overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
     "value": 0.6627456754709296
   },
@@ -3250,7 +3250,7 @@
   "overlap.RAPM_MY.r2": {
     "display": "0.660",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
+    "note": "RAPM+prior overlap R\u00b2: share of its variance the other systems (kin excluded) can reconstruct",
     "unit": null,
     "value": 0.6602996226595719
   },
@@ -3628,14 +3628,14 @@
   "powerlaw.D_RAPM_MY.alpha": {
     "display": "0.20",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) power-law exponent (value ~ rank^-alpha)",
+    "note": "D-RAPM+prior power-law exponent (value ~ rank^-alpha)",
     "unit": null,
     "value": 0.20008827381631186
   },
   "powerlaw.D_RAPM_MY.r2": {
     "display": "0.96",
     "fmt": "{:.2f}",
-    "note": "D-RAPM (MY) log-log power-law fit R^2",
+    "note": "D-RAPM+prior log-log power-law fit R^2",
     "unit": null,
     "value": 0.960890368017684
   },
@@ -3684,14 +3684,14 @@
   "powerlaw.O_RAPM_MY.alpha": {
     "display": "1.04",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) power-law exponent (value ~ rank^-alpha)",
+    "note": "O-RAPM+prior power-law exponent (value ~ rank^-alpha)",
     "unit": null,
     "value": 1.036940004682645
   },
   "powerlaw.O_RAPM_MY.r2": {
     "display": "0.75",
     "fmt": "{:.2f}",
-    "note": "O-RAPM (MY) log-log power-law fit R^2",
+    "note": "O-RAPM+prior log-log power-law fit R^2",
     "unit": null,
     "value": 0.747044016712183
   },
@@ -3726,14 +3726,14 @@
   "powerlaw.RAPM_MY.alpha": {
     "display": "0.39",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) power-law exponent (value ~ rank^-alpha)",
+    "note": "RAPM+prior power-law exponent (value ~ rank^-alpha)",
     "unit": null,
     "value": 0.3907023211898004
   },
   "powerlaw.RAPM_MY.r2": {
     "display": "0.95",
     "fmt": "{:.2f}",
-    "note": "RAPM (multi-yr+prior) log-log power-law fit R^2",
+    "note": "RAPM+prior log-log power-law fit R^2",
     "unit": null,
     "value": 0.9478671680072308
   },
@@ -3794,18 +3794,18 @@
     "value": 6
   },
   "powerlaw.non_systems": {
-    "display": "WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (multi-yr+prior), O-RAPM (MY)",
+    "display": "WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior",
     "fmt": null,
     "note": "names of systems whose value-vs-rank curve bends (not a power law)",
     "unit": null,
-    "value": "WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (multi-yr+prior), O-RAPM (MY)"
+    "value": "WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior"
   },
   "powerlaw.systems": {
-    "display": "Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM (MY)",
+    "display": "Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM+prior",
     "fmt": null,
     "note": "names of systems whose value-vs-rank curve fits a power law",
     "unit": null,
-    "value": "Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM (MY)"
+    "value": "Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM+prior"
   },
   "rapm.box_corr_mean": {
     "display": "0.14",
@@ -3999,14 +3999,14 @@
   "retro.D_RAPM_MY.cv_r2": {
     "display": "-0.104",
     "fmt": "{:.3f}",
-    "note": "D-RAPM (MY) retrodiction R\u00b2 (leave-one-team-out CV)",
+    "note": "D-RAPM+prior retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
     "value": -0.10418316495996338
   },
   "retro.D_RAPM_MY.r2": {
     "display": "0.048",
     "fmt": "{:.3f}",
-    "note": "D-RAPM (MY) team point-diff retrodiction R\u00b2 (in-sample)",
+    "note": "D-RAPM+prior team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
     "value": 0.047555304628122186
   },
@@ -4055,14 +4055,14 @@
   "retro.O_RAPM_MY.cv_r2": {
     "display": "0.234",
     "fmt": "{:.3f}",
-    "note": "O-RAPM (MY) retrodiction R\u00b2 (leave-one-team-out CV)",
+    "note": "O-RAPM+prior retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
     "value": 0.23373707559075851
   },
   "retro.O_RAPM_MY.r2": {
     "display": "0.328",
     "fmt": "{:.3f}",
-    "note": "O-RAPM (MY) team point-diff retrodiction R\u00b2 (in-sample)",
+    "note": "O-RAPM+prior team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
     "value": 0.3281035727539162
   },
@@ -4097,14 +4097,14 @@
   "retro.RAPM_MY.cv_r2": {
     "display": "0.302",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) retrodiction R\u00b2 (leave-one-team-out CV)",
+    "note": "RAPM+prior retrodiction R\u00b2 (leave-one-team-out CV)",
     "unit": null,
     "value": 0.30176507706107925
   },
   "retro.RAPM_MY.r2": {
     "display": "0.380",
     "fmt": "{:.3f}",
-    "note": "RAPM (multi-yr+prior) team point-diff retrodiction R\u00b2 (in-sample)",
+    "note": "RAPM+prior team point-diff retrodiction R\u00b2 (in-sample)",
     "unit": null,
     "value": 0.3800924441306228
   },

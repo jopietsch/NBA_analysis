@@ -30,7 +30,7 @@ Each system tilts toward a player type, and the simplest box scores (PER, Game S
 And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (0.95 on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
 
 The testbed is the 2025-26 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
-It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version that shows how noisy raw plus/minus is, and a prior-informed, multi-year version (RAPM_MY) built the way the published metrics are.
+It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version that shows how noisy raw plus/minus is, and a prior-informed, multi-year version (RAPM+prior) built the way the published metrics are.
 Two findings reach beyond the single season, across 30 seasons back to 1996-97: the describe-versus-forecast test above and each rating's year-to-year stability.
 Because the cross-system comparison rests on one season while those panels span decades, treat the single-season orderings as a snapshot and the panel findings as the firmer, repeated pattern.
 The other impact metrics and the human rankings are surveyed as part of the landscape (Section 1) but are not recomputed or included in the comparison here.
@@ -153,10 +153,10 @@ The bare 2025-26 RAPM puts reserves and rookies near the top, led by Moussa Ciss
 This is why every published impact metric (EPM, LEBRON, DARKO) pulls its RAPM toward a box-score prior rather than using it raw.
 
 The report also builds that fixed version.
-RAPM_MY pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
+RAPM+prior pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
 The effect shows up in the aggregate: its order agrees with the consensus at about 0.48, up from 0.25 for the bare version measured against that same consensus, nearly double.
 The lift is in the broad order, not a clean top tier: in 2025-26 a few low-minute players, Moussa Cisse among them, still spike above the established stars.
-It is RAPM_MY, not the bare version, that feeds the consensus rating.
+It is RAPM+prior, not the bare version, that feeds the consensus rating.
 How it is built is in Section 12; whether it forecasts team results any better is tested in Section 3.
 
 The exact figures are in `docs/player_rating_overview_results.md`.
@@ -224,10 +224,10 @@ The plain box scores again lead, with Game Score on top at about 45%.
 This is the same lesson the single-season noise pointed to: without a box-score prior to steady it, one year of RAPM carries too much randomness to forecast the next.
 Its same-season describe score is mid-pack (about 34%), but for RAPM that number reads high for a mechanical reason, since RAPM is built from the very lineup margins the describe test rebuilds.
 
-The prior-informed RAPM_MY does better than the bare version on the same test, forecasting 8 of 10 at about 24%, but it still lands below the box scores.
+RAPM+prior does better than the bare version on the same test, forecasting 8 of 10 at about 24%, but it still lands below the box scores.
 Pooling three seasons and leaning on a box-score prior sharpen which players rate highly (Section 12), yet they do not make the lineup signal a better forecaster of team results than a plain box score already is.
 
-![The same describe-versus-forecast test on the 13 seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the bare single-season RAPM and the prior-informed RAPM_MY both sit toward the right, forecasting next-season team results below the plain box scores, with RAPM_MY edging ahead of the bare version.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
+![The same describe-versus-forecast test on the 13 seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the bare single-season RAPM and the prior-informed RAPM+prior both sit toward the right, forecasting next-season team results below the plain box scores, with RAPM+prior edging ahead of the bare version.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
 
 ### Which ratings hold steady year to year
 
@@ -310,8 +310,8 @@ The test is simple.
 Stretch both axes onto a log scale, and a power law turns into a straight line.
 
 By that test the systems fall into two groups, and the split lines up with the cumulative-versus-rate divide already described.
-Holding close to a straight line: Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM (MY).
-Bending instead: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (multi-yr+prior), O-RAPM (MY).
+Holding close to a straight line: Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM+prior.
+Bending instead: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior.
 
 Win Shares is the steep power law, and VORP concentrates value just as hard, though its top-50 curve bends rather than holding the straight line.
 Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down.
@@ -366,7 +366,7 @@ The data is consistent with the explanation that elite talent is worth more than
 The raw top 20 makes Section 6's split concrete: under VORP and Win Shares the rank-1 player sits far above rank 20, while under PER the twenty bunch close in value.
 The gap between rank 1 and rank 20 is the most direct read on how concentrated value is: a large gap means the top player is in a different tier from the rest; a small gap means the list is relatively flat.
 
-![Top 20 players and their raw scores under each of the eight rating systems. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
+![Top 20 players and their raw scores under each rating system, grouped by family, with the bare RAPM trio and the RAPM+prior trio on their own rows. Blue row is rank 1, red row is rank 20.](../generated/images/top20_by_system.svg){#fig-top20}
 
 ## 8. Who rose and fell in the playoffs
 
@@ -459,12 +459,12 @@ Two things make this version weaker than the published metrics.
 It uses one season of lineup data with no box-score prior, so it is noisy: bench players who shared the floor with strong lineups can rate near the top, which is what puts Moussa Cisse at the head of the raw 2025-26 list (Section 2), and across the seasons it forecasts next-season team results worse than the plain box scores (Section 3).
 And the bare version's offensive and defensive halves are kept out of the consensus, so one noisy single-season split cannot swing the order at the top.
 
-The report also computes the stabilized version, RAPM_MY.
+The report also computes the stabilized version, RAPM+prior.
 It pools three seasons of possessions, weighting recent ones more heavily, and shrinks each player toward a box-score prior: the offensive half toward Offensive BPM, the defensive half toward Defensive BPM.
 A player with few possessions stays near his box score, while a heavy-minute player moves toward what the lineup data shows.
 This is the prior-plus-RAPM recipe the published metrics use, and it helps where expected: its order agrees with the consensus at 0.48, up from 0.25 for the bare version, nearly double the agreement.
 The gain is in the overall order; at the very top, low-minute players like Moussa Cisse can still post inflated values, a reminder that this is an approximate in-house recompute.
-RAPM_MY, combined only, is the version that feeds the consensus.
+RAPM+prior, combined only, is the version that feeds the consensus.
 What it does not do is turn RAPM into a strong forecaster of team results: across the seasons it still predicts next-season point differential below the box scores (Section 3), and heavy-minute role players who spend their court time in strong lineups, the hardest case for any plus/minus method, can still rate too high.
 Matching a published metric like EPM or LEBRON would need the player-tracking data they use and we do not have.
 A public RAPM snapshot can be dropped into the cache schema to validate the computed values when one is available.

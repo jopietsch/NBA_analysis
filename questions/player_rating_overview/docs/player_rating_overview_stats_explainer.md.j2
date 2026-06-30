@@ -236,12 +236,12 @@ Each 2025-26 game's play-by-play is reconstructed into possessions; the design m
 The prior is the zero-mean one above, with no SPM term.
 That bare setup is the reason the single-season estimate is noisier than EPM or LEBRON.
 
-The report also computes a stabilized version, RAPM_MY, that adds the two pieces the published metrics rely on.
+The report also computes a stabilized version, RAPM+prior, that adds the two pieces the published metrics rely on.
 First, a non-zero prior: instead of shrinking each coefficient toward zero, the ridge shrinks it toward the player's Box Plus/Minus (the offensive column toward OBPM, the defensive toward DBPM).
 This is the prior-mean ridge, implemented by the substitution γ = β − prior, so the same RidgeCV solver fits the residual and the prior is added back.
 BPM stands in for the optimized SPM priors that EPM and LEBRON use.
 Second, multi-year pooling: three seasons of possessions are stacked with linear recency weights (most recent season weighted highest) and fit together, which is how RPM and EPM cut single-season noise.
-RAPM_MY, combined only, is the version that feeds the consensus.
+RAPM+prior, combined only, is the version that feeds the consensus.
 It does not match EPM or LEBRON, whose edge comes from player-tracking inputs this project does not have.
 
 ### Sequential updating: the Kalman filter

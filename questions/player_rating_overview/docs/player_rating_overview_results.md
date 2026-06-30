@@ -20,9 +20,9 @@ Rating systems present: 14
   RAPM: 378 players with data
   O-RAPM: 378 players with data
   D-RAPM: 378 players with data
-  RAPM (multi-yr+prior): 378 players with data
-  O-RAPM (MY): 378 players with data
-  D-RAPM (MY): 378 players with data
+  RAPM+prior: 378 players with data
+  O-RAPM+prior: 378 players with data
+  D-RAPM+prior: 378 players with data
   RAPM players with computed values: 572
 
 ─── RAPM — COMPUTED SINGLE-SEASON (NO PRIOR) ────────────────────
@@ -111,19 +111,19 @@ D-RAPM (n=378):
   Gini: 0.689  Top-5% share: 23.6%
   Skew: -0.22  Excess kurtosis: -0.15  Below zero: 49%
 
-RAPM (multi-yr+prior) (n=378):
+RAPM+prior (n=378):
   Mean: -2.40  Median: -2.29  Std: 7.30
   Min: -23.27  Max: 37.52
   Gini: 0.818  Top-5% share: 38.4%
   Skew: +0.38  Excess kurtosis: +1.94  Below zero: 66%
 
-O-RAPM (MY) (n=378):
+O-RAPM+prior (n=378):
   Mean: -8.79  Median: -8.99  Std: 5.62
   Min: -20.91  Max: 12.76
   Gini: 0.967  Top-5% share: 97.8%
   Skew: +0.48  Excess kurtosis: +1.02  Below zero: 94%
 
-D-RAPM (MY) (n=378):
+D-RAPM+prior (n=378):
   Mean: 6.39  Median: 6.28  Std: 5.97
   Min: -9.86  Max: 24.99
   Gini: 0.438  Top-5% share: 14.5%
@@ -169,17 +169,17 @@ O-RAPM (n=50 positive ranks):
 D-RAPM (n=50 positive ranks):
   exponent alpha=0.19  R^2=0.859  -> not a power law (bends)
 
-RAPM (multi-yr+prior) (n=50 positive ranks):
+RAPM+prior (n=50 positive ranks):
   exponent alpha=0.39  R^2=0.948  -> not a power law (bends)
 
-O-RAPM (MY) (n=22 positive ranks):
+O-RAPM+prior (n=22 positive ranks):
   exponent alpha=1.04  R^2=0.747  -> not a power law (bends)
 
-D-RAPM (MY) (n=50 positive ranks):
+D-RAPM+prior (n=50 positive ranks):
   exponent alpha=0.20  R^2=0.961  -> power law
 
-Power-law systems (R^2 >= 0.95): Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM (MY)
-Bend instead of a straight line: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (multi-yr+prior), O-RAPM (MY)
+Power-law systems (R^2 >= 0.95): Game Score, PER, Win Shares, BPM, O-RAPM, D-RAPM+prior
+Bend instead of a straight line: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM+prior, O-RAPM+prior
 
 ─── RANK AGREEMENT (SPEARMAN CORRELATIONS) ──────────────────────
   Game Score vs PER: r=0.862
@@ -192,9 +192,9 @@ Bend instead of a straight line: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (mu
   Game Score vs RAPM: r=0.149
   Game Score vs O-RAPM: r=0.114
   Game Score vs D-RAPM: r=0.102
-  Game Score vs RAPM (multi-yr+prior): r=0.225
-  Game Score vs O-RAPM (MY): r=0.241
-  Game Score vs D-RAPM (MY): r=0.038
+  Game Score vs RAPM+prior: r=0.225
+  Game Score vs O-RAPM+prior: r=0.241
+  Game Score vs D-RAPM+prior: r=0.038
   PER vs Win Shares: r=0.768
   PER vs WS/48: r=0.652
   PER vs BPM: r=0.511
@@ -204,9 +204,9 @@ Bend instead of a straight line: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (mu
   PER vs RAPM: r=0.180
   PER vs O-RAPM: r=0.145
   PER vs D-RAPM: r=0.101
-  PER vs RAPM (multi-yr+prior): r=0.288
-  PER vs O-RAPM (MY): r=0.237
-  PER vs D-RAPM (MY): r=0.117
+  PER vs RAPM+prior: r=0.288
+  PER vs O-RAPM+prior: r=0.237
+  PER vs D-RAPM+prior: r=0.117
   Win Shares vs WS/48: r=0.796
   Win Shares vs BPM: r=0.677
   Win Shares vs OBPM: r=0.744
@@ -215,9 +215,9 @@ Bend instead of a straight line: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (mu
   Win Shares vs RAPM: r=0.194
   Win Shares vs O-RAPM: r=0.139
   Win Shares vs D-RAPM: r=0.110
-  Win Shares vs RAPM (multi-yr+prior): r=0.343
-  Win Shares vs O-RAPM (MY): r=0.242
-  Win Shares vs D-RAPM (MY): r=0.169
+  Win Shares vs RAPM+prior: r=0.343
+  Win Shares vs O-RAPM+prior: r=0.242
+  Win Shares vs D-RAPM+prior: r=0.169
   WS/48 vs BPM: r=0.418
   WS/48 vs OBPM: r=0.305
   WS/48 vs DBPM: r=0.126
@@ -225,54 +225,54 @@ Bend instead of a straight line: WS/48, OBPM, DBPM, VORP, RAPM, D-RAPM, RAPM (mu
   WS/48 vs RAPM: r=0.152
   WS/48 vs O-RAPM: r=0.132
   WS/48 vs D-RAPM: r=0.069
-  WS/48 vs RAPM (multi-yr+prior): r=0.305
-  WS/48 vs O-RAPM (MY): r=0.167
-  WS/48 vs D-RAPM (MY): r=0.207
+  WS/48 vs RAPM+prior: r=0.305
+  WS/48 vs O-RAPM+prior: r=0.167
+  WS/48 vs D-RAPM+prior: r=0.207
   BPM vs OBPM: r=0.564
   BPM vs DBPM: r=0.446
   BPM vs VORP: r=0.972
   BPM vs RAPM: r=0.078
   BPM vs O-RAPM: r=-0.028
   BPM vs D-RAPM: r=0.121
-  BPM vs RAPM (multi-yr+prior): r=0.294
-  BPM vs O-RAPM (MY): r=0.044
-  BPM vs D-RAPM (MY): r=0.305
+  BPM vs RAPM+prior: r=0.294
+  BPM vs O-RAPM+prior: r=0.044
+  BPM vs D-RAPM+prior: r=0.305
   OBPM vs DBPM: r=-0.370
   OBPM vs VORP: r=0.563
   OBPM vs RAPM: r=0.144
   OBPM vs O-RAPM: r=0.109
   OBPM vs D-RAPM: r=0.081
-  OBPM vs RAPM (multi-yr+prior): r=0.206
-  OBPM vs O-RAPM (MY): r=0.260
-  OBPM vs D-RAPM (MY): r=-0.013
+  OBPM vs RAPM+prior: r=0.206
+  OBPM vs O-RAPM+prior: r=0.260
+  OBPM vs D-RAPM+prior: r=-0.013
   DBPM vs VORP: r=0.420
   DBPM vs RAPM: r=0.005
   DBPM vs O-RAPM: r=-0.158
   DBPM vs D-RAPM: r=0.138
-  DBPM vs RAPM (multi-yr+prior): r=0.170
-  DBPM vs O-RAPM (MY): r=-0.235
-  DBPM vs D-RAPM (MY): r=0.436
+  DBPM vs RAPM+prior: r=0.170
+  DBPM vs O-RAPM+prior: r=-0.235
+  DBPM vs D-RAPM+prior: r=0.436
   VORP vs RAPM: r=0.083
   VORP vs O-RAPM: r=-0.028
   VORP vs D-RAPM: r=0.130
-  VORP vs RAPM (multi-yr+prior): r=0.288
-  VORP vs O-RAPM (MY): r=0.060
-  VORP vs D-RAPM (MY): r=0.285
+  VORP vs RAPM+prior: r=0.288
+  VORP vs O-RAPM+prior: r=0.060
+  VORP vs D-RAPM+prior: r=0.285
   RAPM vs O-RAPM: r=0.607
   RAPM vs D-RAPM: r=0.676
-  RAPM vs RAPM (multi-yr+prior): r=0.718
-  RAPM vs O-RAPM (MY): r=0.431
-  RAPM vs D-RAPM (MY): r=0.468
+  RAPM vs RAPM+prior: r=0.718
+  RAPM vs O-RAPM+prior: r=0.431
+  RAPM vs D-RAPM+prior: r=0.468
   O-RAPM vs D-RAPM: r=-0.115
-  O-RAPM vs RAPM (multi-yr+prior): r=0.434
-  O-RAPM vs O-RAPM (MY): r=0.772
-  O-RAPM vs D-RAPM (MY): r=-0.157
-  D-RAPM vs RAPM (multi-yr+prior): r=0.525
-  D-RAPM vs O-RAPM (MY): r=-0.122
-  D-RAPM vs D-RAPM (MY): r=0.759
-  RAPM (multi-yr+prior) vs O-RAPM (MY): r=0.567
-  RAPM (multi-yr+prior) vs D-RAPM (MY): r=0.652
-  O-RAPM (MY) vs D-RAPM (MY): r=-0.185
+  O-RAPM vs RAPM+prior: r=0.434
+  O-RAPM vs O-RAPM+prior: r=0.772
+  O-RAPM vs D-RAPM+prior: r=-0.157
+  D-RAPM vs RAPM+prior: r=0.525
+  D-RAPM vs O-RAPM+prior: r=-0.122
+  D-RAPM vs D-RAPM+prior: r=0.759
+  RAPM+prior vs O-RAPM+prior: r=0.567
+  RAPM+prior vs D-RAPM+prior: r=0.652
+  O-RAPM+prior vs D-RAPM+prior: r=-0.185
 
 ─── HOW MUCH EACH SYSTEM OVERLAPS THE OTHERS ────────────────────
 Regression R² of each system on all others, with its own algebraic
@@ -281,10 +281,10 @@ low = carries signal the other systems miss.
   PER: overlap R² = 0.902
   OBPM: overlap R² = 0.894
   Game Score: overlap R² = 0.889
-  D-RAPM (MY): overlap R² = 0.733
+  D-RAPM+prior: overlap R² = 0.733
   Win Shares: overlap R² = 0.680
-  O-RAPM (MY): overlap R² = 0.663
-  RAPM (multi-yr+prior): overlap R² = 0.660
+  O-RAPM+prior: overlap R² = 0.663
+  RAPM+prior: overlap R² = 0.660
   D-RAPM: overlap R² = 0.657
   O-RAPM: overlap R² = 0.636
   WS/48: overlap R² = 0.621
@@ -464,13 +464,13 @@ differential, so a high score is partly mechanical. Systems marked
   [outcome-blind] Game Score     R²=0.521  CV R²=0.471
   [team-fit]     OBPM           R²=0.518  CV R²=0.454
   [team-fit]     WS/48          R²=0.451  CV R²=0.380
-  [team-fit]     RAPM (multi-yr+prior) R²=0.380  CV R²=0.302
+  [team-fit]     RAPM+prior     R²=0.380  CV R²=0.302
   [team-fit]     RAPM           R²=0.322  CV R²=0.242
-  [team-fit]     O-RAPM (MY)    R²=0.328  CV R²=0.234
+  [team-fit]     O-RAPM+prior   R²=0.328  CV R²=0.234
   [team-fit]     O-RAPM         R²=0.270  CV R²=0.173
   [team-fit]     DBPM           R²=0.183  CV R²=0.074
   [team-fit]     D-RAPM         R²=0.064  CV R²=-0.076
-  [team-fit]     D-RAPM (MY)    R²=0.048  CV R²=-0.104
+  [team-fit]     D-RAPM+prior   R²=0.048  CV R²=-0.104
 
 Top retrodictor: PER (CV R²=0.727); it rebuilds 73% of the team point-differential
 spread out of sample.
@@ -500,13 +500,13 @@ were played by players who also carried a rating last season.
   [team-fit]     VORP             0.493     0.356
   [team-fit]     OBPM             0.454     0.284
   [team-fit]     WS/48            0.380     0.269
-  [team-fit]     RAPM (multi-yr+prior)   0.302     0.195
-  [team-fit]     O-RAPM (MY)      0.234     0.194
+  [team-fit]     RAPM+prior       0.302     0.195
+  [team-fit]     O-RAPM+prior     0.234     0.194
   [team-fit]     RAPM             0.242     0.120
   [team-fit]     O-RAPM           0.173     0.086
   [team-fit]     DBPM             0.074     0.029
   [team-fit]     D-RAPM          -0.076     0.024
-  [team-fit]     D-RAPM (MY)     -0.104     0.018
+  [team-fit]     D-RAPM+prior    -0.104     0.018
 
 Best forecaster of next season: Game Score (R²=0.400). Best description of
 the season itself: PER.
@@ -557,7 +557,7 @@ next season's rosters) is the honest read.
   [team-fit]     OBPM            0.294       0.346
   [outcome-blind] PER             0.641       0.267
   [team-fit]     WS/48           0.244       0.260
-  [team-fit]     RAPM (multi-yr+prior)  0.281       0.236
+  [team-fit]     RAPM+prior      0.281       0.236
   [team-fit]     RAPM            0.339       0.169
   [team-fit]     DBPM            0.024       0.061
 

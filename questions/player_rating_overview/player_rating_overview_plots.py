@@ -85,8 +85,8 @@ SYSTEM_LABELS = {
     "O_RAPM": "O-RAPM",
     "D_RAPM": "D-RAPM",
     "RAPM_MY": "RAPM+prior",
-    "O_RAPM_MY": "O-RAPM (MY)",
-    "D_RAPM_MY": "D-RAPM (MY)",
+    "O_RAPM_MY": "O-RAPM+prior",
+    "D_RAPM_MY": "D-RAPM+prior",
     "MVP_SHARE": "MVP Vote Share",
     "ALL_NBA_PTS": "All-NBA Points",
     "CONSENSUS": "Consensus Rating",
@@ -762,7 +762,7 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
     """Grid of mini-tables: top-20 players and their raw score for each system.
 
     One row per category group; systems within the group fill columns left to right.
-    Groups: Rate/Efficiency · Accumulated Value · Directional · Reputation.
+    Groups: Rate/Efficiency · Accumulated Value · Directional · RAPM · RAPM+prior · Uber.
     Highlights rank 1 (blue) and rank 20 (red). The # column appears only in
     the leftmost table of each row.
     """
@@ -778,6 +778,8 @@ def plot_top20_table(df: pd.DataFrame, systems: list[str]) -> str:
         ("Rate / Efficiency", ["GAME_SCORE", "PER", "WS48"],   "#2176ae"),
         ("Accumulated Value", ["WS", "BPM", "VORP"],           "#2e9e6e"),
         ("Directional",       ["OBPM", "DBPM"],                "#8c5e99"),
+        ("RAPM",              ["RAPM", "O_RAPM", "D_RAPM"],    "#1f8a5b"),
+        ("RAPM + prior",      ["RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"], "#3fae84"),
         ("Uber Ratings",      ["CONSENSUS", "WINS_PRED"],      "#5d6d7e"),
     ]
 

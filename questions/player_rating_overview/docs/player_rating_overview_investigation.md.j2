@@ -50,8 +50,8 @@ PER vs RAPM is r = 0.18, Win Shares vs RAPM r = 0.19, BPM vs RAPM r = 0.08.
 The bare one-season RAPM is so noisy that its top-rated player, Moussa Cisse at +12.5 per 100, sits 37th in the consensus.
 Its average rank agreement with the box-score systems is just 0.14.
 
-RAPM_MY, the multi-year version shrunk toward a box-score prior, pulls that agreement up to 0.29 and lands at 0.48 with the consensus, nearly double the bare version's 0.25.
-That lift is in the broad order, not a clean top tier: in 2025-26 the highest RAPM_MY values still land on low-minute players like Moussa Cisse, not on the stars the box scores rate highly.
+RAPM+prior, the multi-year version shrunk toward a box-score prior, pulls that agreement up to 0.29 and lands at 0.48 with the consensus, nearly double the bare version's 0.25.
+That lift is in the broad order, not a clean top tier: in 2025-26 the highest RAPM+prior values still land on low-minute players like Moussa Cisse, not on the stars the box scores rate highly.
 The multi-year pooling and the prior, not the raw lineup data, are what pull the broad order into line, even if a few low-minute players still spike at the very top.
 
 Offense and defense move independently.
@@ -62,7 +62,7 @@ O-RAPM and D-RAPM correlate at -0.12, essentially unrelated, and the box-score h
 The systems agree most where they share inputs and least where they don't.
 The box scores cluster because they read the same box totals; they part from RAPM because RAPM reads lineup results the box scores never see.
 A correlation at 0.7 or above means two systems are largely measuring the same quality from different angles; below 0.4 means they genuinely disagree about who is contributing.
-The single-season RAPM's near-zero agreement with everything is mostly noise, not insight: the multi-year, prior-informed RAPM_MY is the version to compare against the field, and it agrees with the field far more.
+The single-season RAPM's near-zero agreement with everything is mostly noise, not insight: the multi-year, prior-informed RAPM+prior is the version to compare against the field, and it agrees with the field far more.
 
 ---
 
@@ -111,13 +111,13 @@ Where they part is instructive: the wins-predictive rating lifts Nikola Jokić (
 
 A sharper test than fitting wins is rebuilding them.
 Each system's player ratings, minutes-weighted to the team level, are fit to team point differential and scored out of sample by holding one team out at a time (CV R²).
-PER, which never sees who won, rebuilds 73% of the team-margin spread (CV R² = 0.73), ahead of the team-adjusted box metrics (BPM 0.55, Win Shares 0.54, VORP 0.49) and the multi-year RAPM_MY (0.30).
+PER, which never sees who won, rebuilds 73% of the team-margin spread (CV R² = 0.73), ahead of the team-adjusted box metrics (BPM 0.55, Win Shares 0.54, VORP 0.49) and the multi-year RAPM+prior (0.30).
 That ordering carries a caveat: this project's BPM, VORP, and RAPM are approximate recomputes, so part of their gap behind PER is recompute noise, not proof PER is the better rating.
 
 Describing a season and forecasting the next are different jobs, and they reward different systems.
 Carrying each rating onto the next season's rosters and predicting that season's team margin, PER falls the furthest, from 0.73 describing to 0.37 forecasting, while Game Score barely moves (0.47 to 0.40) and ends up the best forecaster of the group.
 Pooled across 29 season-pairs back to 1996-97 the same flip holds: PER averages 0.64 describing but 0.25 forecasting, and BPM forecasts better than PER in 20 of 29 pairs.
-Over the 13 seasons with play-by-play, RAPM_MY forecasts 8 of 10 pairs, just behind bare RAPM's 9, so the multi-year prior does not yet beat the box scores at forecasting here.
+Over the 13 seasons with play-by-play, RAPM+prior forecasts 8 of 10 pairs, just behind bare RAPM's 9, so the multi-year prior does not yet beat the box scores at forecasting here.
 The lesson for the combined rating: the metric that best describes the season just played is not automatically the one that best predicts the next.
 
 ---
