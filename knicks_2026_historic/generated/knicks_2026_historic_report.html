@@ -2391,6 +2391,7 @@ Figure 6: 2025-26 regular-season SRS by team, colored by conference
 </tbody>
 </table>
 <p>Top 5 adjusted-margin champions:</p>
+<div class="sortable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2433,6 +2434,7 @@ Figure 6: 2025-26 regular-season SRS by team, colored by conference
 </tr>
 </tbody>
 </table>
+</div>
 <p>All 43 champion seasons are included. For pre-1997 seasons where nba_api returns null PLUS_MINUS, margins are derived from PTS (both team rows per game).</p>
 <p><strong>Playoff overperformance</strong>, comparing actual margins to what the Knicks’ own regular-season SRS (+6.05) would predict against those opponents (+2.38 expected per game), gives +12.5 pts/game of outperformance, 2nd all-time (98th pct) behind only the 2000–01 Lakers. Their playoff SRS was +17.53, an elevation of +11.48 above their regular-season SRS, also 2nd all-time among champions (and the biggest jump in the 2026 field; see §6). The Knicks didn’t just face the right opponents: they played far above their regular-season level.</p>
 <div id="fig-opponent-srs-ranking" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -2521,6 +2523,7 @@ Figure 9: Per-round raw vs. opponent-adjusted margins: adjustment using playof
 <h2 class="anchored" data-anchor-id="both-finalists-were-the-biggest-risers">6. Both Finalists Were the Biggest Risers</h2>
 <p>The Knicks did not reach the Finals as a polished regular-season team that simply held form. By team rating (SRS, quality adjusted for schedule), they were only the fifth-strongest team in the playoff field during the regular season, at +6.05 (the table below lists notable risers, not the full regular-season order). In the playoffs they jumped to +17.53. That rise of <strong>+11.48</strong> was the largest of any team in the 2026 playoffs.</p>
 <p>The team they beat in the Finals made the second-biggest jump. The Spurs were a stronger regular-season team than the Knicks, +8.28, second only to Oklahoma City (+11.04) among playoff teams. They climbed to +15.13 in the playoffs, a rise of <strong>+6.85</strong>. The Spurs entered the Finals both very good to begin with and getting better, which is part of why the series was close. (This +15.13 covers all of their playoff games, including the Finals against the Knicks, so it sits a little above the +14.48 in §5, which leaves the Knicks series out to judge the Spurs independently.)</p>
+<div class="sortable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2557,6 +2560,7 @@ Figure 9: Per-round raw vs. opponent-adjusted margins: adjustment using playof
 </tr>
 </tbody>
 </table>
+</div>
 <p>The regular-season rating leader, Oklahoma City (+11.04), barely changed in the playoffs (+0.38) and finished well behind both finalists. And the Finals paired the two teams that had improved the most since October: the field’s two hottest teams, not its two best regular-season teams.</p>
 <p>These playoff ratings rest on a few weeks of games, so the exact figures carry the same small-sample caution as the rest of the run (see §10).</p>
 <div id="fig-field-elevation" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -3395,6 +3399,7 @@ Figure 16: How rare a 16-3 run was: from the Knicks’ regular season the model
 <section id="appendix-c-the-full-field-title-odds" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-c-the-full-field-title-odds">Appendix C: The Full-Field Title Odds</h2>
 <p>§12 measures the Knicks’ run along the path they actually drew. The companion question is who the field favored before any of it was played. This simulation seeds all 16 playoff teams into the bracket and plays every round forward from regular-season strength, the same game-by-game model as §12, so every team gets a title number instead of just the Knicks.</p>
+<div class="sortable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3537,6 +3542,7 @@ Figure 16: How rare a 16-3 run was: from the Knicks’ regular season the model
 </tr>
 </tbody>
 </table>
+</div>
 <p>The Thunder were the runaway favorite at 54.5%, more than triple any other team, on the strength of the league’s best regular-season rating by a wide margin. The Knicks were only the 3rd seed in the East, behind Detroit and Boston, so the bracket handed them a hard expected road: just 3.5% to win it all. That is far below the 14.7% the realized-path model gave them in §12, and the gap is the draw, not their play. The East’s top two seeds were both upset before New York would have met them, so the teams the Knicks actually faced were softer than their seed line predicted. Neither number knows the Knicks would elevate in May, and both say the title was a long shot; the full-field view just says it was a longer one.</p>
 <p>The same caveat as §12 applies: this rests on one assumed game-to-game swing and on regular-season ratings, nothing from the playoffs themselves. Widen or narrow that swing and the favorites bunch up or spread out, but the order is stable: Oklahoma City first by a wide margin, the Knicks a distant longshot.</p>
 <hr>
@@ -3978,7 +3984,7 @@ details.collapsible-figure > summary::marker { color: #2780e3; }
      click toggles direction. PDF/Typst ignores the class. -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  var numRe = /^[-+]?\d*\.?\d+$/;
+  var numRe = /^[-+]?\d*\.?\d+%?$/;
   document.querySelectorAll(".sortable table").forEach(function (table) {
     var ths = table.querySelectorAll("thead th");
     var dirs = {};
