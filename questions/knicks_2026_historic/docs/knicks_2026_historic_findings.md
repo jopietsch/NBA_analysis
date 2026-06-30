@@ -411,6 +411,7 @@ See the Regression Results companion (Appendix A) for full numerical output and 
 | [The Investigation](knicks_2026_historic_investigation.html) | Full treatment of every objection to the run: why each seemed plausible, what was tested, and how much it actually explains away. |
 | [One-Page Summary](knicks_2026_historic_summary.html) | Standalone summary built around three charts and four questions. |
 | [Stats Explainer](knicks_2026_historic_stats_explainer.html) | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
+| [Comparing Teams Across Eras](knicks_2026_historic_eras.html) | Standalone one-page field guide to the cross-era comparison techniques (the two axes and what each produces), using the Knicks as the worked example. |
 | [Findings Outline](knicks_2026_historic_findings_outline.html) | Condensed section-by-section outline cross-referenced to the regression output. |
 :::
 
@@ -423,6 +424,7 @@ All files are in the same folder as this PDF (`generated/`).
 | The Investigation | `knicks_2026_historic_investigation.pdf` | Full treatment of every objection to the run: why each seemed plausible, what was tested, and how much it actually explains away. |
 | One-Page Summary | `knicks_2026_historic_summary.pdf` | Standalone summary built around three charts and four questions. |
 | Stats Explainer | `knicks_2026_historic_stats_explainer.pdf` | Guide to the statistical methods behind each analysis, written for a reader who knows some statistics. |
+| Comparing Teams Across Eras | `knicks_2026_historic_eras.pdf` | Standalone one-page field guide to the cross-era comparison techniques (the two axes and what each produces), using the Knicks as the worked example. |
 | Findings Outline | `knicks_2026_historic_findings_outline.pdf` | Condensed section-by-section outline cross-referenced to the regression output. |
 :::
 
