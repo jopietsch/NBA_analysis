@@ -30,7 +30,7 @@ Each system tilts toward a player type, and the simplest box scores (PER, Game S
 And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (<< f("cmp.spearman", "{:.2f}") >> on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
 
 The testbed is the 2025-26 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
-It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version that shows how noisy raw plus/minus is, and a prior-informed, multi-year version (RAPM+prior) built the way the published metrics are.
+It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version, the noisier of the two, and a prior-informed, multi-year version (RAPM+prior) built the way the published metrics are.
 Two findings reach beyond the single season, across << f("panel.n_seasons") >> seasons back to << f("panel.first_season") >>: the describe-versus-forecast test above and each rating's year-to-year stability.
 Because the cross-system comparison rests on one season while those panels span decades, treat the single-season orderings as a snapshot and the panel findings as the firmer, repeated pattern.
 The other impact metrics and the human rankings are surveyed as part of the landscape (Section 1) but are not recomputed or included in the comparison here.
@@ -147,16 +147,19 @@ Two systems can land near each other in the overall order while still disagreein
 
 RAPM, the one impact metric computed here, sits apart from all of them.
 It is built only from which lineups outscored their opponents, with no box-score inputs at all, so it shares little with the rest: its rank order agrees with the box-score systems at about << f("rapm.box_corr_mean") >> on the same 0-to-1 scale, well below how tightly those systems track each other.
-That distance is the whole point of an impact metric, since it is meant to catch what the box score misses.
-But a single season of lineup data is noisy, and it shows.
-The bare 2025-26 RAPM puts reserves and rookies near the top, led by << f("rapm.top.1.name") >>, who lands at number << f("rapm.top1_consensus_rank") >> in the consensus that the box-score systems build.
-This is why every published impact metric (EPM, LEBRON, DARKO) pulls its RAPM toward a box-score prior rather than using it raw.
+That low agreement is now genuine independent signal, the thing an impact metric exists to catch, not noise.
+It used to be noise, for a dull reason: a bug in the step that turns play-by-play into lineups was quietly throwing out most of the season's games, one mistracked substitution enough to void an entire game, and the sliver of RAPM that survived was close to random.
+With that reconstruction fixed and most of the games restored, RAPM steadied.
+Fit it on two random halves of the possessions and the halves now agree at about << f("rapm_rel.splithalf") >> on a 0-to-1 scale, up from the noise floor it sat at while the bug was live, and a single season of bare RAPM now carries from one year to the next at about << f("rapm_rel.yoy_rapm") >>, where before it barely held at all.
 
-The report also builds that fixed version.
+The bare version is still the noisier of the two.
+Its 2025-26 leader is << f("rapm.top.1.name") >>, a genuine rim protector rather than a reserve, but bare RAPM puts him first while the box-score consensus has him down at number << f("rapm.top1_consensus_rank") >>.
+That is why the prior-informed RAPM+prior, not the bare version, feeds the consensus, the same move every published impact metric (EPM, LEBRON, DARKO) makes when it anchors its RAPM to a box-score prior.
+
 RAPM+prior pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
-The effect shows up in the aggregate: its order agrees with the consensus at about << f("rapm_my.consensus_corr") >>, up from << f("rapm.consensus_corr") >> for the bare version measured against that same consensus, nearly double.
-The lift is in the broad order, not a clean top tier: in 2025-26 a few low-minute players, << f("rapm_my.top.1.name") >> among them, still spike above the established stars.
-It is RAPM+prior, not the bare version, that feeds the consensus rating.
+It now tops out at the MVP tier: << f("rapm_my.top.1.name") >>, << f("rapm_my.top.2.name") >>, and << f("rapm_my.top.3.name") >> lead it.
+Its order tracks the consensus at about << f("rapm_my.consensus_corr") >>, up from << f("rapm.consensus_corr") >> for the bare version, and it holds from one season to the next about as firmly as BPM (<< f("rapm_rel.yoy_rapm_my") >> against << f("rapm_rel.yoy_bpm") >> on the 0-to-1 scale).
+A rating that repeats as reliably as BPM but is built from lineup results rather than the box score is adding real impact signal on top of it, not just restating it.
 How it is built is in Section 12; whether it forecasts team results any better is tested in Section 3.
 
 The exact figures are in `docs/player_rating_overview_results.md`.
@@ -220,15 +223,14 @@ What holds across every era is the gap itself: PER, the best honest description 
 ![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over << f("panel.n_seasons") >> seasons and << f("panel.n_pairs") >> season-pairs. Whiskers span the season-to-season range. BPM and VORP describe near-perfectly because they are anchored to team results; among the ratings that never use who won, PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
 
 RAPM can only be computed back to << f("ipanel.first_season") >>, the seasons with play-by-play, so a fair test scores it against the box scores on those same << f("ipanel.n_seasons") >> seasons rather than against their full 30-year history.
-On that even footing the bare single-season RAPM is a weak forecaster of next-season team results: it ranks << f("ipanel.RAPM.forecast_rank") >> of << f("ipanel.n_systems") >>, rebuilding about << f("ipanel.RAPM.forecast_mean_pct") >>% of the gaps between teams, behind every other system in the panel.
-The plain box scores again lead, with << f("ipanel.forecast_top.name") >> on top at about << f("ipanel.forecast_top.mean_pct") >>%.
-This is the same lesson the single-season noise pointed to: without a box-score prior to steady it, one year of RAPM carries too much randomness to forecast the next.
-Its same-season describe score is near the bottom (about << f("ipanel.RAPM.describe_mean_pct") >>%): even though RAPM is built from the very lineup margins the describe test rebuilds, one noisy season of it reconstructs team results worse than the box scores do.
+On that even footing the bare single-season RAPM is a middling forecaster of next-season team results (<< f("ipanel.RAPM.forecast_rank") >> of << f("ipanel.n_systems") >>, rebuilding about << f("ipanel.RAPM.forecast_mean_pct") >>% of the gaps between teams): no longer the near-random metric the reconstruction bug produced, but still the weaker of the two RAPM versions.
+Its same-season describe score is much higher, about << f("ipanel.RAPM.describe_mean_pct") >>%, which fits how it is built: RAPM comes from the very lineup margins the describe test rebuilds.
 
-RAPM+prior does better than the bare version on the same test, forecasting << f("ipanel.RAPM_MY.forecast_rank") >> of << f("ipanel.n_systems") >> at about << f("ipanel.RAPM_MY.forecast_mean_pct") >>%, but it still lands below the box scores.
-Pooling three seasons and leaning on a box-score prior sharpen which players rate highly (Section 12), yet they do not make the lineup signal a better forecaster of team results than a plain box score already is.
+RAPM+prior is the standout on this panel: it forecasts next-season team point differential better than any box score (<< f("ipanel.RAPM_MY.forecast_rank") >> of << f("ipanel.n_systems") >>, at about << f("ipanel.RAPM_MY.forecast_mean_pct") >>%).
+Pooling three seasons and leaning on a box-score prior does more than sharpen which players rate highly (Section 12); on the seasons where the lineup data exists, it edges past the box-built BPM and VORP that top the wider panel.
+That is the payoff of the fix: with the games restored and the prior in place, the lineup signal now forecasts team results better than the box score does, not worse.
 
-![The same describe-versus-forecast test on the << f("ipanel.n_seasons") >> seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the bare single-season RAPM and the prior-informed RAPM+prior both sit toward the right, forecasting next-season team results below the plain box scores, with RAPM+prior edging ahead of the bare version.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
+![The same describe-versus-forecast test on the << f("ipanel.n_seasons") >> seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the prior-informed RAPM+prior forecasts next-season team results better than any box score, while the bare single-season RAPM sits mid-pack.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
 
 ### Which ratings hold steady year to year
 
@@ -251,9 +253,9 @@ Only << f("stability.most_stable.name") >> sits near the top of both lists, stea
 
 Not all systems add independent information, and they split widely on how much.
 The all-in-one summaries are the most redundant: about << f("overlap.PER.r2", "{:.0%}") >> of PER, << f("overlap.GAME_SCORE.r2", "{:.0%}") >> of Game Score, and roughly << f("overlap.BPM.r2", "{:.0%}") >> of BPM and << f("overlap.VORP.r2", "{:.0%}") >> of VORP can be rebuilt from the other systems, so each mostly repeats what the field already says.
-The metric that carries by far the most of its own is Defensive BPM: only about << f("overlap.DBPM.r2", "{:.0%}") >> of it can be rebuilt from the rest, because measuring defense from the box score picks up something the scoring-heavy systems miss.
-Win Shares per minute is the next most independent.
-The RAPM family lands in the middle, in the << f("overlap.RAPM.r2", "{:.0%}") >> to << f("overlap.D_RAPM_MY.r2", "{:.0%}") >> range, but one caveat keeps that from being a clean read: this report's RAPM is still an approximate recompute under repair, and a noisy rating can look independent simply because its noise lines up with nothing.
+The metrics that carry the most of their own are Win Shares per minute (only about << f("overlap.WS48.r2", "{:.0%}") >> of it can be rebuilt from the rest) and the lineup-impact metrics: bare RAPM sits near that independent end too, about << f("overlap.RAPM.r2", "{:.0%}") >> rebuildable.
+That the raw impact metric now lands among the most independent is the payoff of the reconstruction fix (Section 2): with RAPM carrying real lineup signal instead of noise, it catches what the box scores miss, which is the whole point of an impact metric.
+Defensive BPM, which used to look the most independent here, has slid toward the middle (about << f("overlap.DBPM.r2", "{:.0%}") >> rebuildable), because the fixed RAPM now accounts for much of the defensive impact it was previously alone in catching.
 BPM and VORP carry no such caveat (they are validated against Basketball-Reference, a rank agreement of << f("bpm_val.r_bpm", "{:.2f}") >> on a 0-to-1 scale), and they sit with the redundant systems, not the independent ones: a validated rating can still be redundant if it says what the others already do.
 The measure holds each metric's own components out of the comparison, so BPM is never counted as "explained" by its own offensive and defensive halves (see results for the full breakdown).
 
@@ -270,17 +272,21 @@ That is the rare player box scores, impact metrics, and human voters all point a
 
 Now the defense-first star.
 << f("example.defense.name") >> grades out at an all-around BPM of << f("example.defense.bpm") >>, and most of it is defense: << f("example.defense.dbpm") >> of that number comes from his defensive rating alone, the kind of value a pure scoring metric never records.
+The lineup metric, now that it can be trusted (Section 2), agrees and then some: RAPM ranks his net on-court impact number << f("example.defense.rapm_rank", "{:d}") >>, above his box-score offense at number << f("example.defense.obpm_rank", "{:d}") >>, catching two-way value the box only partly sees.
 
 Now the high-volume scorer the systems split on.
 Counting stats love << f("example.split.name") >>, with Player Efficiency Rating placing him << f("example.split.per_rank", "{:d}") >>th.
 The impact-aware metrics are cooler: BPM has him down at << f("example.split.bpm_rank", "{:d}") >>th, because heavy scoring counts for less once efficiency and team results enter the picture.
+The lineup data breaks the tie toward the counting stats, though: RAPM puts him back up at << f("example.split.rapm_rank", "{:d}") >>th, so what his lineups do on the floor backs his volume more than his efficiency alone would.
 
-Then Jalen Brunson, the player the playoffs make interesting (section 8).
+Then Jalen Brunson, the player the playoffs make interesting (Section 8).
 His offense rates with the best, an offensive BPM of << f("example.brunson.obpm") >> that ranks << f("example.brunson.obpm_rank", "{:d}") >>th.
 His defense pulls the other way, a defensive BPM of << f("example.brunson.dbpm") >>, so his all-around BPM of << f("example.brunson.bpm") >> sits at << f("example.brunson.bpm_rank", "{:d}") >>th.
 The same player is a top-fifteen offensive player and a top-thirty contributor overall, and the gap between those two is exactly what his defense costs him.
+The impact metrics, now that they are fixed and trustworthy, tell the same story rather than a kinder one: the corrected RAPM puts his net on-court impact at merely average (<< f("example.brunson.rapm_rank", "{:d}") >>th), and RAPM+prior at << f("example.brunson.rapm_my_rank", "{:d}") >>th, so two independent methods, box and lineup, agree that his scoring outruns what his team actually does with him on the floor.
+That is a sturdier verdict than either method alone: the earlier, broken RAPM had buried him near the bottom, which was noise, and the honest correction lands him where the box score already suggested, good but not a hidden star.
 
-And one player who answers a different question, << f("example.riser.name") >>: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where section 8 picks up.
+And one player who answers a different question, << f("example.riser.name") >>: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where Section 8 picks up.
 
 ## 5. The two uber ratings
 
@@ -427,7 +433,7 @@ The whole cross-system comparison rests on one season, so it is fair to ask how 
 The top barely moves, the middle churns, and the systems disagree by about the same amount as before.
 
 Across the << f("cmp2.n_both") >> players who qualified in both seasons, the consensus order agrees from 2024-25 to 2025-26 at about << f("cmp2.consensus_corr") >> on a 0-to-1 scale: a steady spine with a moving body.
-<< f("cmp2.top_b.1.name") >> and << f("cmp2.top_b.2.name") >> hold the top two spots in both seasons, and << f("cmp2.top_b.3.name") >> holds his as well, so << f("cmp2.held_top5") >> of the top five carry over; << f("cmp2.top_b.4.name") >> and << f("cmp2.top_b.5.name") >> are the new arrivals, taking the two open spots.
+<< f("cmp2.top_b.1.name") >> and << f("cmp2.top_b.2.name") >> hold the top two spots in both seasons, << f("cmp2.top_b.3.name") >> holds his as well, and << f("cmp2.top_b.5.name") >> keeps a place too, so << f("cmp2.held_top5") >> of the top five carry over; << f("cmp2.top_b.4.name") >> is the one new arrival.
 
 The biggest one-year swings are exactly what a single season cannot tell apart from real change.
 << f("cmp2.riser.1.name") >> climbed the most in standardized standing (<< f("cmp2.riser.1.delta") >>) and << f("cmp2.faller.1.name") >> fell the most (<< f("cmp2.faller.1.delta") >>); injuries, role changes, and roster moves drive most of these, and the rating systems only record them.
@@ -441,12 +447,12 @@ The disagreement this report describes is built into how the metrics are made, n
 ## 10. Summary
 
 **Do the systems agree?** On the best handful of players, closely; below the top tier, less than their reputations suggest.
-The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about << f("rapm.box_corr_mean") >> on a 0-to-1 scale), which is the point of an impact metric and also why one season of it is too noisy to trust raw.
+The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about << f("rapm.box_corr_mean") >> on a 0-to-1 scale), which is the point of an impact metric; after a reconstruction bug was fixed that low agreement is now real independent signal, and the prior-informed RAPM+prior, not the raw version, is the one that feeds the consensus.
 No system is best at everything: PER describes a finished season better than any other (about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams) yet forecasts the next among the worst (about << f("panel.PER.forecast_mean_pct") >>%), a split that holds across all << f("panel.n_seasons") >> seasons tested.
 
 **What does each system uniquely capture?** It depends on the system.
 Each tilts toward a player type, Win Shares toward efficient bigs on winning teams, PER toward high-usage scorers, the impact metrics toward off-ball and defensive value the box score misses.
-But how much each adds beyond the rest splits sharply: the simplest all-in-one box scores, PER and Game Score, are nearly reconstructable from the other systems, while BPM, Defensive BPM, and the RAPM family hold the most of their own, with the caveat that this report's approximate recomputes can look independent partly because they are noisy.
+But how much each adds beyond the rest splits sharply: the all-in-one box scores, PER and BPM among them, are nearly reconstructable from the other systems, while Win Shares per minute and the bare RAPM family hold the most of their own, and with the RAPM reconstruction bug fixed that lineup independence now reads as genuine signal rather than an artifact of noise.
 
 **How should they be combined?** Into two ratings that answer different questions.
 A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.
@@ -477,7 +483,8 @@ VORP was rebuilt on the corrected BPM with the right minutes base.
 Defensive BPM is weaker at << f("bpm_val.r_dbpm", "{:.2f}") >>, which is honest: box-score defense is hard, and Basketball-Reference's own defensive BPM is limited for the same reason.
 Two caveats remain.
 The recompute slightly compresses the very top, grading the best player a notch below his Basketball-Reference mark.
-And the impact metrics in the RAPM family are still being repaired, so their absolute values should not yet be trusted; the investigation companion documents what is wrong and what is being done about it.
+And the RAPM family had its own repair: a reconstruction bug was quietly discarding most of the season's games, and the bare RAPM that survived was close to noise.
+With the bug fixed and the games restored, its reliability came back (Section 2), and RAPM+prior is now a usable impact metric; the bare single-season version remains the noisier of the two, and its absolute per-100 values are still approximate, so read the RAPM family for rank more than for exact scale.
 
 ## 12. Limitations
 
@@ -491,17 +498,19 @@ Players who could not be matched are listed there; they are excluded from the cr
 RAPM (regularized adjusted plus/minus) is the technical backbone of every serious modern impact metric (EPM, LEBRON, DARKO, RAPTOR, and RPM all build on it).
 This report now computes it directly from play-by-play, for 2025-26 and back through << f("ipanel.first_season") >>.
 Within a season, every possession is reconstructed into the five-on-five lineup that was on the floor, and a single statistical model estimates all the players' contributions to the scoring margin at once (<< f("cov.rapm_n_players") >> players in 2025-26).
-Two things make this version weaker than the published metrics.
-It uses one season of lineup data with no box-score prior, so it is noisy: bench players who shared the floor with strong lineups can rate near the top, which is what puts << f("rapm.top.1.name") >> at the head of the raw 2025-26 list (Section 2), and across the seasons it forecasts next-season team results worse than the plain box scores (Section 3).
-And the bare version's offensive and defensive halves are kept out of the consensus, so one noisy single-season split cannot swing the order at the top.
+One thing still makes the bare version weaker than the published metrics: it uses a single season of lineup data with no box-score prior, so it carries more noise than the pooled, prior-anchored version.
+Its 2025-26 leader, << f("rapm.top.1.name") >>, is a real rim protector rather than a reserve, but bare RAPM rates him well above where the box scores place him (Section 2), and across the seasons it forecasts next-season team results less well than RAPM+prior does (Section 3).
+The bare version's offensive and defensive halves are also kept out of the consensus, so one single-season split cannot swing the order at the top.
 
 The report also computes the stabilized version, RAPM+prior.
 It pools three seasons of possessions, weighting recent ones more heavily, and shrinks each player toward a box-score prior: the offensive half toward Offensive BPM, the defensive half toward Defensive BPM.
 A player with few possessions stays near his box score, while a heavy-minute player moves toward what the lineup data shows.
-This is the prior-plus-RAPM recipe the published metrics use, and it helps where expected: its order agrees with the consensus at << f("rapm_my.consensus_corr") >>, up from << f("rapm.consensus_corr") >> for the bare version, nearly double the agreement.
-The gain is in the overall order; at the very top, low-minute players like << f("rapm_my.top.1.name") >> can still post inflated values, a reminder that this is an approximate in-house recompute.
+This is the prior-plus-RAPM recipe the published metrics use, and it helps where expected: its order agrees with the consensus at << f("rapm_my.consensus_corr") >>, up from << f("rapm.consensus_corr") >> for the bare version, more than double the agreement.
+The gain shows at the top as well as in the overall order: RAPM+prior now leads with the MVP tier, << f("rapm_my.top.1.name") >> at its head, rather than the low-minute names a raw one-season estimate can float up.
+Its absolute per-100 values are still an approximate in-house recompute, so read it for rank more than exact scale.
 RAPM+prior, combined only, is the version that feeds the consensus.
-What it does not do is turn RAPM into a strong forecaster of team results: across the seasons it still predicts next-season point differential below the box scores (Section 3), and heavy-minute role players who spend their court time in strong lineups, the hardest case for any plus/minus method, can still rate too high.
+It also forecasts team results well: across the seasons where it can be computed, RAPM+prior predicts next-season team point differential better than the box scores do (Section 3).
+The caveat that remains is at the player level, where heavy-minute role players who spend their court time in strong lineups, the hardest case for any plus/minus method, can still rate too high.
 Matching a published metric like EPM or LEBRON would need the player-tracking data they use and we do not have.
 A public RAPM snapshot can be dropped into the cache schema to validate the computed values when one is available.
 

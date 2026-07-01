@@ -276,3 +276,36 @@ def test_rapm_prior_sparse_player_shrinks_to_prior():
         f"Rich player O_RAPM = {rich_o:.3f}, true = {true_o_rich:.3f}, "
         f"wrong prior = -10. Data should dominate the prior."
     )
+
+
+def test_rapm_prior_strength_pins_to_prior():
+    """A large prior_strength collapses every rating onto its box-score prior.
+
+    prior_strength adds pseudo-observations pulling each coefficient toward the
+    prior; a very large strength overwhelms the possession data so the output
+    equals the prior regardless of what the lineups did. This is the mechanism
+    that makes moderate-minute players (which a single CV ridge penalty
+    under-shrinks) collapse onto their box score.
+    """
+    df, _, _ = _simulate_possessions(n_players=20, n_possessions=4000, seed=5)
+    rng = np.random.default_rng(1)
+    prior = pd.DataFrame(
+        {"off": rng.normal(0.0, 4.0, 20), "def": rng.normal(0.0, 3.0, 20)},
+        index=pd.Index(range(20), name="player_id"),
+    )
+    result = rapm(df, alphas=[100.0], cv=2, prior=prior,
+                  prior_strength=1e7).sort_index()
+    np.testing.assert_allclose(result["O_RAPM"].values, prior["off"].values, atol=0.2)
+    np.testing.assert_allclose(result["D_RAPM"].values, prior["def"].values, atol=0.2)
+
+
+def test_rapm_prior_strength_zero_is_backward_compatible():
+    """prior_strength=0 (default) keeps the original prior-mean-shift behavior."""
+    df, _, _ = _simulate_possessions(n_players=20, n_possessions=1500, seed=9)
+    prior = pd.DataFrame(
+        {"off": np.linspace(-3, 3, 20), "def": np.linspace(-2, 2, 20)},
+        index=pd.Index(range(20), name="player_id"),
+    )
+    a = rapm(df, alphas=[300.0], cv=2, prior=prior)
+    b = rapm(df, alphas=[300.0], cv=2, prior=prior, prior_strength=0.0)
+    pd.testing.assert_frame_equal(a, b, atol=1e-10)

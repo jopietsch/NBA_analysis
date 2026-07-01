@@ -819,6 +819,55 @@ The project's own `home_court_team_hca.png` shows the same raw-vs-shrunken compa
 **And when there's no true spread (playoffs)?** Shrinkage collapses *every* franchise to the league mean (+26.9 pp), which is the honest answer when the variance decomposition already told you the true spread is zero.
 Utah's raw +39.7 and the Clippers' raw -3.6 are both just +26.9 once you account for their tiny samples.
 
+## 6.3 Reliability: how much of a single rating is real signal
+
+**The question, now about one metric instead of a leaderboard:** §6.1 asked whether a *list* of averages has real spread.
+Turn it around: hand me one rating, one number per player, and before I rank anyone with it, how much of that number is real and how much is noise?
+
+**The intuition.** **Reliability** is the correlation between two independent measurements of the same underlying thing.
+Measure the same players twice on separate data and correlate the two sets of numbers.
+A metric that captures something real makes the two measurements agree, so the correlation is high; a metric that is mostly noise makes them scatter, so the correlation sits near zero.
+Reliability runs from **0 (pure noise) to 1 (a perfect, repeatable measurement)**.
+
+**Square it for the share that is real signal.** The raw reliability is the quick read: 0.5 is halfway up the scale, a loose "about half signal." The precise version is reliability *squared*, the fraction of the spread between players that is real rather than noise.
+Squaring moves the goalposts.
+A reliability of **0.7** looks strong, but 0.7² = **0.49**: only about half the variation you see between players is real, and the other half is noise.
+A reliability of **0.5** squares to **0.25**, just a quarter.
+The number that feels like "half signal" on the raw scale is a quarter signal once you account for variance; you have to climb to about 0.7 before half the variance is genuinely real.
+
+**The rough usability line, about 0.5.** Below ~0.5 a single-number rating is dominated by noise and cannot be trusted to rank individuals: re-measure on fresh data and the order reshuffles.
+Between ~0.5 and ~0.7 a rating becomes genuinely useful, real enough to separate players even with a meaningful chunk of noise left in.
+This is a rough guide, not a magic threshold.
+0.49 and 0.51 are not different worlds; treat the line as "roughly where a ranking starts to mean something."
+
+**Split-half reliability: measuring it without measuring twice.** You rarely get to replay a whole season, so you manufacture the two independent measurements by splitting the data you already have.
+**Split-half reliability** randomly divides the raw data (for a plus-minus metric, the possessions) into two halves, computes the metric independently on each half, and correlates the two sets of estimates.
+Real signal makes the halves agree; noise makes them diverge.
+
+**A worked example: our RAPM.** Split one season of possessions into two random halves, fit the rating on each, and correlate the players' two estimates: they line up at about **r = 0.32**.
+On its own that reads as discouraging, but it *understates* the metric you actually use, because each half was built on only half the possessions.
+
+**Spearman-Brown: correcting for the halving.** Because a split-half correlation rests on half the data per estimate, it is pessimistic about the reliability of the metric run on *all* the data.
+The **Spearman-Brown correction** rescales it:
+
+```
+full-data reliability  ≈  2r / (1 + r)
+```
+
+For RAPM, r = 0.32 gives 2(0.32) / (1 + 0.32) = 0.64 / 1.32 ≈ **0.48**.
+That lands the full-season rating right at the low edge of the usable band: barely rankable, and only because the correction rescued it from the raw 0.32.
+
+**Reliability grows with more data.** Reliability is not a fixed property of a metric; it climbs as you feed the estimate more evidence, because more data averages the noise away and lets the real signal take up a larger share.
+Pooling more seasons of RAPM lifts the full-data reliability from about **0.48 at three pooled seasons to about 0.60 at five**.
+That climb is exactly the ~0.5-to-0.7 span between "barely usable" and "genuinely useful": the same metric crosses from one to the other just by resting on more possessions.
+
+**How to read it, and how it connects to §6.1.** A split-half or Spearman-Brown reliability figure tells you whether a leaderboard is worth reading at all, before you look at who is on top.
+It is the single-metric twin of §6.1: variance decomposition asks "is there real spread among these groups?", and reliability asks the same question of one rating, "is this number mostly signal?" A reliability near zero is the single-metric version of §6.1's verdict that a whole leaderboard is luck.
+
+**The trap it avoids.** A rating can look authoritative, one clean number per player, and still be mostly noise.
+Print a top-50 list from a metric with reliability 0.3 and you have dressed up a near-coin-flip as a ranking; re-run it on next month's games and the names would shuffle.
+Reliability is the check that keeps you from ranking individuals on a number that would not survive being measured again.
+
 ---
 
 # Part 7: Avoiding the classic traps
@@ -1596,6 +1645,7 @@ Read the grouping and the order of α, not the label on any single borderline sy
 | Consensus z = ... | z-score-standardize each system, then average | §9.1 |
 | Wins-predictive z, ridge alpha=5.0 | ridge regression of team wins on system ratings | §9.2 |
 | unique R² | how much of a system the others can't reconstruct | §9.2 |
+| split-half r, Spearman-Brown correction | how much of a single rating is real signal vs. noise | §6.3 |
 | (RAPM / EPM / DARKO background) | ridge as Bayesian MAP; Kalman filter for daily updates | §9.3 |
 | Gini = ... | concentration of value (trustworthy only for non-negative metrics) | §9.4 |
 | alpha = ..., R² >= 0.95, "power law / bends" | log-log steepness of the value-vs-rank curve | §9.5 |
@@ -1647,3 +1697,8 @@ Read the grouping and the order of α, not the label on any single borderline sy
    for metrics centered on zero because it clips negatives; the power-law exponent
    α doesn't depend on where zero sits, so it is the fair cross-system read.
    (§9.4, §9.5)
+4. **A single rating is only as good as its reliability.** Before ranking players
+   on one metric, measure the share that is real signal: split the data in half,
+   correlate the two estimates, and Spearman-Brown-correct. Below about 0.5 the
+   number is mostly noise and the ranking would reshuffle on fresh data; RAPM sits
+   near that line on one season and climbs as seasons pool. (§6.3)

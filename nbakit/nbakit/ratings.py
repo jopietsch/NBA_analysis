@@ -458,6 +458,7 @@ def rapm(
     alphas=None,
     cv: int = 5,
     prior=None,
+    prior_strength: float = 0.0,
 ) -> pd.DataFrame:
     """Regularized Adjusted Plus-Minus via ridge regression with cross-validated penalty.
 
@@ -530,7 +531,7 @@ def rapm(
     DataFrame indexed by player_id with columns RAPM, O_RAPM, D_RAPM.
     """
     from scipy.sparse import coo_matrix, csr_matrix
-    from sklearn.linear_model import RidgeCV
+    from sklearn.linear_model import Ridge, RidgeCV
 
     df = possessions_df.reset_index(drop=True)
     n = len(df)
@@ -591,11 +592,6 @@ def rapm(
                 prior_vector[idx * 2] = float(prior.loc[pid, "off"])
                 prior_vector[idx * 2 + 1] = float(prior.loc[pid, "def"])
 
-    # Shift target so ridge shrinks gamma = beta - prior_vector toward zero,
-    # which is equivalent to shrinking beta toward prior_vector.
-    # y' = y - X @ prior_vector is a no-op when prior_vector is all zeros.
-    y_fit = y - X.dot(prior_vector)
-
     # --- Ridge regression with cross-validated alpha ---
     # The grid is deliberately bounded to [10, 1000]. A single possession is
     # almost unpredictable, so cross-validation that is free to pick a very large
@@ -608,8 +604,25 @@ def rapm(
     if alphas is None:
         alphas = np.logspace(1, 3, 17)  # 10 .. 1000
 
-    model = RidgeCV(alphas=alphas, cv=cv, fit_intercept=True)
-    model.fit(X, y_fit, sample_weight=weights)
+    # Prior-mean shift: shrink gamma = beta - prior_vector toward zero, which is
+    # equivalent to shrinking beta toward prior_vector. y' = y - X @ prior_vector
+    # is a no-op when prior_vector is all zeros. The league baseline (~110 pts/100)
+    # stays in the unpenalized intercept, so the shrinkage never distorts the level.
+    y_fit = y - X.dot(prior_vector)
+
+    if prior is not None and prior_strength > 0:
+        # Informative prior with a FIXED, strong penalty instead of a
+        # cross-validated one. CV optimizes possession-level prediction and
+        # settles on a penalty far too weak to pull a moderate-minute player
+        # (Cisse, ~900 possessions) off a lucky lineup context, so it leaves such
+        # players spiking at the top. A fixed strong penalty shrinks low-possession
+        # players onto their box-score prior while heavy-minute stars, with far
+        # more possessions, still move to what the lineup data shows.
+        model = Ridge(alpha=float(prior_strength), fit_intercept=True)
+        model.fit(X, y_fit, sample_weight=weights)
+    else:
+        model = RidgeCV(alphas=alphas, cv=cv, fit_intercept=True)
+        model.fit(X, y_fit, sample_weight=weights)
 
     # Recover beta = gamma + prior_vector (no-op when prior_vector is all zeros)
     coefs = model.coef_ + prior_vector  # shape (n_cols,)

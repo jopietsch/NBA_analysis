@@ -1304,3 +1304,70 @@ def plot_playoff_weighted_value(deltas: pd.DataFrame, top_n: int = 12,
 
     fig.tight_layout()
     return save_chart("playoff_weighted_value.svg", OUTPUT_DIR, fig=fig)
+
+
+# ── Chart: RAPM split-half reliability by minutes ────────────────────────────
+
+def plot_rapm_reliability(rel: dict) -> str:
+    """Split-half reliability of our computed RAPM, by minutes played.
+
+    Expects the dict from data.rapm_reliability(): {"by_bin": [{"lo", "hi",
+    "n", "r"}, ...], "splithalf": r, "min_minutes": int, "n_splithalf": int,
+    "yoy": {"RAPM": r, "RAPM_MY": r, "BPM": r}}. Plots split-half r (correlating
+    RAPM fit independently on two halves of the same pooled possessions)
+    against each minutes bin, against a reference line at 0.5 for what a
+    reliable metric looks like. A real player-quality signal should climb
+    toward that line as more minutes accumulate; here it does not.
+    """
+    by_bin = rel.get("by_bin", [])
+    if not by_bin:
+        fig, ax = new_fig()
+        ax.text(0.5, 0.5, "No RAPM reliability data", ha="center", va="center",
+                transform=ax.transAxes)
+        return save_chart("rapm_reliability.svg", OUTPUT_DIR, fig=fig)
+
+    labels = [f"{b['lo']}-{b['hi']}" for b in by_bin]
+    mids = np.arange(len(by_bin))
+    rs = [b["r"] for b in by_bin]
+
+    fig, ax = new_fig(figsize=(8.5, 5))
+    style_axes(ax)
+    ax.grid(axis="y", color="#e0dfd8", linewidth=0.7, zorder=0)
+    ax.grid(axis="x", visible=False)
+
+    ax.axhline(0.5, color=GRAY, linestyle="--", linewidth=1.2, zorder=2)
+    ax.text(len(by_bin) - 1, 0.52, "what a reliable metric looks like",
+            ha="right", va="bottom", fontsize=8, color=GRAY)
+    ax.axhline(0, color="#ccc", linewidth=0.8, zorder=1)
+
+    ax.plot(mids, rs, color=BLUE, linewidth=2, marker="o", markersize=6,
+            zorder=3)
+    for x, r, b in zip(mids, rs, by_bin):
+        if not np.isnan(r):
+            ax.text(x, r - 0.06, f"{r:.2f}", ha="center", va="top",
+                    fontsize=8, color=BLUE)
+
+    ax.set_xticks(mids)
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_xlabel("season minutes played", fontsize=9, color=GRAY)
+    ax.set_ylabel("split-half reliability (r)", fontsize=9, color=GRAY)
+    ax.set_ylim(-0.1, 1.0)
+
+    ax.set_title(
+        "Our RAPM barely reproduces itself: reliability stays near zero at "
+        "every minute level",
+        fontsize=11.5, color="#222", pad=30
+    )
+    yoy = rel.get("yoy", {})
+    yoy_note = ""
+    if "RAPM" in yoy and "BPM" in yoy:
+        yoy_note = (f" Year over year, RAPM tracks itself at r={yoy['RAPM']:.2f} "
+                    f"vs. BPM's r={yoy['BPM']:.2f}.")
+    ax.text(0.5, 1.01,
+            "Two independent halves of the same possession data, correlation "
+            "of the resulting player ratings; a real metric climbs with "
+            f"minutes.{yoy_note}",
+            transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
+
+    fig.tight_layout()
+    return save_chart("rapm_reliability.svg", OUTPUT_DIR, fig=fig)
