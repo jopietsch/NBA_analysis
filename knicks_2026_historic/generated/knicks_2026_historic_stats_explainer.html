@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-30">
+<meta name="dcterms.date" content="2026-07-01">
 
 <title>Statistical Explainer: knicks_2026_analysis.py</title>
 <style>
@@ -2235,6 +2235,7 @@ vertical-align: -.125em;
   <li><a href="#spread-standardized-dominance-run_spread_standardized" id="toc-spread-standardized-dominance-run_spread_standardized" class="nav-link" data-scroll-target="#spread-standardized-dominance-run_spread_standardized">22. Spread-Standardized Dominance (<code>run_spread_standardized</code>)</a></li>
   <li><a href="#comparing-teams-across-eras" id="toc-comparing-teams-across-eras" class="nav-link" data-scroll-target="#comparing-teams-across-eras">Comparing teams across eras</a></li>
   <li><a href="#recurring-methods-quick-reference" id="toc-recurring-methods-quick-reference" class="nav-link" data-scroll-target="#recurring-methods-quick-reference">Recurring Methods: Quick Reference</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   </ul>
 </nav>
 </div>
@@ -2259,7 +2260,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 30, 2026</p>
+      <p class="date">July 1, 2026</p>
     </div>
   </div>
   
@@ -2706,6 +2707,15 @@ theta_c       ~ Normal(mu, tau^2)        # population of true dominance</code></
 <p><strong><code>fill_plus_minus</code></strong> For pre-1997 seasons where <code>PLUS_MINUS</code> is NaN, the helper uses the two-row structure of the game log (one row per team per game) to compute margins from <code>PTS</code>. For each <code>GAME_ID</code>, the <code>PTS</code> column is reversed within the group (using <code>transform(lambda s: s.iloc[::-1].values)</code>) to give each row the opponent’s points, and <code>PLUS_MINUS = PTS − OPP_PTS</code> is filled where null. This is algebraically exact under the assumption that the box-score <code>PTS</code> totals match the official game score (they do).</p>
 <p><strong>Percentile vs. rank.</strong> The report uses “Nth percentile” rather than “Kth of 43” because percentile is more intuitive at this sample size and because it is comparable across sections with slightly different sample sizes (some metrics have fewer than 43 valid values due to NaN, e.g. in pre-1997 margins before the fill).</p>
 <p><strong>Why no regression.</strong> The core analysis is descriptive: it ranks a single team against a historical distribution. A regression of playoff margin on opponent SRS would add complexity (outcome variable? controls?) without better answering “where does this run rank?” The adjusted margin is the closest thing to a structural model; it makes one explicit functional-form assumption (opponent adjustment = direct subtraction), motivated by the SRS identity rather than fit from data. What §13 adds is not a predictive model but uncertainty quantification on that descriptive rank: bootstrap resampling, empirical-Bayes shrinkage, and error-propagation, each chosen because the headline rests on a 19-game sample and the point-estimate rank alone hides how wide that uncertainty is.</p>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>What this design can and cannot establish.</p>
+<p><strong>A descriptive rank, not a predictive model.</strong> The analysis places one team in a historical distribution of champions; it does not model or forecast outcomes (see “Why no regression” above). The claim is about where this run sits, not about what causes it.</p>
+<p><strong>A small, noisy sample.</strong> The distribution has about 43 champions, fewer for some metrics where early-era values are missing, and the headline rests on a 19-game playoff run. Section 13 quantifies that uncertainty with bootstrap resampling, empirical-Bayes shrinkage, and error-propagation, and Section 14 partial-pools the rank so one team is not over-read; none of these removes the smallness, they measure it.</p>
+<p><strong>Cross-era comparison depends on the normalization.</strong> There is no single correct way to compare teams decades apart, so the doc reports several deflators (scoring-share, per-100, spread-standardized) plus Elo and Bradley-Terry opponent-rating cross-checks (Sections 15, 16), and reads the rank through their agreement rather than committing to one number.</p>
+<p><strong>The opponent adjustment is an assumption, not a fit.</strong> Adjusted margin subtracts opponent SRS directly, a functional form motivated by the SRS identity rather than estimated from data; a different adjustment rule would move the adjusted figures.</p>
+<p><strong>Market and availability data are cross-checks, not primary evidence.</strong> Opponent player-availability (Section 11) and betting-market odds (Section 12) corroborate the descriptive rank; they are partial and are not the basis for it.</p>
 </section>
 
 </main>

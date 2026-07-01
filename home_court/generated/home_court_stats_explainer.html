@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Justin Pietsch">
-<meta name="dcterms.date" content="2026-06-30">
+<meta name="dcterms.date" content="2026-07-01">
 
 <title>Statistical Explainer: home_court_analysis.py</title>
 <style>
@@ -2213,6 +2213,7 @@ vertical-align: -.125em;
   <li><a href="#net-rating-split-by-venue-run_net_rating_analysis" id="toc-net-rating-split-by-venue-run_net_rating_analysis" class="nav-link" data-scroll-target="#net-rating-split-by-venue-run_net_rating_analysis">33. Net Rating Split by Venue (<code>run_net_rating_analysis</code>)</a></li>
   <li><a href="#multiple-comparisons-bh-fdr-correction-run_multiple_comparisons_summary" id="toc-multiple-comparisons-bh-fdr-correction-run_multiple_comparisons_summary" class="nav-link" data-scroll-target="#multiple-comparisons-bh-fdr-correction-run_multiple_comparisons_summary">34. Multiple Comparisons: BH FDR Correction (<code>run_multiple_comparisons_summary</code>)</a></li>
   <li><a href="#recurring-methods-quick-reference" id="toc-recurring-methods-quick-reference" class="nav-link" data-scroll-target="#recurring-methods-quick-reference">Recurring Methods: Quick Reference</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   </ul>
 </nav>
 </div>
@@ -2237,7 +2238,7 @@ vertical-align: -.125em;
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 30, 2026</p>
+      <p class="date">July 1, 2026</p>
     </div>
   </div>
   
@@ -2731,6 +2732,15 @@ vertical-align: -.125em;
 <li><strong>Granger causality:</strong> a time-series test of temporal ordering. “X Granger-causes Y” means lagged X improves forecasts of Y beyond what Y’s own lags predict. Run on first differences when series are I(1). A null result means the two series move contemporaneously; they may still be mechanically linked within the same season (as 3PA and HCA appear to be, per Section 10’s within-era game-level test).</li>
 <li><strong>QLR supremum Chow test:</strong> the structural-break test for an unknown break year. A Chow F-test is run at each candidate year; the maximum (supremum) F is the QLR statistic. Because we maximize over many years, Andrews (1993) asymptotic critical values are used rather than a standard F-table (k=2 parameters, 15% trimming: 10% → 7.12, 5% → 8.85, 1% → 12.37).</li>
 </ul>
+</section>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>What this design can and cannot establish.</p>
+<p><strong>Observational, not experimental.</strong> Every model runs on historical game outcomes with no randomization. The causal reading of the 1994-95 drop rests on a natural experiment (a rule change at a known date) backed by the placebo tests (Section 16) and the interrupted-time-series boundary (Section 15), not on experimental control.</p>
+<p><strong>Confounding is controlled, not eliminated.</strong> Game-level models adjust for team quality (<code>quality_diff</code>), season clustering (cluster-robust SEs), and pace endogeneity (leave-one-out <code>expected_pace</code>). Residual confounding from unmeasured factors is bounded by the mediation sensitivity analysis (Section 7b), which reports how strong an unmeasured confounder would have to be to overturn the result, rather than ruling one out.</p>
+<p><strong>Decomposition is accounting, not mechanism.</strong> The mediation and sequential decompositions (Sections 7, 23) attribute the decline to box-score channels that sum to the total by construction. They show where the decline shows up, not a proven causal pathway; the LPM is chosen precisely for that additive identity.</p>
+<p><strong>Trending series risk spurious correlation.</strong> Any cross-era correlation between two drifting series is checked with ADF unit-root and Engle-Granger cointegration tests, and leaned on only within-era; a raw Pearson r between trends is treated as suggestive, not evidence.</p>
+<p><strong>Many tests inflate false positives.</strong> With dozens of simultaneous tests, Benjamini-Hochberg FDR control (Section 34, and the 47 referee tests in Section 5) governs which survive; individual p-values are not each independently reliable.</p>
 </section>
 
 </main>

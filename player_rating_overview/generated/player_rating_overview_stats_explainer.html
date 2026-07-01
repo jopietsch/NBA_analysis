@@ -2174,7 +2174,8 @@ vertical-align: -.125em;
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#recomputed-rating-formulas" id="toc-recomputed-rating-formulas" class="nav-link active" data-scroll-target="#recomputed-rating-formulas">Recomputed rating formulas</a>
+  <li><a href="#the-data" id="toc-the-data" class="nav-link active" data-scroll-target="#the-data">The data</a></li>
+  <li><a href="#recomputed-rating-formulas" id="toc-recomputed-rating-formulas" class="nav-link" data-scroll-target="#recomputed-rating-formulas">Recomputed rating formulas</a>
   <ul class="collapse">
   <li><a href="#game-score" id="toc-game-score" class="nav-link" data-scroll-target="#game-score">Game Score</a></li>
   <li><a href="#player-efficiency-rating-per" id="toc-player-efficiency-rating-per" class="nav-link" data-scroll-target="#player-efficiency-rating-per">Player Efficiency Rating (PER)</a></li>
@@ -2206,7 +2207,7 @@ vertical-align: -.125em;
   <li><a href="#what-is-missing-posterior-uncertainty-intervals" id="toc-what-is-missing-posterior-uncertainty-intervals" class="nav-link" data-scroll-target="#what-is-missing-posterior-uncertainty-intervals">What is missing: posterior uncertainty intervals</a></li>
   <li><a href="#bayesian-model-averaging-for-the-consensus" id="toc-bayesian-model-averaging-for-the-consensus" class="nav-link" data-scroll-target="#bayesian-model-averaging-for-the-consensus">Bayesian model averaging for the consensus</a></li>
   </ul></li>
-  <li><a href="#data-pipeline" id="toc-data-pipeline" class="nav-link" data-scroll-target="#data-pipeline">Data pipeline</a></li>
+  <li><a href="#limitations" id="toc-limitations" class="nav-link" data-scroll-target="#limitations">Limitations</a></li>
   </ul>
 </nav>
 </div>
@@ -2246,8 +2247,13 @@ vertical-align: -.125em;
 <p style="text-align:center">
 <em>Draft</em>
 </p>
-<p>This document explains the statistical methods used in the player rating overview pipeline. It is written for someone who knows statistics but may not have the formulas fresh. Every method named here matches what the code in <code>player_rating_overview_analysis.py</code> and <code>nbakit/ratings.py</code> actually runs.</p>
+<p>This is the methods companion to the findings report: it explains how the numbers in <code>player_rating_overview_results.md</code> were computed, for a reader who knows statistics but may not have the formulas fresh. The findings doc states results in plain language and the investigation doc shows the evidence with p-values and intervals; this doc explains the machinery behind them. Every method named here matches what the code in <code>player_rating_overview_analysis.py</code> and <code>nbakit/ratings.py</code> actually runs. Because this project surveys the rating systems themselves, it is organized as a topical methods catalog (Layout B in <code>../STATS_EXPLAINER_GUIDE.md</code>): the data first, then the rating formulas, the cross-system comparison methods, the distribution analysis, and the Bayesian foundations, closing with what the methods cannot establish.</p>
 <hr>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The data</h2>
+<p>All recomputed ratings are computed in <code>nbakit/ratings.py</code> from totals fetched via <code>nbakit/data.py</code> (nba_api endpoints: <code>LeagueDashPlayerStats</code>, <code>LeagueDashTeamStats</code>, <code>LeagueStandingsV3</code>). Third-party results are loaded from cached CSVs and joined via the player crosswalk in <code>nbakit/player_crosswalk.py</code>. The unified table is assembled in <code>player_rating_overview_data.py</code> and cached to <code>cache/unified_ratings_{season}.csv</code>. The analysis module (<code>player_rating_overview_analysis.py</code>) runs all statistical computations from that unified table, printing results to stdout, which the orchestrator (<code>player_rating_overview.py</code>) captures into <code>docs/player_rating_overview_results.md</code>. The primary testbed is the 2025-26 season; two analyses (describe-versus-forecast and year-to-year stability) span the multi-season cache, and the doc flags which claims rest on which.</p>
+<hr>
+</section>
 <section id="recomputed-rating-formulas" class="level2">
 <h2 class="anchored" data-anchor-id="recomputed-rating-formulas">Recomputed rating formulas</h2>
 <section id="game-score" class="level3">
@@ -2397,10 +2403,14 @@ vertical-align: -.125em;
 <hr>
 </section>
 </section>
-<section id="data-pipeline" class="level2">
-<h2 class="anchored" data-anchor-id="data-pipeline">Data pipeline</h2>
-<p>All recomputed ratings are computed in <code>nbakit/ratings.py</code> from totals fetched via <code>nbakit/data.py</code> (nba_api endpoints: <code>LeagueDashPlayerStats</code>, <code>LeagueDashTeamStats</code>, <code>LeagueStandingsV3</code>). Third-party results are loaded from cached CSVs and joined via the player crosswalk in <code>nbakit/player_crosswalk.py</code>. The unified table is assembled in <code>player_rating_overview_data.py</code> and cached to <code>cache/unified_ratings_{season}.csv</code>.</p>
-<p>The analysis module (<code>player_rating_overview_analysis.py</code>) runs all statistical computations from the unified table, printing results to stdout, which the orchestrator (<code>player_rating_overview.py</code>) captures into <code>docs/player_rating_overview_results.md</code>.</p>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>What these methods can and cannot establish.</p>
+<p><strong>Recomputed values approximate the published ones.</strong> BPM and VORP are recomputed by fitting a linear model to Basketball-Reference’s published OBPM/DBPM on standard advanced percentages, plus a team-margin anchor; they are validated against BBR each run (2025-26: r about 0.930 for BPM, 0.961 for VORP), not reproduced exactly. Defensive BPM is the weakest link, because box-score defense is hard to capture. Absolute levels are therefore approximate; the rankings and comparisons they feed are the reliable output.</p>
+<p><strong>Single-season orderings are a snapshot, not a stable ranking.</strong> The cross-system comparison, the uniqueness breakdown, and the two uber ratings all rest on the 2025-26 testbed. Only the describe-versus-forecast and year-to-year stability panels span the multi-season cache, so only those carry a firm cross-season claim. Bare single-season RAPM is the noisiest cut and can move by chance year to year; RAPM+prior is far steadier, which is why the docs lead with it.</p>
+<p><strong>Agreement is not quality.</strong> The overlap R² measures how much of a system’s variance the other systems explain: high overlap means redundancy, not correctness. Separating “consistent and right” from “consistent but echoing shared box-score biases” needs the retrodiction test, not the correlation alone.</p>
+<p><strong>Uncertainty is mostly unshown.</strong> The third-party metrics publish posterior means without posterior variances (see “What is missing” above), so many apparent mid-tier disagreements fall inside single-system error bars that the rankings never display. Coverage gaps compound this: several third-party systems are stale or partly paywalled, so the field surveyed here is not complete.</p>
+<p><strong>Correlation is not causation.</strong> The wins-predictive weighting and the retrodiction tests establish which ratings track team success, not why a player drives it; nothing here identifies a causal mechanism.</p>
 </section>
 
 </main>
