@@ -21,8 +21,9 @@ Yes: the home team’s win rate has fallen.
 The decline is mostly slow and steady, with two stretches where it briefly sped up.
 Home teams have historically ***shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees***, and those four differences account for about 95% of the advantage.
 Two real-world changes stand out: **the shift to three-point shooting** (which alone reaches close to half) **and fairer officiating**.
-The largest single category in the decline, **rebounding**, declined for reasons neither change explains.
+And the biggest single driver of the decline, **rebounding**, is the one piece neither change explains: the data can measure it but not say why it faded.
 
+These findings held up under a battery of checks built to break them, laid out in the full report.
 Because there are more regular-season games, the analysis is more precise; the playoff figures show direction more than precise size.
 
 ---
@@ -37,7 +38,8 @@ The scoring gap followed the same arc: home teams outscored visitors by about 3 
 The slide sped up twice, in the mid-1990s and again around 2018, but both bursts are accelerations within the same long trend, not separate drops on top of it.
 
 Home court in the playoffs declined later than in the regular season: playoff home win rates held near 64% from the mid-1990s through the 2010s while the regular season was already sliding, then fell to about 58% in the past few seasons.
-The per-game advantage is still real, the home team wins the early games at the top seed's arena and even takes most Game 7s, but a best-of-7 series flattens it.
+The per-game advantage is still real: the home team wins the early games at the top seed's arena and even takes most Game 7s.
+But a best-of-7 series flattens it.
 A home-court team that would have won the series about 55% of the time in the 1980s now takes it about 52% of the time, barely better than a coin flip.
 
 ---

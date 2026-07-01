@@ -37,7 +37,7 @@ Those four advantages account for about 95% of the home-court advantage, and all
 Two real-world changes explain much of why.
 The shift to three-point shooting alone reaches close to half: it flattened the shooting advantage and ate into the foul and turnover gaps.
 Fairer officiating accounts for part of the foul gap.
-The rest stays unexplained, most of it the largest single category of the decline, rebounding, plus part of the turnover gap.
+The rest stays unexplained, and that is the surprising part: the single largest driver of the decline, rebounding, is the one factor the data can measure but not explain, with part of the turnover gap unexplained alongside it.
 
 ![Regular season vs. playoff home win % per season, 1983–84 through 2025–26. Dashed lines are overall linear trends. Background shading marks rule-change eras; red dots mark COVID-impacted seasons. Section 4 checks whether each rule change actually bent the trend; only one did.](../generated/images/home_court_advantage_season.svg){#fig-advantage-season}
 
