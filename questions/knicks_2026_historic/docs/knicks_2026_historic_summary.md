@@ -19,6 +19,17 @@ This summary works through four questions: was the run historic and against real
 ![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions since 1983-84, the best single estimate rather than a settled #1.](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
 The Knicks' raw average margin of +14.9 points per game is the highest in 43 years of data, and adjusted for opponent strength their +11.2 margin still ranks first, ahead of the 2016–17 Warriors (+10.2) and 1986–87 Lakers (+9.5).
+
+**The objections up front, and the answers:**
+
+- **A weak East?** No. The West–East strength gap in 2025–26 was only +0.39 points per game (37th percentile of West dominance); in 63% of prior seasons the West held a larger edge.
+- **A soft bracket?** No. The Knicks' playoff opponents averaged an SRS (each team's season-long scoring margin, adjusted for schedule) of +3.67, right at the historical median for champions.
+- **Padded by blowouts?** No. On a wins-only rating that never sees a point margin, the Knicks still rank first of 43.
+- **Injured opponents?** No. All four were essentially fully healthy (98% average availability; the Spurs and Hawks at 100%).
+
+They earned it by rising, not coasting.
+Only the fifth-strongest team in the playoff field during the regular season, the Knicks made the biggest playoff jump of any 2026 team (a rise of +11.48, the 2nd-biggest any champion has produced); the Spurs they beat in the Finals made the second-biggest jump in the field.
+
 So how solid is that #1?
 Six ways to measure dominance, six answers:
 
@@ -35,11 +46,6 @@ Every *absolute* measure puts them first; the two *relative* ones, which grade a
 The scoring-share row is the crudest knock: 2025–26's high scoring is mostly sharper shooting, not a faster game, and the more accurate per-possession version keeps them clearly first (+11.0).
 That #1 is the best single guess, not a lock: re-drawing the 19 games leaves them first about 60% of the time, and the fairest test, which treats every past champion as just as uncertain as the Knicks, puts their chance of being the single best ever at about 9% (roughly a third to be top-five).
 The verdict: one of the best handful of title runs ever, most likely the best by the raw numbers, but not provably the single best.
-
-The East was **not historically weak**.
-The West-East strength gap in 2025–26 was only +0.39 points per game, 37th percentile of West dominance; in 63% of prior seasons, the West held a larger edge.
-The Knicks' playoff opponents had an average SRS (each team's season-long scoring margin, adjusted for schedule) of +3.67, right at the historical median for champions.
-All four opponents were essentially fully healthy (98% average availability).
 
 ---
 

@@ -13,16 +13,30 @@
 **Yes: the 2025–26 New York Knicks had a historically dominant playoff run.**
 
 They went 16-3 (88th percentile win rate among all 43 champions since 1983–84) and outscored opponents by an average of **+14.9 points per game**, the highest raw playoff margin in the dataset.
-Across the game-to-game swing of a 19-game run, that margin could sit anywhere from +7.4 to +22.4: even at the unlucky end, the run would still rank above the historical average.
-2025–26 is the highest-scoring era since 1984, but that is mostly sharper shooting, not a faster game: in actual possessions the season runs only about 4% above average, so on a true pace-neutral basis the raw margin stays #1 (only the cruder scale-by-total-scoring version drops it to 3rd).
-After adjusting for opponent strength, the margin of **+11.2 pts/game** ranks first all-time (though once every champion's uncertainty is weighed fairly, or each is graded against its own era's spread of teams, being the single best is far from settled: the fairest uncertainty test leaves them the most likely #1 but not a lock (§10–§11), and grading on the era's spread of teams ranks them a top-five run rather than a clear first (§14)); on the same pace-neutral basis the opponent-adjusted margin is also first.
-The East was **not** historically weak: the West-East gap in team strength (SRS, a team's scoring margin adjusted for schedule) in 2025–26 was only +0.39 pts/game (37th percentile of West dominance); in 63% of seasons since 1984, the West was even *more* dominant than this.
+Even at the unlucky end of a 19-game run's swing (the game-to-game bounce puts the margin anywhere from +7.4 to +22.4), the run still ranks above the historical average.
 
-There is a possible nuance in the East record: the 76ers and Cavaliers played a touch *below* their regular-season ratings in their other playoff games, so some of the rounds 1–3 dominance may reflect opponents underperforming, not just Knicks excellence, though that gap is small enough to be random (the Hawks played only the Knicks, so there is no independent read on them; see §5).
-The Finals tells the opposite story: the Spurs were the most improved of the Knicks' four opponents, climbing from a regular-season SRS of +8.28 to a playoff SRS of +15.13 (the second-biggest rise of any team in the whole 2026 field, behind only the Knicks themselves; see §6).
-Winning that series 4-1, even narrowly (+2.4 avg margin), was the hardest test of the run.
+Three questions run through the report:
 
-All four opponents were essentially fully healthy when they played the Knicks (average availability 98%; the Spurs and Hawks were at 100%), so injuries are not an explanation for any of it.
+- **Was the run actually dominant, or the product of a weak field?**
+- **Did the Knicks earn it, or coast in on a soft, injured bracket?**
+- **How does it rank against every champion since 1983–84, and how solid is that rank?**
+
+Start with the objections a reader walks in with:
+
+- **A weak East?** No. The West–East gap in team strength (SRS, a team's scoring margin adjusted for schedule) was only +0.39 pts/game (37th percentile of West dominance); in 63% of seasons since 1984 the West led by more.
+- **A soft bracket?** No. The games-weighted opponent rating was +3.67 (49th percentile), the median champion's schedule.
+- **Padded by garbage-time blowouts?** No. On a wins-only rating that never sees a point margin, the Knicks still rank first of 43 (§11).
+- **Injured opponents?** No. All four were essentially fully healthy against the Knicks (98% availability; the Spurs and Hawks at 100%).
+
+**They earned it by rising, not coasting.** Only the fifth-strongest team in the playoff field during the regular season, the Knicks jumped to the top in the postseason: a rise of **+11.48**, the biggest of any 2026 playoff team and the 2nd-biggest any champion has produced.
+The team they beat in the Finals made the second-biggest jump in the field: the Spurs climbed from a regular-season SRS of +8.28 to +15.13 in the playoffs.
+That is why the Finals were the hardest test of the run, a 4-1 series won by an average of just +2.4 against the one opponent playing above its regular-season level (§5–§6).
+
+**How solid is the #1 claim?** After adjusting for opponent strength, the Knicks' margin of **+11.2 pts/game** ranks first among all 43 champions: the best single number any champion has posted.
+Whether it makes them the single best is a different question, and the honest answer is not quite.
+Nineteen playoff games is a small sample, and a fair test that lets every champion carry the same uncertainty leaves the Knicks the most likely #1 but not a lock (§10–§11).
+Graded against how top-heavy today's league has become, they come out a top-five run rather than a clear first (§14).
+So: the best raw opponent-adjusted number in 43 years, very likely one of the best handful of title runs ever, but not provably the single best.
 
 ![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions, the best single estimate though not a settled #1 (see §10).](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
