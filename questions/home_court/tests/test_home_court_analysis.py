@@ -840,3 +840,60 @@ class TestMediationSensitivity:
         for name in ("sens.reg_fouls_rv", "sens.reg_fouls_partial_r2",
                      "sens.reg_efg_rv", "sens.reg_efg_partial_r2"):
             assert name in reg.FACTS
+
+
+# ── Model-fit warning handling ────────────────────────────────────────────────
+
+class TestSuppressNoisyFitWarnings:
+    def test_lets_convergence_warning_through_but_suppresses_future_warning(self):
+        from statsmodels.tools.sm_exceptions import ConvergenceWarning
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            with reg.suppress_noisy_fit_warnings():
+                warnings.warn("a convergence issue", ConvergenceWarning)
+                warnings.warn("a future issue", FutureWarning)
+
+        categories = [w.category for w in caught]
+        assert ConvergenceWarning in categories
+        assert FutureWarning not in categories
+
+    def test_suppresses_runtime_and_value_warnings(self):
+        from statsmodels.tools.sm_exceptions import ValueWarning
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            with reg.suppress_noisy_fit_warnings():
+                warnings.warn("noisy", RuntimeWarning)
+                warnings.warn("noisy", ValueWarning)
+
+        assert caught == []
+
+
+class TestWarnIfNotConverged:
+    def test_prints_when_not_converged(self, capsys):
+        class FakeResult:
+            mle_retvals = {"converged": False}
+
+        reg._warn_if_not_converged(FakeResult(), "some_section: m")
+        captured = capsys.readouterr()
+        assert "some_section: m" in captured.err
+        assert "did NOT converge" in captured.err
+
+    def test_silent_when_converged(self, capsys):
+        class FakeResult:
+            mle_retvals = {"converged": True}
+
+        reg._warn_if_not_converged(FakeResult(), "some_section: m")
+        captured = capsys.readouterr()
+        assert captured.err == ""
+
+    def test_defaults_to_converged_when_no_mle_retvals(self, capsys):
+        # e.g. GLM results, which don't populate mle_retvals — must not
+        # false-positive as non-converged.
+        class FakeResult:
+            pass
+
+        reg._warn_if_not_converged(FakeResult(), "some_section: m")
+        captured = capsys.readouterr()
+        assert captured.err == ""

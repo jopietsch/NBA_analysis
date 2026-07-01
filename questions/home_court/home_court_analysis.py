@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
+from statsmodels.tools import sm_exceptions
 from nba_api.stats.library.parameters import SeasonType
 
 from nbakit.textfmt import section as _section_str, stars as _stars, p_value as _fmt_p
@@ -27,6 +28,47 @@ from nbakit.stats import shrink_to_mean
 
 import home_court_data as nba
 from home_court_facts import FACTS
+
+
+# ── Model-fit warning handling ────────────────────────────────────────────────
+# ~47 statsmodels fits in this file used to run inside
+# `with warnings.catch_warnings(): warnings.simplefilter("ignore")`, which
+# blanket-suppresses EVERY warning category — including ConvergenceWarning and
+# PerfectSeparationWarning, the two that mean a fit's coefficients may not be
+# trustworthy. A non-converged logit on a thin subset would silently ship
+# coefficients into published facts. suppress_noisy_fit_warnings() ignores
+# only the categories that are routine noise around these fits and lets
+# everything else (crucially, convergence/separation warnings) surface as
+# normal Python warnings.
+_NOISY_FIT_WARNINGS: tuple[type[Warning], ...] = (
+    FutureWarning,
+    RuntimeWarning,
+    sm_exceptions.ValueWarning,
+    sm_exceptions.IterationLimitWarning,
+)
+
+
+@contextlib.contextmanager
+def suppress_noisy_fit_warnings():
+    """Ignore only known-noisy statsmodels warning categories around a fit.
+
+    Deliberately does NOT suppress ConvergenceWarning or
+    PerfectSeparationWarning — see module note above.
+    """
+    with warnings.catch_warnings():
+        for category in _NOISY_FIT_WARNINGS:
+            warnings.simplefilter("ignore", category=category)
+        yield
+
+
+def _warn_if_not_converged(res, label: str) -> None:
+    """Print a visible, unmissable notice if an MLE fit (smf.logit) failed to
+    converge. Does not raise — the pipeline must still complete and produce
+    its other numbers — but a non-converged fit must never ship silently.
+    """
+    if not getattr(res, "mle_retvals", {}).get("converged", True):
+        print(f"    *** WARNING: fit did NOT converge — {label} ***",
+              file=sys.stderr, flush=True)
 
 
 # ── Feature construction ──────────────────────────────────────────────────────
@@ -322,8 +364,7 @@ def run_decline_trend(df: pd.DataFrame) -> None:
         endog = agg[["wins", "games"]].copy()
         endog["losses"] = endog["games"] - endog["wins"]
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             # Binomial GLM — primary
             glm = sm.GLM(
                 endog[["wins", "losses"]].values,
@@ -424,8 +465,7 @@ def run_decline_trend(df: pd.DataFrame) -> None:
             era_endog = era_rows[["wins"]].copy()
             era_endog["losses"] = era_rows["games"] - era_rows["wins"]
             era_pbar = era_rows["pct"].mean() / 100.0
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 era_glm = sm.GLM(
                     era_endog[["wins", "losses"]].values,
                     era_exog,
@@ -484,8 +524,7 @@ def compute_multilevel_decline(df: pd.DataFrame) -> dict:
     panel["hca_gap"]  = panel["home_pct"] - panel["road_pct"]
     panel["year_c"]   = panel["year"] - panel["year"].mean()
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         pooled = smf.ols("hca_gap ~ year_c", data=panel).fit(
             cov_type="cluster", cov_kwds={"groups": panel["team"]})
     league_slope = float(pooled.params["year_c"])
@@ -493,8 +532,7 @@ def compute_multilevel_decline(df: pd.DataFrame) -> dict:
     league_p     = float(pooled.pvalues["year_c"])
 
     rows: list[tuple[str, float, float, int]] = []  # (team, slope, slope_se, n)
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         for t, g in panel.groupby("team"):
             if g["year"].nunique() < MIN_SEASONS:
                 continue
@@ -618,8 +656,7 @@ def compute_hca_forecast(df: pd.DataFrame, horizon: int = 5) -> dict:
         endog = pct.to_numpy().astype(float)
 
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 res = sm.tsa.UnobservedComponents(
                     endog, level="local linear trend"
                 ).fit(disp=False)
@@ -778,13 +815,14 @@ def run_format_period_analysis(df: pd.DataFrame) -> None:
         print(f"   {a:>8} → {b:<8}  {diff:+5.1f} pp   "
               f"(z = {z:+.2f}, p = {p_s}  {_stars(p).strip()})")
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m_year = smf.logit("home_win ~ year", data=po).fit(disp=0)
+        _warn_if_not_converged(m_year, "run_format_period_analysis: m_year")
         m_fmt  = smf.logit(
             f"home_win ~ year + C(format_period, Treatment('{fmt_ref}'))",
             data=po,
         ).fit(disp=0)
+        _warn_if_not_converged(m_fmt, "run_format_period_analysis: m_fmt")
 
     print(f"\n   Trend-controlled logistic: home_win ~ year + format_period")
     print(f"   (reference period = {fmt_ref})\n")
@@ -876,13 +914,14 @@ def run_era_analysis(df: pd.DataFrame) -> None:
             print(f"   {a:>8} → {b:<8}  {diff:+5.1f} pp   "
                   f"(z = {z:+.2f}, p = {_fmt_p(p)}  {_stars(p).strip()})")
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             m_year = smf.logit("home_win ~ year", data=sub).fit(disp=0)
+            _warn_if_not_converged(m_year, "run_era_analysis: m_year")
             m_era  = smf.logit(
                 f"home_win ~ year + C(era, Treatment('{era_ref}'))",
                 data=sub,
             ).fit(disp=0)
+            _warn_if_not_converged(m_era, "run_era_analysis: m_era")
 
         print(f"\n   Trend-controlled logistic: home_win ~ year + C(era)")
         print(f"   (reference era = {era_ref})\n")
@@ -955,15 +994,17 @@ def _compute_shapley_shares(reg: pd.DataFrame, era_ref: str) -> dict[str, float]
     n     = len(names)
 
     cache: dict[frozenset, float] = {}
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         for size in range(n + 1):
             for sub in combinations(names, size):
                 key     = frozenset(sub)
                 formula = ("home_win ~ 1" if not sub else
                            "home_win ~ " + " + ".join(block_terms[b] for b in sub))
                 try:
-                    cache[key] = _mcfadden(smf.logit(formula, data=reg).fit(disp=0))
+                    res = smf.logit(formula, data=reg).fit(disp=0)
+                    _warn_if_not_converged(
+                        res, f"_compute_shapley_shares: subset={sorted(sub) or ['baseline']}")
+                    cache[key] = _mcfadden(res)
                 except Exception:
                     cache[key] = 0.0
 
@@ -1011,12 +1052,13 @@ def run_sequential_decomposition(df: pd.DataFrame) -> None:
     ]
 
     fitted = []
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         for label, formula in steps:
-            fitted.append((label, smf.logit(formula, data=reg).fit(
+            res = smf.logit(formula, data=reg).fit(
                 disp=0, cov_type="cluster", cov_kwds={"groups": reg["year"].values},
-            )))
+            )
+            _warn_if_not_converged(res, f"run_sequential_decomposition: {label}")
+            fitted.append((label, res))
 
     total_r2 = _mcfadden(fitted[-1][1])
 
@@ -1105,10 +1147,11 @@ def run_stability_analysis(df: pd.DataFrame) -> None:
     post  = rs[rs["year"] >= 2014]
     formula = "home_win ~ rest_diff + altitude_home + tz_diff"
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m_pre  = smf.logit(formula, data=pre).fit(disp=0)
+        _warn_if_not_converged(m_pre, "run_stability_analysis: m_pre")
         m_post = smf.logit(formula, data=post).fit(disp=0)
+        _warn_if_not_converged(m_post, "run_stability_analysis: m_post")
 
     p_pre  = pre["home_win"].mean()
     p_post = post["home_win"].mean()
@@ -1148,13 +1191,13 @@ def run_stability_analysis(df: pd.DataFrame) -> None:
     rs2 = rs.copy()
     rs2["post2014"] = (rs2["year"] >= 2014).astype(int)
     p_bar = rs2["home_win"].mean()
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         try:
             m_int = smf.logit(
                 "home_win ~ (rest_diff + altitude_home + tz_diff) * post2014",
                 data=rs2,
             ).fit(disp=0)
+            _warn_if_not_converged(m_int, "run_stability_analysis: m_int")
             interaction_terms = [
                 ("rest_diff:post2014",     "rest_diff × post2014"),
                 ("altitude_home:post2014", "altitude_home × post2014"),
@@ -1207,11 +1250,12 @@ def run_factor_summary(df: pd.DataFrame) -> None:
           f"{'─'*8}  {'─'*5}  {'─'*8}  {'─'*3}")
 
     res: dict[str, dict[str, float]] = {}
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         for raw, label in factors:
             m_re = smf.logit(f"home_win ~ {raw}", data=re).fit(disp=0)
+            _warn_if_not_converged(m_re, "run_factor_summary: m_re")
             m_po = smf.logit(f"home_win ~ {raw}", data=po).fit(disp=0)
+            _warn_if_not_converged(m_po, "run_factor_summary: m_po")
             c_re, p_re_ = m_re.params[raw], m_re.pvalues[raw]
             c_po, p_po_ = m_po.params[raw], m_po.pvalues[raw]
             pp_re, pp_po = _pp(c_re, p_re), _pp(c_po, p_po)
@@ -1283,12 +1327,12 @@ def run_factor_summary(df: pd.DataFrame) -> None:
         p_po_q = po_q["home_win"].mean()
         print(f"\n   Playoff rest controlling for team quality (N = {len(po_q):,} games):")
         print(f"   quality_diff = home RS win% − away RS win% (same season).")
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             try:
                 m_q = smf.logit(
                     "home_win ~ rest_diff + quality_diff", data=po_q
                 ).fit(disp=0)
+                _warn_if_not_converged(m_q, "run_factor_summary: m_q")
                 c_rest = m_q.params["rest_diff"]
                 p_rest = m_q.pvalues["rest_diff"]
                 c_qual = m_q.params["quality_diff"]
@@ -1401,10 +1445,10 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
             era_rows = sub[(sub["year"] >= y1) & (sub["year"] <= y2)]
             if len(era_rows) < 50 or era_rows["rest_diff"].nunique() < 2:
                 continue
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 try:
                     m = smf.logit("home_win ~ rest_diff", data=era_rows).fit(disp=0)
+                    _warn_if_not_converged(m, "run_rest_bucket_analysis: m")
                 except Exception:
                     continue
             c, p = m.params["rest_diff"], m.pvalues["rest_diff"]
@@ -1414,10 +1458,11 @@ def run_rest_bucket_analysis(df: pd.DataFrame) -> None:
                   f"{_pp(c, pb):>+8.1f}  {p_s:>8}  {_stars(p)}")
 
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m_add = smf.logit("home_win ~ rest_diff + C(era)", data=sub).fit(disp=0)
+                _warn_if_not_converged(m_add, "run_rest_bucket_analysis: m_add")
                 m_int = smf.logit("home_win ~ rest_diff * C(era)", data=sub).fit(disp=0)
+                _warn_if_not_converged(m_int, "run_rest_bucket_analysis: m_int")
             lr    = 2.0 * (m_int.llf - m_add.llf)
             dfree = int(m_int.df_model - m_add.df_model)
             p_lr  = chi2.sf(lr, dfree)
@@ -1508,8 +1553,7 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
             if len(data) < 10:
                 trend_row += f"{'—':>{COL_W}}"
                 continue
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m = smf.ols(f"{key} ~ year", data=data).fit()
             coef = m.params["year"]
             pval = m.pvalues["year"]
@@ -1625,8 +1669,7 @@ def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
         hw = d["home_win"].mean() * 100
         level = hw - 50.0
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             cl = {"groups": d["year"]}
             m_chan = smf.ols(f"home_win ~ {rhs}", data=d).fit(
                 cov_type="cluster", cov_kwds=cl)
@@ -1795,8 +1838,7 @@ def compute_channel_3pa_control(df: pd.DataFrame) -> dict:
         if len(d) < 100:
             continue
         rows = []
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             cl = {"groups": d["year"]}
             # Full win-model coefficients convert each channel's per-year slope
             # into win-percentage-points — the same currency as the mediation
@@ -2026,8 +2068,7 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
         print(f"   {'Channel':<16}  {'Trend/yr':>11}  {'Trend/yr | 3PA':>16}  {'Absorbed':>9}")
         print(f"   {'─'*16}  {'─'*11}  {'─'*16}  {'─'*9}")
         absorbed_by: dict[str, tuple[float, float]] = {}
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             cl = {"groups": d["year"]}
             for k, lbl in channels:
                 m_raw  = smf.ols(f"{k} ~ year", data=d).fit(cov_type="cluster", cov_kwds=cl)
@@ -2089,8 +2130,7 @@ def run_mediation_analysis(df: pd.DataFrame) -> None:
         if len(sub) < 200:
             print(f"   {era_label:<12}  {len(sub):>8,}  {'⚠ too few':>36}")
             continue
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             rhs = " + ".join(keys)
             m = smf.ols(f"home_win ~ {rhs}", data=sub).fit(
                 cov_type="cluster", cov_kwds={"groups": sub["year"]})
@@ -2146,8 +2186,7 @@ def compute_mediation_sensitivity(df: pd.DataFrame) -> dict:
         d = df[df["is_playoff"] == is_po].dropna(subset=keys + ["home_win", "year"])
         if len(d) < 100:
             continue
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             m = smf.ols(f"home_win ~ year + {rhs}", data=d).fit()   # classical SEs
             m_cl = smf.ols(f"home_win ~ year + {rhs}", data=d).fit(
                 cov_type="cluster", cov_kwds={"groups": d["year"]})
@@ -2279,8 +2318,7 @@ def compute_shap_channels(df: pd.DataFrame, seed: int = 0) -> dict:
 
         X = sub[keys].values.astype(float)
         y = sub["home_win"].values.astype(int)
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             model = GradientBoostingClassifier(
                 n_estimators=200, max_depth=3, learning_rate=0.05,
                 subsample=0.8, random_state=seed,
@@ -2424,8 +2462,7 @@ def _oos_forecast(df: pd.DataFrame, is_playoff: int, cut_year: int) -> dict:
     if train["year"].nunique() < 5 or test["year"].nunique() < 3:
         return {}
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         lpm = smf.ols("home_win ~ " + " + ".join(_OOS_CHANNELS), data=train).fit()
         tr_season = train.groupby("year")["home_win"].agg(p="mean", n="count").reset_index()
         tr_season["p"] *= 100.0
@@ -2588,8 +2625,7 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
     for _rc, _rsub in [("reg", df[df["is_playoff"] == 0]), ("po", df[df["is_playoff"] == 1])]:
         _se = _rsub[["year", "reb_share_edge"]].dropna()
         if len(_se) >= 10:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 _sm = smf.ols("reb_share_edge ~ year", data=_se).fit()
             FACTS.set(f"{_rc}.reb_share_trend", _sm.params["year"], "{:+.3f}",
                       note=f"{_rc}: pace-free rebound share-edge trend per year")
@@ -2638,8 +2674,7 @@ def run_rebounding_decomposition(df: pd.DataFrame) -> None:
             if len(data) < 10:
                 trend_row += f"{'—':>{COL_W}}"
                 continue
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m = smf.ols(f"{key} ~ year", data=data).fit()
             cell = f"{m.params['year']:>+{COL_W - 3}.3f}{_stars(m.pvalues['year'])}"
             trend_row += cell
@@ -2706,8 +2741,7 @@ def run_tracking_rebound_analysis(seasons: list, stats: dict) -> None:
         if len(xy) < 3:
             print(f"   {label:<{label_w}}{len(xy):>11}{'—':>10}{'—':>12}{'—':>9}")
             continue
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             m = smf.ols("v ~ year", data=xy).fit()
         coef, pval = m.params["year"], m.pvalues["year"]
         print(f"   {label:<{label_w}}{len(xy):>11}{xy['v'].mean():>+10.3f}"
@@ -2799,8 +2833,7 @@ def run_shot_zone_analysis(
                 trend_row += f"{'—':>{COL_W}}"
                 continue
             tdf = pd.DataFrame(pairs, columns=["year", "val"])
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m = smf.ols("val ~ year", data=tdf).fit()
             c    = m.params["year"]
             pval = m.pvalues["year"]
@@ -2857,8 +2890,7 @@ def run_margin_analysis(df: pd.DataFrame) -> None:
             if len(data) < 10:
                 trend_row += f"{'—':>{COL_W}}"
                 continue
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m = smf.ols(f"{col} ~ year", data=data).fit()
             coef = m.params["year"]
             pval = m.pvalues["year"]
@@ -2905,8 +2937,7 @@ def run_quantile_margin_analysis(df: pd.DataFrame) -> None:
         slopes: dict[str, float] = {}
         for q, qlbl in zip(quantiles, q_labels):
             try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
+                with suppress_noisy_fit_warnings():
                     m = smf.quantreg("margin ~ year", data=sub).fit(q=q, disp=0)
                 coef = float(m.params["year"])
                 pval = float(m.pvalues["year"])
@@ -3007,8 +3038,7 @@ def run_net_rating_analysis(df: pd.DataFrame) -> None:
 
         print(divider)
         if len(valid) >= 10:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m = smf.ols("net_rating ~ year", data=valid).fit()
             coef = m.params["year"]
             pval = m.pvalues["year"]
@@ -3058,8 +3088,7 @@ def run_parity_correlation(
           f"  {_stars(p_s).strip()})\n")
 
     data = pd.DataFrame({"parity_std": std_vals, "home_pct": home_vals})
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m = smf.ols("home_pct ~ parity_std", data=data).fit()
     coef = m.params["parity_std"]
     pval = m.pvalues["parity_std"]
@@ -3378,9 +3407,9 @@ def run_attendance_analysis(
 
     d = dose_df.copy()
     d["att_k"] = d["attendance"] / 1000.0  # coefficient = effect per 1,000 fans
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m = smf.logit("home_win ~ att_k", data=d).fit(disp=0)
+        _warn_if_not_converged(m, "run_attendance_analysis: m")
     coef, pval = m.params["att_k"], m.pvalues["att_k"]
     pp = _pp(coef, p_bar)
     lo, hi = _ci_lo_hi(m, "att_k", p_bar)
@@ -3446,8 +3475,7 @@ def run_series_breakdown(df: pd.DataFrame) -> None:
         "home_pct": [100.0 * wins_by_game[g] / total_by_game[g] for g in game_nums],
         "n":        [float(total_by_game[g]) for g in game_nums],
     })
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m = smf.ols("home_pct ~ game_num", data=rows, weights=rows["n"]).fit()
     coef = m.params["game_num"]
     pval = m.pvalues["game_num"]
@@ -3619,10 +3647,11 @@ def compute_playoff_quality_plotdata(df: pd.DataFrame) -> dict:
         df = _add_quality_diff(df)
     po = df[df["is_playoff"] == 1].dropna(subset=["quality_diff", "game_in_series"]).copy()
     p_bar = po["home_win"].mean()
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m_year = smf.logit("home_win ~ year", data=po).fit(disp=0)
+        _warn_if_not_converged(m_year, "compute_playoff_quality_plotdata: m_year")
         m_full = smf.logit("home_win ~ year + quality_diff", data=po).fit(disp=0)
+        _warn_if_not_converged(m_full, "compute_playoff_quality_plotdata: m_full")
     c_raw = m_year.params["year"]
     retained = 100.0 * m_full.params["year"] / c_raw if c_raw else float("nan")
 
@@ -3666,11 +3695,13 @@ def run_playoff_quality_decomposition(df: pd.DataFrame) -> None:
     print("   quality_diff = home RS win% − away RS win% (same season).")
     print(f"   N = {len(po):,} playoff games with complete quality data.\n")
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m_year = smf.logit("home_win ~ year", data=po).fit(disp=0)
+        _warn_if_not_converged(m_year, "run_playoff_quality_decomposition: m_year")
         m_qual = smf.logit("home_win ~ quality_diff", data=po).fit(disp=0)
+        _warn_if_not_converged(m_qual, "run_playoff_quality_decomposition: m_qual")
         m_full = smf.logit("home_win ~ year + quality_diff", data=po).fit(disp=0)
+        _warn_if_not_converged(m_full, "run_playoff_quality_decomposition: m_full")
 
     c_yr_base  = m_year.params["year"]
     c_yr_full  = m_full.params["year"]
@@ -3703,8 +3734,7 @@ def run_playoff_quality_decomposition(df: pd.DataFrame) -> None:
     # Has quality_diff itself trended over time?
     by_year = po.groupby("year")["quality_diff"].mean().reset_index()
     by_year.columns = ["year", "mean_qdiff"]
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         m_qdrift = smf.ols("mean_qdiff ~ year", data=by_year).fit()
     c_qdrift = m_qdrift.params["year"]
     p_qdrift = m_qdrift.pvalues["year"]
@@ -3791,8 +3821,7 @@ def run_placebo_tests(df: pd.DataFrame) -> None:
             agg2 = agg.copy()
             agg2["step"] = (agg2["year"] >= t).astype(float)
             try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
+                with suppress_noisy_fit_warnings():
                     m = smf.wls("pct ~ year + step", data=agg2,
                                 weights=agg2["games"]).fit()
                 coef = float(m.params.get("step", np.nan))
@@ -3858,12 +3887,12 @@ def run_travel_analysis(df: pd.DataFrame) -> None:
             diff = bpct - p_bar * 100
             print(f"   {label:>12}  {len(bsub):>8,}  {bpct:>10.1f}%  {diff:>+12.1f} pp")
 
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
+        with suppress_noisy_fit_warnings():
             try:
                 m = smf.logit("home_win ~ distance_miles", data=sub).fit(
                     disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
                 )
+                _warn_if_not_converged(m, "run_travel_analysis: m")
                 coef = m.params["distance_miles"]
                 pval = m.pvalues["distance_miles"]
                 pval_s = _fmt_p(pval)
@@ -3961,6 +3990,7 @@ def _run_league_metric_analysis(
             m_biv = smf.logit(f"home_win ~ {col}", data=sub).fit(
                 disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
             )
+            _warn_if_not_converged(m_biv, "_run_league_metric_analysis: m_biv")
             coef  = m_biv.params[col]
             pval  = m_biv.pvalues[col]
             pval_s = _fmt_p(pval)
@@ -3994,6 +4024,7 @@ def _run_league_metric_analysis(
             m_era = smf.logit(f"home_win ~ {col} + C(era)", data=sub).fit(
                 disp=0, cov_type="cluster", cov_kwds={"groups": sub["year"].values},
             )
+            _warn_if_not_converged(m_era, "_run_league_metric_analysis: m_era")
             coef_e  = m_era.params[col]
             pval_e  = m_era.pvalues[col]
             pval_e_s = _fmt_p(pval_e)
@@ -4161,11 +4192,11 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             p_bar_ep = sub_ep["home_win"].mean()
             print(f"\n   Expected pace (LOO)  (N = {len(sub_ep):,} games)")
             try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
+                with suppress_noisy_fit_warnings():
                     m_biv_ep = smf.logit("home_win ~ expected_pace", data=sub_ep).fit(
                         disp=0, cov_type="cluster", cov_kwds={"groups": sub_ep["year"].values},
                     )
+                    _warn_if_not_converged(m_biv_ep, "_expected_pace_block: m_biv_ep")
                 c_ep = m_biv_ep.params["expected_pace"]
                 p_ep = m_biv_ep.pvalues["expected_pace"]
                 print(f"   Bivariate: coef = {c_ep:+.4f}  "
@@ -4178,13 +4209,13 @@ def run_pace_analysis(df: pd.DataFrame) -> None:
             except Exception:
                 pass
             try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
+                with suppress_noisy_fit_warnings():
                     m_era_ep = smf.logit(
                         "home_win ~ expected_pace + C(era)", data=sub_ep
                     ).fit(
                         disp=0, cov_type="cluster", cov_kwds={"groups": sub_ep["year"].values},
                     )
+                    _warn_if_not_converged(m_era_ep, "_expected_pace_block: m_era_ep")
                 c_era_ep = m_era_ep.params["expected_pace"]
                 p_era_ep = m_era_ep.pvalues["expected_pace"]
                 pp_era_ep = _pp(c_era_ep, p_bar_ep) * 10
@@ -4824,8 +4855,7 @@ def run_cusum_test(df: pd.DataFrame, results: dict | None = None) -> None:
             # Center years for numerical stability
             x_c = x - x.mean()
             X_c = np.column_stack([np.ones(len(y)), x_c])
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 res = RecursiveLS(y, X_c).fit()
             cusum = res.cusum
             # _cusum_significance_bounds returns (lo_endpoints, hi_endpoints)
@@ -5362,8 +5392,7 @@ def _run_granger_3pa(df: pd.DataFrame) -> None:
         print(f"   {'Lag':>4}  {'F-stat':>8}  {'p-value':>10}  {'Verdict':>28}")
         print(f"   {'─'*4}  {'─'*8}  {'─'*10}  {'─'*28}")
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 gc_res = grangercausalitytests(d_arr, maxlag=2, verbose=False)
             for lag in [1, 2]:
                 F = gc_res[lag][0]["ssr_ftest"][0]
@@ -5433,8 +5462,7 @@ def run_channel_event_study(df: pd.DataFrame) -> None:
             if len(by_yr2) < 8:
                 continue
             try:
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
+                with suppress_noisy_fit_warnings():
                     m = smf.ols(f"{key} ~ year_c + post95 + time_since",
                                 data=by_yr2).fit()
                 pre_slope  = float(m.params.get("year_c",    np.nan))
@@ -5500,15 +5528,16 @@ def run_team_quality_robustness(df: pd.DataFrame) -> None:
     f_fe   = f_base + " + C(TEAM_NAME_home) + C(TEAM_NAME_away)"
     p_bar  = reg["home_win"].mean()
 
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with suppress_noisy_fit_warnings():
         try:
             m_base = smf.logit(f_base, data=reg).fit(
                 disp=0, cov_type="cluster",
                 cov_kwds={"groups": reg["year"].values})
+            _warn_if_not_converged(m_base, "run_team_quality_robustness: m_base")
             m_fe = smf.logit(f_fe, data=reg).fit(
                 disp=0, cov_type="cluster",
                 cov_kwds={"groups": reg["year"].values})
+            _warn_if_not_converged(m_fe, "run_team_quality_robustness: m_fe")
         except Exception as exc:
             print(f"   Model failed: {exc}\n")
             return
@@ -5570,11 +5599,11 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
 
     def _logit_p(formula: str, data: pd.DataFrame, col: str) -> float:
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 m = smf.logit(formula, data=data).fit(
                     disp=0, cov_type="cluster",
                     cov_kwds={"groups": data["year"].values})
+                _warn_if_not_converged(m, "_logit_p: m")
             return float(m.pvalues[col])
         except Exception:
             return 1.0
@@ -5588,8 +5617,7 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
         agg.columns = ["year", "wins", "games"]
         agg["losses"] = agg["games"] - agg["wins"]
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 X = sm.add_constant(agg["year"].values.astype(float))
                 glm = sm.GLM(agg[["wins", "losses"]].values, X,
                              family=sm.families.Binomial()).fit()
@@ -5657,13 +5685,14 @@ def run_multiple_comparisons_summary(df: pd.DataFrame) -> None:
         ("PO era dummies beyond year trend", po.dropna(subset=["rest_diff", "tz_diff"])),
     ]:
         try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
+            with suppress_noisy_fit_warnings():
                 f_yr  = f"home_win ~ year + rest_diff + altitude_home + tz_diff + covid"
                 f_era = (f"home_win ~ year + C(era, Treatment('{era_ref}')) "
                          f"+ rest_diff + altitude_home + tz_diff + covid")
                 m_yr  = smf.logit(f_yr,  data=sub).fit(disp=0)
+                _warn_if_not_converged(m_yr, "run_multiple_comparisons_summary: m_yr")
                 m_era = smf.logit(f_era, data=sub).fit(disp=0)
+                _warn_if_not_converged(m_era, "run_multiple_comparisons_summary: m_era")
             from scipy.stats import chi2
             lr_stat = 2 * (m_era.llf - m_yr.llf)
             df_diff = m_era.df_model - m_yr.df_model

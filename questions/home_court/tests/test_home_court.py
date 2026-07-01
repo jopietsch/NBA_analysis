@@ -201,6 +201,54 @@ class TestFetchSeasonHomePct:
         assert nba.fetch_season_home_pct(2024, "Regular Season") is None
         assert not os.path.exists(nba.cache_path(2024, "Regular Season"))
 
+    def test_returns_none_and_does_not_cache_on_empty_api_result(self, tmp_path, monkeypatch):
+        # An empty API response is the signature of a transient NBA.com
+        # rate-limit, not a real absence of games (every season has games) —
+        # it must never be cached, or the season silently disappears forever.
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
+
+        empty_df = pd.DataFrame(columns=["MATCHUP", "WL"])
+
+        class FakeFinder:
+            def __init__(self, **kwargs):
+                pass
+
+            def get_data_frames(self):
+                return [empty_df]
+
+        monkeypatch.setattr(nba.leaguegamefinder, "LeagueGameFinder", FakeFinder)
+
+        assert nba.fetch_season_home_pct(2024, "Regular Season") is None
+        assert not nba._nbakit.cache_exists(nba.cache_path(2024, "Regular Season"))
+        assert not os.path.exists(nba.cache_path(2024, "Regular Season"))
+
+    def test_caches_and_returns_result_on_non_empty_api_response(self, tmp_path, monkeypatch):
+        # Companion to the empty-result test above: a genuine, non-empty
+        # response must still be cached and returned normally.
+        monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
+        monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
+
+        api_df = pd.DataFrame({
+            "MATCHUP": ["BOS vs. MIA", "MIA vs. BOS", "BOS @ MIA"],
+            "WL":      ["W",           "L",           "L"],
+        })
+
+        class FakeFinder:
+            def __init__(self, **kwargs):
+                pass
+
+            def get_data_frames(self):
+                return [api_df]
+
+        monkeypatch.setattr(nba.leaguegamefinder, "LeagueGameFinder", FakeFinder)
+
+        # 2 home games (BOS vs. MIA -> W, MIA vs. BOS -> L), 1 win -> 50.0%
+        assert nba.fetch_season_home_pct(2024, "Regular Season") == 50.0
+        assert nba._nbakit.cache_exists(nba.cache_path(2024, "Regular Season"))
+        cached = nba._nbakit.cache_read_csv(nba.cache_path(2024, "Regular Season"))
+        assert len(cached) == 3
+
 
 class TestBucketStatsByEra:
     def test_buckets_seasons_into_eras_and_averages(self):
