@@ -2327,18 +2327,18 @@ vertical-align: -.125em;
 <td>Separate offensive and defensive components; WS/48 normalizes for playing time</td>
 </tr>
 <tr class="odd">
-<td><strong>BPM 2.0</strong> (Box Plus/Minus, OBPM / DBPM)</td>
-<td>Per-100-possession box rates + team + role adjustments</td>
+<td><strong>BPM</strong> (Box Plus/Minus, OBPM / DBPM)</td>
+<td>Advanced box-score rates + team point margin</td>
 <td>1973–74 to present</td>
-<td>nba_api + BBR-published regression coefficients</td>
-<td>Estimates on/off impact from box stats; team context adjusts team-quality bias</td>
+<td>nba_api + weights fit to BBR’s published OBPM/DBPM</td>
+<td>Two stages: a linear fit to reproduce BBR, then a team-margin anchor so each team’s players sum to its point differential. Recomputed and validated against Basketball-Reference (BPM r ≈ 0.930 on 361 players).</td>
 </tr>
 <tr class="even">
 <td><strong>VORP</strong> (Value Over Replacement Player)</td>
 <td>BPM, minutes, team games</td>
 <td>1973–74 to present</td>
 <td>Derived from BPM</td>
-<td><code>VORP = (BPM - (-2.0)) × (share of team minutes played)</code>; the recompute does not apply the standard <code>/82</code> season prorate (see stats explainer)</td>
+<td><code>VORP = (BPM - (-2.0)) × (share of team minutes) × (team games / 82)</code>; recomputed and validated against Basketball-Reference (VORP r ≈ 0.961).</td>
 </tr>
 </tbody>
 </table>
@@ -2783,7 +2783,7 @@ vertical-align: -.125em;
 <section id="open-items" class="level2">
 <h2 class="anchored" data-anchor-id="open-items">Open items</h2>
 <ul>
-<li>RAPM (Regularized Adjusted Plus/Minus): computed in-house from nba_api play-by-play (PlayByPlayV3) for 2013-14 through 2025-26, reconstructed into five-on-five possessions and fit with cross-validated ridge regression. Two versions: a bare single-season RAPM (zero-mean prior) kept to show the raw noise, and RAPM+prior, which pools three seasons with recency weights and shrinks each player toward a BPM prior (offense toward OBPM, defense toward DBPM). RAPM+prior feeds the consensus. Still open: loading a public RAPM snapshot to validate the values, and a luck adjustment / tracking-based prior to approach EPM or LEBRON (the player-tracking inputs are not publicly available).</li>
+<li>RAPM (Regularized Adjusted Plus/Minus): computed in-house from nba_api play-by-play (PlayByPlayV3) for 2013-14 through 2025-26, reconstructed into five-on-five possessions and fit with cross-validated ridge regression. Two versions: a bare single-season RAPM (zero-mean prior) kept to show the raw noise, and RAPM+prior, which pools three seasons with recency weights and shrinks each player toward a BPM prior (offense toward OBPM, defense toward DBPM). RAPM+prior feeds the consensus. The RAPM family is under repair: the bare possession-based RAPM still surfaces implausible leaders (low-minute players topping the league), a known bug flagged as a separate follow-on. Fixing BPM this session improved RAPM+prior, which shrinks toward the BPM prior, but the bare RAPM underneath still needs its own fix. Still open: that fix, loading a public RAPM snapshot to validate the values, and a luck adjustment / tracking-based prior to approach EPM or LEBRON (the player-tracking inputs are not publicly available).</li>
 <li>Minutes qualifier threshold: TBD. Initial candidate: 500 minutes (roughly 25+ games at 20 min/game) for 2025–26; adjusted for multi-season pools.</li>
 </ul>
 </section>
