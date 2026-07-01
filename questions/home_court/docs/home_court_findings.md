@@ -14,7 +14,8 @@ And maybe it isn't what it used to be.
 Is that right?
 
 
-Four questions drove this analysis:
+So we dug in.
+Start with what you're probably already wondering:
 
 - **Has home court really shrunk, and by how much?**
 - **What is it made of, and why does it exist at all?**
