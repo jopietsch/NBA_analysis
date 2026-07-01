@@ -8,19 +8,35 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
+<!-- AUDIENCE (see "Audience tiers" in ../CLAUDE.md). This doc is written for a reader who knows statistics but is rusty: someone who once took the course. So:
+  - Use the REAL terms (binomial GLM, cluster-robust SE, QLR, bootstrap, confidence interval), but define or remind on first use. A term must not appear before it is defined.
+  - Don't dumb down to sports-reader level (that's the findings/summary tier); equally, don't pile on jargon a rusty reader can't reconstruct without a reminder.
+  - THE CARDINAL RULE: the named method must match what the pipeline actually ran (PROJECT_analysis.py / PROJECT_results.md). Describing an estimator the code doesn't use is the worst failure this doc can make. Verify each method name against the code before you write it.
+  - Every cited number comes from a << f("section.metric") >> call, not hand-typed (see the footer). -->
+
+<!-- This is the METHODS companion to the findings report. The investigation doc (PROJECT_investigation.md) shows the tests behind each finding for a reader who tolerates p-values; this doc explains HOW the numbers were computed. Frame it as that companion. -->
+
 ## Data
+
+<!-- Describe the data source, date range, and any filtering. Name the endpoints/tables the data module (PROJECT_data.py) actually pulls from. -->
 
 TODO: Describe the data source, date range, and any filtering.
 
 ## Metrics
 
+<!-- Define each metric computed in PROJECT_data.py. Give the formula or the plain definition, and define any term the first time it appears. -->
+
 TODO: Define each metric computed in `PROJECT_data.py`.
 
 ## Analysis approach
 
+<!-- Name the method correctly and say why it fits the question. This section MUST match what PROJECT_analysis.py runs (the cardinal rule above): if the code fits an OLS trend line with cluster-robust standard errors, say exactly that, not "a regression." Define each named method on first use. -->
+
 TODO: Describe the statistical method (ranking, regression, bootstrap, etc.) and why it fits the question.
 
 ## Limitations
+
+<!-- What the data can and cannot establish. Correlation vs. causation; what the design does and does not identify; sample-size caveats. -->
 
 TODO: What the data can and cannot establish.
 <# Template: cite registered facts with f("section.metric") once PROJECT_analysis.py registers them. See docs/PROJECT_facts.json. -#>
