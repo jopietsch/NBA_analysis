@@ -407,13 +407,15 @@ This read works only for the box-score systems, which we recompute ourselves and
 The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way, and neither can the once-a-season award votes.
 (The inventory lays out which systems can be split, and why, in full.) Among the 103 players who logged at least 150 playoff minutes in 2025-26, each player's change is measured against the rest of that group.
 That strips out the leaguewide dip that comes from tougher defense and facing the same opponent night after night, so what is left is who rose or fell relative to the other rotation players who also advanced.
-A short run is still noisy, so two guardrails keep the list honest: each shift is trimmed toward zero the fewer playoff minutes a player logged, so a lucky handful of games can't top the list, and each carries a band showing how far PER, WS/48, and BPM spread on the call.
-A bar that clears its whisker on the chart is a shift all three box formulas see the same way.
+A short run is still noisy, so two guardrails keep the list honest: each shift is trimmed toward zero the fewer playoff minutes a player logged, so a lucky handful of games can't top the list, and each shift also carries a range built by re-running the read on that player's games, re-drawn at random, over and over.
+A shift only counts as real when that whole range stays on one side of zero.
+A bar whose whisker clears zero on the chart is a shift unlikely to be just the bounce of a few games.
+By that test only 16 of the 103 players moved more than the games alone could explain.
 
 The list rewards players whose game travels into a grind-it-out playoff series and marks down those who leaned on production that dried up against a focused defense.
 It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
 
-![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least 150 playoff minutes. Green rose, red fell; the whisker is how far the three box formulas spread on each call.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
+![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least 150 playoff minutes. Green rose, red fell; the whisker is the range from re-drawing each player's games at random.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
 
 **Putting the two halves together: who delivered the most value once the playoffs are weighted in.** The riser-and-faller read says who changed, not who held the most value across the whole season once the playoffs are weighted in.
 For that, blend each playoff player's regular-season and playoff BPM into one number, counting a playoff minute 2 times a regular-season minute.

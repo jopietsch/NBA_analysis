@@ -1132,12 +1132,14 @@ def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:
     """Diverging bar chart of the biggest playoff risers and fallers.
 
     Expects the frame from load_playoff_deltas(), which carries the shrunk
-    composite (SHIFT_SHRUNK) and its agreement band (SHIFT_SE). Shows the top_n
-    risers (green) and top_n fallers (red) by the shrunk shift. The bar length is
-    the minutes-shrunk composite; the whisker is the spread across PER, WS/48,
-    and BPM, so a bar that clears its whisker is one the three formulations agree on.
+    composite (SHIFT_SHRUNK) and a game-level bootstrap confidence interval
+    (SHIFT_CI_LO, SHIFT_CI_HI: the 2.5-97.5 percentile range of the shift from
+    re-drawing the player's games). Shows the top_n risers (green) and top_n
+    fallers (red) by the shrunk shift. The bar length is the minutes-shrunk
+    composite; the whisker is that 2.5-97.5 bootstrap range, so a bar whose
+    whisker clears zero is a shift unlikely to be just the bounce of a few games.
     """
-    if deltas is None or deltas.empty or "SHIFT_SHRUNK" not in deltas.columns:
+    if deltas is None or deltas.empty or "SHIFT_SHRUNK" not in deltas.columns or "SHIFT_CI_LO" not in deltas.columns:
         fig, ax = new_fig()
         ax.text(0.5, 0.5, "No playoff data", ha="center", va="center",
                 transform=ax.transAxes)
@@ -1151,7 +1153,9 @@ def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:
     names = sel["PLAYER_NAME"].tolist()
     teams = sel.get("TEAM_ABBREVIATION", pd.Series([""] * len(sel))).tolist()
     vals = sel["SHIFT_SHRUNK"].tolist()
-    errs = sel["SHIFT_SE"].tolist()
+    lower = (sel["SHIFT_SHRUNK"] - sel["SHIFT_CI_LO"]).clip(lower=0).tolist()
+    upper = (sel["SHIFT_CI_HI"] - sel["SHIFT_SHRUNK"]).clip(lower=0).tolist()
+    errs = [lower, upper]
     colors = [GREEN if v > 0 else RED for v in vals]
 
     fig, ax = plt.subplots(figsize=(7.5, max(5, len(sel) * 0.34)), facecolor=BG)
@@ -1164,7 +1168,7 @@ def plot_playoff_shift(deltas: pd.DataFrame, top_n: int = 10) -> str:
     ax.set_yticks(y)
     ax.set_yticklabels([f"{n}  ({t})" if t else n for n, t in zip(names, teams)],
                        fontsize=8)
-    ax.set_xlabel("Shrunk playoff shift (whisker = spread across PER, WS/48, BPM)",
+    ax.set_xlabel("Shrunk playoff shift (whisker = range on the games played, re-drawn)",
                   fontsize=9, color=GRAY)
     ax.set_title(
         "Who rose and who fell in the 2025-26 playoffs",

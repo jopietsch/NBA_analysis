@@ -182,7 +182,7 @@ The reason is mechanical, and it splits the inventory cleanly into three groups.
 So the regular-season-vs-playoff comparison in the findings (Section 8) is box-score-only by necessity, not by choice.
 Two guards keep that comparison honest given how small a playoff sample is.
 The shift is measured only for players with at least 150 playoff minutes, then pulled toward zero by playoff minutes (half weight at 200), so a short, lucky run can't top the list.
-And each shift carries a band equal to the spread across PER, WS/48, and BPM, so a rise only counts as real when the three formulations agree on it.
+And each shift also carries a range built by re-drawing the player's games at random 1000 times, so a rise only counts as real when that range stays clear of zero.
 
 ---
 

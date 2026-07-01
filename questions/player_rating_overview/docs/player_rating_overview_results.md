@@ -643,38 +643,40 @@ standardized adjusted deltas of PER, WS/48, and BPM, so a riser needs the
 three box formulations to agree.
 Two reliability guards: the shift is shrunk toward zero by playoff
 minutes (half weight at 200 min) so a short, lucky
-sample can't top the list, and the +/- band is the spread across the
-three formulations. A shift 'clears its band' when it exceeds that spread.
-Risers and fallers below are ranked by the shrunk shift.
+sample can't top the list, and a game-level bootstrap re-draws each
+player's games 1000 times to give a 2.5-97.5 range
+([lo, hi], on the shrunk scale). A shift is 'clear' when that range
+excludes zero. Risers and fallers below are ranked by the shrunk shift.
 Note: BPM here is our recompute, validated against Basketball-Reference
 (see the BPM-validation section); the playoff BPM is anchored to each
 team's playoff point margin.
+Shifts whose range clears zero (not just game noise): 16 of 103.
 
 Biggest playoff RISERS (raised their level above their regular-season form):
-   1. OG Anunoby                 NYK  shift = +1.56 +/- 0.35  (585 po min; raw z +2.09; PER +8.0)
-   2. Cason Wallace              OKC  shift = +1.14 +/- 0.14  (374 po min; raw z +1.75; PER +5.8)
-   3. Jayson Tatum               BOS  shift = +1.12 +/- 0.30  (218 po min; raw z +2.15; PER +8.6)
-   4. Karl-Anthony Towns         NYK  shift = +1.03 +/- 0.40  (577 po min; raw z +1.38; PER +2.5)
-   5. Rui Hachimura              LAL  shift = +1.01 +/- 0.16  (386 po min; raw z +1.53; PER +5.5)
-   6. Mike Conley                MIN  shift = +0.89 +/- 0.16  (167 po min; raw z +1.95; PER +6.2)
-   7. Tari Eason                 HOU  shift = +0.87 +/- 0.21  (195 po min; raw z +1.77; PER +6.8)
-   8. Alex Caruso                OKC  shift = +0.85 +/- 0.27  (352 po min; raw z +1.33; PER +6.5)
-   9. Marcus Smart               LAL  shift = +0.81 +/- 0.15  (344 po min; raw z +1.28; PER +4.7)
-  10. Collin Murray-Boyles       TOR  shift = +0.78 +/- 0.26  (190 po min; raw z +1.60; PER +7.3)
+   1. OG Anunoby                 NYK  shift = +1.56 [+0.66, +2.43]  (585 po min; raw z +2.09; PER +8.0)
+   2. Cason Wallace              OKC  shift = +1.14 [+0.49, +1.75]  (374 po min; raw z +1.75; PER +5.8)
+   3. Jayson Tatum               BOS  shift = +1.12 [+0.27, +1.96]  (218 po min; raw z +2.15; PER +8.6)
+   4. Karl-Anthony Towns         NYK  shift = +1.03 [+0.08, +2.02]  (577 po min; raw z +1.38; PER +2.5)
+   5. Rui Hachimura              LAL  shift = +1.01 [+0.50, +1.52]  (386 po min; raw z +1.53; PER +5.5)
+   6. Mike Conley                MIN  shift = +0.89 [+0.25, +1.52]  (167 po min; raw z +1.95; PER +6.2)
+   7. Tari Eason                 HOU  shift = +0.87 [-0.13, +2.26]  (195 po min; raw z +1.77; PER +6.8)
+   8. Alex Caruso                OKC  shift = +0.85 [-0.15, +1.84]  (352 po min; raw z +1.33; PER +6.5)
+   9. Marcus Smart               LAL  shift = +0.81 [-0.36, +2.02]  (344 po min; raw z +1.28; PER +4.7)
+  10. Collin Murray-Boyles       TOR  shift = +0.78 [+0.17, +1.45]  (190 po min; raw z +1.60; PER +7.3)
 
 Biggest playoff FALLERS (dropped below their regular-season form):
-   1. Jalen Duren                DET  shift = -1.60 +/- 0.36  (422 po min; raw z -2.35; PER -10.4)
-   2. Nikola Jokić               DEN  shift = -1.34 +/- 0.38  (237 po min; raw z -2.46; PER -7.0)
-   3. Nickeil Alexander-Walker   ATL  shift = -1.07 +/- 0.36  (212 po min; raw z -2.07; PER -7.4)
-   4. Jalen Suggs                ORL  shift = -1.02 +/- 0.02  (248 po min; raw z -1.84; PER -6.5)
-   5. Julius Randle              MIN  shift = -0.99 +/- 0.19  (399 po min; raw z -1.49; PER -6.1)
-   6. Jamal Murray               DEN  shift = -0.85 +/- 0.06  (238 po min; raw z -1.57; PER -5.1)
-   7. Keldon Johnson             SAS  shift = -0.83 +/- 0.13  (410 po min; raw z -1.24; PER -5.0)
-   8. James Harden               CLE  shift = -0.83 +/- 0.24  (671 po min; raw z -1.08; PER -3.9)
-   9. Shai Gilgeous-Alexander    OKC  shift = -0.82 +/- 0.38  (544 po min; raw z -1.12; PER -4.6)
-  10. Donovan Mitchell           CLE  shift = -0.77 +/- 0.09  (652 po min; raw z -1.00; PER -3.1)
+   1. Jalen Duren                DET  shift = -1.60 [-2.35, -0.79]  (422 po min; raw z -2.35; PER -10.4)
+   2. Nikola Jokić               DEN  shift = -1.34 [-2.19, -0.53]  (237 po min; raw z -2.46; PER -7.0)
+   3. Nickeil Alexander-Walker   ATL  shift = -1.07 [-1.57, -0.52]  (212 po min; raw z -2.07; PER -7.4)
+   4. Jalen Suggs                ORL  shift = -1.02 [-1.90, -0.17]  (248 po min; raw z -1.84; PER -6.5)
+   5. Julius Randle              MIN  shift = -0.99 [-1.66, -0.18]  (399 po min; raw z -1.49; PER -6.1)
+   6. Jamal Murray               DEN  shift = -0.85 [-1.58, -0.19]  (238 po min; raw z -1.57; PER -5.1)
+   7. Keldon Johnson             SAS  shift = -0.83 [-1.58, -0.13]  (410 po min; raw z -1.24; PER -5.0)
+   8. James Harden               CLE  shift = -0.83 [-1.71, +0.07]  (671 po min; raw z -1.08; PER -3.9)
+   9. Shai Gilgeous-Alexander    OKC  shift = -0.82 [-1.72, +0.15]  (544 po min; raw z -1.12; PER -4.6)
+  10. Donovan Mitchell           CLE  shift = -0.77 [-1.63, +0.06]  (652 po min; raw z -1.00; PER -3.1)
 
-Regular-season consensus #1 Nikola Jokić: playoff shift = -1.34 +/- 0.38 (faller rank 2 of 103)
+Regular-season consensus #1 Nikola Jokić: playoff shift = -1.34 [-2.19, -0.53] (faller rank 2 of 103)
 
 ─── SEASON-OVER-SEASON CHANGE (PREVIOUS → CURRENT) ──────────────
 Players qualified in both 2024-25 and 2025-26: 290
@@ -732,7 +734,7 @@ Jalen Brunson: regular-season BPM +3.4, playoff BPM +4.6.
 Agreed elite (best worst-rank across 5 systems): Nikola Jokić (worst rank 1).
 Defense-driven star (top-12 BPM, highest DBPM): Victor Wembanyama (BPM +8.9, of which DBPM +3.9).
 High-usage scorer the metrics split on: Pascal Siakam (USG 30%, PER rank 45 vs BPM rank 126).
-Biggest playoff riser (top composite shift): OG Anunoby (shift +1.56 +/- 0.35).
+Biggest playoff riser (top composite shift): OG Anunoby (shift +1.56 [+0.66, +2.43]).
   Brunson impact ranks: OBPM 12, BPM 29, RAPM 204, RAPM+prior 64 (scoring outruns net on-court impact)
 Saved → docs/player_rating_overview_facts_reference.md
 

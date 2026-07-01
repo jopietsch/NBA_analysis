@@ -65,7 +65,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 
 ### § 8. Who rose and fell in the playoffs
 - Box-score rate metrics recomputed on playoff games only (impact metrics can't: a playoff run is too few games; only the recompute family splits by season type, see inventory). 103 players ≥ 150 playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).
-- Two reliability guards: shift shrunk toward zero by playoff minutes (half weight at 200) so a short sample can't top the list; agreement band = spread across PER/WS48/BPM, a shift "clears its band" when the three agree.
+- Two reliability guards: shift shrunk toward zero by playoff minutes (half weight at 200) so a short sample can't top the list; game-level bootstrap range (re-draw games 1000x), a shift is "clear" when its range excludes zero; only 16 of 103 clear it.
 - Risers: OG Anunoby, Cason Wallace, Jayson Tatum. Fallers: Jalen Duren, Nikola Jokić, Nickeil Alexander-Walker, incl. regular-season consensus #1 Nikola Jokić. One postseason, not proof.
 
 ### § 9. What changed from 2024-25 to 2025-26

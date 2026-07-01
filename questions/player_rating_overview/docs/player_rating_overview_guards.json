@@ -85,7 +85,7 @@
     "value": "Jalen Duren"
   },
   "playoff_top_riser_clears_band": {
-    "claim": "the top playoff riser (OG Anunoby) rose by more than the spread across PER, WS/48, and BPM",
+    "claim": "the top playoff riser (OG Anunoby) rose by more than the bounce of a few games (range excludes zero)",
     "ok": true,
     "value": "OG Anunoby"
   },

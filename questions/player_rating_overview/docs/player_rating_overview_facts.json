@@ -3653,6 +3653,27 @@
     "unit": null,
     "value": 30
   },
+  "playoff.bootstrap_b": {
+    "display": "1000",
+    "fmt": "{:d}",
+    "note": "game-level bootstrap re-draws behind the shift range",
+    "unit": null,
+    "value": 1000
+  },
+  "playoff.consensus1.ci_hi": {
+    "display": "-0.53",
+    "fmt": "{:.2f}",
+    "note": "regular-season consensus #1 player's shift range high",
+    "unit": null,
+    "value": -0.5319687946008061
+  },
+  "playoff.consensus1.ci_lo": {
+    "display": "-2.19",
+    "fmt": "{:.2f}",
+    "note": "regular-season consensus #1 player's shift range low",
+    "unit": null,
+    "value": -2.194672651620082
+  },
   "playoff.consensus1.name": {
     "display": "Nikola Joki\u0107",
     "fmt": null,
@@ -3667,19 +3688,26 @@
     "unit": null,
     "value": -1.335335387682587
   },
+  "playoff.faller.1.ci_hi": {
+    "display": "-0.79",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 1 shift range high (bootstrap)",
+    "unit": null,
+    "value": -0.7930866947375117
+  },
+  "playoff.faller.1.ci_lo": {
+    "display": "-2.35",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 1 shift range low (bootstrap)",
+    "unit": null,
+    "value": -2.351881185877201
+  },
   "playoff.faller.1.name": {
     "display": "Jalen Duren",
     "fmt": null,
     "note": "playoff faller rank 1 (shrunk composite shift)",
     "unit": null,
     "value": "Jalen Duren"
-  },
-  "playoff.faller.1.se": {
-    "display": "0.36",
-    "fmt": "{:.2f}",
-    "note": "playoff faller rank 1 agreement band (SE across formulations)",
-    "unit": null,
-    "value": 0.3563958969069762
   },
   "playoff.faller.1.z": {
     "display": "-1.60",
@@ -3688,19 +3716,26 @@
     "unit": null,
     "value": -1.5953247233590544
   },
+  "playoff.faller.2.ci_hi": {
+    "display": "-0.53",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 2 shift range high (bootstrap)",
+    "unit": null,
+    "value": -0.5319687946008061
+  },
+  "playoff.faller.2.ci_lo": {
+    "display": "-2.19",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 2 shift range low (bootstrap)",
+    "unit": null,
+    "value": -2.194672651620082
+  },
   "playoff.faller.2.name": {
     "display": "Nikola Joki\u0107",
     "fmt": null,
     "note": "playoff faller rank 2 (shrunk composite shift)",
     "unit": null,
     "value": "Nikola Joki\u0107"
-  },
-  "playoff.faller.2.se": {
-    "display": "0.38",
-    "fmt": "{:.2f}",
-    "note": "playoff faller rank 2 agreement band (SE across formulations)",
-    "unit": null,
-    "value": 0.3833195990550709
   },
   "playoff.faller.2.z": {
     "display": "-1.34",
@@ -3709,19 +3744,26 @@
     "unit": null,
     "value": -1.335335387682587
   },
+  "playoff.faller.3.ci_hi": {
+    "display": "-0.52",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 3 shift range high (bootstrap)",
+    "unit": null,
+    "value": -0.5239131707392312
+  },
+  "playoff.faller.3.ci_lo": {
+    "display": "-1.57",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 3 shift range low (bootstrap)",
+    "unit": null,
+    "value": -1.5686431865608843
+  },
   "playoff.faller.3.name": {
     "display": "Nickeil Alexander-Walker",
     "fmt": null,
     "note": "playoff faller rank 3 (shrunk composite shift)",
     "unit": null,
     "value": "Nickeil Alexander-Walker"
-  },
-  "playoff.faller.3.se": {
-    "display": "0.36",
-    "fmt": "{:.2f}",
-    "note": "playoff faller rank 3 agreement band (SE across formulations)",
-    "unit": null,
-    "value": 0.3573320722098774
   },
   "playoff.faller.3.z": {
     "display": "-1.07",
@@ -3737,12 +3779,33 @@
     "unit": null,
     "value": 150
   },
+  "playoff.n_clear": {
+    "display": "16",
+    "fmt": "{:d}",
+    "note": "qualified players whose shift range excludes zero",
+    "unit": null,
+    "value": 16
+  },
   "playoff.n_qualified": {
     "display": "103",
     "fmt": "{:d}",
     "note": "players with >= 150 playoff minutes",
     "unit": null,
     "value": 103
+  },
+  "playoff.riser.1.ci_hi": {
+    "display": "2.43",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 1 shift range high (bootstrap)",
+    "unit": null,
+    "value": 2.433818197246666
+  },
+  "playoff.riser.1.ci_lo": {
+    "display": "0.66",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 1 shift range low (bootstrap)",
+    "unit": null,
+    "value": 0.6639916439140594
   },
   "playoff.riser.1.name": {
     "display": "OG Anunoby",
@@ -3751,19 +3814,26 @@
     "unit": null,
     "value": "OG Anunoby"
   },
-  "playoff.riser.1.se": {
-    "display": "0.35",
-    "fmt": "{:.2f}",
-    "note": "playoff riser rank 1 agreement band (SE across formulations)",
-    "unit": null,
-    "value": 0.3536881349565989
-  },
   "playoff.riser.1.z": {
     "display": "1.56",
     "fmt": "{:.2f}",
     "note": "playoff riser rank 1 shrunk composite shift",
     "unit": null,
     "value": 1.5616486676199528
+  },
+  "playoff.riser.2.ci_hi": {
+    "display": "1.75",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 2 shift range high (bootstrap)",
+    "unit": null,
+    "value": 1.7500194434238665
+  },
+  "playoff.riser.2.ci_lo": {
+    "display": "0.49",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 2 shift range low (bootstrap)",
+    "unit": null,
+    "value": 0.4949139777874097
   },
   "playoff.riser.2.name": {
     "display": "Cason Wallace",
@@ -3772,13 +3842,6 @@
     "unit": null,
     "value": "Cason Wallace"
   },
-  "playoff.riser.2.se": {
-    "display": "0.14",
-    "fmt": "{:.2f}",
-    "note": "playoff riser rank 2 agreement band (SE across formulations)",
-    "unit": null,
-    "value": 0.1393101319932708
-  },
   "playoff.riser.2.z": {
     "display": "1.14",
     "fmt": "{:.2f}",
@@ -3786,19 +3849,26 @@
     "unit": null,
     "value": 1.1402143581884807
   },
+  "playoff.riser.3.ci_hi": {
+    "display": "1.96",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 3 shift range high (bootstrap)",
+    "unit": null,
+    "value": 1.9620783193433176
+  },
+  "playoff.riser.3.ci_lo": {
+    "display": "0.27",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 3 shift range low (bootstrap)",
+    "unit": null,
+    "value": 0.268566179807826
+  },
   "playoff.riser.3.name": {
     "display": "Jayson Tatum",
     "fmt": null,
     "note": "playoff riser rank 3 (shrunk composite shift)",
     "unit": null,
     "value": "Jayson Tatum"
-  },
-  "playoff.riser.3.se": {
-    "display": "0.30",
-    "fmt": "{:.2f}",
-    "note": "playoff riser rank 3 agreement band (SE across formulations)",
-    "unit": null,
-    "value": 0.3036624832986752
   },
   "playoff.riser.3.z": {
     "display": "1.12",

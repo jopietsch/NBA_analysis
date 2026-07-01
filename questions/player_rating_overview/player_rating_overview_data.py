@@ -24,6 +24,7 @@ from nbakit.data import (
     fetch_team_season_totals,
     fetch_league_averages,
     fetch_game_logs,
+    fetch_player_game_logs,
     reconstruct_possessions,
     REGULAR_SEASON,
     PLAYOFFS,
@@ -90,6 +91,16 @@ PLAYOFF_SHIFT_FORMULATIONS = ["PER", "WS48", "BPM"]
 # keeps most of it. This is the sample-size-honest headline number; risers and
 # fallers are ranked by it, not by the raw shift.
 PLAYOFF_SHRINK_MINUTES = 200
+
+# Game-level bootstrap for the composite shift's sampling uncertainty. Each
+# player's playoff and regular-season games are re-drawn with replacement B
+# times; the box-score rate metrics are recomputed on each re-drawn schedule
+# (holding the rest of the league fixed) to trace how far the shift could move
+# on the games actually played. The seed makes the confidence interval
+# deterministic so the facts don't drift run to run. CI is the 2.5/97.5 range.
+PLAYOFF_BOOTSTRAP_B = 1000
+PLAYOFF_BOOTSTRAP_SEED = 12345
+PLAYOFF_CI_PCT = (2.5, 97.5)
 
 
 # ── Power-law fit ─────────────────────────────────────────────────────────────
@@ -246,11 +257,6 @@ def _playoff_delta_table(reg: pd.DataFrame, po: pd.DataFrame) -> pd.DataFrame:
         df[f"_z_{m}"] = (col - col.mean()) / std if std > 0 else 0.0
         z_cols.append(f"_z_{m}")
     df["SHIFT_Z"] = df[z_cols].mean(axis=1)
-    # Agreement band: the standard error of the composite across the three box
-    # formulations. A small band means PER, WS/48, and BPM agree on the size of
-    # the shift; a large one means the read leans on a single formulation. A
-    # shift "clears its band" when it is larger than this.
-    df["SHIFT_SE"] = df[z_cols].std(axis=1, ddof=1) / np.sqrt(len(z_cols))
     df = df.drop(columns=z_cols)
 
     # Reliability shrinkage: pull each shift toward zero by playoff minutes, so a
@@ -259,6 +265,125 @@ def _playoff_delta_table(reg: pd.DataFrame, po: pd.DataFrame) -> pd.DataFrame:
                           / (df["MIN_po"] + PLAYOFF_SHRINK_MINUTES))
 
     return df.sort_values("SHIFT_SHRUNK", ascending=False).reset_index(drop=True)
+
+
+# Box columns summed from per-game logs to rebuild a player's season totals.
+_BOOT_BOX = ["PTS", "FGM", "FGA", "FG3M", "FG3A", "FTM", "FTA", "OREB", "DREB",
+             "REB", "AST", "STL", "BLK", "TOV", "PF", "MIN"]
+# Team totals merged onto player rows for the recompute (matches _build_recomputed).
+_BOOT_TEAM_COLS = ["TEAM_ID", "FGA", "FTA", "TOV", "MIN", "GP", "PTS", "OREB",
+                   "DREB", "AST", "STL", "BLK", "PF", "FGM"]
+
+
+def _merge_team_context(player_df: pd.DataFrame,
+                        team_df: pd.DataFrame) -> pd.DataFrame:
+    """Merge team totals (and wins) onto player rows, as _build_recomputed does."""
+    t_small = team_df[[c for c in _BOOT_TEAM_COLS if c in team_df.columns]].rename(
+        columns={c: f"TEAM_{c}" for c in _BOOT_TEAM_COLS if c != "TEAM_ID"})
+    p = player_df.merge(t_small, on="TEAM_ID", how="left")
+    if "W" in team_df.columns:
+        p = p.merge(team_df[["TEAM_ID", "W"]].rename(columns={"W": "TEAM_W"}),
+                    on="TEAM_ID", how="left")
+    return p
+
+
+def _recompute_box(merged: pd.DataFrame, team_df: pd.DataFrame,
+                   league: dict) -> pd.DataFrame:
+    """Recompute PER, WS/48, BPM for a team-merged player frame.
+
+    Same three formulas _build_recomputed runs, returned indexed by PLAYER_ID.
+    Normalization (PER's league-average uPER, BPM's per-team anchor) is computed
+    from the frame, so passing the full league keeps it identical to production
+    while only the resampled players' inputs change.
+    """
+    out = pd.DataFrame({"PLAYER_ID": merged["PLAYER_ID"].values})
+    out["PER"] = compute_per(merged, team_df, league).values
+    out["WS48"] = compute_win_shares(merged, team_df, league)["WS48"].values
+    out["BPM"] = compute_bpm(merged, team_df, league)["BPM"].values
+    return out.set_index("PLAYER_ID")
+
+
+def _bootstrap_shift_ci(end_year: int, delta_df: pd.DataFrame, *,
+                        B: int = PLAYOFF_BOOTSTRAP_B,
+                        seed: int = PLAYOFF_BOOTSTRAP_SEED) -> pd.DataFrame:
+    """Game-level bootstrap confidence interval for the composite playoff shift.
+
+    For each qualified player, re-draws that player's regular-season and playoff
+    games with replacement B times, recomputes PER/WS48/BPM on the re-drawn
+    schedule (the rest of the league held at its season totals), and traces the
+    composite shift across the B draws. The whole qualified pool is re-drawn
+    together per draw so one recompute serves all of them; validation showed this
+    matches a one-player-at-a-time bootstrap to within a few percent and is
+    never narrower, so the interval is honest-to-conservative.
+
+    The standardization constants (per-metric pool mean and spread) are held
+    FIXED at the point-estimate values from delta_df, so the interval reflects
+    only each player's own game-to-game sampling, not pool wobble. The raw shift
+    interval is scaled by the same minutes-shrinkage factor as SHIFT_SHRUNK, so
+    the bounds sit on the shrunk scale the docs report.
+
+    Returns a frame with PLAYER_ID, SHIFT_CI_LO, SHIFT_CI_HI.
+    """
+    pool_ids = delta_df["PLAYER_ID"].tolist()
+    forms = PLAYOFF_SHIFT_FORMULATIONS
+    # Fixed standardization constants, exactly as _playoff_delta_table built them.
+    pool_mean = {m: float(delta_df[f"{m}_delta"].mean()) for m in forms}
+    pool_std = {m: float(delta_df[f"{m}_delta_adj"].std()) for m in forms}
+    shrink = {int(pid): mp / (mp + PLAYOFF_SHRINK_MINUTES)
+              for pid, mp in zip(delta_df["PLAYER_ID"], delta_df["MIN_po"])}
+
+    rng = np.random.default_rng(seed)
+    per_season = {}
+    for st in (REGULAR_SEASON, PLAYOFFS):
+        stot = fetch_player_season_totals(end_year, st)
+        team_df = fetch_team_season_totals(end_year, st)
+        league = fetch_league_averages(end_year, st)
+        logs = fetch_player_game_logs(end_year, st)
+        boxcols = [c for c in _BOOT_BOX if c in logs.columns]
+        # each pool player's per-game box matrix
+        games = {int(pid): g[boxcols].to_numpy(dtype=float)
+                 for pid, g in logs.groupby("PLAYER_ID") if int(pid) in shrink}
+        base = _merge_team_context(stot.copy(), team_df)
+        pool_mask = base["PLAYER_ID"].astype(int).isin(shrink).values
+        pool_order = base.loc[pool_mask, "PLAYER_ID"].astype(int).tolist()
+        per_season[st] = dict(team_df=team_df, league=league, boxcols=boxcols,
+                              games=games, base=base, pool_mask=pool_mask,
+                              pool_order=pool_order)
+
+    # Draw the SAME game-resample seed structure for both season types per b by
+    # advancing one rng; each player's games are resampled independently.
+    shift_draws = {pid: np.empty(B) for pid in pool_ids}
+    for b in range(B):
+        deltas_b = {}
+        for st in (REGULAR_SEASON, PLAYOFFS):
+            s = per_season[st]
+            frame = s["base"].copy()
+            resampled = np.empty((len(s["pool_order"]), len(s["boxcols"])))
+            for i, pid in enumerate(s["pool_order"]):
+                arr = s["games"][pid]
+                idx = rng.integers(0, len(arr), len(arr))
+                resampled[i] = arr[idx].sum(axis=0)
+            frame.loc[s["pool_mask"], s["boxcols"]] = resampled
+            vals = _recompute_box(frame, s["team_df"], s["league"])
+            deltas_b[st] = vals
+        z_sum = np.zeros(len(pool_ids))
+        for m in forms:
+            d = (deltas_b[PLAYOFFS].reindex(pool_ids)[m].values
+                 - deltas_b[REGULAR_SEASON].reindex(pool_ids)[m].values)
+            z_sum += (d - pool_mean[m]) / pool_std[m]
+        shift_b = z_sum / len(forms)
+        for pid, val in zip(pool_ids, shift_b):
+            shift_draws[pid][b] = val
+
+    lo_pct, hi_pct = PLAYOFF_CI_PCT
+    rows = []
+    for pid in pool_ids:
+        draws = shift_draws[pid]
+        f = shrink[int(pid)]
+        lo, hi = np.percentile(draws, [lo_pct, hi_pct])
+        rows.append({"PLAYER_ID": pid,
+                     "SHIFT_CI_LO": lo * f, "SHIFT_CI_HI": hi * f})
+    return pd.DataFrame(rows)
 
 
 def load_playoff_deltas(end_year: int, *,
@@ -278,12 +403,13 @@ def load_playoff_deltas(end_year: int, *,
                          pool being stronger than league average.)
       SHIFT_Z            composite riser/faller score: the average of the
                          standardized adjusted deltas of PER, WS/48, and BPM.
-      SHIFT_SE           agreement band: the standard error of SHIFT_Z across
-                         those three formulations. A shift clears its band when
-                         |SHIFT_SHRUNK| > SHIFT_SE.
       SHIFT_SHRUNK       SHIFT_Z pulled toward zero by playoff minutes
                          (PLAYOFF_SHRINK_MINUTES), so a short, lucky sample can't
                          top the list. This is the headline riser/faller number.
+      SHIFT_CI_LO/HI     the 2.5/97.5 bounds of a game-level bootstrap: how far
+                         the shrunk shift could move on the games the player
+                         actually played. A shift is "clear" when the interval
+                         excludes zero (LO and HI share a sign).
 
     Rows are sorted by SHIFT_SHRUNK (risers first).
     Cached at cache/playoff_deltas_{season}.csv. Returns an empty DataFrame when
@@ -304,6 +430,8 @@ def load_playoff_deltas(end_year: int, *,
         return pd.DataFrame()
 
     df = _playoff_delta_table(reg, po)
+    ci = _bootstrap_shift_ci(end_year, df)
+    df = df.merge(ci, on="PLAYER_ID", how="left")
     df.to_csv(path, index=False)
     print(f"Playoff deltas: {len(df)} players with >= {MIN_PLAYOFF_MINUTES} "
           f"playoff minutes → {path}")
