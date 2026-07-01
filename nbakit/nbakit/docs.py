@@ -33,9 +33,16 @@ DEFAULT_DOCS_DIR = "docs"
 
 
 def _make_env(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
-              annotate: bool = False) -> jinja2.Environment:
+              annotate: bool = False,
+              extra_facts: tuple[str, ...] = ()) -> jinja2.Environment:
     with open(facts_path) as fh:
         records = json.load(fh)
+    # Merge facts from other projects (e.g. the cross-project stats tutorial
+    # cites player_rating_overview facts). ``facts_path`` wins any name clash.
+    for path in extra_facts:
+        with open(path) as fh:
+            for name, rec in json.load(fh).items():
+                records.setdefault(name, rec)
 
     def f(name: str, fmt: str | None = None) -> str:
         """Display string for a fact. Pass `fmt` (e.g. "{:.2f}") to re-format the
@@ -74,7 +81,8 @@ def _make_env(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
 
 def render_all(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
                annotate: bool = False,
-               extra_templates: tuple[str, ...] = ()) -> list[str]:
+               extra_templates: tuple[str, ...] = (),
+               extra_facts: tuple[str, ...] = ()) -> list[str]:
     """Render every ``docs/*.md.j2`` template, plus any ``extra_templates``.
 
     Default mode writes ``docs/<doc>.md`` (the real, byte-identical output).
@@ -83,8 +91,10 @@ def render_all(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
 
     ``extra_templates`` are paths to ``*.md.j2`` files outside ``docs_dir`` (e.g.
     ``../stats_tutorial.md.j2``); each renders next to itself, skipped if absent.
+    ``extra_facts`` are paths to other projects' facts.json merged into the fact
+    lookup (for cross-project templates); ``facts_path`` wins any name clash.
     """
-    env = _make_env(facts_path, docs_dir, annotate=annotate)
+    env = _make_env(facts_path, docs_dir, annotate=annotate, extra_facts=extra_facts)
     written = []
     for tpl_path in sorted(glob.glob(os.path.join(docs_dir, "*.md.j2"))):
         if annotate:
@@ -166,11 +176,11 @@ def write_reference(facts_path: str, out_path: str,
     return out_path
 
 
-def _snapshot(facts_path: str, docs_dir: str,
+def _snapshot(facts_paths: tuple[str, ...], docs_dir: str,
               extra_templates: tuple[str, ...]) -> dict[str, float]:
     """Modification times for every watched file (templates + facts.json)."""
     watched = (glob.glob(os.path.join(docs_dir, "*.md.j2"))
-               + list(extra_templates) + [facts_path])
+               + list(extra_templates) + list(facts_paths))
     snap = {}
     for path in watched:
         try:
@@ -181,19 +191,22 @@ def _snapshot(facts_path: str, docs_dir: str,
 
 
 def watch(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
-          extra_templates: tuple[str, ...] = (), interval: float = 0.5) -> None:
+          extra_templates: tuple[str, ...] = (), interval: float = 0.5,
+          extra_facts: tuple[str, ...] = ()) -> None:
     """Re-render whenever a template or facts.json changes. Runs until Ctrl-C."""
     print(
         f"watching {docs_dir}/*.md.j2 and {facts_path} "
         f"(every {interval}s; Ctrl-C to stop)"
     )
-    for path in render_all(facts_path, docs_dir, extra_templates=extra_templates):
+    watched_facts = (facts_path, *extra_facts)
+    for path in render_all(facts_path, docs_dir, extra_templates=extra_templates,
+                           extra_facts=extra_facts):
         print(f"rendered {path}")
-    last = _snapshot(facts_path, docs_dir, extra_templates)
+    last = _snapshot(watched_facts, docs_dir, extra_templates)
     try:
         while True:
             time.sleep(interval)
-            current = _snapshot(facts_path, docs_dir, extra_templates)
+            current = _snapshot(watched_facts, docs_dir, extra_templates)
             if current == last:
                 continue
             changed = sorted(
@@ -203,11 +216,12 @@ def watch(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
             print(f"change in {', '.join(changed)}; re-rendering")
             try:
                 for path in render_all(facts_path, docs_dir,
-                                       extra_templates=extra_templates):
+                                       extra_templates=extra_templates,
+                                       extra_facts=extra_facts):
                     print(f"  rendered {path}")
             except Exception as exc:  # keep watching after a bad template/facts edit
                 print(f"  render failed: {exc}")
-            last = _snapshot(facts_path, docs_dir, extra_templates)
+            last = _snapshot(watched_facts, docs_dir, extra_templates)
     except KeyboardInterrupt:
         print("\nstopped watching")
 
@@ -215,18 +229,22 @@ def watch(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
 def main(argv: list[str], *, facts_json: str, reference_md: str,
          reference_title: str = "Facts reference",
          docs_dir: str = DEFAULT_DOCS_DIR,
-         extra_templates: tuple[str, ...] = ()) -> None:
+         extra_templates: tuple[str, ...] = (),
+         extra_facts: tuple[str, ...] = ()) -> None:
     """CLI dispatch for a project's ``render_docs.py`` shim."""
     if not argv:
-        for path in render_all(facts_json, docs_dir, extra_templates=extra_templates):
+        for path in render_all(facts_json, docs_dir, extra_templates=extra_templates,
+                               extra_facts=extra_facts):
             print(f"rendered {path}")
     elif argv == ["--watch"]:
-        watch(facts_json, docs_dir, extra_templates=extra_templates)
+        watch(facts_json, docs_dir, extra_templates=extra_templates,
+              extra_facts=extra_facts)
     elif argv == ["--reference"]:
         print(f"wrote {write_reference(facts_json, reference_md, reference_title)}")
     elif argv == ["--annotate"]:
         for path in render_all(facts_json, docs_dir, annotate=True,
-                               extra_templates=extra_templates):
+                               extra_templates=extra_templates,
+                               extra_facts=extra_facts):
             print(f"rendered {path}")
     else:
         print("usage: render_docs.py [--watch | --reference | --annotate]")

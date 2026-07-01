@@ -30,11 +30,17 @@ REFERENCE_TITLE = "Home-court facts reference"
 # The stats tutorial lives one level above the project (questions/) but draws on
 # the same facts, so it isn't in docs/. Render it too.
 EXTRA_TEMPLATES = (os.path.join("..", "stats_tutorial.md.j2"),)
+# The tutorial's Part 9 cites player_rating_overview facts; merge that project's
+# facts.json so those `<< f("...") >>` calls resolve (home_court facts still win
+# any name clash; the two namespaces are disjoint today).
+EXTRA_FACTS = (os.path.join(
+    "..", "player_rating_overview", "docs", "player_rating_overview_facts.json"),)
 
 
 def render_all(facts_path: str = FACTS_JSON, annotate: bool = False) -> list[str]:
     """Render every ``docs/*.md.j2`` template plus the stats tutorial."""
-    return _render_all(facts_path, annotate=annotate, extra_templates=EXTRA_TEMPLATES)
+    return _render_all(facts_path, annotate=annotate, extra_templates=EXTRA_TEMPLATES,
+                       extra_facts=EXTRA_FACTS)
 
 
 def write_reference(facts_path: str = FACTS_JSON, out_path: str = REFERENCE_MD,
@@ -45,4 +51,5 @@ def write_reference(facts_path: str = FACTS_JSON, out_path: str = REFERENCE_MD,
 
 if __name__ == "__main__":
     _main(sys.argv[1:], facts_json=FACTS_JSON, reference_md=REFERENCE_MD,
-          reference_title=REFERENCE_TITLE, extra_templates=EXTRA_TEMPLATES)
+          reference_title=REFERENCE_TITLE, extra_templates=EXTRA_TEMPLATES,
+          extra_facts=EXTRA_FACTS)

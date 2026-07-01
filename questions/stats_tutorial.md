@@ -1447,16 +1447,16 @@ It is the one genuine significance test in an otherwise descriptive analysis.
 
 The player-rating overview (`player_rating_overview/`) is a different kind of problem from the other two.
 There is no win/loss to predict and no trend over time.
-Instead, many *rating systems* (Game Score, PER, Win Shares, BPM, VORP, and the impact metrics) each score the same 375 qualified players for 2024-25, and the questions are: where do they agree, how do you blend them into one number, and how concentrated is value at the top?
+Instead, many *rating systems* (Game Score, PER, Win Shares, BPM, VORP, and the impact metrics) each score the same 378 qualified players for 2025-26, and the questions are: where do they agree, how do you blend them into one number, and how concentrated is value at the top?
 Spearman correlation (§1.4) does most of the agreement work here too; this Part covers what's new.
 
 ## 9.1 Standardizing onto one scale: z-scores and the consensus rating
 
-**The question:** the systems sit on wildly different scales (PER centers at 15, BPM at 0, VORP runs past 300).
-How do you average them into one "consensus" without letting the big-numbered system dominate?
+**The question:** the systems sit on different scales (PER centers near 14.86, BPM and the plus-minus family near 0).
+How do you average them into one "consensus" without letting the wider-spread system dominate?
 
 **The intuition.** Put every system on the same yardstick first.
-A **z-score** (or **standardized score**) restates a player's rating as *how many standard deviations above or below the league average* it is: z = (value − mean) / SD, computed over the 375 qualified players within that one system.
+A **z-score** (or **standardized score**) restates a player's rating as *how many standard deviations above or below the league average* it is: z = (value − mean) / SD, computed over the 378 qualified players within that one system.
 After standardizing, "+2" means the same thing everywhere: two SD above average.
 Now the systems can be averaged.
 
@@ -1464,20 +1464,20 @@ Now the systems can be averaged.
 The **consensus rating** is the simple average of a player's z-scores across every system that has data for them (a player missing from one system just has it left out of their average).
 Equal weight, no system privileged.
 
-**A worked example.** Nikola Jokić tops the 2024-25 consensus at **z = 2.92**: averaged across systems he sits nearly three standard deviations above the league.
-Shai Gilgeous-Alexander follows at 2.72, Giannis at 2.31.
-Because the scale is now "SD above average," you can read 2.92 directly, and the 0.20 SD gap down to SGA is real separation, not a rounding artifact.
+**A worked example.** Nikola Jokić tops the 2025-26 consensus at **z = 4.00**: averaged across systems he sits four standard deviations above the league.
+Shai Gilgeous-Alexander follows at 3.31, Giannis Antetokounmpo at 2.74.
+Because the scale is now "SD above average," you can read 4.00 directly, and the clear gap down to Shai Gilgeous-Alexander is real separation, not a rounding artifact.
 
-**The trap it avoids, and its own limit.** Averaging raw ratings would let VORP (SD ≈ 68) swamp PER (SD ≈ 4); z-scoring fixes that.
+**The trap it avoids, and its own limit.** Averaging raw ratings would let a wide-scale system like PER (SD ≈ 4.31) swamp a compressed one like VORP (SD ≈ 1.24); z-scoring fixes that.
 But equal weighting has its own bias: if most of the systems are box-score cousins and only one is an impact metric, the consensus quietly *over-weights the box score*, because the redundant systems vote together.
-That redundancy is what §9.2 and the unique-variance check try to correct for.
+That redundancy is what §9.2 and the overlap-variance check try to correct for.
 
 ## 9.2 Ridge regression: many correlated predictors on thin data
 
 **The question:** instead of weighting every system equally, which *combination* of systems best predicts how many games a team actually won?
 That weighting gives a "wins-predictive" rating.
 
-**Why plain OLS (§1.1) breaks here.** Aggregate each system to the team level (minutes-weighted average of its players' z-scores) and you have 30 teams and 14 predictors that all move together: BPM and VORP rank players almost identically (Spearman **0.972**).
+**Why plain OLS (§1.1) breaks here.** Aggregate each system to the team level (minutes-weighted average of its players' z-scores) and you have 30 teams and 14 predictors that all move together: BPM and VORP rank players almost identically (Spearman **0.964**).
 With so few rows and predictors this correlated, ordinary least squares can't tell them apart; it hands one a large positive weight and its twin a large negative one, and the weights swing wildly if a single team changes.
 This is **multicollinearity**.
 
@@ -1487,21 +1487,23 @@ The penalty λ (here **5.0**) pulls every weight toward zero, so the model can't
 It trades a little bias for a large cut in variance, a good deal on 30 noisy rows.
 The price: the weights are *directional evidence, not precise estimates*, so read which systems get more weight, not the exact coefficient.
 
-**A worked example.** The wins-predictive top three are the same three names as the consensus, reordered: Giannis (3.72), SGA (3.45), Jokić (3.24), and the two ratings rank players almost identically (Spearman **0.925**).
-The disagreements are the interesting part: the wins-predictive rating lifts Giannis (+1.41 versus his consensus), Victor Wembanyama (+1.39), and winning-team role players like Isaiah Joe (+0.97), Evan Mobley (+0.91), and Brandon Clarke (+0.90), whose teams won more than the box-score average expects.
+**A worked example.** The wins-predictive top three overlap heavily with the consensus: Nikola Jokić (4.37), Shai Gilgeous-Alexander (4.21), Victor Wembanyama (3.95), and the two ratings rank players almost identically (Spearman **0.963**).
+The disagreements are the interesting part: the wins-predictive rating lifts Victor Wembanyama (+1.27 versus his consensus), Kawhi Leonard (+0.90), and Shai Gilgeous-Alexander (+0.90), whose teams won more than the box-score average expects.
 
-**How to read it.** When the wins-predictive and consensus lists agree at 0.925, the headline ranking is robust to *how* you combine the systems.
+**How to read it.** When the wins-predictive and consensus lists agree at 0.963, the headline ranking is robust to *how* you combine the systems.
 Read the per-player gaps, not the order, for where "what helps your team win" parts from "what the box score likes."
 
 **The trap.** With only 30 teams this is thin data, and λ was not tuned by cross-validation.
 A real validation would fit the weights on past seasons and test them on held-out future seasons.
 Until then the weights are a plausibility check, not a verdict on which system is "best."
 
-### Unique variance: is a system adding signal or echoing the others?
+### Overlap variance: is a system adding signal or echoing the others?
 
-A companion check: regress each system on *all the others* (OLS) and read the R².
-If the others reconstruct it almost perfectly, its **unique R² = 1 − R²** is small and the system is largely redundant; a high unique R² means it carries something the rest miss.
-This is the formal version of the §9.1 worry about double-counting: BPM and VORP correlate at 0.972, so each adds little beyond the other, and a consensus that includes both is really giving that one idea two votes.
+A companion check: regress each system on *all the others* (OLS) and read the R², here its **overlap R²** (each system's own algebraic kin, e.g. BPM's own OBPM/DBPM halves, are held out so a metric can't reconstruct itself).
+A high overlap R² means the others rebuild it almost perfectly, so the system is largely redundant; a low one means it carries something the rest miss.
+The field splits: the all-in-one box scores overlap most (PER **0.947**, BPM **0.937**), while WS/48 and the bare single-season RAPM carry the most of their own (WS/48 **0.596**, O-RAPM **0.602**).
+This is the formal version of the §9.1 worry about double-counting: BPM and VORP correlate at 0.964, so each adds little beyond the other, and a consensus that includes both is really giving that one idea two votes.
+One caveat: an approximate recompute can look independent simply because its *noise* correlates with nothing, so a low overlap is not by itself proof of unique signal.
 
 ## 9.3 Ridge as Bayesian MAP: the bridge to RAPM and DARKO
 
@@ -1528,12 +1530,12 @@ Most cross-system disagreements about mid-tier players sit inside those bands; t
 
 **The intuition.** The **Gini coefficient** is the standard one-number inequality score, borrowed from economics.
 0 means everyone is rated identically; 1 means one player holds all the value.
-Win Shares posts a Gini of **0.363** and VORP **0.749**: VORP is far more top-heavy, because it multiplies a per-possession rate by minutes, so stars who are both efficient and durable pull away.
+Win Shares posts a Gini of **0.362** and VORP **0.611**: VORP is more top-heavy, because it multiplies a per-possession rate by minutes, so stars who are both efficient and durable pull away.
 
 **The trap, and it is a real one here.** Gini is trustworthy only for metrics that *accumulate a quantity that can't go below zero* (Win Shares, VORP).
 The metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) have many negative values, and the implementation clips them to zero before computing Gini.
 That counts every below-average player as a flat zero and **inflates** the score.
-The consensus rating shows a Gini of **0.756**, which would rank it as more top-heavy than Win Shares (0.363), an ordering that is an artifact of the clipping, not a fact about basketball.
+The consensus rating shows a Gini of **0.753**, which would rank it as more top-heavy than Win Shares (0.362), an ordering that is an artifact of the clipping, not a fact about basketball.
 For 0-centered metrics, ignore Gini and use the power-law exponent (§9.5), which doesn't care where zero sits.
 
 ## 9.5 Power laws and the log-log fit
@@ -1548,16 +1550,16 @@ The single number that captures it is the exponent **α**, the steepness: bigger
 A power law becomes a **straight line** there, and a straight line is easy to fit: run OLS (§1.1) on log(value) versus log(rank); the slope is −α, and the fit's **R²** says how straight the points actually are.
 The convention here calls a system a power law when R² ≥ **0.95**; below that the curve "bends," meaning the top player sits lower than a straight extrapolation predicts, a natural ceiling rather than a runaway leader.
 
-**A worked example.** Win Shares fits a power law with α = **0.23** (R² = 0.978); VORP is steeper at α = **0.36** (R² = 0.973).
-What does α = 0.36 mean concretely?
-Value drops by a factor of 10^0.36 ≈ **2.3** from rank 1 to rank 10, so the tenth-best player in VORP holds about **44%** of the leader's value; under Win Shares' shallower α = 0.23 the factor is 10^0.23 ≈ 1.7, so #10 keeps about **59%**.
-The plus/minus *rate* metrics bend instead: OBPM has the worst straight-line fit (R² = 0.878) because "above average per possession" has a natural size on both sides of zero, so its best player is not a runaway.
+**A worked example.** Win Shares fits a power law with α = **0.23** (R² = 0.99); VORP is steeper at α = **0.37** (R² = 0.98).
+What does α = 0.37 mean concretely?
+Value drops by a factor of 10^0.37 ≈ **2.3** from rank 1 to rank 10, so the tenth-best player in VORP holds about **43%** of the leader's value; under Win Shares' shallower α = 0.23 the factor is 10^0.23 ≈ 1.7, so #10 keeps about **59%**.
+A few *rate* metrics bend instead of holding a straight line: WS/48, O-RAPM, D-RAPM+prior fall below the 0.95 cutoff, because a rate like "points above average per 100 possessions" has a natural size, so its best player is not a runaway.
 
 **Why α and not Gini.** α is the honest cross-system steepness measure because it doesn't depend on where zero sits, unlike Gini (§9.4).
-On α the two combined ratings land mid-pack: consensus **0.31**, wins-predictive **0.32**, steeper than flat PER (0.13) but well short of VORP (0.36).
+On α the two combined ratings sit toward the steep end: consensus **0.37** matches VORP (0.37), and wins-predictive is steeper still at **0.43**, well above flat PER (0.14).
 
 **The trap.** The 0.95 cutoff is a convention, not a hypothesis test, and this describes 50 players in one season, not a proven law.
-Systems sitting right at the line (DBPM clears it at R² = 0.957, BPM just misses at 0.935) are really the same shape.
+Systems sitting right at the line are really the same shape: single-season O-RAPM just misses at R² = 0.949 while PER just clears at 0.958.
 Read the grouping and the order of α, not the label on any single borderline system.
 
 ---
@@ -1622,7 +1624,7 @@ Read the grouping and the order of α, not the label on any single borderline sy
 |---|---|---|
 | Consensus z = ... | z-score-standardize each system, then average | §9.1 |
 | Wins-predictive z, ridge alpha=5.0 | ridge regression of team wins on system ratings | §9.2 |
-| unique R² | how much of a system the others can't reconstruct | §9.2 |
+| overlap R² | how much of a system the others *can* reconstruct (high = redundant) | §9.2 |
 | split-half r, Spearman-Brown correction | how much of a single rating is real signal vs. noise | §6.3 |
 | (RAPM / EPM / DARKO background) | ridge as Bayesian MAP; Kalman filter for daily updates | §9.3 |
 | Gini = ... | concentration of value (trustworthy only for non-negative metrics) | §9.4 |
