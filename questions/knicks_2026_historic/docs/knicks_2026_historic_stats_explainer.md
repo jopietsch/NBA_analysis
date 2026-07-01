@@ -32,9 +32,11 @@ This is why a "100th percentile / 1st of 43" reads as "no other champion did bet
 - `wins`, `losses`, `win_rate`: the champion's playoff record
 - `avg_margin`: mean per-game point differential, with PLUS_MINUS filled from
   PTS for pre-1997 seasons (see §Pre-1997 note below)
-- `avg_opp_srs`: games-weighted average regular-season SRS of playoff opponents
-  (each game counts once; a 5-game Finals opponent has 5× the weight of a
-  4-game sweep opponent, matching the per-game basis of `avg_margin`)
+- `avg_opp_srs`: games-weighted average regular-season SRS (Simple Rating System:
+  a team's rating equal to its average point margin per game, adjusted for
+  opponent strength; defined in full under Recurring Methods below) of playoff
+  opponents (each game counts once; a 5-game Finals opponent has 5× the weight of
+  a 4-game sweep opponent, matching the per-game basis of `avg_margin`)
 - `adj_margin`: `avg_margin − avg_opp_srs`
 - `champion_reg_srs`: the champion's own regular-season SRS
 - `overperformance`: `avg_margin − champion_reg_srs + avg_opp_srs`; equivalently,
@@ -247,7 +249,7 @@ Even on this stricter opponent measure (which credits their opponents' postseaso
 This is descriptive, not a ranked test: it shows the Knicks (+11.48) and Spurs (+6.85) were the field's two big risers while most teams declined, which is the backdrop for why the bracket played out as it did.
 
 **What the results mean.** The pre-Finals series were lopsided on every measure (raw +19.7, reg-adj +17.7, po-adj +20.3 across R1–CF), and the Finals were tight on every measure (raw +2.4, reg-adj −5.9, po-adj −12.1).
-Switching from regular-season to playoff opponent strength does not erase the dominance: it sharpens the same story §6 in `knicks_2026_historic_results.md` tells, that the headline margin was built before the Finals against opponents who were not collapsing, and the Finals were a real contest against a Spurs team peaking.
+Switching from regular-season to playoff opponent strength does not erase the dominance: it sharpens the same story this section tells in `knicks_2026_historic_results.md`, that the headline margin was built before the Finals against opponents who were not collapsing, and the Finals were a real contest against a Spurs team peaking.
 
 **Why these charts.** Two figures carry this section.
 The grouped per-round bar (`plot_round_split`) places raw, reg-adj, and po-adj side by side for each series, so the reader sees both the pre-Finals/Finals split and how little the two opponent adjustments move the pre-Finals bars.
@@ -314,6 +316,40 @@ Both playoff and regular-season SRS are expressed in points per game in the same
 **Why this metric.** Playoff SRS elevation directly answers whether a team "showed up" in the playoffs or merely coasted on regular-season talent.
 It complements the overperformance metric (§5) and is independently derived; if both metrics agree, the conclusion is robust.
 They do agree: the Knicks are 2nd all-time on both, and the 2000–01 Lakers rank 1st on both.
+
+---
+
+## 8b. What's Behind the Jump: Roster Continuity (`run_core_continuity`)
+
+**The data.** Player-level minutes from the 2025–26 regular-season and playoff game logs (`player_rs_logs`, `player_po_logs`), joined to the team-level game logs for point margins.
+`compute_core_continuity` (in `knicks_2026_data.py`) builds the `continuity` dict this section prints.
+
+**Why this section exists.** §8 found the Knicks elevated more from their regular-season baseline than all but one champion ever.
+That raises the obvious next question: is the elevation just health, i.e. the playoff roster was healthier than the regular-season one, or is something else going on?
+This section is descriptive accounting, not a ranked percentile test: there is no historical continuity series to rank against.
+
+**The approach.** Two steps:
+
+1. *Define the core.* A player is "core" if he averaged at least 20 minutes per
+   game across the Knicks' playoff games (`MIN_FLOAT >= min_threshold`, computed
+   only over games he actually played). This yields a fixed list of 5 players
+   (Karl-Anthony Towns, OG Anunoby, Josh Hart, Mikal Bridges, Jalen Brunson).
+2. *Split margins by core availability.* For every regular-season and playoff game, count how many of
+   the core players logged minutes (`avail`, 0 to 5).
+   Regular-season point margin is then compared across three slices: games with the full core
+   (`avail == core_n`), games missing at least one core player, and the full-season average; the
+   same full-core share is computed for the playoffs.
+
+**Why regular season vs. playoffs, not playoffs alone.** The playoff sample (19 games) has too little variation in availability to split on its own; the core was intact for 89% of it.
+The regular season supplies the counterfactual: what did this team's margin look like healthy versus short-handed, over a much larger sample, so the playoff margin can be judged against a healthy-team baseline rather than the average (injury-diluted) one.
+
+**What the results mean.** The core five were together for only 56% of the regular season but 89% of the playoffs.
+With the full core healthy, regular-season margin was +8.09; missing at least one core player it fell to +4.08 (full-season blend: +6.33).
+Both guards hold: the full-core margin exceeds the short-handed margin, and the playoff margin (+14.89) exceeds even the full-core regular-season margin.
+So continuity explains part of the reg-to-playoff jump (the team was simply healthy more often when it mattered) but not all of it; the gap between the full-core regular-season margin and the playoff margin is left unexplained by health alone, and pinning down what fills that gap would need play-by-play or shot-quality data this project does not carry.
+
+**Why this chart (margin by core availability).** The bar chart (`plot_core_continuity`) shows regular-season margin at each availability level (0 through 5 of the core dressed) as a step, with the playoff margin drawn as a reference line above all of them.
+That single visual carries the section's finding: margin rises with availability, but even the top step falls short of the playoff line.
 
 ---
 
@@ -413,7 +449,7 @@ The chart's job is to make the absence of an injury story visible.
 
 ## 12. Betting-Market Significance (`run_betting_market`)
 
-**The data.** Game-level ATS data from the ESPN core API, merged with actual margins from the playoff game log.
+**The data.** Game-level ATS (against the spread) data from the ESPN core API, merged with actual margins from the playoff game log.
 
 **The approach.** The 16-3 ATS record is tested against a null hypothesis of 50% coverage (the efficient market expectation: if spreads are fair, any team covers ~50% of games).
 A one-tailed binomial test computes P(X ≥ 16 | n=19, p=0.5):
@@ -502,7 +538,7 @@ This is the same `g_i = margin_i − opp_reg_SRS_i` used in §13, now computed f
 
 **Why this section exists (what §13 could not do).** The §13 bootstrap and shrinkage both held the *other* 42 champions at their point estimates.
 That is unfair in two opposite ways: it never lets a rival's true value exceed its noisy estimate, and (in the shrinkage) it pulls only the subject toward the mean.
-To ask the actual question ("what is the probability the Knicks have the highest *true* adjusted margin?"), every champion must be shrunk and must carry posterior uncertainty simultaneously.
+To ask the actual question ("what is the probability the Knicks have the highest *true* adjusted margin?"), every champion must be shrunk and must carry posterior uncertainty simultaneously: this is "partial pooling," shrinking each champion toward the group average rather than leaving every one alone (no pooling) or collapsing them into a single shared number (complete pooling).
 
 **The model (Gaussian random-effects / hierarchical).**
 
@@ -736,7 +772,8 @@ Two independent choices have to be made, and the report works through both.
 | Capped-margin SRS | §21 | clipped margins + schedule | single-game leverage | 1st |
 
 Three of the four put the Knicks 1st; only Elo's recency weighting moves them to 3rd, and §16 and §21 localize the cause to recency, not margins.
-Two further methods vary the aggregation rather than the rating: the hierarchical model (§14, *uncertainty*) is what actually unseats a settled #1, and possessions (§17) varies *pace*.
+One further method sits outside this axis entirely: the hierarchical model (§14) doesn't change the opponent rating, it adds *uncertainty* on top of the SRS baseline, and that is what actually unseats a settled #1.
+Possessions (§17) belongs to Axis 2 below, not here; it varies the era scale, not the opponent rating.
 
 **Axis 2: how you put the eras on one scale.** Margins are not comparable across eras untouched, because both the scoring *level* and the *spread* of team quality have changed.
 Three normalizations, applied to the opponent-adjusted margin:
@@ -754,9 +791,10 @@ The level adjustments leave the Knicks 1st; the dispersion adjustment drops them
 
 **Putting it together.** The two axes agree on the shape of the answer.
 By absolute measures, on any opponent rating and any level normalization, the 2025-26 Knicks are the most dominant champion in the dataset.
-The two adjustments that move them, recency-weighted opponents (Elo, 3rd) and spread-standardization (z, 5th), are both *relative*: they grade against the specific, unusually deep league the Knicks faced.
+The two adjustments that move them on a point-estimate basis, recency-weighted opponents (Elo, 3rd) and spread-standardization (z, 5th), are both *relative*: they grade against the specific, unusually deep league the Knicks faced.
+A third qualifier is different in kind rather than degree: the hierarchical model (§14) doesn't change the rating or the era scale at all, it puts an honest uncertainty band on the #1 point estimate itself, which is why it, not a rating choice, is what actually unseats a settled #1.
 Which number is "right" depends on the question.
-"Biggest edge in points" is absolute and the answer is #1; "most exceptional relative to peers" is relative and the answer is top-five.
+"Biggest edge in points" is absolute and the answer is #1; "most exceptional relative to peers" is relative and the answer is top-five; "is #1 safe once you admit the run is only 19 games" is a question about certainty, and the honest answer there is no.
 
 **Methods deliberately not used here.** A few standard families are absent for concrete reasons.
 Recency with explicit uncertainty (Glicko) collapses to roughly Elo once reduced to a single point rating, so it adds little over §15.
