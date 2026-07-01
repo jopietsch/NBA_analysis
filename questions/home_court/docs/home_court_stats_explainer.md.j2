@@ -1124,3 +1124,20 @@ Travel (p = 0.010) also survives, though the effect size is trivially small (Sec
   QLR statistic. Because we maximize over many years, Andrews (1993) asymptotic
   critical values are used rather than a standard F-table (k=2 parameters, 15%
   trimming: 10% → 7.12, 5% → 8.85, 1% → 12.37).
+
+## Limitations
+
+What this design can and cannot establish.
+
+**Observational, not experimental.** Every model runs on historical game outcomes with no randomization.
+The causal reading of the 1994-95 drop rests on a natural experiment (a rule change at a known date) backed by the placebo tests (Section 16) and the interrupted-time-series boundary (Section 15), not on experimental control.
+
+**Confounding is controlled, not eliminated.** Game-level models adjust for team quality (`quality_diff`), season clustering (cluster-robust SEs), and pace endogeneity (leave-one-out `expected_pace`).
+Residual confounding from unmeasured factors is bounded by the mediation sensitivity analysis (Section 7b), which reports how strong an unmeasured confounder would have to be to overturn the result, rather than ruling one out.
+
+**Decomposition is accounting, not mechanism.** The mediation and sequential decompositions (Sections 7, 23) attribute the decline to box-score channels that sum to the total by construction.
+They show where the decline shows up, not a proven causal pathway; the LPM is chosen precisely for that additive identity.
+
+**Trending series risk spurious correlation.** Any cross-era correlation between two drifting series is checked with ADF unit-root and Engle-Granger cointegration tests, and leaned on only within-era; a raw Pearson r between trends is treated as suggestive, not evidence.
+
+**Many tests inflate false positives.** With dozens of simultaneous tests, Benjamini-Hochberg FDR control (Section 34, and the 47 referee tests in Section 5) governs which survive; individual p-values are not each independently reliable.

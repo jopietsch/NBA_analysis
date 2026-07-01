@@ -8,9 +8,20 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-This document explains the statistical methods used in the player rating overview pipeline.
-It is written for someone who knows statistics but may not have the formulas fresh.
+This is the methods companion to the findings report: it explains how the numbers in `player_rating_overview_results.md` were computed, for a reader who knows statistics but may not have the formulas fresh.
+The findings doc states results in plain language and the investigation doc shows the evidence with p-values and intervals; this doc explains the machinery behind them.
 Every method named here matches what the code in `player_rating_overview_analysis.py` and `nbakit/ratings.py` actually runs.
+Because this project surveys the rating systems themselves, it is organized as a topical methods catalog (Layout B in `../STATS_EXPLAINER_GUIDE.md`): the data first, then the rating formulas, the cross-system comparison methods, the distribution analysis, and the Bayesian foundations, closing with what the methods cannot establish.
+
+---
+
+## The data
+
+All recomputed ratings are computed in `nbakit/ratings.py` from totals fetched via `nbakit/data.py` (nba_api endpoints: `LeagueDashPlayerStats`, `LeagueDashTeamStats`, `LeagueStandingsV3`).
+Third-party results are loaded from cached CSVs and joined via the player crosswalk in `nbakit/player_crosswalk.py`.
+The unified table is assembled in `player_rating_overview_data.py` and cached to `cache/unified_ratings_{season}.csv`.
+The analysis module (`player_rating_overview_analysis.py`) runs all statistical computations from that unified table, printing results to stdout, which the orchestrator (`player_rating_overview.py`) captures into `docs/player_rating_overview_results.md`.
+The primary testbed is the 2025-26 season; two analyses (describe-versus-forecast and year-to-year stability) span the multi-season cache, and the doc flags which claims rest on which.
 
 ---
 
@@ -333,10 +344,22 @@ Distinguishing those two interpretations requires a retrodiction test: a system 
 
 ---
 
-## Data pipeline
+## Limitations
 
-All recomputed ratings are computed in `nbakit/ratings.py` from totals fetched via `nbakit/data.py` (nba_api endpoints: `LeagueDashPlayerStats`, `LeagueDashTeamStats`, `LeagueStandingsV3`).
-Third-party results are loaded from cached CSVs and joined via the player crosswalk in `nbakit/player_crosswalk.py`.
-The unified table is assembled in `player_rating_overview_data.py` and cached to `cache/unified_ratings_{season}.csv`.
+What these methods can and cannot establish.
 
-The analysis module (`player_rating_overview_analysis.py`) runs all statistical computations from the unified table, printing results to stdout, which the orchestrator (`player_rating_overview.py`) captures into `docs/player_rating_overview_results.md`.
+**Recomputed values approximate the published ones.** BPM and VORP are recomputed by fitting a linear model to Basketball-Reference's published OBPM/DBPM on standard advanced percentages, plus a team-margin anchor; they are validated against BBR each run (2025-26: r about 0.930 for BPM, 0.961 for VORP), not reproduced exactly.
+Defensive BPM is the weakest link, because box-score defense is hard to capture.
+Absolute levels are therefore approximate; the rankings and comparisons they feed are the reliable output.
+
+**Single-season orderings are a snapshot, not a stable ranking.** The cross-system comparison, the uniqueness breakdown, and the two uber ratings all rest on the 2025-26 testbed.
+Only the describe-versus-forecast and year-to-year stability panels span the multi-season cache, so only those carry a firm cross-season claim.
+Bare single-season RAPM is the noisiest cut and can move by chance year to year; RAPM+prior is far steadier, which is why the docs lead with it.
+
+**Agreement is not quality.** The overlap R² measures how much of a system's variance the other systems explain: high overlap means redundancy, not correctness.
+Separating "consistent and right" from "consistent but echoing shared box-score biases" needs the retrodiction test, not the correlation alone.
+
+**Uncertainty is mostly unshown.** The third-party metrics publish posterior means without posterior variances (see "What is missing" above), so many apparent mid-tier disagreements fall inside single-system error bars that the rankings never display.
+Coverage gaps compound this: several third-party systems are stale or partly paywalled, so the field surveyed here is not complete.
+
+**Correlation is not causation.** The wins-predictive weighting and the retrodiction tests establish which ratings track team success, not why a player drives it; nothing here identifies a causal mechanism.

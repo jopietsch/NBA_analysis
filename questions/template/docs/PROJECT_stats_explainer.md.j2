@@ -8,35 +8,51 @@
 <p style="text-align:center"><em>Draft</em></p>
 :::
 
-<!-- AUDIENCE (see "Audience tiers" in ../CLAUDE.md). This doc is written for a reader who knows statistics but is rusty: someone who once took the course. So:
-  - Use the REAL terms (binomial GLM, cluster-robust SE, QLR, bootstrap, confidence interval), but define or remind on first use. A term must not appear before it is defined.
-  - Don't dumb down to sports-reader level (that's the findings/summary tier); equally, don't pile on jargon a rusty reader can't reconstruct without a reminder.
-  - THE CARDINAL RULE: the named method must match what the pipeline actually ran (PROJECT_analysis.py / PROJECT_results.md). Describing an estimator the code doesn't use is the worst failure this doc can make. Verify each method name against the code before you write it.
-  - Every cited number comes from a << f("section.metric") >> call, not hand-typed (see the footer). -->
+<!-- Follow ../STATS_EXPLAINER_GUIDE.md (shared best practices) plus the "knows statistics, but rusty" row in ../CLAUDE.md.
+  CARDINAL RULE: every method named here must match what PROJECT_analysis.py / nbakit actually runs — verify against the code and PROJECT_results.md before writing. Describing an estimator the code doesn't use is the worst failure this doc can make.
+  Use the REAL terms (binomial GLM, cluster-robust SE, ridge/MAP, QLR, bootstrap, confidence interval) and refresh each on first use; don't dumb down (that's findings tier), don't pile on unreconstructable jargon.
+  Every cited number is a << f("section.metric") >> call, never hand-typed. -->
 
-<!-- This is the METHODS companion to the findings report. The investigation doc (PROJECT_investigation.md) shows the tests behind each finding for a reader who tolerates p-values; this doc explains HOW the numbers were computed. Frame it as that companion. -->
+<!-- ORIENTATION NOTE (Requirement 1): keep it short. State the audience, that this is the METHODS companion (findings = plain narrative; investigation = evidence with p-values; this = HOW the numbers were computed), and the section order. -->
+This is the methods companion to the findings report: it explains how each number in `PROJECT_results.md` was computed, for a reader who knows statistics but is rusty.
+Every method named here matches what `PROJECT_analysis.py` (and `nbakit/`) actually runs.
+TODO: state the section order (results order for Layout A; technique grouping for Layout B).
 
-## Data
+<!-- LAYOUT (Guide: "Two layouts"): pick ONE and delete the other.
+  A — pipeline walkthrough: one `## N. Title (`run_xxx`)` per analysis, in PROJECT_results.md order. Best for analysis-driven projects (see home_court, knicks).
+  B — topical methods catalog: group by technique family. Best for methods-survey projects (see player_rating_overview). -->
 
-<!-- Describe the data source, date range, and any filtering. Name the endpoints/tables the data module (PROJECT_data.py) actually pulls from. -->
+---
 
-TODO: Describe the data source, date range, and any filtering.
+## 0. The Dataset
 
-## Metrics
+<!-- Requirement 2: how the analysis frame(s) are built — source, date range, one-row-per-WHAT, key columns and WHY each exists. Name the endpoints/tables PROJECT_data.py actually pulls. If many analyses share one frame, describe it once here and have later sections point back. -->
 
-<!-- Define each metric computed in PROJECT_data.py. Give the formula or the plain definition, and define any term the first time it appears. -->
+TODO: describe the analysis dataset(s): source, range, granularity, key columns and why.
 
-TODO: Define each metric computed in `PROJECT_data.py`.
+## 1. TODO first analysis / method (`run_xxx`)
 
-## Analysis approach
+<!-- Per-item template (Guide: "The per-item template") — the same four beats for every item, Layout A or B: -->
+<!-- The data — which inputs/subset this uses (or "the frame from section 0"). -->
+<!-- The method — the REAL name + what it estimates; if it recurs, one clause + a pointer to the Methods Toolbox rather than a full re-explanation. -->
+<!-- Why this method — why it fits the question / the alternative it beats. -->
+<!-- What the result means — how to read the output (coef sign/size, CI, p, test stat) with the headline number via << f("...") >>. Add a "Why this chart" beat when the section owns a figure. -->
 
-<!-- Name the method correctly and say why it fits the question. This section MUST match what PROJECT_analysis.py runs (the cardinal rule above): if the code fits an OLS trend line with cluster-robust standard errors, say exactly that, not "a regression." Define each named method on first use. -->
+TODO: first analysis, following the four-beat template.
 
-TODO: Describe the statistical method (ranking, regression, bootstrap, etc.) and why it fits the question.
+<!-- ...one section per analysis (Layout A) or per technique family (Layout B)... -->
+
+## Recurring Methods: Quick Reference
+
+<!-- Requirement 5 (DRY core): define every method used in 2+ places ONCE here; the sections above reference it instead of re-explaining. Entry shape:
+  **Name (real term):** one-line refresh of what it is · how to read its output · the key assumption / when it misleads.
+  A method used in exactly one place can be defined inline in that section instead. -->
+
+TODO: one compact entry per recurring method.
 
 ## Limitations
 
-<!-- What the data can and cannot establish. Correlation vs. causation; what the design does and does not identify; sample-size caveats. -->
+<!-- Requirement 7: what the methods can and cannot establish — correlation vs causation, what the design identifies, sample-size caveats. Naming the limit is part of the job. -->
 
-TODO: What the data can and cannot establish.
+TODO: what the methods can and cannot establish.
 <# Template: cite registered facts with f("section.metric") once PROJECT_analysis.py registers them. See docs/PROJECT_facts.json. -#>

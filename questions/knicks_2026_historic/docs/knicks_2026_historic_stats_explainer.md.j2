@@ -836,3 +836,19 @@ This is algebraically exact under the assumption that the box-score `PTS` totals
 **Why no regression.** The core analysis is descriptive: it ranks a single team against a historical distribution.
 A regression of playoff margin on opponent SRS would add complexity (outcome variable? controls?) without better answering "where does this run rank?" The adjusted margin is the closest thing to a structural model; it makes one explicit functional-form assumption (opponent adjustment = direct subtraction), motivated by the SRS identity rather than fit from data.
 What §13 adds is not a predictive model but uncertainty quantification on that descriptive rank: bootstrap resampling, empirical-Bayes shrinkage, and error-propagation, each chosen because the headline rests on a << f("ats.n_total") >>-game sample and the point-estimate rank alone hides how wide that uncertainty is.
+
+## Limitations
+
+What this design can and cannot establish.
+
+**A descriptive rank, not a predictive model.** The analysis places one team in a historical distribution of champions; it does not model or forecast outcomes (see "Why no regression" above).
+The claim is about where this run sits, not about what causes it.
+
+**A small, noisy sample.** The distribution has about << f("raw.n_champions") >> champions, fewer for some metrics where early-era values are missing, and the headline rests on a << f("ats.n_total") >>-game playoff run.
+Section 13 quantifies that uncertainty with bootstrap resampling, empirical-Bayes shrinkage, and error-propagation, and Section 14 partial-pools the rank so one team is not over-read; none of these removes the smallness, they measure it.
+
+**Cross-era comparison depends on the normalization.** There is no single correct way to compare teams decades apart, so the doc reports several deflators (scoring-share, per-100, spread-standardized) plus Elo and Bradley-Terry opponent-rating cross-checks (Sections 15, 16), and reads the rank through their agreement rather than committing to one number.
+
+**The opponent adjustment is an assumption, not a fit.** Adjusted margin subtracts opponent SRS directly, a functional form motivated by the SRS identity rather than estimated from data; a different adjustment rule would move the adjusted figures.
+
+**Market and availability data are cross-checks, not primary evidence.** Opponent player-availability (Section 11) and betting-market odds (Section 12) corroborate the descriptive rank; they are partial and are not the basis for it.
