@@ -269,3 +269,12 @@ def test_fetch_cached_csv_caches_miss(tmp_path):
     assert out is None
     assert os.path.exists(path)  # empty miss cached
     assert fetch_cached_csv(path, lambda: 1 / 0, ["A"], sleep_sec=0) is None
+
+
+def test_fetch_cached_csv_does_not_cache_on_exception(tmp_path):
+    # A transient/API error must NOT be cached: a stray failure would
+    # otherwise be frozen as "already fetched, no data" and skipped forever.
+    path = str(tmp_path / "z.csv")
+    out = fetch_cached_csv(path, lambda: 1 / 0, ["A"], sleep_sec=0)
+    assert out is None
+    assert not os.path.exists(path)  # not cached, so a later run retries

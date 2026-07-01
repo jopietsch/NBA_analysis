@@ -367,8 +367,10 @@ def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
     """Cache one DataFrame build to CSV, keeping id_col + keep_cols.
 
     On a cache hit, returns the cached frame (None if it was an empty miss).
-    On a miss, calls build_df(); any exception or an empty/id-less result is
-    cached as an empty CSV so unavailable pulls aren't retried.
+    On a miss, calls build_df(): a successful call with an empty/id-less
+    result is cached as an empty CSV (genuine no-data, don't retry); an
+    exception is NOT cached, so a later run retries it instead of freezing a
+    transient/rate-limit failure into a permanent "already fetched" miss.
     """
     if os.path.exists(path):
         try:
@@ -381,12 +383,11 @@ def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
     try:
         df = build_df()
     except Exception as e:
-        print(f"    ERROR fetching {os.path.basename(path)}: {e}")
-        pd.DataFrame().to_csv(path, index=False)
+        print(f"    ERROR fetching {os.path.basename(path)}: {e} — not caching; will retry next run.")
         return None
 
     if df.empty or id_col not in df.columns:
-        pd.DataFrame().to_csv(path, index=False)
+        pd.DataFrame().to_csv(path, index=False)  # genuine, permanent absence
         return None
 
     present = [id_col] + [c for c in keep_cols if c in df.columns and c != id_col]
@@ -536,8 +537,9 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str, *,
                      cache_dir: str | None = None,
                      sleep: float = SLEEP_SEC) -> "pd.DataFrame | None":
     """Team-level shot-zone FGA totals from LeagueDashTeamShotLocations, split by
-    location ('Home' or 'Road'). Cached as shot_zones_*.csv. Returns None on an
-    empty/error result (the miss is cached so it is not retried)."""
+    location ('Home' or 'Road'). Cached as shot_zones_*.csv. A successful call
+    that returns no rows is cached as a genuine miss; a transient/rate-limit
+    error is not cached, so a later run retries it."""
     cache_dir = cache_dir or default_cache_dir()
     path = os.path.join(
         cache_dir,
@@ -562,12 +564,12 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str, *,
         )
         df = result.get_data_frames()[0]
     except Exception as e:
-        print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}")
-        pd.DataFrame().to_csv(path, index=False)  # cache the miss so we don't retry
+        print(f"    ERROR fetching shot zones {season_str(end_year)} {season_type} {location}: {e}"
+              " — not caching; will retry next run.")
         return None
 
     if df.empty:
-        pd.DataFrame().to_csv(path, index=False)
+        pd.DataFrame().to_csv(path, index=False)  # genuine, permanent absence
         return None
 
     id_map = {("", "TEAM_ID"): "TEAM_ID", ("", "TEAM_NAME"): "TEAM_NAME"}
