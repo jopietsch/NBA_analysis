@@ -16,14 +16,16 @@ Update when findings prose or RESULTS change.
 
 ## §1. The Verdict (Up Front)
 
-- **Hook — Yes, historically dominant.** Record 16-3, win rate 0.842, 88th pct among 43 champions (1983-84 through 2025-26). Raw margin +14.9 pts/game, 100th pct (best in dataset); 95% CI [+7.4, +22.4], lower bound still above the champion average.
-- **Three-question contract:** (1) actually dominant, or a weak field? (2) earned it, or coasted in? (3) how it ranks vs. every champion, and how solid that rank is.
-- **Yes/No objections block** (answers front-loaded from §3, §4, §9, §11): weak East → no (gap +0.39, 37th pct; West led by more in 63% of seasons); soft bracket → no (games-wtd opp SRS +3.67, 49th pct, median schedule); padded by blowouts → no (wins-only rating #1 of 43, §11); injured opponents → no (avg 98%, Spurs/Hawks 100%).
-- **The rise (promoted from §6):** fifth-strongest field team in the regular season; elevation +11.48, biggest of any 2026 team and 2nd-biggest of any champion. Spurs (Finals opp) made the second-biggest jump, reg-SRS +8.28 → playoff +15.13; Finals the hardest test (+2.4 avg).
-- **How solid is #1:** adj margin +11.2 pts/game, first of 43 (best single number posted), but not provably the single best — 19-game sample (top-five under the fairest test, §10-11) and top-five graded on the era's spread (§14). Opp SRS weighted by games played per series.
+- **Record:** 16-3, win rate 0.842, 88th pct among 43 champions (1983-84 through 2025-26).
+- **Raw margin:** +14.9 pts/game, 100th pct (best in dataset).
+- **Adj margin (reg-SRS):** +11.2 pts/game, 100th pct (best in dataset). Opp SRS weighted by games played per series.
+- **Pace caveat:** 2025-26 is highest-scoring era (115.6 pts/team/game); but possessions only ~4% above average — efficiency, not pace. Per-100-poss margin stays #1.
+- **East strength:** West-East SRS gap +0.39 pts/game = 37th pct of West dominance (below historical mean +0.78). East was not weak.
+- **Health:** All four opponents essentially fully healthy (avg 98%). No injury asterisk.
+- **Spurs:** Final-round opponent elevated from reg-SRS +8.28 to playoff SRS +14.48 — the biggest improvement of any Knicks opponent.
 - knicks_2026_historic_results.md refs: §1 THE RAW CLAIM, §10 VERDICT
 
-## §2. The Raw Numbers
+## §2. The Raw Numbers: Two Sweeps and a Tight Finals
 
 - 16-3 record; win rate 0.842 vs. champion mean 0.752; best (2016-17 Warriors) 0.941.
 - +14.9 pts/game margin, 100th pct; mean among champions +7.0 pts/game.
@@ -68,7 +70,7 @@ Update when findings prose or RESULTS change.
 - What's behind the jump (observable): roster continuity. Core 5 together 56% of reg season vs 89% of playoffs; margin full-core +8.09 vs short-handed +4.08 (full-season +6.33). Health lifts the baseline a couple points but +8.09 still +14.9 short of the playoff margin — health is a piece, not the whole. Chart: knicks_2026_core_continuity. No box-score/lineup data to pin the mechanism.
 - knicks_2026_historic_results.md refs: §5 OVERPERFORMANCE, §6 ROUND-BY-ROUND, §8 PLAYOFF SRS AND ELEVATION, §8b ROSTER CONTINUITY
 
-## §7. Other Context
+## §7. Ordinary at Home, Untouchable on the Road
 
 - Clutch (decided by <=5 pts): 31.6% of games, 83.7th pct (mean 0.256).
 - Home: 9 games, 77.8% win rate, 23rd pct vs. champions (below average at home).
@@ -153,7 +155,7 @@ Update when findings prose or RESULTS change.
 
 ## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
 
-- Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace, plus Z and Z-rank for the era-spread normalization). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie); on Z-rank the Knicks fall to 5th and the Warriors lead.
+- Full ranked table of all 43 champions by opp+pace-adjusted margin (rank, season, champion, Raw/Opp-adj/Opp+Pace, plus Spread Z and Spread Rank for the era-spread normalization). Knicks +10.05 #1, 2016-17 Warriors a hair behind (effective tie); on Spread Rank the Knicks fall to 5th and the Warriors lead.
 - Reading the shape: scores are bell-shaped, not a power law. Mean +3.29, 65% within 1 SD; Knicks sit +2.0 SD above the mean (the expected spot for the best of 43 draws). Statistical echo of §10: real #1, but the leading edge of an ordinary spread.
 - knicks_2026_historic_results.md refs: §20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING
 
@@ -173,13 +175,13 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | ID  | Findings location | Prose claim | knicks_2026_historic_results.md section | Authoritative value |
 |-----|------------------|-------------|-------------------|---------------------|
 | K01 | §1 L15  | 16-3, 88th pct win rate | §1 THE RAW CLAIM | win rate 0.842; 88.4th pct; mean 0.752 |
-| K02 | §1 L15  | +14.9 pts/game raw margin, highest ever | §1 THE RAW CLAIM | +14.89 pts/game, 100th pct |
-| K03 | §1 L16 | CI [+7.4, +22.4] | §1 THE RAW CLAIM | 95% CI [+7.4, +22.4] (t-interval, 19 games) |
-| K04 | §1 L35 | adj margin +11.2 pts/game, first all-time | §5 OPPONENT-ADJUSTED | adj margin +11.23, 100th pct |
+| K02 | §1 L16  | +14.9 pts/game raw margin, highest ever | §1 THE RAW CLAIM | +14.89 pts/game, 100th pct |
+| K03 | §1 L18 | CI [+7.4, +22.4] | §1 THE RAW CLAIM | 95% CI [+7.4, +22.4] (t-interval, 19 games) |
+| K04 | §1 L24 | adj margin +11.2 pts/game, first all-time | §5 OPPONENT-ADJUSTED | adj margin +11.23, 100th pct |
 | K05 | §3 L84 | West-East SRS gap +0.39, 37th pct | §3 HOW WEAK IS THE EAST | gap +0.39, 37.2th pct; mean +0.78 |
-| K06 | §1 L26 | 63% of seasons West more dominant | §3 HOW WEAK IS THE EAST | 37.2th pct West dominance → 62.8% more dominant |
-| K07 | §1 L32 | Spurs SRS +8.28 reg → +15.13 playoff | §6 ROUND-BY-ROUND (field elevation table) | Spurs reg +8.28, playoff SRS +15.13 (incl. Knicks series), elev +6.85 |
-| K08 | §1 L29 | avg opponent availability 98% | §11 OPPONENT PLAYER AVAILABILITY | avg health 98% |
+| K06 | §1 L29 | 63% of seasons West more dominant | §3 HOW WEAK IS THE EAST | 37.2th pct West dominance → 62.8% more dominant |
+| K07 | §1 L38 | Spurs SRS +8.28 reg → +15.13 playoff | §6 ROUND-BY-ROUND (field elevation table) | Spurs reg +8.28, playoff SRS +15.13 (incl. Knicks series), elev +6.85 |
+| K08 | §1 L44 | avg opponent availability 98% | §11 OPPONENT PLAYER AVAILABILITY | avg health 98% |
 | K09 | §2 L56 | win rate 0.842 vs. mean 0.752 | §1 THE RAW CLAIM | mean 0.752; best 0.941 |
 | K10 | §2 L71 | 4 of 5 Finals games decided by 4 pts or fewer | §7 OTHER DEFLATORS | not directly; 31.6% games <=5 pts |
 | K11 | §3 L89 | most West-dominant: 2013-14 +4.08 | §3 HOW WEAK IS THE EAST | top 3: 13-14 +4.08, 03-04 +3.73, 00-01 +3.11 |
@@ -213,7 +215,7 @@ Cross-reference table: each row maps a prose claim to its authoritative value in
 | K39 | §12 L406 | model gave Knicks only 15% title probability | §18 SERIES-LEVEL WIN-PROBABILITY | P(title) = 14.7% |
 | K40 | §12 L408 | only 7% of model championship runs that clean | §18 SERIES-LEVEL WIN-PROBABILITY | P(title run <=3 losses) = 6.7% |
 | K41 | §12 L409 | barely 1% produced title AND <=3 losses | §18 SERIES-LEVEL WIN-PROBABILITY | P(title AND <=3 losses) = 1.0% |
-| K42 | §14 | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%) |
+| K42 | §1 L21  | possessions only ~4% above average | §17 POSSESSIONS-BASED PACE | 2025-26 pace 101.8 vs. mean 98.0 = +3.8/game (~4%) |
 | K43 | §12 | field's strongest reg-season team was Oklahoma City Thunder (+11.04 SRS) | §18 SERIES-LEVEL WIN-PROBABILITY (field note) | strongest field SRS +11.04 vs. Spurs +8.28 |
 | K44 | App.B | champion scores bell-shaped, mean +3.29, Knicks +2.0 SD out | §20 APPENDIX RANKING (shape) | mean +3.29, SD 3.38, 65% within 1 SD |
 | K45 | App.C | full-field favorite Oklahoma City Thunder 54.5%, Knicks 3.5% | §19 FULL-FIELD TITLE ODDS | favorite 54.5%, Knicks 3.5% (seed 3), Spurs 14.2% |

@@ -1806,7 +1806,7 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     )
 
     # ── Facts: appendix ranking table (string) + distribution scalars ────────
-    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Z | Z-rank |",
+    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Spread Z | Spread Rank |",
              "|--:|---|---|--:|--:|--:|--:|--:|"]
     for _, r in df.iterrows():
         _nm = f"**{r['name']}**" if int(r["champion_id"]) == KNICKS_TEAM_ID else r["name"]

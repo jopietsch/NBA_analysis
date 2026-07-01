@@ -38,12 +38,12 @@ Six ways to measure dominance, six answers:
 | Raw scoring margin | nothing | 1st of 43 |
 | Opponent-adjusted | strength of schedule | 1st |
 | Per possession | the era's pace | 1st |
-| Scoring-share | the era's scoring level (a harsh take) | 3rd |
+| Scoring-share (raw margin, no opponent adjustment) | the era's scoring level (a harsh take) | 3rd |
 | Era's spread | how top-heavy the league was | 5th |
 | Recency-weighted opponents (Elo) | opponents' late-season form | 3rd |
 
 Every *absolute* measure puts them first; the two *relative* ones, which grade against a deeper, more spread-out field than any champion faced, make it a top-five run rather than a clear first.
-The scoring-share row is the crudest knock: 2025–26's high scoring is mostly sharper shooting, not a faster game, and the more accurate per-possession version keeps them clearly first (+11.0).
+The scoring-share row is the crudest knock: 2025–26's high scoring is mostly sharper shooting, not a faster game, and the more accurate per-possession version keeps them first (+11.0).
 That #1 is the best single guess, not a lock: re-drawing the 19 games leaves them first about 60% of the time, and the fairest test, which treats every past champion as just as uncertain as the Knicks, puts their chance of being the single best ever at about 9% (roughly a third to be top-five).
 The verdict: one of the best handful of title runs ever, most likely the best by the raw numbers, but not provably the single best.
 
