@@ -829,11 +829,11 @@ Measure the same players twice on separate data and correlate the two sets of nu
 A metric that captures something real makes the two measurements agree, so the correlation is high; a metric that is mostly noise makes them scatter, so the correlation sits near zero.
 Reliability runs from **0 (pure noise) to 1 (a perfect, repeatable measurement)**.
 
-**Square it for the share that is real signal.** The raw reliability is the quick read: 0.5 is halfway up the scale, a loose "about half signal." The precise version is reliability *squared*, the fraction of the spread between players that is real rather than noise.
-Squaring moves the goalposts.
-A reliability of **0.7** looks strong, but 0.7² = **0.49**: only about half the variation you see between players is real, and the other half is noise.
-A reliability of **0.5** squares to **0.25**, just a quarter.
-The number that feels like "half signal" on the raw scale is a quarter signal once you account for variance; you have to climb to about 0.7 before half the variance is genuinely real.
+**Reliability is itself the share that is real signal.** In classical test theory the reliability coefficient equals the fraction of the observed spread between players that reflects real differences rather than noise, so you read it directly, you do not square it.
+A reliability of **0.5** means about half of what separates players is real and half is noise; **0.7** means about 70% is real.
+(The temptation to square comes from regression's R², the variance one variable explains in *another*.
+Reliability is different: it is the correlation between two measurements of the *same* thing, and that correlation already is the signal-variance share.
+Squaring it would double-count the noise and understate the metric.)
 
 **The rough usability line, about 0.5.** Below ~0.5 a single-number rating is dominated by noise and cannot be trusted to rank individuals: re-measure on fresh data and the order reshuffles.
 Between ~0.5 and ~0.7 a rating becomes genuinely useful, real enough to separate players even with a meaningful chunk of noise left in.

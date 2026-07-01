@@ -831,7 +831,9 @@ Reliability runs from **0 (pure noise) to 1 (a perfect, repeatable measurement)*
 
 **Reliability is itself the share that is real signal.** In classical test theory the reliability coefficient equals the fraction of the observed spread between players that reflects real differences rather than noise, so you read it directly, you do not square it.
 A reliability of **0.5** means about half of what separates players is real and half is noise; **0.7** means about 70% is real.
-(The temptation to square comes from regression's R², the variance one variable explains in *another*. Reliability is different: it is the correlation between two measurements of the *same* thing, and that correlation already is the signal-variance share. Squaring it would double-count the noise and understate the metric.)
+(The temptation to square comes from regression's R², the variance one variable explains in *another*.
+Reliability is different: it is the correlation between two measurements of the *same* thing, and that correlation already is the signal-variance share.
+Squaring it would double-count the noise and understate the metric.)
 
 **The rough usability line, about 0.5.** Below ~0.5 a single-number rating is dominated by noise and cannot be trusted to rank individuals: re-measure on fresh data and the order reshuffles.
 Between ~0.5 and ~0.7 a rating becomes genuinely useful, real enough to separate players even with a meaningful chunk of noise left in.

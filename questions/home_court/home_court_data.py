@@ -55,7 +55,11 @@ OFFICIALS_DATA_START_YEAR = 2002
 # Exception to the rule above: a handful of in-range seasons genuinely have no
 # officials in the endpoint (verified empty across many retries, not flaky). These
 # are treated as real absence — cached as an empty marker — so they don't retry
-# forever and leak fetch output into captured reports. {2003} = the 2002-03 gap.
+# forever and leak fetch output into captured reports. {2003} = the 2002-03 gap,
+# re-verified live 2026-06-30: BoxScoreSummaryV3 returns a normal 200 with a
+# genuinely 0-row officials dataset for every one of the season's 88 games
+# (other data_sets on the same calls are populated), so this is real source
+# absence, not a masked rate-limit.
 OFFICIALS_KNOWN_EMPTY_YEARS = {2003}
 
 # 2020 bubble playoffs: all games at neutral site — exclude from playoff stats
