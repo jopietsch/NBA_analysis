@@ -955,6 +955,12 @@ def fetch_game_odds(po_2026: pd.DataFrame,
         })
 
     df = pd.DataFrame(rows)
+    missing = df["knicks_spread"].isna().sum()
+    if missing:
+        print(f"  WARNING: {missing}/{len(df)} games missing odds data "
+              "(ESPN error, timeout, or no line posted) — not caching; "
+              "will retry next run.", file=sys.stderr)
+        return df
     os.makedirs(d, exist_ok=True)
     df.to_csv(cache_file, index=False)
     return df
