@@ -13,6 +13,7 @@ Override: export NBA_CACHE_DIR=/path/to/cache
 import glob
 import os
 import time
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -872,6 +873,7 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
     print(f"  Fetching PBP: {season_str(end_year)} {season_type} ({n} games)...",
           flush=True)
     failed = rate_limited = 0
+    failed_ids: list[str] = []
     for i, gid in enumerate(game_ids, 1):
         gid_str = f"{int(float(gid)):010d}"
         if game_cache_exists(d, "pbp_v3", gid_str):
@@ -889,6 +891,7 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
                 game_id=gid_str, timeout=60).play_by_play.get_data_frame()
         except Exception as e:
             failed += 1
+            failed_ids.append(gid_str)
             if is_rate_limit_error(e):
                 rate_limited += 1
                 time.sleep(sleep * 5)
@@ -915,7 +918,26 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
     if failed:
         tag = f" ({rate_limited} rate-limited)" if rate_limited else ""
         print(f"    {failed} games failed{tag}")
-    return pd.concat(all_dfs, ignore_index=True) if all_dfs else pd.DataFrame()
+
+    out = pd.concat(all_dfs, ignore_index=True) if all_dfs else pd.DataFrame()
+    # Coverage signal so a RAPM build cannot silently run on a partial season:
+    # the returned frame carries the requested/failed game counts and the failed
+    # IDs on .attrs, and a large failure fraction raises a loud warning. Callers
+    # that care (e.g. a long historical build) should inspect
+    # ``df.attrs["failed_games"]`` before trusting the possession matrix.
+    n_games = len(game_ids)
+    out.attrs["n_requested_games"] = int(n_games)
+    out.attrs["failed_games"] = int(failed)
+    out.attrs["failed_game_ids"] = list(failed_ids)
+    frac = (failed / n_games) if n_games else 0.0
+    out.attrs["failed_fraction"] = float(frac)
+    if frac > 0.05:
+        warnings.warn(
+            f"fetch_pbp({season_str(end_year)} {season_type}): "
+            f"{failed}/{n_games} games ({frac:.0%}) failed to fetch; the "
+            f"returned play-by-play is a PARTIAL season. Retry the failed games "
+            f"before using this for a RAPM build (see df.attrs['failed_game_ids']).")
+    return out
 
 
 # ── Lineup/possession reconstruction ──────────────────────────────────────────
@@ -1247,13 +1269,32 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                     # possessing team). Technical FTs don't end a possession.
                     is_tech = "Technical" in subtype
                     made = "MISS" not in str(ev.get("description", ""))
-                    if not is_tech and made:
-                        poss_pts += 1
-                    if not is_tech and _is_last_ft(subtype) and ball_team is not None:
-                        if made:
-                            _emit(ball_team)
-                            ball_team = other_team_of.get(ball_team)
-                        # Missed last FT: rebound will close the possession
+                    # And-1 (or flagrant-on-a-make) bonus FT: the preceding
+                    # "Made Shot" already emitted the shooter's possession and
+                    # flipped the ball to the defense, so this FT shooter's team
+                    # (tid) is NOT the current ball_team. The bonus point belongs
+                    # to that just-closed possession — fold it in rather than emit
+                    # a phantom 1-point possession for the defense — and leave the
+                    # ball with the defense (no emit, no flip). Without this, a
+                    # made "1 of 1" and-1 passed _is_last_ft and _emit'd for the
+                    # team that had just been scored on.
+                    is_and1 = (not is_tech and ball_team is not None
+                               and tid in team_ids
+                               and tid == other_team_of.get(ball_team))
+                    if is_and1:
+                        if (made and period_records
+                                and period_records[-1]["off_team_id"] == tid):
+                            period_records[-1]["points"] += 1
+                        # No emit, no flip: the possession ended on the made shot.
+                    else:
+                        if not is_tech and made:
+                            poss_pts += 1
+                        if (not is_tech and _is_last_ft(subtype)
+                                and ball_team is not None):
+                            if made:
+                                _emit(ball_team)
+                                ball_team = other_team_of.get(ball_team)
+                            # Missed last FT: rebound will close the possession
 
                 elif action == "Rebound":
                     # Use acting_team (handles teamId=0, personId=TEAM_ID team rebds)
