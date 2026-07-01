@@ -2186,6 +2186,7 @@ vertical-align: -.125em;
   <li><a href="#proprietary-systems-blind-spot" id="toc-proprietary-systems-blind-spot" class="nav-link" data-scroll-target="#proprietary-systems-blind-spot">Proprietary systems (blind spot)</a></li>
   <li><a href="#source-registry" id="toc-source-registry" class="nav-link" data-scroll-target="#source-registry">Source registry</a></li>
   <li><a href="#coverage-summary" id="toc-coverage-summary" class="nav-link" data-scroll-target="#coverage-summary">Coverage summary</a></li>
+  <li><a href="#which-systems-can-be-split-regular-season-vs-playoffs" id="toc-which-systems-can-be-split-regular-season-vs-playoffs" class="nav-link" data-scroll-target="#which-systems-can-be-split-regular-season-vs-playoffs">Which systems can be split regular season vs playoffs</a></li>
   <li><a href="#open-items" id="toc-open-items" class="nav-link" data-scroll-target="#open-items">Open items</a></li>
   </ul>
 </nav>
@@ -2778,6 +2779,43 @@ vertical-align: -.125em;
 </tr>
 </tbody>
 </table>
+<hr>
+</section>
+<section id="which-systems-can-be-split-regular-season-vs-playoffs" class="level2">
+<h2 class="anchored" data-anchor-id="which-systems-can-be-split-regular-season-vs-playoffs">Which systems can be split regular season vs playoffs</h2>
+<p>A separate question from coverage: can a system produce a <em>playoff-only</em> value, so you can measure whether a player rose or fell once the postseason started? Only the box-score recompute family can. The reason is mechanical, and it splits the inventory cleanly into three groups.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Group</th>
+<th>Playoff split?</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Box-score recompute</strong> (Game Score, PER, WS/48, BPM/OBPM/DBPM, VORP)</td>
+<td>Yes</td>
+<td>We run the formula ourselves, so we can run it on postseason totals just as easily as on regular-season totals. Each value is renormalized within its own season type, so a playoff PER is comparable to its regular-season twin.</td>
+</tr>
+<tr class="even">
+<td><strong>Impact metrics</strong> (RAPM family, RAPTOR, EPM, LEBRON, DARKO, DRIP)</td>
+<td>No</td>
+<td>These need thousands of possessions to separate a player from his lineup. A first-round loss is about six games; even a Finals run is far short of what a stable estimate needs. The published third-party versions are season figures with no postseason cut, and DARKO/DRIP are now-cast projections, not a season split at all.</td>
+</tr>
+<tr class="odd">
+<td><strong>Human / reputation</strong> (MVP, All-NBA, All-Star, media ranks)</td>
+<td>No</td>
+<td>These are awarded once per regular season. There is no postseason equivalent to difference against.</td>
+</tr>
+</tbody>
+</table>
+<p>So the regular-season-vs-playoff comparison in the findings (Section 8) is box-score-only by necessity, not by choice. Two guards keep that comparison honest given how small a playoff sample is. The shift is measured only for players with at least 150 playoff minutes, then pulled toward zero by playoff minutes (half weight at 200), so a short, lucky run can’t top the list. And each shift carries a band equal to the spread across PER, WS/48, and BPM, so a rise only counts as real when the three formulations agree on it.</p>
 <hr>
 </section>
 <section id="open-items" class="level2">

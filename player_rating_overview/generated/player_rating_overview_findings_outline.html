@@ -2257,8 +2257,8 @@ vertical-align: -.125em;
 <h3 class="anchored" data-anchor-id="do-the-systems-agree">§ 2. Do the systems agree?</h3>
 <ul>
 <li>Spearman matrix. Tight: PER-Game Score 0.862, BPM-VORP 0.964. Moderate: PER-WS 0.768, WS-WS/48 0.796. Loose: PER-BPM 0.901, Game Score-BPM 0.739.</li>
-<li>Player-level divergence even where overall correlation is high: WS favors efficient bigs (Amen Thompson, Donovan Clingan); PER favors high-usage scorers (Giannis Antetokounmpo, Joel Embiid).</li>
-<li>RAPM sits apart: agrees with box scores at 0.18; bare 2025-26 puts reserve Moussa Cisse at #119 in consensus. Fixed RAPM+prior agrees with consensus 0.54 (up from 0.30, ~double) but very top still catches low-minute noise (Moussa Cisse); RAPM+prior (combined only) feeds the consensus.</li>
+<li>Player-level divergence even where overall correlation is high: WS favors efficient bigs (Amen Thompson, Donovan Clingan); PER favors high-usage scorers (Giannis Antetokounmpo, Victor Wembanyama).</li>
+<li>RAPM sits apart: agrees with box scores at 0.33; bare 2025-26 puts reserve Chet Holmgren at #22 in consensus. Fixed RAPM+prior agrees with consensus 0.91 (up from 0.42, ~double) but very top still catches low-minute noise (Shai Gilgeous-Alexander); RAPM+prior (combined only) feeds the consensus.</li>
 <li>Chart: rank-agreement heatmap.</li>
 </ul>
 </section>
@@ -2267,9 +2267,9 @@ vertical-align: -.125em;
 <ul>
 <li>Two community tests: retrodiction (1st-half → 2nd-half outcomes) and team-wins prediction; both reward a RAPM backbone + calibrated box-score prior. Academic caveat: complex metrics don’t reliably beat simple ones as inputs to downstream salary/wins models.</li>
 <li>Direct describe test (held-out teams, 2025-26): PER best, ~73% of team point-diff, above the plus/minus metrics.</li>
-<li>Forecast test (prior-season ratings predict this season): order flips, PER ~37%, best forecaster VORP ~56%. Coverage ~88%.</li>
+<li>Forecast test (prior-season ratings predict this season): order flips, PER ~37%, best forecaster RAPM+prior ~59%. Coverage ~88%.</li>
 <li>Multi-season panel (30 seasons / 29 handoffs back to 1996-97): PER describes ~64%, forecasts ~25%; best forecaster VORP ~52%; BPM beats PER forecasting 29/29 handoffs.</li>
-<li>Impact-era panel (13 seasons from 2013-14, box scores vs RAPM): bare RAPM forecasts 10/10 (~17%, describe ~34% but mechanical), RAPM+prior 6/10 (~32%), both below box scores; top BPM ~60%.</li>
+<li>Impact-era panel (13 seasons from 2013-14, box scores vs RAPM): bare RAPM forecasts 6/10 (~38%, describe ~78% but mechanical), RAPM+prior 1/10 (~62%), both below box scores; top RAPM+prior ~62%.</li>
 <li>Stability (year-over-year): Game Score retains 68% of its top 20, PER 64% (chance ~5%); steadiest Game Score 0.85, jumpiest DBPM 0.67; 29 pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; BPM jumpy but better).</li>
 <li>Charts: retrodiction, next-season retrodiction, panel describe-vs-forecast, impact panel, rating stability.</li>
 </ul>
@@ -2277,25 +2277,25 @@ vertical-align: -.125em;
 <section id="what-each-system-uniquely-sees" class="level3">
 <h3 class="anchored" data-anchor-id="what-each-system-uniquely-sees">§ 4. What each system uniquely sees</h3>
 <ul>
-<li>Overlap R² (own kin held out; high = redundant): most redundant PER 0.946, Game Score 0.882; mid WS 0.659, VORP 0.841; least redundant BPM 0.861, DBPM 0.333. Caveat: BPM/VORP/RAPM are approximate recomputes, so low overlap may be noise, not signal.</li>
+<li>Overlap R² (own kin held out; high = redundant): most redundant PER 0.947, BPM 0.937; least redundant WS/48 0.596, bare RAPM 0.684, WS 0.668; DBPM slid to mid 0.770 after the RAPM fix. Caveat: BPM/VORP validated vs BBR; RAPM now carries real signal, so its low overlap reads as genuine independence.</li>
 <li>System-outliers chart: who each system rates above/below consensus.</li>
 </ul>
 </section>
 <section id="the-two-uber-ratings" class="level3">
 <h3 class="anchored" data-anchor-id="the-two-uber-ratings">§ 5. The two uber ratings</h3>
 <ul>
-<li>Consensus (average normalized score). Top 5: Nikola Jokić 3.87, Shai Gilgeous-Alexander 3.05, Giannis Antetokounmpo 2.62, Victor Wembanyama 2.57, Luka Dončić 2.36.</li>
-<li>Wins-predictive (weighted by team-wins prediction). Top: Nikola Jokić 4.49, Victor Wembanyama 4.08.</li>
-<li>Consensus vs. wins-predictive Spearman 0.963. Top riser Victor Wembanyama +1.51; top faller Jericho Sims -0.93. Wins-predictive lifts stars on winning teams, discounts production on losing teams.</li>
+<li>Consensus (average normalized score). Top 5: Nikola Jokić 4.00, Shai Gilgeous-Alexander 3.31, Giannis Antetokounmpo 2.74, Victor Wembanyama 2.69, Luka Dončić 2.57.</li>
+<li>Wins-predictive (weighted by team-wins prediction). Top: Nikola Jokić 4.37, Shai Gilgeous-Alexander 4.21.</li>
+<li>Consensus vs. wins-predictive Spearman 0.963. Top riser Victor Wembanyama +1.27; top faller Jericho Sims -1.03. Wins-predictive lifts stars on winning teams, discounts production on losing teams.</li>
 </ul>
 </section>
 <section id="stars-matter-more-than-rank-implies-distribution-section" class="level3">
 <h3 class="anchored" data-anchor-id="stars-matter-more-than-rank-implies-distribution-section">§ 6. Stars matter more than rank implies (distribution section)</h3>
 <ul>
 <li>Rate metrics spread evenly: PER top-5% share 8.6%. Cumulative top-heavy: WS top-5% 13.8%, VORP 24.5%.</li>
-<li>Power-law steepness (alpha): PER 0.14 (shallowest); the cumulative metrics and uber ratings cluster higher (VORP 0.37, Consensus 0.38, Wins-Pred 0.40), up to the noisy plus/minus halves. Two groups by R² fit: straight-line power laws (incl. WS, BPM) vs. benders (per-possession metrics; VORP is the bending exception, concentrated but just short of the line).</li>
-<li>RAPM full distribution (13 seasons, 4678 player-seasons, 49% below 0) is a symmetric bell, not a power law (lacks the one-sided tail); VORP leans right (the precondition a power law’s shape needs), though its own top-50 curve bends just short.</li>
-<li>Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini 0.749 &gt; WS 0.362, an artifact, not real top-heaviness).</li>
+<li>Power-law steepness (alpha): PER 0.14 (shallowest); the cumulative metrics and uber ratings cluster higher (VORP 0.37, Consensus 0.37, Wins-Pred 0.43), up to the noisy plus/minus halves. Two groups by R² fit: straight-line power laws (incl. WS, BPM) vs. benders (per-possession metrics; VORP is the bending exception, concentrated but just short of the line).</li>
+<li>RAPM full distribution (13 seasons, 4678 player-seasons, 46% below 0) is a symmetric bell, not a power law (lacks the one-sided tail); VORP leans right (the precondition a power law’s shape needs), though its own top-50 curve bends just short.</li>
+<li>Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini 0.753 &gt; WS 0.362, an artifact, not real top-heaviness).</li>
 <li>Charts: all-systems distributions, distribution shape, power-law small multiples, power-law fits, gini, rank-value curves, ordinal-vs-value gap.</li>
 </ul>
 </section>
@@ -2308,15 +2308,16 @@ vertical-align: -.125em;
 <section id="who-rose-and-fell-in-the-playoffs" class="level3">
 <h3 class="anchored" data-anchor-id="who-rose-and-fell-in-the-playoffs">§ 8. Who rose and fell in the playoffs</h3>
 <ul>
-<li>Box-score rate metrics recomputed on playoff games only (impact metrics can’t: a playoff run is too few games). 103 players ≥ 150 playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).</li>
-<li>Risers: Jayson Tatum, OG Anunoby, Mike Conley. Fallers: Nikola Jokić, Jalen Duren, Nickeil Alexander-Walker, incl. regular-season consensus #1 Nikola Jokić. One postseason, not proof.</li>
+<li>Box-score rate metrics recomputed on playoff games only (impact metrics can’t: a playoff run is too few games; only the recompute family splits by season type, see inventory). 103 players ≥ 150 playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).</li>
+<li>Two reliability guards: shift shrunk toward zero by playoff minutes (half weight at 200) so a short sample can’t top the list; agreement band = spread across PER/WS48/BPM, a shift “clears its band” when the three agree.</li>
+<li>Risers: OG Anunoby, Cason Wallace, Jayson Tatum. Fallers: Jalen Duren, Nikola Jokić, Nickeil Alexander-Walker, incl. regular-season consensus #1 Nikola Jokić. One postseason, not proof.</li>
 </ul>
 </section>
 <section id="what-changed-from-2024-25-to-2025-26" class="level3">
 <h3 class="anchored" data-anchor-id="what-changed-from-2024-25-to-2025-26">§ 9. What changed from 2024-25 to 2025-26</h3>
 <ul>
-<li>Snapshot read of the most recent full-season pair (290 players qualified in both). Consensus order agrees 0.75 year-over-year: top stable (Nikola Jokić, Shai Gilgeous-Alexander lead both; only 3 of top 5 carry over), middle churns.</li>
-<li>Biggest mover up Kawhi Leonard (+1.35), down Ivica Zubac (-1.48); one-year swings, not signal. What did NOT change: box-score agreement 0.70 → 0.73, disagreement is structural. Chart: season comparison (consensus movers).</li>
+<li>Snapshot read of the most recent full-season pair (290 players qualified in both). Consensus order agrees 0.75 year-over-year: top stable (Nikola Jokić, Shai Gilgeous-Alexander lead both; only 4 of top 5 carry over), middle churns.</li>
+<li>Biggest mover up Kawhi Leonard (+1.37), down Ivica Zubac (-1.50); one-year swings, not signal. What did NOT change: box-score agreement 0.70 → 0.73, disagreement is structural. Chart: season comparison (consensus movers).</li>
 </ul>
 </section>
 <section id="summary" class="level3">
@@ -2337,7 +2338,7 @@ vertical-align: -.125em;
 <h3 class="anchored" data-anchor-id="limitations">§ 12. Limitations</h3>
 <ul>
 <li>Single-season cross-system testbed; only the describe-vs-forecast and stability panels reach across 30 seasons.</li>
-<li>RAPM now computed from play-by-play (2025-26 back to 2013-14, 572 players in 2025-26): bare = noisy, no prior; RAPM+prior = 3 pooled seasons + BPM prior (consensus corr 0.54); neither beats box scores at forecasting. No tracking data, so can’t match EPM/LEBRON.</li>
+<li>RAPM now computed from play-by-play (2025-26 back to 2013-14, 582 players in 2025-26): bare = noisy, no prior; RAPM+prior = 3 pooled seasons + BPM prior (consensus corr 0.91); neither beats box scores at forecasting. No tracking data, so can’t match EPM/LEBRON.</li>
 <li>Tracking/team-internal blind spot (Second Spectrum, Synergy, franchise models).</li>
 <li>Playoff small-sample limit for RAPM-based metrics.</li>
 </ul>
@@ -2357,13 +2358,13 @@ vertical-align: -.125em;
 <ul>
 <li>Players: 582 total, 378 qualified (≥ 500 min). Systems present: 14.</li>
 <li>Correlations: PER-Game Score 0.862, PER-WS 0.768, WS-WS/48 0.796, PER-BPM 0.901, Game Score-BPM 0.739, BPM-VORP 0.964.</li>
-<li>RAPM: box-score corr 0.18 (bare), consensus corr 0.30 (bare) → 0.54 (RAPM+prior).</li>
+<li>RAPM: box-score corr 0.33 (bare), consensus corr 0.42 (bare) → 0.91 (RAPM+prior).</li>
 <li>Describe vs forecast (panel, 30 seasons): PER 64% / 25%; best forecaster VORP 52%.</li>
-<li>Consensus top 5: Nikola Jokić 3.87, Shai Gilgeous-Alexander 3.05, Giannis Antetokounmpo 2.62, Victor Wembanyama 2.57, Luka Dončić 2.36.</li>
-<li>Consensus vs. wins-predictive Spearman: 0.963. Top riser Victor Wembanyama +1.51; top faller Jericho Sims -0.93.</li>
-<li>Concentration: PER top-5% 8.6%; Gini cross-check Consensus 0.749 vs WS 0.362 (artifact).</li>
-<li>Overlap R² (own kin held out; high = redundant): PER 0.946, Game Score 0.882 most redundant; BPM 0.861, DBPM 0.333 least; WS 0.659, VORP 0.841 mid. Recompute-noise caveat on BPM/VORP/RAPM.</li>
-<li>Playoffs: 103 players ≥ 150 min; top riser Jayson Tatum, top faller Nikola Jokić.</li>
+<li>Consensus top 5: Nikola Jokić 4.00, Shai Gilgeous-Alexander 3.31, Giannis Antetokounmpo 2.74, Victor Wembanyama 2.69, Luka Dončić 2.57.</li>
+<li>Consensus vs. wins-predictive Spearman: 0.963. Top riser Victor Wembanyama +1.27; top faller Jericho Sims -1.03.</li>
+<li>Concentration: PER top-5% 8.6%; Gini cross-check Consensus 0.753 vs WS 0.362 (artifact).</li>
+<li>Overlap R² (own kin held out; high = redundant): PER 0.947, BPM 0.937 most redundant; WS/48 0.596, bare RAPM 0.684, WS 0.668 least redundant; DBPM 0.770 mid after the RAPM fix.</li>
+<li>Playoffs: 103 players ≥ 150 min; top riser OG Anunoby, top faller Jalen Duren.</li>
 </ul>
 </section>
 
