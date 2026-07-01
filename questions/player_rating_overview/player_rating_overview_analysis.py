@@ -214,15 +214,23 @@ def _build_wins_predictive(df: pd.DataFrame, systems: list[str]) -> pd.Series:
     X = team_data[present].fillna(0).values
     y = team_data["W"].values.astype(float)
 
-    # Non-negative ridge (sklearn if available, else OLS)
+    # Non-negative ridge (sklearn if available, else OLS). The team features are
+    # standardized before the fit so the ridge penalty is even-handed across
+    # systems, but that leaves `ridge.coef_` in doubly-standardized units. The
+    # per-player scores below apply the weights to singly-standardized player
+    # z-scores (same units as the team aggregates X), so we divide the fitted
+    # coefficients by `scaler.scale_` to bring them back into X's space.
+    # Without this, systems whose team-level averages have a smaller spread are
+    # under-weighted. `positive=True` keeps the blend weights non-negative, as a
+    # rating-system blend should (a system never counts against a player).
     try:
         from sklearn.linear_model import Ridge
         from sklearn.preprocessing import StandardScaler
         scaler = StandardScaler()
         X_s = scaler.fit_transform(X)
-        ridge = Ridge(alpha=5.0, fit_intercept=True, positive=False)
+        ridge = Ridge(alpha=5.0, fit_intercept=True, positive=True)
         ridge.fit(X_s, y)
-        coef = ridge.coef_
+        coef = ridge.coef_ / scaler.scale_
     except ImportError:
         coef, _, _, _ = np.linalg.lstsq(X, y, rcond=None)
 
@@ -326,8 +334,11 @@ def next_season_retrodiction(df_prior: pd.DataFrame, df_curr: pd.DataFrame,
     adjustment is fit to its own season, predicting the next season removes the
     in-sample circularity that flatters the team-fit metrics. Players with no
     prior rating (rookies, prior non-qualifiers) drop out; `coverage` reports the
-    share of current team minutes that carried a prior rating. Returns
-    {system: {r2, n, coverage}}.
+    share of current team minutes that carried a prior rating. Reports both the
+    in-sample R² and a leave-one-team-out cross-validated R² (mirroring
+    `retrodiction_scores`), so the forecast panel can be graded on the same
+    honest out-of-sample number as the describe panel. Returns
+    {system: {r2, cv_r2, n, coverage}}.
     """
     pid_p = "player_id" if "player_id" in df_prior.columns else "PLAYER_ID"
     pid_c = "player_id" if "player_id" in df_curr.columns else "PLAYER_ID"
@@ -367,8 +378,36 @@ def next_season_retrodiction(df_prior: pd.DataFrame, df_curr: pd.DataFrame,
         b1, b0 = np.polyfit(x, y, 1)
         yhat = b1 * x + b0
         r2 = 1.0 - float(((y - yhat) ** 2).sum()) / ss_tot
-        result[s] = {"r2": r2, "n": int(len(data)), "coverage": coverage}
+        # Leave-one-team-out cross-validation (same honest read as the describe
+        # panel): refit the line without each team, then predict that team.
+        preds = np.empty(len(x))
+        for i in range(len(x)):
+            mask = np.arange(len(x)) != i
+            c1, c0 = np.polyfit(x[mask], y[mask], 1)
+            preds[i] = c1 * x[i] + c0
+        cv_r2 = 1.0 - float(((y - preds) ** 2).sum()) / ss_tot
+        result[s] = {"r2": r2, "cv_r2": cv_r2, "n": int(len(data)),
+                     "coverage": coverage}
     return result
+
+
+def _next_season_table(nxt: dict, retro: dict) -> list[dict]:
+    """Rows for the single-season describe-vs-forecast table, graded on CV R².
+
+    Both columns carry the leave-one-team-out CV R² — the describe column from
+    the same-season retrodiction (`retro`), the forecast column from the
+    next-season retrodiction (`nxt`) — so the two sides of the table are
+    apples-to-apples (the same out-of-sample metric on both). Rows are sorted by
+    forecast CV R², best first.
+    """
+    return [
+        {
+            "system": s,
+            "describe_cv_r2": retro.get(s, {}).get("cv_r2", float("nan")),
+            "forecast_cv_r2": float(sc["cv_r2"]),
+        }
+        for s, sc in sorted(nxt.items(), key=lambda kv: -kv[1]["cv_r2"])
+    ]
 
 
 def panel_retrodiction(start_year: int, end_year: int,
@@ -379,9 +418,11 @@ def panel_retrodiction(start_year: int, end_year: int,
     For each season y in [start_year, end_year], the describe score is the
     leave-one-team-out CV R² of y's own ratings against y's team point
     differential (same-season retrodiction). For each consecutive pair (y, y+1),
-    the forecast score is how well y's ratings, carried onto y+1's rosters,
-    predict y+1's point differential (next-season retrodiction). Reads only the
-    cached unified tables and cached team totals, so it makes no network calls.
+    the forecast score is the leave-one-team-out CV R² of how well y's ratings,
+    carried onto y+1's rosters, predict y+1's point differential (next-season
+    retrodiction) — the same out-of-sample metric as the describe side, so the
+    two panels are apples-to-apples. Reads only the cached unified tables and
+    cached team totals, so it makes no network calls.
 
     Returns {"describe": {sys: [r2, ...]}, "forecast": {sys: [r2, ...]},
              "seasons": [years], "pairs": [(y, y+1), ...]}.
@@ -417,7 +458,7 @@ def panel_retrodiction(start_year: int, end_year: int,
         pres = _present_systems(df_prior, systems)
         for s, sc in next_season_retrodiction(df_prior, df_curr, out, pres,
                                               target=target).items():
-            forecast[s].append(sc["r2"])
+            forecast[s].append(sc["cv_r2"])
         pairs.append((y, y + 1))
 
     return {"describe": describe, "forecast": forecast,
@@ -1217,28 +1258,34 @@ def run(end_year: int = 2026) -> None:
         print("were played by players who also carried a rating last season.\n")
         FACTS.set("nextretro.coverage_pct", cover * 100, "{:.0f}",
                   note="share of current-season team minutes with a prior-season rating")
-        ranked_n = sorted(nxt.items(), key=lambda kv: -kv[1]["r2"])
+        # Both columns are leave-one-team-out CV R² (see _next_season_table), so
+        # the describe and forecast sides of the table are apples-to-apples. The
+        # nextretro.*.r2 fact KEYS are kept for template stability; their values
+        # now carry the CV number.
+        rows_n = _next_season_table(nxt, retro)
         print(f"  {'':<16}{'describes':>10}{'predicts':>10}")
         print(f"  {'system':<16}{'(same yr)':>10}{'(next yr)':>10}")
-        for s, sc in ranked_n:
-            same_cv = retro.get(s, {}).get("cv_r2", float("nan"))
+        for row in rows_n:
+            s = row["system"]
             tag = "[team-fit]    " if s in OUTCOME_CALIBRATED else "[outcome-blind]"
-            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}{same_cv:>8.3f}{sc['r2']:>10.3f}")
-            FACTS.set(f"nextretro.{s}.r2", sc["r2"], "{:.3f}",
-                      note=f"{SYSTEM_LABELS.get(s, s)} next-season retrodiction R² "
-                           f"(predict {end_year - 1}->{end_year})")
-        top_n_sys, top_n_sc = ranked_n[0]
+            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}"
+                  f"{row['describe_cv_r2']:>8.3f}{row['forecast_cv_r2']:>10.3f}")
+            FACTS.set(f"nextretro.{s}.r2", row["forecast_cv_r2"], "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} next-season retrodiction CV R² "
+                           f"(leave-one-team-out; predict {end_year - 1}->{end_year})")
+        top_n_sys = rows_n[0]["system"]
+        top_n_cv = rows_n[0]["forecast_cv_r2"]
         top_n_label = SYSTEM_LABELS.get(top_n_sys, top_n_sys)
         top_same = max(retro.items(), key=lambda kv: kv[1]["cv_r2"])[0]
         top_same_label = SYSTEM_LABELS.get(top_same, top_same)
-        print(f"\nBest forecaster of next season: {top_n_label} (R²={top_n_sc['r2']:.3f}). "
+        print(f"\nBest forecaster of next season: {top_n_label} (CV R²={top_n_cv:.3f}). "
               f"Best description of\nthe season itself: {top_same_label}.")
         FACTS.set("nextretro.top.name", str(top_n_label),
                   note="system that best predicts next-season team point differential")
-        FACTS.set("nextretro.top.r2", float(top_n_sc["r2"]), "{:.3f}",
-                  note="best next-season retrodiction R²")
-        FACTS.set("nextretro.top.r2_pct", float(top_n_sc["r2"] * 100), "{:.0f}",
-                  note="best next-season retrodiction R² as percent (append % in prose)")
+        FACTS.set("nextretro.top.r2", float(top_n_cv), "{:.3f}",
+                  note="best next-season retrodiction CV R² (leave-one-team-out)")
+        FACTS.set("nextretro.top.r2_pct", float(top_n_cv * 100), "{:.0f}",
+                  note="best next-season retrodiction CV R² as percent (append % in prose)")
         FACTS.guard("forecast_top_differs_from_description_top",
                     top_n_sys != top_same,
                     "the metric that best forecasts next season is not the one that best "
@@ -1246,13 +1293,13 @@ def run(end_year: int = 2026) -> None:
                     f"{top_n_label} vs {top_same_label}")
         if "PER" in nxt and "PER" in retro:
             print(f"PER falls from {retro['PER']['cv_r2']:.2f} describing the season to "
-                  f"{nxt['PER']['r2']:.2f}\nforecasting the next: a strong descriptor, a weak predictor.")
-            FACTS.set("nextretro.PER.r2_pct", float(nxt["PER"]["r2"] * 100), "{:.0f}",
-                      note="PER next-season retrodiction R² as percent (append % in prose)")
+                  f"{nxt['PER']['cv_r2']:.2f}\nforecasting the next: a strong descriptor, a weak predictor.")
+            FACTS.set("nextretro.PER.r2_pct", float(nxt["PER"]["cv_r2"] * 100), "{:.0f}",
+                      note="PER next-season retrodiction CV R² as percent (append % in prose)")
             FACTS.guard("per_describes_better_than_predicts",
-                        nxt["PER"]["r2"] < retro["PER"]["cv_r2"],
+                        nxt["PER"]["cv_r2"] < retro["PER"]["cv_r2"],
                         "PER describes the season far better than it forecasts the next",
-                        retro["PER"]["cv_r2"] - nxt["PER"]["r2"])
+                        retro["PER"]["cv_r2"] - nxt["PER"]["cv_r2"])
 
     header("MULTI-SEASON DESCRIBE vs FORECAST (FULL PANEL)")
     print(f"The single pair above is one season. This pools the same two tests")

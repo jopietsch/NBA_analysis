@@ -936,11 +936,13 @@ def plot_retrodiction(retro: dict, outcome_calibrated: set) -> str:
 def plot_next_season_retrodiction(same: dict, nxt: dict) -> str:
     """Grouped bars: each system's same-season fit vs its next-season forecast.
 
-    `same` is the same-season retrodiction dict ({system: {cv_r2, ...}}); `nxt`
-    is the next-season dict ({system: {r2, ...}}). Bars are paired per system,
-    sorted by next-season R². The muted grey bar is how well the system
-    describes the season just played; the blue bar is how well last season's
-    version forecasts this one. The gap is the overfit/descriptive premium.
+    `same` and `nxt` are the same-season and next-season retrodiction dicts
+    ({system: {cv_r2, ...}}). Both bars read the leave-one-team-out CV R², so
+    the describe and forecast sides are apples-to-apples. Bars are paired per
+    system, sorted by next-season CV R². The muted grey bar is how well the
+    system describes the season just played; the blue bar is how well last
+    season's version forecasts this one. The gap is the overfit/descriptive
+    premium.
     """
     if not nxt or not same:
         fig, ax = new_fig()
@@ -948,10 +950,10 @@ def plot_next_season_retrodiction(same: dict, nxt: dict) -> str:
                 transform=ax.transAxes)
         return save_chart("next_season_retrodiction.svg", OUTPUT_DIR, fig=fig)
 
-    systems = [s for s, _ in sorted(nxt.items(), key=lambda kv: -kv[1]["r2"])
+    systems = [s for s, _ in sorted(nxt.items(), key=lambda kv: -kv[1]["cv_r2"])
                if s in same]
     describe = [same[s]["cv_r2"] for s in systems]
-    predict = [nxt[s]["r2"] for s in systems]
+    predict = [nxt[s]["cv_r2"] for s in systems]
     labels = [SYSTEM_LABELS.get(s, s) for s in systems]
 
     fig, ax = plt.subplots(figsize=(max(6, len(systems) * 1.0), 5), facecolor=BG)

@@ -232,6 +232,100 @@ def test_next_season_retrodiction_coverage_below_one_with_rookies():
     assert 0.0 < scores["GOOD"]["coverage"] < 1.0
 
 
+def _leverage_nextseason_inputs(n_teams=14, seed=3):
+    """Prior ratings + rosters where one influential team props up in-sample R².
+
+    Thirteen teams have prior rating and outcome drawn independently (no real
+    relationship); one extreme team has a very large rating AND a very large
+    outcome. A single line fit in-sample is dragged through that leverage point
+    and looks good, but leave-one-team-out CV exposes it: with the leverage team
+    held out, the bulk carries no signal, so its own prediction is badly off.
+    """
+    rng = np.random.default_rng(seed)
+    prior_rows, curr_rows, outcomes = [], [], []
+    pid = 0
+    for t in range(n_teams):
+        if t == n_teams - 1:
+            x, y = 10.0, 20.0                     # high-leverage team
+        else:
+            x, y = rng.normal(), rng.normal()     # bulk: rating unrelated to outcome
+        for _ in range(3):
+            pid += 1
+            prior_rows.append({"player_id": pid, "GOOD": x})
+            curr_rows.append({"player_id": pid, "TEAM_ID": t, "MIN": 1500})
+        outcomes.append({"TEAM_ID": t, "point_diff": y})
+    return (pd.DataFrame(prior_rows), pd.DataFrame(curr_rows),
+            pd.DataFrame(outcomes))
+
+
+def test_next_season_retrodiction_reports_cv_r2():
+    """The forecast path must expose a leave-one-team-out CV R² (Task 3)."""
+    from player_rating_overview_analysis import next_season_retrodiction
+    prior, curr, outcomes = _nextseason_inputs(n_rookies=0)
+    scores = next_season_retrodiction(prior, curr, outcomes, ["GOOD"])
+    assert "cv_r2" in scores["GOOD"]
+    # When prior skill genuinely drives the outcome, the CV read is also strong.
+    assert scores["GOOD"]["cv_r2"] > 0.99
+
+
+def test_next_season_retrodiction_cv_penalizes_influential_team():
+    """A system inflated by one leverage team gets a high in-sample R² but a
+    poor CV R²; the panel must grade on the CV number, not the in-sample one."""
+    from player_rating_overview_analysis import (
+        next_season_retrodiction, panel_retrodiction)
+    prior, curr, outcomes = _leverage_nextseason_inputs()
+    scores = next_season_retrodiction(prior, curr, outcomes, ["GOOD"])
+    # In-sample fit looks decent; CV exposes the influential-point overfit.
+    assert scores["GOOD"]["r2"] > 0.5
+    assert scores["GOOD"]["cv_r2"] < 0.0
+    assert scores["GOOD"]["cv_r2"] < scores["GOOD"]["r2"] - 0.5
+
+
+def test_panel_forecast_uses_cv_not_in_sample(monkeypatch):
+    """panel_retrodiction's forecast list must carry the CV R², so the describe
+    and forecast panels are apples-to-apples (both leave-one-team-out CV)."""
+    import player_rating_overview_analysis as A
+    prior, curr, outcomes = _leverage_nextseason_inputs()
+    # Season y (2021) supplies prior ratings; season y+1 (2022) the rosters.
+    frames = {2021: prior, 2022: curr}
+    outs = {2022: outcomes}
+    monkeypatch.setattr(A, "load_unified_ratings", lambda y, **k: frames.get(y, curr))
+    monkeypatch.setattr(A, "load_team_outcomes", lambda y: outs.get(y, outcomes))
+
+    direct = A.next_season_retrodiction(prior, curr, outcomes, ["GOOD"])["GOOD"]
+    panel = A.panel_retrodiction(2021, 2022, ["GOOD"])
+    # The single forecast entry equals the CV R² (negative here), not r2.
+    assert panel["forecast"]["GOOD"] == pytest.approx([direct["cv_r2"]])
+    assert panel["forecast"]["GOOD"][0] < 0.0
+
+
+def test_next_season_table_grades_on_cv_r2():
+    """The single-season describe-vs-forecast table (printed by run() and fed
+    into the nextretro.* facts) must carry the leave-one-team-out CV R² on the
+    forecast side and sort by it — in-sample r2 must not leak through even when
+    it disagrees with cv_r2 about the ordering."""
+    import player_rating_overview_analysis as A
+    # In-sample r2 says A > B; the honest CV read says B > A.
+    nxt = {
+        "A": {"r2": 0.80, "cv_r2": 0.10, "n": 30, "coverage": 0.9},
+        "B": {"r2": 0.50, "cv_r2": 0.45, "n": 30, "coverage": 0.9},
+    }
+    retro = {
+        "A": {"r2": 0.70, "cv_r2": 0.65, "n": 30},
+        "B": {"r2": 0.60, "cv_r2": 0.55, "n": 30},
+    }
+    rows = A._next_season_table(nxt, retro)
+    # Sorted by forecast CV R² (B first), not by in-sample r2 (which favors A).
+    assert [r["system"] for r in rows] == ["B", "A"]
+    # Values are the CV numbers on both sides.
+    assert rows[0]["forecast_cv_r2"] == pytest.approx(0.45)
+    assert rows[1]["forecast_cv_r2"] == pytest.approx(0.10)
+    assert rows[0]["describe_cv_r2"] == pytest.approx(0.55)
+    # A system missing from the same-season dict gets NaN describe, not a crash.
+    rows2 = A._next_season_table({"C": {"cv_r2": 0.2}}, {})
+    assert np.isnan(rows2[0]["describe_cv_r2"])
+
+
 def _panel_season(skill_to_outcome=2.0, seed=0):
     """One synthetic season with stable player_ids so seasons chain.
 
@@ -295,6 +389,138 @@ def test_rating_stability_persistent_vs_noise(monkeypatch):
     # The same five players stay in the top five every year for STABLE.
     assert np.mean(st["retention"]["STABLE"]) == pytest.approx(1.0)
     assert np.mean(st["retention"]["STABLE"]) > np.mean(st["retention"]["NOISE"])
+
+
+# ── Wins-predictive combiner ──────────────────────────────────────────────────
+
+def _winspred_signal_vs_noise(n_teams=20, seed=0):
+    """System X tracks team skill (which drives wins); Y is pure player noise."""
+    rng = np.random.default_rng(seed)
+    rows = []
+    for t in range(n_teams):
+        skill = t - (n_teams - 1) / 2
+        for p in range(3):
+            rows.append({"PLAYER_ID": t * 10 + p, "TEAM_ID": t, "MIN": 1500,
+                         "X": skill + rng.normal(0, 0.01),
+                         "Y": rng.normal()})
+        # wins are a monotone function of skill
+    df = pd.DataFrame(rows)
+    df["TEAM_W"] = 20 + 1.2 * (df["TEAM_ID"] - (n_teams - 1) / 2)
+    return df
+
+
+def test_wins_predictive_weights_signal_over_noise():
+    """A system that predicts team wins dominates a pure-noise system, and its
+    top player tops the WINS_PRED score."""
+    import player_rating_overview_analysis as A
+    df = _winspred_signal_vs_noise()
+    wp = A._build_wins_predictive(df, ["X", "Y"])
+    xz = (df["X"] - df["X"].mean()) / df["X"].std()
+    yz = (df["Y"] - df["Y"].mean()) / df["Y"].std()
+    assert abs(np.corrcoef(wp, xz)[0, 1]) > 0.9
+    assert abs(np.corrcoef(wp, yz)[0, 1]) < 0.5
+    # The player highest on X is (near) the top of WINS_PRED.
+    top_x_player = df.loc[df["X"].idxmax(), "PLAYER_ID"]
+    top_wp_player = df.loc[wp.idxmax(), "PLAYER_ID"]
+    assert df.loc[df["PLAYER_ID"] == top_wp_player, "TEAM_ID"].iloc[0] == \
+        df.loc[df["PLAYER_ID"] == top_x_player, "TEAM_ID"].iloc[0]
+
+
+def _winspred_two_spreads(n_teams=24, n_players=30, spacing=2.0,
+                          small_sigma=30.0, big_sigma=0.5, seed=0):
+    """Two systems that BOTH near-perfectly predict team wins, but SMALLSPREAD
+    has a much smaller team-aggregate spread than BIGSPREAD (its player signal is
+    buried under large within-team noise that averages out at the team level).
+
+    The scaling bug reads ridge coefficients in doubly-standardized space, which
+    multiplies each system's weight by its team-aggregate spread — so the buggy
+    combiner over-weights BIGSPREAD and under-weights SMALLSPREAD. The correct
+    combiner (coef / scaler.scale_) restores SMALLSPREAD to at least parity.
+    """
+    rng = np.random.default_rng(seed)
+    rows = []
+    skills = {t: (t - (n_teams - 1) / 2) * spacing for t in range(n_teams)}
+    for t in range(n_teams):
+        for p in range(n_players):
+            rows.append({
+                "PLAYER_ID": t * 100 + p, "TEAM_ID": t, "MIN": 1500,
+                "SMALLSPREAD": skills[t] + rng.normal(0, small_sigma),
+                "BIGSPREAD": skills[t] + rng.normal(0, big_sigma),
+            })
+    df = pd.DataFrame(rows)
+    df["TEAM_W"] = 20 + 0.4 * df["TEAM_ID"].map(skills)
+    return df
+
+
+def test_wins_predictive_scaling_not_biased_by_team_spread():
+    """Two equally-predictive systems with different team-aggregate spreads must
+    not be ranked by spread. On the buggy code the large-spread system wins; the
+    fix restores the small-spread system to (at least) parity. (Tasks 1 & 2)"""
+    import player_rating_overview_analysis as A
+    df = _winspred_two_spreads()
+
+    # Both systems really do rebuild team wins (sanity: this is not noise vs signal).
+    tmS = A._team_mean_z(df, "SMALLSPREAD")
+    tmB = A._team_mean_z(df, "BIGSPREAD")
+    wins = df.groupby("TEAM_ID")["TEAM_W"].max()
+    assert np.corrcoef(tmS.values, wins.reindex(tmS.index).values)[0, 1] > 0.9
+    assert np.corrcoef(tmB.values, wins.reindex(tmB.index).values)[0, 1] > 0.9
+    # And their team-aggregate spreads genuinely differ (the thing the bug keys on).
+    assert tmS.std() < 0.6 < tmB.std()
+
+    wp = A._build_wins_predictive(df, ["SMALLSPREAD", "BIGSPREAD"])
+    sz = (df["SMALLSPREAD"] - df["SMALLSPREAD"].mean()) / df["SMALLSPREAD"].std()
+    bz = (df["BIGSPREAD"] - df["BIGSPREAD"].mean()) / df["BIGSPREAD"].std()
+    corr_small = abs(np.corrcoef(wp, sz)[0, 1])
+    corr_big = abs(np.corrcoef(wp, bz)[0, 1])
+    # The fix stops the small-spread system from being under-weighted: it should
+    # carry at least as much of the combined score as the large-spread one.
+    # (Under the buggy doubly-standardized weighting this assertion fails.)
+    assert corr_small > corr_big
+
+
+def test_wins_predictive_weights_are_non_negative():
+    """positive=True: a system that runs OPPOSITE to wins never earns negative
+    weight that would flip a player's contribution (Task 2)."""
+    import player_rating_overview_analysis as A
+    df = _winspred_signal_vs_noise()
+    # ANTI runs against wins; a non-negative blend must not reward it.
+    df["ANTI"] = -((df["X"] - df["X"].mean()) / df["X"].std()) + \
+        np.random.default_rng(1).normal(0, 0.01, len(df))
+    wp = A._build_wins_predictive(df, ["X", "ANTI"])
+    az = (df["ANTI"] - df["ANTI"].mean()) / df["ANTI"].std()
+    # With non-negative weights, WINS_PRED does not track the wins-opposed system
+    # positively (it either gets ~zero weight or the blend stays wins-aligned).
+    xz = (df["X"] - df["X"].mean()) / df["X"].std()
+    assert np.corrcoef(wp, xz)[0, 1] > 0.9
+    assert np.corrcoef(wp, az)[0, 1] < 0.0
+
+
+# ── Overlap R² ────────────────────────────────────────────────────────────────
+
+def _overlap_inputs(n=200, seed=0):
+    """Two collinear systems (A2 ~= A1) plus an independent one."""
+    rng = np.random.default_rng(seed)
+    a1 = rng.normal(size=n)
+    a2 = 3.0 * a1 + rng.normal(0, 0.05, n)      # nearly a rescaling of A1
+    indep = rng.normal(size=n)                   # unrelated to A1/A2
+    # A fourth system so every metric has >= 2 non-kin predictors available.
+    other = rng.normal(size=n)
+    return pd.DataFrame({"A1": a1, "A2": a2, "INDEP": indep, "OTHER": other})
+
+
+def test_overlap_r2_high_for_collinear_low_for_independent():
+    """_overlap_r2 pins the semantics for the pending 'unique R²' rename: a
+    collinear pair overlaps heavily; an independent system overlaps little."""
+    import player_rating_overview_analysis as A
+    df = _overlap_inputs()
+    ov = A._overlap_r2(df, ["A1", "A2", "INDEP", "OTHER"])
+    # A1 and A2 rebuild each other almost perfectly.
+    assert ov["A1"] > 0.95
+    assert ov["A2"] > 0.95
+    # The independent system carries signal the others cannot reconstruct.
+    assert ov["INDEP"] < 0.2
+    assert ov["A1"] > ov["INDEP"]
 
 
 # ── compute_rapm column rename / orchestration ────────────────────────────────
