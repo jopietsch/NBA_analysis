@@ -587,6 +587,33 @@ def test_panel_forecast_uses_cv_not_in_sample(monkeypatch):
     assert panel["forecast"]["GOOD"][0] < 0.0
 
 
+def test_next_season_table_grades_on_cv_r2():
+    """The single-season describe-vs-forecast table (printed by run() and fed
+    into the nextretro.* facts) must carry the leave-one-team-out CV R² on the
+    forecast side and sort by it — in-sample r2 must not leak through even when
+    it disagrees with cv_r2 about the ordering."""
+    import player_rating_overview_analysis as A
+    # In-sample r2 says A > B; the honest CV read says B > A.
+    nxt = {
+        "A": {"r2": 0.80, "cv_r2": 0.10, "n": 30, "coverage": 0.9},
+        "B": {"r2": 0.50, "cv_r2": 0.45, "n": 30, "coverage": 0.9},
+    }
+    retro = {
+        "A": {"r2": 0.70, "cv_r2": 0.65, "n": 30},
+        "B": {"r2": 0.60, "cv_r2": 0.55, "n": 30},
+    }
+    rows = A._next_season_table(nxt, retro)
+    # Sorted by forecast CV R² (B first), not by in-sample r2 (which favors A).
+    assert [r["system"] for r in rows] == ["B", "A"]
+    # Values are the CV numbers on both sides.
+    assert rows[0]["forecast_cv_r2"] == pytest.approx(0.45)
+    assert rows[1]["forecast_cv_r2"] == pytest.approx(0.10)
+    assert rows[0]["describe_cv_r2"] == pytest.approx(0.55)
+    # A system missing from the same-season dict gets NaN describe, not a crash.
+    rows2 = A._next_season_table({"C": {"cv_r2": 0.2}}, {})
+    assert np.isnan(rows2[0]["describe_cv_r2"])
+
+
 def _panel_season(skill_to_outcome=2.0, seed=0):
     """One synthetic season with stable player_ids so seasons chain.
 

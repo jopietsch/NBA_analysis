@@ -391,6 +391,25 @@ def next_season_retrodiction(df_prior: pd.DataFrame, df_curr: pd.DataFrame,
     return result
 
 
+def _next_season_table(nxt: dict, retro: dict) -> list[dict]:
+    """Rows for the single-season describe-vs-forecast table, graded on CV R².
+
+    Both columns carry the leave-one-team-out CV R² — the describe column from
+    the same-season retrodiction (`retro`), the forecast column from the
+    next-season retrodiction (`nxt`) — so the two sides of the table are
+    apples-to-apples (the same out-of-sample metric on both). Rows are sorted by
+    forecast CV R², best first.
+    """
+    return [
+        {
+            "system": s,
+            "describe_cv_r2": retro.get(s, {}).get("cv_r2", float("nan")),
+            "forecast_cv_r2": float(sc["cv_r2"]),
+        }
+        for s, sc in sorted(nxt.items(), key=lambda kv: -kv[1]["cv_r2"])
+    ]
+
+
 def panel_retrodiction(start_year: int, end_year: int,
                        systems: list[str] | None = None,
                        target: str = "point_diff") -> dict:
@@ -1239,28 +1258,34 @@ def run(end_year: int = 2026) -> None:
         print("were played by players who also carried a rating last season.\n")
         FACTS.set("nextretro.coverage_pct", cover * 100, "{:.0f}",
                   note="share of current-season team minutes with a prior-season rating")
-        ranked_n = sorted(nxt.items(), key=lambda kv: -kv[1]["r2"])
+        # Both columns are leave-one-team-out CV R² (see _next_season_table), so
+        # the describe and forecast sides of the table are apples-to-apples. The
+        # nextretro.*.r2 fact KEYS are kept for template stability; their values
+        # now carry the CV number.
+        rows_n = _next_season_table(nxt, retro)
         print(f"  {'':<16}{'describes':>10}{'predicts':>10}")
         print(f"  {'system':<16}{'(same yr)':>10}{'(next yr)':>10}")
-        for s, sc in ranked_n:
-            same_cv = retro.get(s, {}).get("cv_r2", float("nan"))
+        for row in rows_n:
+            s = row["system"]
             tag = "[team-fit]    " if s in OUTCOME_CALIBRATED else "[outcome-blind]"
-            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}{same_cv:>8.3f}{sc['r2']:>10.3f}")
-            FACTS.set(f"nextretro.{s}.r2", sc["r2"], "{:.3f}",
-                      note=f"{SYSTEM_LABELS.get(s, s)} next-season retrodiction R² "
-                           f"(predict {end_year - 1}->{end_year})")
-        top_n_sys, top_n_sc = ranked_n[0]
+            print(f"  {tag} {SYSTEM_LABELS.get(s, s):<14}"
+                  f"{row['describe_cv_r2']:>8.3f}{row['forecast_cv_r2']:>10.3f}")
+            FACTS.set(f"nextretro.{s}.r2", row["forecast_cv_r2"], "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} next-season retrodiction CV R² "
+                           f"(leave-one-team-out; predict {end_year - 1}->{end_year})")
+        top_n_sys = rows_n[0]["system"]
+        top_n_cv = rows_n[0]["forecast_cv_r2"]
         top_n_label = SYSTEM_LABELS.get(top_n_sys, top_n_sys)
         top_same = max(retro.items(), key=lambda kv: kv[1]["cv_r2"])[0]
         top_same_label = SYSTEM_LABELS.get(top_same, top_same)
-        print(f"\nBest forecaster of next season: {top_n_label} (R²={top_n_sc['r2']:.3f}). "
+        print(f"\nBest forecaster of next season: {top_n_label} (CV R²={top_n_cv:.3f}). "
               f"Best description of\nthe season itself: {top_same_label}.")
         FACTS.set("nextretro.top.name", str(top_n_label),
                   note="system that best predicts next-season team point differential")
-        FACTS.set("nextretro.top.r2", float(top_n_sc["r2"]), "{:.3f}",
-                  note="best next-season retrodiction R²")
-        FACTS.set("nextretro.top.r2_pct", float(top_n_sc["r2"] * 100), "{:.0f}",
-                  note="best next-season retrodiction R² as percent (append % in prose)")
+        FACTS.set("nextretro.top.r2", float(top_n_cv), "{:.3f}",
+                  note="best next-season retrodiction CV R² (leave-one-team-out)")
+        FACTS.set("nextretro.top.r2_pct", float(top_n_cv * 100), "{:.0f}",
+                  note="best next-season retrodiction CV R² as percent (append % in prose)")
         FACTS.guard("forecast_top_differs_from_description_top",
                     top_n_sys != top_same,
                     "the metric that best forecasts next season is not the one that best "
@@ -1268,13 +1293,13 @@ def run(end_year: int = 2026) -> None:
                     f"{top_n_label} vs {top_same_label}")
         if "PER" in nxt and "PER" in retro:
             print(f"PER falls from {retro['PER']['cv_r2']:.2f} describing the season to "
-                  f"{nxt['PER']['r2']:.2f}\nforecasting the next: a strong descriptor, a weak predictor.")
-            FACTS.set("nextretro.PER.r2_pct", float(nxt["PER"]["r2"] * 100), "{:.0f}",
-                      note="PER next-season retrodiction R² as percent (append % in prose)")
+                  f"{nxt['PER']['cv_r2']:.2f}\nforecasting the next: a strong descriptor, a weak predictor.")
+            FACTS.set("nextretro.PER.r2_pct", float(nxt["PER"]["cv_r2"] * 100), "{:.0f}",
+                      note="PER next-season retrodiction CV R² as percent (append % in prose)")
             FACTS.guard("per_describes_better_than_predicts",
-                        nxt["PER"]["r2"] < retro["PER"]["cv_r2"],
+                        nxt["PER"]["cv_r2"] < retro["PER"]["cv_r2"],
                         "PER describes the season far better than it forecasts the next",
-                        retro["PER"]["cv_r2"] - nxt["PER"]["r2"])
+                        retro["PER"]["cv_r2"] - nxt["PER"]["cv_r2"])
 
     header("MULTI-SEASON DESCRIBE vs FORECAST (FULL PANEL)")
     print(f"The single pair above is one season. This pools the same two tests")
