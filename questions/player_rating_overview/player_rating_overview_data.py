@@ -29,6 +29,9 @@ from nbakit.data import (
     REGULAR_SEASON,
     PLAYOFFS,
     season_str,
+    cache_exists,
+    cache_read_csv,
+    cache_write_csv,
 )
 from nbakit.ratings import (
     game_score,
@@ -416,9 +419,9 @@ def load_playoff_deltas(end_year: int, *,
     the season has no playoff data (e.g. a season still in progress).
     """
     path = _cache(f"playoff_deltas_{season_str(end_year)}.csv")
-    if os.path.exists(path) and not force_rebuild:
+    if cache_exists(path) and not force_rebuild:
         try:
-            return pd.read_csv(path)
+            return cache_read_csv(path)
         except pd.errors.EmptyDataError:
             return pd.DataFrame()
 
@@ -426,13 +429,13 @@ def load_playoff_deltas(end_year: int, *,
     po = _build_recomputed(end_year, PLAYOFFS)
 
     if po.empty:
-        pd.DataFrame().to_csv(path, index=False)
+        cache_write_csv(pd.DataFrame(), path)
         return pd.DataFrame()
 
     df = _playoff_delta_table(reg, po)
     ci = _bootstrap_shift_ci(end_year, df)
     df = df.merge(ci, on="PLAYER_ID", how="left")
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     print(f"Playoff deltas: {len(df)} players with >= {MIN_PLAYOFF_MINUTES} "
           f"playoff minutes → {path}")
     return df
@@ -499,9 +502,9 @@ def _load_raptor(end_year: int) -> pd.DataFrame | None:
     if end_year < 2014 or end_year > 2023:
         return None
     path = _cache(f"raptor_{season_str(end_year)}.csv")
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
             return df if not df.empty else None
         except pd.errors.EmptyDataError:
             return None
@@ -519,7 +522,7 @@ def _load_raptor(end_year: int) -> pd.DataFrame | None:
             all_raptor = pd.read_csv(pd.io.common.StringIO(r.text))
             # Save full file to cache, then filter
             all_path = _cache("raptor_modern_all.csv")
-            all_raptor.to_csv(all_path, index=False)
+            cache_write_csv(all_raptor, all_path)
             time.sleep(1)
             # Filter to requested season
             season_label = season_str(end_year)  # e.g., "2024-25"
@@ -527,21 +530,21 @@ def _load_raptor(end_year: int) -> pd.DataFrame | None:
             if season_col:
                 # FTE uses e.g. "2022-23" format
                 df = all_raptor[all_raptor[season_col] == season_label].copy()
-                df.to_csv(path, index=False)
+                cache_write_csv(df, path)
                 return df if not df.empty else None
     except Exception as e:
         print(f"  WARN: Could not download RAPTOR: {e}")
-    pd.DataFrame().to_csv(path, index=False)
+    cache_write_csv(pd.DataFrame(), path)
     return None
 
 
 def _load_raptor_from_cache_all(end_year: int) -> pd.DataFrame | None:
     """Load RAPTOR from the full cached download if available."""
     all_path = _cache("raptor_modern_all.csv")
-    if not os.path.exists(all_path):
+    if not cache_exists(all_path):
         return _load_raptor(end_year)
     try:
-        all_raptor = pd.read_csv(all_path)
+        all_raptor = cache_read_csv(all_path)
     except pd.errors.EmptyDataError:
         return None
     season_label = season_str(end_year)
@@ -558,11 +561,11 @@ def _load_darko(end_year: int) -> pd.DataFrame | None:
     player_name, season (or season_end_year), dpm (or DARKO_DPM).
     """
     path = _cache(f"darko_{season_str(end_year)}.csv")
-    if not os.path.exists(path):
+    if not cache_exists(path):
         print(f"  DARKO snapshot not found at {path} — skipping")
         return None
     try:
-        df = pd.read_csv(path)
+        df = cache_read_csv(path)
         return df if not df.empty else None
     except pd.errors.EmptyDataError:
         return None
@@ -575,9 +578,9 @@ def _load_epm(end_year: int) -> pd.DataFrame | None:
     Season parameter: end_year (e.g. 2025 for 2024-25).
     """
     path = _cache(f"epm_{season_str(end_year)}.csv")
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
             return df if not df.empty else None
         except pd.errors.EmptyDataError:
             return None
@@ -606,7 +609,7 @@ def _load_epm(end_year: int) -> pd.DataFrame | None:
         return None
 
     if not data:
-        pd.DataFrame().to_csv(path, index=False)
+        cache_write_csv(pd.DataFrame(), path)
         return None
 
     df = pd.DataFrame(data)
@@ -614,18 +617,18 @@ def _load_epm(end_year: int) -> pd.DataFrame | None:
     df = df.rename(columns={k: v for k, v in rename.items() if k in df.columns})
     keep = [c for c in ["player_name", "epm", "epm_off", "epm_def"] if c in df.columns]
     df = df[keep]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     return df if not df.empty else None
 
 
 def _load_lebron(end_year: int) -> pd.DataFrame | None:
     """Load LEBRON snapshot from cache/lebron_{season}.csv (manual snapshot)."""
     path = _cache(f"lebron_{season_str(end_year)}.csv")
-    if not os.path.exists(path):
+    if not cache_exists(path):
         print(f"  LEBRON snapshot not found at {path} — skipping")
         return None
     try:
-        df = pd.read_csv(path)
+        df = cache_read_csv(path)
         return df if not df.empty else None
     except pd.errors.EmptyDataError:
         return None
@@ -634,11 +637,11 @@ def _load_lebron(end_year: int) -> pd.DataFrame | None:
 def _load_espn_rpm(end_year: int) -> pd.DataFrame | None:
     """Load ESPN RPM snapshot from cache/espn_rpm_{season}.csv (manual snapshot)."""
     path = _cache(f"espn_rpm_{season_str(end_year)}.csv")
-    if not os.path.exists(path):
+    if not cache_exists(path):
         print(f"  ESPN RPM snapshot not found at {path} — skipping")
         return None
     try:
-        df = pd.read_csv(path)
+        df = cache_read_csv(path)
         return df if not df.empty else None
     except pd.errors.EmptyDataError:
         return None
@@ -652,10 +655,10 @@ def _load_human_rankings(end_year: int) -> pd.DataFrame | None:
     nbarank (ESPN), ringer_rank.
     """
     path = _cache(f"human_{season_str(end_year)}.csv")
-    if not os.path.exists(path):
+    if not cache_exists(path):
         return None
     try:
-        df = pd.read_csv(path)
+        df = cache_read_csv(path)
         return df if not df.empty else None
     except pd.errors.EmptyDataError:
         return None
@@ -669,9 +672,9 @@ def fetch_mvp_votes(end_year: int) -> pd.DataFrame | None:
     Returns DataFrame with: player_name, mvp_share (0–1 scale).
     """
     path = _cache(f"mvp_votes_{season_str(end_year)}.csv")
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
             return df if not df.empty else None
         except pd.errors.EmptyDataError:
             return None
@@ -680,12 +683,12 @@ def fetch_mvp_votes(end_year: int) -> pd.DataFrame | None:
     url = f"https://www.basketball-reference.com/awards/awards_{end_year}.html"
     soup = get_soup(url)
     if soup is None:
-        pd.DataFrame().to_csv(path, index=False)
+        cache_write_csv(pd.DataFrame(), path)
         return None
 
     table = soup.find("table", {"id": "mvp"})
     if table is None:
-        pd.DataFrame().to_csv(path, index=False)
+        cache_write_csv(pd.DataFrame(), path)
         return None
 
     rows = []
@@ -705,7 +708,7 @@ def fetch_mvp_votes(end_year: int) -> pd.DataFrame | None:
                          "season_end_year": end_year})
 
     df = pd.DataFrame(rows)
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     return df if not df.empty else None
 
 
@@ -715,9 +718,9 @@ def fetch_all_nba(end_year: int) -> pd.DataFrame | None:
     Returns DataFrame with: player_name, all_nba_pts (1st=5, 2nd=3, 3rd=1).
     """
     path = _cache(f"all_nba_{season_str(end_year)}.csv")
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
             return df if not df.empty else None
         except pd.errors.EmptyDataError:
             return None
@@ -726,7 +729,7 @@ def fetch_all_nba(end_year: int) -> pd.DataFrame | None:
     url = f"https://www.basketball-reference.com/awards/awards_{end_year}.html"
     soup = get_soup(url)
     if soup is None:
-        pd.DataFrame().to_csv(path, index=False)
+        cache_write_csv(pd.DataFrame(), path)
         return None
 
     # BBR uses a single 'leading_all_nba' table with an 'all_nba_team' column
@@ -747,7 +750,7 @@ def fetch_all_nba(end_year: int) -> pd.DataFrame | None:
 
     df = pd.DataFrame([{"player_name": n, "all_nba_pts": p,
                          "season_end_year": end_year} for n, p in rows.items()])
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     return df if not df.empty else None
 
 
@@ -766,9 +769,9 @@ def fetch_bbr_advanced(end_year: int,
     """
     tag = "po" if season_type == PLAYOFFS else "reg"
     path = _cache(f"bbr_advanced_{season_str(end_year)}_{tag}.csv")
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
             return df if not df.empty else None
         except pd.errors.EmptyDataError:
             return None
@@ -813,7 +816,7 @@ def fetch_bbr_advanced(end_year: int,
     df = (df.sort_values("mp", ascending=False)
             .drop_duplicates("player_name", keep="first")
             .reset_index(drop=True))
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     return df
 
 
@@ -844,9 +847,9 @@ def _season_possessions(end_year: int,
     # finished possession table per season. Only the regular season is cached
     # (the only season type the RAPM paths use).
     poss_cache = _cache(f"possessions_{season_str(end_year)}.csv")
-    if season_type == REGULAR_SEASON and os.path.exists(poss_cache):
+    if season_type == REGULAR_SEASON and cache_exists(poss_cache):
         try:
-            cached = pd.read_csv(poss_cache)
+            cached = cache_read_csv(poss_cache)
             return cached if not cached.empty else empty
         except pd.errors.EmptyDataError:
             return empty
@@ -865,10 +868,10 @@ def _season_possessions(end_year: int,
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
         path = os.path.join(CACHE_DIR, f"pbp_v3_{gid_str}.csv")
-        if not os.path.exists(path):
+        if not cache_exists(path):
             continue
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
         except pd.errors.EmptyDataError:
             continue
         if not df.empty:
@@ -887,10 +890,10 @@ def _season_possessions(end_year: int,
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
         bpath = os.path.join(CACHE_DIR, f"boxscore_trad_{gid_str}.csv")
-        if not os.path.exists(bpath):
+        if not cache_exists(bpath):
             continue
         try:
-            bdf = pd.read_csv(bpath)
+            bdf = cache_read_csv(bpath)
         except pd.errors.EmptyDataError:
             continue
         if not bdf.empty:
@@ -917,7 +920,7 @@ def _season_possessions(end_year: int,
     rename_map.update({f"def_player_{i}": f"def{i}" for i in range(1, 6)})
     poss = poss.rename(columns=rename_map)
     if season_type == REGULAR_SEASON:
-        poss.to_csv(poss_cache, index=False)
+        cache_write_csv(poss, poss_cache)
     return poss
 
 
@@ -953,7 +956,7 @@ def compute_rapm(end_year: int,
         result.columns.values[0] = "player_id"
 
     result["player_id"] = result["player_id"].astype(int)
-    result.to_csv(cache_path, index=False)
+    cache_write_csv(result, cache_path)
     print(f"  RAPM computed from {season_str(end_year)} → {cache_path}")
     return result[["player_id", "RAPM", "O_RAPM", "D_RAPM"]]
 
@@ -1058,7 +1061,7 @@ def compute_rapm_my(end_year: int, prior_df: pd.DataFrame | None = None,
     result["player_id"] = result["player_id"].astype(int)
     result = result.rename(columns={"RAPM": "RAPM_MY", "O_RAPM": "O_RAPM_MY",
                                     "D_RAPM": "D_RAPM_MY"})
-    result.to_csv(cache_path, index=False)
+    cache_write_csv(result, cache_path)
     print(f"  RAPM_MY computed (pool {n_seasons}) for {season_str(end_year)} → {cache_path}")
     return result[["player_id", "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"]]
 
@@ -1135,11 +1138,11 @@ def _load_rapm_snapshot(end_year: int) -> pd.DataFrame | None:
     Returns None (with a skip message) when the file is absent.
     """
     path = _cache(f"rapm_snapshot_{season_str(end_year)}.csv")
-    if not os.path.exists(path):
+    if not cache_exists(path):
         print(f"  RAPM snapshot not found at {path} — skipping")
         return None
     try:
-        df = pd.read_csv(path)
+        df = cache_read_csv(path)
         return df if not df.empty else None
     except pd.errors.EmptyDataError:
         return None
@@ -1155,8 +1158,8 @@ def load_unified_ratings(end_year: int, *,
     re-run even if the cache exists.
     """
     path = _cache(f"unified_ratings_{season_str(end_year)}.csv")
-    if os.path.exists(path) and not force_rebuild:
-        return pd.read_csv(path)
+    if cache_exists(path) and not force_rebuild:
+        return cache_read_csv(path)
 
     print(f"Building unified ratings table for {season_str(end_year)}...")
 
@@ -1299,7 +1302,7 @@ def load_unified_ratings(end_year: int, *,
         if col in merged.columns:
             merged[col] = merged[col].fillna(0)
 
-    merged.to_csv(path, index=False)
+    cache_write_csv(merged, path)
     print(f"Unified ratings table: {len(merged)} players → {path}")
     return merged
 

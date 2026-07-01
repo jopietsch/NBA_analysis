@@ -187,7 +187,7 @@ class TestFetchSeasonHomePct:
 
         # 1 home game, 1 win -> 100.0%
         assert nba.fetch_season_home_pct(2024, "Regular Season") == 100.0
-        assert os.path.exists(nba.cache_path(2024, "Regular Season"))
+        assert nba._nbakit.cache_exists(nba.cache_path(2024, "Regular Season"))
 
     def test_returns_none_on_api_error_and_does_not_cache(self, tmp_path, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
@@ -688,7 +688,7 @@ class TestFetchShotZones:
 
         result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
         assert result is None
-        assert self._path(tmp_path).exists()
+        assert nba._nbakit.cache_exists(str(self._path(tmp_path)))
 
     def test_fetches_from_api_flattens_multiindex_and_caches(self, tmp_path, monkeypatch):
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
@@ -721,7 +721,7 @@ class TestFetchShotZones:
         assert "FGA_RA" in result.columns
         assert "FGA_ATB3" in result.columns
         assert result.iloc[0]["FGA_RA"] == 1000
-        assert self._path(tmp_path).exists()  # cached with flat columns
+        assert nba._nbakit.cache_exists(str(self._path(tmp_path)))  # cached with flat columns
 
         # Second call hits cache, not API
         result2 = nba.fetch_shot_zones(2024, "Regular Season", "Home")
@@ -1191,7 +1191,7 @@ class TestFetchRefereeData:
         self._patch_box(monkeypatch, self._box_returning(pd.DataFrame(columns=["personId", "name"])))
 
         assert nba.fetch_referee_data(1999, "Playoffs") is None
-        assert cache_file.exists()
+        assert nba._nbakit.cache_exists(str(cache_file))
 
     def test_suspect_empty_not_cached_for_modern_season(self, tmp_path, monkeypatch):
         # A season that *should* have officials (>= OFFICIALS_DATA_START_YEAR) but
@@ -1224,7 +1224,7 @@ class TestFetchRefereeData:
         result = nba.fetch_referee_data(2024, "Playoffs")
         assert result is not None
         assert len(result) == 6  # 3 officials x 2 games
-        assert cache_file.exists()
+        assert nba._nbakit.cache_exists(str(cache_file))
 
     def test_is_rate_limit_error_classification(self):
         import requests
@@ -1531,7 +1531,7 @@ class TestFetchAttendanceCaching:
         monkeypatch.setattr(nba, "_bbr_get",
                             lambda url: BeautifulSoup("<html></html>", "lxml"))
         assert nba.fetch_attendance(2024) is None
-        assert os.path.exists(
+        assert nba._nbakit.cache_exists(
             os.path.join(str(tmp_path), f"attendance_{nba.season_str(2024)}.csv")
         )
 
