@@ -51,7 +51,7 @@ It no longer does.**
 **What is not behind it** is just as interesting: rule changes (with the single real exception of 1994–95), travel, time zones, pace of play, crowd size, and the playoff format changes, including the much-blamed 2014 switch.
 Two more matter only a little.
 Teams play fewer back-to-backs than they used to, so visitors arrive less tired, but that schedule change accounts for only about 8% of the decline.
-And competitive balance: in a year when the league's teams bunch closer in quality, home court dips a little, but parity has risen and fallen for 40 years while home court has fallen steadily, so it can't explain the long decline.
+And competitive balance: in a year when the league's teams bunch closer in quality, home court may dip a little, a year-to-year hint on a small sample rather than a firm finding, and parity has risen and fallen for 40 years while home court has fallen steadily, so it can't explain the long decline.
 Each factor is tested; only 1994–95 registers a genuine effect, and it is accounted for above.
 
 The regular season and the playoffs share a similar shape and pattern, but the playoffs lag behind the regular season in this decline.
@@ -322,10 +322,11 @@ Travel distance has a negligible effect in the regular season (about 0.07 points
 Time zones are flat in both.
 Rest makes a difference on any given night (home teams win 63% when better-rested, 58% when the visitor has the advantage), but that gap hasn't changed across eras.
 Load management cut back-to-back frequency from 35% to under 20%, which is real, but that schedule change accounts for only 8% of the decline; home advantage shrank within every rest situation alike.
-Pace of play and the home-vs-away three-point differential show no meaningful relationship to the trend.
+Pace of play shows no meaningful relationship to the trend.
+The home-vs-away gap in three-point attempts has only grown: home teams now take slightly *more* than visitors, the wrong direction to explain a shrinking home advantage.
 Competitive balance shows none in the raw season-to-season comparison; a faint link appears only in the year-to-year wobble, not the 40-year trend, and only on a small sample, so it is best treated as a hint, not a finding.
 
-Crowds have stayed near capacity throughout (record highs in the 2020s, the very years home court hit its lowest), so crowd size is not the dial.
+Crowds have stayed near capacity throughout, even in the very years home court hit its lowest, so crowd size is not the dial.
 Crowd *presence* is different.
 The 2020-21 pandemic seasons ran an accidental test: with buildings empty, home teams won just 51%; with any crowd at all, about 58%.
 A crowd is a genuine ingredient of home court, worth about seven points on the night.
@@ -334,7 +335,7 @@ A test combining all these off-court explanations at once confirms it: rest, alt
 What's left belongs entirely to which era the game was played in: the decline itself, not any off-court factor.
 The full treatment of each hypothesis, including why each seemed plausible and exactly what the data showed, is in Part 2 of [The Investigation](home_court_investigation.html).
 
-![Left: league average attendance per game vs. regular-season home win %, 2000–2026, with crowds holding near capacity (and lately setting records) while home court keeps falling. Right: 2020–21 home win % by game attendance, where an empty arena erases the advantage that even a small crowd restores.](../generated/images/home_court_attendance.svg){#fig-attendance}
+![Left: league average attendance per game vs. regular-season home win %, 2000–2026, with crowds holding near capacity while home court keeps falling. Right: 2020–21 home win % by game attendance, where an empty arena erases the advantage that even a small crowd restores.](../generated/images/home_court_attendance.svg){#fig-attendance}
 
 **The decline isn't concentrated in a handful of franchises.** Each active franchise was tracked separately.
 Remove the random bounce of a 40-odd-game home schedule, and the spread across teams is no bigger than that randomness: the real team-to-team difference in decline rates is about zero.
@@ -439,7 +440,7 @@ Transition defense, better visiting-team preparation, and the perimeter revoluti
 What did not drive the decline: rule changes (except 1994–95), travel, time zones, pace of play, crowd size, and playoff format.
 Fewer back-to-backs for visiting teams explains only about 8%.
 Competitive balance can't explain the long fall either (parity bounces up and down while home court has fallen steadily for 40 years), though year to year the two wobble together a little.
-Arenas have stayed near capacity, lately setting records, even as the advantage shrank.
+Arenas have stayed near capacity even as the advantage shrank.
 The one genuine crowd effect is a switch, not a dial: in the empty arenas of 2020–21 home teams won just 51%, then snapped back to about 58% whenever fans returned.
 
 The playoffs have followed the same path with nearly a two-decade lag, on far fewer games, so the direction is certain but the size is not.

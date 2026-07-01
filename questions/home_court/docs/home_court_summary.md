@@ -19,7 +19,7 @@ And what did not?**
 
 Yes: the home team’s win rate has fallen.
 The decline is mostly slow and steady, with two stretches where it briefly sped up.
-Home teams have historically ***shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees***, and those four differences account for about 95% of the advantage.
+Home teams have historically **shot better, pulled down more rebounds, committed fewer turnovers, and gotten the benefit of the doubt from the referees**, and those four differences account for about 95% of the advantage.
 Two real-world changes stand out: **the shift to three-point shooting** (which alone reaches close to half) **and fairer officiating**.
 And the biggest single driver of the decline, **rebounding**, is the one piece neither change explains: the data can measure it but not say why it faded.
 
@@ -94,7 +94,7 @@ The 2014 playoff format change didn't move the playoff decline.
 Rest matters on a given night, but that gap hasn't shifted across eras, and fewer back-to-backs for tired visitors explains only about **8%** of the decline.
 
 Even crowd size misses.
-Arenas have held near capacity for 25 years, setting attendance records in the very seasons home court hit bottom.
+Arenas have held near capacity for 25 years, even in the seasons home court hit bottom.
 A live crowd is still a real ingredient: empty 2020–21 arenas dropped home teams to about 51%, and any crowd at all restored about 58%.
 But that makes crowd presence a switch that flips with the doors, not a dial slowly turning down.
 

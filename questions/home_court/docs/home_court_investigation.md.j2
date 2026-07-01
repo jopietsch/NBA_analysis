@@ -389,7 +389,7 @@ If average crowd intensity or size fell, the noise advantage should have weakene
 
 **The test.** I plotted league-average attendance per game against home win percentage across the 27 seasons with reliable gate figures.
 
-**The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, climbing to record highs above 18,000 in the 2020s (the very years home win rates hit their lowest).
+**The result.** NBA arenas have been near capacity throughout: roughly 17,000 per night in the early 2000s, still above 18,000 in the 2020s, the very years home win rates hit their lowest.
 Season to season, attendance and home court advantage are unrelated and if anything drift in opposite directions.
 In the playoffs the point is cleaner still: postseason games are near-guaranteed sellouts throughout the entire 40-year window, yet postseason home court fell right alongside the regular season.
 

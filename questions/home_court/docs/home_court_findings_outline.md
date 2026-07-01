@@ -14,7 +14,7 @@
   - Change is real & one-directional: regular-season home win rate **~65% → 55%**; playoffs **~68% → 58%**. Shape = a slow gradual fade + steeper stretches in the mid-1990s and post-2017, with a brief visible uptick around 2002-04 in between.
   - HCA is built from four box-score categories (shooting, rebounding, foul calls, turnover margin) that capture **~95%** of it, shooting the largest; plus smaller rest & altitude boosts for specific matchups.
   - Decline drivers (four categories, ~96% of RS decline): fairer officiating, the shift to three-point shooting, the fading home rebounding edge, and the closing turnover gap. Rebounding is the largest single channel and is independent of the three-point shift; the intro names this as the surprise, that the biggest driver of the decline is the one factor the data can measure but not explain.
-- **Why it matters:** In the 1980s and 1990s, a weaker team playing at home in the playoffs won 65% and 66% of those games, nearly the same rate as the stronger team hosting. Today that number is 49%. Home court used to compensate for being outmatched; it no longer does. The decline also reveals three real changes in the game: officiating grew more even, the three-point move flattened the home shooting edge, and teams abandoned the offensive glass. It corrects the crowd assumption: arenas are fuller than ever (attendance records in the same years HCA bottomed).
+- **Why it matters:** In the 1980s and 1990s, a weaker team playing at home in the playoffs won 65% and 66% of those games, nearly the same rate as the stronger team hosting. Today that number is 49%. Home court used to compensate for being outmatched; it no longer does. The decline also reveals three real changes in the game: officiating grew more even, the three-point move flattened the home shooting edge, and teams abandoned the offensive glass. It corrects the crowd assumption: arenas have stayed near capacity even in the years HCA bottomed.
 - **Ruled-out suspects:** rule changes, travel, time zones, pace, crowd size, playoff format changes (best-of-seven shifts and Finals reschedules, incl. 2014), fewer back-to-backs (~8% of decline). Competitive balance is a partial exception: it can't explain the long-run decline (parity is mean-reverting; HCA has declined steadily for 40 years), but year-to-year parity fluctuations show a weak association with HCA fluctuations in the same year.
 - **Scope:** regular season vs. playoffs tracked separately (same direction, different timeline); ~52,000 games; tables in home_court_results.md.
 
@@ -153,7 +153,7 @@
 
 ![Parity vs HCA](../generated/images/home_court_parity.svg){#fig-parity}
 
-- **Crowd size:** arenas near capacity throughout (~17k→18k+), records set as HCA hit lows. *RESULTS r=+0.248 (p=0.212); detrended ns.* Playoffs ~guaranteed sellouts yet faded too.
+- **Crowd size:** arenas near capacity throughout (~17k→18k+), even as HCA hit lows. *RESULTS r=+0.248 (p=0.212); detrended ns.* Playoffs ~guaranteed sellouts yet faded too.
 
 ![Attendance & empty-arena](../generated/images/home_court_attendance.svg){#fig-attendance}
 
