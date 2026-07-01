@@ -1316,8 +1316,8 @@ def plot_rapm_reliability(rel: dict) -> str:
     "yoy": {"RAPM": r, "RAPM_MY": r, "BPM": r}}. Plots split-half r (correlating
     RAPM fit independently on two halves of the same pooled possessions)
     against each minutes bin, against a reference line at 0.5 for what a
-    reliable metric looks like. Single-season reliability rises with minutes
-    but stays under that line; pooling several seasons is what carries it over.
+    reliable metric looks like. A real player-quality signal should climb
+    toward that line as more minutes accumulate; here it does not.
     """
     by_bin = rel.get("by_bin", [])
     if not by_bin:
@@ -1354,22 +1354,19 @@ def plot_rapm_reliability(rel: dict) -> str:
     ax.set_ylim(-0.1, 1.0)
 
     ax.set_title(
-        "The reconstruction fix revived RAPM: split-half reliability roughly "
-        "tripled, and pooling seasons carries it over the usable line",
+        "Our RAPM barely reproduces itself: reliability stays near zero at "
+        "every minute level",
         fontsize=11.5, color="#222", pad=30
     )
     yoy = rel.get("yoy", {})
     yoy_note = ""
     if "RAPM" in yoy and "BPM" in yoy:
-        yoy_note = (f" Year over year, RAPM now tracks itself at r={yoy['RAPM']:.2f} "
-                    f"(near zero before the fix)")
-        if "RAPM_MY" in yoy:
-            yoy_note += f", and RAPM+prior at r={yoy['RAPM_MY']:.2f}, matching BPM's r={yoy['BPM']:.2f}"
-        yoy_note += "."
+        yoy_note = (f" Year over year, RAPM tracks itself at r={yoy['RAPM']:.2f} "
+                    f"vs. BPM's r={yoy['BPM']:.2f}.")
     ax.text(0.5, 1.01,
             "Two independent halves of the same possession data, correlation "
-            "of the resulting player ratings; single-season bars stay under the "
-            f"line, pooling seasons carries it over.{yoy_note}",
+            "of the resulting player ratings; a real metric climbs with "
+            f"minutes.{yoy_note}",
             transform=ax.transAxes, ha="center", va="bottom", fontsize=8, color=GRAY)
 
     fig.tight_layout()
