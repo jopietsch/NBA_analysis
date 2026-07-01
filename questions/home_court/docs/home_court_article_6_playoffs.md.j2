@@ -1,0 +1,85 @@
+# The Playoffs Are Different (and the Same)
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+Averaged across four decades of NBA playoffs, the arena a game is played in has mattered more to the outcome than the quality gap between the two teams, at least among the factors this analysis could measure.
+Home court is supposed to matter most here, in the games with the highest stakes, and for a long time it did exactly that.
+Then it started slipping, and the way it slipped is the surprise.
+The playoff decline is not about better teams winning more at home.
+It is about worse teams winning less.
+
+The shared backdrop first: home court advantage has been shrinking since the 1980s, in the playoffs from nearly << f("po.hw_first_plain") >> to << f("po.hw_last_plain") >> and in the regular season from about << f("reg.hw_first_plain") >> to << f("reg.hw_last_plain") >>.
+The playoffs are not just a shrunken copy of the regular season, though.
+They have their own structure, their own baseline, and their own timeline of decline.
+
+## How a series is shaped
+
+The home team usually wins Games 1 and 2 at the higher seed's arena, and Game 5, back at the top seed, is the most lopsided game of the series.
+Games 3 and 4, at the lower seed's arena, average about 55% for the home team across all decades, though as the next section shows that flat average hides a large change underneath it.
+Even Game 7 still goes to the home team about 64% of the time.
+Road teams show no evidence of adapting as a series deepens; the last game of a series is nearly as friendly to the host as the first.
+
+![Two panels. Left: playoff home win % for each game within a series (G1 through G7), all eras combined, with a reference line at the overall playoff average. G5, back at the top seed's arena, is consistently the most lopsided. Right: the same G1–G7 breakdown broken out by era, one line per era.](../generated/images/home_court_series_breakdown.svg){#fig-series-breakdown}
+
+## The twist: worse teams stopped winning at home
+
+Here is where the decline actually lives.
+In the 1980s and 1990s, the lower-seeded team, the weaker opponent, won << f("seed.weaker_1984") >> and << f("seed.weaker_1995") >> of their home playoff games.
+The gap was small, under 6 points in the 1980s, and in the 1990s the lower seed won more often at home than the higher seed did.
+Quality barely mattered once you were in your own building; the question was not whether you would win at home, but whether you could steal one on the road.
+
+From the mid-2000s onward the lower seed's home rate dropped to 47–52%, while the higher seed's held near 70–75% through 2022 before easing to about 65% in recent seasons.
+A gap that started at about 5–6 percentage points grew to more than 20 at its peak and still sits near 15 today.
+The top seeds didn't get much better at holding serve.
+The weaker hosts collapsed.
+Home court used to compensate for being outmatched in the playoffs, and it no longer does.
+
+## Is it just weaker seeds, or real home-court decline?
+
+A fair objection: maybe playoff home teams win less now simply because top seeds no longer outclass their opponents the way they once did.
+The data says no. Strip out the quality gap between the two teams and the year-by-year playoff decline doesn't budge; none of it is explained by seeds bunching closer together.
+The cleanest proof isolates the genuinely weaker team by regular-season quality: when the objectively weaker team hosts Games 3 and 4, it still wins just over half the time.
+Home court alone is still worth a coin-flip-beating advantage, and that advantage is exactly what has been slipping away.
+
+![The playoff decline is genuine home-court weakening, not weaker seeds. Left: the yearly playoff decline is the same size before and after removing the regular-season quality gap between the two teams (quality explains essentially none of it). Right: home win % by who hosts, where even the objectively weaker team still wins about << f("pq.weaker_hosts") >> of its home games (Games 3–4), a pure venue effect above the coin-flip line.](../generated/images/home_court_playoff_quality.svg){#fig-playoff-quality .collapsible}
+
+## A best-of-7 absorbs most of home court
+
+A single home game and a seven-game series are very different things.
+To see how the per-game advantage translates into who actually wins a series, I ran a simulation: take the home win rate for one game and play out 200,000 best-of-7 series between two otherwise-equal teams, with the home-court side hosting Games 1, 2, 5, 6, and 7.
+The format flattens the advantage.
+In the 1980s a home team won about << f("reg.hw_first_plain") >> of individual regular-season games, but that turned into only a << f("series.rs_early") >> chance of winning a series.
+By the 2020s the per-game rate had fallen to about << f("reg.hw_last_plain") >>, and the series advantage with it, to about << f("series.rs_now") >>: a home-court team in a series is now barely better than a coin flip.
+The playoffs tell the same story a notch higher, a series advantage near << f("series.po_now") >> today.
+Notice how much the format softens the fall: a roughly 9-point drop in the regular-season per-game advantage shows up as only about a 3-point drop at the series level.
+
+Two cautions on the simulation.
+The playoff per-game rate mixes home court with seeding, since better teams host more games, so the regular-season figures are the cleaner read on the pure venue effect.
+And the simulation treats each game as a fresh start, unaffected by who won the ones before, so it shows how much the format dilutes an advantage rather than forecasting any real series.
+
+![Two panels translating the per-game home advantage into a best-of-7 series advantage via simulation. Left: a single-game home win rate (x-axis) maps to a much smaller series win rate (y-axis) for the home-court team, far below the dashed 1:1 line; era dots sit on the curve and drift toward the 50% coin flip over time. Right: the simulated series-level home advantage by era for the regular season and the playoffs, both ending just above 50%, with the per-game rates shown muted above for contrast.](../generated/images/home_court_series_simulation.svg){#fig-series-simulation .collapsible}
+
+## Different timing, same direction
+
+The playoffs followed the same path as the regular season, but with nearly a two-decade lag.
+Postseason home court held firm through the 2000s and 2010s even as the regular season slipped, then joined the slide after 2018.
+Because each postseason rests on far fewer games than a full regular season, the direction of the playoff decline is certain but its exact size is not.
+The much-blamed 2014 playoff format change is not the reason for any of this, an alibi covered in full in [The Alibis](home_court_article_5_alibis.html).
+
+## The same, part two: every playoff building looks alike
+
+One more playoff twist, covered in full in [The Buildings That Still Bite](home_court_article_7_buildings.html): the real spread between franchises that shows up in the regular season vanishes in the postseason, where the handful of games each building hosts can't separate one arena from another.
+Yet the common advantage every host shares runs larger in the playoffs than in the regular season.
+That is the playoff paradox in one line: the differences between buildings disappear, and the advantage of any building at all grows.
+
+---
+
+Next: [The Buildings That Still Bite](home_court_article_7_buildings.html)
+
+Back to the series hub: [The Disappearing Home Court](home_court_series.html)

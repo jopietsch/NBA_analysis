@@ -18,6 +18,7 @@ Outputs both <stem>.pdf and <stem>.html to generated/ next to the source file
 
 import os
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -85,6 +86,46 @@ def _yaml_dq(value: str) -> str:
 
 # ── Quarto helpers ────────────────────────────────────────────────────────────
 
+def _finalize_html_resources(tmp: str, stem: str, dest: str, render_cwd: str) -> None:
+    """Fix up an HTML render's resource paths and move its sidecar assets.
+
+    With embed-resources: false, Quarto writes <img> srcs relative to
+    render_cwd (where it copies the referenced image too) and emits a
+    <stem>_files/ dir of css/js libs alongside the output. Since we render to
+    a throwaway tmp dir and then relocate just the .html file to dest, both
+    need fixing: img srcs must be re-relativized from render_cwd to dest's
+    directory (the source image already lives there for real; no copy
+    needed), and the <stem>_files/ dir must be moved next to dest with its
+    references renamed to match dest's stem.
+    """
+    out_dir = os.path.dirname(os.path.abspath(dest)) or "."
+    html_path = os.path.join(tmp, stem + ".html")
+    with open(html_path) as f:
+        html = f.read()
+
+    def _fix_img_src(m: re.Match) -> str:
+        prefix, path = m.group(1), m.group(2)
+        if path.startswith(("http://", "https://", "data:", "#", "/")):
+            return m.group(0)
+        abs_path = os.path.normpath(os.path.join(render_cwd, path))
+        return f'{prefix}{os.path.relpath(abs_path, out_dir)}"'
+
+    html = re.sub(r'(<img\b[^>]*\bsrc=")([^"]+)"', _fix_img_src, html)
+
+    files_dir = os.path.join(tmp, stem + "_files")
+    if os.path.isdir(files_dir):
+        final_stem = os.path.splitext(os.path.basename(dest))[0]
+        if final_stem != stem:
+            html = html.replace(f"{stem}_files/", f"{final_stem}_files/")
+        dest_files_dir = os.path.join(out_dir, final_stem + "_files")
+        if os.path.exists(dest_files_dir):
+            shutil.rmtree(dest_files_dir)
+        shutil.move(files_dir, dest_files_dir)
+
+    with open(html_path, "w") as f:
+        f.write(html)
+
+
 def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
                    toc: bool = False, extra_meta: dict | None = None,
                    date: str | None = None) -> None:
@@ -124,6 +165,8 @@ def _quarto_render(src: str, fmt: str, dest: str, title: str, author: str,
         if result.returncode != 0:
             sys.exit(f"quarto render failed:\n{result.stderr}")
         os.makedirs(os.path.dirname(dest) or ".", exist_ok=True)
+        if fmt == "html":
+            _finalize_html_resources(tmp, stem, dest, src_dir)
         os.replace(os.path.join(tmp, stem + ext), dest)
 
 

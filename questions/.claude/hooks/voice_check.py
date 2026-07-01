@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """PostToolUse voice gate for reader-facing docs.
 
-Fires ONLY on `*_findings.md` and `*_summary.md` — the docs written for a
-general / sports reader. It flags hard statistical jargon and em-dashes that
-violate the plain-language rules in questions/CLAUDE.md and suggests a plain
-replacement for each.
+Fires ONLY on `*_findings.md`, `*_summary.md`, and article/series docs
+(`*_article_*.md`, `*_series*.md`, each optionally with a trailing `.j2`) —
+the docs written for a general / sports reader. It flags hard statistical
+jargon and em-dashes that violate the plain-language rules in
+questions/CLAUDE.md and suggests a plain replacement for each.
 
 Intentionally NOT checked (stat language is correct there by design):
   - *_results.md          — auto-generated statistical output
@@ -86,7 +87,11 @@ def main() -> None:
 
     fp = (data.get("tool_input") or {}).get("file_path", "") or ""
     name = os.path.basename(fp)
-    if not (name.endswith("_findings.md") or name.endswith("_summary.md")):
+    if name.endswith(".j2"):
+        name = name[: -len(".j2")]
+    is_findings_summary = name.endswith("_findings.md") or name.endswith("_summary.md")
+    is_article = name.endswith(".md") and ("_article_" in name or "_series" in name)
+    if not (is_findings_summary or is_article):
         sys.exit(0)
 
     try:

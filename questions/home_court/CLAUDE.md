@@ -21,6 +21,14 @@ The standard commands, module architecture, document workflow, test pattern, and
 - `docs/home_court_stats_explainer.md` / `stats_tutorial.md` — hand-edited methods companions to `home_court_results.md`; PDFs at `generated/home_court_stats_explainer.pdf` and `../generated/stats_tutorial.pdf` respectively.
 - `docs/home_court_investigation.md` — reader-facing companion that shows the tests behind the findings, in two parts. Part 1 ("What Drives Home Court") covers the confirmed story (the decline, the four box-score channels that make up HCA, and the drivers of the change: fouls, three-pointers, rebounding, turnovers); Part 2 ("What We Ruled Out") covers every ruled-out hypothesis in full (why each seemed plausible, what was tested, what the data showed). Each test reports both p-values and 95% CIs, with a "How to read the numbers" box up top. PDF at `generated/home_court_investigation.pdf`. Regenerate with `python3 ../generate_doc_pdf.py docs/home_court_investigation.md`. Update Part 1 when Sections 1–3 of FINDINGS change and Part 2 when Section 4 changes.
 
+### The article series (web-first)
+
+`home_court_findings.md.j2` is recut into an eight-article series plus a hub, all rendering from the same `home_court_facts.json` as the monolith. The templates:
+- `docs/home_court_series.md.j2` — the hub (`home_court_series.html`): hook, the ordered links to all eight articles, and links to the full report and companion docs.
+- `docs/home_court_article_1_case.md.j2` through `docs/home_court_article_8_checks.md.j2` — the eight standalone articles: 1 case, 2 whistle, 3 threes, 4 glass, 5 alibis, 6 playoffs, 7 buildings, 8 checks.
+
+The articles are **web-first**: they link to each other in HTML and are not part of the PDF set. `home_court_findings.md.j2` remains **canonical**: when the findings change, update the owning article too. The mapping from findings content to owning article: intro / Section 1 (the decline) → article 1; fouls → article 2; three-pointers → article 3; rebounding and turnovers → article 4; ruled-out factors (Section 4) → article 5; the playoff picture (Section 5) → article 6; franchise/altitude and blowouts (Appendix A) → article 7; the checks (Appendix C) → article 8.
+
 ## updating docs/home_court_findings.md
 - whenever the order of sections changes in home_court_findings.md, the order needs to also change in home_court_results.md so home_court_analysis.py must be updated to the new order
 - throughout home_court_findings.md, make sure that both regular season and playoffs are mentioned. We are trying to determine what changes for the regular season and what changed for the playoffs or post season.

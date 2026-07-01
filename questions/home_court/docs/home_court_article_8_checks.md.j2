@@ -1,0 +1,65 @@
+# How We Know This Isn't Made Up
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+The central claim of this series is easy to state and easy to get wrong: NBA home court advantage has faded, from about << f("reg.hw_first_plain") >> to << f("reg.hw_last_plain") >> of regular-season games and from nearly << f("po.hw_first_plain") >> to << f("po.hw_last_plain") >> in the playoffs, and a handful of real-world changes narrowed it.
+Findings like that are the kind you can talk yourself into.
+Pick the right years, fit a model to a story you already believe, run enough tests, and something will always look real.
+So every claim in these articles was put through a battery of checks built to make it fail.
+They held.
+Here is what was tried, in plain terms.
+
+**The slowdown was dated several ways, and they agreed.** The decline bent once, gently, in the late 1990s, then kept drifting.
+A bend like that can be an illusion of where you draw the line, so it was located with methods that share no assumptions: one that checks every possible break year for the sharpest change, one that watches the trend for drift as seasons pile up, and one that weighs whether the record is better described by no bend, one bend, or two.
+They all land on about << f("sb.reg_break") >>, inside a range of roughly << f("changepoint.hpd_lo") >> to << f("changepoint.hpd_hi") >>.
+When independent methods agree, the bend is in the data, not in the choice of line.
+This is the shape [Home Court Is Fading](home_court_article_1_case.html) describes.
+
+**Fake rule changes were planted where nothing happened.** A favorite way to fool yourself is to find an effect at a moment when nothing actually changed.
+So made-up rule changes were planted at dozens of years where nothing happened, to see whether the method would invent an effect anyway.
+It didn't: the only year that stands out as a genuine one-time shift is the real 1994–95 hand-checking crackdown, a drop of about << f("era.drop_1995") >> points.
+That is the fingerprint [Home Court Is Fading](home_court_article_1_case.html) dates the first drop by, and the reason [The Alibis](home_court_article_5_alibis.html) can clear every other rule change.
+
+**The explanation was frozen on old seasons and made to predict the rest.** A fair worry about any after-the-fact story is that it was fit to the whole history, so of course it lines up.
+To test that, the four-category box-score model was trained only on seasons through << f("oos.train_end") >>, then used unchanged to predict each later season's home win rate.
+Its error on seasons it had never seen is about << f("oos.rmse_channel") >> percentage point in the regular season, against more than << f("oos.rmse_naive") >> for a flat guess, and it even catches the 2021 dip a simple trend line misses.
+The same frozen model reconstructs the steeper modern playoff decline too.
+The mechanism predicts data it was not built from.
+
+![Actual home win % across all seasons (regular season left, playoffs right) with the four-category model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast .collapsible}
+
+**The breakdown was re-run with no straight-line assumption.** The split of the decline across the four categories comes from a model that adds them up in a straight line.
+A second, more flexible model that lets the categories bend and feed off each other reaches the same split: shooting, rebounding, and turnovers each carry a substantial share and fouls the smallest at about << f("shap.reg_fouls_pct") >> (the simpler straight-line breakdown in [The Three-Point Suspect](home_court_article_3_threes.html) put it near << f("share.fouls.decline") >>), adding back to the same total drop.
+The playoffs split the same way.
+Because the two methods share no assumptions, the four-way split, including the rebounding lead that [The Mystery on the Glass](home_court_article_4_glass.html) rests on, is a feature of the games themselves, not of the simpler model.
+
+![How the home-court decline splits across the four box-score factors when a flexible win model, free of any straight-line assumption, does the splitting. Each era's stacked bars are the factors' contributions to that season's home advantage; the tall early-1980s stack shrinks toward zero in the recent seasons, and that shrinking stack is the decline. Regular season and playoffs split it across the same factors, with shooting and rebounding the largest pieces.](../generated/images/home_court_shap_channels.svg){#fig-shap-channels .collapsible}
+
+**The drivers were tested against a hidden cause.** Maybe a category is just standing in for something the box score never recorded.
+There is a standard way to ask how strong such a hidden cause would have to be to explain a link away.
+For the shooting link that [The Three-Point Suspect](home_court_article_3_threes.html) rests on, a hidden cause would have to explain more than << f("sens.reg_efg_rv") >> of everything left unexplained in both the shooting gap and who wins; for the foul link, more than << f("sens.reg_fouls_rv") >>.
+Those are demanding thresholds, so the strongest links are hard to wish away.
+
+**Running many tests was corrected for.** Test enough things and a few will look real by chance alone.
+After the standard correction for having run a whole battery of tests at once, the central results, the decline and its main drivers, still clear the bar.
+They are not the lucky few.
+
+**It wasn't just which teams happened to host.** The era decline could be a trick of composition, if the stronger home teams happened to host more in the early years.
+When each franchise is checked on its own, the era-by-era decline barely moves.
+It is not an artifact of which teams played at home in which decade, which is why the fade reads as league-wide rather than the work of a few franchises.
+
+None of these checks proves a mechanism on its own, and where the data can only propose a cause, these articles say so.
+What they establish is that the decline is real, its timing is real, and its main drivers are not artifacts of how the numbers were sliced.
+For every test above with its full numbers and the range each result could shift within, see [The Investigation](home_court_investigation.html); the raw statistical output is in the [Results](home_court_results.html) file.
+
+---
+
+That closes the case.
+
+Back to the series hub: [The Disappearing Home Court](home_court_series.html)

@@ -10,7 +10,7 @@ format:
     fontsize: 10pt
     monofont: "DejaVu Sans Mono"
   html:
-    embed-resources: true
+    embed-resources: false
     toc: true
     theme: cosmo
     monofont: "DejaVu Sans Mono, monospace"

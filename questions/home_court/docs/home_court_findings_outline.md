@@ -17,6 +17,7 @@
 - **Why it matters:** In the 1980s and 1990s, a weaker team playing at home in the playoffs won 65% and 66% of those games, nearly the same rate as the stronger team hosting. Today that number is 49%. Home court used to compensate for being outmatched; it no longer does. The decline also reveals three real changes in the game: officiating grew more even, the three-point move flattened the home shooting edge, and teams abandoned the offensive glass. It corrects the crowd assumption: arenas have stayed near capacity even in the years HCA bottomed.
 - **Ruled-out suspects:** rule changes, travel, time zones, pace, crowd size, playoff format changes (best-of-seven shifts and Finals reschedules, incl. 2014), fewer back-to-backs (~8% of decline). Competitive balance is a partial exception: it can't explain the long-run decline (parity is mean-reverting; HCA has declined steadily for 40 years), but year-to-year parity fluctuations show a weak association with HCA fluctuations in the same year.
 - **Scope:** regular season vs. playoffs tracked separately (same direction, different timeline); ~52,000 games; tables in home_court_results.md.
+- **Article series pointer:** the intro links to the eight-article web recut of this report (`home_court_series.html`), and Appendix E's companion table gains an Article Series row (web only). Navigation only; no findings content changed.
 
 ---
 

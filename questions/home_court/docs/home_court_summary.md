@@ -24,7 +24,7 @@ Two real-world changes stand out: **the shift to three-point shooting** (which a
 And the biggest single driver of the decline, **rebounding**, is the one piece neither change explains: the data can measure it but not say why it faded.
 
 These findings held up under a battery of checks built to break them, laid out in the full report.
-Because there are more regular-season games, the analysis is more precise; the playoff figures show direction more than precise size.
+[The checks have their own article: [How We Know This Isn't Made Up](home_court_article_8_checks.html).]{.content-visible when-format="html"} Because there are more regular-season games, the analysis is more precise; the playoff figures show direction more than precise size.
 
 ---
 
@@ -36,11 +36,13 @@ Forty years ago, home teams won about 65% of regular-season games and nearly 68%
 Today it's about 55% and 58%, **a drop of roughly 10 percentage points in both**.
 The scoring gap followed the same arc: home teams outscored visitors by about 3 points per 100 possessions through the mid-2010s, and about 2 today, a drop of about a third.
 The slide sped up twice, in the mid-1990s and again around 2018, but both bursts are accelerations within the same long trend, not separate drops on top of it.
+[The full story of the decline: [Home Court Is Fading](home_court_article_1_case.html).]{.content-visible when-format="html"}
 
 Home court in the playoffs declined later than in the regular season: playoff home win rates held near 64% from the mid-1990s through the 2010s while the regular season was already sliding, then fell to about 58% in the past few seasons.
 The per-game advantage is still real: the home team wins the early games at the top seed's arena and even takes most Game 7s.
 But a best-of-7 series flattens it.
 A home-court team that would have won the series about 55% of the time in the 1980s now takes it about 52% of the time, barely better than a coin flip.
+[The postseason in full: [The Playoffs Are Different (and the Same)](home_court_article_6_playoffs.html).]{.content-visible when-format="html"}
 
 ---
 
@@ -65,6 +67,7 @@ Referees are calling fairer games: home teams once attempted about 2 more free t
 The 1994–95 hand-checking crackdown is the one rule change that leaves a clear fingerprint in the foul gap.
 The three-point shift reaches further: it accounts for the entire shooting decline and about half of both the foul and turnover declines, so the move to the perimeter touches close to half the 40-year total on its own.
 It is the biggest single real-world force, but still not the engine behind the whole decline.
+[Each change has its own article: [The Whistle](home_court_article_2_whistle.html) and [The Three-Point Suspect](home_court_article_3_threes.html).]{.content-visible when-format="html"}
 
 The largest unexplained piece is rebounding.
 It sits almost entirely outside the three-point story: in games with similar three-point rates, the shooting advantage disappears while the rebounding advantage barely moves.
@@ -75,6 +78,7 @@ The data shows the home rebounding advantage shrank; it cannot say why.
 Turnovers faded over the same span: home teams once committed slightly fewer turnovers than visitors, and that gap is now essentially zero.
 About half of that fade is the perimeter shift (fewer drives, fewer live-ball turnovers); the other half has no clear explanation.
 The playoffs show the same fade on both counts, with far fewer games to pin down the size.
+[Rebounding and turnovers share an article: [The Mystery on the Glass](home_court_article_4_glass.html).]{.content-visible when-format="html"}
 
 Both rebounding and turnovers are near their practical limits: three-point attempts already make up about 40% of all shots and the offensive-rebound rate is close to a floor, so further declines have less room to run.
 
@@ -97,6 +101,7 @@ Even crowd size misses.
 Arenas have held near capacity for 25 years, even in the seasons home court hit bottom.
 A live crowd is still a real ingredient: empty 2020–21 arenas dropped home teams to about 51%, and any crowd at all restored about 58%.
 But that makes crowd presence a switch that flips with the doors, not a dial slowly turning down.
+[Every ruled-out suspect in full: [The Alibis](home_court_article_5_alibis.html).]{.content-visible when-format="html"}
 
 ---
 
@@ -107,6 +112,7 @@ But that makes crowd presence a switch that flips with the doors, not a dial slo
 | Document | Description |
 |---|---|
 | [Full Report](home_court_report.html) | Complete findings with all charts, section-by-section analysis, and the ruled-out factors. |
+| [Article Series](home_court_series.html) | The full report recut as eight standalone articles, each a shorter read on one part of the story. |
 | [Regression Results](home_court_results.html) | Full statistical output: regression tables, significance tests, and coefficient values. |
 | [Stats Explainer](home_court_stats_explainer.html) | Guide to the statistical methods used, written for a general audience. |
 | [Stats Tutorial](../../generated/stats_tutorial.html) | Worked examples reproducing key results from the regression output. |
@@ -118,6 +124,7 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 | Document | File | Description |
 |---|---|---|
 | Full Report | `home_court_report.pdf` | Complete findings with all charts, section-by-section analysis, and the ruled-out factors. |
+| Article Series | web only | The full report recut as eight standalone articles; the series lives on the site, not in the PDF set. |
 | Regression Results | `home_court_results.pdf` | Full statistical output: regression tables, significance tests, and coefficient values. |
 | Stats Explainer | `home_court_stats_explainer.pdf` | Guide to the statistical methods used, written for a general audience. |
 | Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |

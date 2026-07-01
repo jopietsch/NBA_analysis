@@ -1,0 +1,115 @@
+# The Alibis
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+In 2020-21 the NBA played to empty buildings, and home court nearly vanished: home teams won just 51% of their games, a hair above a coin flip.
+Let any crowd back in, even a reduced one, and the advantage snapped back to about 58%.
+So the crowd is a real ingredient, worth about seven points on the night.
+Case closed on the 40-year decline?
+Not even close.
+If crowds are what make home court, and home court has been fading for four decades, then crowds should have been thinning for four decades.
+They weren't.
+Arenas have stayed near capacity the whole time, packed even in the seasons home court hit its lowest.
+The crowd is a switch that flips with the doors, not a dial slowly turning down.
+
+That is the shape of this whole article.
+Home court advantage has been shrinking since the 1980s: the home team's win rate fell from about 65% to 55% in the regular season, and from nearly 68% to 58% in the playoffs.
+Fans have a list of usual suspects for why: rule changes, easier travel, load management, smaller crowds, faster pace, the 2014 playoff format.
+Line them up and nearly every one has an alibi.
+Here they are, one at a time, with the crowd first because its accidental test is the cleanest of the lot.
+
+![Left: league average attendance per game vs. regular-season home win %, 2000–2026, with crowds holding near capacity while home court keeps falling. Right: 2020–21 home win % by game attendance, where an empty arena erases the advantage that even a small crowd restores.](../generated/images/home_court_attendance.svg){#fig-attendance}
+
+## The rule changes, and the one that isn't an alibi
+
+The series' opening chart, in [Home Court Is Fading](home_court_article_1_case.html), shades the seasons by the NBA's major rule changes, and it is natural to assume those boundaries explain where home court bent.
+Here are the eras and what defines them:
+
+| Era | Seasons | Defining rule change |
+|-----|---------|----------------------|
+| 1984–94 | 1983–84 → 1993–94 | Illegal-defense rules (no zone defense) |
+| 1995–01 | 1994–95 → 2000–01 | Hand-checking restrictions; zone still illegal |
+| 2002–04 | 2001–02 → 2003–04 | Zone defense legalized; defensive three-seconds added |
+| 2005–17 | 2004–05 → 2016–17 | Perimeter hand-checking banned (the pace-and-space era) |
+| 2018–22 | 2017–18 → 2021–22 | Freedom-of-movement emphasis |
+| 2023–26 | 2022–23 → 2025–26 | Transition take-foul rule |
+
+They mostly don't.
+Only 1994–95 registers a real shift in the data: a one-time drop of about 2.6 points, most likely from the hand-checking crackdown, though the simultaneously shortened three-point line adds some ambiguity.
+Hand-checking registered because it directly affected referee discretion, one of the few things that can shift asymmetrically between the home and away teams.
+Every other rule change reshaped how the game looks without reshaping who benefits from playing at home: zone legalization, the 2004-05 perimeter hand-check ban, freedom of movement, the take-foul rule.
+And in the playoffs, even 1994–95 doesn't register.
+The postseason slide is steady drift throughout, with no single season standing out.
+
+## Travel, time zones, rest, and the schedule
+
+Most off-court explanations either don't matter or haven't changed enough to explain the decline.
+Travel distance has a negligible effect in the regular season, about 0.07 points per 100 miles, and if anything it leans slightly against the home team; in the playoffs there is no measurable effect at all.
+Time zones are flat in both.
+
+Rest is the one that pays off on the night.
+Home teams win 63% when they are the better-rested side and 58% when the visitor holds the rest advantage, a real swing.
+But that gap hasn't changed across eras, so it can't bend a 40-year trend.
+Load management is the closest thing to a live suspect here: it cut back-to-back frequency from 35% to under 20%, so visitors arrive fresher than they used to.
+That is real, and it is the one schedule change with a foot in the door.
+Yet it accounts for only about 8% of the decline, because home advantage shrank within every rest situation alike, not just on the second night of a back-to-back.
+
+Pace of play shows no meaningful relationship to the trend.
+If anything the home-vs-away gap in three-point attempts has grown, with home teams now taking slightly more threes than visitors, the wrong direction to explain a shrinking home advantage.
+
+Competitive balance is the subtle one.
+The raw season-to-season comparison shows nothing.
+A faint link appears only in the year-to-year wobble: in a season when the league bunches closer in quality, home court may dip a little, and even that rests on a small sample.
+So it is best read as a hint, not a finding, and parity has risen and fallen for 40 years while home court fell steadily, so it can't carry the long decline.
+
+Crowd size was already cleared in the opening, so that leaves one more check: throw every off-court suspect in together at once.
+A test combining rest, altitude, time zones, and the COVID seasons finds each has some effect, but none of them explain the long-run decline.
+What's left over belongs entirely to which era the game was played in, which is the decline itself, not any off-court factor.
+The full treatment of each hypothesis, why it seemed plausible and exactly what the data showed, is in Part 2 of [The Investigation](home_court_investigation.html).
+
+## No single franchise to blame
+
+Maybe a few teams dragged the average down.
+They didn't.
+Each active franchise was tracked separately, and once you remove the random bounce of a 40-odd-game home schedule, the spread across teams is no bigger than that randomness: the real team-to-team difference in decline rates is about zero.
+Every franchise's home-court advantage faded at roughly the same league-wide rate, about half a point of the home-road gap per year.
+No single team stands apart as the cause.
+This is a regular-season result; per-team playoff samples are too small to split this way.
+
+![How fast each franchise's home-court advantage changed per year, with a bar showing the range its true value is likely to sit in. Negative values mean declining; the dashed blue line is the league-wide rate. Nearly every team's bar overlaps that line, and once the randomness is removed the spread between teams is near zero: the decline is shared, not concentrated in a handful of franchises. Active franchises only.](../generated/images/home_court_team_decline_slopes.svg){#fig-team-decline-slopes .collapsible}
+
+## The 2014 playoff format: the most-blamed suspect
+
+The playoffs have been restructured several times, in four distinct format periods.
+
+| Period | Seasons | Format |
+|--------|---------|--------|
+| 1984 | 1983–84 | Best-of-5 first round; 2-2-1-1-1 Finals |
+| 1985–02 | 1984–85 → 2001–02 | Best-of-5 first round; 2-3-2 Finals |
+| 2003–13 | 2002–03 → 2012–13 | Best-of-7 first round; 2-3-2 Finals |
+| 2014–26 | 2013–14 → 2025–26 | Best-of-7 first round; 2-2-1-1-1 Finals |
+
+The most recent shift, in 2014, lands right on top of the sharpest stretch of playoff home-court decline: a nearly 7-point raw drop from the 2003–13 period to the 2014–26 period.
+That timing is exactly what makes it a suspect, and exactly why it needs an alibi.
+It has one.
+The playoff slide was already underway before 2014 and continued at the same pace after; the format change added nothing of its own.
+The clean tell is the regular season, which never changed format at all yet declined at a similar rate across the same periods.
+The playoff drop would have arrived on roughly the same schedule regardless.
+Format was not the cause.
+
+![Home win % averaged over each playoff format period, for both the regular season and the playoffs. The regular season never changed format, so the fact that both series decline at similar rates across the same periods means the format change is not driving the playoff drop.](../generated/images/home_court_advantage_format_bars.svg){#fig-advantage-format-bars width=50% .collapsible}
+
+A whole lineup of alibis, one real culprit among the rule changes, and a crowd effect that turns out to be a switch rather than a slide.
+The forces that actually bent the 40-year trend live in the box score, not in the schedule, the arena, or the rulebook.
+
+---
+
+Next: [The Playoffs Are Different (and the Same)](home_court_article_6_playoffs.html)
+
+Back to the series hub: [The Disappearing Home Court](home_court_series.html)

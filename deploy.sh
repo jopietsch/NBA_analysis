@@ -22,6 +22,12 @@ for project_dir in "$REPO_ROOT/questions"/*/; do
     [[ -e "${htmls[0]}" ]] || continue
     mkdir -p "$STAGE/$project/generated"
     cp "${htmls[@]}" "$STAGE/$project/generated/"
+    [[ -d "$gen_dir/images" ]] && cp -R "$gen_dir/images" "$STAGE/$project/generated/images"
+    # Quarto emits a <stem>_files/ sidecar (CSS/JS) per HTML doc now that
+    # embed-resources is off; the pages render unstyled without them.
+    for sidecar in "$gen_dir"/*_files; do
+        [[ -d "$sidecar" ]] && cp -R "$sidecar" "$STAGE/$project/generated/"
+    done
     echo "  $project: ${#htmls[@]} files"
 done
 
@@ -32,6 +38,10 @@ if [[ -d "$shared_gen" ]]; then
     if [[ -e "${shared_htmls[0]}" ]]; then
         mkdir -p "$STAGE/generated"
         cp "${shared_htmls[@]}" "$STAGE/generated/"
+        [[ -d "$shared_gen/images" ]] && cp -R "$shared_gen/images" "$STAGE/generated/images"
+        for sidecar in "$shared_gen"/*_files; do
+            [[ -d "$sidecar" ]] && cp -R "$sidecar" "$STAGE/generated/"
+        done
         echo "  shared: ${#shared_htmls[@]} files"
     fi
 fi

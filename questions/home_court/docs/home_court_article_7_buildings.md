@@ -1,0 +1,72 @@
+# The Buildings That Still Bite
+
+```{=typst}
+#align(center)[_Draft_]
+```
+
+::: {.content-visible when-format="html"}
+<p style="text-align:center"><em>Draft</em></p>
+:::
+
+Home-court advantage in the NBA has been fading for forty years.
+Two buildings never got the memo.
+Denver and Utah, the league's only altitude teams, still hold its largest home-court advantages: about 28 and 27 percentage points above their own road win rates, against a league average near 20.
+The thin mountain air is the most plausible reason, and it has outlasted four decades of decline.
+
+Across the league, the home team's regular-season win rate has fallen from about 65% to 55%, and the playoff rate from nearly 68% to 58%.
+That slide is real and league-wide.
+But it did not flatten every franchise to the same level, and a few of the differences between buildings are worth a look on their own.
+
+## The spread between buildings is real
+
+Denver and Utah play at altitude, and the franchise spread they sit on top of is not just noise: roughly 70% of the variation across teams reflects genuine differences between buildings, not the random bounce of a short home schedule.
+Altitude sits right at the top of that spread.
+With only two high-altitude franchises, elevation can't be fully separated from whatever else is unique to those teams, but it is the most plausible common thread.
+Of Denver's 28-point home-minus-road gap, the altitude piece on its own accounts for about 8 points.
+
+![Franchise home court advantage, regular season and playoffs. Each bar carries a range showing how much the figure could shift on the available games: in the regular season most franchises sit clearly apart, but in the playoffs the ranges are wide and overlapping, so the franchise differences there are mostly noise.](../generated/images/home_court_team_hca.svg){#fig-team-hca}
+
+## Every building faded, from different heights
+
+Those are today's levels; the sharper question is how far each franchise's advantage fell.
+Every franchise declined, but the raw two-era drops vary widely, inflated by small samples and by compression from a high starting point.
+Split the 40-year record at 2001–02 and the league average dropped from about 25.6 percentage points to about 17.
+Every one of the 26 franchises with at least 400 home games in both halves declined.
+Sacramento and Phoenix fell the most, about 16 and 15 points; both sat near the top of the league in the 1980s and 1990s and are near the bottom now.
+The Knicks shed 13 points.
+At the other end, the Los Angeles Lakers barely moved (a drop of under a point), though they started below the league average and stayed there.
+Denver and Utah both declined a lot too (13 and 9 points), yet still sit at the top of the recent rankings.
+The pattern fits compression: the franchises with the most home-court advantage to begin with had the most to lose.
+Once that random bounce is removed, the true team-to-team difference in decline rates is about zero, a headline of [Home Court Is Fading](home_court_article_1_case.html); here the point is only that the franchises started from different heights.
+
+![Franchise HCA in the early era (1984–2001, blue) and recent era (2002–26, green), sorted by early-era HCA. Every franchise shifted left. The dashed vertical lines mark the league average in each era.](../generated/images/home_court_team_hca_era.svg){#fig-team-hca-era .collapsible}
+
+## In the playoffs, the buildings look alike
+
+All of that is the regular season.
+The postseason erases it.
+With fewer than 150 playoff home games on record for most franchises, the apparent gaps between them just reflect how few games each has played; the real spread is too small to separate from the random bounce.
+A team's apparent postseason home-court strength mostly reflects being a good team, since good teams simply host more games.
+
+The twist is that the shared advantage every team has is bigger in the playoffs than in the regular season.
+Averaged across franchises with both records, home court is worth about 20 points in the regular season and about 27 in the playoffs, a 7-point premium.
+The crowd, the stakes, and the familiar floor all seem to count for more when the games matter most.
+
+## Fewer home wins, bigger blowouts
+
+One more oddity sits alongside the decline.
+As home teams win less often, the games they do win have grown more lopsided, and so have the ones they lose.
+Track the full spread of margins regardless of who won, and the gap between the biggest wins and biggest losses widens by about 0.2 points per year in the regular season and 0.3 in the playoffs.
+In the regular season blowouts grow in both directions; in the playoffs the spread widens mainly because the big home wins keep getting bigger.
+Fewer home wins overall, but the ones that happen land harder.
+
+![Three panels. Left: mean all-game point margin per season for regular season and playoffs. Center: mean win margin and mean loss margin per season (regular season); the two lines diverging means the average home win is getting bigger while the average home loss is getting worse. Right: the same by era.](../generated/images/home_court_margin.svg){#fig-margin .collapsible}
+
+Home court is fading almost everywhere.
+But in Denver and Utah, and in the widening margins of a home blowout, the building still bites.
+
+---
+
+Next: [How We Know This Isn't Made Up](home_court_article_8_checks.html)
+
+Back to the series hub: [The Disappearing Home Court](home_court_series.html)
