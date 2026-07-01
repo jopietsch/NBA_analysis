@@ -286,7 +286,7 @@ The same player is a top-fifteen offensive player and a top-thirty contributor o
 The impact metrics, now that they are fixed and trustworthy, tell the same story rather than a kinder one: the corrected RAPM puts his net on-court impact at merely average (204th), and RAPM+prior at 64th, so two independent methods, box and lineup, agree that his scoring outruns what his team actually does with him on the floor.
 That is a sturdier verdict than either method alone: the earlier, broken RAPM had buried him near the bottom, which was noise, and the honest correction lands him where the box score already suggested, good but not a hidden star.
 
-And one player who answers a different question, Jayson Tatum: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where Section 8 picks up.
+And one player who answers a different question, OG Anunoby: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where Section 8 picks up.
 
 ## 5. The two uber ratings
 
@@ -399,19 +399,21 @@ The gap between rank 1 and rank 20 is the most direct read on how concentrated v
 ## 8. Who rose and fell in the playoffs
 
 Recompute the box-score rate metrics on playoff games only, and a direct before-and-after read falls out: who climbed once the postseason started, and who sank.
-The biggest risers were Jayson Tatum, OG Anunoby, and Mike Conley.
-The biggest fallers were Nikola Jokić, Jalen Duren, and Nickeil Alexander-Walker.
+The biggest risers were OG Anunoby, Cason Wallace, and Jayson Tatum.
+The biggest fallers were Jalen Duren, Nikola Jokić, and Nickeil Alexander-Walker.
 The drop reached even the regular-season consensus number one, Nikola Jokić, whose box-score rates slipped as Denver lost in the first round.
 
-This read works only for the box-score systems.
-The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way.
-Among the 103 players who logged at least 150 playoff minutes in 2025-26, each player's change is measured against the rest of that group.
+This read works only for the box-score systems, which we recompute ourselves and can therefore run on playoff games alone.
+The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way, and neither can the once-a-season award votes.
+(The inventory lays out which systems can be split, and why, in full.) Among the 103 players who logged at least 150 playoff minutes in 2025-26, each player's change is measured against the rest of that group.
 That strips out the leaguewide dip that comes from tougher defense and facing the same opponent night after night, so what is left is who rose or fell relative to the other rotation players who also advanced.
+A short run is still noisy, so two guardrails keep the list honest: each shift is trimmed toward zero the fewer playoff minutes a player logged, so a lucky handful of games can't top the list, and each carries a band showing how far PER, WS/48, and BPM spread on the call.
+A bar that clears its whisker on the chart is a shift all three box formulas see the same way.
 
 The list rewards players whose game travels into a grind-it-out playoff series and marks down those who leaned on production that dried up against a focused defense.
 It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
 
-![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least 150 playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
+![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least 150 playoff minutes. Green rose, red fell; the whisker is how far the three box formulas spread on each call.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
 
 **Putting the two halves together: who delivered the most value once the playoffs are weighted in.** The riser-and-faller read says who changed, not who held the most value across the whole season once the playoffs are weighted in.
 For that, blend each playoff player's regular-season and playoff BPM into one number, counting a playoff minute 2 times a regular-season minute.

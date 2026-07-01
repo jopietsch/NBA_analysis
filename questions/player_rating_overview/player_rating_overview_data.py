@@ -84,6 +84,13 @@ MIN_PLAYOFF_MINUTES = 150
 # offense/defense breakdown.
 PLAYOFF_SHIFT_FORMULATIONS = ["PER", "WS48", "BPM"]
 
+# Reliability shrinkage for the composite shift. A postseason of a handful of
+# games is noisy, so each player's shift is pulled toward zero by playoff
+# minutes: at this many minutes a shift keeps half its size, and a deep run
+# keeps most of it. This is the sample-size-honest headline number; risers and
+# fallers are ranked by it, not by the raw shift.
+PLAYOFF_SHRINK_MINUTES = 200
+
 
 # ── Power-law fit ─────────────────────────────────────────────────────────────
 
@@ -239,9 +246,19 @@ def _playoff_delta_table(reg: pd.DataFrame, po: pd.DataFrame) -> pd.DataFrame:
         df[f"_z_{m}"] = (col - col.mean()) / std if std > 0 else 0.0
         z_cols.append(f"_z_{m}")
     df["SHIFT_Z"] = df[z_cols].mean(axis=1)
+    # Agreement band: the standard error of the composite across the three box
+    # formulations. A small band means PER, WS/48, and BPM agree on the size of
+    # the shift; a large one means the read leans on a single formulation. A
+    # shift "clears its band" when it is larger than this.
+    df["SHIFT_SE"] = df[z_cols].std(axis=1, ddof=1) / np.sqrt(len(z_cols))
     df = df.drop(columns=z_cols)
 
-    return df.sort_values("SHIFT_Z", ascending=False).reset_index(drop=True)
+    # Reliability shrinkage: pull each shift toward zero by playoff minutes, so a
+    # short, lucky sample can't top the list on its own (see PLAYOFF_SHRINK_MINUTES).
+    df["SHIFT_SHRUNK"] = (df["SHIFT_Z"] * df["MIN_po"]
+                          / (df["MIN_po"] + PLAYOFF_SHRINK_MINUTES))
+
+    return df.sort_values("SHIFT_SHRUNK", ascending=False).reset_index(drop=True)
 
 
 def load_playoff_deltas(end_year: int, *,
@@ -261,8 +278,14 @@ def load_playoff_deltas(end_year: int, *,
                          pool being stronger than league average.)
       SHIFT_Z            composite riser/faller score: the average of the
                          standardized adjusted deltas of PER, WS/48, and BPM.
+      SHIFT_SE           agreement band: the standard error of SHIFT_Z across
+                         those three formulations. A shift clears its band when
+                         |SHIFT_SHRUNK| > SHIFT_SE.
+      SHIFT_SHRUNK       SHIFT_Z pulled toward zero by playoff minutes
+                         (PLAYOFF_SHRINK_MINUTES), so a short, lucky sample can't
+                         top the list. This is the headline riser/faller number.
 
-    Rows are sorted by SHIFT_Z (risers first).
+    Rows are sorted by SHIFT_SHRUNK (risers first).
     Cached at cache/playoff_deltas_{season}.csv. Returns an empty DataFrame when
     the season has no playoff data (e.g. a season still in progress).
     """

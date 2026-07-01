@@ -167,6 +167,25 @@ The crosswalk (player identity reconciliation across systems) is keyed on `(play
 
 ---
 
+## Which systems can be split regular season vs playoffs
+
+A separate question from coverage: can a system produce a *playoff-only* value, so you can measure whether a player rose or fell once the postseason started?
+Only the box-score recompute family can.
+The reason is mechanical, and it splits the inventory cleanly into three groups.
+
+| Group | Playoff split? | Why |
+|---|---|---|
+| **Box-score recompute** (Game Score, PER, WS/48, BPM/OBPM/DBPM, VORP) | Yes | We run the formula ourselves, so we can run it on postseason totals just as easily as on regular-season totals. Each value is renormalized within its own season type, so a playoff PER is comparable to its regular-season twin. |
+| **Impact metrics** (RAPM family, RAPTOR, EPM, LEBRON, DARKO, DRIP) | No | These need thousands of possessions to separate a player from his lineup. A first-round loss is about six games; even a Finals run is far short of what a stable estimate needs. The published third-party versions are season figures with no postseason cut, and DARKO/DRIP are now-cast projections, not a season split at all. |
+| **Human / reputation** (MVP, All-NBA, All-Star, media ranks) | No | These are awarded once per regular season. There is no postseason equivalent to difference against. |
+
+So the regular-season-vs-playoff comparison in the findings (Section 8) is box-score-only by necessity, not by choice.
+Two guards keep that comparison honest given how small a playoff sample is.
+The shift is measured only for players with at least 150 playoff minutes, then pulled toward zero by playoff minutes (half weight at 200), so a short, lucky run can't top the list.
+And each shift carries a band equal to the spread across PER, WS/48, and BPM, so a rise only counts as real when the three formulations agree on it.
+
+---
+
 ## Open items
 
 - RAPM (Regularized Adjusted Plus/Minus): computed in-house from nba_api play-by-play (PlayByPlayV3) for 2013-14 through 2025-26, reconstructed into five-on-five possessions and fit with cross-validated ridge regression. Two versions: a bare single-season RAPM (zero-mean prior) kept to show the raw noise, and RAPM+prior, which pools three seasons with recency weights and shrinks each player toward a BPM prior (offense toward OBPM, defense toward DBPM). RAPM+prior feeds the consensus. The RAPM family is under repair: the bare possession-based RAPM still surfaces implausible leaders (low-minute players topping the league), a known bug flagged as a separate follow-on. Fixing BPM this session improved RAPM+prior, which shrinks toward the BPM prior, but the bare RAPM underneath still needs its own fix. Still open: that fix, loading a public RAPM snapshot to validate the values, and a luck adjustment / tracking-based prior to approach EPM or LEBRON (the player-tracking inputs are not publicly available).

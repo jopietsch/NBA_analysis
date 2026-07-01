@@ -403,15 +403,17 @@ The biggest risers were << f("playoff.riser.1.name") >>, << f("playoff.riser.2.n
 The biggest fallers were << f("playoff.faller.1.name") >>, << f("playoff.faller.2.name") >>, and << f("playoff.faller.3.name") >>.
 The drop reached even the regular-season consensus number one, << f("playoff.consensus1.name") >>, whose box-score rates slipped as Denver lost in the first round.
 
-This read works only for the box-score systems.
-The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way.
-Among the << f("playoff.n_qualified") >> players who logged at least << f("playoff.min_floor") >> playoff minutes in 2025-26, each player's change is measured against the rest of that group.
+This read works only for the box-score systems, which we recompute ourselves and can therefore run on playoff games alone.
+The impact metrics need far more games than a playoff run provides (a first-round loss is about six games), so they cannot be split this way, and neither can the once-a-season award votes.
+(The inventory lays out which systems can be split, and why, in full.) Among the << f("playoff.n_qualified") >> players who logged at least << f("playoff.min_floor") >> playoff minutes in 2025-26, each player's change is measured against the rest of that group.
 That strips out the leaguewide dip that comes from tougher defense and facing the same opponent night after night, so what is left is who rose or fell relative to the other rotation players who also advanced.
+A short run is still noisy, so two guardrails keep the list honest: each shift is trimmed toward zero the fewer playoff minutes a player logged, so a lucky handful of games can't top the list, and each carries a band showing how far PER, WS/48, and BPM spread on the call.
+A bar that clears its whisker on the chart is a shift all three box formulas see the same way.
 
 The list rewards players whose game travels into a grind-it-out playoff series and marks down those who leaned on production that dried up against a focused defense.
 It describes one postseason, not proof that any of these players is reliably better or worse when the stakes rise: playoff samples are small, and only half the league is in them.
 
-![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least << f("playoff.min_floor") >> playoff minutes. Green rose, red fell.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
+![Who rose and who fell in the 2025-26 playoffs, by box-score rate metrics, for players with at least << f("playoff.min_floor") >> playoff minutes. Green rose, red fell; the whisker is how far the three box formulas spread on each call.](../generated/images/playoff_shift.svg){#fig-playoff-shift}
 
 **Putting the two halves together: who delivered the most value once the playoffs are weighted in.** The riser-and-faller read says who changed, not who held the most value across the whole season once the playoffs are weighted in.
 For that, blend each playoff player's regular-season and playoff BPM into one number, counting a playoff minute << f("pwv.weight", "{:d}") >> times a regular-season minute.

@@ -2639,11 +2639,11 @@
     "value": 1
   },
   "example.riser.name": {
-    "display": "Jayson Tatum",
+    "display": "OG Anunoby",
     "fmt": null,
     "note": "biggest-playoff-riser archetype: top composite shift",
     "unit": null,
-    "value": "Jayson Tatum"
+    "value": "OG Anunoby"
   },
   "example.split.bpm_rank": {
     "display": "126",
@@ -3661,53 +3661,74 @@
     "value": "Nikola Joki\u0107"
   },
   "playoff.consensus1.z": {
-    "display": "-2.46",
+    "display": "-1.34",
     "fmt": "{:.2f}",
-    "note": "regular-season consensus #1 player's composite playoff shift z",
+    "note": "regular-season consensus #1 player's shrunk playoff shift",
     "unit": null,
-    "value": -2.462073915850377
+    "value": -1.335335387682587
   },
   "playoff.faller.1.name": {
-    "display": "Nikola Joki\u0107",
-    "fmt": null,
-    "note": "playoff faller rank 1 (composite shift)",
-    "unit": null,
-    "value": "Nikola Joki\u0107"
-  },
-  "playoff.faller.1.z": {
-    "display": "-2.46",
-    "fmt": "{:.2f}",
-    "note": "playoff faller rank 1 composite shift z",
-    "unit": null,
-    "value": -2.462073915850377
-  },
-  "playoff.faller.2.name": {
     "display": "Jalen Duren",
     "fmt": null,
-    "note": "playoff faller rank 2 (composite shift)",
+    "note": "playoff faller rank 1 (shrunk composite shift)",
     "unit": null,
     "value": "Jalen Duren"
   },
-  "playoff.faller.2.z": {
-    "display": "-2.35",
+  "playoff.faller.1.se": {
+    "display": "0.36",
     "fmt": "{:.2f}",
-    "note": "playoff faller rank 2 composite shift z",
+    "note": "playoff faller rank 1 agreement band (SE across formulations)",
     "unit": null,
-    "value": -2.350725555958132
+    "value": 0.3563958969069762
+  },
+  "playoff.faller.1.z": {
+    "display": "-1.60",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 1 shrunk composite shift",
+    "unit": null,
+    "value": -1.5953247233590544
+  },
+  "playoff.faller.2.name": {
+    "display": "Nikola Joki\u0107",
+    "fmt": null,
+    "note": "playoff faller rank 2 (shrunk composite shift)",
+    "unit": null,
+    "value": "Nikola Joki\u0107"
+  },
+  "playoff.faller.2.se": {
+    "display": "0.38",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 2 agreement band (SE across formulations)",
+    "unit": null,
+    "value": 0.3833195990550709
+  },
+  "playoff.faller.2.z": {
+    "display": "-1.34",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 2 shrunk composite shift",
+    "unit": null,
+    "value": -1.335335387682587
   },
   "playoff.faller.3.name": {
     "display": "Nickeil Alexander-Walker",
     "fmt": null,
-    "note": "playoff faller rank 3 (composite shift)",
+    "note": "playoff faller rank 3 (shrunk composite shift)",
     "unit": null,
     "value": "Nickeil Alexander-Walker"
   },
-  "playoff.faller.3.z": {
-    "display": "-2.07",
+  "playoff.faller.3.se": {
+    "display": "0.36",
     "fmt": "{:.2f}",
-    "note": "playoff faller rank 3 composite shift z",
+    "note": "playoff faller rank 3 agreement band (SE across formulations)",
     "unit": null,
-    "value": -2.0690679059577155
+    "value": 0.3573320722098774
+  },
+  "playoff.faller.3.z": {
+    "display": "-1.07",
+    "fmt": "{:.2f}",
+    "note": "playoff faller rank 3 shrunk composite shift",
+    "unit": null,
+    "value": -1.0661711663762383
   },
   "playoff.min_floor": {
     "display": "150",
@@ -3724,46 +3745,74 @@
     "value": 103
   },
   "playoff.riser.1.name": {
-    "display": "Jayson Tatum",
-    "fmt": null,
-    "note": "playoff riser rank 1 (composite shift)",
-    "unit": null,
-    "value": "Jayson Tatum"
-  },
-  "playoff.riser.1.z": {
-    "display": "2.15",
-    "fmt": "{:.2f}",
-    "note": "playoff riser rank 1 composite shift z",
-    "unit": null,
-    "value": 2.1527026673482705
-  },
-  "playoff.riser.2.name": {
     "display": "OG Anunoby",
     "fmt": null,
-    "note": "playoff riser rank 2 (composite shift)",
+    "note": "playoff riser rank 1 (shrunk composite shift)",
     "unit": null,
     "value": "OG Anunoby"
   },
-  "playoff.riser.2.z": {
-    "display": "2.09",
+  "playoff.riser.1.se": {
+    "display": "0.35",
     "fmt": "{:.2f}",
-    "note": "playoff riser rank 2 composite shift z",
+    "note": "playoff riser rank 1 agreement band (SE across formulations)",
     "unit": null,
-    "value": 2.0947634425638224
+    "value": 0.3536881349565989
+  },
+  "playoff.riser.1.z": {
+    "display": "1.56",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 1 shrunk composite shift",
+    "unit": null,
+    "value": 1.5616486676199528
+  },
+  "playoff.riser.2.name": {
+    "display": "Cason Wallace",
+    "fmt": null,
+    "note": "playoff riser rank 2 (shrunk composite shift)",
+    "unit": null,
+    "value": "Cason Wallace"
+  },
+  "playoff.riser.2.se": {
+    "display": "0.14",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 2 agreement band (SE across formulations)",
+    "unit": null,
+    "value": 0.1393101319932708
+  },
+  "playoff.riser.2.z": {
+    "display": "1.14",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 2 shrunk composite shift",
+    "unit": null,
+    "value": 1.1402143581884807
   },
   "playoff.riser.3.name": {
-    "display": "Mike Conley",
+    "display": "Jayson Tatum",
     "fmt": null,
-    "note": "playoff riser rank 3 (composite shift)",
+    "note": "playoff riser rank 3 (shrunk composite shift)",
     "unit": null,
-    "value": "Mike Conley"
+    "value": "Jayson Tatum"
+  },
+  "playoff.riser.3.se": {
+    "display": "0.30",
+    "fmt": "{:.2f}",
+    "note": "playoff riser rank 3 agreement band (SE across formulations)",
+    "unit": null,
+    "value": 0.3036624832986752
   },
   "playoff.riser.3.z": {
-    "display": "1.95",
+    "display": "1.12",
     "fmt": "{:.2f}",
-    "note": "playoff riser rank 3 composite shift z",
+    "note": "playoff riser rank 3 shrunk composite shift",
     "unit": null,
-    "value": 1.951823130646152
+    "value": 1.1228984828150377
+  },
+  "playoff.shrink_minutes": {
+    "display": "200",
+    "fmt": "{:d}",
+    "note": "playoff minutes at which the composite shift keeps half its size",
+    "unit": null,
+    "value": 200
   },
   "powerlaw.BPM.alpha": {
     "display": "0.43",

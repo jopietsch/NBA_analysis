@@ -20,6 +20,7 @@ from player_rating_overview_data import (
     fetch_bbr_advanced,
     MIN_MINUTES_QUALIFIER,
     MIN_PLAYOFF_MINUTES,
+    PLAYOFF_SHRINK_MINUTES,
     PLAYOFF_DELTA_METRICS,
     powerlaw_fit,
     POWERLAW_R2_THRESHOLD,
@@ -1494,6 +1495,11 @@ def run(end_year: int = 2026) -> None:
         print("rotation players who also advanced. The composite shift z averages the")
         print("standardized adjusted deltas of PER, WS/48, and BPM, so a riser needs the")
         print("three box formulations to agree.")
+        print(f"Two reliability guards: the shift is shrunk toward zero by playoff")
+        print(f"minutes (half weight at {PLAYOFF_SHRINK_MINUTES} min) so a short, lucky")
+        print("sample can't top the list, and the +/- band is the spread across the")
+        print("three formulations. A shift 'clears its band' when it exceeds that spread.")
+        print("Risers and fallers below are ranked by the shrunk shift.")
         print("Note: BPM here is our recompute, validated against Basketball-Reference")
         print("(see the BPM-validation section); the playoff BPM is anchored to each")
         print("team's playoff point margin.")
@@ -1501,59 +1507,74 @@ def run(end_year: int = 2026) -> None:
                   note=f"players with >= {MIN_PLAYOFF_MINUTES} playoff minutes")
         FACTS.set("playoff.min_floor", MIN_PLAYOFF_MINUTES, "{:d}",
                   note="minimum playoff minutes to enter the riser/faller pool")
+        FACTS.set("playoff.shrink_minutes", PLAYOFF_SHRINK_MINUTES, "{:d}",
+                  note="playoff minutes at which the composite shift keeps half its size")
 
-        risers = deltas.nlargest(10, "SHIFT_Z")
-        fallers = deltas.nsmallest(10, "SHIFT_Z")
+        risers = deltas.nlargest(10, "SHIFT_SHRUNK")
+        fallers = deltas.nsmallest(10, "SHIFT_SHRUNK")
 
         def _line(rank, row):
             # PER is the one metric on a trustworthy real scale (normalized to a
-            # league average of 15), shown alongside the composite z.
+            # league average of 15), shown alongside the shrunk composite and band.
             return (f"  {rank:>2}. {row['PLAYER_NAME']:<26} "
                     f"{row.get('TEAM_ABBREVIATION', ''):>3}  "
-                    f"shift z = {row['SHIFT_Z']:+.2f}  "
-                    f"(PER {row['PER_delta_adj']:+.1f} vs regular season)")
+                    f"shift = {row['SHIFT_SHRUNK']:+.2f} +/- {row['SHIFT_SE']:.2f}  "
+                    f"({int(row['MIN_po'])} po min; raw z {row['SHIFT_Z']:+.2f}; "
+                    f"PER {row['PER_delta_adj']:+.1f})")
 
         print("\nBiggest playoff RISERS (raised their level above their regular-season form):")
         for rank, (_, row) in enumerate(risers.iterrows(), 1):
             print(_line(rank, row))
             if rank <= 3:
                 FACTS.set(f"playoff.riser.{rank}.name", str(row["PLAYER_NAME"]),
-                          note=f"playoff riser rank {rank} (composite shift)")
-                FACTS.set(f"playoff.riser.{rank}.z", float(row["SHIFT_Z"]), "{:.2f}",
-                          note=f"playoff riser rank {rank} composite shift z")
+                          note=f"playoff riser rank {rank} (shrunk composite shift)")
+                FACTS.set(f"playoff.riser.{rank}.z", float(row["SHIFT_SHRUNK"]), "{:.2f}",
+                          note=f"playoff riser rank {rank} shrunk composite shift")
+                FACTS.set(f"playoff.riser.{rank}.se", float(row["SHIFT_SE"]), "{:.2f}",
+                          note=f"playoff riser rank {rank} agreement band (SE across formulations)")
 
         print("\nBiggest playoff FALLERS (dropped below their regular-season form):")
         for rank, (_, row) in enumerate(fallers.iterrows(), 1):
             print(_line(rank, row))
             if rank <= 3:
                 FACTS.set(f"playoff.faller.{rank}.name", str(row["PLAYER_NAME"]),
-                          note=f"playoff faller rank {rank} (composite shift)")
-                FACTS.set(f"playoff.faller.{rank}.z", float(row["SHIFT_Z"]), "{:.2f}",
-                          note=f"playoff faller rank {rank} composite shift z")
+                          note=f"playoff faller rank {rank} (shrunk composite shift)")
+                FACTS.set(f"playoff.faller.{rank}.z", float(row["SHIFT_SHRUNK"]), "{:.2f}",
+                          note=f"playoff faller rank {rank} shrunk composite shift")
+                FACTS.set(f"playoff.faller.{rank}.se", float(row["SHIFT_SE"]), "{:.2f}",
+                          note=f"playoff faller rank {rank} agreement band (SE across formulations)")
 
         top_riser = str(risers.iloc[0]["PLAYER_NAME"])
         top_faller = str(fallers.iloc[0]["PLAYER_NAME"])
         FACTS.guard("playoff_top_riser_positive",
-                    float(risers.iloc[0]["SHIFT_Z"]) > 0,
+                    float(risers.iloc[0]["SHIFT_SHRUNK"]) > 0,
                     f"the top playoff riser ({top_riser}) gained on the pool", top_riser)
         FACTS.guard("playoff_top_faller_negative",
-                    float(fallers.iloc[0]["SHIFT_Z"]) < 0,
+                    float(fallers.iloc[0]["SHIFT_SHRUNK"]) < 0,
                     f"the top playoff faller ({top_faller}) lost ground on the pool", top_faller)
+        # The headline riser is only worth calling out if the three box
+        # formulations agree on it: the shrunk shift should clear its band.
+        FACTS.guard("playoff_top_riser_clears_band",
+                    abs(float(risers.iloc[0]["SHIFT_SHRUNK"]))
+                    > float(risers.iloc[0]["SHIFT_SE"]),
+                    f"the top playoff riser ({top_riser}) rose by more than the "
+                    f"spread across PER, WS/48, and BPM", top_riser)
 
         # Did the regular-season consensus #1 hold up in the playoffs?
         if "CONSENSUS" in qual.columns and qual["CONSENSUS"].notna().sum() > 0:
             cons_top = str(qual.nlargest(1, "CONSENSUS")["PLAYER_NAME"].iloc[0])
             match = deltas[deltas["PLAYER_NAME"] == cons_top]
             if not match.empty:
-                z = float(match.iloc[0]["SHIFT_Z"])
-                order = deltas.sort_values("SHIFT_Z").reset_index(drop=True)
+                z = float(match.iloc[0]["SHIFT_SHRUNK"])
+                se = float(match.iloc[0]["SHIFT_SE"])
+                order = deltas.sort_values("SHIFT_SHRUNK").reset_index(drop=True)
                 frank = int(order.index[order["PLAYER_NAME"] == cons_top][0]) + 1
                 print(f"\nRegular-season consensus #1 {cons_top}: playoff shift "
-                      f"z = {z:+.2f} (faller rank {frank} of {len(deltas)})")
+                      f"= {z:+.2f} +/- {se:.2f} (faller rank {frank} of {len(deltas)})")
                 FACTS.set("playoff.consensus1.name", cons_top,
                           note="regular-season consensus #1 player (playoff shift lookup)")
                 FACTS.set("playoff.consensus1.z", z, "{:.2f}",
-                          note="regular-season consensus #1 player's composite playoff shift z")
+                          note="regular-season consensus #1 player's shrunk playoff shift")
                 FACTS.guard("consensus_top_fell_in_playoffs", z < 0,
                             f"the regular-season consensus #1 ({cons_top}) fell in the playoffs", z)
 
@@ -1756,12 +1777,13 @@ def run(end_year: int = 2026) -> None:
                             "well above where impact-aware BPM puts him",
                             f"PER {int(split['PER_rk'])} vs BPM {int(split['BPM_rk'])}")
 
-        # Biggest playoff riser: top of the corrected playoff shift.
-        if not pwv_deltas.empty and "SHIFT_Z" in pwv_deltas.columns:
-            riser = pwv_deltas.sort_values("SHIFT_Z", ascending=False).iloc[0]
+        # Biggest playoff riser: top of the shrunk playoff shift (matches the
+        # headline riser list, which ranks by SHIFT_SHRUNK).
+        if not pwv_deltas.empty and "SHIFT_SHRUNK" in pwv_deltas.columns:
+            riser = pwv_deltas.sort_values("SHIFT_SHRUNK", ascending=False).iloc[0]
             chosen["riser"] = str(riser["PLAYER_NAME"])
             print(f"Biggest playoff riser (top composite shift): {chosen['riser']} "
-                  f"(shift z {riser['SHIFT_Z']:+.2f}).")
+                  f"(shift {riser['SHIFT_SHRUNK']:+.2f} +/- {riser['SHIFT_SE']:.2f}).")
             FACTS.set("example.riser.name", chosen["riser"],
                       note="biggest-playoff-riser archetype: top composite shift")
 

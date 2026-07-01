@@ -1,6 +1,6 @@
 # Player Rating Overview: Analysis Results
 
-Season: 2025-26
+Season: 2025–26
 
 ```
 
@@ -641,35 +641,40 @@ among this qualified pool, so a riser is measured against the other
 rotation players who also advanced. The composite shift z averages the
 standardized adjusted deltas of PER, WS/48, and BPM, so a riser needs the
 three box formulations to agree.
+Two reliability guards: the shift is shrunk toward zero by playoff
+minutes (half weight at 200 min) so a short, lucky
+sample can't top the list, and the +/- band is the spread across the
+three formulations. A shift 'clears its band' when it exceeds that spread.
+Risers and fallers below are ranked by the shrunk shift.
 Note: BPM here is our recompute, validated against Basketball-Reference
 (see the BPM-validation section); the playoff BPM is anchored to each
 team's playoff point margin.
 
 Biggest playoff RISERS (raised their level above their regular-season form):
-   1. Jayson Tatum               BOS  shift z = +2.15  (PER +8.6 vs regular season)
-   2. OG Anunoby                 NYK  shift z = +2.09  (PER +8.0 vs regular season)
-   3. Mike Conley                MIN  shift z = +1.95  (PER +6.2 vs regular season)
-   4. Tari Eason                 HOU  shift z = +1.77  (PER +6.8 vs regular season)
-   5. Cason Wallace              OKC  shift z = +1.75  (PER +5.8 vs regular season)
-   6. Collin Murray-Boyles       TOR  shift z = +1.60  (PER +7.3 vs regular season)
-   7. Rui Hachimura              LAL  shift z = +1.53  (PER +5.5 vs regular season)
-   8. Karl-Anthony Towns         NYK  shift z = +1.38  (PER +2.5 vs regular season)
-   9. Alex Caruso                OKC  shift z = +1.33  (PER +6.5 vs regular season)
-  10. Marcus Smart               LAL  shift z = +1.28  (PER +4.7 vs regular season)
+   1. OG Anunoby                 NYK  shift = +1.56 +/- 0.35  (585 po min; raw z +2.09; PER +8.0)
+   2. Cason Wallace              OKC  shift = +1.14 +/- 0.14  (374 po min; raw z +1.75; PER +5.8)
+   3. Jayson Tatum               BOS  shift = +1.12 +/- 0.30  (218 po min; raw z +2.15; PER +8.6)
+   4. Karl-Anthony Towns         NYK  shift = +1.03 +/- 0.40  (577 po min; raw z +1.38; PER +2.5)
+   5. Rui Hachimura              LAL  shift = +1.01 +/- 0.16  (386 po min; raw z +1.53; PER +5.5)
+   6. Mike Conley                MIN  shift = +0.89 +/- 0.16  (167 po min; raw z +1.95; PER +6.2)
+   7. Tari Eason                 HOU  shift = +0.87 +/- 0.21  (195 po min; raw z +1.77; PER +6.8)
+   8. Alex Caruso                OKC  shift = +0.85 +/- 0.27  (352 po min; raw z +1.33; PER +6.5)
+   9. Marcus Smart               LAL  shift = +0.81 +/- 0.15  (344 po min; raw z +1.28; PER +4.7)
+  10. Collin Murray-Boyles       TOR  shift = +0.78 +/- 0.26  (190 po min; raw z +1.60; PER +7.3)
 
 Biggest playoff FALLERS (dropped below their regular-season form):
-   1. Nikola Jokić               DEN  shift z = -2.46  (PER -7.0 vs regular season)
-   2. Jalen Duren                DET  shift z = -2.35  (PER -10.4 vs regular season)
-   3. Nickeil Alexander-Walker   ATL  shift z = -2.07  (PER -7.4 vs regular season)
-   4. Jalen Suggs                ORL  shift z = -1.84  (PER -6.5 vs regular season)
-   5. Jamal Murray               DEN  shift z = -1.57  (PER -5.1 vs regular season)
-   6. Julius Randle              MIN  shift z = -1.49  (PER -6.1 vs regular season)
-   7. Austin Reaves              LAL  shift z = -1.34  (PER -5.3 vs regular season)
-   8. Derrick White              BOS  shift z = -1.25  (PER -5.1 vs regular season)
-   9. Keldon Johnson             SAS  shift z = -1.24  (PER -5.0 vs regular season)
-  10. Anthony Edwards            MIN  shift z = -1.16  (PER -4.6 vs regular season)
+   1. Jalen Duren                DET  shift = -1.60 +/- 0.36  (422 po min; raw z -2.35; PER -10.4)
+   2. Nikola Jokić               DEN  shift = -1.34 +/- 0.38  (237 po min; raw z -2.46; PER -7.0)
+   3. Nickeil Alexander-Walker   ATL  shift = -1.07 +/- 0.36  (212 po min; raw z -2.07; PER -7.4)
+   4. Jalen Suggs                ORL  shift = -1.02 +/- 0.02  (248 po min; raw z -1.84; PER -6.5)
+   5. Julius Randle              MIN  shift = -0.99 +/- 0.19  (399 po min; raw z -1.49; PER -6.1)
+   6. Jamal Murray               DEN  shift = -0.85 +/- 0.06  (238 po min; raw z -1.57; PER -5.1)
+   7. Keldon Johnson             SAS  shift = -0.83 +/- 0.13  (410 po min; raw z -1.24; PER -5.0)
+   8. James Harden               CLE  shift = -0.83 +/- 0.24  (671 po min; raw z -1.08; PER -3.9)
+   9. Shai Gilgeous-Alexander    OKC  shift = -0.82 +/- 0.38  (544 po min; raw z -1.12; PER -4.6)
+  10. Donovan Mitchell           CLE  shift = -0.77 +/- 0.09  (652 po min; raw z -1.00; PER -3.1)
 
-Regular-season consensus #1 Nikola Jokić: playoff shift z = -2.46 (faller rank 1 of 103)
+Regular-season consensus #1 Nikola Jokić: playoff shift = -1.34 +/- 0.38 (faller rank 2 of 103)
 
 ─── SEASON-OVER-SEASON CHANGE (PREVIOUS → CURRENT) ──────────────
 Players qualified in both 2024-25 and 2025-26: 290
@@ -727,7 +732,7 @@ Jalen Brunson: regular-season BPM +3.4, playoff BPM +4.6.
 Agreed elite (best worst-rank across 5 systems): Nikola Jokić (worst rank 1).
 Defense-driven star (top-12 BPM, highest DBPM): Victor Wembanyama (BPM +8.9, of which DBPM +3.9).
 High-usage scorer the metrics split on: Pascal Siakam (USG 30%, PER rank 45 vs BPM rank 126).
-Biggest playoff riser (top composite shift): Jayson Tatum (shift z +2.15).
+Biggest playoff riser (top composite shift): OG Anunoby (shift +1.56 +/- 0.35).
   Brunson impact ranks: OBPM 12, BPM 29, RAPM 204, RAPM+prior 64 (scoring outruns net on-court impact)
 Saved → docs/player_rating_overview_facts_reference.md
 

@@ -22,7 +22,7 @@
   "consensus_top_fell_in_playoffs": {
     "claim": "the regular-season consensus #1 (Nikola Joki\u0107) fell in the playoffs",
     "ok": true,
-    "value": -2.462073915850377
+    "value": -1.335335387682587
   },
   "cumulative_are_power_laws": {
     "claim": "the cumulative metrics (Win Shares, VORP) are power laws",
@@ -42,7 +42,7 @@
   "example_reps_distinct": {
     "claim": "the example archetypes resolve to distinct players",
     "ok": true,
-    "value": "Nikola Joki\u0107; Victor Wembanyama; Pascal Siakam; Jayson Tatum; Jalen Brunson"
+    "value": "Nikola Joki\u0107; Victor Wembanyama; Pascal Siakam; OG Anunoby; Jalen Brunson"
   },
   "example_split_per_over_bpm": {
     "claim": "counting stats rate the split scorer (Pascal Siakam) well above where impact-aware BPM puts him",
@@ -80,14 +80,19 @@
     "value": 0.8619138824761607
   },
   "playoff_top_faller_negative": {
-    "claim": "the top playoff faller (Nikola Joki\u0107) lost ground on the pool",
+    "claim": "the top playoff faller (Jalen Duren) lost ground on the pool",
     "ok": true,
-    "value": "Nikola Joki\u0107"
+    "value": "Jalen Duren"
+  },
+  "playoff_top_riser_clears_band": {
+    "claim": "the top playoff riser (OG Anunoby) rose by more than the spread across PER, WS/48, and BPM",
+    "ok": true,
+    "value": "OG Anunoby"
   },
   "playoff_top_riser_positive": {
-    "claim": "the top playoff riser (Jayson Tatum) gained on the pool",
+    "claim": "the top playoff riser (OG Anunoby) gained on the pool",
     "ok": true,
-    "value": "Jayson Tatum"
+    "value": "OG Anunoby"
   },
   "pwv_brunson_not_top5": {
     "claim": "even with the playoffs weighted heavily Brunson stays outside the top 5 of the playoff pool",

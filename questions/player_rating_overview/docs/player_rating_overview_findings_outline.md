@@ -64,8 +64,9 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Top-20-by-system table across the 14 systems; rank-1-to-rank-20 gap as a concentration read.
 
 ### § 8. Who rose and fell in the playoffs
-- Box-score rate metrics recomputed on playoff games only (impact metrics can't: a playoff run is too few games). 103 players ≥ 150 playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).
-- Risers: Jayson Tatum, OG Anunoby, Mike Conley. Fallers: Nikola Jokić, Jalen Duren, Nickeil Alexander-Walker, incl. regular-season consensus #1 Nikola Jokić. One postseason, not proof.
+- Box-score rate metrics recomputed on playoff games only (impact metrics can't: a playoff run is too few games; only the recompute family splits by season type, see inventory). 103 players ≥ 150 playoff minutes; change measured against that peer group (strips the leaguewide playoff dip).
+- Two reliability guards: shift shrunk toward zero by playoff minutes (half weight at 200) so a short sample can't top the list; agreement band = spread across PER/WS48/BPM, a shift "clears its band" when the three agree.
+- Risers: OG Anunoby, Cason Wallace, Jayson Tatum. Fallers: Jalen Duren, Nikola Jokić, Nickeil Alexander-Walker, incl. regular-season consensus #1 Nikola Jokić. One postseason, not proof.
 
 ### § 9. What changed from 2024-25 to 2025-26
 - Snapshot read of the most recent full-season pair (290 players qualified in both). Consensus order agrees 0.75 year-over-year: top stable (Nikola Jokić, Shai Gilgeous-Alexander lead both; only 4 of top 5 carry over), middle churns.
@@ -102,4 +103,4 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Consensus vs. wins-predictive Spearman: 0.963. Top riser Victor Wembanyama +1.27; top faller Jericho Sims -1.03.
 - Concentration: PER top-5% 8.6%; Gini cross-check Consensus 0.753 vs WS 0.362 (artifact).
 - Overlap R² (own kin held out; high = redundant): PER 0.947, BPM 0.937 most redundant; WS/48 0.596, bare RAPM 0.684, WS 0.668 least redundant; DBPM 0.770 mid after the RAPM fix.
-- Playoffs: 103 players ≥ 150 min; top riser Jayson Tatum, top faller Nikola Jokić.
+- Playoffs: 103 players ≥ 150 min; top riser OG Anunoby, top faller Jalen Duren.
