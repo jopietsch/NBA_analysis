@@ -102,8 +102,8 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
     season = season_str(end_year)
     path = cache_path(end_year, season_type)
 
-    if os.path.exists(path):
-        df = pd.read_csv(path)
+    if _nbakit.cache_exists(path):
+        df = _nbakit.cache_read_csv(path)
     else:
         try:
             finder = leaguegamefinder.LeagueGameFinder(
@@ -117,7 +117,7 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
             return None
 
         os.makedirs(CACHE_DIR, exist_ok=True)
-        df.to_csv(path, index=False)
+        _nbakit.cache_write_csv(df, path)
         time.sleep(SLEEP_SEC)  # polite pause, only needed after a real API call
 
     if df.empty:
@@ -245,10 +245,10 @@ def compute_playoff_format_averages(
 def _load_game_log(end_year: int, season_type: str) -> pd.DataFrame | None:
     """Load one season/type's cached game log (one row per team per game)."""
     path = cache_path(end_year, season_type)
-    if not os.path.exists(path):
+    if not _nbakit.cache_exists(path):
         return None
 
-    df = pd.read_csv(path)
+    df = _nbakit.cache_read_csv(path)
     if df.empty:
         return None
     return df
@@ -1179,9 +1179,9 @@ def fetch_attendance(end_year: int) -> pd.DataFrame | None:
     is written on a miss so we never re-fetch).
     """
     path = os.path.join(CACHE_DIR, f"attendance_{season_str(end_year)}.csv")
-    if os.path.exists(path):
+    if _nbakit.cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = _nbakit.cache_read_csv(path)
         except pd.errors.EmptyDataError:
             return None
         return df if not df.empty else None
@@ -1198,7 +1198,7 @@ def fetch_attendance(end_year: int) -> pd.DataFrame | None:
     filt = index.find("div", class_="filter")
     month_hrefs = [a.get("href") for a in filt.find_all("a")] if filt else []
     if not month_hrefs:
-        pd.DataFrame().to_csv(path, index=False)  # genuine miss
+        _nbakit.cache_write_csv(pd.DataFrame(), path)  # genuine miss
         return None
 
     print(f"  Fetching attendance: {season_str(end_year)} "
@@ -1211,11 +1211,11 @@ def fetch_attendance(end_year: int) -> pd.DataFrame | None:
         records.extend(_parse_bbr_schedule(soup))
 
     if not records:
-        pd.DataFrame().to_csv(path, index=False)  # genuine miss
+        _nbakit.cache_write_csv(pd.DataFrame(), path)  # genuine miss
         return None
 
     df = pd.DataFrame(records)
-    df.to_csv(path, index=False)
+    _nbakit.cache_write_csv(df, path)
     return df
 
 

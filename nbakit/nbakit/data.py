@@ -10,6 +10,7 @@ directory at the monorepo root so all questions share downloaded data.
 Override: export NBA_CACHE_DIR=/path/to/cache
 """
 
+import glob
 import os
 import time
 
@@ -102,6 +103,80 @@ def cache_path(end_year: int, season_type: str,
     return os.path.join(d, fname)
 
 
+# ── Cache I/O shim (transparent compression) ────────────────────────────────────
+# Call sites keep using logical '<name>.csv' paths; this layer resolves which
+# variant to read (compressed preferred) and writes the canonical compressed
+# variant. pandas infers (de)compression from the file extension, so the
+# compression itself needs no manual coding — only the path resolution lives here.
+# Switch codec globally with NBA_CACHE_CODEC=zst|gz|none.
+
+CACHE_CODEC = os.environ.get("NBA_CACHE_CODEC", "zst")   # "zst" | "gz" | "none"
+_COMPRESSED_EXT = {"zst": ".zst", "gz": ".gz", "none": ""}
+# pandas compression= value per codec. Passed explicitly on write because the
+# temp file (…"".tmp"") hides the real extension pandas would infer from.
+_PANDAS_COMPRESSION = {"zst": "zstd", "gz": "gzip", "none": None}
+
+
+def cache_variants(path: str) -> list[str]:
+    """Candidate paths for a logical '<name>.csv', compressed first.
+
+    ``path`` already ends in ``.csv``; returns [path+'.zst', path+'.gz', path]
+    in read-preference order (compressed variants before the plain CSV).
+    """
+    return [path + ".zst", path + ".gz", path]
+
+
+def cache_exists(path: str) -> bool:
+    """True if any variant (.csv.zst, .csv.gz, or plain .csv) of path exists."""
+    return any(os.path.exists(p) for p in cache_variants(path))
+
+
+def cache_read_csv(path: str, **kw) -> pd.DataFrame:
+    """Read the first existing variant of path (compressed preferred).
+
+    pandas auto-decompresses by extension. Forwards **kw to pd.read_csv.
+    Raises FileNotFoundError if no variant exists. pd.errors.EmptyDataError
+    (empty-marker files) propagates to the caller, exactly as before.
+    """
+    for p in cache_variants(path):
+        if os.path.exists(p):
+            return pd.read_csv(p, **kw)
+    raise FileNotFoundError(path)
+
+
+def cache_write_csv(df: pd.DataFrame, path: str, *, index: bool = False,
+                    **kw) -> str:
+    """Write the canonical compressed variant of path; return the path written.
+
+    The written path is ``path + ext`` for the active CACHE_CODEC ("none" writes
+    the plain ``.csv``). Writes to a temp sibling then os.replace for atomicity,
+    then removes any OTHER existing variants so a later read never returns a
+    stale copy. An empty df round-trips to an EmptyDataError on read, preserving
+    the empty-marker convention.
+    """
+    ext = _COMPRESSED_EXT[CACHE_CODEC]
+    target = path + ext
+    tmp = target + ".tmp"
+    # Pass compression explicitly: the ".tmp" suffix hides the extension pandas
+    # would otherwise infer, so it would write the temp file uncompressed.
+    df.to_csv(tmp, index=index, compression=_PANDAS_COMPRESSION[CACHE_CODEC],
+              **kw)
+    os.replace(tmp, target)             # atomic
+    for p in cache_variants(path):
+        if p != target and os.path.exists(p):
+            os.remove(p)
+    return target
+
+
+def cache_glob(pattern: str) -> list[str]:
+    """glob.glob(pattern) plus the .zst and .gz variants, de-duplicated."""
+    seen: dict[str, None] = {}
+    for pat in (pattern, pattern + ".zst", pattern + ".gz"):
+        for match in glob.glob(pat):
+            seen.setdefault(match, None)
+    return list(seen)
+
+
 # ── MATCHUP parsing ─────────────────────────────────────────────────────────────
 
 def is_home(matchup: str) -> bool:
@@ -165,8 +240,8 @@ def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,
     not the bare season= other endpoints take.
     """
     path = cache_path(end_year, season_type, cache_dir)
-    if os.path.exists(path):
-        return pd.read_csv(path)
+    if cache_exists(path):
+        return cache_read_csv(path)
     os.makedirs(os.path.dirname(path), exist_ok=True)
     from nba_api.stats.endpoints import leaguegamefinder
     df = leaguegamefinder.LeagueGameFinder(
@@ -174,7 +249,7 @@ def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,
         season_type_nullable=season_type,
         league_id_nullable="00",
     ).get_data_frames()[0]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(SLEEP_SEC)
     return df
 
@@ -189,8 +264,8 @@ def fetch_player_game_logs(end_year: int, season_type: str = PLAYOFFS,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"{season_str(end_year)}_{slug}_players.csv")
-    if os.path.exists(path):
-        return pd.read_csv(path)
+    if cache_exists(path):
+        return cache_read_csv(path)
     os.makedirs(d, exist_ok=True)
     from nba_api.stats.endpoints import leaguegamefinder
     df = leaguegamefinder.LeagueGameFinder(
@@ -199,7 +274,7 @@ def fetch_player_game_logs(end_year: int, season_type: str = PLAYOFFS,
         season_type_nullable=season_type,
         league_id_nullable="00",
     ).get_data_frames()[0]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(SLEEP_SEC)
     return df
 
@@ -230,8 +305,8 @@ def fetch_standings(end_year: int,
     """
     d = cache_dir or default_cache_dir()
     path = os.path.join(d, f"{season_str(end_year)}_standings.csv")
-    if os.path.exists(path):
-        return pd.read_csv(path)
+    if cache_exists(path):
+        return cache_read_csv(path)
     os.makedirs(d, exist_ok=True)
     from nba_api.stats.endpoints import leaguestandingsv3
     df = leaguestandingsv3.LeagueStandingsV3(
@@ -239,7 +314,7 @@ def fetch_standings(end_year: int,
         season=season_str(end_year),
         season_type="Regular Season",
     ).get_data_frames()[0]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(SLEEP_SEC)
     return df
 
@@ -372,9 +447,9 @@ def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
     exception is NOT cached, so a later run retries it instead of freezing a
     transient/rate-limit failure into a permanent "already fetched" miss.
     """
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
         except pd.errors.EmptyDataError:
             return None
         return df if not df.empty else None
@@ -387,12 +462,12 @@ def fetch_cached_csv(path: str, build_df, keep_cols: list[str], *,
         return None
 
     if df.empty or id_col not in df.columns:
-        pd.DataFrame().to_csv(path, index=False)  # genuine, permanent absence
+        cache_write_csv(pd.DataFrame(), path)  # genuine, permanent absence
         return None
 
     present = [id_col] + [c for c in keep_cols if c in df.columns and c != id_col]
     df = df[present].copy()
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(sleep_sec)
     return df
 
@@ -411,8 +486,8 @@ def fetch_player_season_totals(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"player_totals_{season_str(end_year)}_{slug}.csv")
-    if os.path.exists(path):
-        return pd.read_csv(path)
+    if cache_exists(path):
+        return cache_read_csv(path)
     os.makedirs(d, exist_ok=True)
     from nba_api.stats.endpoints import leaguedashplayerstats
     df = leaguedashplayerstats.LeagueDashPlayerStats(
@@ -423,7 +498,7 @@ def fetch_player_season_totals(end_year: int,
         league_id_nullable="00",
         timeout=60,
     ).get_data_frames()[0]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(SLEEP_SEC)
     return df
 
@@ -438,8 +513,8 @@ def fetch_player_season_per100(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"player_per100_{season_str(end_year)}_{slug}.csv")
-    if os.path.exists(path):
-        return pd.read_csv(path)
+    if cache_exists(path):
+        return cache_read_csv(path)
     os.makedirs(d, exist_ok=True)
     from nba_api.stats.endpoints import leaguedashplayerstats
     df = leaguedashplayerstats.LeagueDashPlayerStats(
@@ -450,7 +525,7 @@ def fetch_player_season_per100(end_year: int,
         league_id_nullable="00",
         timeout=60,
     ).get_data_frames()[0]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(SLEEP_SEC)
     return df
 
@@ -466,8 +541,8 @@ def fetch_team_season_totals(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"team_totals_{season_str(end_year)}_{slug}.csv")
-    if os.path.exists(path):
-        return pd.read_csv(path)
+    if cache_exists(path):
+        return cache_read_csv(path)
     os.makedirs(d, exist_ok=True)
     from nba_api.stats.endpoints import leaguedashteamstats
     df = leaguedashteamstats.LeagueDashTeamStats(
@@ -478,7 +553,7 @@ def fetch_team_season_totals(end_year: int,
         league_id_nullable="00",
         timeout=60,
     ).get_data_frames()[0]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(SLEEP_SEC)
     return df
 
@@ -497,8 +572,8 @@ def fetch_league_averages(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"league_avg_{season_str(end_year)}_{slug}.csv")
-    if os.path.exists(path):
-        row = pd.read_csv(path).iloc[0].to_dict()
+    if cache_exists(path):
+        row = cache_read_csv(path).iloc[0].to_dict()
         return row
     team_df = fetch_team_season_totals(end_year, season_type, cache_dir)
     lg: dict = {}
@@ -514,7 +589,7 @@ def fetch_league_averages(end_year: int,
     else:
         lg["lg_pace"] = 100.0
     lg["lg_orb_pct"] = (lg["lg_oreb"] / (lg["lg_oreb"] + lg.get("lg_dreb", 1))) if lg.get("lg_dreb", 0) > 0 else 0.25
-    pd.DataFrame([lg]).to_csv(path, index=False)
+    cache_write_csv(pd.DataFrame([lg]), path)
     return lg
 
 
@@ -545,9 +620,9 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str, *,
         cache_dir,
         f"shot_zones_{season_str(end_year)}_{season_type.replace(' ', '_')}_{location}.csv",
     )
-    if os.path.exists(path):
+    if cache_exists(path):
         try:
-            df = pd.read_csv(path)
+            df = cache_read_csv(path)
         except pd.errors.EmptyDataError:
             return None
         return df if not df.empty else None
@@ -569,7 +644,7 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str, *,
         return None
 
     if df.empty:
-        pd.DataFrame().to_csv(path, index=False)  # genuine, permanent absence
+        cache_write_csv(pd.DataFrame(), path)  # genuine, permanent absence
         return None
 
     id_map = {("", "TEAM_ID"): "TEAM_ID", ("", "TEAM_NAME"): "TEAM_NAME"}
@@ -577,7 +652,7 @@ def fetch_shot_zones(end_year: int, season_type: str, location: str, *,
     present = [c for c in col_map if c in df.columns]
     df = df[present].copy()
     df.columns = [col_map[c] for c in present]
-    df.to_csv(path, index=False)
+    cache_write_csv(df, path)
     time.sleep(sleep)
     return df
 
@@ -594,9 +669,9 @@ def fetch_referees(end_year: int, season_type: str, *,
     cache_dir = cache_dir or default_cache_dir()
     cache_file = os.path.join(
         cache_dir, f"referee_{season_str(end_year)}_{season_type.replace(' ', '_')}.csv")
-    if os.path.exists(cache_file):
+    if cache_exists(cache_file):
         try:
-            df = pd.read_csv(cache_file)
+            df = cache_read_csv(cache_file)
         except pd.errors.EmptyDataError:
             return None
         return df if not df.empty else None
@@ -646,11 +721,11 @@ def fetch_referees(end_year: int, season_type: str, *,
                   f"data (>= {officials_start_year}) but returned none — likely a "
                   f"silent rate-limit. Not caching; will retry next run.")
             return None
-        pd.DataFrame().to_csv(cache_file, index=False)  # genuine, permanent absence
+        cache_write_csv(pd.DataFrame(), cache_file)  # genuine, permanent absence
         return None
 
     df = pd.DataFrame(records)
-    df.to_csv(cache_file, index=False)
+    cache_write_csv(df, cache_file)
     return df
 
 
@@ -677,9 +752,9 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
         path = os.path.join(d, f"boxscore_trad_{gid_str}.csv")
-        if os.path.exists(path):
+        if cache_exists(path):
             try:
-                df = pd.read_csv(path)
+                df = cache_read_csv(path)
             except pd.errors.EmptyDataError:
                 continue
             if not df.empty:
@@ -701,7 +776,7 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
         if ps.empty:
             # A successful call that returns no rows: the source genuinely has no
             # data, so caching an empty marker (and not retrying) is correct.
-            pd.DataFrame().to_csv(path, index=False)
+            cache_write_csv(pd.DataFrame(), path)
             time.sleep(sleep)
             continue
         rows = []
@@ -713,7 +788,7 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
                 "familyName": str(r.get("familyName", "")),
                 "is_starter": bool(str(r.get("position", "")).strip()),
             })
-        pd.DataFrame(rows).to_csv(path, index=False)
+        cache_write_csv(pd.DataFrame(rows), path)
         all_records.extend(rows)
         time.sleep(sleep)
     return pd.DataFrame(all_records) if all_records else pd.DataFrame(
@@ -747,9 +822,9 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
     for i, gid in enumerate(game_ids, 1):
         gid_str = f"{int(float(gid)):010d}"
         path = os.path.join(d, f"pbp_v3_{gid_str}.csv")
-        if os.path.exists(path):
+        if cache_exists(path):
             try:
-                df = pd.read_csv(path)
+                df = cache_read_csv(path)
             except pd.errors.EmptyDataError:
                 continue
             if not df.empty:
@@ -776,10 +851,10 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
         if pbp.empty:
             # Successful call, genuinely no events: cache the empty marker so we
             # do not re-fetch a game the source has nothing for.
-            pd.DataFrame().to_csv(path, index=False)
+            cache_write_csv(pd.DataFrame(), path)
             time.sleep(sleep)
             continue
-        pbp.to_csv(path, index=False)
+        cache_write_csv(pbp, path)
         all_dfs.append(pbp)
         time.sleep(sleep)
         if i % 100 == 0:

@@ -28,6 +28,9 @@ from nbakit.data import (
     short_label,
     season_range_label,
     cache_path,
+    cache_exists,
+    cache_read_csv,
+    cache_write_csv,
     fetch_game_logs,
     fetch_player_game_logs,
     fetch_standings,
@@ -606,9 +609,9 @@ def build_possession_table(start_year: int = START_YEAR,
     rows = []
     for year in range(start_year, end_year + 1):
         rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not os.path.exists(rs_path):
+        if not cache_exists(rs_path):
             continue
-        rs = pd.read_csv(rs_path)
+        rs = cache_read_csv(rs_path)
         rows.append({"year": year, "poss_per_game": compute_possessions_per_game(rs)})
     return pd.DataFrame(rows)
 
@@ -929,8 +932,8 @@ def fetch_game_odds(po_2026: pd.DataFrame,
     """
     d = cache_dir or _nba.default_cache_dir()
     cache_file = os.path.join(d, "2025-26_Playoffs_odds.csv")
-    if os.path.exists(cache_file):
-        return pd.read_csv(cache_file)
+    if cache_exists(cache_file):
+        return cache_read_csv(cache_file)
 
     knicks_games = (
         po_2026[po_2026["TEAM_ID"] == knicks_team_id]
@@ -962,7 +965,7 @@ def fetch_game_odds(po_2026: pd.DataFrame,
               "will retry next run.", file=sys.stderr)
         return df
     os.makedirs(d, exist_ok=True)
-    df.to_csv(cache_file, index=False)
+    cache_write_csv(df, cache_file)
     return df
 
 
@@ -1069,10 +1072,10 @@ def build_champions_table(start_year: int = START_YEAR,
     for year in range(start_year, end_year + 1):
         po_path = cache_path(year, PLAYOFFS, cache_dir)
         rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not os.path.exists(po_path) or not os.path.exists(rs_path):
+        if not cache_exists(po_path) or not cache_exists(rs_path):
             continue
-        po = _nba.fill_plus_minus(pd.read_csv(po_path))
-        rs = pd.read_csv(rs_path)
+        po = _nba.fill_plus_minus(cache_read_csv(po_path))
+        rs = cache_read_csv(rs_path)
 
         champ = identify_champion(po)
         srs = compute_srs(rs)
@@ -1157,10 +1160,10 @@ def build_conference_gap_table(start_year: int = START_YEAR,
             cache_dir or _nba.default_cache_dir(),
             f"{season_str(year)}_standings.csv",
         )
-        if not os.path.exists(rs_path) or not os.path.exists(st_path):
+        if not cache_exists(rs_path) or not cache_exists(st_path):
             continue
-        rs = pd.read_csv(rs_path)
-        standings = pd.read_csv(st_path)
+        rs = cache_read_csv(rs_path)
+        standings = cache_read_csv(st_path)
         srs = compute_srs(rs)
         conf_avgs = compute_conference_avg_srs(srs, standings)
         gap = compute_srs_gap(conf_avgs)
@@ -1330,10 +1333,10 @@ def build_alt_rating_adjusted_table(rating_fn,
     for year in range(start_year, end_year + 1):
         po_path = cache_path(year, PLAYOFFS, cache_dir)
         rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not os.path.exists(po_path) or not os.path.exists(rs_path):
+        if not cache_exists(po_path) or not cache_exists(rs_path):
             continue
-        po = _nba.fill_plus_minus(pd.read_csv(po_path))
-        rs = pd.read_csv(rs_path)
+        po = _nba.fill_plus_minus(cache_read_csv(po_path))
+        rs = cache_read_csv(rs_path)
         champ = identify_champion(po)
         rating = rating_fn(rs)
         margin = compute_playoff_margin(po, champ)
@@ -1561,10 +1564,10 @@ def build_adjusted_margin_samples(start_year: int = START_YEAR,
     for year in range(start_year, end_year + 1):
         po_path = cache_path(year, PLAYOFFS, cache_dir)
         rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not os.path.exists(po_path) or not os.path.exists(rs_path):
+        if not cache_exists(po_path) or not cache_exists(rs_path):
             continue
-        po = _nba.fill_plus_minus(pd.read_csv(po_path))
-        rs = pd.read_csv(rs_path)
+        po = _nba.fill_plus_minus(cache_read_csv(po_path))
+        rs = cache_read_csv(rs_path)
         champ = identify_champion(po)
         srs = compute_srs(rs)
         g = per_game_adjusted_margins(po, srs, champ)

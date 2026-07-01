@@ -23,12 +23,12 @@ OUTPUT_DIR = "generated"
 
 def _count_regular_season_games() -> int:
     """Count total regular-season games from cached CSVs (each game = 2 rows)."""
-    import pandas as pd
+    from nbakit.data import cache_exists, cache_read_csv
     total = 0
     for year in range(nba.START_YEAR, nba.END_YEAR + 1):
         path = nba.cache_path(year, "Regular Season")
-        if os.path.exists(path):
-            total += len(pd.read_csv(path, usecols=[0]))
+        if cache_exists(path):
+            total += len(cache_read_csv(path, usecols=[0]))
     return total // 2
 
 

@@ -9,6 +9,7 @@ from nbakit.data import (
     add_rest_days,
     bucket_series_by_period,
     bucket_stats_by_period,
+    cache_exists,
     cache_path,
     compute_srs,
     default_cache_dir,
@@ -267,7 +268,7 @@ def test_fetch_cached_csv_caches_miss(tmp_path):
     path = str(tmp_path / "y.csv")
     out = fetch_cached_csv(path, lambda: pd.DataFrame(), ["A"], sleep_sec=0)
     assert out is None
-    assert os.path.exists(path)  # empty miss cached
+    assert cache_exists(path)  # empty miss cached (compressed variant)
     assert fetch_cached_csv(path, lambda: 1 / 0, ["A"], sleep_sec=0) is None
 
 
