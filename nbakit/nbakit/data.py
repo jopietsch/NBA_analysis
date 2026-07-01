@@ -691,10 +691,14 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
             ps = bs.player_stats.get_data_frame()
         except Exception as e:
             print(f"    WARN boxscore {gid_str}: {e!r}")
-            pd.DataFrame().to_csv(path, index=False)
+            # Do NOT cache an empty placeholder on a transient/rate-limit error:
+            # an empty file is treated as "already fetched" on later runs and the
+            # game is skipped forever. Leave it uncached so a later run retries it.
             time.sleep(sleep)
             continue
         if ps.empty:
+            # A successful call that returns no rows: the source genuinely has no
+            # data, so caching an empty marker (and not retrying) is correct.
             pd.DataFrame().to_csv(path, index=False)
             time.sleep(sleep)
             continue
@@ -761,10 +765,15 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
                 time.sleep(sleep * 5)
             if failed <= 3:
                 print(f"    WARN {gid_str}: {e!r}")
-            pd.DataFrame().to_csv(path, index=False)
+            # Do NOT cache an empty placeholder on a transient/rate-limit error:
+            # later runs read it as "already fetched, no data" and skip the game
+            # permanently. Leaving it uncached lets a later run retry it. (This
+            # silently dropped ~a third of some seasons' games before the fix.)
             time.sleep(sleep)
             continue
         if pbp.empty:
+            # Successful call, genuinely no events: cache the empty marker so we
+            # do not re-fetch a game the source has nothing for.
             pd.DataFrame().to_csv(path, index=False)
             time.sleep(sleep)
             continue
@@ -802,33 +811,57 @@ def _is_last_ft(subtype: str) -> bool:
     return False
 
 
-def _build_name_lookup(game_pbp: pd.DataFrame,
-                       game_players: pd.DataFrame | None) -> dict[tuple, int]:
-    """Return {(team_id, family_name_lower): personId} for one game.
+def _norm_name(name: str) -> str:
+    """Normalize a family name for lineup matching.
 
+    Strips accents ('Pöltl' → 'poltl'), lower-cases, drops a leading
+    disambiguation initial that play-by-play adds when two players share a
+    family name ('F. Wagner' → 'wagner'), and drops a trailing generational
+    suffix ('Nance Jr.' → 'nance'). These three are the substitution-resolution
+    failures that otherwise shrink a lineup below five and get the whole game
+    discarded.
+    """
+    import unicodedata
+    s = (unicodedata.normalize("NFKD", str(name))
+         .encode("ascii", "ignore").decode("ascii").lower())
+    parts = s.replace(".", " ").split()
+    if parts and len(parts[0]) == 1:          # leading initial: "f wagner"
+        parts = parts[1:]
+    if parts and parts[-1] in ("jr", "sr", "ii", "iii", "iv", "v"):
+        parts = parts[:-1]
+    return " ".join(parts)
+
+
+def _build_name_lookup(game_pbp: pd.DataFrame,
+                       game_players: pd.DataFrame | None) -> dict[tuple, list]:
+    """Return {(team_id, normalized_family_name): [personId, ...]} for one game.
+
+    Values are lists because two players on a team can share a normalized family
+    name (Franz and Moritz Wagner both normalize to 'wagner'); the caller picks
+    the right one from lineup context (a substituted-in player must be off court).
     Merges two sources:
     1. Non-substitution PBP events (player took an action → ID is in the row).
     2. players_df rows for the game (box-score roster, more complete).
     """
-    lookup: dict[tuple, int] = {}
-    # Source 1: observed events
+    lookup: dict[tuple, list] = {}
+
+    def _add(tid: int, name: str, pid: int) -> None:
+        key = (tid, _norm_name(name))
+        if key[1] and tid and pid:
+            lookup.setdefault(key, [])
+            if pid not in lookup[key]:
+                lookup[key].append(pid)
+
+    # Source 1: observed events (playerName in V3 is the family name)
     obs = game_pbp[(game_pbp["personId"].fillna(0).astype(float) > 0) &
                    (game_pbp["actionType"] != "Substitution")]
     for _, r in obs.iterrows():
         tid = int(float(r["teamId"])) if float(str(r["teamId"]).replace("nan", "0") or 0) > 0 else 0
-        pid = int(float(r["personId"]))
-        name = str(r.get("playerName", "")).strip().lower()
-        if tid and pid and name:
-            # playerName in V3 is family name only
-            lookup[(tid, name)] = pid
+        _add(tid, str(r.get("playerName", "")), int(float(r["personId"])))
     # Source 2: box-score roster (covers players who took no stat actions)
     if game_players is not None and not game_players.empty:
         for _, r in game_players.iterrows():
-            tid = int(r["team_id"])
-            pid = int(r["personId"])
-            fname = str(r["familyName"]).strip().lower()
-            if tid and pid and fname:
-                lookup[(tid, fname)] = pid
+            _add(int(r["team_id"]), str(r["familyName"]), int(r["personId"]))
     return lookup
 
 
@@ -941,7 +974,6 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                 if len(s) == 5:
                     p1_starters[tid] = s
 
-        game_ok = True
         # Lineups carry across periods; initialised at each period start
         carry_lineups: dict[int, set] = {}
 
@@ -968,7 +1000,6 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
             other_team_of = {team_ids[0]: team_ids[1], team_ids[1]: team_ids[0]}
             poss_pts = 0
             period_records: list[dict] = []
-            period_ok = True
 
             def _emit(b_team: int) -> None:
                 nonlocal poss_pts
@@ -987,19 +1018,25 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                 period_records.append(row)
                 poss_pts = 0
 
+            # Event index of each player's most recent action this period, so a
+            # forced eviction removes the one with the longest silence.
+            last_seen: dict[int, int] = {}
+
             def _reconcile_player(tid: int, pid: int) -> None:
-                """Add pid to lineup if missing; drop least-recently-added if full."""
+                """Add pid to lineup if missing; when full, evict the player who
+                has gone longest without a play (the likeliest unlogged sub-out),
+                not an arbitrary smallest-id victim."""
                 if pid in lineups[tid]:
                     return
                 if len(lineups[tid]) < 5:
                     lineups[tid].add(pid)
                 else:
-                    # Drop the player with the smallest ID (arbitrary but stable)
-                    victim = min(lineups[tid] - {pid})
+                    victim = min(lineups[tid] - {pid},
+                                 key=lambda p: last_seen.get(p, -1))
                     lineups[tid].discard(victim)
                     lineups[tid].add(pid)
 
-            for _, ev in period_pbp.iterrows():
+            for ev_i, (_, ev) in enumerate(period_pbp.iterrows()):
                 action = str(ev.get("actionType", ""))
                 subtype = str(ev.get("subType", ""))
                 tid_raw = ev.get("teamId", 0)
@@ -1021,7 +1058,7 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                     # "Jump Ball X vs. Y: Tip to Z" — find Z's team
                     desc = str(ev.get("description", ""))
                     if "Tip to " in desc:
-                        tip_name = desc.split("Tip to ")[-1].strip().lower()
+                        tip_name = _norm_name(desc.split("Tip to ")[-1])
                         for lt in team_ids:
                             if (lt, tip_name) in name_lookup:
                                 ball_team = lt
@@ -1036,7 +1073,17 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                     if tid in team_ids and pid > 0:
                         lineups[tid].discard(pid)
                     in_name = _parse_sub_in_name(str(ev.get("description", "")))
-                    in_pid = name_lookup.get((tid, in_name), 0) if tid in team_ids else 0
+                    cands = (name_lookup.get((tid, _norm_name(in_name)), [])
+                             if tid in team_ids else [])
+                    if len(cands) == 1:
+                        in_pid = cands[0]
+                    elif len(cands) > 1:
+                        # Shared family name (e.g. two Wagners): the incoming
+                        # player is the one currently off court.
+                        off = [p for p in cands if p not in lineups[tid]]
+                        in_pid = off[0] if off else cands[0]
+                    else:
+                        in_pid = 0
                     if tid in team_ids and in_pid > 0:
                         lineups[tid].add(in_pid)
                     continue
@@ -1049,6 +1096,7 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                 # For player events: reconcile and infer ball_team.
                 if tid in team_ids and pid > 0:
                     _reconcile_player(tid, pid)
+                    last_seen[pid] = ev_i
                     if ball_team is None and action in (
                             "Made Shot", "Missed Shot", "Turnover", "Free Throw"):
                         ball_team = tid
@@ -1097,24 +1145,22 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                         _emit(ball_team)
                         ball_team = other_team_of.get(ball_team)
 
-            # Check lineup integrity for this period
-            for t in team_ids:
-                if len(lineups[t]) != 5:
-                    period_ok = False
-                    break
-
-            if not period_ok:
-                warnings.warn(
-                    f"Game {game_id_str} period {period}: lineup not reconciled "
-                    f"to 5-on-5 — dropping game.")
-                game_ok = False
-                break
-
-            carry_lineups = {t: set(lineups[t]) for t in team_ids}
+            # Keep the 5-on-5 possessions this period produced. _emit already
+            # skipped any possession where a lineup was not exactly five, so
+            # period_records holds only clean rows. A period whose bookkeeping
+            # drifts off five (a missed substitution, an unlogged re-entry) yields
+            # fewer possessions, but that is no reason to discard the rest of the
+            # game: dropping whole games this way threw out ~60% of games that had
+            # complete play-by-play. Possessions from a drifted stretch are simply
+            # absent, not corrupt.
             records.extend(period_records)
 
-        if not game_ok:
-            # Remove any records emitted for this game before the bad period
-            records = [r for r in records if r["game_id"] != game_id_str]
+            # Only carry a lineup into the next period when it is intact; a drifted
+            # (non-five) lineup would propagate its error, so fall back to inference
+            # at the next period start instead.
+            if all(len(lineups[t]) == 5 for t in team_ids):
+                carry_lineups = {t: set(lineups[t]) for t in team_ids}
+            else:
+                carry_lineups = {}
 
     return pd.DataFrame(records, columns=cols) if records else pd.DataFrame(columns=cols)

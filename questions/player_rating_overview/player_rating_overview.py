@@ -49,6 +49,7 @@ def main() -> None:
         plot_rating_stability,
         plot_season_comparison,
         plot_playoff_weighted_value,
+        plot_rapm_reliability,
     )
     from player_rating_overview_analysis import (
         ALL_SYSTEMS,
@@ -144,6 +145,10 @@ def main() -> None:
 
     # Season-over-season consensus movers (most recent full-season pair)
     plot_season_comparison(season_comparison(end_year - 1, end_year))
+
+    # RAPM split-half reliability by minutes played
+    from player_rating_overview_data import rapm_reliability
+    plot_rapm_reliability(rapm_reliability(end_year))
 
     # 3. Analysis → results doc
     print("\n[3/3] Running analysis...")

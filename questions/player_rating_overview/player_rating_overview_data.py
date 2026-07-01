@@ -51,6 +51,21 @@ CACHE_DIR = default_cache_dir()
 # flagged as below threshold.
 MIN_MINUTES_QUALIFIER = 500
 
+# Strength of the box-score prior in the prior-informed RAPM (RAPM_MY): the fixed
+# ridge penalty pulling each player's rating toward his BPM prior. A player's own
+# possession count must be comparable to this before the lineup data moves his
+# rating off the prior, so ~500-900 minute players collapse onto their box score
+# (fixing the low-possession spikes) while 2000+ minute stars still move to what
+# the pooled lineup data shows. Replaces the cross-validated penalty, which
+# optimizes possession prediction and settles far too weak to shrink these spikes.
+RAPM_PRIOR_STRENGTH = 8000.0
+
+# RAPM leaderboards reuse the shared 500-minute qualified cutoff. The split-half
+# and year-over-year reliability of the computed RAPM is flat and low across every
+# minute level (see rapm_reliability), so a higher RAPM-specific floor would not
+# buy reliability; and with the fixed prior, moderate-minute players no longer
+# spike, so the 500 cutoff needs no separate safeguard.
+
 # Rate metrics meaningful for a regular-season vs playoff comparison: each is
 # per-minute or per-possession by construction, so it measures level of play
 # rather than how many games a player accumulated. Cumulative Win Shares and
@@ -871,13 +886,17 @@ def compute_rapm_my(end_year: int, prior_df: pd.DataFrame | None = None,
         base = _build_recomputed(end_year).rename(columns={"PLAYER_ID": "player_id"})
         prior_df = base[["player_id", "OBPM", "DBPM"]]
 
-    prior = prior_df.dropna(subset=["player_id"]).copy()
+    prior = prior_df.dropna(subset=["player_id", "OBPM", "DBPM"]).copy()
     prior["player_id"] = prior["player_id"].astype(int)
     prior = (prior.set_index("player_id")[["OBPM", "DBPM"]]
                   .rename(columns={"OBPM": "off", "DBPM": "def"}))
 
+    # Drop possessions with a missing outcome so the ridge target carries no NaN.
+    poss = poss.dropna(subset=["points"])
+
     try:
-        result = compute_rapm_fit(poss, prior=prior)
+        result = compute_rapm_fit(poss, prior=prior,
+                                  prior_strength=RAPM_PRIOR_STRENGTH)
     except Exception as e:
         print(f"  RAPM_MY: fit failed for {season_str(end_year)}: {e}")
         return empty
@@ -891,6 +910,69 @@ def compute_rapm_my(end_year: int, prior_df: pd.DataFrame | None = None,
     result.to_csv(cache_path, index=False)
     print(f"  RAPM_MY computed (pool {n_seasons}) for {season_str(end_year)} → {cache_path}")
     return result[["player_id", "RAPM_MY", "O_RAPM_MY", "D_RAPM_MY"]]
+
+
+# Minutes bins for the RAPM split-half reliability curve.
+_RAPM_REL_BINS = [(0, 500), (500, 1000), (1000, 1500), (1500, 2000), (2000, 3500)]
+
+
+def rapm_reliability(end_year: int, *, n_seasons: int = 3,
+                     min_minutes: int = 1000, seed: int = 0) -> dict:
+    """Quantify how reliable the computed RAPM is, two independent ways.
+
+    1. Split-half: randomly halve the pooled possessions, fit bare RAPM on each
+       half on its own, and correlate the two estimates for players above
+       min_minutes (and within each minutes bin). This asks whether the lineup
+       signal is even reproducible from one half of the data to the other.
+    2. Year-over-year: correlate each metric between end_year-1 and end_year for
+       players who cleared min_minutes in both seasons. This asks whether the
+       metric tracks a stable player quality. BPM is the reference: a real
+       player-quality metric lands near 0.5-0.8 here.
+
+    Returns a dict of scalars plus the by-bin curve, or {} when fewer than two
+    seasons of play-by-play are cached.
+    """
+    poss = pool_possessions(end_year, n_seasons=n_seasons)
+    if poss.empty:
+        return {}
+
+    mins = load_unified_ratings(end_year).set_index("player_id")["MIN"].to_dict()
+
+    rng = np.random.default_rng(seed)
+    mask = rng.random(len(poss)) < 0.5
+    a = compute_rapm_fit(poss[mask].reset_index(drop=True))
+    b = compute_rapm_fit(poss[~mask].reset_index(drop=True))
+    common = a.index.intersection(b.index)
+    df = pd.DataFrame({"a": a.loc[common, "RAPM"].to_numpy(),
+                       "b": b.loc[common, "RAPM"].to_numpy(),
+                       "min": [mins.get(int(p), 0) for p in common]})
+
+    def _r(sub: pd.DataFrame) -> float:
+        return (float(np.corrcoef(sub["a"], sub["b"])[0, 1])
+                if len(sub) > 8 and sub["a"].std() > 0 else float("nan"))
+
+    by_bin = [{"lo": lo, "hi": hi,
+               "n": int(((df["min"] >= lo) & (df["min"] < hi)).sum()),
+               "r": _r(df[(df["min"] >= lo) & (df["min"] < hi)])}
+              for lo, hi in _RAPM_REL_BINS]
+    splithalf = _r(df[df["min"] >= min_minutes])
+
+    # Year-over-year stability of RAPM, RAPM_MY, and BPM (reference).
+    yoy: dict[str, float] = {}
+    cur = load_unified_ratings(end_year)
+    prev = load_unified_ratings(end_year - 1)
+    for col in ["RAPM", "RAPM_MY", "BPM"]:
+        if col in cur.columns and col in prev.columns:
+            m = (prev[["player_id", col, "MIN"]]
+                 .merge(cur[["player_id", col, "MIN"]], on="player_id",
+                        suffixes=("_a", "_b")).dropna())
+            m = m[(m["MIN_a"] >= min_minutes) & (m["MIN_b"] >= min_minutes)]
+            yoy[col] = (_r(pd.DataFrame({"a": m[f"{col}_a"], "b": m[f"{col}_b"]}))
+                        if len(m) > 8 else float("nan"))
+
+    return {"splithalf": splithalf, "min_minutes": min_minutes,
+            "n_splithalf": int((df["min"] >= min_minutes).sum()),
+            "by_bin": by_bin, "yoy": yoy}
 
 
 def _load_rapm_snapshot(end_year: int) -> pd.DataFrame | None:

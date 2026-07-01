@@ -271,3 +271,31 @@ def test_plot_playoff_weighted_value_empty(tmp_path):
     plots.OUTPUT_DIR = str(tmp_path)
     path = plots.plot_playoff_weighted_value(pd.DataFrame())
     assert os.path.exists(path)
+
+
+def _mini_rapm_reliability() -> dict:
+    return {
+        "by_bin": [
+            {"lo": 0, "hi": 500, "n": 80, "r": 0.08},
+            {"lo": 500, "hi": 1000, "n": 60, "r": 0.11},
+            {"lo": 1000, "hi": 1500, "n": 50, "r": 0.09},
+            {"lo": 1500, "hi": 2000, "n": 40, "r": 0.12},
+            {"lo": 2000, "hi": 3500, "n": 30, "r": 0.10},
+        ],
+        "splithalf": 0.10,
+        "min_minutes": 1000,
+        "n_splithalf": 120,
+        "yoy": {"RAPM": 0.10, "RAPM_MY": 0.75, "BPM": 0.79},
+    }
+
+
+def test_plot_rapm_reliability(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_rapm_reliability(_mini_rapm_reliability())
+    assert os.path.exists(path)
+
+
+def test_plot_rapm_reliability_empty(tmp_path):
+    plots.OUTPUT_DIR = str(tmp_path)
+    path = plots.plot_rapm_reliability({})
+    assert os.path.exists(path)
