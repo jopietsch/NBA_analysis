@@ -667,7 +667,7 @@ def plot_fta_distribution(
     ax1.axvline(mean_val, color=RED, linewidth=2, zorder=3)
     ax1.text(mean_val, ax1.get_ylim()[1] * 0.94, f"  season average {mean_val:+.1f}",
              color=RED, fontsize=9, fontweight="bold", ha="left" if mean_val >= 0 else "right")
-    ax1.set_title("One season looks like noise, not a pattern",
+    ax1.set_title(f"An ordinary bell curve ({season_label}) hides the home edge inside it",
                    fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
     ax1.set_xlabel(f"{season_label} regular season, one point per game", fontsize=8, color=GRAY)
     ax1.set_ylabel("Number of games", fontsize=10)
