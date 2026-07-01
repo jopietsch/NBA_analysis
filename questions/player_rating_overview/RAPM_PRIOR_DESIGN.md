@@ -1,47 +1,60 @@
 # RAPM: box-score prior and reproducing the proprietary metrics
 
-Design note on the next iteration of the computed RAPM. Internal analyst tier:
-technical shorthand is fine. Captures the discussion of what a box-score prior
-would be, how to wire it in, and how close we can get to EPM / LEBRON / RPM /
-DARKO / RAPTOR.
+Design note for the computed RAPM. Internal analyst tier: technical shorthand is
+fine. Most of the plan below is now shipped as `RAPM_MY` (prior-informed,
+multi-year RAPM); this note records what was built, how it is wired, how close it
+gets to EPM / LEBRON / RPM / DARKO / RAPTOR, and the two open items.
 
-## Where we are now
+## Status: what shipped
 
-RAPM is computed from play-by-play for 2013-14 through 2025-26 (ridge with a
-cross-validated penalty, possessions reconstructed with box-score starters). The
-current version is **bare single-season RAPM with a zero-mean prior**: in the
-absence of lineup data every player is assumed average. That is the noisy version
-every serious metric improves on. The tell is the 2024-25 top: Isaiah Joe (a
-reserve) at #1 and a cluster of role-player bigs ahead of the stars. One season
-of lineup data cannot separate a player's impact from the quality of the lineups
-they happened to share the floor with.
+The recommended path (bottom of this note) is built except for the public-snapshot
+validation and the optional luck adjustment.
 
-Only the combined RAPM feeds the consensus; the offense/defense splits are kept
-out so a noisy single-season split cannot swing the headline order.
+| Step | Status | Where |
+|---|---|---|
+| Multi-year pooling (2 to 3 seasons, recency-weighted) | Done | `pool_possessions()`, `compute_rapm_my()` in `..._data.py` |
+| BPM box-score prior (prior-mean ridge) | Done | `rapm(prior=, prior_strength=)` in `nbakit/nbakit/ratings.py` |
+| Validation vs public RAPM snapshot | Infra done, inactive: no snapshot CSV | `_load_rapm_snapshot()`, guard `rapm_val_reasonable` |
+| Luck adjustment (shot-location expected-points proxy) | Not started (optional, partial) | — |
 
-## The prior is already in the codebase: BPM
+Two versions now exist in the unified table:
 
-A box-score prior is a per-player estimate of impact per 100 possessions built
-from box-score stats, used as the center the ridge shrinks toward instead of
-zero. That is exactly what a Statistical Plus/Minus (SPM) model is, and our
-recomputed **BPM 2.0** (`nbakit.ratings.bpm`, already in the unified table,
-already on a points-per-100 scale) is one. It is the documented public analog of
-what the proprietary metrics use internally:
+- **Bare single-season RAPM** with a zero-mean prior. The noisy baseline every
+  serious metric improves on. Kept in the docs as the higher-variance cut.
+- **`RAPM_MY`**: BPM box-score prior + pooled possessions (default 3 seasons,
+  linear recency weights 1/3, 2/3, 1.0). This is the version to lead with.
+
+The RAPM reconstruction fix earlier this session (recover valid possessions from a
+game instead of discarding the whole game on any 5-on-5 reconcile failure) roughly
+tripled usable games (~500 → ~1,230 per season) and lifted reliability across the
+board: split-half ~0.10 → 0.32 (~0.48 Spearman-Brown full-data, ~0.60 at 5 pooled
+seasons); bare single-season RAPM year-over-year 0.09 → 0.41; `RAPM_MY` year-over-
+year 0.84, at least as stable as BPM (0.79). Only combined RAPM feeds the
+consensus; the offense/defense splits stay out so a noisy single-season split
+cannot swing the headline order.
+
+## The prior is BPM
+
+A box-score prior is a per-player impact-per-100 estimate built from box-score
+stats, used as the center the ridge shrinks toward instead of zero. That is a
+Statistical Plus/Minus (SPM) model, and our recomputed **BPM 2.0**
+(`nbakit.ratings.bpm`, already on a points-per-100 scale) is one. It is the public
+analog of what the proprietary metrics use internally:
 
 - EPM: its own optimized SPM prior (plus tracking)
 - LEBRON: PIPM coefficients as the prior
 - RPM (Engelmann): an SPM prior
 - BPM: the reproducible version of the same idea
 
-BPM and our raw RAPM agree at only ~0.23 (rank), so using BPM as the prior would
-move the noisy low-possession players a lot (pulling Isaiah Joe down hard) while
-barely touching a 2,500-minute star. That is the desired behavior.
+BPM and bare RAPM agree at only ~0.23 (rank), so BPM-as-prior moves the noisy
+low-possession players a lot (pulling reserve names down hard) while barely
+touching a 2,500-minute star. That is the desired behavior.
 
-Caveat: our recomputed BPM absolute values are approximations (see the findings
-note on the recomputed formulas). For a prior, the scale should be sanity-checked
-or lightly calibrated against published BPM before trusting the absolute output.
+Caveat: recomputed BPM absolute values are approximations (see the findings note
+on the recomputed formulas). For a prior the scale is sanity-checked against the
+BPM validation section each run rather than trusted blind.
 
-## How to wire a prior into the existing ridge
+## How the prior is wired
 
 Prior-mean ridge minimizes
 
@@ -49,33 +62,25 @@ Prior-mean ridge minimizes
 Sum (y - X beta)^2 + lambda * Sum (beta_i - prior_i)^2
 ```
 
-No new solver is needed. Substitute `gamma = beta - prior`:
+No new solver. `rapm()` substitutes `gamma = beta - prior`:
 
-1. Form each player's prior contribution and the residual target
-   `y' = y - X . prior`.
-2. Run the existing zero-mean `RidgeCV` on `y'` to get `gamma`.
+1. Form the residual target `y' = y - X . prior`.
+2. Run ridge on `y'` to get `gamma` (with a fixed strong penalty
+   `RAPM_PRIOR_STRENGTH`, not the cross-validated one, so the shrink toward BPM is
+   deliberate and stable).
 3. Add back: `beta = gamma + prior`.
 
-Low-possession players (small, noisy `gamma`) collapse onto their BPM; heavy-
-minute players move far from it. This is roughly 20 lines on top of `rapm()`
-(add a `prior=` argument; map each player's BPM onto the design-matrix columns).
-
-## The bigger lever: multi-year pooling
-
-The prior is the second most important fix. The first is **pooling 2 to 3
-seasons of possessions** into one regression, often with recency weighting, which
-is what RPM / EPM / RAPTOR all do. We now have 13 seasons of play-by-play cached,
-so this is immediately doable and would cut the single-season noise more than the
-prior alone. Prior plus multi-year pooling together is what makes these metrics
-stable.
+Column layout is `2*i` offensive / `2*i+1` defensive; players absent from the prior
+fall back to a zero prior. Low-possession players (small, noisy `gamma`) collapse
+onto their BPM; heavy-minute stars move far from it.
 
 ## Can we reproduce a proprietary metric?
 
-The structure, yes; the exact metric, no. We can build a credible prior-informed,
-multi-year, regularized RAPM that captures what makes EPM / RPM / LEBRON good.
-What we cannot replicate is the proprietary inputs.
+The structure, yes; the exact metric, no. `RAPM_MY` captures what makes EPM / RPM /
+LEBRON good (RAPM backbone + SPM prior + multi-year pooling). What it cannot
+replicate is the proprietary inputs.
 
-| Metric | What we can match | The gap we cannot close |
+| Metric | What we match | The gap we cannot close |
 |---|---|---|
 | RPM (Engelmann) | Essentially all of it: RAPM + SPM prior + multi-year. Closest to reproducible. | His exact SPM coefficients; also defunct. |
 | EPM | RAPM backbone + BPM-as-prior | Player-tracking inputs (Second Spectrum) and the per-stat stabilization weighting that is its actual edge |
@@ -85,23 +90,25 @@ What we cannot replicate is the proprietary inputs.
 
 The wall for all of them is **player-tracking data** (speed, distance, shot
 quality, matchup data), which is proprietary. A luck adjustment needs
-expected-points-per-shot, which we only partially have via the cached
-shot-location data (not true shot quality).
+expected-points-per-shot, which we only partially have via cached shot-location
+data (not true shot quality).
 
 ## Recommended path
 
-Build an honest "RPM/EPM-like" metric, in order of leverage:
+In order of leverage. Steps 1 and 2 shipped; 3 and 4 remain.
 
-1. **Multi-year pooling** (2 to 3 seasons of possessions, recency-weighted). Data
-   is already cached.
-2. **BPM box-score prior** via the prior-mean ridge substitution above.
-3. **Validation** against a public RAPM snapshot dropped at
-   `cache/rapm_snapshot_{season}.csv` (activates the existing computed-vs-public
-   guard, `rapm_val_reasonable`, r > 0.70).
+1. ~~**Multi-year pooling** (2 to 3 seasons, recency-weighted).~~ Done.
+2. ~~**BPM box-score prior** via the prior-mean ridge substitution above.~~ Done.
+3. **Validation** against a public RAPM snapshot. Infrastructure is in place: drop
+   the downloaded CSV at `cache/rapm_snapshot_{season}.csv` (schema per
+   `_load_rapm_snapshot`), rerun the pipeline, and the computed-vs-public section
+   plus the `rapm_val_reasonable` guard (r > 0.70) activate. This is a manual
+   data-acquisition step, not code; the snapshot source is external and partly
+   paywalled.
 4. Optional, partial: a **luck adjustment** using cached shot-location data as a
-   rough expected-points proxy. Not full shot quality.
+   rough expected-points proxy. Not full shot quality. Not started.
 
-Expected outcome: the top tier sharpens to recognizable stars rather than
+Outcome so far: the top tier sharpened to recognizable stars rather than
 single-season role-player noise, while RAPM keeps the independent signal it adds
-over the box scores. We can call it RPM/EPM-like, not EPM or LEBRON itself,
-because the tracking data and bespoke tuning are not ours to reproduce.
+over the box scores. Call it RPM/EPM-like, not EPM or LEBRON itself, because the
+tracking data and bespoke tuning are not ours to reproduce.

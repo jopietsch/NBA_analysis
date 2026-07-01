@@ -125,6 +125,8 @@ minute level, even for 2,000-minute players. That is noise: two halves of the
 data barely agreed. After recovering the discarded games and repairing the
 lineup tracking, and pooling multiple seasons, the picture is very different:
 
+![Single-season split-half reliability by minutes played. Even after the fix, one season of bare RAPM stays under the usable line at every minute level; the reconstruction fix roughly tripled it, and pooling several seasons is what carries it over.](../generated/images/rapm_reliability.svg){#fig-rapm-reliability}
+
 | Pooled seasons | Split-half | Full-data reliability (Spearman-Brown) |
 |---|---|---|
 | 3 | 0.32 | ~0.48 |
@@ -132,7 +134,7 @@ lineup tracking, and pooling multiple seasons, the picture is very different:
 | 5 | 0.43 | ~0.60 |
 
 So the honest answer to "how many years do you need for a stable RAPM" is about
-**four pooled seasons to clear the usable ~0.5 line, and five to reach ~0.60** —
+**four pooled seasons to clear the usable ~0.5 line, and five to reach ~0.60**,
 and the prior-informed version (RAPM shrunk toward BPM) is steadier still,
 because the box-score prior absorbs the residual lineup noise. The single-season
 version stays noisy, which is exactly why every published metric pools years and
