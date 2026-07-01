@@ -2678,77 +2678,77 @@
     "fmt": "{:.3f}",
     "note": "BPM mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.9994595683251057
+    "value": 0.9994046287916883
   },
   "ipanel.BPM.forecast_mean": {
-    "display": "0.601",
+    "display": "0.512",
     "fmt": "{:.3f}",
     "note": "BPM mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.6007962054459086
+    "value": 0.5117429874747584
   },
   "ipanel.DBPM.describe_mean": {
-    "display": "0.524",
+    "display": "0.482",
     "fmt": "{:.3f}",
     "note": "DBPM mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.5236324728612864
+    "value": 0.481915505003757
   },
   "ipanel.DBPM.forecast_mean": {
-    "display": "0.293",
+    "display": "0.256",
     "fmt": "{:.3f}",
     "note": "DBPM mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.29345470988278144
+    "value": 0.25649285576968767
   },
   "ipanel.GAME_SCORE.describe_mean": {
-    "display": "0.424",
+    "display": "0.387",
     "fmt": "{:.3f}",
     "note": "Game Score mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.42411571533732545
+    "value": 0.38681014533887337
   },
   "ipanel.GAME_SCORE.forecast_mean": {
-    "display": "0.446",
+    "display": "0.417",
     "fmt": "{:.3f}",
     "note": "Game Score mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.445750295789499
+    "value": 0.41712772032151896
   },
   "ipanel.OBPM.describe_mean": {
-    "display": "0.698",
+    "display": "0.610",
     "fmt": "{:.3f}",
     "note": "OBPM mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.697959643357674
+    "value": 0.6102786596578739
   },
   "ipanel.OBPM.forecast_mean": {
-    "display": "0.468",
+    "display": "0.378",
     "fmt": "{:.3f}",
     "note": "OBPM mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.46848005218451844
+    "value": 0.37814448517017923
   },
   "ipanel.PER.describe_mean": {
-    "display": "0.641",
+    "display": "0.634",
     "fmt": "{:.3f}",
     "note": "PER mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.6410333633370849
+    "value": 0.6342857358687314
   },
   "ipanel.PER.forecast_mean": {
-    "display": "0.267",
+    "display": "0.253",
     "fmt": "{:.3f}",
     "note": "PER mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.26706916866261426
+    "value": 0.25326515335695776
   },
   "ipanel.PER.forecast_mean_pct": {
-    "display": "27",
+    "display": "25",
     "fmt": "{:.0f}",
     "note": "PER mean forecast R\u00b2 (impact-era panel), percent (append % in prose)",
     "unit": null,
-    "value": 26.706916866261427
+    "value": 25.326515335695778
   },
   "ipanel.RAPM.describe_mean": {
     "display": "0.776",
@@ -2814,53 +2814,53 @@
     "value": 1
   },
   "ipanel.VORP.describe_mean": {
-    "display": "0.919",
+    "display": "0.906",
     "fmt": "{:.3f}",
     "note": "VORP mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.9192963247572195
+    "value": 0.9059597148364522
   },
   "ipanel.VORP.forecast_mean": {
-    "display": "0.553",
+    "display": "0.518",
     "fmt": "{:.3f}",
     "note": "VORP mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.55346938236798
+    "value": 0.5179625188441047
   },
   "ipanel.WS.describe_mean": {
-    "display": "0.369",
+    "display": "0.290",
     "fmt": "{:.3f}",
     "note": "Win Shares mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.3693343473450795
+    "value": 0.2898266662012918
   },
   "ipanel.WS.forecast_mean": {
-    "display": "0.367",
+    "display": "0.327",
     "fmt": "{:.3f}",
     "note": "Win Shares mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.367135780145555
+    "value": 0.32702363541741913
   },
   "ipanel.WS48.describe_mean": {
-    "display": "0.244",
+    "display": "0.136",
     "fmt": "{:.3f}",
     "note": "WS/48 mean describe R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.24359758131324258
+    "value": 0.13576221370610736
   },
   "ipanel.WS48.forecast_mean": {
-    "display": "0.260",
+    "display": "0.189",
     "fmt": "{:.3f}",
     "note": "WS/48 mean forecast R\u00b2 (impact-era panel)",
     "unit": null,
-    "value": 0.2598712120063751
+    "value": 0.18912063308058683
   },
   "ipanel.first_season": {
-    "display": "2013-14",
+    "display": "1997-98",
     "fmt": null,
     "note": "first season in the impact-era panel",
     "unit": null,
-    "value": "2013-14"
+    "value": "1997-98"
   },
   "ipanel.forecast_top.mean_pct": {
     "display": "62",
@@ -2877,18 +2877,18 @@
     "value": "RAPM+prior"
   },
   "ipanel.n_pairs": {
-    "display": "12",
+    "display": "28",
     "fmt": "{:d}",
     "note": "consecutive season-pairs in the impact-era panel",
     "unit": null,
-    "value": 12
+    "value": 28
   },
   "ipanel.n_seasons": {
-    "display": "13",
+    "display": "29",
     "fmt": "{:d}",
     "note": "seasons in the impact-era panel",
     "unit": null,
-    "value": 13
+    "value": 29
   },
   "ipanel.n_systems": {
     "display": "10",
@@ -4368,11 +4368,11 @@
     "value": 4678
   },
   "rapm_shape.n_seasons": {
-    "display": "13",
+    "display": "29",
     "fmt": "{:d}",
     "note": "play-by-play seasons pooled for the RAPM distribution shape",
     "unit": null,
-    "value": 13
+    "value": 29
   },
   "rapm_shape.skew": {
     "display": "+0.06",
@@ -4382,11 +4382,11 @@
     "value": 0.05739882939405266
   },
   "rapm_shape.vorp_skew": {
-    "display": "+1.95",
+    "display": "+1.82",
     "fmt": "{:+.2f}",
     "note": "pooled VORP skewness (right-skewed accumulation metric)",
     "unit": null,
-    "value": 1.9544467766796243
+    "value": 1.815563352479856
   },
   "retro.BPM.cv_r2": {
     "display": "1.000",

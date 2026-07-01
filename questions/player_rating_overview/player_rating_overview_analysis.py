@@ -81,7 +81,9 @@ PANEL_END_YEAR = 2026    # 2025-26
 # than against their full 30-season history. Only the combined RAPM is included
 # (not its offensive/defensive halves), matching the consensus treatment.
 RAPM_PANEL_SYSTEMS = PANEL_SYSTEMS + ["RAPM", "RAPM_MY"]
-RAPM_PANEL_START_YEAR = 2014  # 2013-14, first season with cached play-by-play
+RAPM_PANEL_START_YEAR = 1998  # 1997-98, first season with both RAPM and RAPM+prior
+                              # (play-by-play reaches 1996-97; RAPM+prior needs a
+                              #  preceding season, so it starts one year later)
 RAPM_PANEL_END_YEAR = 2026    # 2025-26
 
 SYSTEM_LABELS = {

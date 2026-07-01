@@ -112,12 +112,12 @@
   "rapm_in_impact_panel": {
     "claim": "RAPM is scored across the impact-era panel alongside the box scores",
     "ok": true,
-    "value": "12 pairs"
+    "value": "28 pairs"
   },
   "rapm_less_skewed_than_vorp": {
     "claim": "RAPM is far less skewed than the right-skewed accumulation metric VORP",
     "ok": true,
-    "value": 1.8970479472855717
+    "value": 1.7581645230858034
   },
   "rapm_my_at_least_bpm_stable": {
     "claim": "RAPM_MY is at least as stable year to year as BPM, so the prior-informed lineup signal adds to the box score rather than degrading it",

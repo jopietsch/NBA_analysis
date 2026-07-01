@@ -156,7 +156,7 @@ RAPM+prior's high rebuild is no longer the recompute artifact it once looked lik
 Describing a season and forecasting the next are different jobs, and they reward different systems.
 Carrying each rating onto the next season's rosters and predicting that season's team margin, PER falls the furthest, from 0.73 describing to 0.37 forecasting, while Game Score barely moves (0.47 to 0.40) and ends up the best forecaster among the outcome-blind box scores.
 Pooled across 29 season-pairs back to 1996-97 the same flip holds: PER averages 0.64 describing but 0.25 forecasting, and BPM forecasts better than PER in 29 of 29 pairs.
-Over the 13 seasons with play-by-play, the fix flips this row too: the multi-year RAPM+prior is now the strongest forecaster in the impact-era panel, rebuilding 62% of next season's team margin on average against bare RAPM's 38%, so once the lineup data is pooled and anchored it predicts the next season better than the box scores do.
+Over the 29 seasons where RAPM can be computed, the fix flips this row too: the multi-year RAPM+prior is now the strongest forecaster in the impact-era panel, rebuilding 62% of next season's team margin on average against bare RAPM's 38%, so once the lineup data is pooled and anchored it predicts the next season better than the box scores do.
 The lesson for the combined rating: the metric that best describes the season just played is not automatically the one that best predicts the next.
 
 ---

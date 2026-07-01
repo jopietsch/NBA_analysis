@@ -175,7 +175,7 @@ D-RAPM+prior (n=378):
   Gini: 0.737  Top-5% share: 29.5%
   Skew: +0.40  Excess kurtosis: +0.60  Below zero: 52%
 
-RAPM distribution shape, pooled over 13 seasons (n=4678 player-seasons):
+RAPM distribution shape, pooled over 29 seasons (n=4678 player-seasons):
   Skew: +0.06  Excess kurtosis: +0.06  Below zero: 46%
 
 ─── POWER-LAW FIT (VALUE VS RANK, LOG-LOG) ──────────────────────
@@ -585,7 +585,7 @@ BPM forecasts better than PER in 29 of 29 pairs.
 
 ─── IMPACT-ERA PANEL: BOX SCORES vs RAPM (EQUAL SEASONS) ────────
 The panel above runs 30 seasons, but RAPM can only be computed for the
-13 seasons with cached play-by-play (2013-14 through 2025-26).
+29 seasons with cached play-by-play (1997-98 through 2025-26).
 This second panel scores the box-score systems AND RAPM over those same
 seasons, so the comparison is even. RAPM is built from lineup point
 differential, so its DESCRIBE score (rebuilding the same season's team
@@ -595,17 +595,17 @@ next season's rosters) is the honest read.
                      describes    predicts
   system             (same yr)   (next yr)
   [team-fit]     RAPM+prior      0.901       0.621
-  [team-fit]     BPM             0.999       0.601
-  [team-fit]     VORP            0.919       0.553
-  [team-fit]     OBPM            0.698       0.468
-  [outcome-blind] Game Score      0.424       0.446
+  [team-fit]     VORP            0.906       0.518
+  [team-fit]     BPM             0.999       0.512
+  [outcome-blind] Game Score      0.387       0.417
+  [team-fit]     OBPM            0.610       0.378
   [team-fit]     RAPM            0.776       0.377
-  [team-fit]     Win Shares      0.369       0.367
-  [team-fit]     DBPM            0.524       0.293
-  [outcome-blind] PER             0.641       0.267
-  [team-fit]     WS/48           0.244       0.260
+  [team-fit]     Win Shares      0.290       0.327
+  [team-fit]     DBPM            0.482       0.256
+  [outcome-blind] PER             0.634       0.253
+  [team-fit]     WS/48           0.136       0.189
 
-Over these 12 pairs RAPM forecasts 6 of 10; the best forecaster is RAPM+prior.
+Over these 28 pairs RAPM forecasts 6 of 10; the best forecaster is RAPM+prior.
 RAPM_MY forecasts 1 of 10 (bare RAPM was 6).
 
 ─── PLAYER RATING STABILITY (YEAR OVER YEAR) ────────────────────

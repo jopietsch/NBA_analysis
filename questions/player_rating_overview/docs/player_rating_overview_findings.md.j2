@@ -222,7 +222,7 @@ What holds across every era is the gap itself: PER, the best honest description 
 
 ![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over << f("panel.n_seasons") >> seasons and << f("panel.n_pairs") >> season-pairs. Whiskers span the season-to-season range. BPM and VORP describe near-perfectly because they are anchored to team results; among the ratings that never use who won, PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
 
-RAPM can only be computed back to << f("ipanel.first_season") >>, the seasons with play-by-play, so a fair test scores it against the box scores on those same << f("ipanel.n_seasons") >> seasons rather than against their full 30-year history.
+The impact panel spans the << f("ipanel.n_seasons") >> seasons from << f("ipanel.first_season") >> where both RAPM versions can be computed (play-by-play reaches 1996-97, and RAPM+prior needs the season before it), so a fair test scores RAPM against the box scores on those seasons rather than against their full 30-year history.
 On that even footing the bare single-season RAPM is a middling forecaster of next-season team results (<< f("ipanel.RAPM.forecast_rank") >> of << f("ipanel.n_systems") >>, rebuilding about << f("ipanel.RAPM.forecast_mean_pct") >>% of the gaps between teams): no longer the near-random metric the reconstruction bug produced, but still the weaker of the two RAPM versions.
 Its same-season describe score is much higher, about << f("ipanel.RAPM.describe_mean_pct") >>%, which fits how it is built: RAPM comes from the very lineup margins the describe test rebuilds.
 

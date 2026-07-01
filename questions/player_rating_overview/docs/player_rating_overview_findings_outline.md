@@ -40,7 +40,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Direct describe test (held-out teams, 2025-26): PER best, ~73% of team point-diff, above the plus/minus metrics.
 - Forecast test (prior-season ratings predict this season): order flips, PER ~37%, best forecaster RAPM+prior ~59%. Coverage ~88%.
 - Multi-season panel (30 seasons / 29 handoffs back to 1996-97): PER describes ~64%, forecasts ~25%; best forecaster VORP ~52%; BPM beats PER forecasting 29/29 handoffs.
-- Impact-era panel (13 seasons from 2013-14, box scores vs RAPM): bare RAPM forecasts 6/10 (~38%, describe ~78% but mechanical), RAPM+prior 1/10 (~62%), both below box scores; top RAPM+prior ~62%.
+- Impact-era panel (29 seasons from 1997-98, box scores vs RAPM): bare RAPM forecasts 6/10 (~38%, describe ~78% but mechanical), RAPM+prior tops the forecast (1/10, ~62%) above every box score, while bare RAPM sits mid-pack; forecast leader RAPM+prior.
 - Stability (year-over-year): Game Score retains 68% of its top 20, PER 64% (chance ~5%); steadiest Game Score 0.85, jumpiest DBPM 0.67; 29 pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; BPM jumpy but better).
 - Charts: retrodiction, next-season retrodiction, panel describe-vs-forecast, impact panel, rating stability.
 
@@ -56,7 +56,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 ### § 6. Stars matter more than rank implies (distribution section)
 - Rate metrics spread evenly: PER top-5% share 8.6%. Cumulative top-heavy: WS top-5% 13.8%, VORP 24.5%.
 - Power-law steepness (alpha): PER 0.14 (shallowest); the cumulative metrics and uber ratings cluster higher (VORP 0.37, Consensus 0.37, Wins-Pred 0.43), up to the noisy plus/minus halves. Two groups by R² fit: straight-line power laws (incl. WS, BPM) vs. benders (per-possession metrics; VORP is the bending exception, concentrated but just short of the line).
-- RAPM full distribution (13 seasons, 4678 player-seasons, 46% below 0) is a symmetric bell, not a power law (lacks the one-sided tail); VORP leans right (the precondition a power law's shape needs), though its own top-50 curve bends just short.
+- RAPM full distribution (29 seasons, 4678 player-seasons, 46% below 0) is a symmetric bell, not a power law (lacks the one-sided tail); VORP leans right (the precondition a power law's shape needs), though its own top-50 curve bends just short.
 - Gini kept only as a cross-check; it misleads on 0-centered metrics (Consensus Gini 0.753 > WS 0.362, an artifact, not real top-heaviness).
 - Charts: all-systems distributions, distribution shape, power-law small multiples, power-law fits, gini, rank-value curves, ordinal-vs-value gap.
 
@@ -82,7 +82,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 
 ### § 12. Limitations
 - Single-season cross-system testbed; only the describe-vs-forecast and stability panels reach across 30 seasons.
-- RAPM now computed from play-by-play (2025-26 back to 2013-14, 582 players in 2025-26): bare = noisy, no prior; RAPM+prior = 3 pooled seasons + BPM prior (consensus corr 0.91); neither beats box scores at forecasting. No tracking data, so can't match EPM/LEBRON.
+- RAPM now computed from play-by-play (2025-26 back to 1997-98, 582 players in 2025-26): bare = noisy, no prior; RAPM+prior = 3 pooled seasons + BPM prior (consensus corr 0.91); over the 29-season panel RAPM+prior tops the forecast (above every box score), bare RAPM does not. No tracking data, so can't match EPM/LEBRON.
 - Tracking/team-internal blind spot (Second Spectrum, Synergy, franchise models).
 - Playoff small-sample limit for RAPM-based metrics.
 

@@ -222,7 +222,7 @@ What holds across every era is the gap itself: PER, the best honest description 
 
 ![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over 30 seasons and 29 season-pairs. Whiskers span the season-to-season range. BPM and VORP describe near-perfectly because they are anchored to team results; among the ratings that never use who won, PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
 
-RAPM can only be computed back to 2013-14, the seasons with play-by-play, so a fair test scores it against the box scores on those same 13 seasons rather than against their full 30-year history.
+The impact panel spans the 29 seasons from 1997-98 where both RAPM versions can be computed (play-by-play reaches 1996-97, and RAPM+prior needs the season before it), so a fair test scores RAPM against the box scores on those seasons rather than against their full 30-year history.
 On that even footing the bare single-season RAPM is a middling forecaster of next-season team results (6 of 10, rebuilding about 38% of the gaps between teams): no longer the near-random metric the reconstruction bug produced, but still the weaker of the two RAPM versions.
 Its same-season describe score is much higher, about 78%, which fits how it is built: RAPM comes from the very lineup margins the describe test rebuilds.
 
@@ -230,7 +230,7 @@ RAPM+prior is the standout on this panel: it forecasts next-season team point di
 Pooling three seasons and leaning on a box-score prior does more than sharpen which players rate highly (Section 12); on the seasons where the lineup data exists, it edges past the box-built BPM and VORP that top the wider panel.
 That is the payoff of the fix: with the games restored and the prior in place, the lineup signal now forecasts team results better than the box score does, not worse.
 
-![The same describe-versus-forecast test on the 13 seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the prior-informed RAPM+prior forecasts next-season team results better than any box score, while the bare single-season RAPM sits mid-pack.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
+![The same describe-versus-forecast test on the 29 seasons where RAPM can be computed, box scores and both RAPM versions scored together. Sorted by forecast strength: the prior-informed RAPM+prior forecasts next-season team results better than any box score, while the bare single-season RAPM sits mid-pack.](../generated/images/impact_panel_describe_vs_forecast.svg){#fig-impact-panel}
 
 ### Which ratings hold steady year to year
 
@@ -351,7 +351,7 @@ They score how far above average a player is per possession against the lineup h
 
 RAPM, the impact metric built for this report, is the clearest case, and it answers a natural question: no, RAPM is not a power law.
 The log-log test above only reads the top 50 players, but RAPM's whole distribution settles it.
-Pooled across all 13 seasons with play-by-play (4678 player-seasons, enough to read the shape cleanly), it is a symmetric hump centered on zero, about as many players below average as above (46% sit below zero), and it tracks a plain bell curve closely.
+Pooled across all 29 seasons with play-by-play (4678 player-seasons, enough to read the shape cleanly), it is a symmetric hump centered on zero, about as many players below average as above (46% sit below zero), and it tracks a plain bell curve closely.
 A power law needs a long one-sided tail of standout values.
 RAPM has none, because a per-possession impact is scored against the average player and runs about as far into the minus as the plus.
 VORP, set beside it, leans to the right: a handful of stars trail a long tail above the pack.
@@ -500,7 +500,7 @@ The crosswalk matching rate for each third-party source is reported in `docs/pla
 Players who could not be matched are listed there; they are excluded from the cross-system comparison but retained in the unified table.
 
 RAPM (regularized adjusted plus/minus) is the technical backbone of every serious modern impact metric (EPM, LEBRON, DARKO, RAPTOR, and RPM all build on it).
-This report now computes it directly from play-by-play, for 2025-26 and back through 2013-14.
+This report now computes it directly from play-by-play, for 2025-26 and back through 1997-98.
 Within a season, every possession is reconstructed into the five-on-five lineup that was on the floor, and a single statistical model estimates all the players' contributions to the scoring margin at once (582 players in 2025-26).
 One thing still makes the bare version weaker than the published metrics: it uses a single season of lineup data with no box-score prior, so it carries more noise than the pooled, prior-anchored version.
 Its 2025-26 leader, Chet Holmgren, is a real rim protector rather than a reserve, but bare RAPM rates him well above where the box scores place him (Section 2), and across the seasons it forecasts next-season team results less well than RAPM+prior does (Section 3).
