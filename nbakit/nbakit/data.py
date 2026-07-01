@@ -157,6 +157,7 @@ def cache_write_csv(df: pd.DataFrame, path: str, *, index: bool = False,
     ext = _COMPRESSED_EXT[CACHE_CODEC]
     target = path + ext
     tmp = target + ".tmp"
+    os.makedirs(os.path.dirname(target), exist_ok=True)   # sharded subdirs
     # Pass compression explicitly: the ".tmp" suffix hides the extension pandas
     # would otherwise infer, so it would write the temp file uncompressed.
     df.to_csv(tmp, index=index, compression=_PANDAS_COMPRESSION[CACHE_CODEC],
@@ -175,6 +176,59 @@ def cache_glob(pattern: str) -> list[str]:
         for match in glob.glob(pat):
             seen.setdefault(match, None)
     return list(seen)
+
+
+# ── Per-game cache sharding ───────────────────────────────────────────────────
+# The play-by-play and boxscore caches are one file per game (tens of thousands
+# of them). They are sharded into <kind>/<season>/<gid>.csv so the cache stays
+# navigable, while readers still fall back to the legacy flat <kind>_<gid>.csv
+# during (and after) the one-time reorg. See CACHE_COMPRESSION_PLAN.md Phase 4.
+
+def season_of_game_id(gid) -> str:
+    """Season label from a 10-digit NBA game ID: '0020500123' → '2005-06'.
+
+    Digits 3-4 are the season's start-year (YY); the game-type digit (2=regular,
+    4=playoffs, ...) is ignored, so playoff and regular-season IDs shard together.
+    """
+    g = f"{int(float(gid)):010d}"
+    yy = int(g[3:5])
+    start = 1900 + yy if yy >= 60 else 2000 + yy
+    return f"{start}-{(start + 1) % 100:02d}"
+
+
+def game_cache_path(cache_dir: str, kind: str, gid, *, sharded: bool = True) -> str:
+    """Logical .csv path for a per-game cache file (kind = 'pbp_v3'/'boxscore_trad').
+
+    sharded=True → <cache_dir>/<kind>/<season>/<gid>.csv (the current layout);
+    sharded=False → <cache_dir>/<kind>_<gid>.csv (the legacy flat layout).
+    """
+    g = f"{int(float(gid)):010d}"
+    if sharded:
+        return os.path.join(cache_dir, kind, season_of_game_id(g), f"{g}.csv")
+    return os.path.join(cache_dir, f"{kind}_{g}.csv")
+
+
+def game_cache_exists(cache_dir: str, kind: str, gid) -> bool:
+    """True if the game's file exists in the sharded OR the legacy flat layout."""
+    return (cache_exists(game_cache_path(cache_dir, kind, gid))
+            or cache_exists(game_cache_path(cache_dir, kind, gid, sharded=False)))
+
+
+def game_cache_read_csv(cache_dir: str, kind: str, gid, **kw) -> pd.DataFrame:
+    """Read a per-game cache file, preferring the sharded path, then flat.
+
+    EmptyDataError propagates (empty-marker convention), same as cache_read_csv.
+    """
+    sharded = game_cache_path(cache_dir, kind, gid)
+    if cache_exists(sharded):
+        return cache_read_csv(sharded, **kw)
+    return cache_read_csv(game_cache_path(cache_dir, kind, gid, sharded=False), **kw)
+
+
+def game_cache_write_csv(df: pd.DataFrame, cache_dir: str, kind: str, gid,
+                         **kw) -> str:
+    """Write a per-game cache file to the sharded location (creates the subdir)."""
+    return cache_write_csv(df, game_cache_path(cache_dir, kind, gid), **kw)
 
 
 # ── MATCHUP parsing ─────────────────────────────────────────────────────────────
@@ -751,10 +805,9 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
     all_records: list[dict] = []
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
-        path = os.path.join(d, f"boxscore_trad_{gid_str}.csv")
-        if cache_exists(path):
+        if game_cache_exists(d, "boxscore_trad", gid_str):
             try:
-                df = cache_read_csv(path)
+                df = game_cache_read_csv(d, "boxscore_trad", gid_str)
             except pd.errors.EmptyDataError:
                 continue
             if not df.empty:
@@ -776,7 +829,7 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
         if ps.empty:
             # A successful call that returns no rows: the source genuinely has no
             # data, so caching an empty marker (and not retrying) is correct.
-            cache_write_csv(pd.DataFrame(), path)
+            game_cache_write_csv(pd.DataFrame(), d, "boxscore_trad", gid_str)
             time.sleep(sleep)
             continue
         rows = []
@@ -788,7 +841,7 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
                 "familyName": str(r.get("familyName", "")),
                 "is_starter": bool(str(r.get("position", "")).strip()),
             })
-        cache_write_csv(pd.DataFrame(rows), path)
+        game_cache_write_csv(pd.DataFrame(rows), d, "boxscore_trad", gid_str)
         all_records.extend(rows)
         time.sleep(sleep)
     return pd.DataFrame(all_records) if all_records else pd.DataFrame(
@@ -821,10 +874,9 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
     failed = rate_limited = 0
     for i, gid in enumerate(game_ids, 1):
         gid_str = f"{int(float(gid)):010d}"
-        path = os.path.join(d, f"pbp_v3_{gid_str}.csv")
-        if cache_exists(path):
+        if game_cache_exists(d, "pbp_v3", gid_str):
             try:
-                df = cache_read_csv(path)
+                df = game_cache_read_csv(d, "pbp_v3", gid_str)
             except pd.errors.EmptyDataError:
                 continue
             if not df.empty:
@@ -851,10 +903,10 @@ def fetch_pbp(end_year: int, season_type: str = REGULAR_SEASON, *,
         if pbp.empty:
             # Successful call, genuinely no events: cache the empty marker so we
             # do not re-fetch a game the source has nothing for.
-            cache_write_csv(pd.DataFrame(), path)
+            game_cache_write_csv(pd.DataFrame(), d, "pbp_v3", gid_str)
             time.sleep(sleep)
             continue
-        cache_write_csv(pbp, path)
+        game_cache_write_csv(pbp, d, "pbp_v3", gid_str)
         all_dfs.append(pbp)
         time.sleep(sleep)
         if i % 100 == 0:

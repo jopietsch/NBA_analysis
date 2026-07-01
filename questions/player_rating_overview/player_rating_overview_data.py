@@ -32,6 +32,8 @@ from nbakit.data import (
     cache_exists,
     cache_read_csv,
     cache_write_csv,
+    game_cache_exists,
+    game_cache_read_csv,
 )
 from nbakit.ratings import (
     game_score,
@@ -867,11 +869,10 @@ def _season_possessions(end_year: int,
     pbp_dfs: list[pd.DataFrame] = []
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
-        path = os.path.join(CACHE_DIR, f"pbp_v3_{gid_str}.csv")
-        if not cache_exists(path):
+        if not game_cache_exists(CACHE_DIR, "pbp_v3", gid_str):
             continue
         try:
-            df = cache_read_csv(path)
+            df = game_cache_read_csv(CACHE_DIR, "pbp_v3", gid_str)
         except pd.errors.EmptyDataError:
             continue
         if not df.empty:
@@ -889,11 +890,10 @@ def _season_possessions(end_year: int,
     player_dfs: list[pd.DataFrame] = []
     for gid in game_ids:
         gid_str = f"{int(float(gid)):010d}"
-        bpath = os.path.join(CACHE_DIR, f"boxscore_trad_{gid_str}.csv")
-        if not cache_exists(bpath):
+        if not game_cache_exists(CACHE_DIR, "boxscore_trad", gid_str):
             continue
         try:
-            bdf = cache_read_csv(bpath)
+            bdf = game_cache_read_csv(CACHE_DIR, "boxscore_trad", gid_str)
         except pd.errors.EmptyDataError:
             continue
         if not bdf.empty:
