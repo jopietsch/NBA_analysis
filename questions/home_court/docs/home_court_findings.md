@@ -464,7 +464,7 @@ Three threads turned up that don't bear on the four questions: how much referees
 ### Referees differ, but by less than the leaderboard suggests
 
 Of 47 officials with at least 50 playoff games, 45 call fewer fouls on the home team.
-The most home-leaning on record, Ron Garretson, Joe Crawford, and Eddie Rush, sit roughly a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte.
+The most home-leaning on record, Ron Garretson (last worked a playoff game in 2017-18), Joe Crawford (2014-15), and Eddie Rush (2011-12), sit roughly a full foul per game apart from the most even-handed, a group that includes Tony Brothers, Josh Tiven, and Joe Forte.
 About 60% of that raw spread is the random bounce of how few games some officials worked.
 Referees genuinely differ, but the gap between them is narrower than the leaderboard suggests, and this measures tendencies, not proof that any one official decides games.
 
@@ -495,7 +495,7 @@ The pattern is consistent with compression: franchises that had the most home-co
 ![Franchise HCA in the early era (1984–2001, blue) and recent era (2002–26, green), sorted by early-era HCA. Every franchise shifted left. The dashed vertical lines mark the league average in each era.](../generated/images/home_court_team_hca_era.svg){#fig-team-hca-era .collapsible}
 
 All of that is the regular season.
-Does the same pecking order hold in the playoffs?
+Does the same patterns hold in the playoffs?
 **In the playoffs, every franchise's home court looks the same.** That real regular-season spread vanishes in the postseason.
 With fewer than 150 playoff home games on record for most franchises, the apparent gaps just reflect how few games each has played.
 The real spread between franchises is too small to separate from the random bounce of those few games.
@@ -532,7 +532,7 @@ A bend like that can be an illusion of where you draw the line, so it was locate
 They all land on about 1999, inside a range of roughly 1992 to 2003.
 When independent methods agree, the bend is in the data, not in the choice of line.
 
-**The result was attacked on purpose.** A favorite way to fool yourself is to find an "effect" at a moment when nothing actually happened.
+**The result was tested carefully on purpose.** A favorite way to fool yourself is to find an "effect" at a moment when nothing actually happened.
 So fake rule changes were planted at dozens of years where nothing changed, to see whether the method would invent an effect anyway.
 It didn't: the only year that stands out as a genuine one-time shift is the real 1994-95 hand-checking crackdown, a drop of about 2.6 points.
 The decline is not an artifact of where the breaks were placed.
@@ -583,7 +583,7 @@ One sign both pipelines are measuring the same thing: Sparkle's home-court figur
 **Where we differ, and why.** The blog names the three-point revolution as the primary cause, drawing on a 40-year near-mirror image: as three-point attempts rose, home win percentage fell.
 I ran a tighter test and found about 42% of that lockstep is just two trends drifting the same way over time, not one causing the other.
 The three-point effect is real, showing up within individual seasons too.
-In the box score it registers most directly as the shooting category, about 21% of the regular-season decline; counting its share of the foul and turnover categories (about half of each), it reaches close to half the decline, still short of the whole story.
+Counting its share of the foul and turnover categories (about half of each), it reaches close to half the decline, still short of the whole story.
 The category the blog never measures at all, rebounding, is the single largest category and is untouched by the perimeter shift; the fading turnover advantage adds more on top.
 Part of the gap is just a question of how you count: the three-point shift is the most far-reaching real-world cause (it touches three of the four box-score categories), but no single category it drives is as large as rebounding, which has its own separate cause.
 

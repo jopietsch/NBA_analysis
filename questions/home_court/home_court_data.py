@@ -1147,6 +1147,7 @@ def compute_referee_bias_stats(
             "era_means":      era_means,
             "era_sd":         era_sd,
             "era_n":          era_n,
+            "last_year":      int(grp["year"].max()),
         })
 
     result.sort(key=lambda x: x["mean_foul_diff"], reverse=True)

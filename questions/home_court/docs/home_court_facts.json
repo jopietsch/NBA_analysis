@@ -1042,6 +1042,13 @@
     "unit": null,
     "value": 34.10822302519503
   },
+  "ref.crawford_last_season": {
+    "display": "2014-15",
+    "fmt": null,
+    "note": "Last playoff season officiated by Joe Crawford",
+    "unit": null,
+    "value": "2014-15"
+  },
   "ref.fta_early": {
     "display": "2",
     "fmt": "{:.0f}",
@@ -1055,6 +1062,13 @@
     "note": "Reg. FTA gap, recent era",
     "unit": null,
     "value": 0.4623217922606925
+  },
+  "ref.garretson_last_season": {
+    "display": "2017-18",
+    "fmt": null,
+    "note": "Last playoff season officiated by Ron Garretson",
+    "unit": null,
+    "value": "2017-18"
   },
   "ref.n_biased": {
     "display": "45",
@@ -1153,6 +1167,13 @@
     "note": "reg: home FTA gap, recent era",
     "unit": null,
     "value": 0.4623217922606925
+  },
+  "ref.rush_last_season": {
+    "display": "2011-12",
+    "fmt": null,
+    "note": "Last playoff season officiated by Eddie Rush",
+    "unit": null,
+    "value": "2011-12"
   },
   "reg.decline_total": {
     "display": "-10.3 pp",

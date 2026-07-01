@@ -100,7 +100,7 @@
 ![Player-tracking rebounding](../generated/images/home_court_rebounding_tracking.svg){#fig-rebounding-tracking}
 - **Referee foul bias narrowed:**
   - Reg season **1.2 → ~0.25 fouls/game** (≈**80% reduction**); free throw edge **+1.97 → +0.46 FTA/game**. Playoffs **1.6 → 0.7 fouls**; **+2.35 → +1.09 FTA/game**. *RESULTS reg trend +0.022***/yr; 2023–26 = −0.25 fouls, +0.46 FTA.*
-  - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (@fig-referee-era).
+  - Generational shift: most home-favoring refs (Garretson, Crawford, Rush) worked 1990s–2000s; distribution compressed (@fig-referee-era). Last worked a playoff game: Garretson 2017-18, Crawford 2014-15, Rush 2011-12.
 - **Adding it up (trend decomposition):**
   - Reg season: four categories = **~96% of decline**; all four trends p<0.001. *RESULTS:* REB **30%**, TOV **27%**, eFG% **21%**, Foul **18%**; unmediated 4%. → overlooked pair (REB+TOV) carries >half.
   - Playoffs: overall trend 4× less precisely measured than RS (CI [−0.359, −0.091] vs [−0.280, −0.209]); categories = **only ~67%**; ~⅓ unexplained. *RESULTS:* REB 28%, Foul 18%, eFG% 12%, TOV 10%; unmediated 33%. Only Foul & REB trends significant (p<0.05); eFG% & TOV trends not distinguishable from noise → split is suggestive/consistent-with-RS, not independently established. Strongest playoff evidence is the venue/seeding control (§5), not the box score. Unexplained third has no box-score column to point at.
@@ -196,7 +196,7 @@
 Three threads, none bearing on the four questions: referee spread, franchise differences, blowout margins. (Player-tracking and the team-strategy recap that used to sit here are gone: the tracking treatment moved up to §3 with the rebounding mechanism; the strategy bullet was cut as a recap of the body.)
 
 ### Referees differ, but by less than the leaderboard suggests
-- 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing. Top/bottom 15 ranked in @fig-referee-rankings.
+- 45/47 home-favoring; spread ~1 foul/game between most-leaning (Garretson −1.734 shrunken, Crawford, Rush) and most even-handed (Brothers, Tiven, Forte). **~60% of raw spread = sampling noise** (RESULTS true between-SD 0.407 vs observed 0.645). Measures tendencies, not game-fixing. Top/bottom 15 ranked in @fig-referee-rankings. Last playoff game called: Garretson 2017-18, Crawford 2014-15, Rush 2011-12.
 
 ![Referee rankings](../generated/images/home_court_referee_rankings.svg){#fig-referee-rankings}
 

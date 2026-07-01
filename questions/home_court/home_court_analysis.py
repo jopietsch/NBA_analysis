@@ -4503,6 +4503,20 @@ def run_referee_analysis(bias_stats: list) -> None:
         key=lambda x: x[3],
     )
 
+    # Facts for the prose (Appendix A): last playoff season each of the three
+    # most home-favoring officials worked (named in the findings text).
+    by_name = {o["name"]: o for o in bias_stats}
+    print(f"\n   Last playoff season worked, most home-favoring officials:")
+    for slug, official_name in [
+        ("garretson", "Ron Garretson"), ("crawford", "Joe Crawford"), ("rush", "Eddie Rush"),
+    ]:
+        o = by_name.get(official_name)
+        if o is not None:
+            last_season = nba.season_str(o["last_year"])
+            print(f"   {official_name:<20} last worked {last_season}")
+            FACTS.set(f"ref.{slug}_last_season", last_season,
+                      note=f"Last playoff season officiated by {official_name}")
+
     NW, CW = 26, 9
 
     header = (f"   {'Official':<{NW}} {'N games':>{CW}} {'Raw diff':>{CW}} "

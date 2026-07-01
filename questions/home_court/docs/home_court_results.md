@@ -264,6 +264,11 @@ All data from cache/ — same source as the plots above.
    Estimated true between-SD:    0.407 fouls/game
    ► Sampling noise explains 60% of observed spread.
 
+   Last playoff season worked, most home-favoring officials:
+   Ron Garretson        last worked 2017-18
+   Joe Crawford         last worked 2014-15
+   Eddie Rush           last worked 2011-12
+
    Top 10 most home-favoring (by shrunken mean foul_diff):
    Official                     N games  Raw diff  Shrunken         p      BH-p
    ────────────────────────── ───────── ───────── ───────── ───────── ─────────
