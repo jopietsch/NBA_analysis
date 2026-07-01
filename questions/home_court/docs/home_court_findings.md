@@ -56,7 +56,7 @@ Each factor is tested; only 1994–95 registers a genuine effect, and it is acco
 
 The regular season and the playoffs share a similar shape and pattern, but the playoffs lag behind the regular season in this decline.
 The regular-season figures rest on tens of thousands of games and are solid; the playoff figures rest on far fewer, so they show the direction of a change more than its precise size.
-The analysis covers about 52,000 regular-season and playoff games; see Appendix D for companion documents including the full statistical tables, and Appendix A for additional findings.
+The analysis covers about 52,000 regular-season and playoff games; see Appendix E for companion documents including the full statistical tables, and Appendix A for additional findings.
 
 
 ---
@@ -115,6 +115,11 @@ In the 1980s and early 1990s, home teams averaged about 1.2 fewer foul calls per
 In the playoffs the gap was even wider: about 1.6 fewer fouls per game and 2.4 more free throws.
 With fouls go free throws, and with free throws go points.
 This is the most consistent component of home court advantage.
+
+How can an edge that small decide anything?
+Mostly, it can't, not on any single night: the home free-throw edge in the 1980s swung anywhere from -12 to +16 attempts from one game to the next, a range many times wider than the roughly 2-attempt average sitting inside it.
+A night where the home team shoots 10 fewer free throws than the visitor is just an ordinary bounce, foul trouble, a cold shooting stretch, nothing to do with home court.
+The average only becomes visible once thousands of games are stacked together, and it has faded further than that night-to-night swing ever has (Appendix B).
 
 The playoff referee data shows how universal this is: 45 of 47 officials with at least 50 playoff games on record show a home-favoring foul differential.
 Nearly every referee who has worked the postseason has called the game differently depending on which team was at home.
@@ -519,13 +524,48 @@ Fewer home wins overall, but the ones that happen are more decisive.
 
 ---
 
-## Appendix B: How We Know This Isn't Made Up
+## Appendix B: How Can 2 Extra Free Throws Shift Home Court Advantage?
+
+Section 2 put a number on the whistle's bias: in the 1980s, home teams averaged roughly 2 more free throw attempts a game than the visitor, worth a bit over a point of scoring.
+That is a small number to carry real weight in who wins about 52,000 games.
+The answer sits in the gap between what one game looks like and what a whole season of games looks like.
+
+**On any single night, the average edge is buried in noise.** Free throw attempts swing wildly from game to game (foul trouble, a hack-a-shaq stretch, a night both teams live at the line), so the average lean toward the home team is nowhere near the biggest thing driving the count in any one game.
+In the 1980s, the middle 80% of regular-season games saw the home team attempt anywhere from -12 to +16 more free throws than the visitor, a range many times the width of the +1.97-attempt average sitting inside it.
+A game where the home team shot 10 fewer free throws than the visitor, well inside that ordinary range, says nothing about which team the referees favored that night.
+
+| | 1984–94 average | 1984–94 typical range* | 2023–26 average | 2023–26 typical range* |
+|---|---|---|---|---|
+| Regular season | +1.97 | -12 to +16 | +0.46 | -11 to +12 |
+| Playoffs | +2.35 | -11 to +16 | +1.09 | -10 to +11 |
+
+*Typical range: excludes the most extreme 10% of games on each end, so it covers the middle 80% of nights.*
+
+**The average shrank far faster than the swing around it.** In the regular season, the average free-throw edge fell 77% while the typical night-to-night range narrowed by only 18%.
+The share of games where the home team attempted more free throws than the visitor fell from 56% to 49%, close to a coin flip.
+The playoffs show the same shape but move less: the average fell 54%, and the home-favored share only slipped from 57% to 56%, another sign the playoffs lag the regular season's decline (Section 5).
+
+The foul count behind those free throws tells the identical story.
+
+| | 1984–94 average | 1984–94 typical range* | 2023–26 average | 2023–26 typical range* |
+|---|---|---|---|---|
+| Regular season | -1.23 | -8 to +6 | -0.25 | -6 to +6 |
+| Playoffs | -1.58 | -8 to +5 | -0.68 | -6 to +5 |
+
+The regular-season foul gap fell 80% while its night-to-night range narrowed only 14%; the playoff foul gap fell 57%, again a smaller drop than the regular season.
+
+**What this means for the rest of the report.** None of this changes any finding elsewhere: it explains why a real, repeatable bias can be invisible in any single game and only show up once thousands of games are averaged together.
+The free-throw edge belongs in the same category as the shooting, rebounding, and turnover edges covered above: modest on its own, indistinguishable from noise on any given night, but consistent enough across tens of thousands of games that its shrinking became a measurable slice of the 40-year decline.
+
+---
+
+## Appendix C: How We Know This Isn't Made Up
 
 Most claims in this report are the kind that are easy to get wrong by accident, or to talk yourself into: pick the right years, fit a model to a story you already believe, and run enough tests and something will always look real.
 So the findings were put through a battery of checks built to make them fail.
 They held.
 Here is what was tried, in plain terms.
-The Investigation companion (Appendix D) lays out each test with its full numbers.
+The Investigation companion (Appendix E) lays out each test with its full numbers.
 
 **The slowdown was dated several different ways, and they agreed.** The decline bent once, gently, in the late 1990s, then kept drifting.
 A bend like that can be an illusion of where you draw the line, so it was located with methods that share no assumptions: one that checks every possible break year for the sharpest change, one that watches the trend for drift as the seasons pile up, and one that weighs whether the record is better described by no bend, one bend, or two.
@@ -566,11 +606,11 @@ They are not the lucky few.
 When each franchise is checked on its own, the era-by-era decline barely moves.
 It is not an artifact of which teams played at home in which decade.
 
-For every test above with its full numbers and the range each result could shift within on the games available, see the Investigation companion (Appendix D); the raw statistical output is in the Results file.
+For every test above with its full numbers and the range each result could shift within on the games available, see the Investigation companion (Appendix E); the raw statistical output is in the Results file.
 
 ---
 
-## Appendix C: Independent Corroboration
+## Appendix D: Independent Corroboration
 
 Sparkle Technologies published an independent analysis of the same question at [sparkletechnologies.com/blog/nba-disappearing-home-court-advantage](https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage).
 I checked every number we share in common.
@@ -612,7 +652,7 @@ It just misses where most of the work is happening.
 
 ---
 
-## Appendix D: Companion Documents
+## Appendix E: Companion Documents
 
 ::: {.content-visible when-format="html"}
 | Document | Description |
@@ -636,7 +676,7 @@ All files are in the same folder as this PDF (`generated/`), except the Stats Tu
 | Stats Tutorial | `../generated/stats_tutorial.pdf` | Worked examples reproducing key results from the regression output. |
 :::
 
-## Appendix E: Was this written by AI?
+## Appendix F: Was this written by AI?
 Mostly yes, but hopefully that isn't a bad thing.
 I'm trying to build a toolkit to ask interesting NBA questions, do analysis, make graphs, and create understanding.
 I want to do more of these than I can write, so I'm having Claude write most of the text.

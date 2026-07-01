@@ -235,6 +235,30 @@ All data from cache/ — same source as the plots above.
    ──────────────────────────────────────────────────────────────────────────────────────────────────────────────
    Trend/yr         +0.018        -0.017        -0.020        -0.013        +0.032  *     +0.030        +0.022   
 
+
+─── FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD VS. THE AVERAGE EDGE ─────
+   P10/P90 = 10th/90th percentile of the per-game home-minus-away gap.
+   width = P90 - P10, the typical night-to-night swing around the average.
+   home-favored = share of games where the gap ran the home team's way.
+
+   Regular season
+      early   FTA  mean=+2.05  P10=-12  P90=+16  width=28  home-favored=56%
+              Foul mean=-1.25  P10=-8  P90=+6  width=14  home-favored=56%
+      late    FTA  mean=+0.43  P10=-10  P90=+12  width=22  home-favored=49%
+              Foul mean=-0.20  P10=-6  P90=+6  width=12  home-favored=47%
+
+      fta: average edge fell 79%, game-to-game spread narrowed only 21%
+      foul: average edge fell 84%, game-to-game spread narrowed only 14%
+
+   Playoffs
+      early   FTA  mean=+1.96  P10=-12  P90=+15  width=27  home-favored=57%
+              Foul mean=-1.40  P10=-9  P90=+6  width=15  home-favored=56%
+      late    FTA  mean=+1.11  P10=-10  P90=+11  width=21  home-favored=56%
+              Foul mean=-0.70  P10=-6  P90=+5  width=11  home-favored=54%
+
+      fta: average edge fell 44%, game-to-game spread narrowed only 22%
+      foul: average edge fell 50%, game-to-game spread narrowed only 27%
+
    No cached referee data — run the analysis first to fetch it.
 
 

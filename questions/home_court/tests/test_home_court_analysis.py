@@ -391,6 +391,14 @@ class TestRunDifferentialAnalysis:
             reg.run_differential_analysis(df)
 
 
+class TestRunFtaDistributionAnalysis:
+    def test_does_not_raise(self, capsys):
+        df = _make_game_df(n=400)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            reg.run_fta_distribution_analysis(df)
+
+
 class TestRunQuantileMarginAnalysis:
     def test_does_not_raise(self, capsys):
         # Needs ≥100 rows per context; use a larger synthetic df

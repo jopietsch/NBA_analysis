@@ -300,6 +300,342 @@
     "unit": null,
     "value": -0.036138664344946926
   },
+  "dist.po_foul_favor_early": {
+    "display": "58%",
+    "fmt": "{:.0f}%",
+    "note": "po foul_diff: % games favoring home, early era",
+    "unit": null,
+    "value": 57.80856423173803
+  },
+  "dist.po_foul_favor_late": {
+    "display": "52%",
+    "fmt": "{:.0f}%",
+    "note": "po foul_diff: % games favoring home, late era",
+    "unit": null,
+    "value": 52.23880597014925
+  },
+  "dist.po_foul_mean_drop_pct": {
+    "display": "57%",
+    "fmt": "{:.0f}%",
+    "note": "po foul_diff: % decline in average edge, early->late era",
+    "unit": null,
+    "value": 56.80303518379326
+  },
+  "dist.po_foul_mean_early": {
+    "display": "-1.58",
+    "fmt": "{:+.2f}",
+    "note": "po foul_diff: mean, early era",
+    "unit": null,
+    "value": -1.5755667506297228
+  },
+  "dist.po_foul_mean_late": {
+    "display": "-0.68",
+    "fmt": "{:+.2f}",
+    "note": "po foul_diff: mean, late era",
+    "unit": null,
+    "value": -0.6805970149253732
+  },
+  "dist.po_foul_p10_early": {
+    "display": "-8",
+    "fmt": "{:+.0f}",
+    "note": "po foul_diff: P10, early era",
+    "unit": null,
+    "value": -8.0
+  },
+  "dist.po_foul_p10_late": {
+    "display": "-6",
+    "fmt": "{:+.0f}",
+    "note": "po foul_diff: P10, late era",
+    "unit": null,
+    "value": -6.0
+  },
+  "dist.po_foul_p90_early": {
+    "display": "+5",
+    "fmt": "{:+.0f}",
+    "note": "po foul_diff: P90, early era",
+    "unit": null,
+    "value": 5.0
+  },
+  "dist.po_foul_p90_late": {
+    "display": "+5",
+    "fmt": "{:+.0f}",
+    "note": "po foul_diff: P90, late era",
+    "unit": null,
+    "value": 5.0
+  },
+  "dist.po_foul_width_drop_pct": {
+    "display": "15%",
+    "fmt": "{:.0f}%",
+    "note": "po foul_diff: % narrowing in game-to-game spread, early->late era",
+    "unit": null,
+    "value": 15.384615384615385
+  },
+  "dist.po_foul_width_early": {
+    "display": "13",
+    "fmt": "{:.0f}",
+    "note": "po foul_diff: P90-P10 spread, early era",
+    "unit": null,
+    "value": 13.0
+  },
+  "dist.po_foul_width_late": {
+    "display": "11",
+    "fmt": "{:.0f}",
+    "note": "po foul_diff: P90-P10 spread, late era",
+    "unit": null,
+    "value": 11.0
+  },
+  "dist.po_fta_favor_early": {
+    "display": "57%",
+    "fmt": "{:.0f}%",
+    "note": "po fta_diff: % games favoring home, early era",
+    "unit": null,
+    "value": 57.0528967254408
+  },
+  "dist.po_fta_favor_late": {
+    "display": "56%",
+    "fmt": "{:.0f}%",
+    "note": "po fta_diff: % games favoring home, late era",
+    "unit": null,
+    "value": 55.82089552238806
+  },
+  "dist.po_fta_mean_drop_pct": {
+    "display": "54%",
+    "fmt": "{:.0f}%",
+    "note": "po fta_diff: % decline in average edge, early->late era",
+    "unit": null,
+    "value": 53.839789814970096
+  },
+  "dist.po_fta_mean_early": {
+    "display": "+2.35",
+    "fmt": "{:+.2f}",
+    "note": "po fta_diff: mean, early era",
+    "unit": null,
+    "value": 2.353904282115869
+  },
+  "dist.po_fta_mean_late": {
+    "display": "+1.09",
+    "fmt": "{:+.2f}",
+    "note": "po fta_diff: mean, late era",
+    "unit": null,
+    "value": 1.0865671641791044
+  },
+  "dist.po_fta_p10_early": {
+    "display": "-11",
+    "fmt": "{:+.0f}",
+    "note": "po fta_diff: P10, early era",
+    "unit": null,
+    "value": -11.0
+  },
+  "dist.po_fta_p10_late": {
+    "display": "-10",
+    "fmt": "{:+.0f}",
+    "note": "po fta_diff: P10, late era",
+    "unit": null,
+    "value": -10.0
+  },
+  "dist.po_fta_p90_early": {
+    "display": "+16",
+    "fmt": "{:+.0f}",
+    "note": "po fta_diff: P90, early era",
+    "unit": null,
+    "value": 16.0
+  },
+  "dist.po_fta_p90_late": {
+    "display": "+11",
+    "fmt": "{:+.0f}",
+    "note": "po fta_diff: P90, late era",
+    "unit": null,
+    "value": 11.0
+  },
+  "dist.po_fta_width_drop_pct": {
+    "display": "22%",
+    "fmt": "{:.0f}%",
+    "note": "po fta_diff: % narrowing in game-to-game spread, early->late era",
+    "unit": null,
+    "value": 22.22222222222222
+  },
+  "dist.po_fta_width_early": {
+    "display": "27",
+    "fmt": "{:.0f}",
+    "note": "po fta_diff: P90-P10 spread, early era",
+    "unit": null,
+    "value": 27.0
+  },
+  "dist.po_fta_width_late": {
+    "display": "21",
+    "fmt": "{:.0f}",
+    "note": "po fta_diff: P90-P10 spread, late era",
+    "unit": null,
+    "value": 21.0
+  },
+  "dist.reg_foul_favor_early": {
+    "display": "56%",
+    "fmt": "{:.0f}%",
+    "note": "reg foul_diff: % games favoring home, early era",
+    "unit": null,
+    "value": 55.60975609756098
+  },
+  "dist.reg_foul_favor_late": {
+    "display": "48%",
+    "fmt": "{:.0f}%",
+    "note": "reg foul_diff: % games favoring home, late era",
+    "unit": null,
+    "value": 47.9837067209776
+  },
+  "dist.reg_foul_mean_drop_pct": {
+    "display": "80%",
+    "fmt": "{:.0f}%",
+    "note": "reg foul_diff: % decline in average edge, early->late era",
+    "unit": null,
+    "value": 80.02971647860096
+  },
+  "dist.reg_foul_mean_early": {
+    "display": "-1.23",
+    "fmt": "{:+.2f}",
+    "note": "reg foul_diff: mean, early era",
+    "unit": null,
+    "value": -1.2289135254988914
+  },
+  "dist.reg_foul_mean_late": {
+    "display": "-0.25",
+    "fmt": "{:+.2f}",
+    "note": "reg foul_diff: mean, late era",
+    "unit": null,
+    "value": -0.2454175152749491
+  },
+  "dist.reg_foul_p10_early": {
+    "display": "-8",
+    "fmt": "{:+.0f}",
+    "note": "reg foul_diff: P10, early era",
+    "unit": null,
+    "value": -8.0
+  },
+  "dist.reg_foul_p10_late": {
+    "display": "-6",
+    "fmt": "{:+.0f}",
+    "note": "reg foul_diff: P10, late era",
+    "unit": null,
+    "value": -6.0
+  },
+  "dist.reg_foul_p90_early": {
+    "display": "+6",
+    "fmt": "{:+.0f}",
+    "note": "reg foul_diff: P90, early era",
+    "unit": null,
+    "value": 6.0
+  },
+  "dist.reg_foul_p90_late": {
+    "display": "+6",
+    "fmt": "{:+.0f}",
+    "note": "reg foul_diff: P90, late era",
+    "unit": null,
+    "value": 6.0
+  },
+  "dist.reg_foul_width_drop_pct": {
+    "display": "14%",
+    "fmt": "{:.0f}%",
+    "note": "reg foul_diff: % narrowing in game-to-game spread, early->late era",
+    "unit": null,
+    "value": 14.28571428571429
+  },
+  "dist.reg_foul_width_early": {
+    "display": "14",
+    "fmt": "{:.0f}",
+    "note": "reg foul_diff: P90-P10 spread, early era",
+    "unit": null,
+    "value": 14.0
+  },
+  "dist.reg_foul_width_late": {
+    "display": "12",
+    "fmt": "{:.0f}",
+    "note": "reg foul_diff: P90-P10 spread, late era",
+    "unit": null,
+    "value": 12.0
+  },
+  "dist.reg_fta_favor_early": {
+    "display": "56%",
+    "fmt": "{:.0f}%",
+    "note": "reg fta_diff: % games favoring home, early era",
+    "unit": null,
+    "value": 55.69844789356985
+  },
+  "dist.reg_fta_favor_late": {
+    "display": "49%",
+    "fmt": "{:.0f}%",
+    "note": "reg fta_diff: % games favoring home, late era",
+    "unit": null,
+    "value": 49.30753564154786
+  },
+  "dist.reg_fta_mean_drop_pct": {
+    "display": "77%",
+    "fmt": "{:.0f}%",
+    "note": "reg fta_diff: % decline in average edge, early->late era",
+    "unit": null,
+    "value": 76.50676848864563
+  },
+  "dist.reg_fta_mean_early": {
+    "display": "+1.97",
+    "fmt": "{:+.2f}",
+    "note": "reg fta_diff: mean, early era",
+    "unit": null,
+    "value": 1.9678935698447892
+  },
+  "dist.reg_fta_mean_late": {
+    "display": "+0.46",
+    "fmt": "{:+.2f}",
+    "note": "reg fta_diff: mean, late era",
+    "unit": null,
+    "value": 0.4623217922606925
+  },
+  "dist.reg_fta_p10_early": {
+    "display": "-12",
+    "fmt": "{:+.0f}",
+    "note": "reg fta_diff: P10, early era",
+    "unit": null,
+    "value": -12.0
+  },
+  "dist.reg_fta_p10_late": {
+    "display": "-11",
+    "fmt": "{:+.0f}",
+    "note": "reg fta_diff: P10, late era",
+    "unit": null,
+    "value": -11.0
+  },
+  "dist.reg_fta_p90_early": {
+    "display": "+16",
+    "fmt": "{:+.0f}",
+    "note": "reg fta_diff: P90, early era",
+    "unit": null,
+    "value": 16.0
+  },
+  "dist.reg_fta_p90_late": {
+    "display": "+12",
+    "fmt": "{:+.0f}",
+    "note": "reg fta_diff: P90, late era",
+    "unit": null,
+    "value": 12.0
+  },
+  "dist.reg_fta_width_drop_pct": {
+    "display": "18%",
+    "fmt": "{:.0f}%",
+    "note": "reg fta_diff: % narrowing in game-to-game spread, early->late era",
+    "unit": null,
+    "value": 17.85714285714286
+  },
+  "dist.reg_fta_width_early": {
+    "display": "28",
+    "fmt": "{:.0f}",
+    "note": "reg fta_diff: P90-P10 spread, early era",
+    "unit": null,
+    "value": 28.0
+  },
+  "dist.reg_fta_width_late": {
+    "display": "23",
+    "fmt": "{:.0f}",
+    "note": "reg fta_diff: P90-P10 spread, late era",
+    "unit": null,
+    "value": 23.0
+  },
   "era.drop_1995": {
     "display": "2.6",
     "fmt": "{:.1f}",

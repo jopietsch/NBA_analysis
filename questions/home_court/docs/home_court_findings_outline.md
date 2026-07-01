@@ -55,6 +55,7 @@
 - **Referee foul calls and free throws** (most consistent component; Dean Oliver's "FT rate" factor):
   - 1984–94 reg season: ~**1.2 fewer fouls** on home (RESULTS −1.23) → **~2 more FTA/game** (RESULTS +1.97); playoffs ~**1.6 fewer fouls** (RESULTS −1.58) → **~2.4 more FTA/game** (RESULTS +2.35).
   - Playoff universality: **45 of 47** officials (≥50 playoff games) home-favoring; holds under all checks.
+  - **Inline aside (new):** answers "how can 2 FTA matter" right where the number first appears — the 1980s per-game FTA gap swung across a ~28-attempt range (P10 to P90) around that ~2-attempt average; only visible once thousands of games are pooled. Full distribution treatment deferred to new Appendix B. *RESULTS: FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD VS. THE AVERAGE EDGE.*
 - **Shooting advantage:** home shoot **>1 pp better FG%** (RESULTS 1984–94: +1.57 FG%, +1.56 eFG%); consistent across eras, both contexts.
 - **Shot selection:** more attempts from close range, fewer mid-range → structural expected-scoring advantage. *RESULTS shot zones 1995–01 reg: Paint +1.28, Mid-Range −1.24.*
 - **Rebounding & ball control:** ~**1.5 extra rebounds** (RESULTS REB diff +1.52) and ~**0.4 fewer turnovers** (TOV diff −0.38); together rival shooting.
@@ -235,7 +236,16 @@ Three threads, none bearing on the four questions: referee spread, franchise dif
 
 ---
 
-## Appendix B — How We Know This Isn't Made Up
+## Appendix B — How Can 2 Extra Free Throws Shift Home Court Advantage?
+New appendix (2nd), directly following Appendix A. Answers the reader question raised by the §2 inline aside: a ~2-attempt average FTA edge is tiny, so how does it register at all? Full per-game distribution treatment, RS and PO, 1984–94 vs 2023–26. *RESULTS: FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD VS. THE AVERAGE EDGE.*
+- **The average is buried in per-game noise:** RS 1984–94 FTA diff mean +1.97, but the middle-80%-of-games range runs −12 to +16 (width 28), many times the average. Same shape in PO (mean +2.35, range −11 to +16).
+- **Two tables (FTA, then fouls), each RS vs PO, 1984–94 vs 2023–26:** average and typical range (P10–P90) side by side. FTA: RS +1.97→+0.46 (range 28→23 wide), PO +2.35→+1.09 (range 27→21). Fouls: RS −1.23→−0.25 (range 14→12), PO −1.58→−0.68 (range 13→11).
+- **The average fell far faster than the swing narrowed:** RS FTA mean −77%, range width only −18%; PO FTA mean −54%, width −22%. RS foul mean −80%, width −14%; PO foul mean −57%, width −15%. Share of games home-favored: RS FTA 56%→49% (near coin flip); PO FTA 57%→56% (barely moved) — another playoffs-lag signal, consistent with §5.
+- **Closing point:** doesn't change any other finding — explains why a real, repeatable per-game bias is invisible game-to-game and only shows up once thousands of games are pooled. Same category as the other three box-score channels: individually modest, real in aggregate.
+
+---
+
+## Appendix C — How We Know This Isn't Made Up
 Consolidated robustness/credibility appendix: gathers the validation battery in plain (findings-tier) language so a reader can see the findings were stress-tested, not cherry-picked. Folds in the old out-of-sample appendix. Each item points to the Investigation doc / RESULTS for full numbers. Bolded mini-sections:
 - **Break date triangulated:** sup-Chow QLR (sb.reg_break=1999) + CUSUM stability + Bayesian changepoint (changepoint.map_year=1999, HPD [1992, 2003]) all agree → the bend is real, not a line-drawing artifact. *RESULTS: STRUCTURAL BREAK / CUSUM / BAYESIAN CHANGE-POINT.*
 - **Placebo tests:** fake breaks at dozens of no-change years; only 1994-95 stands out (era.drop_1995=2.6 pp). *RESULTS: PLACEBO TESTS.*
@@ -249,7 +259,7 @@ Consolidated robustness/credibility appendix: gathers the validation battery in 
 
 ---
 
-## Appendix C — Independent Corroboration (Sparkle Technologies Blog)
+## Appendix D — Independent Corroboration (Sparkle Technologies Blog)
 - Blog: Sparkle Technologies, same question, independent pipeline. Main agreements: overall decline, foul story, travel/pace irrelevance, altitude (Denver +27 pp, Utah +26 pp — within 0.1 pp of mine).
 - **Key disagreement — cause:** blog crowns three-point revolution the primary driver (raw r=−0.88 season-level). I find ~40% of that correlation is parallel-trend artifact (detrended partial r=−0.53; Granger test: no temporal lead). 3PA effect is real within seasons (−2.27 pp/10pp). It registers most directly as the shooting channel (~21% of the decline), and counting its share of the foul and turnover channels (~half of each) reaches close to half the decline overall — still short of the whole story. Rebounding (30%, the largest channel and independent of the 3PA shift) is the piece the blog never measures. Category-vs-cause framing: 3PA is the most far-reaching cause (touches three of four channels) but no single channel it drives is as large as rebounding, which has its own separate cause.
 - **Mid-1990s drop:** blog attributes to shortened 3-pt line (1994–97); I attribute to hand-checking crackdown. Events overlap at season level. Channel event study gives leverage: foul diff immediate and significant at 1994-95 (p=0.007); shooting channel not significant (p=0.327). Hand-checking is the more consistent explanation; the two cannot be fully separated.
@@ -288,12 +298,12 @@ Checklist for `/check-consistency`. Each row is one prose claim with the home_co
 | N19 | §3 › intro table; §6 › level factors | Four Factors carry ~96% of RS decline | MEDIATION, RS trend — bootstrap summary | 96% (95% CI [87, 107]%) |
 | N20 | §3 › intro table | REB 30% of RS decline | MEDIATION, RS trend decomp | 30% |
 | N21 | §3 › intro table; §6 › four drivers | TOV 27% of RS decline | MEDIATION, RS trend decomp | 27% |
-| N22 | §3 › intro table; App C › where we differ | eFG% 21% of RS decline | MEDIATION, RS trend decomp | 21% |
-| N23 | §3 › intro table; App B › no straight-line | Foul 18% of RS decline | MEDIATION, RS trend decomp | 18% |
+| N22 | §3 › intro table; App D › where we differ | eFG% 21% of RS decline | MEDIATION, RS trend decomp | 21% |
+| N23 | §3 › intro table; App C › no straight-line | Foul 18% of RS decline | MEDIATION, RS trend decomp | 18% |
 | N24 | §3 › intro | PO channels ~67% of decline | MEDIATION, PO trend — bootstrap summary | 67% (95% CI [38, 107]%) |
 | N25 | §3 › 3PT | Paint shot gap fell from 1.3 pp to 0.2 pp (RS) | SHOT ZONE DIFFERENTIALS, RS Paint column | +1.28 (1995–01) → +0.24 (2023–26) |
 | N26 | §3 › 3PT | 7% threes in 1980s, home teams won 65% | LEAGUE-WIDE 3-POINT, RS era table | 6.8% / 65.0% (1984–94) |
-| N27 | §3 › 3PT; App C › where we differ | ~40% of 40-yr 3PA-HCA correlation is trend artifact | LEAGUE-WIDE 3-POINT, partial correlation | raw r=−0.902 → partial r=−0.526; 42% shrinkage |
+| N27 | §3 › 3PT; App D › where we differ | ~40% of 40-yr 3PA-HCA correlation is trend artifact | LEAGUE-WIDE 3-POINT, partial correlation | raw r=−0.902 → partial r=−0.526; 42% shrinkage |
 | N28 | §3 › 3PT | 2–3 fewer home wins/100 per 10-pp 3PA rise | LEAGUE-WIDE 3-POINT, game-level logistic | −2.64 pp/10pp (bivariate); −2.27 pp within-era |
 | N29 | §3 › Rebounding & turnovers | DREB diff fell from +1.64 to +0.59 | REBOUNDING DECOMP, RS DREB diff column | +1.64 (1984–94) → +0.59 (2023–26) |
 | N30 | §3 › Rebounding & turnovers | OREB diff fell from +0.61 to slightly below zero | REBOUNDING DECOMP, RS OREB diff column | +0.61 (1984–94) → −0.05 (2023–26) |
@@ -305,10 +315,10 @@ Checklist for `/check-consistency`. Each row is one prose claim with the home_co
 | N36 | §3 › Officiating | PO FTA edge 2.4 → 1.1/game | FOUL & SHOOTING ERAS, PO FTA diff column | +2.35 (1984–94) → +1.09 (2023–26) |
 | N37 | §1 › two drops; §4 › rule eras | 1994–95 discrete step ~−2.6 pp | RULE-CHANGE ERAS, RS trend-controlled era:1995–01 | ≈pp = −2.6 (log-odds −0.108, p=0.010) |
 | N38 | §4 › off-court factors | Travel ~0.07 pp per 100 miles (RS) | REST, ALTITUDE, AND TIME ZONE | −0.07 pp/100 mi (bivariate logistic) |
-| N39 | §4 › off-court factors; App C › back-to-backs | B2B frequency 35% → under 20% | BACK-TO-BACKS, visitor B2B by era | 35.0% (1984–94) → 18.8% (2023–26) |
+| N39 | §4 › off-court factors; App D › back-to-backs | B2B frequency 35% → under 20% | BACK-TO-BACKS, visitor B2B by era | 35.0% (1984–94) → 18.8% (2023–26) |
 | N40 | intro › what is not behind it; §4 › off-court factors; §6 › ruled-out | Schedule shift explains ~8% of RS decline | BACK-TO-BACKS, shift-share | frequency component −0.71 pp ≈ 8% of −9.29 pp total |
 | N41 | §4 › off-court factors | Rest: home better-rested 63%, visitor better-rested 58% | REST DIFFERENTIAL, RS bucket table | home-more-rest: 62.8%; away-more-rest: 57.6% |
-| N42 | §4 › crowds; §6 › ruled-out; App C › empty arena | Empty arena 51%, any crowd 58.5% | ARENA ATTENDANCE, 2020-21 | empty 51.0% (n=573); fans present 58.5% (n=591) |
+| N42 | §4 › crowds; §6 › ruled-out; App D › empty arena | Empty arena 51%, any crowd 58.5% | ARENA ATTENDANCE, 2020-21 | empty 51.0% (n=573); fans present 58.5% (n=591) |
 | N43 | §5 › series structure; §6 › playoff recap | G1 69%, G2 72% | PLAYOFF SERIES STRUCTURE, game table | G1=69.4%, G2=71.9% |
 | N44 | §5 › series structure | G5 74.5% | PLAYOFF SERIES STRUCTURE, game table | G5=74.5% |
 | N45 | §5 › series structure; §6 › playoff recap | G7 64% | PLAYOFF SERIES STRUCTURE, game table | G7=63.8% |
@@ -332,3 +342,8 @@ Checklist for `/check-consistency`. Each row is one prose claim with the home_co
 | N63 | App A › Referees | ~60% of referee home-foul spread is sampling noise | REFEREE CREW HOME FOUL BIAS | noise explains ~60% (true between-SD 0.407 vs observed 0.645) |
 | N64 | App A › Franchises | Home court ~20 pp RS vs ~27 pp PO; +7 pp playoff premium | FRANCHISE HCA — RS VS PO CONSISTENCY | 19.6 / 26.9 / +7.2 pp |
 | N65 | App A › Blowouts | Blowout spread widens ~0.2 (RS) / ~0.3 (PO) pts/yr | WIN MARGIN POLARIZATION | IQR change 0.217 (RS) / 0.326 (PO) pts/yr |
+| N66 | §2 › aside; App B | 1980s RS FTA gap swings −12 to +16 around a +2 average | FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD | mean +1.97, P10 −12, P90 +16 (width 28) |
+| N67 | App B | FTA average vs. typical range, RS and PO, 1984–94 vs 2023–26 | FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD | RS +1.97 (−12 to +16) → +0.46 (−11 to +12); PO +2.35 (−11 to +16) → +1.09 (−10 to +11) |
+| N68 | App B | Foul average vs. typical range, RS and PO, 1984–94 vs 2023–26 | FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD | RS −1.23 (−8 to +6) → −0.25 (−6 to +6); PO −1.58 (−8 to +5) → −0.68 (−6 to +5) |
+| N69 | App B | Average edge fell far faster than the swing narrowed | FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD | FTA: RS mean −77%/width −18%, PO mean −54%/width −22%; Foul: RS mean −80%/width −14%, PO mean −57%/width −15% |
+| N70 | App B | Share of games home attempted more FTA fell to near a coin flip (RS); barely moved (PO) | FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD | RS 56%→49%; PO 57%→56% |

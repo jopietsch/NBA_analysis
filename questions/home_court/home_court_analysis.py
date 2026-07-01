@@ -1525,6 +1525,77 @@ def run_differential_analysis(df: pd.DataFrame) -> None:
         print()
 
 
+# ── Analysis 4b: Foul/FTA differential — per-game spread vs. the average ────
+
+def run_fta_distribution_analysis(df: pd.DataFrame) -> None:
+    """
+    Companion to run_differential_analysis: how the small average foul/FTA
+    edge compares to the game-to-game swing around it, and whether that
+    swing narrowed as fast as the average edge did. Feeds Appendix B of
+    FINDINGS ("how can 2 extra free throws matter").
+    """
+    _section("FOUL & FTA DIFFERENTIAL — PER-GAME SPREAD VS. THE AVERAGE EDGE")
+    print("   P10/P90 = 10th/90th percentile of the per-game home-minus-away gap.")
+    print("   width = P90 - P10, the typical night-to-night swing around the average.")
+    print("   home-favored = share of games where the gap ran the home team's way.\n")
+
+    _e0, _eN = nba.ERA_DEFS[0], nba.ERA_DEFS[-1]
+
+    def _stats(col, era_rows, favor_home):
+        vals = era_rows[col].dropna()
+        p10, p90 = (float(v) for v in np.percentile(vals, [10, 90]))
+        return {
+            "mean":  float(vals.mean()),
+            "p10":   p10, "p90": p90, "width": p90 - p10,
+            "favor": 100 * float(favor_home(vals).mean()),
+        }
+
+    for _ctx, _sub in [("reg", df[df["is_playoff"] == 0]), ("po", df[df["is_playoff"] == 1])]:
+        label = "Regular season" if _ctx == "reg" else "Playoffs"
+        print(f"   {label}")
+
+        eras = {}
+        for era_tag, era in [("early", _e0), ("late", _eN)]:
+            era_rows = _sub[(_sub["year"] >= era[1]) & (_sub["year"] <= era[2])]
+            eras[era_tag] = {
+                "fta":  _stats("fta_diff",  era_rows, lambda v: v > 0),
+                "foul": _stats("foul_diff", era_rows, lambda v: v < 0),
+            }
+            fta, foul = eras[era_tag]["fta"], eras[era_tag]["foul"]
+            print(f"      {era_tag:<6}  FTA  mean={fta['mean']:+.2f}  P10={fta['p10']:+.0f}  "
+                  f"P90={fta['p90']:+.0f}  width={fta['width']:.0f}  home-favored={fta['favor']:.0f}%")
+            print(f"      {'':6}  Foul mean={foul['mean']:+.2f}  P10={foul['p10']:+.0f}  "
+                  f"P90={foul['p90']:+.0f}  width={foul['width']:.0f}  home-favored={foul['favor']:.0f}%")
+
+            # dist.*_mean_* duplicates diff.{ctx}_{fta,foul}_{early,late} from
+            # run_differential_analysis above; kept under this namespace too
+            # since Appendix B's tables read every cell from "dist.*".
+            for stat_key, stat in (("fta", fta), ("foul", foul)):
+                FACTS.set(f"dist.{_ctx}_{stat_key}_mean_{era_tag}", stat["mean"], "{:+.2f}",
+                          note=f"{_ctx} {stat_key}_diff: mean, {era_tag} era")
+                FACTS.set(f"dist.{_ctx}_{stat_key}_p10_{era_tag}", stat["p10"], "{:+.0f}",
+                          note=f"{_ctx} {stat_key}_diff: P10, {era_tag} era")
+                FACTS.set(f"dist.{_ctx}_{stat_key}_p90_{era_tag}", stat["p90"], "{:+.0f}",
+                          note=f"{_ctx} {stat_key}_diff: P90, {era_tag} era")
+                FACTS.set(f"dist.{_ctx}_{stat_key}_width_{era_tag}", stat["width"], "{:.0f}",
+                          note=f"{_ctx} {stat_key}_diff: P90-P10 spread, {era_tag} era")
+                FACTS.set(f"dist.{_ctx}_{stat_key}_favor_{era_tag}", stat["favor"], "{:.0f}%",
+                          note=f"{_ctx} {stat_key}_diff: % games favoring home, {era_tag} era")
+        print()
+
+        for stat_key in ("fta", "foul"):
+            early, late = eras["early"][stat_key], eras["late"][stat_key]
+            mean_drop  = 100 * (1 - abs(late["mean"]) / abs(early["mean"]))
+            width_drop = 100 * (1 - late["width"] / early["width"])
+            FACTS.set(f"dist.{_ctx}_{stat_key}_mean_drop_pct", mean_drop, "{:.0f}%",
+                      note=f"{_ctx} {stat_key}_diff: % decline in average edge, early->late era")
+            FACTS.set(f"dist.{_ctx}_{stat_key}_width_drop_pct", width_drop, "{:.0f}%",
+                      note=f"{_ctx} {stat_key}_diff: % narrowing in game-to-game spread, early->late era")
+            print(f"      {stat_key}: average edge fell {mean_drop:.0f}%, "
+                  f"game-to-game spread narrowed only {width_drop:.0f}%")
+        print()
+
+
 def compute_mediation_decomposition(df: pd.DataFrame) -> dict:
     """Box-score channel shares of the HCA level and its trend, RS and playoffs.
 
@@ -5692,6 +5763,7 @@ def generate_results_text(df: pd.DataFrame | None = None) -> str:
 
         # §2 What Creates Home Court Advantage
         run_differential_analysis(df)
+        run_fta_distribution_analysis(df)
         ref_df = nba.fetch_all_referee_data(
             nba.START_YEAR, nba.END_YEAR, "Playoffs",
             skip_years=nba.SKIP_PLAYOFF_YEARS,
