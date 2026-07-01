@@ -9,7 +9,7 @@ The standard commands, module architecture, document workflow, test pattern, and
 ## Project-specific notes
 
 - `home_court_findings_outline.md` is a **non-standard** doc (not in the standard document set): a condensed outline cross-referenced to `home_court_results.md`. Keep it in sync with the findings and regenerate its PDF with `python3 ../generate_doc_pdf.py docs/home_court_findings_outline.md`.
-- The `stats_tutorial.md` companion lives one level up in `questions/`, not in `docs/`. Its worked examples reproduce `home_court_results.md` rows, so check them when results change. Regenerate with `python3 ../generate_doc_pdf.py ../stats_tutorial.md`.
+- The `stats_tutorial.md` companion lives one level up in `questions/`, not in `docs/` — it's a cross-project doc (also cites `player_rating_overview` facts), not owned by home_court, so it is **not** rendered by this project's `render_docs.py` or `generate_report.py`. Its worked examples reproduce `home_court_results.md` rows, so check them when results change. Regenerate the `.md` from its template with `python3 ../render_stats_tutorial.py`, then the PDF/HTML with `python3 ../generate_doc_pdf.py ../stats_tutorial.md`.
 - The report is built with no inlined appendix; `home_court_results.md` has its own standalone PDF (`python3 ../generate_doc_pdf.py docs/home_court_results.md`).
 
 ## Key files
