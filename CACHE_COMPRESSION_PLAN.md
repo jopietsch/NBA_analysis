@@ -184,3 +184,42 @@ Considered and mostly declined, for this change. The per-project cache sites are
 - **Parquet instead of compressed CSV** for the numeric tables (season totals, ratings) would compress better and read faster, but changes the on-disk format and dtype round-tripping; deferred — this plan keeps CSV semantics and only adds compression.
 - **Codec**: plan recommends zstd; confirm before Phase 1 (one-line change if gzip is preferred).
 - Whether to compress tiny files (< a few KB) at all, or skip them by a size threshold (marginal savings, slightly simpler `ls`).
+
+---
+
+# Phase 4: directory sharding (Option A)
+
+**Status:** proposal, not executed. Run **after** the RAPM historical build finishes (same "don't reorganize the cache while a fetch is writing to it" rule as the compression batch).
+
+## Why
+
+The cache is ~68k files and 98.8% of them are per-game (`pbp_v3_{gid}.csv.zst`, `boxscore_trad_{gid}.csv.zst`). Nothing is *broken* — APFS handles it and the hot paths read exact filenames (O(1), no directory scan) — but `ls` is unusable and any `glob` scans the whole directory. Sharding the per-game files into season subfolders fixes navigability and gives natural, immutable backup units, at low risk.
+
+**Why A and not Parquet consolidation (Option B3):** at ~300 MB the Parquet wins (compression, columnar reads, types) are marginal, and B3's cost is real (new format, losing `zcat`/grep, compaction + a dual-representation hit check). A is right-sized. Crucially **A is a stepping-stone, not a dead end**: its `cache/pbp_v3/<season>/` layout is exactly the partition structure B3 would use, so upgrading later keeps the layout and only swaps the format. Revisit B3 only if the data grows a lot, real cross-season SQL queries become part of the workflow, or the type-coercion bugs start to bite.
+
+## Layout
+
+- Per-game files move into a type + season subdir: `cache/pbp_v3/<season>/<gid>.csv.zst`, `cache/boxscore_trad/<season>/<gid>.csv.zst` (~30 files/season/type).
+- The ~800 per-season files (totals, standings, league averages, tracking, shot zones, referees, RAPM outputs, third-party snapshots) stay flat at the cache root — they are already few and readable.
+
+## Mechanism (reuses the compression shim)
+
+- **A path helper** in the shim maps a logical per-game filename to its sharded location: `pbp_v3_{gid}.csv` → `pbp_v3/<season>/{gid}.csv`. The handful of per-game path constructions (`fetch_pbp`, `fetch_pbp_players`, `_season_possessions` reads, the inline `pbp_v3_`/`boxscore_trad_` joins in `player_rating_overview_data.py`) route through it.
+- **gid → season** is deterministic: the 10-digit game ID encodes the season (`002YYNNNNN`, `YY` = start-year last two digits, e.g. `0020500123` → `2005-06`). A small `season_of_game_id(gid)` helper does the parse. Writers already know the season from context; readers derive it from the gid.
+- **Dual-representation reads (the critical requirement).** Exactly like the compression variant-fallback: a per-game read/exists must resolve **sharded path first, then flat**, so the cache works during the transition and after. The one-time reorg deletes the flat files only after the sharded copy is verified.
+
+## One-time reorg script
+
+`nbakit/tools/shard_cache.py`, mirroring `compress_cache.py`: walk flat per-game files, move each to its season subdir (atomic rename), idempotent/resumable, with `--dry-run`, `--verify-only`, and `--unshard` (rollback). Only touches `pbp_v3_*`/`boxscore_trad_*`; leaves per-season files flat.
+
+## Rebuild-from-empty works unchanged
+
+The cache is a derived artifact. On a fresh build the writers know each game's season, so they write straight into `pbp_v3/<season>/` — no reorg needed, no special cold-start handling. Resume-after-interruption and mixed flat/sharded states are covered by the dual-representation hit check above (the same discipline that makes "delete the cache and start over" safe today).
+
+## Backup synergy
+
+Once sharded, `backup_cache.sh --per-season` tars each season subdir separately. Completed seasons are immutable, so their archive is written once and never re-touched; only the in-progress season's tar changes. That is the incremental backup the flat layout can't do cleanly.
+
+## Execution with subagents
+
+Small enough to do in one or two workstreams: (A, opus) the shim path helper + `season_of_game_id` + `shard_cache.py` + tests; (B, sonnet) route the per-game call sites through the helper and confirm dual-path reads. Then the audit (no flat per-game path built outside the helper) → `shard_cache.py --dry-run` → real reorg → suite. Gated until the RAPM build is idle.
