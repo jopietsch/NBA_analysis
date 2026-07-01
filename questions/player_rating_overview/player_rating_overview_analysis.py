@@ -693,6 +693,7 @@ def run(end_year: int = 2026) -> None:
             if "RAPM" in qual.columns else None
         if bare_pair is not None and len(bare_pair) > 10:
             bare_cons = abs(bare_pair["RAPM"].corr(bare_pair["_C"], method="spearman"))
+            print(f"  Bare RAPM rank agreement with the consensus: {bare_cons:.2f}")
             FACTS.set("rapm.consensus_corr", float(bare_cons), "{:.2f}",
                       note="bare single-season RAPM rank agreement with the consensus")
             if len(cons_pair) > 10:

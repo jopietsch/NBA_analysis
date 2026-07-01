@@ -26,8 +26,9 @@ A few things to settle up front:
 
 The short answers run through the report.
 The box-score systems move together but only loosely track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them, agreeing with the box scores at about 0.33 on a 0-to-1 scale.
-Each system tilts toward a player type, and the simplest box scores (PER, Game Score) prove largely redundant, nearly rebuilt from the others, while the metrics built for defense and lineup impact carry more of their own.
+Each system tilts toward a player type, and the all-in-one summaries (PER, Win Shares, BPM, VORP) prove largely redundant, nearly rebuilt from the others, while Win Shares per minute and the from-scratch lineup metric carry the most of their own.
 And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (0.96 on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
+One more thread runs through it: whether a player's rating holds up when the games matter most, the Jalen Brunson question the report started from (Section 8).
 
 The testbed is the 2025-26 season, built on the eight box-score systems that can be recomputed directly from public data: Game Score, PER, Win Shares, WS/48, BPM, Offensive BPM, Defensive BPM, and VORP.
 It also includes a lineup-based impact metric computed from scratch for this report, RAPM, in two forms: a bare single-season version, the noisier of the two, and a prior-informed, multi-year version (RAPM+prior) built the way the published metrics are.
@@ -105,7 +106,7 @@ ESPN stopped publishing RPM publicly around 2023.
 The core limitation across all these systems is sample size: a player's on/off data in one season is much noisier than their box-score totals.
 That smoothing pulls noisy estimates toward the box-score baseline, which means the baseline's assumptions matter a great deal, especially for players with limited minutes.
 
-The prior-plus-RAPM structure is a form of Bayesian reasoning applied to a noisy measurement problem.
+The prior-plus-RAPM structure is a way of weighing a noisy measurement against a steadier starting estimate.
 The box-score prior is a starting belief about a player's value before seeing the lineup data.
 The on/off data is the evidence that updates that belief.
 The final estimate blends the two, with the weight on the data side growing as the sample of lineup possessions grows.
@@ -114,12 +115,12 @@ This is why the best-performing metrics in retrodiction tests outperform simpler
 
 The one thing this framework does not yet deliver is uncertainty.
 Every metric publishes a single number ("EPM: +8.2 per 100"), with no range around it.
-A fully Bayesian treatment would produce something like "+8.2, likely between +6.8 and +9.6, with the range reflecting how much one season of lineup data can vary by chance." That range would make visible what is currently hidden: the apparent disagreements between systems about who ranks 8th versus 12th are often smaller than the uncertainty band of any single metric.
+Carrying the uncertainty through would produce something like "+8.2, likely between +6.8 and +9.6, with the range reflecting how much one season of lineup data can vary by chance." That range would make visible what is currently hidden: the apparent disagreements between systems about who ranks 8th versus 12th are often smaller than the uncertainty band of any single metric.
 The rankings are noisier than they look.
 
 **Which metrics do practitioners trust?** A HoopsHype survey of 29 NBA front-office executives (2021) found DARKO DPM was the most preferred catch-all metric (8 respondents), followed by EPM and LEBRON.
 A retrodiction study by Dunks & Threes, comparing how well each metric predicts future game outcomes, put EPM first, followed by RPM, RAPTOR, and BPM 2.0 in that order.
-EPM and RPM were the only two metrics using RAPM directly with a Bayesian prior at the time of that study, which appears to be the structural feature behind their edge over box-score-only approaches.
+EPM and RPM were the only two metrics using RAPM directly with a box-score prior at the time of that study, which appears to be the structural feature behind their edge over box-score-only approaches.
 (Both the survey and the retrodiction study are external published work, not recomputed here; full citations are in the [resources bibliography](player_rating_resources.md).)
 
 ### Human rankings
@@ -158,7 +159,7 @@ That is why the prior-informed RAPM+prior, not the bare version, feeds the conse
 
 RAPM+prior pools three seasons of lineup data and anchors each player to a box-score prior (their BPM), the same recipe the published metrics use.
 It now tops out at the MVP tier: Shai Gilgeous-Alexander, Giannis Antetokounmpo, and Nikola Jokić lead it.
-Its order tracks the consensus at about 0.91, up from 0.42 for the bare version, and it holds from one season to the next about as firmly as BPM (0.84 against 0.79 on the 0-to-1 scale).
+Its order tracks the consensus at about 0.91, up from 0.42 for the bare version (agreement with the consensus rating, a separate measure from the box-score agreement above), and it holds from one season to the next about as firmly as BPM (0.84 against 0.79 on the 0-to-1 scale).
 A rating that repeats as reliably as BPM but is built from lineup results rather than the box score is adding real impact signal on top of it, not just restating it.
 How it is built is in Section 12; whether it forecasts team results any better is tested in Section 3.
 
@@ -203,7 +204,7 @@ Take each player's rating from the prior season (2024-25), spread it across this
 This is a stricter test: a metric's team adjustment is tuned to its own season, so it earns nothing for predicting a season it has not seen.
 The order flips.
 PER, the best description of the season, becomes one of the weakest forecasts of the next, falling from about 73% to roughly 37%.
-In this one pair the plus/minus family holds up best, with RAPM+prior on top at about 59%.
+In this one pair the lineup metric holds up best, with RAPM+prior on top at about 59%, ahead of every box score.
 (About 88% of this season's minutes came from players who also rated the year before; rookies have no prior mark.)
 
 The lesson is the one every projection system runs into: describing what happened and forecasting what comes next are different jobs.
@@ -217,7 +218,7 @@ The shape repeats.
 Among the ratings that never use who won, PER describes best every era, averaging about 64% of the gaps between teams, and forecasts near the bottom, about 25%.
 The team-anchored box metrics, BPM and VORP, sit above it on the describe test, but mechanically: they are built to reproduce team point differential, so rebuilding it is no test of them.
 The best forecaster across all those handoffs is VORP, at about 52%, a box-built rating that carries more of its signal from one season to the next than PER does.
-The single 2025-26 handoff agrees: VORP forecasts best there too, and across the full panel BPM still beats PER as a forecaster in 29 of the 29 handoffs.
+The single 2025-26 handoff agrees: VORP is the best-forecasting box score there too, and across the full panel BPM still beats PER as a forecaster in 29 of the 29 handoffs.
 What holds across every era is the gap itself: PER, the best honest description of a finished season, is consistently among the worst bets on the next one.
 
 ![Average same-season fit (grey) against next-season forecast (blue) for each box-score system, pooled over 30 seasons and 29 season-pairs. Whiskers span the season-to-season range. BPM and VORP describe near-perfectly because they are anchored to team results; among the ratings that never use who won, PER's describe-forecast gap is the widest and never closes.](../generated/images/panel_describe_vs_forecast.svg){#fig-panel-describe-forecast}
@@ -272,7 +273,7 @@ That is the rare player box scores, impact metrics, and human voters all point a
 
 Now the defense-first star.
 Victor Wembanyama grades out at an all-around BPM of +8.9, and most of it is defense: +3.9 of that number comes from his defensive rating alone, the kind of value a pure scoring metric never records.
-The lineup metric, now that it can be trusted (Section 2), agrees and then some: RAPM ranks his net on-court impact number 3, above his box-score offense at number 9, catching two-way value the box only partly sees.
+The lineup metric agrees and then some: RAPM ranks his net on-court impact number 3, above his box-score offense at number 9, catching two-way value the box only partly sees.
 
 Now the high-volume scorer the systems split on.
 Counting stats love Pascal Siakam, with Player Efficiency Rating placing him 45th.
@@ -284,13 +285,13 @@ His offense rates with the best, an offensive BPM of +4.3 that ranks 12th.
 His defense pulls the other way, a defensive BPM of -0.9, so his all-around BPM of +3.4 sits at 29th.
 The same player is a top-fifteen offensive player and a top-thirty contributor overall, and the gap between those two is exactly what his defense costs him.
 The impact metrics, now that they are fixed and trustworthy, tell the same story rather than a kinder one: the corrected RAPM puts his net on-court impact at merely average (204th), and RAPM+prior at 64th, so two independent methods, box and lineup, agree that his scoring outruns what his team actually does with him on the floor.
-That is a sturdier verdict than either method alone: the earlier, broken RAPM had buried him near the bottom, which was noise, and the honest correction lands him where the box score already suggested, good but not a hidden star.
+That is a sturdier verdict than either method alone: the earlier, broken RAPM had buried him near the bottom, which was noise, and the corrected read lands him where the box score already suggested, good but not a hidden star.
 
 And one player who answers a different question, OG Anunoby: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where Section 8 picks up.
 
 ## 5. The two uber ratings
 
-Two combined ratings are built from the systems present in the data.
+Combine the systems two ways, a plain average or a weighting by how well each predicts team wins, and the two rankings land almost on top of each other at the top (0.96 on a 0-to-1 scale).
 
 Each system uses a different scale (PER is centered around 15, BPM around 0, Win Shares in the single digits), so you cannot average them directly.
 Putting every system on one common scale fixes that, by asking of each player: how many typical-player gaps above or below average is this?
@@ -302,7 +303,7 @@ This measures what the crowd of methodologies agrees on, not what is best-suppor
 The 2025-26 consensus top five: Nikola Jokić, Shai Gilgeous-Alexander, Giannis Antetokounmpo, Victor Wembanyama, and Luka Dončić.
 
 **Wins-predictive rating:** a combination of those scores weighted by how well each system (aggregated to team level) predicts actual team wins.
-The two ratings agree very closely (0.96 on a 0-to-1 scale): they reach the same conclusions about the very best players.
+The two reach the same conclusions about the very best players; where they part is further down the list.
 The wins-predictive rating pushes the stars on winning teams higher still.
 Victor Wembanyama rises the most, with Kawhi Leonard close behind, and Shai Gilgeous-Alexander, Luka Dončić, and Jayson Tatum also move up.
 Players on losing teams slide the other way: Jericho Sims and other deep-rotation players on poor teams rate lower on the wins-predictive scale than on the consensus, because their on-court production did not translate into team wins.
@@ -326,7 +327,7 @@ The deep-rotation players on losing teams move the opposite way: solid rate metr
 ![Rating systems normalized to the same scale: value falls steeply in the top tier for every methodology, but at very different rates.](../generated/images/all_systems_distributions.svg){#fig-all-dist}
 
 PER spreads relatively evenly among qualified 2025-26 players: the top 5% account for only 8.6% of total value.
-The gap between the 50th and 95th percentile player in PER is smaller than it looks on a ranked list.
+The gap between a middle-of-the-pack player and one in the top 5% in PER is smaller than it looks on a ranked list.
 
 Win Shares and VORP tell a different story.
 The top 5% of players hold 13.8% of total Win Shares, and VORP concentrates far more steeply still: its top 5% hold 24.5% of all positive value.
@@ -346,10 +347,11 @@ Win Shares and VORP concentrate the most value of any system, with their top 5% 
 Because they multiply a rate by minutes, value compounds: the best players lead in both, so their totals pull far ahead and the top stays heavy all the way down.
 PER and Game Score are power laws too, but so shallow that the line is nearly flat, which is the same reason their top 50 sit bunched close together in value.
 
-The benders are the impact metrics.
+What bends are the per-possession rate metrics.
 They score how far above average a player is per possession against the lineup he shares the floor with, a quantity that is roughly even on both sides of the middle and has a natural size to it, so their best player is not a runaway: the top of the curve sits below where a straight power law would put it.
 
-RAPM, the impact metric built for this report, is the clearest case, and it answers a natural question: no, RAPM is not a power law.
+The impact metrics are the subtler case: several of them clear the straight-line test above, but that test reads only the top 50 players, and their full distributions say otherwise.
+RAPM, the impact metric built for this report, is the clearest example, and it answers a natural question: no, RAPM is not a power law.
 The log-log test above only reads the top 50 players, but RAPM's whole distribution settles it.
 Pooled across all 29 seasons with play-by-play (4678 player-seasons, enough to read the shape cleanly), it is a symmetric hump centered on zero, about as many players below average as above (46% sit below zero), and it tracks a plain bell curve closely.
 A power law needs a long one-sided tail of standout values.
@@ -378,7 +380,7 @@ On those (the BPM family and the two combined ratings) it counts every below-ave
 The steepness read above is the one to trust.
 By it the combined ratings sit in the upper-middle of the pack: Consensus at 0.37 and Wins-Predictive at 0.43, steeper than PER at 0.14 and a touch steeper than VORP at 0.37.
 
-![Gini coefficient by system, kept as a cross-check. It ranks the 0-centered metrics (the BPM family and the two combined ratings, outlined) near the top, but that is an artifact of how Gini handles below-average players, not real top-heaviness.](../generated/images/gini_by_system.svg){#fig-gini .collapsible}
+![Gini score by system, kept as a cross-check. It ranks the 0-centered metrics (the BPM family and the two combined ratings, outlined) near the top, but that is an artifact of how Gini handles below-average players, not real top-heaviness.](../generated/images/gini_by_system.svg){#fig-gini .collapsible}
 
 ![Each line shows a system's value as a percentage of its rank-1 player. Win Shares and VORP fall steeply; PER and BPM stay much flatter.](../generated/images/rank_value_distributions.svg){#fig-distributions}
 
@@ -427,7 +429,7 @@ Brunson is the interesting case, and the one this report started from: did he re
 Yes, and the size is honest.
 His BPM rose from +3.4 in the regular season to +4.6 in the playoffs, a real step up.
 Weighted only by minutes that leaves him 15th of the 103 playoff players; lean on the postseason and he climbs to 7th; lean on it harder still and he holds at 7th, never quite breaking the top five.
-The honest reading is a genuine top-ten playoff performer who got better when it counted, not a hidden top-five star the regular-season numbers were missing: the players ahead of him were either better all-around or rose more.
+The straightforward reading is a real top-ten playoff performer who got better when it counted, not a hidden top-five star the regular-season numbers were missing: the players ahead of him were either better all-around or rose more.
 
 ![Brunson raised his game in the playoffs, but not into the top five. Regular-season versus playoff BPM for the top 12 by playoff-weighted value.](../generated/images/playoff_weighted_value.svg){#fig-playoff-weighted-value}
 
@@ -456,7 +458,7 @@ No system is best at everything: PER describes a finished season better than any
 
 **What does each system uniquely capture?** It depends on the system.
 Each tilts toward a player type, Win Shares toward efficient bigs on winning teams, PER toward high-usage scorers, the impact metrics toward off-ball and defensive value the box score misses.
-But how much each adds beyond the rest splits sharply: the all-in-one box scores, PER and BPM among them, are nearly reconstructable from the other systems, while Win Shares per minute and the bare RAPM family hold the most of their own, and with the RAPM reconstruction bug fixed that lineup independence now reads as genuine signal rather than an artifact of noise.
+But how much each adds beyond the rest splits widely: the all-in-one box scores, PER and BPM among them, are nearly reconstructable from the other systems, while Win Shares per minute and the bare RAPM family hold the most of their own, and with the RAPM reconstruction bug fixed that lineup independence now reads as genuine signal rather than an artifact of noise.
 
 **How should they be combined?** Into two ratings that answer different questions.
 A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.
@@ -470,9 +472,9 @@ The recomputed BPM and VORP are validated against Basketball-Reference (Section 
 
 ## 11. A note on the recomputed formulas
 
-Four of the box-score systems here are recomputed from raw totals (PER, Win Shares, BPM, VORP) rather than copied from a published source.
+Four of the box-score systems here are recomputed from raw totals (PER, Win Shares, BPM, VORP) rather than copied from a published source, and getting that recompute right mattered: an earlier version of this report had a reserve grading as the league's best player and VORP running thirty times too large.
 PER and Win Shares land in the expected range (PER averages 15, with Nikola Jokić in the low 30s) and are used as is.
-BPM and VORP needed real repair, and that repair is worth describing, because an earlier version of this report had them wrong.
+BPM and VORP needed real repair, and the fix is worth walking through.
 
 **The bug.** The first recompute built BPM's per-100 rates on each player's own possessions instead of the team's, which inflated the rates for low-minute and high-steal players.
 The symptoms: a reserve, John Konchar, graded as the league's best player by BPM; VORP ran roughly thirty times too large, with a single-season leader near 250 where the real scale tops out under 10; and usage rate read close to 100% for a starter instead of the correct 30%.
@@ -527,15 +529,15 @@ A first-round exit provides roughly 6 games of lineup data; even a Finals run pr
 That sample is too small for the lineup-based estimate to stabilize, regardless of how good the prior is.
 The small-sample problem is not a solvable data-engineering issue; it is a fundamental limit of how RAPM works.
 
-## 13. What a Bayesian lens would add
+## 13. What weighing the evidence more carefully would add
 
-The impact metrics already apply Bayesian reasoning in one place.
+The impact metrics already weigh evidence this way in one place.
 The box-score prior is a starting belief about what a player should be worth, derived from their individual stats.
 The lineup on/off data is the evidence that updates that belief.
 A player with many lineup possessions gets pulled strongly toward what the data shows; a bench player with few possessions barely moves from the prior.
 That structure is the skeleton of EPM, LEBRON, DARKO, and every other serious impact metric.
 
-Two things a more complete Bayesian treatment would add:
+Two things a more complete version would add:
 
 **Uncertainty ranges.** Every metric publishes a single number (EPM: +8.2 per 100 possessions), with no range, no width.
 With one season of lineup data, the true uncertainty band around any RAPM-based estimate is roughly 2-3 points per 100 possessions.
@@ -544,14 +546,14 @@ This does not mean the metrics are unreliable.
 It means the precision they imply is a display choice, not a statistical one.
 
 **Playoff versus regular season.** Section 8 already compares regular season and playoffs for the box-score rate metrics directly, which is the practical version.
-The Bayesian addition is for the RAPM-based metrics, where the right approach is different: treat the full-season estimate as the prior and update it with playoff lineup data.
+The addition is for the RAPM-based metrics, where the right approach is different: treat the full-season estimate as the starting belief and update it with playoff lineup data.
 The updated estimate barely shifts for a player who exits in the first round (roughly 6 games of new evidence), and moves more for a player who reaches the Finals (20-24 games).
 The shift (in which direction and by how much) is the honest answer to "did this player hold up in the playoffs?" without pretending there is more data than there is.
 A player whose updated estimate barely moves showed results consistent with the regular-season picture.
 A player whose updated estimate shifts meaningfully showed something different.
 
 **Better consensus weighting.** The wins-predictive rating in this report is a step toward what is sometimes called model averaging: instead of treating all systems as equally reliable, weight them by how well they predicted team wins.
-A more fully Bayesian version would estimate those weights from retrodiction performance across multiple seasons and update them as new data arrives.
+A more complete version would estimate those weights from retrodiction performance across multiple seasons and update them as new data arrives.
 The practical difference at the top of the rankings is small, because the systems that predict team wins best already carry the most weight.
 But the principled foundation matters when choosing which metrics to trust for a specific question, particularly for players at the margins of the top tier.
 

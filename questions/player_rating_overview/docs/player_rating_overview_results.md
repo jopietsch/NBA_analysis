@@ -42,6 +42,7 @@ Rating systems present: 14
   5. Luka Dončić: RAPM_MY +7.88 per 100
   Mean rank agreement with box-score systems: 0.75
   Rank agreement with the consensus: 0.91
+  Bare RAPM rank agreement with the consensus: 0.42
 
 ─── RAPM RELIABILITY (SPLIT-HALF AND YEAR-OVER-YEAR) ────────────
 Split-half: fit bare RAPM on two random halves of the pooled
