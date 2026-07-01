@@ -3,33 +3,11 @@
 A teaching companion to the `*_results.md` files in this project.
 The goal: if you've taken one or two statistics courses but wouldn't call yourself an expert, this should let you understand *every* number in the results files: what it is, why we used it, and how to read it without being fooled.
 
-It covers three analyses:
-
-- **Home court advantage** (`home_court/`): why HCA fell over 40 years, what
-  drives it, and what's a red herring. Heavy inference: logistic regression, trend
-  tests, mediation decompositions, quantile regression.
-- **2025-26 Knicks historically** (`knicks_2026_historic/`): was the playoff run
-  all-time dominant? Lighter methods: percentile ranking, SRS, schedule-adjusted
-  margin.
-- **Player rating systems** (`player_rating_overview/`): how a dozen rating
-  systems score the same players, how to blend them into one number, and how
-  top-heavy the league is. Methods for combining and comparing: z-score
-  standardization, ridge regression, the Gini coefficient, power-law fits.
-
 It's organized **by method, not by section**, because the same handful of tools show up over and over.
 Learn logistic regression once and you've unlocked ten sections of the home-court results.
 Where it helps, each method is illustrated with *actual numbers from this project*; many worked examples reproduce a row of the results doc exactly so you can check the arithmetic yourself.
 
-Companion docs:
-- `home_court/STATS_EXPLAINER.md`: goes section-by-section through the home-court
-  the results doc using full statistical vocabulary; explains *why each section's
-  figure takes the form it does*. Read that *after* this once the vocabulary is
-  familiar.
-- `knicks_2026_historic/STATS_EXPLAINER.md`: same role for the Knicks analysis.
-- `player_rating_overview/STATS_EXPLAINER.md`: same role for the rating-systems
-  analysis, including the Bayesian foundations of the impact metrics.
-- `home_court/FINDINGS.md` / `knicks_2026_historic/FINDINGS.md`: plain-English
-  narratives with no jargon.
+See the Appendix for the three analyses this tutorial covers and their companion docs.
 
 ---
 
@@ -829,11 +807,11 @@ Measure the same players twice on separate data and correlate the two sets of nu
 A metric that captures something real makes the two measurements agree, so the correlation is high; a metric that is mostly noise makes them scatter, so the correlation sits near zero.
 Reliability runs from **0 (pure noise) to 1 (a perfect, repeatable measurement)**.
 
-**Square it for the share that is real signal.** The raw reliability is the quick read: 0.5 is halfway up the scale, a loose "about half signal." The precise version is reliability *squared*, the fraction of the spread between players that is real rather than noise.
-Squaring moves the goalposts.
-A reliability of **0.7** looks strong, but 0.7² = **0.49**: only about half the variation you see between players is real, and the other half is noise.
-A reliability of **0.5** squares to **0.25**, just a quarter.
-The number that feels like "half signal" on the raw scale is a quarter signal once you account for variance; you have to climb to about 0.7 before half the variance is genuinely real.
+**Reliability is itself the share that is real signal.** In classical test theory the reliability coefficient equals the fraction of the observed spread between players that reflects real differences rather than noise, so you read it directly, you do not square it.
+A reliability of **0.5** means about half of what separates players is real and half is noise; **0.7** means about 70% is real.
+(The temptation to square comes from regression's R², the variance one variable explains in *another*.
+Reliability is different: it is the correlation between two measurements of the *same* thing, and that correlation already is the signal-variance share.
+Squaring it would double-count the noise and understate the metric.)
 
 **The rough usability line, about 0.5.** Below ~0.5 a single-number rating is dominated by noise and cannot be trusted to rank individuals: re-measure on fresh data and the order reshuffles.
 Between ~0.5 and ~0.7 a rating becomes genuinely useful, real enough to separate players even with a meaningful chunk of noise left in.
@@ -1702,3 +1680,31 @@ Read the grouping and the order of α, not the label on any single borderline sy
    correlate the two estimates, and Spearman-Brown-correct. Below about 0.5 the
    number is mostly noise and the ranking would reshuffle on fresh data; RAPM sits
    near that line on one season and climbs as seasons pool. (§6.3)
+
+---
+
+# Appendix: Analyses covered and companion docs
+
+This tutorial covers three analyses:
+
+- **Home court advantage** (`home_court/`): why HCA fell over 40 years, what
+  drives it, and what's a red herring. Heavy inference: logistic regression, trend
+  tests, mediation decompositions, quantile regression.
+- **2025-26 Knicks historically** (`knicks_2026_historic/`): was the playoff run
+  all-time dominant? Lighter methods: percentile ranking, SRS, schedule-adjusted
+  margin.
+- **Player rating systems** (`player_rating_overview/`): how a dozen rating
+  systems score the same players, how to blend them into one number, and how
+  top-heavy the league is. Methods for combining and comparing: z-score
+  standardization, ridge regression, the Gini coefficient, power-law fits.
+
+Companion docs:
+- `home_court/STATS_EXPLAINER.md`: goes section-by-section through the home-court
+  the results doc using full statistical vocabulary; explains *why each section's
+  figure takes the form it does*. Read that *after* this once the vocabulary is
+  familiar.
+- `knicks_2026_historic/STATS_EXPLAINER.md`: same role for the Knicks analysis.
+- `player_rating_overview/STATS_EXPLAINER.md`: same role for the rating-systems
+  analysis, including the Bayesian foundations of the impact metrics.
+- `home_court/FINDINGS.md` / `knicks_2026_historic/FINDINGS.md`: plain-English
+  narratives with no jargon.
