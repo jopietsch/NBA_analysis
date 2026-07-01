@@ -187,14 +187,18 @@ The league's three-point attempt rate and the home win rate have moved in opposi
 When fewer than 7% of shots were threes in the 1980s, home teams won 65%; when 40% are threes today, they win 55%.
 The timing even lines up with the second steepening, when the three-point share rose from about a quarter to 40% of all shots in the three seasons after 2017.
 
-It is tempting to read that chart as three-point shooting causing the decline, but two things that both drift steadily over 40 years will track each other whether or not one affects the other, and plenty of unrelated things changed across these same decades.
-So the 40-year mirror image, on its own, is weak evidence.
-Strip out the shared long-run drift and compare only the year-to-year swings, and the link holds but loses about 42% of its strength: a real part of that near-mirror-image chart is just two trends pointed the same way.
+It is tempting to read that chart as three-point shooting causing the decline, but the same 40 years changed almost everything else about the NBA too: training, scouting, salaries, the size and skill of the players.
+Anything that drifted steadily up over those decades will trace a near-mirror-image of anything that drifted steadily down, whether or not the two are related at all.
+So the 40-year chart, on its own, is weak evidence.
 
-The evidence that three-point shooting genuinely hurts home teams comes from a comparison the 40-year chart can't make: games within the same season, where the era and everything else that drifted across decades is the same for both.
+One way to check it: set aside the slow drift in both lines and look only at the year-to-year bumps, the seasons where threes rose more or less than their long trend.
+If threes were really pushing home court down, those bumps should line up too.
+They partly do, but the link is about 42% weaker than the raw mirror image looked: much of what made the chart so striking was just the two trends sliding past each other in step.
+
+The clean evidence comes from a comparison the 40-year chart can't make: games played in the same season.
+Within a single season nothing has had time to drift, so the rules, rosters, and style are the same for every game, and time can't be the hidden cause.
 There, the high-three-point games are the ones home teams lose more often, about 2 to 3 fewer home wins per 100 games for every 10-point rise in three-point volume.
-Because those games are contemporaries, the pattern can't be a coincidence of two long trends.
-It holds inside every decade and in the playoffs too.
+Because those games are contemporaries, the pattern can't be two long trends coinciding, and it holds inside every decade and in the playoffs too.
 
 That win-level effect lands most directly in one box-score line: shooting.
 It accounts for roughly one-fifth of the regular-season decline.
