@@ -135,12 +135,17 @@ def per(player_df: pd.DataFrame, team_df: pd.DataFrame,
         tid = row.get("TEAM_ID")
         team_min = t.loc[tid, "MIN"] if (tid in t.index and "MIN" in t.columns) else mp
 
+        # Team-assist share of this player's makes, scaled to on-court minutes;
+        # feeds the assisted-make discount in the FGM and FTM terms below.
+        team_fgm = _team_val(row, "FGM")
+        ast_ratio = (team_min / (5 * mp) * _team_val(row, "AST") / team_fgm) if team_fgm else 0
+
         # uPER (un-adjusted PER) — per minute
         uper = (1 / mp) * (
             row["FG3M"]
             + (2 / 3) * row["AST"]
-            + (2 - factor * (team_min / (5 * mp) * _team_val(row, "AST") / _team_val(row, "FGM") if _team_val(row, "FGM") else 0)) * row["FGM"]
-            + row["FTM"] * 0.5 * (1 + (1 - (team_min / (5 * mp) * _team_val(row, "AST") / _team_val(row, "FGM") if _team_val(row, "FGM") else 0)) + (2 / 3) * (team_min / (5 * mp) * _team_val(row, "AST") / _team_val(row, "FGM") if _team_val(row, "FGM") else 0))
+            + (2 - factor * ast_ratio) * row["FGM"]
+            + row["FTM"] * 0.5 * (1 + (1 - ast_ratio) + (2 / 3) * ast_ratio)
             - vop * row["TOV"]
             - vop * lg_dreb_pct * (row["FGA"] - row["FGM"])
             - vop * 0.44 * (0.44 + (0.56 * lg_dreb_pct)) * (row["FTA"] - row["FTM"])
@@ -187,8 +192,22 @@ def win_shares(player_df: pd.DataFrame, team_df: pd.DataFrame,
     Returns a DataFrame with OWS, DWS, WS, WS48 columns added to player_df.
     Reference: https://www.basketball-reference.com/about/ws.html
 
-    The BBR formula requires team wins. We use GP * W_PCT if W is not available,
-    or sum WINS from standings. Pass team_df with a W or WIN column if available.
+    Defensive Win Shares follow Dean Oliver's individual-defense chain: player
+    Stops (Stops1 + Stops2) -> Stop% -> an individual DRtg anchored to the team's
+    actual defensive rating -> marginal defensive points -> DWS. The team
+    defensive rating is opponent points per 100 possessions, derived from
+    team PTS and season point differential (team_df["PLUS_MINUS"]); if
+    PLUS_MINUS is absent the team is centered at a league-average opponent, so
+    DWS still varies across a team's players by their own Stop%. Approximation:
+    the BBR Stops formulas need per-opponent box totals the Base team-totals
+    frame does not carry, so the opponent a team faced is modeled as the
+    league-average team (league totals / number of teams). DWS absolute values
+    are therefore approximate (like the BPM/VORP recomputes), but the ordering
+    and scale across players are faithful.
+
+    The offensive side reuses the marginal-points-per-win (ppw) scaling; team_df
+    should carry season totals (PTS, FGA, FTA, TOV, OREB, DREB, FGM, GP, MIN) and,
+    for the defensive anchor, PLUS_MINUS.
     """
     p = player_df.copy()
     for col in ["PTS", "FGM", "FGA", "FTM", "FTA", "FG3M", "OREB", "DREB", "AST",
@@ -210,13 +229,34 @@ def win_shares(player_df: pd.DataFrame, team_df: pd.DataFrame,
 
     lg_pts = league.get("lg_pts", 1)
     lg_fga = league.get("lg_fga", 1)
+    lg_fgm = league.get("lg_fgm", 1)
     lg_oreb = league.get("lg_oreb", 0)
+    lg_dreb = league.get("lg_dreb", 1)
     lg_tov = league.get("lg_tov", 0)
     lg_fta = league.get("lg_fta", 1)
+    lg_ftm = league.get("lg_ftm", 0.75 * lg_fta)
     lg_pf = league.get("lg_pf", 1)
 
     # Value of a possession
-    vop = lg_pts / (lg_fga - lg_oreb + lg_tov + 0.44 * lg_fta)
+    lg_poss = lg_fga - lg_oreb + lg_tov + 0.44 * lg_fta
+    vop = lg_pts / lg_poss
+    lg_ppp = lg_pts / lg_poss  # league points per possession
+
+    # ── Defensive context (Dean Oliver / Basketball-Reference DWS) ────────────
+    # The BBR individual-defense formulas need per-opponent box totals (opponent
+    # FGA/FGM/ORB/TOV/FTA/FTM) that the team-Base totals frame does not carry.
+    # We approximate the opponent a team faced by the league-average team
+    # (league totals / number of teams) — accurate over a full season and the
+    # same approximation _advanced_pct() uses for BPM's rate stats.
+    n_teams = max(len(t_idx), 1)
+    has_plus_minus = "PLUS_MINUS" in t_idx.columns
+    opp_fga = lg_fga / n_teams
+    opp_fgm = lg_fgm / n_teams
+    opp_oreb = lg_oreb / n_teams
+    opp_tov = lg_tov / n_teams
+    opp_fta = lg_fta / n_teams
+    opp_ftm = lg_ftm / n_teams
+    opp_fg_pct = (opp_fgm / opp_fga) if opp_fga > 0 else 0.45
 
     ows_list, dws_list, min_list = [], [], []
 
@@ -270,24 +310,73 @@ def win_shares(player_df: pd.DataFrame, team_df: pd.DataFrame,
         ows = marg_off_pts / ppw
         ows_list.append(ows)
 
-        # ── Defensive Win Shares ──────────────────────────────────────────────
-        # Stops (steals + blocks that result in opponent missing, + opponent TO)
-        # Simplified BBR formula
-        lg_dreb_pct = league.get("lg_orb_pct", 0.25)
+        # ── Defensive Win Shares (Dean Oliver / Basketball-Reference) ─────────
+        # Full individual-defense chain: player Stops -> Stop% -> individual
+        # DRtg anchored to the team's actual defensive rating -> marginal
+        # defensive points -> DWS. See the opponent approximation note above.
+        tm_drb = tval(tid, "DREB")
+        tm_blk = tval(tid, "BLK")
+        tm_stl = tval(tid, "STL")
+        tm_pf = max(tval(tid, "PF"), 1.0)
+        # Team minutes are reported as game-minutes (GP x 48); the BBR "Tm MP"
+        # term is the whole team's player-minutes, i.e. 5x that.
+        tm_mp = 5.0 * tval(tid, "MIN")
+        tm_pts = tval(tid, "PTS")
+
+        # Team defensive rating: opponent points per 100 defensive possessions.
+        # Opponent points = team points - season point differential (PLUS_MINUS);
+        # opponent possessions ~ the team's own possessions over a season. When
+        # PLUS_MINUS is absent we fall back to a league-average opponent, which
+        # centers every team at league-average team defense but still lets each
+        # player's DRtg vary by his own Stop%.
+        opp_pts = (tm_pts - tval(tid, "PLUS_MINUS")) if has_plus_minus else (lg_pts / n_teams)
+        tm_def_poss = team_poss if team_poss > 0 else 1.0
+        tm_def_rating = 100.0 * opp_pts / tm_def_poss
+
+        # Defensive field-goal weighting (FMwt) and opponent offensive-rebound
+        # rate (DOR%) against this team.
+        dor_pct = opp_oreb / (opp_oreb + tm_drb) if (opp_oreb + tm_drb) > 0 else 0.25
+        fmwt_den = (opp_fg_pct * (1 - dor_pct)
+                    + (1 - opp_fg_pct) * dor_pct)
+        fmwt = (opp_fg_pct * (1 - dor_pct)) / fmwt_den if fmwt_den > 0 else 0.0
+
+        # Stops1: individual defensive events (steals, blocks that stick, DREBs).
         stop1 = (
             row["STL"]
-            + row["BLK"] * (1 - lg_dreb_pct)
-            + row["DREB"] * (1 - (1 / (1 + (1 - lg_dreb_pct) / lg_dreb_pct)))
+            + row["BLK"] * fmwt * (1 - 1.07 * dor_pct)
+            + row["DREB"] * (1 - fmwt)
         )
-        fmwt = (0.44 * lg_fta / max(lg_pf, 1)) * (1 - (0.44 * lg_fta / max(lg_pf, 1)))
-        stop2 = (row["PF"] * fmwt) if row["PF"] > 0 else 0
+        # Stops2: the player's share of team-level forced misses / turnovers,
+        # plus stops driven off his personal fouls.
+        if tm_mp > 0:
+            stop2 = (
+                (((opp_fga - opp_fgm - tm_blk) / tm_mp) * fmwt * (1 - 1.07 * dor_pct)
+                 + (opp_tov - tm_stl) / tm_mp) * mp
+                + (row["PF"] / tm_pf) * 0.4 * opp_fta
+                * (1 - (opp_ftm / opp_fta if opp_fta > 0 else 0.0)) ** 2
+            )
+        else:
+            stop2 = 0.0
         stops = stop1 + stop2
 
-        # Defensive rating
-        team_def_rating = 100  # placeholder; true def rating requires possessions
-        player_drtg = team_def_rating + 0.2 * (100 - team_def_rating)  # simplification
-        marg_def_pts = (player_drtg - team_def_rating) * (mp / 5) * (team_poss / team_games / 100)
-        dws = -marg_def_pts / ppw if ppw > 0 else 0
+        # Stop%: share of the opponent possessions the player ends while on court.
+        stop_pct = (stops * tm_mp) / (tm_def_poss * mp) if (tm_def_poss * mp) > 0 else 0.0
+
+        # Points the defense concedes per scoring possession (opponent side).
+        scposs_den = (opp_fgm + (1 - (1 - (opp_ftm / opp_fta if opp_fta > 0 else 0.0)) ** 2)
+                      * opp_fta * 0.4)
+        d_pts_per_scposs = opp_pts / scposs_den if scposs_den > 0 else lg_ppp
+
+        # Individual DRtg: 20% player Stop%, 80% team defense (Oliver's split).
+        player_drtg = tm_def_rating + 0.2 * (
+            100.0 * d_pts_per_scposs * (1 - stop_pct) - tm_def_rating)
+
+        # Marginal defense: possessions the player influenced, valued against the
+        # 1.08 x league-points-per-possession defensive baseline. A lower DRtg
+        # (better defender) yields more marginal defensive points.
+        marg_def_pts = (mp / tm_mp) * tm_def_poss * (1.08 * lg_ppp - player_drtg / 100.0) \
+            if tm_mp > 0 else 0.0
+        dws = marg_def_pts / ppw if ppw > 0 else 0.0
         dws_list.append(dws)
 
     p["OWS"] = ows_list
