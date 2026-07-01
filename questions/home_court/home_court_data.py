@@ -116,6 +116,15 @@ def fetch_season_home_pct(end_year: int, season_type: str) -> float | None:
             print(f"    ERROR fetching {season} {season_type}: {e}")
             return None
 
+        # Every season in range genuinely has games, so an empty result here is
+        # always the signature of a transient NBA.com rate-limit (a silent 200
+        # with no rows) rather than real absence. Do NOT cache it — caching
+        # would permanently disappear the season from every downstream
+        # analysis. Only cache (and sleep, since a real call was made) once we
+        # know the response was non-empty.
+        if df.empty:
+            return None
+
         os.makedirs(CACHE_DIR, exist_ok=True)
         _nbakit.cache_write_csv(df, path)
         time.sleep(SLEEP_SEC)  # polite pause, only needed after a real API call
