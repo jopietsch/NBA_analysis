@@ -650,7 +650,9 @@ class TestFetchShotZones:
         pd.DataFrame().to_csv(self._path(tmp_path), index=False)
         assert nba.fetch_shot_zones(2024, "Regular Season", "Home") is None
 
-    def test_returns_none_and_caches_sentinel_on_api_error(self, tmp_path, monkeypatch):
+    def test_returns_none_and_does_not_cache_on_api_error(self, tmp_path, monkeypatch):
+        # A transient/API error must NOT be cached: a stray rate-limit would
+        # otherwise be frozen as "already fetched, no data" and skipped forever.
         monkeypatch.setattr(nba, "CACHE_DIR", str(tmp_path))
         monkeypatch.setattr(nba.time, "sleep", lambda *_: None)
 
@@ -664,9 +666,9 @@ class TestFetchShotZones:
 
         result = nba.fetch_shot_zones(2024, "Regular Season", "Home")
         assert result is None
-        assert self._path(tmp_path).exists()  # sentinel file written
+        assert not self._path(tmp_path).exists()  # not cached, so a later run retries
 
-        # Second call reads the sentinel and skips the API entirely
+        # Second call retries the API rather than reading a stale sentinel
         result2 = nba.fetch_shot_zones(2024, "Regular Season", "Home")
         assert result2 is None
 
