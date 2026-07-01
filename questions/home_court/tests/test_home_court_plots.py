@@ -74,6 +74,20 @@ def test_plot_differential_analysis():
     plots.plot_differential_analysis(SEASONS, stats, SEASONS, dict(stats))
 
 
+def test_plot_fta_distribution():
+    import numpy as np
+    rng = np.random.default_rng(0)
+    plots.plot_fta_distribution(
+        season_label="1983-84",
+        season_vals=rng.normal(2.0, 10.0, 900).round(),
+        era_labels=("1984–94", "2023–26"),
+        reg_early=rng.normal(2.0, 10.0, 900).round(),
+        reg_late=rng.normal(0.5, 9.0, 1200).round(),
+        po_early=rng.normal(2.3, 10.0, 800).round(),
+        po_late=rng.normal(1.1, 9.0, 250).round(),
+    )
+
+
 def test_plot_rebound_decomposition():
     keys = ["oreb_diff", "dreb_diff", "reb_diff",
             "reb_share_edge", "league_oreb_rate",

@@ -22,9 +22,10 @@ import numpy as np
 from nba_api.stats.library.parameters import SeasonType
 
 from home_court_data import (
-    START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, BBR_START_YEAR,
+    START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, BBR_START_YEAR, ERA_DEFS,
     fetch_all_seasons,
     compute_playoff_format_averages,
+    fetch_differential_data, fetch_pooled_differential_data,
     compute_differential_stats, compute_rebound_stats, compute_margin_stats,
     compute_net_rating_stats,
     compute_parity_stats, compute_series_stats, compute_series_stats_by_era,
@@ -38,7 +39,7 @@ from home_court_data import (
 from home_court_plots import (
     plot_results, plot_mediation, plot_mediation_sensitivity,
     plot_rest_altitude, plot_channel_3pa_control,
-    plot_differential_analysis, plot_rebound_decomposition,
+    plot_differential_analysis, plot_fta_distribution, plot_rebound_decomposition,
     plot_margin_analysis, plot_parity_analysis,
     plot_series_breakdown, plot_series_simulation, plot_playoff_quality,
     plot_shot_zone_analysis, plot_3pa_hca_analysis,
@@ -66,6 +67,20 @@ def main() -> None:
         START_YEAR, END_YEAR, "Playoffs", skip_years=SKIP_PLAYOFF_YEARS
     )
     plot_differential_analysis(reg_diff_seasons, reg_diff_stats, po_diff_seasons, po_diff_stats)
+
+    era_early, era_late = ERA_DEFS[0], ERA_DEFS[-1]
+    one_season = era_early[1]
+    one_season_df = fetch_differential_data(one_season, SeasonType.regular)
+    if one_season_df is not None:
+        plot_fta_distribution(
+            season_label=f"{one_season - 1}-{str(one_season)[-2:]}",
+            season_vals=one_season_df["fta_diff"].dropna().to_numpy(),
+            era_labels=(era_early[0], era_late[0]),
+            reg_early=fetch_pooled_differential_data(era_early[1], era_early[2], SeasonType.regular)["fta_diff"].dropna().to_numpy(),
+            reg_late=fetch_pooled_differential_data(era_late[1], era_late[2], SeasonType.regular)["fta_diff"].dropna().to_numpy(),
+            po_early=fetch_pooled_differential_data(era_early[1], era_early[2], "Playoffs", skip_years=SKIP_PLAYOFF_YEARS)["fta_diff"].dropna().to_numpy(),
+            po_late=fetch_pooled_differential_data(era_late[1], era_late[2], "Playoffs", skip_years=SKIP_PLAYOFF_YEARS)["fta_diff"].dropna().to_numpy(),
+        )
 
     import home_court_analysis as _reg
     game_df = _reg.build_game_dataset()

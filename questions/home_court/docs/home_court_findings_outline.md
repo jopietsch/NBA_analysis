@@ -242,6 +242,9 @@ New appendix (2nd), directly following Appendix A. Answers the reader question r
 - **Two tables (FTA, then fouls), each RS vs PO, 1984–94 vs 2023–26:** average and typical range (P10–P90) side by side. FTA: RS +1.97→+0.46 (range 28→23 wide), PO +2.35→+1.09 (range 27→21). Fouls: RS −1.23→−0.25 (range 14→12), PO −1.58→−0.68 (range 13→11).
 - **The average fell far faster than the swing narrowed:** RS FTA mean −77%, range width only −18%; PO FTA mean −54%, width −22%. RS foul mean −80%, width −14%; PO foul mean −57%, width −15%. Share of games home-favored: RS FTA 56%→49% (near coin flip); PO FTA 57%→56% (barely moved) — another playoffs-lag signal, consistent with §5.
 - **Closing point:** doesn't change any other finding — explains why a real, repeatable per-game bias is invisible game-to-game and only shows up once thousands of games are pooled. Same category as the other three box-score channels: individually modest, real in aggregate.
+**Figure:**
+
+![One-season histogram + era box plots of the FTA gap](../generated/images/home_court_fta_distribution.svg){#fig-fta-distribution}
 
 ---
 

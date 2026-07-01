@@ -341,6 +341,22 @@ def fetch_differential_data(end_year: int, season_type: str) -> pd.DataFrame | N
     return _compute_box_differentials(merged)
 
 
+def fetch_pooled_differential_data(
+    start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
+) -> pd.DataFrame | None:
+    """
+    Raw per-game home-minus-away differentials, pooled across every cached
+    season in [start_year, end_year]. Unlike compute_differential_stats (which
+    averages within each season), this keeps one row per game — used for
+    distribution charts (histograms, box plots) spanning an era.
+    """
+    frames = [g for _, g in _iter_season_frames(start_year, end_year, season_type,
+                                                 skip_years, fetch_differential_data)]
+    if not frames:
+        return None
+    return pd.concat(frames, ignore_index=True)
+
+
 def compute_differential_stats(
     start_year: int, end_year: int, season_type: str, skip_years: set[int] = frozenset(),
 ) -> tuple[list[str], dict]:

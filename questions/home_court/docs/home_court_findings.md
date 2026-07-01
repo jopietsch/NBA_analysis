@@ -541,6 +541,8 @@ A game where the home team shot 10 fewer free throws than the visitor, well insi
 
 *Typical range: excludes the most extreme 10% of games on each end, so it covers the middle 80% of nights.*
 
+![Left: one season's per-game FTA gap, a wide noisy spread with the season average (red line) sitting well inside it, nowhere near the edge. Right: box plots of the same gap, regular season and playoffs, earliest era vs. latest (diamond = average, box = middle 50%, whiskers = middle 80%). The diamonds slide toward zero era to era while the boxes stay nearly the same size.](../generated/images/home_court_fta_distribution.svg){#fig-fta-distribution .collapsible}
+
 **The average shrank far faster than the swing around it.** In the regular season, the average free-throw edge fell 77% while the typical night-to-night range narrowed by only 18%.
 The share of games where the home team attempted more free throws than the visitor fell from 56% to 49%, close to a coin flip.
 The playoffs show the same shape but move less: the average fell 54%, and the home-favored share only slipped from 57% to 56%, another sign the playoffs lag the regular season's decline (Section 5).

@@ -394,6 +394,23 @@ class TestFetchDifferentialData:
         assert pd.isna(result.iloc[0]["fg3_pct_diff"])
 
 
+class TestFetchPooledDifferentialData:
+    def test_pools_raw_rows_across_seasons(self, monkeypatch):
+        def fake_fetch(year, season_type):
+            return pd.DataFrame({"foul_diff": [float(year)], "fta_diff": [float(year) * 2]})
+
+        monkeypatch.setattr(nba, "fetch_differential_data", fake_fetch)
+        result = nba.fetch_pooled_differential_data(2023, 2025, "Regular Season")
+
+        assert result is not None
+        assert len(result) == 3
+        assert sorted(result["foul_diff"].tolist()) == [2023.0, 2024.0, 2025.0]
+
+    def test_returns_none_when_no_seasons_cached(self, monkeypatch):
+        monkeypatch.setattr(nba, "fetch_differential_data", lambda year, s: None)
+        assert nba.fetch_pooled_differential_data(2023, 2025, "Regular Season") is None
+
+
 class TestComputeDifferentialStats:
     def test_aggregates_means_per_season(self, monkeypatch):
         def fake_fetch(year, season_type):

@@ -632,6 +632,76 @@ def plot_differential_analysis(
     save_chart("home_court_advantage_differentials.svg", OUTPUT_DIR)
 
 
+def plot_fta_distribution(
+    season_label: str, season_vals: np.ndarray,
+    era_labels: tuple[str, str],
+    reg_early: np.ndarray, reg_late: np.ndarray,
+    po_early: np.ndarray, po_late: np.ndarray,
+) -> None:
+    """
+    Two panels showing the per-game FTA differential (home minus away) is
+    noisy game to game even though its average is a real, shrinking edge.
+
+    Panel 1: histogram of one season's per-game values — shows the average
+    sitting deep inside ordinary game-to-game spread.
+    Panel 2: box plots (whiskers = 10th/90th percentile) for regular season
+    and playoffs, earliest era vs. latest — the average edge slides toward
+    zero while the box width barely narrows.
+    Saves -> home_court_fta_distribution.svg
+    """
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5), facecolor=BG)
+    for ax in (ax1, ax2):
+        ax.set_facecolor(PANEL)
+    fig.suptitle("A ~2-attempt average edge sits inside a much wider nightly swing",
+                 fontsize=14, fontweight="bold", y=1.0, color="#2c2c2a")
+    fig.text(0.5, 0.945,
+             "Data: NBA.com  |  Home minus away free-throw attempts per game  |  positive = home team more",
+             ha="center", fontsize=9, color=GRAY)
+
+    # ── Panel 1: one season's histogram ───────────────────────────────────
+    mean_val = float(np.mean(season_vals))
+    lo, hi = int(np.min(season_vals)), int(np.max(season_vals))
+    ax1.hist(season_vals, bins=np.arange(lo - 0.5, hi + 1.5, 1),
+             color=BLUE, alpha=0.75, edgecolor="white", linewidth=0.4)
+    ax1.axvline(0, color=GRAY, linewidth=1, linestyle=":")
+    ax1.axvline(mean_val, color=RED, linewidth=2, zorder=3)
+    ax1.text(mean_val, ax1.get_ylim()[1] * 0.94, f"  season average {mean_val:+.1f}",
+             color=RED, fontsize=9, fontweight="bold", ha="left" if mean_val >= 0 else "right")
+    ax1.set_title("One season looks like noise, not a pattern",
+                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax1.set_xlabel(f"{season_label} regular season, one point per game", fontsize=8, color=GRAY)
+    ax1.set_ylabel("Number of games", fontsize=10)
+
+    # ── Panel 2: box plots by context and era ─────────────────────────────
+    groups = [reg_early, reg_late, po_early, po_late]
+    positions = [1, 2, 3.5, 4.5]
+    colors = [BLUE, BLUE, GREEN, GREEN]
+    alphas = [0.35, 0.85, 0.35, 0.85]
+    bp = ax2.boxplot(
+        groups, positions=positions, widths=0.7, whis=(10, 90), showfliers=False,
+        patch_artist=True, showmeans=True,
+        medianprops={"color": "#2c2c2a", "linewidth": 1.5},
+        whiskerprops={"linewidth": 0.9}, capprops={"linewidth": 0.9},
+        meanprops={"marker": "D", "markerfacecolor": "white",
+                   "markeredgecolor": "#2c2c2a", "markersize": 6, "zorder": 4},
+    )
+    for patch, color, alpha in zip(bp["boxes"], colors, alphas):
+        patch.set_facecolor(color)
+        patch.set_alpha(alpha)
+    ax2.axhline(0, color=GRAY, linewidth=0.8, linestyle="--", alpha=0.7)
+    ax2.set_xticks(positions)
+    ax2.set_xticklabels([f"RS\n{era_labels[0]}", f"RS\n{era_labels[1]}",
+                          f"PO\n{era_labels[0]}", f"PO\n{era_labels[1]}"], fontsize=9)
+    ax2.set_title("The average slides to zero; the swing barely narrows",
+                   fontsize=11, fontweight="bold", color="#2c2c2a", pad=6)
+    ax2.set_ylabel("Home minus away FTA per game", fontsize=10)
+    ax2.set_xlabel("Diamond = average; box = 25th-75th percentile; whiskers = 10th-90th (typical range)",
+                    fontsize=8, color=GRAY)
+
+    plt.tight_layout()
+    save_chart("home_court_fta_distribution.svg", OUTPUT_DIR)
+
+
 def plot_rebound_decomposition(
     reg_seasons: list[str], reg_stats: dict,
     po_seasons: list[str], po_stats: dict,
