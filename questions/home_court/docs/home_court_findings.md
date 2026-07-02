@@ -212,8 +212,8 @@ Because those games are contemporaries, the pattern can't be two long trends coi
 That win-level effect lands most directly in one box-score line: shooting.
 It accounts for roughly one-fifth of the regular-season decline.
 But the perimeter shift reaches past that one category: it also explains about half of the foul decline and about half of the turnover decline.
-Add those in and three-point shooting touches close to half the decline overall.
-What it does not explain is the largest single category, rebounding, which barely moves when games have similar three-point rates.
+Add those in and three-point shooting touches close to half the decline overall, maybe a bit more: a second way of splitting the four categories (Appendix C), with no straight-line assumption, puts shooting's own share higher than the fifth quoted above, which would push the three-point total past half.
+What it does not explain, under either way of splitting it, is the largest single category, rebounding, which barely moves when games have similar three-point rates.
 The perimeter shift is a major force, then, but not the engine behind the whole decline.
 In the playoffs this pattern is less clear, since team quality tends to matter more than shooting style, but it still points the same direction.
 
