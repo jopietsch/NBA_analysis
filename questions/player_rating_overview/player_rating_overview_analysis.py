@@ -1164,10 +1164,10 @@ def run_consensus_vs_wins(qual: pd.DataFrame) -> None:
                           note=f"rank {idx} wins-predictive minus consensus diff (negative)")
 
 
-def run_uber_concentration(qual: pd.DataFrame, _alpha: dict) -> None:
+def run_uber_concentration(qual: pd.DataFrame, alpha: dict) -> None:
     """UBER RATING CONCENTRATION — Gini vs power-law alpha for the uber ratings.
 
-    `_alpha` is the per-system power-law fit dict returned by run_powerlaws.
+    `alpha` is the per-system power-law fit dict returned by run_powerlaws.
     """
     _header("UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS)")
     print("Gini clips negatives to zero, so it inflates 0-centered metrics (the uber")
@@ -1194,9 +1194,9 @@ def run_uber_concentration(qual: pd.DataFrame, _alpha: dict) -> None:
     # flattest rate metric (PER) and the steepest cumulative metric (VORP).
     _cons = powerlaw_fit(np.sort(qual["CONSENSUS"].dropna().values)[::-1], top_n=50) \
         if "CONSENSUS" in qual.columns and qual["CONSENSUS"].notna().sum() >= 20 else None
-    if _cons and _alpha.get("PER") and _alpha.get("OBPM"):
+    if _cons and alpha.get("PER") and alpha.get("OBPM"):
         FACTS.guard("uber_concentration_moderate",
-                    _alpha["PER"]["alpha"] < _cons["alpha"] < _alpha["OBPM"]["alpha"],
+                    alpha["PER"]["alpha"] < _cons["alpha"] < alpha["OBPM"]["alpha"],
                     "by center-robust steepness the consensus rating sits between the "
                     "flattest metric (PER) and the steepest (Offensive BPM)",
                     _cons["alpha"])
