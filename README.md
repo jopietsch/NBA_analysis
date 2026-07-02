@@ -8,12 +8,14 @@ instead of being copied by hand.
 ## Layout
 
 ```
-nbakit/        # shared library: nba_api fetch+cache, SRS/conference/champion,
-               #   markdown→PDF + FINDINGS→PDF report generators
+nbakit/        # shared library: nba_api fetch+cache, ratings (SRS/RAPM/box-score),
+               #   the facts/guards system, and markdown→PDF report generation
 cache/         # shared raw-data cache (NBA.com pulls keyed by season + type)
 questions/
   home_court/            # NBA home court advantage and its decline
   knicks_2026_historic/  # did the 2025–26 Knicks have a historic playoff run?
+  player_rating_overview/# survey and comparison of NBA player-rating systems
+  template/              # scaffold cloned to start a new question
 ```
 
 The two `julia_*` directories in this folder are separate, unrelated Julia repos
@@ -22,4 +24,6 @@ and are intentionally not tracked here.
 ## Working in a question
 
 Each question is self-contained (its own `CLAUDE.md`, data/plots/analysis modules,
-`FINDINGS.md`, and report). See the per-question `CLAUDE.md` for commands.
+a `docs/<project>_findings.md`, and report). Computed numbers are written once as
+"facts" and templated into the prose docs, so the findings can't drift from the
+analysis. See the per-question `CLAUDE.md` for commands.
