@@ -92,13 +92,17 @@ def _parse_findings(path: str) -> tuple[str, dict[str, str]]:
 
 # ── Report builder ─────────────────────────────────────────────────────────────
 
-def _make_wrapper_qmd(cfg: ReportConfig, findings_body: str, src_dir: str) -> str:
+def _make_wrapper_qmd(cfg: ReportConfig, findings_body: str,
+                      src_dir: str) -> tuple[str, "str | None"]:
     """Write a temporary .qmd that combines the findings body + optional appendix.
 
     Writes to the parent of src_dir (the project root) so Typst's sandbox root
     covers generated/ without needing --root flags. Image paths in findings_body
     that are relative to src_dir (../generated/) are rewritten to be relative to
     the project root (generated/).
+
+    Returns (wrapper_path, appendix_qmd_path or None) so the caller cleans up
+    exactly the files created here, without re-deriving the appendix filename.
     """
     footnote_md = f"\n---\n\n{cfg.footnote}\n" if cfg.footnote else ""
     project_dir = os.path.dirname(src_dir)
@@ -106,13 +110,15 @@ def _make_wrapper_qmd(cfg: ReportConfig, findings_body: str, src_dir: str) -> st
 
     suffix = f"_{os.getpid()}"
     wrapper = os.path.join(project_dir, f"_report_generated{suffix}.qmd")
+    appendix_qmd = None
     with open(wrapper, "w") as f:
         f.write(body)
         f.write(footnote_md)
         if cfg.include_appendix:
-            _make_appendix_qmd(os.path.abspath(cfg.results_path), project_dir, suffix=suffix)
-            f.write(f"\n\n{{{{< include _appendix_generated{suffix}.qmd >}}}}\n")
-    return wrapper
+            appendix_qmd = _make_appendix_qmd(os.path.abspath(cfg.results_path),
+                                              project_dir, suffix=suffix)
+            f.write(f"\n\n{{{{< include {os.path.basename(appendix_qmd)} >}}}}\n")
+    return wrapper, appendix_qmd
 
 
 def build_report(cfg: ReportConfig) -> None:
@@ -120,7 +126,6 @@ def build_report(cfg: ReportConfig) -> None:
     _check_prerequisites(cfg)
 
     src_dir = os.path.dirname(os.path.abspath(cfg.findings_path))
-    project_dir = os.path.dirname(src_dir)
     with open(cfg.findings_path) as f:
         md = f.read()
 
@@ -137,11 +142,10 @@ def build_report(cfg: ReportConfig) -> None:
     if cfg.data_line:
         extra_meta["abstract"] = cfg.data_line
 
-    suffix = f"_{os.getpid()}"
     wrapper = None
-    appendix_qmd = os.path.join(project_dir, f"_appendix_generated{suffix}.qmd")
+    appendix_qmd = None
     try:
-        wrapper = _make_wrapper_qmd(cfg, body, src_dir)
+        wrapper, appendix_qmd = _make_wrapper_qmd(cfg, body, src_dir)
         _quarto_render(wrapper, "typst", pdf_path,  cfg.title, cfg.author,
                        toc=True, extra_meta=extra_meta, date=cfg.date or None)
         _quarto_render(wrapper, "html",  html_path, cfg.title, cfg.author,

@@ -184,20 +184,24 @@ def _make_appendix_qmd(appendix_path: str, work_dir: str, suffix: str = "") -> s
     return qmd_path
 
 
-def _make_wrapper_qmd(md_path: str, appendix_path: str) -> str:
-    """Write a _wrapper.qmd that includes the source md + appendix."""
+def _make_wrapper_qmd(md_path: str, appendix_path: str) -> tuple[str, str]:
+    """Write a _wrapper.qmd that includes the source md + appendix.
+
+    Returns (wrapper_path, appendix_qmd_path) so the caller cleans up exactly
+    the files created here, without re-deriving the appendix filename.
+    """
     src_dir = os.path.dirname(os.path.abspath(md_path))
     appendix_abs = os.path.abspath(appendix_path)
     suffix = f"_{os.getpid()}"
 
-    _make_appendix_qmd(appendix_abs, src_dir, suffix=suffix)
+    appendix_qmd = _make_appendix_qmd(appendix_abs, src_dir, suffix=suffix)
 
     md_name = os.path.basename(md_path)
     wrapper = os.path.join(src_dir, f"_wrapper_generated{suffix}.qmd")
     with open(wrapper, "w") as f:
         f.write(f"{{{{< include {md_name} >}}}}\n\n")
-        f.write(f"{{{{< include _appendix_generated{suffix}.qmd >}}}}\n")
-    return wrapper
+        f.write(f"{{{{< include {os.path.basename(appendix_qmd)} >}}}}\n")
+    return wrapper, appendix_qmd
 
 
 # ── Public API ─────────────────────────────────────────────────────────────────
@@ -242,15 +246,15 @@ def build(md_path: str, output_path: str | None = None,
 
     suffix = f"_{os.getpid()}"
     temp_md = os.path.join(project_dir, f"_body_generated{suffix}.qmd")
-    appendix_qmd = os.path.join(project_dir, f"_appendix_generated{suffix}.qmd")
     wrapper = None
+    appendix_qmd = None
     try:
         with open(temp_md, "w") as f:
             f.write(body)
 
         if appendix_path:
-            render_src = _make_wrapper_qmd(temp_md, appendix_path)
-            wrapper = render_src
+            wrapper, appendix_qmd = _make_wrapper_qmd(temp_md, appendix_path)
+            render_src = wrapper
         else:
             render_src = temp_md
 
