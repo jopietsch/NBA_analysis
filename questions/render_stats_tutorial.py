@@ -11,14 +11,10 @@ pipelines (which write their facts.json) and before building the PDF/HTML
     python3 render_stats_tutorial.py --annotate  # render to .annotated.md with fact names
     python3 render_stats_tutorial.py --watch     # re-render on change (Ctrl-C to stop)
 """
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see _bootstrap.py)
+
 import os
 import sys
-
-# Use this worktree's nbakit, not a global install (see conftest.py).
-_d = os.path.dirname(os.path.abspath(__file__))
-while os.path.dirname(_d) != _d and not os.path.isdir(os.path.join(_d, "nbakit", "nbakit")):
-    _d = os.path.dirname(_d)
-sys.path.insert(0, os.path.join(_d, "nbakit"))
 
 from nbakit.docs import render_all as _render_all
 from nbakit.docs import watch as _watch

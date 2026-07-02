@@ -11,6 +11,8 @@ All CSVs land in the shared monorepo cache (nba_analysis/cache/).
 Re-running is safe: cached files are not re-fetched.
 """
 
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
+
 import os
 import time
 import sys

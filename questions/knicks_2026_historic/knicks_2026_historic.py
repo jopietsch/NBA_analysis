@@ -9,6 +9,8 @@ writes knicks_2026_historic_results.md. Holds no data, plotting, or stats logic 
     MPLBACKEND=Agg python3 knicks_2026_historic.py
 """
 
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
+
 import os
 
 import knicks_2026_data as data

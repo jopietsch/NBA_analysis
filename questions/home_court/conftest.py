@@ -1,13 +1,11 @@
 """Make pytest import this worktree's in-repo nbakit, not a global install.
 
-An editable `pip install -e nbakit` records one absolute path for the whole
-interpreter, so every git worktree would load that single copy. Walking up from
-this file to the worktree's own ``nbakit/`` and putting it on ``sys.path`` makes
-each worktree use its own nbakit. Entry-point scripts carry the same few lines
-at their top for non-pytest runs.
+The path bootstrap is shared: ``questions/_bootstrap.py`` holds the walker (and
+its full explanation), imported here through this project's ``_bootstrap.py``
+delegator. Entry-point scripts carry the same one-line import for non-pytest
+runs.
 """
 import os
-import sys
 
 # Cap BLAS/OpenMP threads to 1 per process *before* numpy/scipy/statsmodels
 # get imported anywhere. Under pytest-xdist (see pytest.ini, -n 4), each worker
@@ -21,7 +19,4 @@ for _var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
              "VECLIB_MAXIMUM_THREADS", "NUMEXPR_NUM_THREADS"):
     os.environ.setdefault(_var, "1")
 
-_d = os.path.dirname(os.path.abspath(__file__))
-while os.path.dirname(_d) != _d and not os.path.isdir(os.path.join(_d, "nbakit", "nbakit")):
-    _d = os.path.dirname(_d)
-sys.path.insert(0, os.path.join(_d, "nbakit"))
+import _bootstrap  # noqa: F401, E402

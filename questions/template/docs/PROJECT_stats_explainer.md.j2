@@ -11,7 +11,7 @@
 <!-- Follow ../STATS_EXPLAINER_GUIDE.md (shared best practices) plus the "knows statistics, but rusty" row in ../CLAUDE.md.
   CARDINAL RULE: every method named here must match what PROJECT_analysis.py / nbakit actually runs — verify against the code and PROJECT_results.md before writing. Describing an estimator the code doesn't use is the worst failure this doc can make.
   Use the REAL terms (binomial GLM, cluster-robust SE, ridge/MAP, QLR, bootstrap, confidence interval) and refresh each on first use; don't dumb down (that's findings tier), don't pile on unreconstructable jargon.
-  Every cited number is a << f("section.metric") >> call, never hand-typed. -->
+  Every cited number is an f("section.metric") template call, never hand-typed. -->
 
 <!-- ORIENTATION NOTE (Requirement 1): keep it short. State the audience, that this is the METHODS companion (findings = plain narrative; investigation = evidence with p-values; this = HOW the numbers were computed), and the section order. -->
 This is the methods companion to the findings report: it explains how each number in `PROJECT_results.md` was computed, for a reader who knows statistics but is rusty.
@@ -36,7 +36,7 @@ TODO: describe the analysis dataset(s): source, range, granularity, key columns 
 <!-- The data — which inputs/subset this uses (or "the frame from section 0"). -->
 <!-- The method — the REAL name + what it estimates; if it recurs, one clause + a pointer to the Methods Toolbox rather than a full re-explanation. -->
 <!-- Why this method — why it fits the question / the alternative it beats. -->
-<!-- What the result means — how to read the output (coef sign/size, CI, p, test stat) with the headline number via << f("...") >>. Add a "Why this chart" beat when the section owns a figure. -->
+<!-- What the result means — how to read the output (coef sign/size, CI, p, test stat) with the headline number via an f("...") call. Add a "Why this chart" beat when the section owns a figure. -->
 
 TODO: first analysis, following the four-beat template.
 

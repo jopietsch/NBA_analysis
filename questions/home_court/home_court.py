@@ -11,12 +11,7 @@ Visualization:  home_court_plots.py
 Analysis:       home_court_analysis.py
 """
 
-# Use this worktree's nbakit, not a global install (see conftest.py).
-import os as _os, sys as _sys
-_d = _os.path.dirname(_os.path.abspath(__file__))
-while _os.path.dirname(_d) != _d and not _os.path.isdir(_os.path.join(_d, "nbakit", "nbakit")):
-    _d = _os.path.dirname(_d)
-_sys.path.insert(0, _os.path.join(_d, "nbakit"))
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
 
 import numpy as np
 from nba_api.stats.library.parameters import SeasonType

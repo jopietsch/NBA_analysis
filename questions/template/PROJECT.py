@@ -3,6 +3,8 @@
 Sequences: data → plots → analysis → docs/PROJECT_results.md.
 Run with: MPLBACKEND=Agg python3 PROJECT.py
 """
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
+
 import io
 import os
 import sys
