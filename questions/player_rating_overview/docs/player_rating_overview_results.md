@@ -122,19 +122,19 @@ WS/48 (n=378):
 BPM (n=378):
   Mean: -0.24  Median: -0.43  Std: 2.66
   Min: -5.72  Max: 11.43
-  Gini: 0.767  Top-5% share: 34.3%
+  Top-5% share: 34.3%  (Gini omitted: 58% of players below zero)
   Skew: +0.78  Excess kurtosis: +1.68  Below zero: 58%
 
 OBPM (n=378):
   Mean: -0.22  Median: -0.46  Std: 2.30
   Min: -5.65  Max: 10.16
-  Gini: 0.769  Top-5% share: 34.9%
+  Top-5% share: 34.9%  (Gini omitted: 59% of players below zero)
   Skew: +0.84  Excess kurtosis: +2.05  Below zero: 59%
 
 DBPM (n=378):
   Mean: -0.02  Median: -0.10  Std: 1.10
   Min: -3.01  Max: 3.89
-  Gini: 0.732  Top-5% share: 30.4%
+  Top-5% share: 30.4%  (Gini omitted: 53% of players below zero)
   Skew: +0.32  Excess kurtosis: +0.63  Below zero: 53%
 
 VORP (n=378):
@@ -146,37 +146,37 @@ VORP (n=378):
 RAPM (n=378):
   Mean: 0.40  Median: 0.24  Std: 3.53
   Min: -10.00  Max: 11.05
-  Gini: 0.690  Top-5% share: 24.9%
+  Top-5% share: 24.9%  (Gini omitted: 47% of players below zero)
   Skew: +0.04  Excess kurtosis: +0.12  Below zero: 47%
 
 O-RAPM (n=378):
   Mean: 0.33  Median: 0.40  Std: 2.53
   Min: -8.29  Max: 8.86
-  Gini: 0.672  Top-5% share: 25.3%
+  Top-5% share: 25.3%  (Gini omitted: 44% of players below zero)
   Skew: +0.07  Excess kurtosis: +0.34  Below zero: 44%
 
 D-RAPM (n=378):
   Mean: 0.07  Median: 0.17  Std: 2.55
   Min: -8.44  Max: 9.56
-  Gini: 0.706  Top-5% share: 27.1%
+  Top-5% share: 27.1%  (Gini omitted: 47% of players below zero)
   Skew: +0.05  Excess kurtosis: +0.69  Below zero: 47%
 
 RAPM+prior (n=378):
   Mean: -0.16  Median: -0.26  Std: 2.72
   Min: -6.96  Max: 11.01
-  Gini: 0.756  Top-5% share: 33.0%
+  Top-5% share: 33.0%  (Gini omitted: 54% of players below zero)
   Skew: +0.63  Excess kurtosis: +1.59  Below zero: 54%
 
 O-RAPM+prior (n=378):
   Mean: -0.17  Median: -0.40  Std: 2.23
   Min: -5.92  Max: 10.44
-  Gini: 0.777  Top-5% share: 35.1%
+  Top-5% share: 35.1%  (Gini omitted: 57% of players below zero)
   Skew: +0.87  Excess kurtosis: +2.39  Below zero: 57%
 
 D-RAPM+prior (n=378):
   Mean: 0.01  Median: -0.08  Std: 1.39
   Min: -3.58  Max: 5.77
-  Gini: 0.736  Top-5% share: 29.3%
+  Top-5% share: 29.3%  (Gini omitted: 52% of players below zero)
   Skew: +0.38  Excess kurtosis: +0.55  Below zero: 52%
 
 RAPM distribution shape, pooled over 29 seasons (n=9820 player-seasons):

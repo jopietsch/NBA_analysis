@@ -126,8 +126,23 @@ def _present_systems(df: pd.DataFrame, systems: list[str]) -> list[str]:
     return [s for s in systems if s in df.columns and df[s].notna().sum() >= 10]
 
 
+# Gini only reads as concentration on non-negative values: it clamps negatives
+# to zero, so on a 0-centered metric (the BPM/RAPM family, ~half the players
+# below zero) every below-average player collapses onto zero and inflates the
+# score. Report a system's Gini only when below-zero players are a minority;
+# above this fraction the number is an artifact of centering, not real
+# top-heaviness. The deliberate, labeled Gini-vs-alpha contrast for the centered
+# uber ratings lives in run_uber_concentration, which is exempt by design.
+_GINI_MAX_NEG_FRAC = 0.40
+
+
 def _gini(values: np.ndarray) -> float:
-    """Gini coefficient for a 1-D array of non-negative values."""
+    """Gini coefficient of a 1-D array, clamping negatives to zero.
+
+    Only meaningful for genuinely non-negative distributions; on a 0-centered
+    metric the clamp inflates it (see _GINI_MAX_NEG_FRAC). Callers should gate on
+    the below-zero fraction before reporting it as concentration.
+    """
     v = np.sort(np.maximum(values, 0))
     n = len(v)
     if n == 0 or v.sum() == 0:
@@ -939,7 +954,15 @@ def run_distributions(qual: pd.DataFrame, present: list[str]) -> None:
         _skew = float(stats.skew(vals))
         _exkurt = float(stats.kurtosis(vals))  # excess kurtosis (0 = normal)
         _frac_neg = float(np.mean(vals < 0))
-        print(f"  Gini: {_gini(vals):.3f}  Top-5% share: {_top_share(vals)*100:.1f}%")
+        _t5 = _top_share(vals) * 100
+        # Gini only where below-zero players are a minority; on the centered
+        # metrics it is an artifact of clamping (see _GINI_MAX_NEG_FRAC).
+        _gini_ok = _frac_neg < _GINI_MAX_NEG_FRAC
+        if _gini_ok:
+            print(f"  Gini: {_gini(vals):.3f}  Top-5% share: {_t5:.1f}%")
+        else:
+            print(f"  Top-5% share: {_t5:.1f}%  "
+                  f"(Gini omitted: {_frac_neg*100:.0f}% of players below zero)")
         print(f"  Skew: {_skew:+.2f}  Excess kurtosis: {_exkurt:+.2f}  "
               f"Below zero: {_frac_neg*100:.0f}%")
         FACTS.set(f"dist.{s}.skew", _skew, "{:+.2f}", note=f"{SYSTEM_LABELS.get(s, s)} skewness")
@@ -951,8 +974,10 @@ def run_distributions(qual: pd.DataFrame, present: list[str]) -> None:
         FACTS.set(f"dist.{s}.std", float(vals.std()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} std dev")
         FACTS.set(f"dist.{s}.min", float(vals.min()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} min")
         FACTS.set(f"dist.{s}.max", float(vals.max()), "{:.2f}", note=f"{SYSTEM_LABELS.get(s, s)} max")
-        FACTS.set(f"dist.{s}.gini", float(_gini(vals)), "{:.3f}", note=f"{SYSTEM_LABELS.get(s, s)} Gini coefficient")
-        FACTS.set(f"dist.{s}.top5pct", float(_top_share(vals) * 100), "{:.1f}", unit="%",
+        if _gini_ok:
+            FACTS.set(f"dist.{s}.gini", float(_gini(vals)), "{:.3f}",
+                      note=f"{SYSTEM_LABELS.get(s, s)} Gini coefficient")
+        FACTS.set(f"dist.{s}.top5pct", float(_t5), "{:.1f}", unit="%",
                   note=f"{SYSTEM_LABELS.get(s, s)} top-5% share of total value")
     # Guard: VORP concentrates value more steeply than Win Shares and PER
     if "VORP" in qual.columns and "WS" in qual.columns:

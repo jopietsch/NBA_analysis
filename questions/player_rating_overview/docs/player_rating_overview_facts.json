@@ -1546,13 +1546,6 @@
     "unit": null,
     "value": 58.201058201058196
   },
-  "dist.BPM.gini": {
-    "display": "0.767",
-    "fmt": "{:.3f}",
-    "note": "BPM Gini coefficient",
-    "unit": null,
-    "value": 0.7672284462041026
-  },
   "dist.BPM.max": {
     "display": "11.43",
     "fmt": "{:.2f}",
@@ -1630,13 +1623,6 @@
     "unit": null,
     "value": 52.910052910052904
   },
-  "dist.DBPM.gini": {
-    "display": "0.732",
-    "fmt": "{:.3f}",
-    "note": "DBPM Gini coefficient",
-    "unit": null,
-    "value": 0.7324476751552742
-  },
   "dist.DBPM.max": {
     "display": "3.89",
     "fmt": "{:.2f}",
@@ -1700,13 +1686,6 @@
     "unit": null,
     "value": 46.82539682539682
   },
-  "dist.D_RAPM.gini": {
-    "display": "0.706",
-    "fmt": "{:.3f}",
-    "note": "D-RAPM Gini coefficient",
-    "unit": null,
-    "value": 0.7057057796405266
-  },
   "dist.D_RAPM.max": {
     "display": "9.56",
     "fmt": "{:.2f}",
@@ -1769,13 +1748,6 @@
     "note": "D-RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
     "value": 52.38095238095239
-  },
-  "dist.D_RAPM_MY.gini": {
-    "display": "0.736",
-    "fmt": "{:.3f}",
-    "note": "D-RAPM+prior Gini coefficient",
-    "unit": null,
-    "value": 0.7359154092793156
   },
   "dist.D_RAPM_MY.max": {
     "display": "5.77",
@@ -1910,13 +1882,6 @@
     "unit": null,
     "value": 58.730158730158735
   },
-  "dist.OBPM.gini": {
-    "display": "0.769",
-    "fmt": "{:.3f}",
-    "note": "OBPM Gini coefficient",
-    "unit": null,
-    "value": 0.7687057427282253
-  },
   "dist.OBPM.max": {
     "display": "10.16",
     "fmt": "{:.2f}",
@@ -1980,13 +1945,6 @@
     "unit": null,
     "value": 43.65079365079365
   },
-  "dist.O_RAPM.gini": {
-    "display": "0.672",
-    "fmt": "{:.3f}",
-    "note": "O-RAPM Gini coefficient",
-    "unit": null,
-    "value": 0.6721230987151441
-  },
   "dist.O_RAPM.max": {
     "display": "8.86",
     "fmt": "{:.2f}",
@@ -2049,13 +2007,6 @@
     "note": "O-RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
     "value": 57.407407407407405
-  },
-  "dist.O_RAPM_MY.gini": {
-    "display": "0.777",
-    "fmt": "{:.3f}",
-    "note": "O-RAPM+prior Gini coefficient",
-    "unit": null,
-    "value": 0.7774405662750714
   },
   "dist.O_RAPM_MY.max": {
     "display": "10.44",
@@ -2190,13 +2141,6 @@
     "unit": null,
     "value": 46.82539682539682
   },
-  "dist.RAPM.gini": {
-    "display": "0.690",
-    "fmt": "{:.3f}",
-    "note": "RAPM Gini coefficient",
-    "unit": null,
-    "value": 0.6896874913040931
-  },
   "dist.RAPM.max": {
     "display": "11.05",
     "fmt": "{:.2f}",
@@ -2259,13 +2203,6 @@
     "note": "RAPM+prior share of qualified players below zero (percent)",
     "unit": null,
     "value": 53.96825396825397
-  },
-  "dist.RAPM_MY.gini": {
-    "display": "0.756",
-    "fmt": "{:.3f}",
-    "note": "RAPM+prior Gini coefficient",
-    "unit": null,
-    "value": 0.7564097381120556
   },
   "dist.RAPM_MY.max": {
     "display": "11.01",
