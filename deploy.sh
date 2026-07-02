@@ -46,6 +46,18 @@ if [[ -d "$shared_gen" ]]; then
     fi
 fi
 
+# Guard: if no project staged any HTML, the copy loops above were all skipped
+# (generators never run, or run from the wrong directory). Publishing now would
+# force-push a blank site over the live one. Abort before the index is built —
+# nothing but real content HTML exists in the stage at this point.
+staged_htmls=$(find "$STAGE" -name '*.html' | wc -l | tr -d ' ')
+if [[ "$staged_htmls" -eq 0 ]]; then
+    echo "ERROR: no generated HTML found under questions/*/generated/ or questions/generated/." >&2
+    echo "Refusing to publish a blank site over the live one. Run the report" >&2
+    echo "generators first (render_docs.py / generate_report.py in each project)." >&2
+    exit 1
+fi
+
 # Build index.html using real <title> tags extracted from each HTML file
 python3 - "$STAGE" <<'PYEOF'
 import sys, re
