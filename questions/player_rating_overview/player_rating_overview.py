@@ -8,6 +8,8 @@ Usage:
     MPLBACKEND=Agg python3 player_rating_overview.py [--year 2025]
 """
 
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
+
 import argparse
 import io
 import os

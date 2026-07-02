@@ -1,1 +1,7 @@
-{}
+{
+  "example.placeholder": {
+    "claim": "placeholder \u2014 replace with the project's first real prose claim",
+    "ok": true,
+    "value": null
+  }
+}

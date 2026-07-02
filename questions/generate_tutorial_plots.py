@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Generate illustrative tutorial diagrams for stats_tutorial.md."""
 
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see _bootstrap.py)
+
 import numpy as np
 import matplotlib.pyplot as plt
 import os

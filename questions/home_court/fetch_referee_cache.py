@@ -9,6 +9,8 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
+
 from home_court_data import (
     START_YEAR, END_YEAR, SKIP_PLAYOFF_YEARS, fetch_referee_data
 )

@@ -10,6 +10,8 @@ Thin wrapper around nbakit.mdpdf — all logic lives there.
 """
 
 import sys
+
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see _bootstrap.py)
 from nbakit.mdpdf import build
 
 if __name__ == "__main__":

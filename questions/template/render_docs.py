@@ -10,28 +10,17 @@ Run after the analysis pipeline (which writes facts.json) and before
     python3 render_docs.py --annotate  # render to *.annotated.md with fact names
     python3 render_docs.py --watch     # re-render on change (Ctrl-C to stop)
 """
+import _bootstrap  # noqa: F401  — use this worktree's nbakit (see questions/_bootstrap.py)
+
 import sys
 
-from nbakit.docs import render_all as _render_all
-from nbakit.docs import write_reference as _write_reference
-from nbakit.docs import main as _main
+from nbakit.docs import project_shim
 
-FACTS_JSON = "docs/PROJECT_facts.json"
-REFERENCE_MD = "docs/PROJECT_facts_reference.md"
-REFERENCE_TITLE = "PROJECT facts reference"
-
-
-def render_all(facts_path: str = FACTS_JSON, annotate: bool = False) -> list[str]:
-    """Render every ``docs/*.md.j2`` template (used by generate_report.py)."""
-    return _render_all(facts_path, annotate=annotate)
-
-
-def write_reference(facts_path: str = FACTS_JSON, out_path: str = REFERENCE_MD,
-                    title: str = REFERENCE_TITLE) -> str:
-    """Write the facts reference table (used by the analysis pipeline)."""
-    return _write_reference(facts_path, out_path, title)
-
+render_all, write_reference, _main = project_shim(
+    facts_json="docs/PROJECT_facts.json",
+    reference_md="docs/PROJECT_facts_reference.md",
+    reference_title="PROJECT facts reference",
+)
 
 if __name__ == "__main__":
-    _main(sys.argv[1:], facts_json=FACTS_JSON, reference_md=REFERENCE_MD,
-          reference_title=REFERENCE_TITLE)
+    _main(sys.argv[1:])

@@ -20,6 +20,12 @@ def run(out=None) -> None:
     # run_summary(out)
     # run_trends(out)
 
+    # Placeholder guard so tests/test_prose_claims.py is exercised from day one.
+    # Replace with real FACTS.guard(name, condition, claim, value) calls placed
+    # next to the numbers each qualitative prose claim rests on.
+    FACTS.guard("example.placeholder", True,
+                "placeholder — replace with the project's first real prose claim")
+
     FACTS.dump(_FACTS_PATH)
     FACTS.dump_guards(_GUARDS_PATH)
     from render_docs import write_reference

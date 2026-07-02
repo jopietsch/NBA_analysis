@@ -70,7 +70,7 @@ def _check_prerequisites(cfg: ReportConfig) -> None:
         sys.exit(1)
 
 
-# ── Kept for backwards-compat with existing tests ─────────────────────────────
+# ── Findings parsing (used by tests; handy for tooling) ───────────────────────
 
 def _parse_findings(path: str) -> tuple[str, dict[str, str]]:
     if not os.path.exists(path):
@@ -153,3 +153,33 @@ def build_report(cfg: ReportConfig) -> None:
 
     print(f"Saved → {pdf_path}")
     print(f"Saved → {html_path}")
+
+
+def run_report(cfg: ReportConfig, render_all=None) -> None:
+    """Render the docs templates, then build the PDF/HTML report.
+
+    The one call a project's ``generate_report.py`` makes: ``render_all`` is
+    that project's ``render_docs.render_all`` closure, run first (printing each
+    rendered path) so every number in the rendered docs comes from the facts
+    data model before the PDF/HTML build. Pass ``None`` to skip rendering.
+    """
+    if render_all is not None:
+        for rendered in render_all():
+            print(f"rendered {rendered}")
+    build_report(cfg)
+
+
+def count_regular_season_games(cache_path, start_year: int, end_year: int) -> int:
+    """Count regular-season games in the shared cache (each game = 2 team rows).
+
+    ``cache_path`` is the project's ``cache_path(year, season_type)`` callable
+    from its data module; seasons missing from the cache count zero. Used to
+    build a report's "N games" data line from the same cache the analysis read.
+    """
+    from nbakit.data import cache_exists, cache_read_csv
+    total = 0
+    for year in range(start_year, end_year + 1):
+        path = cache_path(year, "Regular Season")
+        if cache_exists(path):
+            total += len(cache_read_csv(path, usecols=[0]))
+    return total // 2

@@ -1,57 +1,38 @@
-"""Guard the dual-write: every numeric fact's value must appear in results.md.
+"""Guard the dual-write: every numeric fact must be cited in results.md.
 
-``docs/knicks_2026_historic_facts.json`` and ``docs/knicks_2026_historic_results.md``
-are both produced by ``knicks_2026_analysis.py``, but via separate code paths
-(``FACTS.set`` vs ``print``). They share the computed variable today, so they
-can't drift — but a future edit could change a print without its fact (or vice
-versa). This test asserts each numeric fact's value is present in the committed
-``results.md`` (tried at several precisions), catching that drift.
-
-String facts (plain-language phrasings) are skipped. Facts whose value
-legitimately does not appear verbatim in results.md are listed in
-``ALLOW_ABSENT``, which should stay small and reviewed.
+Thin wrapper: the matcher lives in ``nbakit.facts.assert_facts_in_results``.
+Each numeric fact's value must appear in the committed results.md *near text
+that shares context with the fact* (tokens from its name segments or ``note``),
+so a drifted value can't pass on a coincidental match elsewhere in the file.
+This module only pins the project's docs paths and its reviewed exception
+lists.
 """
-import json
 import os
 
-_DOCS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs")
-_FACTS = os.path.join(_DOCS, "knicks_2026_historic_facts.json")
-_RESULTS = os.path.join(_DOCS, "knicks_2026_historic_results.md")
+from nbakit.facts import assert_facts_in_results
 
-# Curated after a first run: facts whose value is derived/reformatted and so
-# does not appear verbatim in results.md. Keep minimal; each entry is a
-# deliberate "not in results.md by design" statement.
+_DOCS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "docs")
+
+# Facts whose value legitimately never appears in results.md (derived or
+# reformatted by design). Keep minimal; each entry is a deliberate,
+# commented "not in results.md by design" statement.
 ALLOW_ABSENT: set[str] = set()
 
-
-def _candidates(value: float) -> set[str]:
-    """String forms of a numeric value to search for in results.md."""
-    forms: set[str] = set()
-    for p in range(0, 5):
-        forms.add(f"{value:.{p}f}")
-        forms.add(f"{abs(value):.{p}f}")
-        forms.add(f"{value:+.{p}f}")
-    # Drop forms that are too short to be a meaningful match (a bare "0"/"8"
-    # appears everywhere); require at least one digit and not a lone integer 0-9.
-    return {s for s in forms if not (s.lstrip("+-").isdigit() and len(s.lstrip("+-")) <= 1)}
+# Documented fallback tier: the value is present, but only as a bare table
+# cell / interval bound whose surrounding text shares no word with the fact's
+# name or note. Value presence is still required; only the context requirement
+# is waived. Keep minimal and reviewed.
+ALLOW_NO_CONTEXT: set[str] = {
+    # +7.60: bare upper bound in "90% credible interval: [+1.80, +7.60]"; the
+    # §14 HIERARCHICAL section header sits 11 lines above, outside the window.
+    "hier.ci.hi",
+}
 
 
 def test_every_numeric_fact_appears_in_results():
-    with open(_FACTS) as fh:
-        facts = json.load(fh)
-    with open(_RESULTS) as fh:
-        results = fh.read()
-
-    missing = []
-    for name, rec in facts.items():
-        value = rec["value"]
-        if not isinstance(value, (int, float)) or name in ALLOW_ABSENT:
-            continue
-        if not any(c in results for c in _candidates(value)):
-            missing.append((name, rec["display"]))
-
-    assert not missing, (
-        "Numeric facts whose value is not found in results.md (dual-write drift, "
-        "or add to ALLOW_ABSENT if derived by design):\n"
-        + "\n".join(f"  {n} = {d}" for n, d in missing)
+    assert_facts_in_results(
+        os.path.join(_DOCS, "knicks_2026_historic_facts.json"),
+        os.path.join(_DOCS, "knicks_2026_historic_results.md"),
+        allow_absent=ALLOW_ABSENT,
+        allow_no_context=ALLOW_NO_CONTEXT,
     )

@@ -226,6 +226,39 @@ def watch(facts_path: str, docs_dir: str = DEFAULT_DOCS_DIR,
         print("\nstopped watching")
 
 
+def project_shim(*, facts_json: str, reference_md: str,
+                 reference_title: str = "Facts reference",
+                 docs_dir: str = DEFAULT_DOCS_DIR,
+                 extra_templates: tuple[str, ...] = (),
+                 extra_facts: tuple[str, ...] = ()):
+    """Bind the render engine to one project's paths.
+
+    Returns ``(render_all, write_reference, main)`` closures for the project's
+    ``render_docs.py`` shim, so that module is nothing but paths + one call:
+
+    - ``render_all(annotate=False)`` renders every ``docs/*.md.j2`` (used by
+      ``generate_report.py``);
+    - ``write_reference()`` writes the facts lookup table (used by the analysis
+      pipeline);
+    - ``main(argv)`` is the CLI dispatcher (``--watch`` / ``--reference`` /
+      ``--annotate``).
+    """
+    def _render_all(annotate: bool = False) -> list[str]:
+        return render_all(facts_json, docs_dir, annotate=annotate,
+                          extra_templates=extra_templates,
+                          extra_facts=extra_facts)
+
+    def _write_reference() -> str:
+        return write_reference(facts_json, reference_md, reference_title)
+
+    def _main(argv: list[str]) -> None:
+        main(argv, facts_json=facts_json, reference_md=reference_md,
+             reference_title=reference_title, docs_dir=docs_dir,
+             extra_templates=extra_templates, extra_facts=extra_facts)
+
+    return _render_all, _write_reference, _main
+
+
 def main(argv: list[str], *, facts_json: str, reference_md: str,
          reference_title: str = "Facts reference",
          docs_dir: str = DEFAULT_DOCS_DIR,
