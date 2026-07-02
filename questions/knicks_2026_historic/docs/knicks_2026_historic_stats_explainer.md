@@ -17,7 +17,7 @@ Unlike `knicks_2026_historic_findings.md`, this document uses statistical termin
 
 ## 0. The Comparison Dataset (`build_champions_table`, `build_conference_gap_table`)
 
-**The data.** Every comparison (Sections 1, 4–9) runs against one of two tables built by looping over all 43 NBA seasons from 1983–84 through 2025–26:
+**The data.** Most percentile comparisons in this document run against one of two tables built by looping over all 43 NBA seasons from 1983–84 through 2025–26:
 
 Note that the 2025-26 Knicks won the title (`identify_champion` returns the Knicks for 2026), so they are themselves one of the 43 rows.
 Every percentile in the report ranks the Knicks against a set that *includes their own season*: the count and the denominator both contain them.
@@ -87,7 +87,7 @@ The margin claim is the strongest of the two raw numbers.
 A ranked bar chart answers two questions simultaneously: "where does this team rank?" (bar position) and "how unusual is the gap from the next-best?" (spacing).
 Horizontal orientation keeps the 43 season labels readable.
 Vertical wouldn't; 43 narrow columns of year labels would overlap.
-The Knicks bar is labeled with the value; the chart is the main visual for the report's §2 "The Raw Numbers."
+The Knicks bar is labeled with the value; the chart is the main visual for the findings report's "The Raw Numbers" section.
 
 ---
 
@@ -210,7 +210,7 @@ The comparison with 2016–17 Golden State (+10.2) and 1986–87 Los Angeles Lak
 The Knicks elevated more relative to their regular-season baseline.
 The 2000–01 Lakers rank 1st (+14.5) on overperformance: they had a strong but not historically dominant regular season and then dominated the playoffs.
 
-**Why this is the headline chart.** The adjusted margin ranking is the single number that answers the central question ("historically dominant?") most fully.
+**Why this is the headline chart.** The adjusted margin ranking is the single number that answers the raw dominance question most directly (how solid the resulting #1 is belongs to §13–§14).
 Win rate alone doesn't account for the quality of opponents; raw margin doesn't either.
 Adjusted margin does both.
 The bar chart annotates the Knicks' position explicitly with the value (+11.2) and the legend says "#1 of 43." It is the chart that tells the whole story in one panel.
@@ -294,7 +294,7 @@ The bar-per-game form preserves the "film" of the run.
 
 **The approach.** `compute_playoff_srs` applies `compute_srs` to the playoff game log only.
 The SRS algorithm (see Recurring Methods) solves the same `(I − A) @ srs = mean_margin_vector` system from the playoff bracket graph.
-Because the bracket is sparser than the regular season (not every team plays every other team), the solution is a least-squares approximation; the same `numpy.linalg.lstsq` call handles this naturally.
+Because the bracket is sparser than the regular season (not every team plays every other team), the solution is a least-squares approximation (the ratings that minimize total squared error across the overdetermined system, rather than solving it exactly); the same `numpy.linalg.lstsq` call handles this naturally.
 
 *Elevation* = playoff_SRS − regular_season_SRS.
 A positive value means the champion performed at a higher level in the playoffs than their 82-game baseline predicted.
@@ -452,7 +452,7 @@ The chart's job is to make the absence of an injury story visible.
 **The data.** Game-level ATS (against the spread) data from the ESPN core API, merged with actual margins from the playoff game log.
 
 **The approach.** The 16-3 ATS record is tested against a null hypothesis of 50% coverage (the efficient market expectation: if spreads are fair, any team covers ~50% of games).
-A one-tailed binomial test computes P(X ≥ 16 | n=19, p=0.5):
+A one-tailed binomial test (testing only whether the Knicks covered *more* than a fair market would predict, not a deviation in either direction) computes P(X ≥ 16 | n=19, p=0.5):
 
 ```python
 from scipy.stats import binom
@@ -464,8 +464,8 @@ The z-score is computed as `(k − np) / sqrt(np(1−p))` = `(16 − 9.5) / sqrt
 **Why a one-tailed test.** We are testing whether the Knicks covered *more* than expected, not whether they differed from 50% in either direction.
 The question ("was this ATS performance unusual?") is directional.
 
-**What the results mean (iid).** Z = +2.98, p = 0.0022.
-Here "iid" is short for independent and identically distributed: each game is treated as a separate, equally likely coin flip.
+**What the results mean (games treated as independent).** Z = +2.98, p = 0.0022.
+This is the iid version, short for independent and identically distributed: each game is treated as a separate, equally likely coin flip.
 A team covering 16 of 19 games under a fair-coin null has only a 0.22% probability.
 The East-opponent performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
 
@@ -598,7 +598,7 @@ The §14 framing is the honest answer to the all-time-best question; the §13 fr
 Re-running with a structurally different rating tests that.
 Elo is the natural choice: sequential and recency-weighted rather than season-aggregate.
 
-**The Elo model.** FiveThirtyEight's NBA parameters: start every team at 1500, process games in date order, K = 20, 100-Elo home-court bump, and the margin-of-victory multiplier `ln(|margin|+1) · 2.2/(0.001·Δelo_winner + 2.2)` (the Δelo term damps blowouts by favorites).
+**The Elo model.** FiveThirtyEight's NBA parameters: start every team at 1500, process games in date order, and after each game shift both teams' ratings by K = 20 (the step size) times the gap between the actual result and what the pre-game ratings predicted, with a 100-Elo home-court bump and the margin-of-victory multiplier `ln(|margin|+1) · 2.2/(0.001·Δelo_winner + 2.2)` (the Δelo term damps blowouts by favorites).
 The final Elo is centered at the league mean and divided by ≈28 Elo-per-point to land on the same points-above-average scale as SRS, so it slots into the identical games-weighted opponent machinery.
 
 **What the results mean (an instructive disagreement).** Across all 43 champions the Elo-adjusted and SRS-adjusted margins are almost the same ordering (correlation ≈ +0.96), so the two systems broadly agree.
@@ -692,7 +692,7 @@ The better seed hosts in-conference; the better regular-season SRS hosts the Fin
 A team's title probability is the share of simulations it wins; the 16 shares sum to 1 by construction.
 
 **What the results mean.** Oklahoma City, the league's best SRS by a wide margin, is the runaway favorite at 54.5%, more than triple any rival.
-The Knicks, only the East 3-seed, are 3.5%, far below the 14.7% the realized-path model gave them in §18.
+The Knicks, only the East 3-seed, are 3.5%, far below the ≈15% the realized-path model gave them in §18.
 That is not a contradiction: §18 conditions on the opponents New York actually drew (the East's top two seeds were upset before they would have met), while this sim makes them run the seed-expected gauntlet through Detroit and Boston.
 Neither model knows the Knicks would elevate; both call the title a long shot, and the full-field view a longer one.
 
@@ -709,7 +709,7 @@ Widening or narrowing `σ` bunches or separates the favorites but leaves the ord
 Second, the *shape* of those scores, which is what licenses the order-statistic reading of the #1 claim (treating the top score as the expected largest of 43 draws from one bell curve, not a different kind of team).
 
 **The distribution.** Mean +3.29 points/game, standard deviation 3.38, with 65% of champions inside one SD of the mean (close to the ≈68% a normal predicts).
-Skewness is near zero and the excess kurtosis is negative, meaning tails *thinner* than a normal curve, the opposite of the heavy tail that defines a power law.
+Skewness (asymmetry around the mean) is near zero and the excess kurtosis is negative, meaning tails *thinner* than a normal curve, the opposite of the heavy tail that defines a power law.
 A Shapiro-Wilk test (the standard test of whether a sample could plausibly come from a normal distribution) does not reject normality; the exact W and p are in the results companion, §20.
 So the champion-dominance scores are approximately Gaussian, not scale-free.
 
@@ -748,8 +748,7 @@ But the spread of team strengths has nearly doubled: the SD of team SRS rose fro
 In a more top-heavy league a given margin is a smaller distance above the field, so a level adjustment alone leaves recent dominance overstated relative to older, bunched-up eras.
 
 **The computation.** `z = adj_margin / season_srs_sd`: the opponent-adjusted margin expressed in standard deviations of that season's team-strength distribution.
-This is the ordinary z-score (a value's distance from its distribution mean in SD units), using the league's own spread as the yardstick.
-The construction mixes a playoff-derived margin with a regular-season spread, so it answers "how many regular-season-team-strength units was this playoff dominance", a defensible but not unique choice; the exact rank is mildly sensitive to it.
+This is a spread-standardized margin, not a true z-score: it scales by the season's spread but is deliberately not centered on any mean (an average team sits at 0 by SRS's own construction), so it reads as "how many typical team-to-team gaps clear of average." The construction mixes a playoff-derived margin with a regular-season spread, so it answers "how many regular-season-team-strength units was this playoff dominance", a defensible but not unique choice; the exact rank is mildly sensitive to it.
 
 **What the results mean.** The Knicks' +11.23 adjusted margin is the largest in raw points, but 2025-26 also has the widest spread in the dataset (5.9), so their z-score is +1.90 SD, ranking **#5 of 43**.
 The 16–17 Warriors lead at +2.48.
@@ -835,7 +834,7 @@ This is algebraically exact under the assumption that the box-score `PTS` totals
 **Percentile vs. rank.** The report uses "Nth percentile" rather than "Kth of 43" because percentile is more intuitive at this sample size and because it is comparable across sections with slightly different sample sizes (some metrics have fewer than 43 valid values due to NaN, e.g. in pre-1997 margins before the fill).
 
 **Why no regression.** The core analysis is descriptive: it ranks a single team against a historical distribution.
-A regression of playoff margin on opponent SRS would add complexity (outcome variable? controls?) without better answering "where does this run rank?" The adjusted margin is the closest thing to a structural model; it makes one explicit functional-form assumption (opponent adjustment = direct subtraction), motivated by the SRS identity rather than fit from data.
+A regression of playoff margin on opponent SRS would add complexity (what is the outcome variable? what else must be held fixed?) without better answering "where does this run rank?" The adjusted margin is the closest thing to a structural model; it makes one explicit functional-form assumption (opponent adjustment = direct subtraction), motivated by the SRS identity rather than fit from data.
 What §13 adds is not a predictive model but uncertainty quantification on that descriptive rank: bootstrap resampling, empirical-Bayes shrinkage, and error-propagation, each chosen because the headline rests on a 19-game sample and the point-estimate rank alone hides how wide that uncertainty is.
 
 ## Limitations
