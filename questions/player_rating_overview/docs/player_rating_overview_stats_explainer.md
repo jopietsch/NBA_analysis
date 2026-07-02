@@ -143,7 +143,7 @@ For each system S, we regress S on all other present systems using ordinary leas
 That R² is the share of S the others can reconstruct: its overlap with the rest of the field, so a high value means the system is largely redundant and a low value means it carries independent signal.
 Each system's own algebraic kin are held out of the predictor set: a metric and its offensive/defensive halves, or a rescaling of itself.
 Without that, BPM (which is OBPM plus DBPM) would be reconstructed exactly from its own components and post a meaningless R² = 1.00; holding the kin out measures overlap against genuinely different systems instead.
-The result splits the field: the all-in-one box scores are the most redundant (PER near R² = 0.946, BPM 0.935), while WS/48 and the bare RAPM family carry the most of their own (near 0.665).
+The result splits the field: the all-in-one box scores are the most redundant (PER near R² = 0.946, BPM 0.937), while WS/48 and the bare RAPM family carry the most of their own (near 0.660).
 One reading caveat: an approximate recompute looks independent partly because its noise correlates with nothing, so a low overlap is not by itself proof of unique signal.
 
 ### Consensus rating (z-score average)
@@ -288,12 +288,12 @@ It is the same logic as handing two graders the same essays and checking whether
 
 Each split-half estimate uses only half the data, which understates the reliability of the metric fit on all of it.
 The **Spearman-Brown prophecy formula** corrects for that: full-data reliability ≈ 2r / (1 + r), where r is the split-half correlation.
-A split-half of 0.32 corresponds to a full-data reliability near 0.48.
+A split-half of 0.39 corresponds to a full-data reliability near 0.48.
 
 The numbers are what turned RAPM from a curiosity into a usable metric.
 Before the possession-reconstruction fix (a bug had been silently discarding about 60% of games with complete play-by-play; see the RAPM methods companion), bare RAPM's split-half reliability sat around 0.10 at every minute level: two halves of the same data barely agreed, the signature of noise.
-Recovering the discarded games took it to 0.32 at three pooled seasons, a full-data reliability near 0.48 after the Spearman-Brown step.
-A companion check, **year-over-year stability** (correlating a player's rating this season with last), tells the same story among players with at least 1000 minutes: bare single-season RAPM rose from about 0.09 to 0.41, the prior-informed RAPM+prior reaches 0.84, and for reference the box-score BPM sits at 0.79.
+Recovering the discarded games took it to 0.39 at three pooled seasons, a full-data reliability near 0.48 after the Spearman-Brown step.
+A companion check, **year-over-year stability** (correlating a player's rating this season with last), tells the same story among players with at least 1000 minutes: bare single-season RAPM rose from about 0.09 to 0.40, the prior-informed RAPM+prior reaches 0.84, and for reference the box-score BPM sits at 0.79.
 So RAPM+prior is now at least as steady from year to year as BPM, which means the lineup data is adding a real, repeatable contribution on top of the box score rather than echoing it.
 Reliability also keeps climbing as more seasons are pooled: on the Spearman-Brown full-data scale it is roughly 0.48 at three pooled seasons and about 0.60 at five, which is why every published metric pools years and leans on a prior.
 

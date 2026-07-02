@@ -20,8 +20,8 @@ This report recomputes the box-score systems for 2025-26, adds a from-scratch RA
 **Do they agree?
 At the top, closely; below it, less than their reputations suggest.** The same handful of players (Nikola Jokić, Shai Gilgeous-Alexander, Victor Wembanyama) rise to the top of nearly every system and of both combined ratings.
 Below the top tier they part: Win Shares favors efficient big men on good teams (Amen Thompson) while PER rewards high-usage scorers (Giannis Antetokounmpo), so the same player can sit many spots apart.
-The from-scratch RAPM, built only from which lineups outscored their opponents, barely moves with the box scores (about 0.34 on a 0-to-1 scale), which is the point of an impact metric.
-A reconstruction bug once made that independence look like noise; with it fixed, RAPM+prior, which steadies the noisy lineup data with a box-score estimate, is a usable impact metric, led by the MVP tier (Shai Gilgeous-Alexander, Giannis Antetokounmpo, Nikola Jokić), as steady from year to year as BPM, and across the 29 seasons it can be computed it forecasts next-season team results better than any box score.
+The from-scratch RAPM, built only from which lineups outscored their opponents, barely moves with the box scores (about 0.37 on a 0-to-1 scale), which is the point of an impact metric.
+A reconstruction bug once made that independence look like noise; with it fixed, RAPM+prior, which steadies the noisy lineup data with a box-score estimate, is a usable impact metric, led by the MVP tier (Shai Gilgeous-Alexander, Nikola Jokić, Giannis Antetokounmpo), as steady from year to year as BPM, and across the 29 seasons it can be computed it forecasts next-season team results better than any box score.
 
 **What does each uniquely capture?
 It depends.** Each system tilts toward a player type, but the all-in-one summaries (PER, Game Score, and the now-validated BPM and VORP) are nearly reconstructable from the others, while Win Shares per minute and the fixed lineup metric carry the most of their own, picking up value the scoring-heavy systems miss.

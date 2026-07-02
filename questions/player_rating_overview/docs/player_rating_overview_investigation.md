@@ -46,17 +46,17 @@ The recomputed BPM sits inside this cluster too: it agrees with PER at r = 0.901
 VORP tracks BPM almost perfectly (r = 0.964), which is no surprise since VORP is BPM scaled by minutes.
 
 The box scores and the single-season RAPM agree only loosely.
-PER vs bare RAPM is r = 0.302, Win Shares vs RAPM 0.399, BPM vs RAPM 0.355, and its average rank agreement across the box-score systems is 0.34.
-Its top-rated player, Chet Holmgren, sits at No. 19 in the consensus: one season of lineup data still moves the leaderboard around, which is the price of reading the game through possessions rather than the box score.
-Against the consensus itself bare RAPM lands at 0.43.
+PER vs bare RAPM is r = 0.335, Win Shares vs RAPM 0.415, BPM vs RAPM 0.389, and its average rank agreement across the box-score systems is 0.37.
+Its top-rated player, Chet Holmgren, sits at No. 20 in the consensus: one season of lineup data still moves the leaderboard around, which is the price of reading the game through possessions rather than the box score.
+Against the consensus itself bare RAPM lands at 0.46.
 
 RAPM+prior, the multi-year version shrunk toward a box-score prior, agrees far more.
-BPM vs RAPM+prior is r = 0.892, PER vs RAPM+prior 0.811, its mean box-score agreement 0.77, and it tracks the consensus at 0.91.
-Its top five are now the players the box scores also rate highest: Shai Gilgeous-Alexander, Giannis Antetokounmpo, Nikola Jokić, Victor Wembanyama, and Luka Dončić.
+BPM vs RAPM+prior is r = 0.894, PER vs RAPM+prior 0.811, its mean box-score agreement 0.77, and it tracks the consensus at 0.91.
+Its top five are now the players the box scores also rate highest: Shai Gilgeous-Alexander, Nikola Jokić, Giannis Antetokounmpo, Victor Wembanyama, and Kawhi Leonard.
 The multi-year pooling and the box-score prior, not any single season's raw lineup data, are what pull the order into line.
 
 Offense and defense move independently.
-O-RAPM and D-RAPM correlate at -0.068, essentially unrelated, and the box-score halves barely relate either: OBPM vs DBPM is 0.089, and Game Score, a scoring-led measure, is nearly unrelated to DBPM (r = 0.102).
+O-RAPM and D-RAPM correlate at -0.019, essentially unrelated, and the box-score halves barely relate either: OBPM vs DBPM is 0.089, and Game Score, a scoring-led measure, is nearly unrelated to DBPM (r = 0.102).
 
 ### Interpretation
 
@@ -89,8 +89,8 @@ Recovering those games (and repairing the substitution-name matching that caused
 
 How we know: split-half reliability, the clean test for whether a rating measures anything real.
 Split the possessions in half at random, fit RAPM on each half, and correlate the two sets of player ratings; if the lineup signal is real the halves agree, if it is noise they do not.
-That number rose from about 0.10 before the fix to 0.32 after it (a full-data reliability near 0.48 once you correct for using only half the data each time).
-Bare single-season RAPM's year-over-year stability climbed the same way, from about 0.09 to 0.41.
+That number rose from about 0.10 before the fix to 0.39 after it (a full-data reliability near 0.48 once you correct for using only half the data each time).
+Bare single-season RAPM's year-over-year stability climbed the same way, from about 0.09 to 0.40.
 And RAPM+prior, the multi-year version anchored to the box-score prior, is now at least as steady from season to season as BPM: 0.84 against BPM's 0.79, which means it is adding a genuine lineup contribution on top of the box score rather than echoing it.
 The full method and the split-half evidence are laid out in the RAPM methods companion (`player_rating_overview_rapm_methods.md`).
 
@@ -114,9 +114,9 @@ A reliable, well-validated system that moves in lockstep with the others is stil
 ### Results
 
 The systems split sharply.
-The all-in-one box scores are the most redundant: PER sits at 0.946 overlap and BPM at 0.935, each almost fully reconstructable from the rest.
-The metrics that carry the most of their own sit at the other end: WS/48 (0.665), bare RAPM at 0.684 and its offensive half, and Win Shares (0.712).
-Defensive BPM, which once looked the most independent here, has slid toward the middle (0.766) now that the fixed RAPM accounts for much of the defensive impact it alone used to catch; RAPM+prior, anchored to the box score, sits high with the redundant group (0.939; see the caveat below).
+The all-in-one box scores are the most redundant: PER sits at 0.946 overlap and BPM at 0.937, each almost fully reconstructable from the rest.
+The metrics that carry the most of their own sit at the other end: WS/48 (0.660), bare RAPM at 0.706 and its offensive half, and Win Shares (0.711).
+Defensive BPM, which once looked the most independent here, has slid toward the middle (0.773) now that the fixed RAPM accounts for much of the defensive impact it alone used to catch; RAPM+prior, anchored to the box score, sits high with the redundant group (0.942; see the caveat below).
 
 That ordering matches intuition: a measure that only reshuffles box-score totals largely echoes the others, while one that reaches for defense or on-court impact picks up something they miss.
 One caveat blunts the conclusion.
@@ -124,7 +124,7 @@ This project's BPM and VORP are validated against Basketball-Reference (see "How
 The RAPM family used to carry an asterisk here: it was an approximate, near-noise recompute, so its low overlap meant little (noise lines up with nothing, so it cannot be reconstructed from anything).
 That asterisk is gone.
 The possession-reconstruction fix (Section 1, and the RAPM methods companion) took RAPM from noise to a validated signal, confirmed by split-half reliability, so its overlap now reflects real agreement rather than recompute slack.
-Bare RAPM carries the most of its own (0.684), while RAPM+prior, leaning on the box-score prior, tracks the field closely (0.939).
+Bare RAPM carries the most of its own (0.706), while RAPM+prior, leaning on the box-score prior, tracks the field closely (0.942).
 
 ---
 
@@ -143,20 +143,20 @@ Out-of-sample validation (held-out seasons) would be needed to trust the weights
 
 ### Results
 
-The consensus rating and the wins-predictive rating rank players almost the same way: their rankings correlate at 0.982 (the one place a direct significance test applies, p < 0.001).
+The consensus rating and the wins-predictive rating rank players almost the same way: their rankings correlate at 0.981 (the one place a direct significance test applies, p < 0.001).
 Reweighting the systems to chase team wins barely moves the order from simply averaging them.
-Where they part is instructive: the wins-predictive rating lifts Giannis Antetokounmpo (+0.95 versus consensus), Shai Gilgeous-Alexander (+0.85), and Kawhi Leonard (+0.83), the stars its team-margin weighting rewards most, and marks down low-minute role players like Jericho Sims and Dwight Powell.
+Where they part is instructive: the wins-predictive rating lifts Giannis Antetokounmpo (+0.96 versus consensus), Shai Gilgeous-Alexander (+0.86), and Kawhi Leonard (+0.83), the stars its team-margin weighting rewards most, and marks down low-minute role players like Jericho Sims and Dwight Powell.
 
 A sharper test than fitting wins is rebuilding them.
 Each system's player ratings, minutes-weighted to the team level, are fit to team point differential and scored out of sample by holding one team out at a time (CV R²).
-Some ratings are themselves built from team or lineup point differential, so their rebuild score is partly mechanical: BPM, anchored to sum to team margin, tops out at 1.000, and VORP (0.939) and the multi-year RAPM+prior (0.924) lean on that same anchor.
+Some ratings are themselves built from team or lineup point differential, so their rebuild score is partly mechanical: BPM, anchored to sum to team margin, tops out at 1.000, and VORP (0.939) and the multi-year RAPM+prior (0.936) lean on that same anchor.
 The honest read is the outcome-blind systems that never saw who won: among those, PER leads, rebuilding 73% of the team point-differential spread out of sample (CV R² = 0.727).
 RAPM+prior's high rebuild is no longer the recompute artifact it once looked like: the possession-reconstruction fix (Section 1) makes it a validated signal resting on the anchored box-score prior plus real lineup data.
 
 Describing a season and forecasting the next are different jobs, and they reward different systems.
 Carrying each rating onto the next season's rosters and predicting that season's team margin, PER falls the furthest, from 0.73 describing to 0.37 forecasting, while Game Score barely moves (0.47 to 0.40) and ends up the best forecaster among the outcome-blind box scores.
 Pooled across 29 season-pairs back to 1996-97 the same flip holds: PER averages 0.64 describing but -2.82 forecasting, and BPM forecasts better than PER in 28 of 29 pairs.
-Over the 29 seasons where RAPM can be computed, the fix flips this row too: the multi-year RAPM+prior is now the strongest forecaster in the impact-era panel, rebuilding 45% of next season's team margin on average against bare RAPM's 22%, so once the lineup data is pooled and anchored it predicts the next season better than the box scores do.
+Over the 29 seasons where RAPM can be computed, the fix flips this row too: the multi-year RAPM+prior is now the strongest forecaster in the impact-era panel, rebuilding 46% of next season's team margin on average against bare RAPM's 26%, so once the lineup data is pooled and anchored it predicts the next season better than the box scores do.
 The lesson for the combined rating: the metric that best describes the season just played is not automatically the one that best predicts the next.
 
 ---
@@ -210,7 +210,7 @@ We then measured the year-over-year consensus rank correlation, the change in ea
 
 The consensus order is moderately stable: it agrees from 2024-25 to 2025-26 at Spearman r = 0.75.
 Nikola Jokić and Shai Gilgeous-Alexander rank first and second in both seasons, and 4 of the top 5 carry over, so the stability is strongest at the very top.
-The largest single-year moves are Stephon Castle up (+1.41 in standardized standing) and Ivica Zubac down (-1.59); swings this size are indistinguishable from health, role, and roster changes on one season of data, which is why the cross-system orderings are read as a snapshot.
+The largest single-year moves are Stephon Castle up (+1.41 in standardized standing) and Ivica Zubac down (-1.58); swings this size are indistinguishable from health, role, and roster changes on one season of data, which is why the cross-system orderings are read as a snapshot.
 
 The mean rank agreement among the box-score systems barely moved, 0.71 in 2024-25 and 0.75 in 2025-26.
 The systems disagree by about the same amount each year, so the divergences this document maps are a standing property of the metrics, not a one-season artifact.
