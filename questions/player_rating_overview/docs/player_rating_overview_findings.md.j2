@@ -9,7 +9,7 @@
 :::
 
 Among the ratings that never use who won, the one that best describes a finished NBA season is one of the worst at predicting the next.
-Averaged across the << f("panel.n_seasons") >> seasons tested, PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams in a season just played, more than any other rating that never looks at team results, yet it forecasts the next at only about << f("panel.PER.forecast_mean_pct") >>%.
+In a typical season — the middle of the << f("panel.n_seasons") >> tested — PER, the oldest and simplest box score, rebuilds about << f("panel.PER.describe_median_pct") >>% of the gaps between teams in a season just played, more than any other rating that never looks at team results, yet it forecasts the next at only about << f("panel.PER.forecast_median_pct") >>%.
 That split is one thread of a larger problem: every "top players" list uses a different method, and they disagree in ways that matter for players on losing teams, defensive specialists, and high-usage scorers.
 
 This report surveys how NBA players get rated and puts three questions to the systems:
@@ -215,7 +215,7 @@ Which rating is "better" depends on the question.
 
 One pair of seasons could be a fluke, so we ran the same two tests on every season back to << f("panel.first_season") >>: << f("panel.n_seasons") >> seasons for the describe test and << f("panel.n_pairs") >> year-to-year handoffs for the forecast test.
 The shape repeats.
-Among the ratings that never use who won, PER describes best every era, averaging about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams, and forecasts near the bottom, about << f("panel.PER.forecast_mean_pct") >>%.
+Among the ratings that never use who won, PER describes best every era, rebuilding about << f("panel.PER.describe_median_pct") >>% of the gaps between teams in a typical season, and forecasts near the bottom: about << f("panel.PER.forecast_median_pct") >>% in a typical handoff, and in a couple of handoffs its forecast collapses entirely.
 The team-anchored box metrics, BPM and VORP, sit above it on the describe test, but mechanically: they are built to reproduce team point differential, so rebuilding it is no test of them.
 The best forecaster across all those handoffs is << f("panel.forecast_top.name") >>, at about << f("panel.forecast_top.mean_pct") >>%, a box-built rating that carries more of its signal from one season to the next than PER does.
 The single 2025-26 handoff agrees: << f("panel.forecast_top.name") >> is the best-forecasting box score there too, and across the full panel BPM still beats PER as a forecaster in << f("panel.bpm_beats_per_pairs") >> of the << f("panel.n_cmp_pairs") >> handoffs.
@@ -454,7 +454,7 @@ The disagreement this report describes is built into how the metrics are made, n
 
 **Do the systems agree?** On the best handful of players, closely; below the top tier, less than their reputations suggest.
 The box-score systems move together but only moderately track the lineup-based impact metrics, and the from-scratch RAPM sits apart from all of them (agreeing with the box scores at about << f("rapm.box_corr_mean") >> on a 0-to-1 scale), which is the point of an impact metric; after a reconstruction bug was fixed that low agreement is now real independent signal, and the prior-informed RAPM+prior, not the raw version, is the one that feeds the consensus.
-No system is best at everything: PER describes a finished season better than any other (about << f("panel.PER.describe_mean_pct") >>% of the gaps between teams) yet forecasts the next among the worst (about << f("panel.PER.forecast_mean_pct") >>%), a split that holds across all << f("panel.n_seasons") >> seasons tested.
+No system is best at everything: in a typical season PER describes a finished season better than any other (about << f("panel.PER.describe_median_pct") >>% of the gaps between teams) yet forecasts the next among the worst (about << f("panel.PER.forecast_median_pct") >>%), a split that holds across all << f("panel.n_seasons") >> seasons tested.
 
 **What does each system uniquely capture?** It depends on the system.
 Each tilts toward a player type, Win Shares toward efficient bigs on winning teams, PER toward high-usage scorers, the impact metrics toward off-ball and defensive value the box score misses.

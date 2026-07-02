@@ -41,17 +41,17 @@ Because we are examining many pairs at once, we read the full matrix rather than
 The full correlation matrix is in `player_rating_overview_results.md`; the patterns below are its spine.
 
 The box-score systems form a tight cluster.
-Game Score and PER rank players almost identically (r = 0.862), PER and Win Shares closely (r = 0.768), Game Score and Win Shares nearly as much (r = 0.674).
+Game Score and PER rank players almost identically (r = 0.862), PER and Win Shares closely (r = 0.764), Game Score and Win Shares nearly as much (r = 0.671).
 The recomputed BPM sits inside this cluster too: it agrees with PER at r = 0.901 and with Game Score at r = 0.739, on par with how tightly the box scores agree among themselves, even though BPM weighs team point margin and defense that those scoring-led metrics leave out.
 VORP tracks BPM almost perfectly (r = 0.964), which is no surprise since VORP is BPM scaled by minutes.
 
 The box scores and the single-season RAPM agree only loosely.
-PER vs bare RAPM is r = 0.302, Win Shares vs RAPM 0.367, BPM vs RAPM 0.355, and its average rank agreement across the box-score systems is 0.33.
-Its top-rated player, Chet Holmgren, sits at No. 22 in the consensus: one season of lineup data still moves the leaderboard around, which is the price of reading the game through possessions rather than the box score.
-Against the consensus itself bare RAPM lands at 0.42.
+PER vs bare RAPM is r = 0.302, Win Shares vs RAPM 0.399, BPM vs RAPM 0.355, and its average rank agreement across the box-score systems is 0.34.
+Its top-rated player, Chet Holmgren, sits at No. 19 in the consensus: one season of lineup data still moves the leaderboard around, which is the price of reading the game through possessions rather than the box score.
+Against the consensus itself bare RAPM lands at 0.43.
 
 RAPM+prior, the multi-year version shrunk toward a box-score prior, agrees far more.
-BPM vs RAPM+prior is r = 0.892, PER vs RAPM+prior 0.811, its mean box-score agreement 0.75, and it tracks the consensus at 0.91.
+BPM vs RAPM+prior is r = 0.892, PER vs RAPM+prior 0.811, its mean box-score agreement 0.77, and it tracks the consensus at 0.91.
 Its top five are now the players the box scores also rate highest: Shai Gilgeous-Alexander, Giannis Antetokounmpo, Nikola Jokić, Victor Wembanyama, and Luka Dončić.
 The multi-year pooling and the box-score prior, not any single season's raw lineup data, are what pull the order into line.
 
@@ -114,9 +114,9 @@ A reliable, well-validated system that moves in lockstep with the others is stil
 ### Results
 
 The systems split sharply.
-The all-in-one box scores are the most redundant: PER sits at 0.947 overlap and BPM at 0.937, each almost fully reconstructable from the rest.
-The metrics that carry the most of their own sit at the other end: WS/48 (0.596), bare RAPM at 0.684 and its offensive half, and Win Shares (0.668).
-Defensive BPM, which once looked the most independent here, has slid toward the middle (0.770) now that the fixed RAPM accounts for much of the defensive impact it alone used to catch; RAPM+prior, anchored to the box score, sits high with the redundant group (0.939; see the caveat below).
+The all-in-one box scores are the most redundant: PER sits at 0.946 overlap and BPM at 0.935, each almost fully reconstructable from the rest.
+The metrics that carry the most of their own sit at the other end: WS/48 (0.665), bare RAPM at 0.684 and its offensive half, and Win Shares (0.712).
+Defensive BPM, which once looked the most independent here, has slid toward the middle (0.766) now that the fixed RAPM accounts for much of the defensive impact it alone used to catch; RAPM+prior, anchored to the box score, sits high with the redundant group (0.939; see the caveat below).
 
 That ordering matches intuition: a measure that only reshuffles box-score totals largely echoes the others, while one that reaches for defense or on-court impact picks up something they miss.
 One caveat blunts the conclusion.
@@ -143,9 +143,9 @@ Out-of-sample validation (held-out seasons) would be needed to trust the weights
 
 ### Results
 
-The consensus rating and the wins-predictive rating rank players almost the same way: their rankings correlate at 0.963 (the one place a direct significance test applies, p < 0.001).
+The consensus rating and the wins-predictive rating rank players almost the same way: their rankings correlate at 0.982 (the one place a direct significance test applies, p < 0.001).
 Reweighting the systems to chase team wins barely moves the order from simply averaging them.
-Where they part is instructive: the wins-predictive rating lifts Victor Wembanyama (+1.27 versus consensus), Kawhi Leonard (+0.90), and Shai Gilgeous-Alexander (+0.90), the stars its team-margin weighting rewards most, and marks down low-minute role players like Jericho Sims and Bub Carrington.
+Where they part is instructive: the wins-predictive rating lifts Giannis Antetokounmpo (+0.95 versus consensus), Shai Gilgeous-Alexander (+0.85), and Kawhi Leonard (+0.83), the stars its team-margin weighting rewards most, and marks down low-minute role players like Jericho Sims and Dwight Powell.
 
 A sharper test than fitting wins is rebuilding them.
 Each system's player ratings, minutes-weighted to the team level, are fit to team point differential and scored out of sample by holding one team out at a time (CV R²).
@@ -155,8 +155,8 @@ RAPM+prior's high rebuild is no longer the recompute artifact it once looked lik
 
 Describing a season and forecasting the next are different jobs, and they reward different systems.
 Carrying each rating onto the next season's rosters and predicting that season's team margin, PER falls the furthest, from 0.73 describing to 0.37 forecasting, while Game Score barely moves (0.47 to 0.40) and ends up the best forecaster among the outcome-blind box scores.
-Pooled across 29 season-pairs back to 1996-97 the same flip holds: PER averages 0.64 describing but 0.25 forecasting, and BPM forecasts better than PER in 29 of 29 pairs.
-Over the 29 seasons where RAPM can be computed, the fix flips this row too: the multi-year RAPM+prior is now the strongest forecaster in the impact-era panel, rebuilding 62% of next season's team margin on average against bare RAPM's 38%, so once the lineup data is pooled and anchored it predicts the next season better than the box scores do.
+Pooled across 29 season-pairs back to 1996-97 the same flip holds: PER averages 0.64 describing but -2.82 forecasting, and BPM forecasts better than PER in 28 of 29 pairs.
+Over the 29 seasons where RAPM can be computed, the fix flips this row too: the multi-year RAPM+prior is now the strongest forecaster in the impact-era panel, rebuilding 45% of next season's team margin on average against bare RAPM's 22%, so once the lineup data is pooled and anchored it predicts the next season better than the box scores do.
 The lesson for the combined rating: the metric that best describes the season just played is not automatically the one that best predicts the next.
 
 ---
@@ -176,11 +176,11 @@ We tested the hypothesis that cumulative metrics (Win Shares, VORP) are more top
 ### Results
 
 The full distribution statistics are in `player_rating_overview_results.md`.
-The drop-off measure and the Gini coefficient can disagree sharply: the consensus rating and Win Shares have drop-offs far closer (0.37 vs 0.23) than their Gini scores (0.75 vs 0.36), which look far apart because Gini penalizes the consensus rating's zero-centered scale.
+The drop-off measure and the Gini coefficient can disagree sharply: the consensus rating and Win Shares have drop-offs far closer (0.38 vs 0.22) than their Gini scores (0.75 vs 0.35), which look far apart because Gini penalizes the consensus rating's zero-centered scale.
 When the two conflict, the drop-off is the one to trust.
 
 The cumulative-versus-rate hypothesis holds where it can be read cleanly.
-Win Shares and VORP are right-skewed (skew 1.16 and 2.07), with the top 5% of players holding 14% and 24% of all value; the rate metric PER is far flatter (skew 0.83, top 5% holding just 9%).
+Win Shares and VORP are right-skewed (skew 1.11 and 2.07), with the top 5% of players holding 14% and 24% of all value; the rate metric PER is far flatter (skew 0.83, top 5% holding just 9%).
 Value built as rate times minutes piles up at the top, because the best players are both efficient and heavily used.
 BPM, the other rate metric, looks deceptively top-heavy here (top 5% at 34%) for the same zero-centering reason that inflates its Gini: a scale artifact, not real concentration.
 
@@ -210,7 +210,7 @@ We then measured the year-over-year consensus rank correlation, the change in ea
 
 The consensus order is moderately stable: it agrees from 2024-25 to 2025-26 at Spearman r = 0.75.
 Nikola Jokić and Shai Gilgeous-Alexander rank first and second in both seasons, and 4 of the top 5 carry over, so the stability is strongest at the very top.
-The largest single-year moves are Kawhi Leonard up (+1.37 in standardized standing) and Ivica Zubac down (-1.50); swings this size are indistinguishable from health, role, and roster changes on one season of data, which is why the cross-system orderings are read as a snapshot.
+The largest single-year moves are Stephon Castle up (+1.41 in standardized standing) and Ivica Zubac down (-1.59); swings this size are indistinguishable from health, role, and roster changes on one season of data, which is why the cross-system orderings are read as a snapshot.
 
-The mean rank agreement among the box-score systems barely moved, 0.70 in 2024-25 and 0.73 in 2025-26.
+The mean rank agreement among the box-score systems barely moved, 0.71 in 2024-25 and 0.75 in 2025-26.
 The systems disagree by about the same amount each year, so the divergences this document maps are a standing property of the metrics, not a one-season artifact.

@@ -143,7 +143,7 @@ For each system S, we regress S on all other present systems using ordinary leas
 That R² is the share of S the others can reconstruct: its overlap with the rest of the field, so a high value means the system is largely redundant and a low value means it carries independent signal.
 Each system's own algebraic kin are held out of the predictor set: a metric and its offensive/defensive halves, or a rescaling of itself.
 Without that, BPM (which is OBPM plus DBPM) would be reconstructed exactly from its own components and post a meaningless R² = 1.00; holding the kin out measures overlap against genuinely different systems instead.
-The result splits the field: the all-in-one box scores are the most redundant (PER near R² = 0.947, BPM 0.937), while WS/48 and the bare RAPM family carry the most of their own (near 0.596).
+The result splits the field: the all-in-one box scores are the most redundant (PER near R² = 0.946, BPM 0.935), while WS/48 and the bare RAPM family carry the most of their own (near 0.665).
 One reading caveat: an approximate recompute looks independent partly because its noise correlates with nothing, so a low overlap is not by itself proof of unique signal.
 
 ### Consensus rating (z-score average)
@@ -214,7 +214,7 @@ where players are sorted ascending by value and rank_i runs from 1 to n.
 
 Gini is reliable only for metrics that accumulate a quantity that cannot drop below zero (Win Shares, VORP).
 The implementation here clips negative values to zero, so for metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) every below-average player is counted as a flat zero.
-That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.75, above Win Shares near 0.36, an ordering the power-law exponents pull far closer (consensus 0.37 vs Win Shares 0.23), so the fair measure shows a much smaller gap than Gini implies.
+That inflates the score and makes the metric look more top-heavy than it is: the consensus rating posts a Gini near 0.75, above Win Shares near 0.35, an ordering the power-law exponents pull far closer (consensus 0.38 vs Win Shares 0.22), so the fair measure shows a much smaller gap than Gini implies.
 Gini is therefore reported only as a cross-check; the power-law exponent is the measure to trust when comparing systems.
 
 ### Top-5% share

@@ -17,7 +17,7 @@
   "consensus_stable_yoy": {
     "claim": "the consensus order is largely stable from one season to the next (year-over-year rank agreement above 0.6)",
     "ok": true,
-    "value": 0.7465036896170401
+    "value": 0.7474483890291861
   },
   "consensus_top_fell_in_playoffs": {
     "claim": "the regular-season consensus #1 (Nikola Joki\u0107) fell in the playoffs",
@@ -67,12 +67,12 @@
   "panel_per_describes_better_than_forecasts": {
     "claim": "across the full panel PER describes better than it forecasts",
     "ok": true,
-    "value": 0.38329087800024575
+    "value": 3.4516489569500366
   },
   "per_describes_better_than_predicts": {
     "claim": "PER describes the season far better than it forecasts the next",
     "ok": true,
-    "value": 0.35918239001676355
+    "value": 0.505014023895812
   },
   "per_gamescore_close": {
     "claim": "PER and Game Score track closely (r > 0.75)",
@@ -107,7 +107,7 @@
   "rapm_diverges_from_box": {
     "claim": "single-season RAPM diverges from the box-score systems (mean rank agreement below 0.40)",
     "ok": true,
-    "value": 0.3293201708268581
+    "value": 0.34340306626722783
   },
   "rapm_in_impact_panel": {
     "claim": "RAPM is scored across the impact-era panel alongside the box scores",
@@ -117,7 +117,7 @@
   "rapm_less_skewed_than_vorp": {
     "claim": "RAPM is far less skewed than the right-skewed accumulation metric VORP",
     "ok": true,
-    "value": 1.7581645230858034
+    "value": 1.7330468560484942
   },
   "rapm_my_at_least_bpm_stable": {
     "claim": "RAPM_MY is at least as stable year to year as BPM, so the prior-informed lineup signal adds to the box score rather than degrading it",
@@ -127,12 +127,12 @@
   "rapm_my_beats_bare_consensus": {
     "claim": "RAPM_MY tracks the consensus better than bare RAPM",
     "ok": true,
-    "value": "0.91 vs 0.42"
+    "value": "0.91 vs 0.43"
   },
   "rapm_my_forecasts_better_than_bare": {
     "claim": "RAPM_MY forecasts next-season team results better than bare RAPM",
     "ok": true,
-    "value": "0.621 vs 0.377"
+    "value": "0.449 vs 0.224"
   },
   "rapm_splithalf_real": {
     "claim": "bare RAPM's split-half reliability is well above the near-zero noise floor it sat at before the reconstruction fix",
@@ -142,7 +142,7 @@
   "rapm_symmetric_not_powerlaw": {
     "claim": "RAPM is a near-symmetric bell (skew near zero), not the heavy-tailed shape a power law needs",
     "ok": true,
-    "value": 0.05739882939405266
+    "value": 0.08251649643136189
   },
   "rapm_yoy_meaningful": {
     "claim": "bare single-season RAPM now holds from one season to the next, year-over-year stability well above noise",
@@ -162,7 +162,7 @@
   "strong_consensus_wins_corr": {
     "claim": "the two ratings agree very closely (r > 0.90)",
     "ok": true,
-    "value": 0.9630475772774016
+    "value": 0.9815271213688099
   },
   "team_anchored_box_is_mechanical": {
     "claim": "the team-anchored box metrics top this test only mechanically (BPM is built to equal team point differential)",
@@ -172,7 +172,7 @@
   "uber_concentration_moderate": {
     "claim": "by center-robust steepness the consensus rating sits between the flattest metric (PER) and the steepest (Offensive BPM)",
     "ok": true,
-    "value": 0.3749610888774898
+    "value": 0.37667326982492094
   },
   "vorp_more_concentrated_than_per": {
     "claim": "VORP top-5% share far exceeds PER",

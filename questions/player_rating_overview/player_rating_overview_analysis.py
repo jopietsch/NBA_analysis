@@ -1351,13 +1351,25 @@ def run(end_year: int = 2026) -> None:
                   note="system with the best average next-season (forecast) R² across the panel")
 
         if "PER" in d_means and "PER" in f_means:
+            # Prose facts use the MEDIAN pair, not the mean: forecast CV R² is
+            # unbounded below, and a couple of pathological handoffs (e.g.
+            # 2005->06 at -66) drag PER's mean to an unquotable large negative.
+            # The table above keeps the means with ranges so the blow-ups stay
+            # visible; the median is the honest "typical season" number.
+            d_med_per = float(np.median(panel["describe"]["PER"]))
+            f_med_per = float(np.median(panel["forecast"]["PER"]))
             print(f"PER averages {d_means['PER']:.2f} describing but only "
                   f"{f_means['PER']:.2f} forecasting,\nthe same collapse the single pair "
                   f"showed, now seen across {n_pairs} pairs.")
-            FACTS.set("panel.PER.describe_mean_pct", d_means["PER"] * 100, "{:.0f}",
-                      note="PER mean describe R² across the panel, percent (append % in prose)")
-            FACTS.set("panel.PER.forecast_mean_pct", f_means["PER"] * 100, "{:.0f}",
-                      note="PER mean forecast R² across the panel, percent (append % in prose)")
+            print(f"In the typical (median) pair PER describes {d_med_per:.2f} "
+                  f"and forecasts {f_med_per:.2f}.")
+            FACTS.set("panel.PER.describe_median_pct", d_med_per * 100, "{:.0f}",
+                      note="PER median same-season (describe) R² across the panel, "
+                           "percent (append % in prose)")
+            FACTS.set("panel.PER.forecast_median_pct", f_med_per * 100, "{:.0f}",
+                      note="PER median next-season (forecast) CV R² across the panel, "
+                           "percent (append % in prose); median not mean because CV R² "
+                           "blow-up pairs make the mean unquotable")
         if forecast_top in f_means:
             FACTS.set("panel.forecast_top.mean_pct", f_means[forecast_top] * 100, "{:.0f}",
                       note="best forecaster's mean forecast R² across the panel, percent (append % in prose)")
@@ -1438,9 +1450,9 @@ def run(end_year: int = 2026) -> None:
                   note="RAPM mean forecast R² (impact-era panel), percent (append % in prose)")
         FACTS.set("ipanel.RAPM.describe_mean_pct", id_means["RAPM"] * 100, "{:.0f}",
                   note="RAPM mean describe R² (impact-era panel), percent (append % in prose)")
-        if "PER" in if_means:
-            FACTS.set("ipanel.PER.forecast_mean_pct", if_means["PER"] * 100, "{:.0f}",
-                      note="PER mean forecast R² (impact-era panel), percent (append % in prose)")
+        # (No ipanel.PER.forecast_mean_pct fact: nothing in the prose consumes
+        # it, and PER's forecast CV R² mean is distorted by blow-up pairs —
+        # see the panel.PER.*_median_pct facts above for the quotable numbers.)
         print(f"\nOver these {i_n_pairs} pairs RAPM forecasts {rapm_forecast_rank} of "
               f"{n_ipanel_systems}; the best forecaster is {i_forecast_top_label}.")
         FACTS.guard("rapm_in_impact_panel", i_n_pairs >= 5 and "RAPM" in if_means,
