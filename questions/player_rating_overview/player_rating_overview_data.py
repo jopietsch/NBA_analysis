@@ -34,6 +34,7 @@ from nbakit.data import (
     cache_write_csv,
     game_cache_exists,
     game_cache_read_csv,
+    normalize_game_id,
 )
 from nbakit.ratings import (
     game_score,
@@ -868,7 +869,7 @@ def _season_possessions(end_year: int,
 
     pbp_dfs: list[pd.DataFrame] = []
     for gid in game_ids:
-        gid_str = f"{int(float(gid)):010d}"
+        gid_str = normalize_game_id(gid)
         if not game_cache_exists(CACHE_DIR, "pbp_v3", gid_str):
             continue
         try:
@@ -889,7 +890,7 @@ def _season_possessions(end_year: int,
     # are cached. fetch_pbp_players() populates these in the background.
     player_dfs: list[pd.DataFrame] = []
     for gid in game_ids:
-        gid_str = f"{int(float(gid)):010d}"
+        gid_str = normalize_game_id(gid)
         if not game_cache_exists(CACHE_DIR, "boxscore_trad", gid_str):
             continue
         try:
@@ -906,10 +907,10 @@ def _season_possessions(end_year: int,
     # frames. Normalize both to the same zero-padded string so the starter join
     # actually fires (otherwise it silently falls back to lineup inference).
     if "gameId" in pbp_all.columns:
-        pbp_all["gameId"] = pbp_all["gameId"].apply(lambda g: f"{int(float(g)):010d}")
+        pbp_all["gameId"] = pbp_all["gameId"].apply(normalize_game_id)
     if players_df is not None:
         players_df = players_df.copy()
-        players_df["game_id"] = players_df["game_id"].apply(lambda g: f"{int(float(g)):010d}")
+        players_df["game_id"] = players_df["game_id"].apply(normalize_game_id)
         print(f"  possessions {season_str(end_year)}: using box-score starters for {len(player_dfs)} games")
 
     poss = reconstruct_possessions(pbp_all, players_df=players_df)
