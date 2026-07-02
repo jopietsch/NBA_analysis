@@ -12,7 +12,7 @@
 The main report tells the story in full; this document shows the tests behind it.
 Part 1 lays out the affirmative case that the run was historically dominant, and the evidence behind each claim.
 Part 2 takes the objections, the reasons people offer for why a << f("raw.wins") >>-<< f("raw.losses") >> run might mean less than it looks, and tests each one directly.
-A short closing section covers the one caveat that does survive.*
+A short closing section covers the two things that do temper the claim.*
 
 The numerical detail behind every test is in `knicks_2026_historic_results.md`; the charts here are the same ones used in the full analysis pipeline.
 
@@ -232,16 +232,18 @@ The close Finals margin reflects genuine competition against a whole team, not a
 
 ## What actually does temper the claim
 
-None of the deflation objections above survives contact with the data, but one genuine caveat does, and it has nothing to do with the opponents.
-It is the shortness of the run itself.
+None of the deflation objections above survives contact with the data, but two genuine things temper the claim, and neither is about the opponents.
 
+The first is the shortness of the run itself.
 The "best opponent-adjusted margin of any champion" claim rests on << f("ats.n_total") >> games.
 That is a small sample, and the other 42 champions are measured with the same kind of uncertainty.
 When every champion is allowed to be as uncertain as the Knicks, and the field is judged all at once, the Knicks come out as the single best only about << f("hier.p_rank1", "{:.0f}") >>% of the time, and in the top five about a third of the time.
 The run is clearly among the better champions, but the data cannot crown them the outright #1 that a single rating suggests.
-There is a second, separate reason the #1 is not secure, and it is not about sample size: weight opponents by recent form (Elo) or grade the margin against how top-heavy today's league is, and the Knicks read as a top-three to top-five run rather than a clear first.
+
+The second is separate, and it is not about sample size: it is the yardstick.
+Weight opponents by recent form (Elo) or grade the margin against how top-heavy today's league is, and the Knicks read as a top-three to top-five run rather than a clear first.
 
 The honest position is not that the run was less dominant than it looked: the deflation objections all fail.
-It is that << f("ats.n_total") >> games is too short to settle a first-place tie against << f("raw.n_champions") >> years of champions.
+It is that << f("ats.n_total") >> games is too short to settle a first-place tie against << f("raw.n_champions") >> years of champions, and that the answer also depends on which yardstick you pick.
 Clearly elite, plausibly the best, not provably the best.
 (Main report, §10, §11 and §14.)
