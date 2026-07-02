@@ -803,7 +803,7 @@ def run_pace_era(reg_2026: pd.DataFrame,
                  po_2026: pd.DataFrame,
                  champions: pd.DataFrame,
                  out: io.StringIO) -> None:
-    """Compare the 2025-26 Knicks' margin to the pace-adjusted ranking."""
+    """Compare the 2025-26 Knicks' margin to the scoring-level-adjusted ranking."""
     srs_2026   = compute_srs(reg_2026)
     avg_opp    = compute_games_weighted_opponent_srs(po_2026, srs_2026, KNICKS_TEAM_ID)
     raw_margin = compute_playoff_margin(po_2026, KNICKS_TEAM_ID)
@@ -813,58 +813,58 @@ def run_pace_era(reg_2026: pd.DataFrame,
     pace_adj     = compute_pace_adjusted_margin(raw_margin, scoring_2026, ref_scoring)
     pace_adj_adj = compute_pace_adjusted_margin(adj, scoring_2026, ref_scoring)
 
-    print(_hdr("§9  ERA / PACE ADJUSTMENT"), file=out)
+    print(_hdr("§9  ERA / SCORING-LEVEL ADJUSTMENT"), file=out)
     print(f"League scoring environment:", file=out)
     print(f"  2025-26 avg pts/team/game: {scoring_2026:.1f}", file=out)
     print(f"  Historical mean ({START_YEAR}–{END_YEAR}): {ref_scoring:.1f}", file=out)
     print(f"  Scale factor: {ref_scoring / scoring_2026:.3f}", file=out)
     print(f"\nKnicks 2025-26:", file=out)
     print(f"  Raw avg margin:             {raw_margin:+.2f} pts/game", file=out)
-    print(f"  Pace-adjusted margin:       {pace_adj:+.2f} pts/game", file=out)
+    print(f"  Scoring-adjusted margin:    {pace_adj:+.2f} pts/game", file=out)
     print(f"  Opp-adj margin (raw):       {adj:+.2f} pts/game", file=out)
-    print(f"  Opp+pace-adjusted margin:   {pace_adj_adj:+.2f} pts/game", file=out)
+    print(f"  Opp+scoring-adjusted margin: {pace_adj_adj:+.2f} pts/game", file=out)
 
     pa_series  = champions["pace_adj_margin"].dropna()
     paa_series = champions["pace_adj_adj_margin"].dropna()
     pa_pct     = _pct_rank(pa_series,  pace_adj,     ascending=True)
     paa_pct    = _pct_rank(paa_series, pace_adj_adj, ascending=True)
     print(f"\nAmong {len(pa_series)} champion seasons:", file=out)
-    print(f"  Pace-adj raw-margin percentile:      {pa_pct:.1f}th  "
+    print(f"  Scoring-adj raw-margin percentile:   {pa_pct:.1f}th  "
           f"(mean {pa_series.mean():+.2f}, best {pa_series.max():+.2f})", file=out)
-    print(f"  Opp+pace-adj margin percentile:      {paa_pct:.1f}th  "
+    print(f"  Opp+scoring-adj margin percentile:   {paa_pct:.1f}th  "
           f"(mean {paa_series.mean():+.2f}, best {paa_series.max():+.2f})", file=out)
     # ── Facts: era/pace adjustment ───────────────────────────────────────────
     FACTS.set("scoring.2026",      scoring_2026,              "{:.1f}",  note="2025-26 league avg pts/team/game")
     FACTS.set("scoring.mean",      ref_scoring,               "{:.1f}",  note="Historical mean pts/team/game")
-    FACTS.set("scoring.scale",     ref_scoring / scoring_2026, "{:.3f}", note="Pace-adj scale factor (ref/2026)")
-    FACTS.set("pace_era.pace_adj", pace_adj,                  "{:+.2f}", note="Pace-adj raw margin (Knicks 2026)")
-    FACTS.set("pace_era.paa_adj",  pace_adj_adj,              "{:+.2f}", note="Opp+pace-adj margin (Knicks 2026)")
-    FACTS.set("pace_era.raw_pct",  pa_pct,                    "{:.1f}",  note="Pace-adj raw margin percentile vs champions")
-    FACTS.set("pace_era.opp_pct",  paa_pct,                   "{:.1f}",  note="Opp+pace-adj margin percentile vs champions")
+    FACTS.set("scoring.scale",     ref_scoring / scoring_2026, "{:.3f}", note="Scoring-adj scale factor (ref/2026)")
+    FACTS.set("pace_era.pace_adj", pace_adj,                  "{:+.2f}", note="Scoring-adj raw margin (Knicks 2026)")
+    FACTS.set("pace_era.paa_adj",  pace_adj_adj,              "{:+.2f}", note="Opp+scoring-adj margin (Knicks 2026)")
+    FACTS.set("pace_era.raw_pct",  pa_pct,                    "{:.1f}",  note="Scoring-adj raw margin percentile vs champions")
+    FACTS.set("pace_era.opp_pct",  paa_pct,                   "{:.1f}",  note="Opp+scoring-adj margin percentile vs champions")
 
     top5 = champions.dropna(subset=["pace_adj_margin"]).nlargest(
         5, "pace_adj_margin"
     )[["year", "avg_margin", "league_scoring", "pace_adj_margin"]]
-    print(f"\nTop 5 pace-adjusted raw-margin champions:", file=out)
+    print(f"\nTop 5 scoring-adjusted raw-margin champions:", file=out)
     for _, row in top5.iterrows():
         marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
         print(
             f"  {short_label(int(row.year))}: raw {row.avg_margin:+.2f}  "
             f"era-scoring {row.league_scoring:.1f}  "
-            f"pace-adj {row.pace_adj_margin:+.2f}{marker}",
+            f"scoring-adj {row.pace_adj_margin:+.2f}{marker}",
             file=out,
         )
 
     top5adj = champions.dropna(subset=["pace_adj_adj_margin"]).nlargest(
         5, "pace_adj_adj_margin"
     )[["year", "adj_margin", "league_scoring", "pace_adj_adj_margin"]]
-    print(f"\nTop 5 opp+pace-adjusted margin champions:", file=out)
+    print(f"\nTop 5 opp+scoring-adjusted margin champions:", file=out)
     for _, row in top5adj.iterrows():
         marker = "  ← 2025-26 Knicks" if int(row.year) == SUBJECT_YEAR else ""
         print(
             f"  {short_label(int(row.year))}: opp-adj {row.adj_margin:+.2f}  "
             f"era-scoring {row.league_scoring:.1f}  "
-            f"opp+pace-adj {row.pace_adj_adj_margin:+.2f}{marker}",
+            f"opp+scoring-adj {row.pace_adj_adj_margin:+.2f}{marker}",
             file=out,
         )
 
@@ -915,8 +915,8 @@ def run_verdict(po_2026: pd.DataFrame, reg_2026: pd.DataFrame,
     if not np.isnan(pace_adj):
         pace_adj_adj_v = compute_pace_adjusted_margin(adj, scoring_2026, ref_scoring)
         paa_pct_v = _pct_rank(champions["pace_adj_adj_margin"].dropna(), pace_adj_adj_v, ascending=True)
-        print(f"  Pace-adj raw margin {pace_adj:+.1f} pts/game: {pa_pct:.0f}th percentile", file=out)
-        print(f"  Opp+pace-adj margin {pace_adj_adj_v:+.1f} pts/game: {paa_pct_v:.0f}th percentile", file=out)
+        print(f"  Scoring-adj raw margin {pace_adj:+.1f} pts/game: {pa_pct:.0f}th percentile", file=out)
+        print(f"  Opp+scoring-adj margin {pace_adj_adj_v:+.1f} pts/game: {paa_pct_v:.0f}th percentile", file=out)
     if not np.isnan(overperf):
         print(f"  Overperformance {overperf:+.1f} pts/game: {op_pct:.0f}th percentile", file=out)
     if not np.isnan(gap_2026):
@@ -1106,6 +1106,8 @@ def run_betting_market(ats_df: pd.DataFrame,
               f"(of {clus_res['n_games']} games, {clus_res['n_series']} series)", file=out)
         print(f"    Adjusted z-score:                {clus_res['z']:+.2f}", file=out)
         print(f"    Adjusted one-tailed p-value:     {clus_res['p_value']:.4f}", file=out)
+        print(f"    95% Wilson CI, true cover rate:  {clus_res['ci_lo'] * 100:.0f}% – "
+              f"{clus_res['ci_hi'] * 100:.0f}%  (on the effective sample)", file=out)
         print(
             "  Still beyond chance, but an order of magnitude weaker than the iid\n"
             "  0.0022.  Note too that ATS margin is the raw margin minus a near-zero\n"
@@ -1118,6 +1120,10 @@ def run_betting_market(ats_df: pd.DataFrame,
         FACTS.set("ats.deff",    clus_res["deff"],    "{:.2f}", note="Design effect")
         FACTS.set("ats.n_eff",   clus_res["n_eff"],   "{:.1f}", note="Effective sample size")
         FACTS.set("ats.p_clust", clus_res["p_value"], "{:.4f}", note="Cluster-adjusted one-tailed p-value")
+        FACTS.set("ats.cover_ci.lo", clus_res["ci_lo"] * 100, "{:.0f}",
+                  note="95% Wilson CI lower bound, true cover rate (pct)")
+        FACTS.set("ats.cover_ci.hi", clus_res["ci_hi"] * 100, "{:.0f}",
+                  note="95% Wilson CI upper bound, true cover rate (pct)")
 
     name_map = standings_2026.set_index("TeamID").apply(
         lambda r: f"{r['TeamCity']} {r['TeamName']}", axis=1
@@ -1546,7 +1552,7 @@ def run_spread_standardized(champions: pd.DataFrame, out: io.StringIO) -> None:
     # ── Facts ─────────────────────────────────────────────────────────────────
     FACTS.set("spread.knicks_z",     z_val,    "{:+.2f}", note="Knicks z-score (adj margin / season SRS SD)")
     FACTS.set("spread.knicks_rank",  z_rank,   "{:d}",    note="Knicks rank by spread-standardized dominance")
-    FACTS.set("spread.sd_2026",      sd_2026,  "{:.2f}",  note="2025-26 SRS spread (SD of team SRS)")
+    FACTS.set("spread.sd_2026",      sd_2026,  "{:.1f}",  note="2025-26 SRS spread (SD of team SRS)")
     _sd_start_row = champions[champions["year"] == START_YEAR]
     if not _sd_start_row.empty:
         FACTS.set("spread.sd_start", float(_sd_start_row["season_srs_sd"].iloc[0]), "{:.1f}",
@@ -1735,7 +1741,7 @@ def run_series_winprob(po_2026: pd.DataFrame,
 
 
 def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
-    """Full opp+pace-adjusted ranking of every champion, plus its distribution.
+    """Full opp+scoring-adjusted ranking of every champion, plus its distribution.
 
     Prints the complete ranked table and a shape summary (mean, spread, where the
     Knicks land, and a normality check) to results.md, and registers the table as
@@ -1744,7 +1750,7 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     from nba_api.stats.static import teams as _static_teams
     from scipy import stats as _stats
 
-    print(_hdr("§20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING"), file=out)
+    print(_hdr("§20 APPENDIX: FULL OPP+SCORING-ADJUSTED CHAMPION RANKING"), file=out)
 
     nm = {t["id"]: t["full_name"] for t in _static_teams.get_teams()}
     df = champions.dropna(subset=["pace_adj_adj_margin"]).copy()
@@ -1755,16 +1761,16 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     df["z_rank"] = df["z_adj_margin"].rank(ascending=False, method="min").astype(int)
 
     print(
-        "Opponent-and-pace-adjusted regular-season margin (pts/game) for all\n"
+        "Opponent-and-scoring-adjusted playoff margin (pts/game) for all\n"
         f"{len(df)} champions, most dominant first. Raw = scoring margin; OppAdj =\n"
-        "after strength-of-schedule; Opp+Pace = also scaled to a common scoring\n"
+        "after strength-of-schedule; Opp+Scoring = also scaled to a common scoring\n"
         "environment so eras compare on one ruler. Z = the same opponent-adjusted\n"
         "margin graded against that season's spread of team strength (§22), with\n"
         "Z# its rank on that order.\n",
         file=out,
     )
     thdr = (f"{'#':>2}  {'Season':<7} {'Champion':<24} {'Raw':>6} {'OppAdj':>7} "
-            f"{'Opp+Pace':>9} {'Z':>6} {'Z#':>3}")
+            f"{'Opp+Scoring':>11} {'Z':>6} {'Z#':>3}")
     print(thdr, file=out)
     print("─" * len(thdr), file=out)
     for _, r in df.iterrows():
@@ -1772,7 +1778,7 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
         print(
             f"{int(r['rank']):>2}  {short_label(int(r['year'])):<7} {r['name']:<24} "
             f"{r['avg_margin']:>+6.2f} {r['adj_margin']:>+7.2f} "
-            f"{r['pace_adj_adj_margin']:>+9.2f} {r['z_adj_margin']:>+6.2f} "
+            f"{r['pace_adj_adj_margin']:>+11.2f} {r['z_adj_margin']:>+6.2f} "
             f"{int(r['z_rank']):>3}{marker}",
             file=out,
         )
@@ -1806,7 +1812,7 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
     )
 
     # ── Facts: appendix ranking table (string) + distribution scalars ────────
-    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Spread Z | Spread Rank |",
+    _rows = ["| # | Season | Champion | Raw | Opp-adj | Opp+Scoring | Spread Z | Spread Rank |",
              "|--:|---|---|--:|--:|--:|--:|--:|"]
     for _, r in df.iterrows():
         _nm = f"**{r['name']}**" if int(r["champion_id"]) == KNICKS_TEAM_ID else r["name"]
@@ -1816,9 +1822,9 @@ def run_appendix_ranking(champions: pd.DataFrame, out: io.StringIO) -> None:
             f"{r['z_adj_margin']:+.2f} | {int(r['z_rank'])} |"
         )
     FACTS.set("appendix.ranking_table", "\n".join(_rows),
-              note="Full opp+pace-adjusted champion ranking, markdown table")
-    FACTS.set("appendix.dist.mean",        mean,        "{:+.2f}", note="Mean opp+pace champion margin")
-    FACTS.set("appendix.dist.sd",          sd,          "{:.2f}",  note="SD of opp+pace champion margins")
+              note="Full opp+scoring-adjusted champion ranking, markdown table")
+    FACTS.set("appendix.dist.mean",        mean,        "{:+.2f}", note="Mean opp+scoring champion margin")
+    FACTS.set("appendix.dist.sd",          sd,          "{:.2f}",  note="SD of opp+scoring champion margins")
     FACTS.set("appendix.dist.knicks_z",    knicks_z,    "{:+.1f}", note="Knicks score in SDs above the mean")
     FACTS.set("appendix.dist.within1sd_pct", within1_pct, "{:.0f}", note="Pct of champions within 1 SD of mean")
     FACTS.guard("appendix.dist.bell_not_powerlaw",

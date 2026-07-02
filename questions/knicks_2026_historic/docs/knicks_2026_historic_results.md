@@ -238,7 +238,7 @@ split the Knicks' point margin by how many were available.
   margin falls well short of the playoff margin, so health is part of the
   jump, not the whole of it.
 
-─── §9  ERA / PACE ADJUSTMENT ──────────────────────────────────────────
+─── §9  ERA / SCORING-LEVEL ADJUSTMENT ─────────────────────────────────
 League scoring environment:
   2025-26 avg pts/team/game: 115.6
   Historical mean (1984–2026): 103.5
@@ -246,27 +246,27 @@ League scoring environment:
 
 Knicks 2025-26:
   Raw avg margin:             +14.89 pts/game
-  Pace-adjusted margin:       +13.34 pts/game
+  Scoring-adjusted margin:    +13.34 pts/game
   Opp-adj margin (raw):       +11.23 pts/game
-  Opp+pace-adjusted margin:   +10.05 pts/game
+  Opp+scoring-adjusted margin: +10.05 pts/game
 
 Among 43 champion seasons:
-  Pace-adj raw-margin percentile:      95.3th  (mean +7.02, best +13.92)
-  Opp+pace-adj margin percentile:      100.0th  (mean +3.29, best +10.05)
+  Scoring-adj raw-margin percentile:   95.3th  (mean +7.02, best +13.92)
+  Opp+scoring-adj margin percentile:   100.0th  (mean +3.29, best +10.05)
 
-Top 5 pace-adjusted raw-margin champions:
-  00–01: raw +12.75  era-scoring 94.8  pace-adj +13.92
-  16–17: raw +13.65  era-scoring 105.6  pace-adj +13.38
-  25–26: raw +14.89  era-scoring 115.6  pace-adj +13.34  ← 2025-26 Knicks
-  90–91: raw +11.71  era-scoring 106.3  pace-adj +11.40
-  95–96: raw +10.56  era-scoring 99.5  pace-adj +10.98
+Top 5 scoring-adjusted raw-margin champions:
+  00–01: raw +12.75  era-scoring 94.8  scoring-adj +13.92
+  16–17: raw +13.65  era-scoring 105.6  scoring-adj +13.38
+  25–26: raw +14.89  era-scoring 115.6  scoring-adj +13.34  ← 2025-26 Knicks
+  90–91: raw +11.71  era-scoring 106.3  scoring-adj +11.40
+  95–96: raw +10.56  era-scoring 99.5  scoring-adj +10.98
 
-Top 5 opp+pace-adjusted margin champions:
-  25–26: opp-adj +11.23  era-scoring 115.6  opp+pace-adj +10.05  ← 2025-26 Knicks
-  16–17: opp-adj +10.23  era-scoring 105.6  opp+pace-adj +10.04
-  86–87: opp-adj +9.52  era-scoring 109.9  opp+pace-adj +8.96
-  90–91: opp-adj +9.20  era-scoring 106.3  opp+pace-adj +8.96
-  00–01: opp-adj +7.26  era-scoring 94.8  opp+pace-adj +7.93
+Top 5 opp+scoring-adjusted margin champions:
+  25–26: opp-adj +11.23  era-scoring 115.6  opp+scoring-adj +10.05  ← 2025-26 Knicks
+  16–17: opp-adj +10.23  era-scoring 105.6  opp+scoring-adj +10.04
+  86–87: opp-adj +9.52  era-scoring 109.9  opp+scoring-adj +8.96
+  90–91: opp-adj +9.20  era-scoring 106.3  opp+scoring-adj +8.96
+  00–01: opp-adj +7.26  era-scoring 94.8  opp+scoring-adj +7.93
 
 Lowest-scoring eras (margins get scaled UP):
   98–99: 91.6 pts/team/game
@@ -285,8 +285,8 @@ KEY METRICS vs. all 43 champions (1983–84 through 2025–26):
   Avg margin +14.9 pts/game:    100th percentile
   Games-wtd opp SRS +3.67:     49th percentile (lower = easier schedule)
   Adj margin +11.2 pts/game:    100th percentile
-  Pace-adj raw margin +13.3 pts/game: 95th percentile
-  Opp+pace-adj margin +10.1 pts/game: 100th percentile
+  Scoring-adj raw margin +13.3 pts/game: 95th percentile
+  Opp+scoring-adj margin +10.1 pts/game: 100th percentile
   Overperformance +12.5 pts/game: 98th percentile
   East/West SRS gap +0.39:         37th percentile (West dominance)
 
@@ -333,6 +333,7 @@ Avg ATS margin:         +16.9 pts (how much they beat the spread)
     Effective sample size:           6.7 (of 19 games, 4 series)
     Adjusted z-score:                +1.78
     Adjusted one-tailed p-value:     0.0378
+    95% Wilson CI, true cover rate:  47% – 97%  (on the effective sample)
   Still beyond chance, but an order of magnitude weaker than the iid
   0.0022.  Note too that ATS margin is the raw margin minus a near-zero
   average spread, so this is not independent confirmation of the
@@ -546,59 +547,59 @@ actually drew (the East's top seeds were upset before they met), while
 this sim makes them run the seed-expected gauntlet through Detroit and
 Boston. Neither model knows they would elevate.
 
-─── §20 APPENDIX: FULL OPP+PACE-ADJUSTED CHAMPION RANKING ──────────────
-Opponent-and-pace-adjusted regular-season margin (pts/game) for all
+─── §20 APPENDIX: FULL OPP+SCORING-ADJUSTED CHAMPION RANKING ───────────
+Opponent-and-scoring-adjusted playoff margin (pts/game) for all
 43 champions, most dominant first. Raw = scoring margin; OppAdj =
-after strength-of-schedule; Opp+Pace = also scaled to a common scoring
+after strength-of-schedule; Opp+Scoring = also scaled to a common scoring
 environment so eras compare on one ruler. Z = the same opponent-adjusted
 margin graded against that season's spread of team strength (§22), with
 Z# its rank on that order.
 
- #  Season  Champion                    Raw  OppAdj  Opp+Pace      Z  Z#
-────────────────────────────────────────────────────────────────────────
- 1  25–26   New York Knicks          +14.89  +11.23    +10.05  +1.90   5  ← Knicks
- 2  16–17   Golden State Warriors    +13.65  +10.23    +10.04  +2.48   1
- 3  86–87   Los Angeles Lakers       +10.83   +9.52     +8.96  +2.12   2
- 4  90–91   Chicago Bulls            +11.71   +9.20     +8.96  +1.90   6
- 5  00–01   Los Angeles Lakers       +12.75   +7.26     +7.93  +1.67   8
- 6  85–86   Boston Celtics           +10.56   +7.72     +7.25  +1.96   4
- 7  22–23   Denver Nuggets            +8.30   +7.68     +6.93  +2.03   3
- 8  84–85   Los Angeles Lakers       +10.16   +7.21     +6.74  +1.88   7
- 9  95–96   Chicago Bulls            +10.56   +6.03     +6.27  +1.21  10
-10  17–18   Golden State Warriors    +10.00   +6.04     +5.88  +1.43   9
-11  98–99   San Antonio Spurs         +7.24   +4.90     +5.54  +1.15  11
-12  23–24   Boston Celtics            +8.05   +6.06     +5.49  +1.15  12
-13  13–14   San Antonio Spurs         +9.30   +4.82     +4.94  +1.03  13
-14  14–15   Golden State Warriors     +7.81   +4.48     +4.64  +0.95  15
-15  19–20   Los Angeles Lakers        +6.86   +4.80     +4.44  +1.01  14
-16  24–25   Oklahoma City Thunder     +8.35   +4.68     +4.25  +0.82  19
-17  89–90   Detroit Pistons           +7.00   +4.25     +4.12  +0.92  16
-18  11–12   Miami Heat                +7.09   +3.81     +4.10  +0.82  20
-19  88–89   Detroit Pistons           +7.71   +4.26     +4.04  +0.81  21
-20  12–13   Miami Heat                +6.43   +3.71     +3.92  +0.84  18
-21  03–04   Detroit Pistons           +6.35   +3.44     +3.82  +0.87  17
-22  08–09   Los Angeles Lakers        +7.22   +3.35     +3.47  +0.74  22
-23  15–16   Cleveland Cavaliers       +8.62   +3.21     +3.24  +0.66  23
-24  07–08   Boston Celtics            +5.23   +2.75     +2.85  +0.53  24
-25  97–98   Chicago Bulls             +7.00   +2.42     +2.62  +0.46  26
-26  91–92   Chicago Bulls             +6.18   +2.20     +2.17  +0.47  25
-27  20–21   Milwaukee Bucks           +5.13   +1.80     +1.66  +0.39  28
-28  02–03   San Antonio Spurs         +5.50   +1.35     +1.47  +0.33  29
-29  83–84   Boston Celtics            +4.17   +1.42     +1.34  +0.46  27
-30  10–11   Dallas Mavericks          +5.76   +1.26     +1.31  +0.28  30
-31  18–19   Toronto Raptors           +5.46   +1.15     +1.07  +0.25  31
-32  92–93   Chicago Bulls             +5.84   +0.79     +0.77  +0.17  32
-33  04–05   San Antonio Spurs         +4.35   +0.65     +0.69  +0.16  33
-34  21–22   Golden State Warriors     +5.05   +0.46     +0.43  +0.10  34
-35  05–06   Miami Heat                +3.78   +0.22     +0.24  +0.06  35
-36  96–97   Chicago Bulls             +5.74   +0.04     +0.04  +0.01  36
-37  06–07   San Antonio Spurs         +3.90   -0.13     -0.14  -0.04  37
-38  09–10   Los Angeles Lakers        +3.83   -0.27     -0.28  -0.06  38
-39  87–88   Los Angeles Lakers        +2.54   -0.33     -0.32  -0.07  39
-40  93–94   Houston Rockets           +3.13   -1.61     -1.64  -0.32  40
-41  01–02   Los Angeles Lakers        +3.79   -1.94     -2.10  -0.48  41
-42  99–00   Los Angeles Lakers        +2.39   -2.42     -2.58  -0.54  42
-43  94–95   Houston Rockets           +2.77   -2.99     -3.06  -0.64  43
+ #  Season  Champion                    Raw  OppAdj Opp+Scoring      Z  Z#
+──────────────────────────────────────────────────────────────────────────
+ 1  25–26   New York Knicks          +14.89  +11.23      +10.05  +1.90   5  ← Knicks
+ 2  16–17   Golden State Warriors    +13.65  +10.23      +10.04  +2.48   1
+ 3  86–87   Los Angeles Lakers       +10.83   +9.52       +8.96  +2.12   2
+ 4  90–91   Chicago Bulls            +11.71   +9.20       +8.96  +1.90   6
+ 5  00–01   Los Angeles Lakers       +12.75   +7.26       +7.93  +1.67   8
+ 6  85–86   Boston Celtics           +10.56   +7.72       +7.25  +1.96   4
+ 7  22–23   Denver Nuggets            +8.30   +7.68       +6.93  +2.03   3
+ 8  84–85   Los Angeles Lakers       +10.16   +7.21       +6.74  +1.88   7
+ 9  95–96   Chicago Bulls            +10.56   +6.03       +6.27  +1.21  10
+10  17–18   Golden State Warriors    +10.00   +6.04       +5.88  +1.43   9
+11  98–99   San Antonio Spurs         +7.24   +4.90       +5.54  +1.15  11
+12  23–24   Boston Celtics            +8.05   +6.06       +5.49  +1.15  12
+13  13–14   San Antonio Spurs         +9.30   +4.82       +4.94  +1.03  13
+14  14–15   Golden State Warriors     +7.81   +4.48       +4.64  +0.95  15
+15  19–20   Los Angeles Lakers        +6.86   +4.80       +4.44  +1.01  14
+16  24–25   Oklahoma City Thunder     +8.35   +4.68       +4.25  +0.82  19
+17  89–90   Detroit Pistons           +7.00   +4.25       +4.12  +0.92  16
+18  11–12   Miami Heat                +7.09   +3.81       +4.10  +0.82  20
+19  88–89   Detroit Pistons           +7.71   +4.26       +4.04  +0.81  21
+20  12–13   Miami Heat                +6.43   +3.71       +3.92  +0.84  18
+21  03–04   Detroit Pistons           +6.35   +3.44       +3.82  +0.87  17
+22  08–09   Los Angeles Lakers        +7.22   +3.35       +3.47  +0.74  22
+23  15–16   Cleveland Cavaliers       +8.62   +3.21       +3.24  +0.66  23
+24  07–08   Boston Celtics            +5.23   +2.75       +2.85  +0.53  24
+25  97–98   Chicago Bulls             +7.00   +2.42       +2.62  +0.46  26
+26  91–92   Chicago Bulls             +6.18   +2.20       +2.17  +0.47  25
+27  20–21   Milwaukee Bucks           +5.13   +1.80       +1.66  +0.39  28
+28  02–03   San Antonio Spurs         +5.50   +1.35       +1.47  +0.33  29
+29  83–84   Boston Celtics            +4.17   +1.42       +1.34  +0.46  27
+30  10–11   Dallas Mavericks          +5.76   +1.26       +1.31  +0.28  30
+31  18–19   Toronto Raptors           +5.46   +1.15       +1.07  +0.25  31
+32  92–93   Chicago Bulls             +5.84   +0.79       +0.77  +0.17  32
+33  04–05   San Antonio Spurs         +4.35   +0.65       +0.69  +0.16  33
+34  21–22   Golden State Warriors     +5.05   +0.46       +0.43  +0.10  34
+35  05–06   Miami Heat                +3.78   +0.22       +0.24  +0.06  35
+36  96–97   Chicago Bulls             +5.74   +0.04       +0.04  +0.01  36
+37  06–07   San Antonio Spurs         +3.90   -0.13       -0.14  -0.04  37
+38  09–10   Los Angeles Lakers        +3.83   -0.27       -0.28  -0.06  38
+39  87–88   Los Angeles Lakers        +2.54   -0.33       -0.32  -0.07  39
+40  93–94   Houston Rockets           +3.13   -1.61       -1.64  -0.32  40
+41  01–02   Los Angeles Lakers        +3.79   -1.94       -2.10  -0.48  41
+42  99–00   Los Angeles Lakers        +2.39   -2.42       -2.58  -0.54  42
+43  94–95   Houston Rockets           +2.77   -2.99       -3.06  -0.64  43
 
 ── Shape of the champion-dominance distribution ──
   Mean:                 +3.29 pts/game

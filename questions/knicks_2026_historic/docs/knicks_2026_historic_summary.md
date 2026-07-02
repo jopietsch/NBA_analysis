@@ -10,7 +10,7 @@
 
 In 43 years of NBA champions, none outscored its playoff opponents by more than the 2025–26 New York Knicks.
 They went 16-3, posting the highest raw and opponent-adjusted margins on record, and they did it as underdogs: their regular season gave them only a 15% chance to win the title at all.
-This summary works through four questions: was the run historic and against real competition, does it hold up after adjusting for era and schedule, what made the Finals so different from the first three rounds, and how unlikely was a title run from where the Knicks started?
+This summary works through the same four questions as the full report: was the run actually dominant, or the product of a weak field; did the Knicks earn it, or coast in on a soft, injured bracket; how does it rank against every champion since 1983–84, and how solid is that rank; and how unlikely was a title run from where they started?
 
 ---
 
@@ -31,19 +31,19 @@ They earned it by rising, not coasting.
 Only the fifth-strongest team in the playoff field during the regular season, the Knicks made the biggest playoff jump of any 2026 team (a rise of +11.48, the 2nd-biggest any champion has produced); the Spurs they beat in the Finals made the second-biggest jump in the field.
 
 So how solid is that #1?
-Six ways to measure dominance, six answers:
+Six yardsticks, and they split two ways:
 
 | How you measure dominance | What it adjusts for | Knicks rank |
 |---|---|---|
 | Raw scoring margin | nothing | 1st of 43 |
 | Opponent-adjusted | strength of schedule | 1st |
 | Per possession | the era's pace | 1st |
-| Scoring-share (raw margin, no opponent adjustment) | the era's scoring level (a harsh take) | 3rd |
+| Scoring-share (still opponent-adjusted) | the era's scoring level (a harsh take) | 1st (raw margin alone slips to 3rd) |
 | Era's spread | how top-heavy the league was | 5th |
 | Recency-weighted opponents (Elo) | opponents' late-season form | 3rd |
 
 Every *absolute* measure puts them first; the two *relative* ones, which grade against a deeper, more spread-out field than any champion faced, make it a top-five run rather than a clear first.
-The scoring-share row is the crudest knock: 2025–26's high scoring is mostly sharper shooting, not a faster game, and the more accurate per-possession version keeps them first (+11.0).
+The scoring-share lens is the crudest knock, and it only dents the raw margin: 2025–26's high scoring is mostly sharper shooting, not a faster game, and the more accurate per-possession version keeps them first (+11.0).
 That #1 is the best single guess, not a lock: re-drawing the 19 games leaves them first about 60% of the time, and the fairest test, which treats every past champion as just as uncertain as the Knicks, puts their chance of being the single best ever at about 9% (roughly a third to be top-five).
 The verdict: one of the best handful of title runs ever, most likely the best by the raw numbers, but not provably the single best.
 
@@ -54,7 +54,7 @@ The verdict: one of the best handful of title runs ever, most likely the best by
 ![Per-round raw margins vs. opponent-adjusted margins using each opponent's playoff form against other teams. The Finals adjustment is large because the Spurs elevated from SRS +8.28 to +14.48 through the West bracket.](../generated/images/knicks_2026_round_split.svg){#fig-round-split width=100%}
 
 The run has two distinct halves.
-Against the East (Hawks, 76ers, Cavaliers) the Knicks went 12-2 with an average margin of +19.4 points.
+Against the East (Hawks, 76ers, Cavaliers) the Knicks went 12-2 with an average margin of +19.4 points a game across those 14 games.
 Against the Spurs in the Finals, they won 4-1 with an average margin of +2.4, with four of five games decided by 4 points or fewer.
 
 This split is not just a story about opponent quality.

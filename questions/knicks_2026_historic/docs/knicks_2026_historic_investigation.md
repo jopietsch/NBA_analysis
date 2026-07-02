@@ -16,6 +16,10 @@ A short closing section covers the one caveat that does survive.*
 
 The numerical detail behind every test is in `knicks_2026_historic_results.md`; the charts here are the same ones used in the full analysis pipeline.
 
+**How to read the numbers.** Two statistical terms recur below.
+A *95% range* around a number is the interval its true value would land in 95 times out of 100 if the same short run could be re-drawn; the wider it is, the less a 19-game sample has pinned down.
+A *p-value* is the chance of a result at least this lopsided arising by luck if there were really nothing there; the smaller it is, the harder the result is to dismiss as a fluke.
+
 ---
 
 # Part 1: The Case That the Run Was Historic
@@ -52,7 +56,7 @@ After crediting opponents for their quality, the Knicks still rank first.
 A wins-only system that never sees a single point margin also puts them first (Part 2, "the margins are garbage-time padding"), and the schedule they faced was a median champion's rather than a soft one (Part 2, "the bracket was soft"), so the adjustment is not propping up a weak slate.
 The one rating that does move them, off the top to third, is Elo, which weights recent form and rates their late-peaking opponents tougher (Part 2, "the early-round opponents were fading").
 
-![Opponent-adjusted playoff dominance: 2025-26 Knicks rank #1 all-time among 43 champions](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
+![Opponent-adjusted playoff dominance: the 2025-26 Knicks' margin ranks first among 43 champions, the best single estimate rather than a settled #1](../generated/images/knicks_2026_adjusted_margin_ranking.svg){#fig-adjusted-margin-ranking width=100%}
 
 ## They Played Far Above Their Own Level
 
@@ -83,7 +87,7 @@ In the Finals the market made them slight underdogs (+2.5), and they won by an a
 
 **Why it holds.** Two cautions keep this from being independent proof.
 The 19 games are really four series and move together, so the effective sample is about 6.7; and an against-the-spread margin is mostly the same scoreline read from the bookmaker's side, not a separate measurement of strength.
-Even crediting that clustering, the cover record still beats what a coin flip would produce (about a 1-in-25 chance it is a fluke, p ≈ 0.04), though with only four series that reads as suggestive, not conclusive.
+Even crediting that clustering, the cover record still beats what a coin flip would produce (about a 1-in-25 chance it is a fluke, p ≈ 0.04), but the 95% range for the true cover rate runs from 47% to 97%, a coin flip to near-automatic: suggestive, not conclusive.
 But the split is the point: the market, pricing in everything known at the time, saw a team that overwhelmed the East and faced a near-coin-flip in the Finals, the same two-sided run the ratings describe.
 
 ![Market expectations vs. actual margins: Knicks badly beat the spread against East opponents, Finals were dead-on](../generated/images/knicks_2026_market_vs_actual.svg){#fig-market-vs-actual width=100%}
@@ -141,7 +145,7 @@ If the specific teams the Knicks drew were below the usual championship caliber,
 **The test.** The games-weighted average rating of the Knicks' four playoff opponents (each opponent weighted by how many games the series ran), ranked against all 43 champions since 1983–84.
 
 **The result.** The opponents averaged +3.67, the 49th percentile, essentially the median champion's schedule.
-Cleveland (+3.77) was a genuine title contender, and the Spurs entered the Finals as one of the strongest teams in the field (+8.28 in the regular season, second only to Oklahoma City among playoff teams).
+Cleveland (+3.77) was the strongest East opponent the Knicks drew, and the Spurs entered the Finals as one of the strongest teams in the field (+8.28 in the regular season, second only to Oklahoma City among playoff teams).
 
 ![Strength of schedule, avg opponent SRS per champion](../generated/images/knicks_2026_opponent_srs_ranking.svg){#fig-opponent-srs-ranking width=100%}
 
@@ -178,11 +182,11 @@ The toughest opponent of the run went the other way and was playing above its se
 **Why it seemed plausible.** A +14.9 average margin can be inflated by running up the score in games that were already decided.
 Any rating built on point margins would reward that padding.
 
-**The test.** Re-rank the run with a wins-only rating (Bradley-Terry), which is fit from nothing but who beat whom and never sees a single point margin.
+**The test.** Re-rank the run with a wins-only rating, which is fit from nothing but who beat whom and never sees a single point margin.
 
 **The result.** On a pure wins-only basis the Knicks' opponent-adjusted dominance still ranks first of 43, and it grades their schedule almost exactly as the margin-based rating does.
 
-![The Knicks rank top-3 under all three rating systems: #1 on season margin and wins-only, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){#fig-rating-systems width=100%}
+![The Knicks rank top-3 under all four rating systems: #1 on season margin, wins-only, and blowout-capped, #3 once recent form is weighted](../generated/images/knicks_2026_rating_systems.svg){#fig-rating-systems width=100%}
 
 **How much it explains away.** None.
 Stripping margins out entirely does not knock them off the top, so the dominance lives in who they beat, not just by how much.
@@ -240,4 +244,4 @@ There is a second, separate reason the #1 is not secure, and it is not about sam
 The honest position is not that the run was less dominant than it looked: the deflation objections all fail.
 It is that 19 games is too short to settle a first-place tie against 43 years of champions.
 Clearly elite, plausibly the best, not provably the best.
-(Main report, §10 and §11.)
+(Main report, §10, §11 and §14.)

@@ -31,11 +31,11 @@ Start with the objections a reader walks in with:
 
 **They earned it by rising, not coasting.** Only the fifth-strongest team in the playoff field during the regular season, the Knicks jumped to the top in the postseason: a rise of **<< f("elev.knicks.elevation") >>**, the biggest of any 2026 playoff team and the << f("elev.knicks_rank") >>nd-biggest any champion has produced.
 The team they beat in the Finals made the second-biggest jump in the field: the Spurs climbed from a regular-season SRS of << f("field.spurs.reg_srs") >> to << f("field.spurs.po_srs") >> in the playoffs.
-That is why the Finals were the hardest test of the run, a 4-1 series won by an average of just << f("finals.raw") >> against the one opponent playing above its regular-season level (§5–§6).
+That is part of why the Finals were the hardest test of the run, a 4-1 series won by an average of just << f("finals.raw") >> against the one opponent playing above its regular-season level (§5–§6).
 
 **How solid is the #1 claim?** After adjusting for opponent strength, the Knicks' margin of **<< f("adj.margin", "{:+.1f}") >> pts/game** ranks first among all << f("raw.n_champions") >> champions: the best single number any champion has posted.
 Whether it makes them the single best is a different question, and the answer is not quite.
-Nineteen playoff games is a small sample: re-drawing the run at random still leaves the Knicks the most likely #1, in about << f("boot.p_rank1", "{:.0f}") >>% of replays, but a fairer test that lets every champion carry the same uncertainty drops that to about << f("hier.p_rank1", "{:.0f}") >>% (§10–§11).
+Nineteen playoff games is a small sample: re-drawing the run at random still leaves the Knicks the most likely #1, in about << f("boot.p_rank1", "{:.0f}") >>% of replays, but a fairer test that lets every champion carry the same uncertainty drops that to about << f("hier.p_rank1", "{:.0f}") >>% (§10).
 Graded against how top-heavy today's league has become, they come out a top-five run rather than a clear first (§14).
 So: the best raw opponent-adjusted number in << f("raw.n_champions") >> years, very likely one of the best handful of title runs ever, but not provably the single best.
 
@@ -48,9 +48,8 @@ So: the best raw opponent-adjusted number in << f("raw.n_champions") >> years, v
 The Knicks went **<< f("raw.wins") >>-<< f("raw.losses") >>** in the 2026 playoffs.
 Among all << f("raw.n_champions") >> champions in the data (1983–84 through 2025–26):
 
-- **Win-rate percentile: << f("raw.win_rate_pct", "{:.0f}") >>th**: << f("raw.win_rate") >>, vs. mean << f("raw.win_rate_mean") >>, best (2016–17 Warriors)
-  << f("raw.win_rate_best") >>
-- **Average margin: << f("raw.margin_pct", "{:.0f}") >>th percentile**: << f("raw.margin") >> pts/game, best in 43 years
+- **Win rate: << f("raw.win_rate_pct", "{:.0f}") >>th percentile.** They won << f("raw.win_rate", "{:.0%}") >> of their playoff games; the typical champion wins << f("raw.win_rate_mean", "{:.0%}") >>, and the best, the 2016–17 Warriors, won << f("raw.win_rate_best", "{:.0%}") >>.
+- **Average margin: << f("raw.margin_pct", "{:.0f}") >>th percentile.** << f("raw.margin") >> pts/game, best in 43 years.
 
 **Round-by-round** (SRS = team quality relative to schedule; higher = stronger):
 
@@ -61,7 +60,7 @@ Among all << f("raw.n_champions") >> champions in the data (1983–84 through 20
 | Conference Finals | Cleveland Cavaliers (SRS << f("round.cf.opp_reg_srs") >>) | 4-0 | << f("round.cf.raw") >> |
 | NBA Finals | San Antonio Spurs (SRS << f("round.finals.opp_reg_srs") >>) | 4-1 | << f("round.finals.raw") >> |
 
-The two sweeps, against Cleveland (SRS << f("round.cf.opp_reg_srs") >>, a genuine title contender) and Philadelphia (SRS << f("round.r2.opp_reg_srs") >>), drove the record margin.
+The two sweeps, against Cleveland (SRS << f("round.cf.opp_reg_srs") >>, the strongest East opponent the Knicks drew) and Philadelphia (SRS << f("round.r2.opp_reg_srs") >>), drove the record margin.
 The Finals were tight: four of the five games were decided by 4 points or fewer.
 
 ![Playoff win rate, all 43 champions ranked](../generated/images/knicks_2026_win_rate_ranking.svg){#fig-win-rate-ranking width=100%}
@@ -199,7 +198,7 @@ Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and 
 **What the rise is made of.** It is not spread evenly across the run.
 The first three rounds against the East were demolitions: raw margins of << f("round.r1.raw") >>, << f("round.r2.raw") >>, and << f("round.cf.raw") >>.
 The Finals were a near-even fight (<< f("round.finals.raw") >>), and once the Spurs' own playoff form is subtracted out, the Knicks actually came out behind on the scoreboard math (§5).
-So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen even further than the Knicks pushed to the hardest test of the run.
+So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen nearly as far as the Knicks pushed to the hardest test of the run.
 
 **Is there anything behind the jump we can actually see?** One thing shows up in who was on the floor.
 The Knicks' core five (<< f("continuity.core_list") >>) were together for only **<< f("continuity.rs_full_share") >>%** of the regular season, but **<< f("continuity.po_full_share") >>%** of the playoffs.
@@ -210,21 +209,19 @@ Some of the jump, then, is plain continuity: the playoffs were the longest healt
 
 But health does not finish the story.
 Even at full strength in the regular season (<< f("continuity.rs_full_margin") >>), the Knicks were nowhere near their playoff margin (<< f("raw.margin") >>).
-A healthy roster lifts the realistic baseline a couple of points above the full-season number, no more; the rest of the jump is the weaker, underperforming early-round opponents (§5) and a genuine playoff step-up that the data here can measure but cannot pin to a cause.
+A healthy roster lifts the realistic baseline a couple of points above the full-season number, no more; the rest of the jump is the possibly-fading early-round opponents (a weak maybe, per §5) and a genuine playoff step-up that the data here can measure but cannot pin to a cause.
 Pinning down *why* a team shoots or defends better for six weeks would take possession-level and shot-quality data this study does not carry, so the honest answer is that continuity is the one piece of the rise we can see, and it is only a piece.
 
 ---
 
 ## 7. Ordinary at Home, Untouchable on the Road
 
-The Knicks won << f("away.wr", "{:.1%}") >> of their road playoff games, better than all but one champion in << f("raw.n_champions") >> years.
+The Knicks have an unusual profile for a champion: merely decent in Madison Square Garden, and nearly unbeatable everywhere else.
 They also played more close games than a typical champion: << f("clutch.rate", "{:.1%}") >> of their playoff games were decided by 5 points or fewer, the << f("clutch.pct", "{:.0f}") >>th percentile.
 
 **Home/away splits:**
 - Home: << f("home.games") >> games, << f("home.wr", "{:.1%}") >> win rate (<< f("home.wr_pct", "{:.0f}") >>rd percentile vs. champions, relatively weak at home for a champion)
-- Away: << f("away.games") >> games, << f("away.wr", "{:.1%}") >> win rate (<< f("away.wr_pct", "{:.0f}") >>th percentile)
-
-It is an unusual profile for a champion: ordinary at home, nearly untouchable on the road.
+- Away: << f("away.games") >> games, << f("away.wr", "{:.1%}") >> win rate (<< f("away.wr_pct", "{:.0f}") >>th percentile, better than all but one champion in << f("raw.n_champions") >> years)
 
 ---
 
@@ -308,7 +305,7 @@ They land in the top three about << f("hier.p_top3", "{:.0f}") >>% of the time a
 
 The gap between << f("boot.p_rank1", "{:.0f}") >>% and << f("hier.p_rank1", "{:.0f}") >>% comes from two factors.
 The Knicks' run was streaky: the two sweeps came by << f("round.r2.raw") >> and << f("round.cf.raw") >> next to a << f("finals.raw") >> Finals.
-A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from << f("adj.margin", "{:+.1f}") >> down to about << f("hier.post_mean", "{:+.1f}") >>, rather than the << f("shrink.post_mean", "{:+.1f}") >> of the second check (which ignored streakiness).
+A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from << f("adj.margin", "{:+.1f}") >> down to about << f("hier.post_mean", "{:+.1f}") >>, rather than the << f("shrink.post_mean", "{:+.1f}") >> of the second check (which pulled toward a looser, noise-inflated benchmark).
 And several rivals, the 1990-91 Bulls, the 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier evidence, so once everyone's wobble is in play they overtake the Knicks often.
 
 The bottom line across these checks: the 2025-26 Knicks own the best raw opponent-adjusted number of any champion, and they are very likely one of the best handful of title runs ever, but the data cannot crown them the single best.
@@ -378,8 +375,9 @@ Each was tested; the data does not support any of them.
 | The high-scoring era inflated the margin | Mostly no. The scoring is better shooting, not a faster game; per possession both the raw and adjusted margins stay first. Only the harsher scoring-share adjustment drops the raw margin to 3rd. | §14 |
 | An opponent was injured | No. Opponents were << f("health.avg") >>% healthy on average; the Spurs and Hawks were at << f("health.spurs") >>%. | §9 |
 
-The one thing that genuinely tempers the claim is not on this list.
-It is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about << f("hier.p_rank1", "{:.0f}") >>% of the time (§10–§11).
+Two things genuinely temper the claim, and neither is on this list.
+One is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about << f("hier.p_rank1", "{:.0f}") >>% of the time (§10).
+The other is the yardstick: grade the margin against how top-heavy today's league is, or weight opponents by their late-season form, and the run reads as top-five rather than a clear first (§11, §14).
 
 Each objection is treated in full, with why it seemed plausible and exactly what the data showed, in the companion document *The Investigation* (Appendix A).
 
@@ -433,7 +431,7 @@ Whichever metric sets the ranking, the leaders' intervals sit on top of one anot
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin (<< f("raw.margin_ci.lo") >> to << f("raw.margin_ci.hi") >>).
 The comparison set is also only << f("raw.n_champions") >> champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all measure closely related things; treat them as different angles on one story, not independent votes.
-§10 puts numbers on how solid the #1 rank is, and that uncertainty, not any objection in §13, is what keeps first place from being settled.
+§10 puts numbers on how solid the #1 rank is; that uncertainty, together with the choice of yardstick in §14, is what keeps first place from being settled, not any objection in §13.
 
 **Opponent SRS** for the reg-season-adjusted metrics is from regular-season performance.
 For the playoff-adjusted metrics (§5), each opponent's playoff SRS is computed from games *excluding* the Knicks series to avoid circularity; the Hawks had no such games and are excluded from that adjustment.
@@ -484,12 +482,12 @@ All files are in the same folder as this PDF (`generated/`).
 
 ---
 
-## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
+## Appendix B: Every Champion, Opponent-and-Scoring-Adjusted
 
 The headline rankings throughout this report quote percentiles and the top few names.
-Here is the full list: all << f("raw.n_champions") >> champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §4 and §14.
+Here is the full list: all << f("raw.n_champions") >> champions since 1983-84, ranked by the opponent-adjusted margin of §4 scaled to a common scoring level (the scoring-share lens of §14, its deliberately harsh take on the era).
 Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
-The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era's scoring.
+The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Scoring** also levels the era's scoring.
 The last two take a different route to the same era problem: **Spread Z** grades each opponent-adjusted margin against how spread out team strength was that season (§14), and **Spread Rank** is where that order places the champion.
 
 ::: {.content-visible when-format="html"}
@@ -513,8 +511,8 @@ The ones that slide are the big-margin champions from spread-out eras, where a w
 It is the mirror image of the schedule-and-pace reshuffle above, and why §14 treats the spread as the one lens that unseats the Knicks.
 
 **The scores form a bell curve, not a handful of runaway giants.** The average champion sits at << f("appendix.dist.mean") >> points per game, and about << f("appendix.dist.within1sd_pct") >>% of them fall within one standard deviation (the typical spread of the scores) of that average.
-The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).
-That matters for reading the #1 claim: the Knicks' top score sits about << f("appendix.dist.knicks_z") >> standard deviations above the average champion, which is high but exactly where the single best of << f("raw.n_champions") >> bell-curve draws is expected to land.
+The spread is near-symmetric with no fat tail, and the scores pass a standard check for that bell shape (the details are in the Regression Results companion).
+That matters for reading the #1 claim: the Knicks' top score sits about twice that typical spread above the average champion (<< f("appendix.dist.knicks_z") >> standard deviations), which is high but right where the single best of << f("raw.n_champions") >> bell-curve draws is expected to land.
 The best champion is the leading edge of an ordinary spread, not a breed apart, which is the statistical echo of §10's conclusion that first place is real but not settled.
 
 ---

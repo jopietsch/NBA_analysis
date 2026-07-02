@@ -1020,6 +1020,17 @@ def clustered_cover_significance(covered,
     se = float(np.sqrt(p_null * (1 - p_null) / n_eff))
     z  = (grand - p_null) / se if se > 0 else float("nan")
     p  = float(norm.sf(z)) if not np.isnan(z) else float("nan")
+
+    # 95% Wilson interval for the true cover rate on the effective sample size
+    # (the standard binomial CI that stays inside [0, 1] at small n).
+    z95 = float(norm.ppf(0.975))
+    den = 1.0 + z95 ** 2 / n_eff
+    center = (grand + z95 ** 2 / (2 * n_eff)) / den
+    hw = z95 * float(np.sqrt(grand * (1 - grand) / n_eff
+                             + z95 ** 2 / (4 * n_eff ** 2))) / den
+    ci_lo = max(0.0, center - hw)
+    ci_hi = min(1.0, center + hw)
+
     return {
         "cover_rate": grand,
         "n_games":    int(N),
@@ -1029,6 +1040,8 @@ def clustered_cover_significance(covered,
         "n_eff":      float(n_eff),
         "z":          float(z),
         "p_value":    p,
+        "ci_lo":      float(ci_lo),
+        "ci_hi":      float(ci_hi),
     }
 
 

@@ -162,7 +162,7 @@ Regular-season SRS measures each opponent's strength on an independent baseline 
 
 **Why games-weighted, not unique-opponent average.** `avg_opp_srs` is computed as a per-game average across all playoff games (each game contributes one opponent SRS data point), not as a simple average of four unique opponents.
 This matches the basis of `avg_margin`, which is also a per-game average.
-When the same formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are expressed on the same per-game scale, making the subtraction internally consistent: "how dominant per game after accounting for per-game opponent quality?"  A unique- opponent average could give equal weight to a 4-game first-round opponent and a 7-game Finals opponent, which would misstate the actual per-game opponent quality experienced.
+When the same formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are expressed on the same per-game scale, making the subtraction internally consistent: "how dominant per game after accounting for per-game opponent quality?"  A unique-opponent average could give equal weight to a 4-game first-round opponent and a 7-game Finals opponent, which would misstate the actual per-game opponent quality experienced.
 
 **What the results mean.** Games-weighted average opponent SRS +3.67 sits at the 49th percentile among 43 champions, right at the historical median.
 The schedule was not unusually easy or hard.
@@ -248,7 +248,7 @@ Even on this stricter opponent measure (which credits their opponents' postseaso
 **The playoff-field elevation table.** As context, the section also lists every 2025–26 playoff team's regular-season SRS, full playoff SRS (all of that team's playoff games, including any against the Knicks), and the elevation between them (`compute_playoff_field_elevation`).
 This is descriptive, not a ranked test: it shows the Knicks (+11.48) and Spurs (+6.85) were the field's two big risers while most teams declined, which is the backdrop for why the bracket played out as it did.
 
-**What the results mean.** The pre-Finals series were lopsided on every measure (raw +19.7, reg-adj +17.7, po-adj +20.3 across R1–CF), and the Finals were tight on every measure (raw +2.4, reg-adj −5.9, po-adj −12.1).
+**What the results mean.** The pre-Finals series were lopsided on every measure (raw +19.7, reg-adj +17.7, po-adj +20.3, each averaged per series across R1–CF; games-weighted, the raw figure is +19.4), and the Finals were tight on every measure (raw +2.4, reg-adj −5.9, po-adj −12.1).
 Switching from regular-season to playoff opponent strength does not erase the dominance: it sharpens the same story this section tells in `knicks_2026_historic_results.md`, that the headline margin was built before the Finals against opponents who were not collapsing, and the Finals were a real contest against a Spurs team peaking.
 
 **Why these charts.** Two figures carry this section.
@@ -391,7 +391,7 @@ But the inflation is not fully cancelled: `adj_margin = raw − opp_SRS`, and if
 
 **The data.** All of the above; this section re-computes the key metrics from scratch to produce a single summary table and a text verdict.
 
-**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin, pace-adjusted margin, opp+pace-adjusted margin, overperformance, SRS gap) are pulled, their percentile ranks computed, and a branching verdict string is assembled using thresholds:
+**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin, scoring-adjusted margin, opp+scoring-adjusted margin, overperformance, SRS gap) are pulled, their percentile ranks computed, and a branching verdict string is assembled using thresholds:
 
 ```python
 if wr_pct >= 85:   dom = "elite"
@@ -470,12 +470,13 @@ A team covering 16 of 19 games under a fair-coin null has only a 0.22% probabili
 The East-opponent performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
 
 **Adjusting for series correlation (`clustered_cover_significance`).** The iid binomial assumes 19 independent Bernoulli (coin-flip) trials, but the games cluster into 4 series, and covers within a series are correlated (same matchup, same direction of pricing error).
-We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA (analysis of variance, here splitting cover-outcome variation into between-series and within-series parts) across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.75 here).
+We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA (analysis of variance, here splitting cover-outcome variation into between-series and within-series parts) across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.7 here, slightly below the plain 19/4 average because the series lengths are unequal).
 That gives an effective sample size `N / deff` and a p-value computed on it:
 
 - ICC ≈ 0.49 (covers are strongly clustered: three series are 100% covers, one is 2/5)
 - design effect ≈ 2.82, so effective N ≈ 6.7 (not 19)
 - adjusted z ≈ +1.78, one-tailed p ≈ 0.038
+- 95% Wilson interval for the true cover rate, computed on the effective N: 47% to 97% (the Wilson score interval is the standard binomial CI that stays inside [0, 1] and behaves at small samples; on ~7 effective games it is necessarily wide, spanning a coin flip to near-automatic)
 
 Still beyond chance, but an order of magnitude weaker than the iid 0.0022.
 With only four clusters the ICC is itself imprecise, so treat 0.038 as "weakened but still suggestive," not a sharp figure.
@@ -702,10 +703,10 @@ Widening or narrowing `σ` bunches or separates the favorites but leaves the ord
 
 ## 20. Full Champion Ranking and Its Shape (`run_appendix_ranking`)
 
-**The data.** The opponent-and-pace-adjusted margin (the §5 schedule adjustment carried onto the §17 pace-neutral scale) for all 43 champions, ranked.
+**The data.** The opponent-and-scoring-adjusted margin (the §5 schedule adjustment carried onto the §9 scoring-share scale) for all 43 champions, ranked.
 
 **Two things it reports.** First, the complete ranked table behind the "1st of 43" headline, so every champion's adjusted score is visible, not only the top five.
-Second, the *shape* of those scores, which is what licenses the order-statistic reading of the #1 claim.
+Second, the *shape* of those scores, which is what licenses the order-statistic reading of the #1 claim (treating the top score as the expected largest of 43 draws from one bell curve, not a different kind of team).
 
 **The distribution.** Mean +3.29 points/game, standard deviation 3.38, with 65% of champions inside one SD of the mean (close to the ≈68% a normal predicts).
 Skewness is near zero and the excess kurtosis is negative, meaning tails *thinner* than a normal curve, the opposite of the heavy tail that defines a power law.
@@ -743,14 +744,14 @@ As in §16, the lone disagreement remains Elo's recency weighting, not anything 
 **The data.** Each champion's opponent-adjusted margin (§5) and the standard deviation of all teams' SRS in that champion's season (`season_srs_sd`, added in `build_champions_table`).
 
 **Why a dispersion adjustment.** §9 and §17 correct the *level* of the scoring environment (total scoring, pace); neither touches its *dispersion*.
-But the spread of team strengths has nearly doubled: the SD of team SRS rose from 3.1 in 1983-84 to 5.90 in 2025-26.
+But the spread of team strengths has nearly doubled: the SD of team SRS rose from 3.1 in 1983-84 to 5.9 in 2025-26.
 In a more top-heavy league a given margin is a smaller distance above the field, so a level adjustment alone leaves recent dominance overstated relative to older, bunched-up eras.
 
 **The computation.** `z = adj_margin / season_srs_sd`: the opponent-adjusted margin expressed in standard deviations of that season's team-strength distribution.
 This is the ordinary z-score (a value's distance from its distribution mean in SD units), using the league's own spread as the yardstick.
 The construction mixes a playoff-derived margin with a regular-season spread, so it answers "how many regular-season-team-strength units was this playoff dominance", a defensible but not unique choice; the exact rank is mildly sensitive to it.
 
-**What the results mean.** The Knicks' +11.23 adjusted margin is the largest in raw points, but 2025-26 also has the widest spread in the dataset (5.90), so their z-score is +1.90 SD, ranking **#5 of 43**.
+**What the results mean.** The Knicks' +11.23 adjusted margin is the largest in raw points, but 2025-26 also has the widest spread in the dataset (5.9), so their z-score is +1.90 SD, ranking **#5 of 43**.
 The 16–17 Warriors lead at +2.48.
 Standardizing by dispersion is the only era adjustment that unseats the Knicks from #1; §9 (scoring), §17 (pace), and the wins-only and capped ratings do not.
 It points the same direction as Elo's recency weighting (§15): both are *relative* measures that grade against the specific league faced, rather than absolute ones.

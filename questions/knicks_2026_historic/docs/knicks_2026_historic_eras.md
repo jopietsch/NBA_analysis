@@ -50,7 +50,7 @@ Two traps live here.
 **Scoring-share** scales margins by points per game, which over-corrects: it treats a league's better shooting as if it were inflation.
 **Per-100 possessions** divides by possessions instead, the cleaner fix, because it strips out pace without punishing efficiency.
 But both only touch the *level* of scoring.
-Neither touches the *spread* of team quality, which has nearly doubled since 1984 (the spread of team ratings rose from 3.1 to 5.90).
+Neither touches the *spread* of team quality, which has nearly doubled since 1984 (the spread of team ratings rose from 3.1 to 5.9).
 Measure a team by how far it stood above an average opponent in units of the league's spread, and a huge margin in today's top-heavy league counts for less than the same margin in a bunched one.
 
 ## The punchline: absolute vs. relative

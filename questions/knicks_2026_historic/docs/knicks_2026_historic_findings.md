@@ -31,11 +31,11 @@ Start with the objections a reader walks in with:
 
 **They earned it by rising, not coasting.** Only the fifth-strongest team in the playoff field during the regular season, the Knicks jumped to the top in the postseason: a rise of **+11.48**, the biggest of any 2026 playoff team and the 2nd-biggest any champion has produced.
 The team they beat in the Finals made the second-biggest jump in the field: the Spurs climbed from a regular-season SRS of +8.28 to +15.13 in the playoffs.
-That is why the Finals were the hardest test of the run, a 4-1 series won by an average of just +2.4 against the one opponent playing above its regular-season level (§5–§6).
+That is part of why the Finals were the hardest test of the run, a 4-1 series won by an average of just +2.4 against the one opponent playing above its regular-season level (§5–§6).
 
 **How solid is the #1 claim?** After adjusting for opponent strength, the Knicks' margin of **+11.2 pts/game** ranks first among all 43 champions: the best single number any champion has posted.
 Whether it makes them the single best is a different question, and the answer is not quite.
-Nineteen playoff games is a small sample: re-drawing the run at random still leaves the Knicks the most likely #1, in about 60% of replays, but a fairer test that lets every champion carry the same uncertainty drops that to about 9% (§10–§11).
+Nineteen playoff games is a small sample: re-drawing the run at random still leaves the Knicks the most likely #1, in about 60% of replays, but a fairer test that lets every champion carry the same uncertainty drops that to about 9% (§10).
 Graded against how top-heavy today's league has become, they come out a top-five run rather than a clear first (§14).
 So: the best raw opponent-adjusted number in 43 years, very likely one of the best handful of title runs ever, but not provably the single best.
 
@@ -48,9 +48,8 @@ So: the best raw opponent-adjusted number in 43 years, very likely one of the be
 The Knicks went **16-3** in the 2026 playoffs.
 Among all 43 champions in the data (1983–84 through 2025–26):
 
-- **Win-rate percentile: 88th**: 0.842, vs. mean 0.752, best (2016–17 Warriors)
-  0.941
-- **Average margin: 100th percentile**: +14.9 pts/game, best in 43 years
+- **Win rate: 88th percentile.** They won 84% of their playoff games; the typical champion wins 75%, and the best, the 2016–17 Warriors, won 94%.
+- **Average margin: 100th percentile.** +14.9 pts/game, best in 43 years.
 
 **Round-by-round** (SRS = team quality relative to schedule; higher = stronger):
 
@@ -61,7 +60,7 @@ Among all 43 champions in the data (1983–84 through 2025–26):
 | Conference Finals | Cleveland Cavaliers (SRS +3.77) | 4-0 | +19.2 |
 | NBA Finals | San Antonio Spurs (SRS +8.28) | 4-1 | +2.4 |
 
-The two sweeps, against Cleveland (SRS +3.77, a genuine title contender) and Philadelphia (SRS -0.27), drove the record margin.
+The two sweeps, against Cleveland (SRS +3.77, the strongest East opponent the Knicks drew) and Philadelphia (SRS -0.27), drove the record margin.
 The Finals were tight: four of the five games were decided by 4 points or fewer.
 
 ![Playoff win rate, all 43 champions ranked](../generated/images/knicks_2026_win_rate_ranking.svg){#fig-win-rate-ranking width=100%}
@@ -199,7 +198,7 @@ Two ways of measuring the rise, one verdict: the biggest in the 2026 field, and 
 **What the rise is made of.** It is not spread evenly across the run.
 The first three rounds against the East were demolitions: raw margins of +17.5, +22.2, and +19.2.
 The Finals were a near-even fight (+2.4), and once the Spurs' own playoff form is subtracted out, the Knicks actually came out behind on the scoreboard math (§5).
-So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen even further than the Knicks pushed to the hardest test of the run.
+So the historic rise rests on overwhelming a beatable conference, not on the championship round, which the one team that had risen nearly as far as the Knicks pushed to the hardest test of the run.
 
 **Is there anything behind the jump we can actually see?** One thing shows up in who was on the floor.
 The Knicks' core five (Karl-Anthony Towns, OG Anunoby, Josh Hart, Mikal Bridges, Jalen Brunson) were together for only **56%** of the regular season, but **89%** of the playoffs.
@@ -210,21 +209,19 @@ Some of the jump, then, is plain continuity: the playoffs were the longest healt
 
 But health does not finish the story.
 Even at full strength in the regular season (+8.09), the Knicks were nowhere near their playoff margin (+14.9).
-A healthy roster lifts the realistic baseline a couple of points above the full-season number, no more; the rest of the jump is the weaker, underperforming early-round opponents (§5) and a genuine playoff step-up that the data here can measure but cannot pin to a cause.
+A healthy roster lifts the realistic baseline a couple of points above the full-season number, no more; the rest of the jump is the possibly-fading early-round opponents (a weak maybe, per §5) and a genuine playoff step-up that the data here can measure but cannot pin to a cause.
 Pinning down *why* a team shoots or defends better for six weeks would take possession-level and shot-quality data this study does not carry, so the honest answer is that continuity is the one piece of the rise we can see, and it is only a piece.
 
 ---
 
 ## 7. Ordinary at Home, Untouchable on the Road
 
-The Knicks won 90.0% of their road playoff games, better than all but one champion in 43 years.
+The Knicks have an unusual profile for a champion: merely decent in Madison Square Garden, and nearly unbeatable everywhere else.
 They also played more close games than a typical champion: 31.6% of their playoff games were decided by 5 points or fewer, the 84th percentile.
 
 **Home/away splits:**
 - Home: 9 games, 77.8% win rate (23rd percentile vs. champions, relatively weak at home for a champion)
-- Away: 10 games, 90.0% win rate (98th percentile)
-
-It is an unusual profile for a champion: ordinary at home, nearly untouchable on the road.
+- Away: 10 games, 90.0% win rate (98th percentile, better than all but one champion in 43 years)
 
 ---
 
@@ -308,7 +305,7 @@ They land in the top three about 23% of the time and the top five about 34%; the
 
 The gap between 60% and 9% comes from two factors.
 The Knicks' run was streaky: the two sweeps came by +22.2 and +19.2 next to a +2.4 Finals.
-A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from +11.2 down to about +4.7, rather than the +6.5 of the second check (which ignored streakiness).
+A run that swings between blowouts and close games is harder to trust than a steady one, so this test pulls the margin back harder than the simple version above did: from +11.2 down to about +4.7, rather than the +6.5 of the second check (which pulled toward a looser, noise-inflated benchmark).
 And several rivals, the 1990-91 Bulls, the 2022-23 Nuggets, the 2016-17 Warriors, were nearly as dominant on steadier evidence, so once everyone's wobble is in play they overtake the Knicks often.
 
 The bottom line across these checks: the 2025-26 Knicks own the best raw opponent-adjusted number of any champion, and they are very likely one of the best handful of title runs ever, but the data cannot crown them the single best.
@@ -378,8 +375,9 @@ Each was tested; the data does not support any of them.
 | The high-scoring era inflated the margin | Mostly no. The scoring is better shooting, not a faster game; per possession both the raw and adjusted margins stay first. Only the harsher scoring-share adjustment drops the raw margin to 3rd. | §14 |
 | An opponent was injured | No. Opponents were 98% healthy on average; the Spurs and Hawks were at 100%. | §9 |
 
-The one thing that genuinely tempers the claim is not on this list.
-It is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about 9% of the time (§10–§11).
+Two things genuinely temper the claim, and neither is on this list.
+One is the shortness of a 19-game run: when every champion is allowed the same uncertainty, the Knicks are the single best only about 9% of the time (§10).
+The other is the yardstick: grade the margin against how top-heavy today's league is, or weight opponents by their late-season form, and the run reads as top-five rather than a clear first (§11, §14).
 
 Each objection is treated in full, with why it seemed plausible and exactly what the data showed, in the companion document *The Investigation* (Appendix A).
 
@@ -399,7 +397,7 @@ Per possession the Knicks' raw margin (+14.6) and opponent-adjusted margin (+11.
 So the level of scoring, however you handle it, does not knock the opponent-adjusted run off the top.
 
 **Then, the spread.** This is the adjustment that does.
-Today's league is far more top-heavy than the 1980s: the spread of team strength has nearly doubled since 1984, with the typical distance of a team from the league average growing from about 3.1 to 5.90 points.
+Today's league is far more top-heavy than the 1980s: the spread of team strength has nearly doubled since 1984, with the typical distance of a team from the league average growing from about 3.1 to 5.9 points.
 A given margin is a smaller achievement when many teams are extreme than when the league is bunched together.
 Grade each champion against its own era's spread, measuring how far above an average team it stood relative to how spread out that season's teams were, and the Knicks come in **5th**, standing +1.90 times that era's typical team-to-team gap clear of an average team.
 The 2016-17 Warriors lead at +2.48, the 1986-87 Lakers and 2022-23 Nuggets just behind: smaller margins in raw points, but towering over flatter fields.
@@ -433,7 +431,7 @@ Whichever metric sets the ranking, the leaders' intervals sit on top of one anot
 **Small sample and ranking uncertainty:** 19 playoff games produce a wide range on the margin (+7.4 to +22.4).
 The comparison set is also only 43 champions.
 Several of the metrics here (adjusted margin, overperformance, elevation) all measure closely related things; treat them as different angles on one story, not independent votes.
-§10 puts numbers on how solid the #1 rank is, and that uncertainty, not any objection in §13, is what keeps first place from being settled.
+§10 puts numbers on how solid the #1 rank is; that uncertainty, together with the choice of yardstick in §14, is what keeps first place from being settled, not any objection in §13.
 
 **Opponent SRS** for the reg-season-adjusted metrics is from regular-season performance.
 For the playoff-adjusted metrics (§5), each opponent's playoff SRS is computed from games *excluding* the Knicks series to avoid circularity; the Hawks had no such games and are excluded from that adjustment.
@@ -484,12 +482,12 @@ All files are in the same folder as this PDF (`generated/`).
 
 ---
 
-## Appendix B: Every Champion, Opponent-and-Pace-Adjusted
+## Appendix B: Every Champion, Opponent-and-Scoring-Adjusted
 
 The headline rankings throughout this report quote percentiles and the top few names.
-Here is the full list: all 43 champions since 1983-84, ranked by the same opponent-and-pace-adjusted margin used in §4 and §14.
+Here is the full list: all 43 champions since 1983-84, ranked by the opponent-adjusted margin of §4 scaled to a common scoring level (the scoring-share lens of §14, its deliberately harsh take on the era).
 Each score is points per game above an average team, after stripping out strength of schedule and then scaling to a common scoring environment so a 2025-26 margin and a 2000-01 margin sit on one ruler.
-The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Pace** also levels the era's scoring.
+The first three columns trace the adjustment: **Raw** is the plain scoring margin, **Opp-adj** removes the schedule, **Opp+Scoring** also levels the era's scoring.
 The last two take a different route to the same era problem: **Spread Z** grades each opponent-adjusted margin against how spread out team strength was that season (§14), and **Spread Rank** is where that order places the champion.
 
 ::: {.content-visible when-format="html"}
@@ -498,7 +496,7 @@ The last two take a different route to the same era problem: **Spread Z** grades
 
 ::: {.sortable}
 
-| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Spread Z | Spread Rank |
+| # | Season | Champion | Raw | Opp-adj | Opp+Scoring | Spread Z | Spread Rank |
 |--:|---|---|--:|--:|--:|--:|--:|
 | 1 | 25–26 | **New York Knicks** | +14.89 | +11.23 | +10.05 | +1.90 | 5 |
 | 2 | 16–17 | Golden State Warriors | +13.65 | +10.23 | +10.04 | +2.48 | 1 |
@@ -557,8 +555,8 @@ The ones that slide are the big-margin champions from spread-out eras, where a w
 It is the mirror image of the schedule-and-pace reshuffle above, and why §14 treats the spread as the one lens that unseats the Knicks.
 
 **The scores form a bell curve, not a handful of runaway giants.** The average champion sits at +3.29 points per game, and about 65% of them fall within one standard deviation (the typical spread of the scores) of that average.
-The spread is near-symmetric with no fat tail, and a standard normality check passes comfortably (the full test statistics are in the Regression Results companion).
-That matters for reading the #1 claim: the Knicks' top score sits about +2.0 standard deviations above the average champion, which is high but exactly where the single best of 43 bell-curve draws is expected to land.
+The spread is near-symmetric with no fat tail, and the scores pass a standard check for that bell shape (the details are in the Regression Results companion).
+That matters for reading the #1 claim: the Knicks' top score sits about twice that typical spread above the average champion (+2.0 standard deviations), which is high but right where the single best of 43 bell-curve draws is expected to land.
 The best champion is the leading edge of an ordinary spread, not a breed apart, which is the statistical echo of §10's conclusion that first place is real but not settled.
 
 ---

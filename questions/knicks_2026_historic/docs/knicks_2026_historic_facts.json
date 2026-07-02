@@ -107,14 +107,14 @@
   "appendix.dist.mean": {
     "display": "+3.29",
     "fmt": "{:+.2f}",
-    "note": "Mean opp+pace champion margin",
+    "note": "Mean opp+scoring champion margin",
     "unit": null,
     "value": 3.292848569089431
   },
   "appendix.dist.sd": {
     "display": "3.38",
     "fmt": "{:.2f}",
-    "note": "SD of opp+pace champion margins",
+    "note": "SD of opp+scoring champion margins",
     "unit": null,
     "value": 3.381322511025133
   },
@@ -126,11 +126,11 @@
     "value": 65.11627906976744
   },
   "appendix.ranking_table": {
-    "display": "| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Spread Z | Spread Rank |\n|--:|---|---|--:|--:|--:|--:|--:|\n| 1 | 25\u201326 | **New York Knicks** | +14.89 | +11.23 | +10.05 | +1.90 | 5 |\n| 2 | 16\u201317 | Golden State Warriors | +13.65 | +10.23 | +10.04 | +2.48 | 1 |\n| 3 | 86\u201387 | Los Angeles Lakers | +10.83 | +9.52 | +8.96 | +2.12 | 2 |\n| 4 | 90\u201391 | Chicago Bulls | +11.71 | +9.20 | +8.96 | +1.90 | 6 |\n| 5 | 00\u201301 | Los Angeles Lakers | +12.75 | +7.26 | +7.93 | +1.67 | 8 |\n| 6 | 85\u201386 | Boston Celtics | +10.56 | +7.72 | +7.25 | +1.96 | 4 |\n| 7 | 22\u201323 | Denver Nuggets | +8.30 | +7.68 | +6.93 | +2.03 | 3 |\n| 8 | 84\u201385 | Los Angeles Lakers | +10.16 | +7.21 | +6.74 | +1.88 | 7 |\n| 9 | 95\u201396 | Chicago Bulls | +10.56 | +6.03 | +6.27 | +1.21 | 10 |\n| 10 | 17\u201318 | Golden State Warriors | +10.00 | +6.04 | +5.88 | +1.43 | 9 |\n| 11 | 98\u201399 | San Antonio Spurs | +7.24 | +4.90 | +5.54 | +1.15 | 11 |\n| 12 | 23\u201324 | Boston Celtics | +8.05 | +6.06 | +5.49 | +1.15 | 12 |\n| 13 | 13\u201314 | San Antonio Spurs | +9.30 | +4.82 | +4.94 | +1.03 | 13 |\n| 14 | 14\u201315 | Golden State Warriors | +7.81 | +4.48 | +4.64 | +0.95 | 15 |\n| 15 | 19\u201320 | Los Angeles Lakers | +6.86 | +4.80 | +4.44 | +1.01 | 14 |\n| 16 | 24\u201325 | Oklahoma City Thunder | +8.35 | +4.68 | +4.25 | +0.82 | 19 |\n| 17 | 89\u201390 | Detroit Pistons | +7.00 | +4.25 | +4.12 | +0.92 | 16 |\n| 18 | 11\u201312 | Miami Heat | +7.09 | +3.81 | +4.10 | +0.82 | 20 |\n| 19 | 88\u201389 | Detroit Pistons | +7.71 | +4.26 | +4.04 | +0.81 | 21 |\n| 20 | 12\u201313 | Miami Heat | +6.43 | +3.71 | +3.92 | +0.84 | 18 |\n| 21 | 03\u201304 | Detroit Pistons | +6.35 | +3.44 | +3.82 | +0.87 | 17 |\n| 22 | 08\u201309 | Los Angeles Lakers | +7.22 | +3.35 | +3.47 | +0.74 | 22 |\n| 23 | 15\u201316 | Cleveland Cavaliers | +8.62 | +3.21 | +3.24 | +0.66 | 23 |\n| 24 | 07\u201308 | Boston Celtics | +5.23 | +2.75 | +2.85 | +0.53 | 24 |\n| 25 | 97\u201398 | Chicago Bulls | +7.00 | +2.42 | +2.62 | +0.46 | 26 |\n| 26 | 91\u201392 | Chicago Bulls | +6.18 | +2.20 | +2.17 | +0.47 | 25 |\n| 27 | 20\u201321 | Milwaukee Bucks | +5.13 | +1.80 | +1.66 | +0.39 | 28 |\n| 28 | 02\u201303 | San Antonio Spurs | +5.50 | +1.35 | +1.47 | +0.33 | 29 |\n| 29 | 83\u201384 | Boston Celtics | +4.17 | +1.42 | +1.34 | +0.46 | 27 |\n| 30 | 10\u201311 | Dallas Mavericks | +5.76 | +1.26 | +1.31 | +0.28 | 30 |\n| 31 | 18\u201319 | Toronto Raptors | +5.46 | +1.15 | +1.07 | +0.25 | 31 |\n| 32 | 92\u201393 | Chicago Bulls | +5.84 | +0.79 | +0.77 | +0.17 | 32 |\n| 33 | 04\u201305 | San Antonio Spurs | +4.35 | +0.65 | +0.69 | +0.16 | 33 |\n| 34 | 21\u201322 | Golden State Warriors | +5.05 | +0.46 | +0.43 | +0.10 | 34 |\n| 35 | 05\u201306 | Miami Heat | +3.78 | +0.22 | +0.24 | +0.06 | 35 |\n| 36 | 96\u201397 | Chicago Bulls | +5.74 | +0.04 | +0.04 | +0.01 | 36 |\n| 37 | 06\u201307 | San Antonio Spurs | +3.90 | -0.13 | -0.14 | -0.04 | 37 |\n| 38 | 09\u201310 | Los Angeles Lakers | +3.83 | -0.27 | -0.28 | -0.06 | 38 |\n| 39 | 87\u201388 | Los Angeles Lakers | +2.54 | -0.33 | -0.32 | -0.07 | 39 |\n| 40 | 93\u201394 | Houston Rockets | +3.13 | -1.61 | -1.64 | -0.32 | 40 |\n| 41 | 01\u201302 | Los Angeles Lakers | +3.79 | -1.94 | -2.10 | -0.48 | 41 |\n| 42 | 99\u201300 | Los Angeles Lakers | +2.39 | -2.42 | -2.58 | -0.54 | 42 |\n| 43 | 94\u201395 | Houston Rockets | +2.77 | -2.99 | -3.06 | -0.64 | 43 |",
+    "display": "| # | Season | Champion | Raw | Opp-adj | Opp+Scoring | Spread Z | Spread Rank |\n|--:|---|---|--:|--:|--:|--:|--:|\n| 1 | 25\u201326 | **New York Knicks** | +14.89 | +11.23 | +10.05 | +1.90 | 5 |\n| 2 | 16\u201317 | Golden State Warriors | +13.65 | +10.23 | +10.04 | +2.48 | 1 |\n| 3 | 86\u201387 | Los Angeles Lakers | +10.83 | +9.52 | +8.96 | +2.12 | 2 |\n| 4 | 90\u201391 | Chicago Bulls | +11.71 | +9.20 | +8.96 | +1.90 | 6 |\n| 5 | 00\u201301 | Los Angeles Lakers | +12.75 | +7.26 | +7.93 | +1.67 | 8 |\n| 6 | 85\u201386 | Boston Celtics | +10.56 | +7.72 | +7.25 | +1.96 | 4 |\n| 7 | 22\u201323 | Denver Nuggets | +8.30 | +7.68 | +6.93 | +2.03 | 3 |\n| 8 | 84\u201385 | Los Angeles Lakers | +10.16 | +7.21 | +6.74 | +1.88 | 7 |\n| 9 | 95\u201396 | Chicago Bulls | +10.56 | +6.03 | +6.27 | +1.21 | 10 |\n| 10 | 17\u201318 | Golden State Warriors | +10.00 | +6.04 | +5.88 | +1.43 | 9 |\n| 11 | 98\u201399 | San Antonio Spurs | +7.24 | +4.90 | +5.54 | +1.15 | 11 |\n| 12 | 23\u201324 | Boston Celtics | +8.05 | +6.06 | +5.49 | +1.15 | 12 |\n| 13 | 13\u201314 | San Antonio Spurs | +9.30 | +4.82 | +4.94 | +1.03 | 13 |\n| 14 | 14\u201315 | Golden State Warriors | +7.81 | +4.48 | +4.64 | +0.95 | 15 |\n| 15 | 19\u201320 | Los Angeles Lakers | +6.86 | +4.80 | +4.44 | +1.01 | 14 |\n| 16 | 24\u201325 | Oklahoma City Thunder | +8.35 | +4.68 | +4.25 | +0.82 | 19 |\n| 17 | 89\u201390 | Detroit Pistons | +7.00 | +4.25 | +4.12 | +0.92 | 16 |\n| 18 | 11\u201312 | Miami Heat | +7.09 | +3.81 | +4.10 | +0.82 | 20 |\n| 19 | 88\u201389 | Detroit Pistons | +7.71 | +4.26 | +4.04 | +0.81 | 21 |\n| 20 | 12\u201313 | Miami Heat | +6.43 | +3.71 | +3.92 | +0.84 | 18 |\n| 21 | 03\u201304 | Detroit Pistons | +6.35 | +3.44 | +3.82 | +0.87 | 17 |\n| 22 | 08\u201309 | Los Angeles Lakers | +7.22 | +3.35 | +3.47 | +0.74 | 22 |\n| 23 | 15\u201316 | Cleveland Cavaliers | +8.62 | +3.21 | +3.24 | +0.66 | 23 |\n| 24 | 07\u201308 | Boston Celtics | +5.23 | +2.75 | +2.85 | +0.53 | 24 |\n| 25 | 97\u201398 | Chicago Bulls | +7.00 | +2.42 | +2.62 | +0.46 | 26 |\n| 26 | 91\u201392 | Chicago Bulls | +6.18 | +2.20 | +2.17 | +0.47 | 25 |\n| 27 | 20\u201321 | Milwaukee Bucks | +5.13 | +1.80 | +1.66 | +0.39 | 28 |\n| 28 | 02\u201303 | San Antonio Spurs | +5.50 | +1.35 | +1.47 | +0.33 | 29 |\n| 29 | 83\u201384 | Boston Celtics | +4.17 | +1.42 | +1.34 | +0.46 | 27 |\n| 30 | 10\u201311 | Dallas Mavericks | +5.76 | +1.26 | +1.31 | +0.28 | 30 |\n| 31 | 18\u201319 | Toronto Raptors | +5.46 | +1.15 | +1.07 | +0.25 | 31 |\n| 32 | 92\u201393 | Chicago Bulls | +5.84 | +0.79 | +0.77 | +0.17 | 32 |\n| 33 | 04\u201305 | San Antonio Spurs | +4.35 | +0.65 | +0.69 | +0.16 | 33 |\n| 34 | 21\u201322 | Golden State Warriors | +5.05 | +0.46 | +0.43 | +0.10 | 34 |\n| 35 | 05\u201306 | Miami Heat | +3.78 | +0.22 | +0.24 | +0.06 | 35 |\n| 36 | 96\u201397 | Chicago Bulls | +5.74 | +0.04 | +0.04 | +0.01 | 36 |\n| 37 | 06\u201307 | San Antonio Spurs | +3.90 | -0.13 | -0.14 | -0.04 | 37 |\n| 38 | 09\u201310 | Los Angeles Lakers | +3.83 | -0.27 | -0.28 | -0.06 | 38 |\n| 39 | 87\u201388 | Los Angeles Lakers | +2.54 | -0.33 | -0.32 | -0.07 | 39 |\n| 40 | 93\u201394 | Houston Rockets | +3.13 | -1.61 | -1.64 | -0.32 | 40 |\n| 41 | 01\u201302 | Los Angeles Lakers | +3.79 | -1.94 | -2.10 | -0.48 | 41 |\n| 42 | 99\u201300 | Los Angeles Lakers | +2.39 | -2.42 | -2.58 | -0.54 | 42 |\n| 43 | 94\u201395 | Houston Rockets | +2.77 | -2.99 | -3.06 | -0.64 | 43 |",
     "fmt": null,
-    "note": "Full opp+pace-adjusted champion ranking, markdown table",
+    "note": "Full opp+scoring-adjusted champion ranking, markdown table",
     "unit": null,
-    "value": "| # | Season | Champion | Raw | Opp-adj | Opp+Pace | Spread Z | Spread Rank |\n|--:|---|---|--:|--:|--:|--:|--:|\n| 1 | 25\u201326 | **New York Knicks** | +14.89 | +11.23 | +10.05 | +1.90 | 5 |\n| 2 | 16\u201317 | Golden State Warriors | +13.65 | +10.23 | +10.04 | +2.48 | 1 |\n| 3 | 86\u201387 | Los Angeles Lakers | +10.83 | +9.52 | +8.96 | +2.12 | 2 |\n| 4 | 90\u201391 | Chicago Bulls | +11.71 | +9.20 | +8.96 | +1.90 | 6 |\n| 5 | 00\u201301 | Los Angeles Lakers | +12.75 | +7.26 | +7.93 | +1.67 | 8 |\n| 6 | 85\u201386 | Boston Celtics | +10.56 | +7.72 | +7.25 | +1.96 | 4 |\n| 7 | 22\u201323 | Denver Nuggets | +8.30 | +7.68 | +6.93 | +2.03 | 3 |\n| 8 | 84\u201385 | Los Angeles Lakers | +10.16 | +7.21 | +6.74 | +1.88 | 7 |\n| 9 | 95\u201396 | Chicago Bulls | +10.56 | +6.03 | +6.27 | +1.21 | 10 |\n| 10 | 17\u201318 | Golden State Warriors | +10.00 | +6.04 | +5.88 | +1.43 | 9 |\n| 11 | 98\u201399 | San Antonio Spurs | +7.24 | +4.90 | +5.54 | +1.15 | 11 |\n| 12 | 23\u201324 | Boston Celtics | +8.05 | +6.06 | +5.49 | +1.15 | 12 |\n| 13 | 13\u201314 | San Antonio Spurs | +9.30 | +4.82 | +4.94 | +1.03 | 13 |\n| 14 | 14\u201315 | Golden State Warriors | +7.81 | +4.48 | +4.64 | +0.95 | 15 |\n| 15 | 19\u201320 | Los Angeles Lakers | +6.86 | +4.80 | +4.44 | +1.01 | 14 |\n| 16 | 24\u201325 | Oklahoma City Thunder | +8.35 | +4.68 | +4.25 | +0.82 | 19 |\n| 17 | 89\u201390 | Detroit Pistons | +7.00 | +4.25 | +4.12 | +0.92 | 16 |\n| 18 | 11\u201312 | Miami Heat | +7.09 | +3.81 | +4.10 | +0.82 | 20 |\n| 19 | 88\u201389 | Detroit Pistons | +7.71 | +4.26 | +4.04 | +0.81 | 21 |\n| 20 | 12\u201313 | Miami Heat | +6.43 | +3.71 | +3.92 | +0.84 | 18 |\n| 21 | 03\u201304 | Detroit Pistons | +6.35 | +3.44 | +3.82 | +0.87 | 17 |\n| 22 | 08\u201309 | Los Angeles Lakers | +7.22 | +3.35 | +3.47 | +0.74 | 22 |\n| 23 | 15\u201316 | Cleveland Cavaliers | +8.62 | +3.21 | +3.24 | +0.66 | 23 |\n| 24 | 07\u201308 | Boston Celtics | +5.23 | +2.75 | +2.85 | +0.53 | 24 |\n| 25 | 97\u201398 | Chicago Bulls | +7.00 | +2.42 | +2.62 | +0.46 | 26 |\n| 26 | 91\u201392 | Chicago Bulls | +6.18 | +2.20 | +2.17 | +0.47 | 25 |\n| 27 | 20\u201321 | Milwaukee Bucks | +5.13 | +1.80 | +1.66 | +0.39 | 28 |\n| 28 | 02\u201303 | San Antonio Spurs | +5.50 | +1.35 | +1.47 | +0.33 | 29 |\n| 29 | 83\u201384 | Boston Celtics | +4.17 | +1.42 | +1.34 | +0.46 | 27 |\n| 30 | 10\u201311 | Dallas Mavericks | +5.76 | +1.26 | +1.31 | +0.28 | 30 |\n| 31 | 18\u201319 | Toronto Raptors | +5.46 | +1.15 | +1.07 | +0.25 | 31 |\n| 32 | 92\u201393 | Chicago Bulls | +5.84 | +0.79 | +0.77 | +0.17 | 32 |\n| 33 | 04\u201305 | San Antonio Spurs | +4.35 | +0.65 | +0.69 | +0.16 | 33 |\n| 34 | 21\u201322 | Golden State Warriors | +5.05 | +0.46 | +0.43 | +0.10 | 34 |\n| 35 | 05\u201306 | Miami Heat | +3.78 | +0.22 | +0.24 | +0.06 | 35 |\n| 36 | 96\u201397 | Chicago Bulls | +5.74 | +0.04 | +0.04 | +0.01 | 36 |\n| 37 | 06\u201307 | San Antonio Spurs | +3.90 | -0.13 | -0.14 | -0.04 | 37 |\n| 38 | 09\u201310 | Los Angeles Lakers | +3.83 | -0.27 | -0.28 | -0.06 | 38 |\n| 39 | 87\u201388 | Los Angeles Lakers | +2.54 | -0.33 | -0.32 | -0.07 | 39 |\n| 40 | 93\u201394 | Houston Rockets | +3.13 | -1.61 | -1.64 | -0.32 | 40 |\n| 41 | 01\u201302 | Los Angeles Lakers | +3.79 | -1.94 | -2.10 | -0.48 | 41 |\n| 42 | 99\u201300 | Los Angeles Lakers | +2.39 | -2.42 | -2.58 | -0.54 | 42 |\n| 43 | 94\u201395 | Houston Rockets | +2.77 | -2.99 | -3.06 | -0.64 | 43 |"
+    "value": "| # | Season | Champion | Raw | Opp-adj | Opp+Scoring | Spread Z | Spread Rank |\n|--:|---|---|--:|--:|--:|--:|--:|\n| 1 | 25\u201326 | **New York Knicks** | +14.89 | +11.23 | +10.05 | +1.90 | 5 |\n| 2 | 16\u201317 | Golden State Warriors | +13.65 | +10.23 | +10.04 | +2.48 | 1 |\n| 3 | 86\u201387 | Los Angeles Lakers | +10.83 | +9.52 | +8.96 | +2.12 | 2 |\n| 4 | 90\u201391 | Chicago Bulls | +11.71 | +9.20 | +8.96 | +1.90 | 6 |\n| 5 | 00\u201301 | Los Angeles Lakers | +12.75 | +7.26 | +7.93 | +1.67 | 8 |\n| 6 | 85\u201386 | Boston Celtics | +10.56 | +7.72 | +7.25 | +1.96 | 4 |\n| 7 | 22\u201323 | Denver Nuggets | +8.30 | +7.68 | +6.93 | +2.03 | 3 |\n| 8 | 84\u201385 | Los Angeles Lakers | +10.16 | +7.21 | +6.74 | +1.88 | 7 |\n| 9 | 95\u201396 | Chicago Bulls | +10.56 | +6.03 | +6.27 | +1.21 | 10 |\n| 10 | 17\u201318 | Golden State Warriors | +10.00 | +6.04 | +5.88 | +1.43 | 9 |\n| 11 | 98\u201399 | San Antonio Spurs | +7.24 | +4.90 | +5.54 | +1.15 | 11 |\n| 12 | 23\u201324 | Boston Celtics | +8.05 | +6.06 | +5.49 | +1.15 | 12 |\n| 13 | 13\u201314 | San Antonio Spurs | +9.30 | +4.82 | +4.94 | +1.03 | 13 |\n| 14 | 14\u201315 | Golden State Warriors | +7.81 | +4.48 | +4.64 | +0.95 | 15 |\n| 15 | 19\u201320 | Los Angeles Lakers | +6.86 | +4.80 | +4.44 | +1.01 | 14 |\n| 16 | 24\u201325 | Oklahoma City Thunder | +8.35 | +4.68 | +4.25 | +0.82 | 19 |\n| 17 | 89\u201390 | Detroit Pistons | +7.00 | +4.25 | +4.12 | +0.92 | 16 |\n| 18 | 11\u201312 | Miami Heat | +7.09 | +3.81 | +4.10 | +0.82 | 20 |\n| 19 | 88\u201389 | Detroit Pistons | +7.71 | +4.26 | +4.04 | +0.81 | 21 |\n| 20 | 12\u201313 | Miami Heat | +6.43 | +3.71 | +3.92 | +0.84 | 18 |\n| 21 | 03\u201304 | Detroit Pistons | +6.35 | +3.44 | +3.82 | +0.87 | 17 |\n| 22 | 08\u201309 | Los Angeles Lakers | +7.22 | +3.35 | +3.47 | +0.74 | 22 |\n| 23 | 15\u201316 | Cleveland Cavaliers | +8.62 | +3.21 | +3.24 | +0.66 | 23 |\n| 24 | 07\u201308 | Boston Celtics | +5.23 | +2.75 | +2.85 | +0.53 | 24 |\n| 25 | 97\u201398 | Chicago Bulls | +7.00 | +2.42 | +2.62 | +0.46 | 26 |\n| 26 | 91\u201392 | Chicago Bulls | +6.18 | +2.20 | +2.17 | +0.47 | 25 |\n| 27 | 20\u201321 | Milwaukee Bucks | +5.13 | +1.80 | +1.66 | +0.39 | 28 |\n| 28 | 02\u201303 | San Antonio Spurs | +5.50 | +1.35 | +1.47 | +0.33 | 29 |\n| 29 | 83\u201384 | Boston Celtics | +4.17 | +1.42 | +1.34 | +0.46 | 27 |\n| 30 | 10\u201311 | Dallas Mavericks | +5.76 | +1.26 | +1.31 | +0.28 | 30 |\n| 31 | 18\u201319 | Toronto Raptors | +5.46 | +1.15 | +1.07 | +0.25 | 31 |\n| 32 | 92\u201393 | Chicago Bulls | +5.84 | +0.79 | +0.77 | +0.17 | 32 |\n| 33 | 04\u201305 | San Antonio Spurs | +4.35 | +0.65 | +0.69 | +0.16 | 33 |\n| 34 | 21\u201322 | Golden State Warriors | +5.05 | +0.46 | +0.43 | +0.10 | 34 |\n| 35 | 05\u201306 | Miami Heat | +3.78 | +0.22 | +0.24 | +0.06 | 35 |\n| 36 | 96\u201397 | Chicago Bulls | +5.74 | +0.04 | +0.04 | +0.01 | 36 |\n| 37 | 06\u201307 | San Antonio Spurs | +3.90 | -0.13 | -0.14 | -0.04 | 37 |\n| 38 | 09\u201310 | Los Angeles Lakers | +3.83 | -0.27 | -0.28 | -0.06 | 38 |\n| 39 | 87\u201388 | Los Angeles Lakers | +2.54 | -0.33 | -0.32 | -0.07 | 39 |\n| 40 | 93\u201394 | Houston Rockets | +3.13 | -1.61 | -1.64 | -0.32 | 40 |\n| 41 | 01\u201302 | Los Angeles Lakers | +3.79 | -1.94 | -2.10 | -0.48 | 41 |\n| 42 | 99\u201300 | Los Angeles Lakers | +2.39 | -2.42 | -2.58 | -0.54 | 42 |\n| 43 | 94\u201395 | Houston Rockets | +2.77 | -2.99 | -3.06 | -0.64 | 43 |"
   },
   "ats.avg_margin": {
     "display": "+16.9",
@@ -173,6 +173,20 @@
     "note": "CF avg Knicks spread",
     "unit": null,
     "value": -2.75
+  },
+  "ats.cover_ci.hi": {
+    "display": "97",
+    "fmt": "{:.0f}",
+    "note": "95% Wilson CI upper bound, true cover rate (pct)",
+    "unit": null,
+    "value": 97.02641604283633
+  },
+  "ats.cover_ci.lo": {
+    "display": "47",
+    "fmt": "{:.0f}",
+    "note": "95% Wilson CI lower bound, true cover rate (pct)",
+    "unit": null,
+    "value": 46.57381620756587
   },
   "ats.deff": {
     "display": "2.82",
@@ -1465,28 +1479,28 @@
   "pace_era.opp_pct": {
     "display": "100.0",
     "fmt": "{:.1f}",
-    "note": "Opp+pace-adj margin percentile vs champions",
+    "note": "Opp+scoring-adj margin percentile vs champions",
     "unit": null,
     "value": 100.0
   },
   "pace_era.paa_adj": {
     "display": "+10.05",
     "fmt": "{:+.2f}",
-    "note": "Opp+pace-adj margin (Knicks 2026)",
+    "note": "Opp+scoring-adj margin (Knicks 2026)",
     "unit": null,
     "value": 10.054932334158453
   },
   "pace_era.pace_adj": {
     "display": "+13.34",
     "fmt": "{:+.2f}",
-    "note": "Pace-adj raw margin (Knicks 2026)",
+    "note": "Scoring-adj raw margin (Knicks 2026)",
     "unit": null,
     "value": 13.339868214921623
   },
   "pace_era.raw_pct": {
     "display": "95.3",
     "fmt": "{:.1f}",
-    "note": "Pace-adj raw margin percentile vs champions",
+    "note": "Scoring-adj raw margin percentile vs champions",
     "unit": null,
     "value": 95.34883720930233
   },
@@ -1745,7 +1759,7 @@
   "scoring.scale": {
     "display": "0.896",
     "fmt": "{:.3f}",
-    "note": "Pace-adj scale factor (ref/2026)",
+    "note": "Scoring-adj scale factor (ref/2026)",
     "unit": null,
     "value": 0.895609526796858
   },
@@ -1827,8 +1841,8 @@
     "value": 43
   },
   "spread.sd_2026": {
-    "display": "5.90",
-    "fmt": "{:.2f}",
+    "display": "5.9",
+    "fmt": "{:.1f}",
     "note": "2025-26 SRS spread (SD of team SRS)",
     "unit": null,
     "value": 5.899618573319846

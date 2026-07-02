@@ -162,7 +162,7 @@ Regular-season SRS measures each opponent's strength on an independent baseline 
 
 **Why games-weighted, not unique-opponent average.** `avg_opp_srs` is computed as a per-game average across all playoff games (each game contributes one opponent SRS data point), not as a simple average of four unique opponents.
 This matches the basis of `avg_margin`, which is also a per-game average.
-When the same formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are expressed on the same per-game scale, making the subtraction internally consistent: "how dominant per game after accounting for per-game opponent quality?"  A unique- opponent average could give equal weight to a 4-game first-round opponent and a 7-game Finals opponent, which would misstate the actual per-game opponent quality experienced.
+When the same formula `adj_margin = avg_margin − avg_opp_srs` is applied, both sides are expressed on the same per-game scale, making the subtraction internally consistent: "how dominant per game after accounting for per-game opponent quality?"  A unique-opponent average could give equal weight to a 4-game first-round opponent and a 7-game Finals opponent, which would misstate the actual per-game opponent quality experienced.
 
 **What the results mean.** Games-weighted average opponent SRS << f("opp.srs_weighted") >> sits at the << f("opp.srs_pct", "{:.0f}") >>th percentile among << f("raw.n_champions") >> champions, right at the historical median.
 The schedule was not unusually easy or hard.
@@ -248,7 +248,7 @@ Even on this stricter opponent measure (which credits their opponents' postseaso
 **The playoff-field elevation table.** As context, the section also lists every 2025–26 playoff team's regular-season SRS, full playoff SRS (all of that team's playoff games, including any against the Knicks), and the elevation between them (`compute_playoff_field_elevation`).
 This is descriptive, not a ranked test: it shows the Knicks (<< f("field.knicks.elevation") >>) and Spurs (<< f("field.spurs.elevation") >>) were the field's two big risers while most teams declined, which is the backdrop for why the bracket played out as it did.
 
-**What the results mean.** The pre-Finals series were lopsided on every measure (raw << f("prefinals.raw") >>, reg-adj << f("prefinals.reg_adj") >>, po-adj << f("prefinals.po_adj") >> across R1–CF), and the Finals were tight on every measure (raw << f("finals.raw") >>, reg-adj << f("finals.reg_adj") |tm >>, po-adj << f("finals.po_adj") |tm >>).
+**What the results mean.** The pre-Finals series were lopsided on every measure (raw << f("prefinals.raw") >>, reg-adj << f("prefinals.reg_adj") >>, po-adj << f("prefinals.po_adj") >>, each averaged per series across R1–CF; games-weighted, the raw figure is << f("east.margin") >>), and the Finals were tight on every measure (raw << f("finals.raw") >>, reg-adj << f("finals.reg_adj") |tm >>, po-adj << f("finals.po_adj") |tm >>).
 Switching from regular-season to playoff opponent strength does not erase the dominance: it sharpens the same story this section tells in `knicks_2026_historic_results.md`, that the headline margin was built before the Finals against opponents who were not collapsing, and the Finals were a real contest against a Spurs team peaking.
 
 **Why these charts.** Two figures carry this section.
@@ -391,7 +391,7 @@ But the inflation is not fully cancelled: `adj_margin = raw − opp_SRS`, and if
 
 **The data.** All of the above; this section re-computes the key metrics from scratch to produce a single summary table and a text verdict.
 
-**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin, pace-adjusted margin, opp+pace-adjusted margin, overperformance, SRS gap) are pulled, their percentile ranks computed, and a branching verdict string is assembled using thresholds:
+**The approach.** All metrics (win rate, margin, opp SRS, adjusted margin, scoring-adjusted margin, opp+scoring-adjusted margin, overperformance, SRS gap) are pulled, their percentile ranks computed, and a branching verdict string is assembled using thresholds:
 
 ```python
 if wr_pct >= 85:   dom = "elite"
@@ -470,12 +470,13 @@ A team covering << f("ats.n_covered") >> of << f("ats.n_total") >> games under a
 The East-opponent performance (14-0 ATS in rounds 1-3) drove the signal, while the Finals (2-5 ATS) was exactly what the efficient market predicted.
 
 **Adjusting for series correlation (`clustered_cover_significance`).** The iid binomial assumes << f("ats.n_total") >> independent Bernoulli (coin-flip) trials, but the games cluster into 4 series, and covers within a series are correlated (same matchup, same direction of pricing error).
-We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA (analysis of variance, here splitting cover-outcome variation into between-series and within-series parts) across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.75 here).
+We estimate the intraclass correlation (ICC, the share of cover-outcome variability that belongs to which series a game came from rather than to game-to-game noise) of the cover indicator via one-way ANOVA (analysis of variance, here splitting cover-outcome variation into between-series and within-series parts) across the four series and inflate the variance by the design effect `deff = 1 + (m0 − 1)·ICC`, where `m0` is the effective average cluster size (≈ 4.7 here, slightly below the plain 19/4 average because the series lengths are unequal).
 That gives an effective sample size `N / deff` and a p-value computed on it:
 
 - ICC ≈ << f("ats.icc") >> (covers are strongly clustered: three series are 100% covers, one is 2/5)
 - design effect ≈ << f("ats.deff") >>, so effective N ≈ << f("ats.n_eff") >> (not << f("ats.n_total") >>)
 - adjusted z ≈ +1.78, one-tailed p ≈ << f("ats.p_clust", "{:.3f}") >>
+- 95% Wilson interval for the true cover rate, computed on the effective N: << f("ats.cover_ci.lo") >>% to << f("ats.cover_ci.hi") >>% (the Wilson score interval is the standard binomial CI that stays inside [0, 1] and behaves at small samples; on ~7 effective games it is necessarily wide, spanning a coin flip to near-automatic)
 
 Still beyond chance, but an order of magnitude weaker than the iid << f("ats.p_iid") >>.
 With only four clusters the ICC is itself imprecise, so treat << f("ats.p_clust", "{:.3f}") >> as "weakened but still suggestive," not a sharp figure.
@@ -702,10 +703,10 @@ Widening or narrowing `σ` bunches or separates the favorites but leaves the ord
 
 ## 20. Full Champion Ranking and Its Shape (`run_appendix_ranking`)
 
-**The data.** The opponent-and-pace-adjusted margin (the §5 schedule adjustment carried onto the §17 pace-neutral scale) for all << f("raw.n_champions") >> champions, ranked.
+**The data.** The opponent-and-scoring-adjusted margin (the §5 schedule adjustment carried onto the §9 scoring-share scale) for all << f("raw.n_champions") >> champions, ranked.
 
 **Two things it reports.** First, the complete ranked table behind the "1st of << f("raw.n_champions") >>" headline, so every champion's adjusted score is visible, not only the top five.
-Second, the *shape* of those scores, which is what licenses the order-statistic reading of the #1 claim.
+Second, the *shape* of those scores, which is what licenses the order-statistic reading of the #1 claim (treating the top score as the expected largest of << f("raw.n_champions") >> draws from one bell curve, not a different kind of team).
 
 **The distribution.** Mean << f("appendix.dist.mean") >> points/game, standard deviation << f("appendix.dist.sd") >>, with << f("appendix.dist.within1sd_pct") >>% of champions inside one SD of the mean (close to the ≈68% a normal predicts).
 Skewness is near zero and the excess kurtosis is negative, meaning tails *thinner* than a normal curve, the opposite of the heavy tail that defines a power law.
