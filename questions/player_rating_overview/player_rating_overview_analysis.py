@@ -632,15 +632,15 @@ def _overlap_r2(df: pd.DataFrame, systems: list[str]) -> dict[str, float]:
     return result
 
 
-def run(end_year: int = 2026) -> None:
-    """Run all analysis sections and print results to stdout."""
-    df_full = load_unified_ratings(end_year)
-    qual = df_full[df_full["QUALIFIED"] == True].copy() if "QUALIFIED" in df_full.columns else df_full.copy()
-    present = _present_systems(qual, ALL_SYSTEMS)
+def _header(title: str) -> None:
+    """Print the box-drawing section header used throughout results.md."""
+    print(f"\n{'─' * 3} {title} {'─' * max(0, 60 - len(title))}")
 
-    header = lambda title: print(f"\n{'─' * 3} {title} {'─' * max(0, 60 - len(title))}")
 
-    header("DATA COVERAGE")
+def run_coverage(df_full: pd.DataFrame, qual: pd.DataFrame,
+                 present: list[str], end_year: int) -> None:
+    """DATA COVERAGE — season label, player counts, systems present."""
+    _header("DATA COVERAGE")
     print(f"Season: {end_year - 1}–{str(end_year)[-2:]}")
     print(f"Total players in unified table: {len(df_full)}")
     print(f"Qualified players (>= {MIN_MINUTES_QUALIFIER} min): {len(qual)}")
@@ -659,12 +659,15 @@ def run(end_year: int = 2026) -> None:
         FACTS.set("cov.rapm_n_players", n_rapm, "{:d}",
                   note="players with computed RAPM values")
 
+
+def run_rapm_single_season(qual: pd.DataFrame, present: list[str]) -> None:
+    """RAPM — computed single-season, no prior: top-5, box-score divergence."""
     # RAPM detail — computed in-house this report from 2025-26 play-by-play, a
     # single season with no box-score prior. Registers the top of the list (to
     # show the single-season noise) and how far it sits from the box-score
     # systems (its independence from them).
     if "RAPM" in qual.columns and qual["RAPM"].notna().sum() >= 20:
-        header("RAPM — COMPUTED SINGLE-SEASON (NO PRIOR)")
+        _header("RAPM — COMPUTED SINGLE-SEASON (NO PRIOR)")
         rq = qual[qual["RAPM"].notna()].copy()
         top5 = rq.nlargest(5, "RAPM")
         for rank, (_, row) in enumerate(top5.iterrows(), 1):
@@ -699,11 +702,14 @@ def run(end_year: int = 2026) -> None:
             FACTS.set("rapm.top1_consensus_rank", rapm1_consensus_rank, "{:d}",
                       note="consensus rank of the single-season RAPM #1 player")
 
+
+def run_rapm_my(qual: pd.DataFrame, present: list[str]) -> None:
+    """RAPM_MY — prior-informed multi-year RAPM: top-5, consensus agreement."""
     # RAPM_MY detail — the prior-informed, multi-year version. Registers its top
     # (should be recognizable stars, not single-season noise) and how much closer
     # it sits to the box-score systems and the consensus than bare RAPM does.
     if "RAPM_MY" in qual.columns and qual["RAPM_MY"].notna().sum() >= 20:
-        header("RAPM_MY — PRIOR-INFORMED, MULTI-YEAR")
+        _header("RAPM_MY — PRIOR-INFORMED, MULTI-YEAR")
         rq = qual[qual["RAPM_MY"].notna()].copy()
         top5 = rq.nlargest(5, "RAPM_MY")
         for rank, (_, row) in enumerate(top5.iterrows(), 1):
@@ -742,8 +748,11 @@ def run(end_year: int = 2026) -> None:
                             "RAPM_MY tracks the consensus better than bare RAPM",
                             f"{my_cons:.2f} vs {bare_cons:.2f}")
 
+
+def run_rapm_reliability(end_year: int) -> None:
+    """RAPM RELIABILITY — split-half and year-over-year stability checks."""
     # ── How reliable is the computed RAPM? Split-half + year-over-year ────────
-    header("RAPM RELIABILITY (SPLIT-HALF AND YEAR-OVER-YEAR)")
+    _header("RAPM RELIABILITY (SPLIT-HALF AND YEAR-OVER-YEAR)")
     rel = rapm_reliability(end_year)
     if not rel:
         print("  Fewer than two seasons of play-by-play — reliability check skipped.")
@@ -803,9 +812,12 @@ def run(end_year: int = 2026) -> None:
                         "degrading it",
                         f"RAPM_MY {yoy['RAPM_MY']:.2f} vs BPM {yoy['BPM']:.2f}")
 
+
+def run_rapm_vs_public(df_full: pd.DataFrame) -> None:
+    """RAPM: COMPUTED VS PUBLIC SNAPSHOT — validation against a public RAPM."""
     # RAPM vs public snapshot comparison (no-ops when RAPM_PUBLIC is absent)
     if "RAPM" in df_full.columns and "RAPM_PUBLIC" in df_full.columns:
-        header("RAPM: COMPUTED VS PUBLIC SNAPSHOT")
+        _header("RAPM: COMPUTED VS PUBLIC SNAPSHOT")
         cmp = df_full[["RAPM", "RAPM_PUBLIC"]].dropna()
         if len(cmp) >= 10:
             r = float(np.corrcoef(cmp["RAPM"], cmp["RAPM_PUBLIC"])[0, 1])
@@ -822,10 +834,13 @@ def run(end_year: int = 2026) -> None:
         else:
             print(f"  Too few overlapping players ({len(cmp)}) for comparison")
 
+
+def run_bpm_validation(df_full: pd.DataFrame, end_year: int) -> None:
+    """BPM VALIDATION vs BASKETBALL-REFERENCE — BPM family reproduction check."""
     # BPM family validation against Basketball-Reference's published values —
     # our BPM was just rewritten, so this checks it reproduces an authoritative
     # source rather than only agreeing with itself.
-    header("BPM VALIDATION vs BASKETBALL-REFERENCE")
+    _header("BPM VALIDATION vs BASKETBALL-REFERENCE")
     bbr = fetch_bbr_advanced(end_year)
     if bbr is None or bbr.empty:
         print("  BBR advanced stats unavailable — section skipped.")
@@ -891,7 +906,10 @@ def run(end_year: int = 2026) -> None:
                         "our VORP reproduces Basketball-Reference VORP (r > 0.90)",
                         r_by_metric["VORP"])
 
-    header("BASIC DISTRIBUTION STATS")
+
+def run_distributions(qual: pd.DataFrame, present: list[str]) -> None:
+    """BASIC DISTRIBUTION STATS — per-system moments, Gini, pooled RAPM shape."""
+    _header("BASIC DISTRIBUTION STATS")
     for s in present:
         vals = qual[s].dropna().values
         if len(vals) < 5:
@@ -970,7 +988,10 @@ def run(end_year: int = 2026) -> None:
                         "RAPM is far less skewed than the right-skewed accumulation metric VORP",
                         _vorp_skew - abs(_rapm_skew))
 
-    header("POWER-LAW FIT (VALUE VS RANK, LOG-LOG)")
+
+def run_powerlaws(qual: pd.DataFrame, present: list[str]) -> dict:
+    """POWER-LAW FIT — log-log value-vs-rank fits; returns {system: fit dict}."""
+    _header("POWER-LAW FIT (VALUE VS RANK, LOG-LOG)")
     print(f"A system's top-{50} value-vs-rank curve is a power law when the")
     print(f"log-log fit clears R^2 >= {POWERLAW_R2_THRESHOLD:.2f} (a straight line on log-log axes).")
     power_law_systems = []
@@ -1016,8 +1037,12 @@ def run(end_year: int = 2026) -> None:
     # RAPM's shape is asserted on its full distribution (rapm_symmetric_not_powerlaw
     # above, skew near zero) rather than the borderline top-50 log-log fit, which
     # sits right at the 0.95 line and is not a formal test.
+    return _alpha
 
-    header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
+
+def run_rank_agreement(qual: pd.DataFrame, present: list[str]) -> None:
+    """RANK AGREEMENT — Spearman correlations for every system pair."""
+    _header("RANK AGREEMENT (SPEARMAN CORRELATIONS)")
     if len(present) >= 2:
         ranks = qual[present].rank(pct=True)
         corr = ranks.corr(method="spearman")
@@ -1041,7 +1066,10 @@ def run(end_year: int = 2026) -> None:
                     FACTS.set(f"corr.{si}_{sj}", float(r), "{:.3f}",
                               note=f"Spearman rank corr: {label_i} vs {label_j}")
 
-    header("HOW MUCH EACH SYSTEM OVERLAPS THE OTHERS")
+
+def run_overlap(qual: pd.DataFrame, present: list[str]) -> None:
+    """OVERLAP — regression R² of each system on the others (kin held out)."""
+    _header("HOW MUCH EACH SYSTEM OVERLAPS THE OTHERS")
     print("Regression R² of each system on all others, with its own algebraic")
     print("kin (offense/defense halves, rescalings) held out. High = redundant;")
     print("low = carries signal the other systems miss.")
@@ -1051,7 +1079,10 @@ def run(end_year: int = 2026) -> None:
         FACTS.set(f"overlap.{s}.r2", float(r2), "{:.3f}",
                   note=f"{SYSTEM_LABELS.get(s, s)} overlap R²: share of its variance the other systems (kin excluded) can reconstruct")
 
-    header("CONSENSUS RATING — TOP 20")
+
+def run_consensus(qual: pd.DataFrame, present: list[str]) -> None:
+    """CONSENSUS RATING — top 20; adds the CONSENSUS column to qual in place."""
+    _header("CONSENSUS RATING — TOP 20")
     qual["CONSENSUS"] = _build_consensus(qual, present)
     if qual["CONSENSUS"].notna().sum() > 0:
         top = qual.nlargest(20, "CONSENSUS")
@@ -1067,7 +1098,11 @@ def run(end_year: int = 2026) -> None:
         FACTS.guard("jokic_tops_consensus", top_name == "Nikola Jokić",
                     "Nikola Jokić tops the consensus rating", top_name)
 
-    header("WINS-PREDICTIVE RATING — TOP 20")
+
+def run_wins_predictive(qual: pd.DataFrame, df_full: pd.DataFrame,
+                        present: list[str]) -> None:
+    """WINS-PREDICTIVE RATING — top 20; adds WINS_PRED to qual/df_full in place."""
+    _header("WINS-PREDICTIVE RATING — TOP 20")
     qual["WINS_PRED"] = _build_wins_predictive(qual, present)
     df_full["WINS_PRED"] = np.nan
     if qual["WINS_PRED"].notna().sum() > 0:
@@ -1081,7 +1116,10 @@ def run(end_year: int = 2026) -> None:
                 FACTS.set(f"wins_pred.top.{rank}.z", float(row["WINS_PRED"]), "{:.2f}",
                           note=f"wins-predictive rank {rank} z-score")
 
-    header("COMPARISON: CONSENSUS vs. WINS-PREDICTIVE")
+
+def run_consensus_vs_wins(qual: pd.DataFrame) -> None:
+    """COMPARISON — consensus vs wins-predictive: correlation and biggest gaps."""
+    _header("COMPARISON: CONSENSUS vs. WINS-PREDICTIVE")
     if qual["CONSENSUS"].notna().sum() > 0 and qual["WINS_PRED"].notna().sum() > 0:
         both = qual[["PLAYER_NAME", "CONSENSUS", "WINS_PRED", "MIN"]].dropna()
         if len(both) >= 10:
@@ -1107,7 +1145,13 @@ def run(end_year: int = 2026) -> None:
                 FACTS.set(f"cmp.lower.{idx}.diff", float(row["_diff"]), "{:.2f}",
                           note=f"rank {idx} wins-predictive minus consensus diff (negative)")
 
-    header("UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS)")
+
+def run_uber_concentration(qual: pd.DataFrame, _alpha: dict) -> None:
+    """UBER RATING CONCENTRATION — Gini vs power-law alpha for the uber ratings.
+
+    `_alpha` is the per-system power-law fit dict returned by run_powerlaws.
+    """
+    _header("UBER RATING CONCENTRATION (GINI vs CENTER-ROBUST STEEPNESS)")
     print("Gini clips negatives to zero, so it inflates 0-centered metrics (the uber")
     print("ratings and the BPM family). The power-law exponent alpha does not depend on")
     print("where zero sits, so it is the fair cross-system concentration read.")
@@ -1139,7 +1183,10 @@ def run(end_year: int = 2026) -> None:
                     "flattest metric (PER) and the steepest (Offensive BPM)",
                     _cons["alpha"])
 
-    header("POWER-LAW / TAIL ANALYSIS")
+
+def run_tail_analysis(qual: pd.DataFrame, present: list[str]) -> None:
+    """POWER-LAW / TAIL ANALYSIS — cumulative vs rate metric concentration."""
+    _header("POWER-LAW / TAIL ANALYSIS")
     cumulative_metrics = [s for s in present if s in ("WS", "VORP", "RAPTOR_WAR")]
     rate_metrics = [s for s in present if s in ("PER", "BPM", "RAPTOR", "DARKO_DPM", "EPM")]
 
@@ -1161,7 +1208,10 @@ def run(end_year: int = 2026) -> None:
                 FACTS.set(f"tail.{s}.skew", skew, "{:.2f}",
                           note=f"{SYSTEM_LABELS.get(s, s)} skewness (positive values only)")
 
-    header("WHO EACH SYSTEM LOVES vs. CONSENSUS")
+
+def run_loves_discounts(qual: pd.DataFrame, present: list[str]) -> None:
+    """WHO EACH SYSTEM LOVES vs. CONSENSUS — biggest per-system residuals."""
+    _header("WHO EACH SYSTEM LOVES vs. CONSENSUS")
     qual["CONSENSUS"] = _build_consensus(qual, present)
     for s in present[:8]:  # top 8 systems only to keep output manageable
         z_s = (qual[s] - qual[s].mean()) / qual[s].std() if qual[s].std() > 0 else 0
@@ -1183,7 +1233,14 @@ def run(end_year: int = 2026) -> None:
             FACTS.set(f"discounts.{s}.{rank}.diff", float(row.get("_res", 0)), "{:.2f}",
                       note=f"{SYSTEM_LABELS.get(s, s)} discounts rank {rank} residual vs consensus (negative)")
 
-    header("RETRODICTION: WHICH RATING REBUILDS TEAM RESULTS")
+
+def run_retrodiction(df_full: pd.DataFrame, present: list[str],
+                     end_year: int) -> tuple[pd.DataFrame, dict]:
+    """RETRODICTION — same-season team point-diff rebuild.
+
+    Returns (outcomes, retro) for the next-season section.
+    """
+    _header("RETRODICTION: WHICH RATING REBUILDS TEAM RESULTS")
     print("Each system's player ratings are minutes-weighted to the team level, then")
     print("fit to team point differential per game across the 30 teams. R² is the")
     print("in-sample fit; CV R² is leave-one-team-out (the honest out-of-sample read).")
@@ -1241,8 +1298,13 @@ def run(end_year: int = 2026) -> None:
                         "the team-anchored box metrics top this test only mechanically "
                         "(BPM is built to equal team point differential)",
                         f"{top_label} CV R²={top_sc['cv_r2']:.2f}")
+    return outcomes, retro
 
-    header("NEXT-SEASON RETRODICTION (PREDICTING THIS SEASON FROM LAST)")
+
+def run_next_season(df_full: pd.DataFrame, outcomes: pd.DataFrame, retro: dict,
+                    present: list[str], end_year: int) -> None:
+    """NEXT-SEASON RETRODICTION — predict this season from last season's ratings."""
+    _header("NEXT-SEASON RETRODICTION (PREDICTING THIS SEASON FROM LAST)")
     print(f"Last season's ({end_year - 2}-{str(end_year - 1)[-2:]}) player ratings are")
     print("distributed across this season's rosters (weighted by this season's minutes)")
     print("and fit to this season's team point differential. Because each metric's team")
@@ -1301,7 +1363,10 @@ def run(end_year: int = 2026) -> None:
                         "PER describes the season far better than it forecasts the next",
                         retro["PER"]["cv_r2"] - nxt["PER"]["cv_r2"])
 
-    header("MULTI-SEASON DESCRIBE vs FORECAST (FULL PANEL)")
+
+def run_panels() -> None:
+    """MULTI-SEASON DESCRIBE vs FORECAST — the pooled full-history panel."""
+    _header("MULTI-SEASON DESCRIBE vs FORECAST (FULL PANEL)")
     print(f"The single pair above is one season. This pools the same two tests")
     print(f"across every season in the cache: {PANEL_END_YEAR - PANEL_START_YEAR + 1} seasons")
     print(f"({PANEL_START_YEAR - 1}-{str(PANEL_START_YEAR)[-2:]} through "
@@ -1397,7 +1462,10 @@ def run(end_year: int = 2026) -> None:
                         "across the full panel PER describes better than it forecasts",
                         d_means["PER"] - f_means["PER"])
 
-    header("IMPACT-ERA PANEL: BOX SCORES vs RAPM (EQUAL SEASONS)")
+
+def run_impact_panel() -> None:
+    """IMPACT-ERA PANEL — box scores vs RAPM over the same play-by-play seasons."""
+    _header("IMPACT-ERA PANEL: BOX SCORES vs RAPM (EQUAL SEASONS)")
     print("The panel above runs 30 seasons, but RAPM can only be computed for the")
     print(f"{RAPM_PANEL_END_YEAR - RAPM_PANEL_START_YEAR + 1} seasons with cached play-by-play "
           f"({RAPM_PANEL_START_YEAR - 1}-{str(RAPM_PANEL_START_YEAR)[-2:]} through "
@@ -1474,7 +1542,10 @@ def run(end_year: int = 2026) -> None:
                         "RAPM_MY forecasts next-season team results better than bare RAPM",
                         f"{if_means['RAPM_MY']:.3f} vs {if_means['RAPM']:.3f}")
 
-    header("PLAYER RATING STABILITY (YEAR OVER YEAR)")
+
+def run_stability(qual: pd.DataFrame) -> None:
+    """PLAYER RATING STABILITY — year-over-year correlation and top-N retention."""
+    _header("PLAYER RATING STABILITY (YEAR OVER YEAR)")
     print("A different lens: not how well a rating predicts team results, but how")
     print("much a player's own rating carries from one season to the next. For every")
     print(f"pair of seasons, players who qualified ({MIN_MINUTES_QUALIFIER}+ minutes) in both are")
@@ -1545,7 +1616,10 @@ def run(end_year: int = 2026) -> None:
                         "forecasting order",
                         corr_means["PER"] - corr_means["BPM"])
 
-    header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
+
+def run_playoff_shift(qual: pd.DataFrame, end_year: int) -> None:
+    """REGULAR SEASON vs PLAYOFFS — composite shift risers and fallers."""
+    _header("REGULAR SEASON vs PLAYOFFS (RATE-METRIC DELTAS)")
     deltas = load_playoff_deltas(end_year)
     if deltas.empty:
         print("  No playoff data available for this season — section skipped.")
@@ -1665,10 +1739,13 @@ def run(end_year: int = 2026) -> None:
                 FACTS.guard("consensus_top_fell_in_playoffs", z < 0,
                             f"the regular-season consensus #1 ({cons_top}) fell in the playoffs", z)
 
+
+def run_season_change(end_year: int) -> None:
+    """SEASON-OVER-SEASON CHANGE — consensus movement in the latest season pair."""
     # ── Season-over-season change: the most recent full-season pair ──────────
     # A snapshot read of how much the single-season orderings move year to year;
     # the multi-season panels above carry the firm cross-season findings.
-    header("SEASON-OVER-SEASON CHANGE (PREVIOUS → CURRENT)")
+    _header("SEASON-OVER-SEASON CHANGE (PREVIOUS → CURRENT)")
     comp = season_comparison(end_year - 1, end_year)
     if comp:
         la, lb = comp["label_a"], comp["label_b"]
@@ -1720,11 +1797,18 @@ def run(end_year: int = 2026) -> None:
             FACTS.set(f"cmp2.faller.{rank}.delta", float(row["delta"]), "{:+.2f}",
                       note=f"consensus z change for faller {rank}")
 
+
+def run_pwv(end_year: int) -> pd.DataFrame:
+    """PLAYOFF-WEIGHTED VALUE — blended regular+playoff BPM ranking.
+
+    Returns the playoff-deltas frame (with the PWV column when playoff data
+    exists) for the examples section.
+    """
     # ── Playoff-Weighted Value: who drove playoff success ────────────────────
     # An honest combine that blends each playoff player's regular-season and
     # postseason BPM, weighting playoff minutes more. BPM is now validated
     # against Basketball-Reference, so the blend sits on a real scale.
-    header("PLAYOFF-WEIGHTED VALUE (REGULAR SEASON + PLAYOFFS)")
+    _header("PLAYOFF-WEIGHTED VALUE (REGULAR SEASON + PLAYOFFS)")
     pwv_deltas = load_playoff_deltas(end_year)
     BRUNSON_ID = 1628973
     if pwv_deltas.empty:
@@ -1785,12 +1869,16 @@ def run(end_year: int = 2026) -> None:
                         brunson_ranks.get(3, 0) > 5,
                         "even with the playoffs weighted heavily Brunson stays outside "
                         "the top 5 of the playoff pool", brunson_ranks.get(3))
+    return pwv_deltas
 
+
+def run_examples(df_full: pd.DataFrame, pwv_deltas: pd.DataFrame) -> None:
+    """EXAMPLE PLAYERS — rule-selected archetypes plus the Brunson case study."""
     # ── Example players: archetypes that show what each system captures ───────
     # Rule-selected representatives (emitted as facts so the prose re-points
     # automatically when a metric is fixed or added); Brunson is the pinned case
     # study. See the findings "Examples" section.
-    header("EXAMPLE PLAYERS (ARCHETYPES)")
+    _header("EXAMPLE PLAYERS (ARCHETYPES)")
     ex_q = df_full[df_full["QUALIFIED"] == True].copy() if "QUALIFIED" in df_full.columns else df_full.copy()
     _ex_systems = [c for c in ["PER", "WS", "BPM", "GAME_SCORE", "VORP"] if c in ex_q.columns]
     if len(ex_q) > 20 and len(_ex_systems) >= 3 and "BPM" in ex_q.columns:
@@ -1912,6 +2000,45 @@ def run(end_year: int = 2026) -> None:
         FACTS.guard("example_reps_distinct", len(set(reps)) == len(reps),
                     "the example archetypes resolve to distinct players",
                     "; ".join(reps))
+
+
+def run(end_year: int = 2026) -> None:
+    """Run all analysis sections and print results to stdout.
+
+    Thin orchestrator: loads the season, then calls each run_* section in
+    results.md order. Sections communicate only through explicit parameters
+    and return values (plus the in-place CONSENSUS / WINS_PRED columns that
+    run_consensus / run_wins_predictive add to the shared frames).
+    """
+    df_full = load_unified_ratings(end_year)
+    qual = df_full[df_full["QUALIFIED"] == True].copy() if "QUALIFIED" in df_full.columns else df_full.copy()
+    present = _present_systems(qual, ALL_SYSTEMS)
+
+    run_coverage(df_full, qual, present, end_year)
+    run_rapm_single_season(qual, present)
+    run_rapm_my(qual, present)
+    run_rapm_reliability(end_year)
+    run_rapm_vs_public(df_full)
+    run_bpm_validation(df_full, end_year)
+    run_distributions(qual, present)
+    alpha = run_powerlaws(qual, present)
+    run_rank_agreement(qual, present)
+    run_overlap(qual, present)
+    run_consensus(qual, present)
+    run_wins_predictive(qual, df_full, present)
+    run_consensus_vs_wins(qual)
+    run_uber_concentration(qual, alpha)
+    run_tail_analysis(qual, present)
+    run_loves_discounts(qual, present)
+    outcomes, retro = run_retrodiction(df_full, present, end_year)
+    run_next_season(df_full, outcomes, retro, present, end_year)
+    run_panels()
+    run_impact_panel()
+    run_stability(qual)
+    run_playoff_shift(qual, end_year)
+    run_season_change(end_year)
+    pwv_deltas = run_pwv(end_year)
+    run_examples(df_full, pwv_deltas)
 
     # Dump all facts and guards to docs/ (+ the dev facts-reference lookup table)
     FACTS.dump(_FACTS_PATH)
