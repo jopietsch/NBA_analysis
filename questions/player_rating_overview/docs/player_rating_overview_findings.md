@@ -26,7 +26,7 @@ A few things to settle up front:
 
 The short answers run through the report.
 The box-score systems move together but only loosely track the from-scratch RAPM, the one lineup-based impact metric computed here, agreeing with the box scores at about 0.37 on a 0-to-1 scale.
-Each system tilts toward a player type, and the all-in-one summaries (PER, Game Score, BPM, VORP) prove largely redundant, nearly rebuilt from the others, while Win Shares per minute and the from-scratch lineup metric carry the most of their own.
+Each system tilts toward a player type, and the all-in-one summaries (PER, Game Score, BPM, VORP) turn out largely redundant, nearly rebuilt from the others, while Win Shares per minute and the from-scratch lineup metric carry the most of their own.
 And two combined ratings, a plain consensus and a wins-predictive blend, agree almost exactly (0.98 on a 0-to-1 scale) on the best players while parting on role players whose production did not turn into team wins.
 One more thread runs through it: whether a player's rating holds up when the games matter most, the Jalen Brunson question the report started from (Section 8).
 
@@ -258,8 +258,8 @@ Not all systems add independent information, and they split widely on how much.
 The all-in-one summaries are the most redundant: about 95% of PER, 89% of Game Score, and roughly 94% of BPM and 89% of VORP can be rebuilt from the other systems, so each mostly repeats what the field already says.
 The metrics that carry the most of their own are Win Shares per minute (only about 66% of it can be rebuilt from the rest) and the lineup-impact metrics: bare RAPM sits near that independent end too, about 71% rebuildable, and its offensive half alone, O-RAPM, is the single most independent metric in the whole comparison, at about 61% (it is a bare-RAPM split, not part of the consensus).
 That the raw impact metric now lands among the most independent is the payoff of the reconstruction fix (Section 2): with RAPM carrying real lineup signal instead of noise, it catches what the box scores miss, which is the whole point of an impact metric.
-Defensive BPM, which used to look the most independent here, has slid toward the middle (about 77% rebuildable), because the fixed RAPM now accounts for much of the defensive impact it was previously alone in catching.
-BPM and VORP carry no such caveat (they are validated against Basketball-Reference, a rank agreement of 0.93 on a 0-to-1 scale), and they sit with the redundant systems, not the independent ones: a validated rating can still be redundant if it says what the others already do.
+Defensive BPM, which used to look the most independent here, has slid toward the middle (about 77% rebuildable), consistent with the fixed RAPM now accounting for much of the defensive impact it was previously alone in catching.
+BPM and VORP carry no such caveat (they are validated against Basketball-Reference, a value agreement of 0.93 on a 0-to-1 scale), and they sit with the redundant systems, not the independent ones: a validated rating can still be redundant if it says what the others already do.
 The measure holds each metric's own components out of the comparison, so BPM is never counted as "explained" by its own offensive and defensive halves (see results for the full breakdown).
 
 The "system outliers" chart shows the players each system rates most above and below the consensus.
@@ -286,7 +286,7 @@ Then Jalen Brunson, the player the playoffs make interesting (Section 8).
 His offense rates with the best, an offensive BPM of +4.3 that ranks 12th.
 His defense pulls the other way, a defensive BPM of -0.9, so his all-around BPM of +3.4 sits at 29th.
 The same player is a top-fifteen offensive player and a top-thirty contributor overall, and the gap between those two is exactly what his defense costs him.
-The impact metrics, now that they are fixed and trustworthy, tell the same story rather than a kinder one: the corrected RAPM puts his net on-court impact at merely average (221th), and RAPM+prior at 68th, so two independent methods, box and lineup, agree that his scoring outruns what his team actually does with him on the floor.
+The impact metrics, now that they are fixed and trustworthy, tell the same story rather than a kinder one: the corrected RAPM puts his net on-court impact at merely average (221st), and RAPM+prior at 68th, so two independent methods, box and lineup, agree that his scoring outruns what his team actually does with him on the floor.
 That is a sturdier verdict than either method alone: the earlier, broken RAPM had buried him near the bottom, which was noise, and the corrected read lands him where the box score already suggested, good but not a hidden star.
 
 And one player who answers a different question, OG Anunoby: he looks ordinary here but is the biggest riser once the playoffs start, which is exactly where Section 8 picks up.
@@ -353,8 +353,7 @@ What bends are the per-possession rate metrics.
 They score how far above average a player is per possession against the lineup he shares the floor with, a quantity that is roughly even on both sides of the middle and has a natural size to it, so their best player is not a runaway: the top of the curve sits below where a straight power law would put it.
 
 The impact metrics are the subtler case: several of them clear the straight-line test above, but that test reads only the top 50 players, and their full distributions say otherwise.
-RAPM, the impact metric built for this report, is the clearest example, and it answers a natural question: no, RAPM is not a power law.
-The log-scale test above only reads the top 50 players, but RAPM's whole distribution settles it.
+RAPM, the impact metric built for this report, is the clearest example, and it answers a natural question: no, RAPM is not a power law, and its whole distribution settles it.
 Pooled across all 29 seasons with play-by-play (9820 player-seasons, enough to read the shape cleanly), it is a symmetric hump centered on zero, about as many players below average as above (47% sit below zero), and it tracks a plain bell curve closely.
 A power law needs a long one-sided tail of standout values.
 RAPM has none, because a per-possession impact is scored against the average player and runs about as far into the minus as the plus.
@@ -487,7 +486,7 @@ First, the standard advanced rates (usage, assist, turnover, rebound, steal, and
 Second, each team's ratings are anchored so its players, weighted by minutes, sum to the team's actual point differential, which is the defining property of BPM and what sets the scale.
 VORP was rebuilt on the corrected BPM with the right minutes base.
 
-**The check.** Against Basketball-Reference's published 2025-26 figures, across 361 qualified players, the recomputed values now line up: a rank-and-value agreement of 0.93 for BPM, 0.95 for offensive BPM, and 0.96 for VORP, on a 0-to-1 scale.
+**The check.** Against Basketball-Reference's published 2025-26 figures, across 361 qualified players, the recomputed values now line up: a value agreement of 0.93 for BPM, 0.95 for offensive BPM, and 0.96 for VORP, on a 0-to-1 scale.
 Defensive BPM is weaker at 0.88, which is honest: box-score defense is hard, and Basketball-Reference's own defensive BPM is limited for the same reason.
 Two caveats remain.
 The recompute slightly compresses the very top, grading the best player a notch below his Basketball-Reference mark.

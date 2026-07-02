@@ -26,7 +26,7 @@ It is as steady from year to year as BPM, and across the 29 seasons it can be co
 
 **What does each uniquely capture?
 It depends.** Each system tilts toward a player type, but the all-in-one summaries (PER, Game Score, and the now-validated BPM and VORP) are nearly reconstructable from the others, while Win Shares per minute and the fixed lineup metric carry the most of their own, picking up value the scoring-heavy systems miss.
-BPM is recomputed and validated against Basketball-Reference here (rank-and-value agreement 0.93), which makes it accurate but no less redundant; the RAPM family, once a broken recompute, now reads as genuine independent lineup signal after the reconstruction fix, though its absolute values stay approximate.
+BPM is recomputed and validated against Basketball-Reference here (value agreement 0.93), which makes it accurate but no less redundant; the RAPM family, once a broken recompute, now reads as genuine independent lineup signal after the reconstruction fix, though its absolute values stay approximate.
 
 **How should they be combined?
 Into two ratings that answer different questions.** A plain consensus averages every system; a wins-predictive blend weights each by how well it tracked team wins.

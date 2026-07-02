@@ -4311,12 +4311,33 @@
     "unit": null,
     "value": 1000
   },
+  "rapm_rel.sb_fulldata_3season": {
+    "display": "0.56",
+    "fmt": "{:.2f}",
+    "note": "Spearman-Brown full-data reliability estimate at 3 pooled seasons",
+    "unit": null,
+    "value": 0.5622606070882183
+  },
+  "rapm_rel.sb_fulldata_5season": {
+    "display": "0.56",
+    "fmt": "{:.2f}",
+    "note": "Spearman-Brown full-data reliability estimate at 5 pooled seasons",
+    "unit": null,
+    "value": 0.555328108993651
+  },
   "rapm_rel.splithalf": {
     "display": "0.39",
     "fmt": "{:.2f}",
     "note": "split-half reliability of bare RAPM (1000+ min)",
     "unit": null,
     "value": 0.39107268664976896
+  },
+  "rapm_rel.splithalf_5season": {
+    "display": "0.38",
+    "fmt": "{:.2f}",
+    "note": "split-half reliability of bare RAPM at 5 pooled seasons",
+    "unit": null,
+    "value": 0.3843973932425674
   },
   "rapm_rel.yoy_bpm": {
     "display": "0.79",

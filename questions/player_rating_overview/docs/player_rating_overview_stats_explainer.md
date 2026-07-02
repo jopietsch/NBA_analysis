@@ -160,14 +160,14 @@ The limitation is that it can be dominated by systems that measure the same thin
 To find the combination of systems that best predicts team wins:
 1. Standardize each system's values per player (z-score, same as consensus).
 2. Aggregate to team level: for each team, compute the minutes-weighted average of each system's player z-scores.
-3. Regress actual team wins on these team-level ratings using ridge regression (L2 penalty, α = 5.0) to handle multicollinearity (the instability that arises when predictors are highly correlated with each other, which makes individual OLS coefficients swing wildly).
-4. The regression coefficients define the importance weight for each system in predicting wins.
+3. Regress actual team wins on these team-level ratings using ridge regression, an L2 penalty (it shrinks coefficients by the sum of their squares) with α = 5.0, to handle multicollinearity (the instability that arises when predictors are highly correlated with each other, which makes individual OLS coefficients swing wildly), constrained so every coefficient stays non-negative, since a rating system should never count against a player.
+4. The regression coefficients, all non-negative by construction, define the importance weight for each system in predicting wins.
 5. Apply the same weights per-player to construct the per-player wins-predictive rating.
 
 **Ridge regression** is OLS with a penalty term that shrinks large coefficients toward zero.
 With 30 data points (teams) and many correlated predictors (systems), OLS coefficients are unreliable.
 Ridge stabilizes them at the cost of some bias.
-The α = 5.0 penalty is not tuned by cross-validation for this application; the resulting weights should be taken as directional evidence, not precise estimates.
+The α = 5.0 penalty is not tuned by cross-validation (splitting the data into folds, fitting on some, and checking the penalty against the rest to see which value generalizes best) for this application; the resulting weights should be taken as directional evidence, not precise estimates.
 
 With only 30 teams per season, the wins-predictive weights are estimated on thin data.
 A proper evaluation would require holding out seasons and testing whether the weights estimated on past seasons predict future-season team wins.
@@ -194,7 +194,7 @@ A system is labeled a power law when R² ≥ 0.95 (`POWERLAW_R2_THRESHOLD`): a s
 Curves that fall below the threshold "bend," meaning the top player sits below where a straight extrapolation would place them, so there is a natural ceiling rather than a runaway leader.
 
 The 0.95 cutoff is a convention, not a hypothesis test.
-Systems sitting right at the line (DBPM just clears it, BPM just misses) are effectively the same shape.
+Systems sitting right at the line (PER just clears it, WS/48 just misses) are effectively the same shape.
 The reliable read is the grouping and the order of α across systems, not the label on any single borderline case.
 
 α is the fair cross-system concentration measure because it does not depend on where zero sits: shifting every value by a constant leaves the slope on log-log axes unchanged once the curve is rescaled.
@@ -251,7 +251,7 @@ It minimizes:
 Σ (observed_diff − X β)² + λ Σ βᵢ²
 ```
 
-where X is the design matrix of stint-level player indicators (one column per player, one row per stint), β is the vector of player values, and λ is the regularization penalty.
+where X is the design matrix of stint-level player indicators (one column per player, one row per stint), β is the vector of player values, and λ is the regularization penalty (the same shrinkage strength called α in the wins-predictive ridge above; RAPM's own literature calls it λ, so that is the label kept here).
 This is identical to maximum a posteriori (MAP) estimation under a Bayesian model with two assumptions: (1) observed point differentials are Gaussian around the true lineup value, and (2) each player's true value βᵢ is drawn from a zero-mean Gaussian with variance σ²/λ.
 
 The prior here is zero-mean: in the absence of data, every player is assumed to be average.
@@ -288,14 +288,14 @@ It is the same logic as handing two graders the same essays and checking whether
 
 Each split-half estimate uses only half the data, which understates the reliability of the metric fit on all of it.
 The **Spearman-Brown prophecy formula** corrects for that: full-data reliability ≈ 2r / (1 + r), where r is the split-half correlation.
-A split-half of 0.39 corresponds to a full-data reliability near 0.48.
+A split-half of 0.39 (pooled across three seasons) corresponds to a full-data reliability near 0.56.
 
 The numbers are what turned RAPM from a curiosity into a usable metric.
 Before the possession-reconstruction fix (a bug had been silently discarding about 60% of games with complete play-by-play; see the RAPM methods companion), bare RAPM's split-half reliability sat around 0.10 at every minute level: two halves of the same data barely agreed, the signature of noise.
-Recovering the discarded games took it to 0.39 at three pooled seasons, a full-data reliability near 0.48 after the Spearman-Brown step.
+Recovering the discarded games took it to 0.39 at three pooled seasons, a full-data reliability near 0.56 after the Spearman-Brown step.
 A companion check, **year-over-year stability** (correlating a player's rating this season with last), tells the same story among players with at least 1000 minutes: bare single-season RAPM rose from about 0.09 to 0.40, the prior-informed RAPM+prior reaches 0.84, and for reference the box-score BPM sits at 0.79.
 So RAPM+prior is now at least as steady from year to year as BPM, which means the lineup data is adding a real, repeatable contribution on top of the box score rather than echoing it.
-Reliability also keeps climbing as more seasons are pooled: on the Spearman-Brown full-data scale it is roughly 0.48 at three pooled seasons and about 0.60 at five, which is why every published metric pools years and leans on a prior.
+Pooling more seasons does not push reliability much further: split-half is 0.39 at three pooled seasons and 0.38 at five (full-data estimates 0.56 and 0.56), so most of the gain from pooling years is already captured by three; the value of pooling is mainly the recency-weighted prior anchor, not a longer reliability curve.
 
 ### Sequential updating: the Kalman filter
 

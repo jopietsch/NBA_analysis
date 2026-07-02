@@ -794,8 +794,26 @@ def run_rapm_reliability(end_year: int) -> None:
         print(f"Pooled across seasons and anchored to the BPM prior, RAPM_MY is at least")
         print(f"as stable as BPM ({yoy['RAPM_MY']:.2f} vs {yoy['BPM']:.2f}), so it adds a")
         print("genuine lineup contribution on top of the box score rather than echoing")
-        print("it. Reliability keeps climbing with more pooled seasons (roughly 0.48 at")
-        print("three seasons, 0.60 at five, on the full-data scale).")
+        print("it.")
+
+        sb3 = 2 * sh / (1 + sh)
+        FACTS.set("rapm_rel.sb_fulldata_3season", float(sb3), "{:.2f}",
+                  note="Spearman-Brown full-data reliability estimate at 3 pooled seasons")
+        rel5 = rapm_reliability(end_year, n_seasons=5)
+        if rel5 and rel5["splithalf"] == rel5["splithalf"]:
+            sh5 = rel5["splithalf"]
+            sb5 = 2 * sh5 / (1 + sh5)
+            FACTS.set("rapm_rel.splithalf_5season", float(sh5), "{:.2f}",
+                      note="split-half reliability of bare RAPM at 5 pooled seasons")
+            FACTS.set("rapm_rel.sb_fulldata_5season", float(sb5), "{:.2f}",
+                      note="Spearman-Brown full-data reliability estimate at 5 pooled seasons")
+            print(f"Pooling more seasons does not move split-half reliability much further:")
+            print(f"{sh:.2f} at 3 pooled seasons and {sh5:.2f} at 5 (Spearman-Brown full-data")
+            print(f"estimate {sb3:.2f} and {sb5:.2f} respectively), so most of the gain from")
+            print("pooling years is already captured by 3 seasons.")
+        else:
+            print(f"On the Spearman-Brown full-data scale that split-half corresponds to")
+            print(f"about {sb3:.2f}.")
 
         FACTS.guard("rapm_splithalf_real", sh > 0.20,
                     "bare RAPM's split-half reliability is well above the near-zero "

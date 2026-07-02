@@ -41,7 +41,7 @@ Reflects the current pipeline: 14 recomputed box-score systems plus a from-scrat
 - Forecast test (prior-season ratings predict this season): order flips, PER ~22%, best forecaster RAPM+prior ~55%. Coverage ~88%.
 - Multi-season panel (30 seasons / 29 handoffs back to 1996-97): PER describes ~68%, forecasts ~10% (median handoff); best forecaster VORP ~45%; BPM beats PER forecasting 28/29 handoffs.
 - Impact-era panel (29 seasons from 1997-98, box scores vs RAPM): bare RAPM forecasts 7/10 (~26%, describe ~82% but mechanical), RAPM+prior tops the forecast (1/10, ~46%) above every box score, while bare RAPM sits mid-pack; forecast leader RAPM+prior.
-- Stability (year-over-year): Game Score retains 68% of its top 20, PER 64% (chance ~5%); steadiest Game Score 0.85, jumpiest DBPM 0.67; 29 pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; BPM jumpy but better).
+- Stability (year-over-year): Game Score retains 68% of its top 20, PER 64% (chance ~5%); steadiest Game Score 0.85, jumpiest DBPM 0.67; 29 pairs. Stickiness cuts against forecasting (PER sticky but weak forecaster; plus/minus metrics jumpier but better forecasters).
 - Charts: retrodiction, next-season retrodiction, panel describe-vs-forecast, impact panel, rating stability.
 
 ### § 4. What each system uniquely sees

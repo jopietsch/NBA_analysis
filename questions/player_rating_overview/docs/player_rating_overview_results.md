@@ -70,8 +70,11 @@ season to the next at 0.40 (it was near zero before).
 Pooled across seasons and anchored to the BPM prior, RAPM_MY is at least
 as stable as BPM (0.84 vs 0.79), so it adds a
 genuine lineup contribution on top of the box score rather than echoing
-it. Reliability keeps climbing with more pooled seasons (roughly 0.48 at
-three seasons, 0.60 at five, on the full-data scale).
+it.
+Pooling more seasons does not move split-half reliability much further:
+0.39 at 3 pooled seasons and 0.38 at 5 (Spearman-Brown full-data
+estimate 0.56 and 0.56 respectively), so most of the gain from
+pooling years is already captured by 3 seasons.
 
 ─── BPM VALIDATION vs BASKETBALL-REFERENCE ──────────────────────
   Qualified players matched to BBR: 361
