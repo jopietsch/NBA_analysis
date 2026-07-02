@@ -18,14 +18,21 @@ echo "── Regenerating main report ──"
 python3 generate_report.py
 
 # Standalone docs: every docs/*.md except the findings file (which
-# generate_report.py already renders into the main report) and the
-# facts reference table (a developer lookup, not a reader-facing doc).
+# generate_report.py already renders into the main report) and the facts
+# reference table (a developer lookup, not a reader-facing doc). The article
+# series (web-first) gets HTML only, no PDF: they link to each other in HTML
+# and are not part of the PDF set.
 shopt -s nullglob
 for f in docs/*.md; do
   case "$(basename "$f")" in
     *_findings.md) continue ;;
     *_facts_reference.md) continue ;;
     *.annotated.md) continue ;;  # reviewer-mode (--annotate) dev artifacts, not reader-facing
+    *_series.md|*_article_*.md)
+      echo "── Regenerating $f (HTML only) ──"
+      python3 ../generate_doc_pdf.py "$f" --html-only
+      continue
+      ;;
   esac
   echo "── Regenerating $f ──"
   python3 ../generate_doc_pdf.py "$f"

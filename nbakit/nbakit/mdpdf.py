@@ -209,8 +209,9 @@ def _make_wrapper_qmd(md_path: str, appendix_path: str) -> tuple[str, str]:
 def build(md_path: str, output_path: str | None = None,
           appendix_path: str | None = None,
           author: str = "Justin Pietsch",
-          date: str | None = None) -> str:
-    """Render a Markdown file to PDF and HTML. Returns the PDF output path."""
+          date: str | None = None,
+          html_only: bool = False) -> str:
+    """Render a Markdown file to PDF and HTML (or HTML only). Returns the PDF output path (or the HTML path if html_only)."""
     if not os.path.exists(md_path):
         sys.exit(f"ERROR: {md_path} not found")
 
@@ -258,7 +259,8 @@ def build(md_path: str, output_path: str | None = None,
         else:
             render_src = temp_md
 
-        _quarto_render(render_src, "typst", pdf_path,  title, author, toc=False, date=date)
+        if not html_only:
+            _quarto_render(render_src, "typst", pdf_path,  title, author, toc=False, date=date)
         _quarto_render(render_src, "html",  html_path, title, author, toc=True,  date=date)
 
     finally:
@@ -266,22 +268,29 @@ def build(md_path: str, output_path: str | None = None,
             if p and os.path.exists(p):
                 os.unlink(p)
 
-    print(f"Saved → {pdf_path}")
+    if not html_only:
+        print(f"Saved → {pdf_path}")
     print(f"Saved → {html_path}")
-    return pdf_path
+    return html_path if html_only else pdf_path
 
 
 def main(argv: list[str]) -> None:
     """CLI entry: render a Markdown doc to PDF + HTML.
 
-        <markdown_file> [output.pdf] [--appendix RESULTS.md]
+        <markdown_file> [output.pdf] [--appendix RESULTS.md] [--html-only]
 
     With no explicit output path, the PDF lands in the source's project
     generated/ dir, derived from the markdown's location rather than the cwd:
     a doc inside docs/ lands in its project root's generated/
     (foo/docs/x.md -> foo/generated/); a doc elsewhere lands in a sibling
     generated/ (./x.md -> generated/).
+
+    --html-only skips the Typst/PDF render and produces only the HTML file,
+    for web-first docs (e.g. an article series) that aren't part of the PDF set.
     """
+    html_only = "--html-only" in argv
+    if html_only:
+        argv.remove("--html-only")
     appendix = None
     if "--appendix" in argv:
         idx = argv.index("--appendix")
@@ -292,7 +301,7 @@ def main(argv: list[str]) -> None:
         del argv[idx:idx + 2]
     if not argv:
         sys.exit("usage: python3 -m nbakit.mdpdf <markdown_file> "
-                 "[output.pdf] [--appendix RESULTS.md]")
+                 "[output.pdf] [--appendix RESULTS.md] [--html-only]")
     md_path = argv[0]
     if len(argv) > 1:
         out_path = argv[1]
@@ -302,7 +311,7 @@ def main(argv: list[str]) -> None:
         if os.path.basename(src_dir) == "docs":
             src_dir = os.path.dirname(src_dir)
         out_path = os.path.join(src_dir, "generated", stem + ".pdf")
-    build(md_path, out_path, appendix_path=appendix)
+    build(md_path, out_path, appendix_path=appendix, html_only=html_only)
 
 
 if __name__ == "__main__":

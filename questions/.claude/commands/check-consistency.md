@@ -1,6 +1,6 @@
 Verify that every number in one or more reader-facing docs matches `docs/*_results.md`. This is the numbers-only counterpart to `/check-coherence` (argument structure) and `/voice-review` (prose style).
 
-Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. It also runs on the stats-tier docs when passed explicitly: `*_investigation.md`, `*_stats_explainer.md`, and `stats_tutorial.md` (which lives at `questions/`, not under `docs/`).
+Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. It also runs on the stats-tier docs when passed explicitly: `*_investigation.md`, `*_stats_explainer.md`, and `stats_tutorial.md` (which lives at `questions/`, not under `docs/`). If the project has an article series (`docs/<project>_series.md` plus `docs/<project>_article_*.md`), pass all of them explicitly as a set when reviewing it; they are general-reader tier, same rules as findings/summary, and are not covered by the default scope.
 
 The source of truth is the project's results doc, `docs/*_results.md` (one per project, e.g. `home_court_results.md`; auto-generated; never edit by hand). Every figure in prose must trace back to it.
 

@@ -1,6 +1,6 @@
 Review one or more reader-facing docs for voice and plain-language problems. This is the deep on-demand pass that complements the `voice_check.py` hook: the hook only flags hard jargon on save, while this also catches drama, em-dashes, overstated causation, generated-sounding prose, and prose that has gone flat. The hook and most of the rules are subtractive (they remove inflation); this review is the one place that also pushes *back toward* engagement, so a maximally dry doc should not pass it clean.
 
-Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md` (the standard doc names from `questions/CLAUDE.md`).
+Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md` (the standard doc names from `questions/CLAUDE.md`). If the project has an article series (`docs/<project>_series.md` plus `docs/<project>_article_*.md`), pass all of them explicitly as a set when reviewing it; the `voice_check.py` hook already gates them live on edit, but this deep pass (drama, flatness, generated-sounding prose) does not run on them unless named.
 
 Pick the standard by filename (see the audience-tier table in `questions/CLAUDE.md`). Each tier flips what counts as a problem, so route first, then apply only that tier's checks:
 - `*_findings.md` / `*_summary.md` — general reader: strip statistical jargon to plain language (translation table).

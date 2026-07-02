@@ -2,7 +2,7 @@ Run all three reader-facing doc reviews at once: numbers (`/check-consistency`),
 
 Use this when you want to review a doc on all three axes together (the common case). To run just one axis, use the standalone `/check-consistency`, `/check-coherence`, or `/voice-review` instead.
 
-Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. The stats-tier docs (`*_investigation.md`, `*_stats_explainer.md`, `stats_tutorial.md`) are reviewed when passed explicitly; each skill routes on filename and applies the right tier's checks, so no extra flags are needed here.
+Scope: `$ARGUMENTS` is the doc path(s) to review. If empty, review the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. The stats-tier docs (`*_investigation.md`, `*_stats_explainer.md`, `stats_tutorial.md`) and the article series (`*_series.md`, `*_article_*.md`) are reviewed when passed explicitly; each skill routes on filename and applies the right tier's checks, so no extra flags are needed here.
 
 This command does NOT restate each review's rules. Each subagent reads the relevant skill file and follows it, so the three reviews can never drift from their standalone versions. Because the skills are tier-aware, this command needs no per-tier logic of its own — the only thing that changes by tier is the model you assign the consistency agent (next step).
 

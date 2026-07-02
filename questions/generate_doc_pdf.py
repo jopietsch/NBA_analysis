@@ -7,6 +7,7 @@ Thin wrapper around nbakit.mdpdf — all logic lives there.
     python3 generate_doc_pdf.py stats_tutorial.md
     python3 generate_doc_pdf.py stats_tutorial.md [output.pdf]
     python3 generate_doc_pdf.py stats_tutorial.md --appendix <project>_results.md
+    python3 generate_doc_pdf.py home_court_series.md --html-only
 """
 
 import sys
@@ -16,6 +17,9 @@ from nbakit.mdpdf import build
 
 if __name__ == "__main__":
     args = sys.argv[1:]
+    html_only = "--html-only" in args
+    if html_only:
+        args.remove("--html-only")
     appendix = None
     if "--appendix" in args:
         idx = args.index("--appendix")
@@ -26,5 +30,5 @@ if __name__ == "__main__":
         del args[idx:idx + 2]
     if not args:
         sys.exit("usage: python3 generate_doc_pdf.py <markdown_file> "
-                 "[output.pdf] [--appendix <project>_results.md]")
-    build(args[0], args[1] if len(args) > 1 else None, appendix_path=appendix)
+                 "[output.pdf] [--appendix <project>_results.md] [--html-only]")
+    build(args[0], args[1] if len(args) > 1 else None, appendix_path=appendix, html_only=html_only)

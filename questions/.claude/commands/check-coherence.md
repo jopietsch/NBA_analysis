@@ -2,7 +2,7 @@ Audit the argument structure of one or more reader-facing docs: do the sections 
 
 This skill does NOT open `docs/*_results.md`. It works entirely within the prose documents. If you find a number that looks suspicious, note it for `/check-consistency` to verify — do not chase it here.
 
-Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. Also runs on `*_investigation.md`, `*_stats_explainer.md`, and `stats_tutorial.md` when passed explicitly (see the stats-tier note in step 6).
+Scope: `$ARGUMENTS` is the doc path(s) to check. If empty, check the current project's `docs/<project>_findings.md` and `docs/<project>_summary.md`. Also runs on `*_investigation.md`, `*_stats_explainer.md`, and `stats_tutorial.md` when passed explicitly (see the stats-tier note in step 6). If the project has an article series (`docs/<project>_series.md` plus `docs/<project>_article_*.md`), pass all of them explicitly as a set: each article is a recut of a findings section, so treat the series hub like an intro/contract and each article like a body section when checking intro-vs-body and cross-reference consistency.
 
 ---
 
