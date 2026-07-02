@@ -591,9 +591,11 @@ The mechanism predicts data it was not built from.
 ![Actual home win % across all seasons (regular season left, playoffs right) with the four-category model forecast and a trend extrapolation drawn over the held-out 2014-onward window. The win model was trained only on pre-2014 games, then used to predict each later season from its box-score advantages. The frozen forecast tracks the held-out decline, and beats both a flat guess and the extrapolated trend line.](../generated/images/home_court_oos_forecast.svg){#fig-oos-forecast .collapsible}
 
 **The breakdown was re-run with no straight-line assumption.** The split of the decline across the four categories comes from a model that adds them up in a straight line.
-A second, more flexible model that lets the categories bend and feed off each other reaches the same split: shooting, rebounding, and turnovers each carry a substantial share and fouls the smallest at about 14% (the straight-line table put it a little higher, near 18%), adding back to the same total drop.
-The playoffs split the same way.
-Because the two methods share no assumptions, reaching the same split means it is a feature of the games themselves, not of the simpler model.
+A second, more flexible model that lets the categories bend and feed off each other agrees closely on three of the four channels: fouls the smallest at about 14% (the straight-line table put it a little higher, near 18%), with turnovers and rebounding close behind, adding back to the same total drop.
+Shooting is the exception: the flexible model puts it as the single largest channel at 35%, above the straight-line table's 21% and outside the range that table itself said the value could shift within (11–28%).
+Shooting, fouls, and turnovers all move together with the three-point shift, so when two methods divide credit among channels that trend together, they can split it differently even while agreeing on the total; that's what's happening here, not a contradiction about whether shooting matters.
+In the playoffs, with a fifteenth as many games, the straight-line table's own range is already too wide to say whether the same split holds.
+Because the two methods share no assumptions, agreeing on fouls, turnovers, and rebounding means those three shares are a feature of the games themselves, not of the simpler model; shooting's share is the one number here to treat as approximate rather than settled.
 
 ![How the home-court decline splits across the four box-score factors when a flexible win model, free of any straight-line assumption, does the splitting. Each era's stacked bars are the factors' contributions to that season's home edge; the tall early-1980s stack shrinks toward zero in the recent seasons, and that shrinking stack is the decline. Regular season and playoffs split it across the same factors, with shooting and rebounding the largest pieces.](../generated/images/home_court_shap_channels.svg){#fig-shap-channels .collapsible}
 
