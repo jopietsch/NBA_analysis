@@ -6,6 +6,8 @@ Create a new analysis project by copying `questions/template/` and substituting 
 
 ## Steps
 
+**0. Load the `pipeline` skill.** It holds the module architecture, standard commands, and test pattern you'll scaffold against and code in. Load it now (read `.claude/skills/pipeline/SKILL.md` if the skill isn't already available) so the rest of this flow and the code you write next follow the standard structure.
+
 **1. Validate the name.**
 
 - The name must be a non-empty lowercase slug (letters, digits, underscores only). If it contains spaces or uppercase, convert it and confirm with the user before continuing.
@@ -17,6 +19,10 @@ Run from the repo root (`/Users/justin/code/nba_analysis`):
 
 ```bash
 cp -r questions/template questions/<name>
+
+# Drop any local build cruft cp may have copied (all gitignored, never committed)
+rm -rf questions/<name>/__pycache__ questions/<name>/tests/__pycache__ \
+       questions/<name>/.pytest_cache questions/<name>/.coverage
 ```
 
 **3. Rename files that contain `PROJECT` in their name.**
@@ -118,10 +124,24 @@ git -C /Users/justin/code/nba_analysis status
 
 Do NOT commit yet — the user needs to fill out `project_definition.md` and the `CLAUDE.md` description first.
 
-**9. Report and prompt next steps.**
+**9. Walk the user through `project_definition.md` before finishing.**
 
-Tell the user what was created. Then say:
+Do not just point at the file. A scaffold with a blank definition is where analyses go wrong, so capture the design now, interactively. Open `questions/<name>/project_definition.md` and fill it by asking the user one short round at a time (accept "skip" / "not sure yet" and leave the `TODO` where they're genuinely undecided):
 
-> Before writing any code, fill out `project_definition.md` (question, hypothesis, comparison set, confirmation/refutation criteria, done checklist) and update the one-line description at the top of `CLAUDE.md`. When both are done, you're ready to start on `<name>_data.py`.
+- **The question** — the one-sentence question, and why it's worth answering.
+- **Hypothesis** — what they expect to find, and why.
+- **Comparison set** — what's compared against what, time range, inclusion criteria. Flag this as the highest-leverage choice: a different set can flip the answer.
+- **Confirmation / refutation criteria** — what makes the answer clearly yes, clearly no, or ambiguous. Push for these to be written before any data is pulled, so the goalposts can't move later.
+- **Alternative explanations** — the objections a skeptical reader would raise, each with a plan to address (these become the "what did NOT cause this" section of the findings).
+- **Data plan** — primary source, key endpoints, metrics to compute, known gaps.
+- **Done criteria** — the checklist that says when to stop adding analysis.
+
+Write the answers into `project_definition.md`, replacing the matching `TODO`s. Then read the filled definition back to the user in a couple of sentences and ask them to confirm or correct before moving on.
+
+**10. Report and prompt next steps.**
+
+Tell the user what was created and that `project_definition.md` is now filled in. Then say:
+
+> Update the one-line description at the top of `CLAUDE.md`, and you're ready to start on `<name>_data.py`.
 >
 > As you add analysis, register facts with `FACTS.set()` in `<name>_analysis.py` next to each `print()` call, then cite them in the `.md.j2` docs with `<< f("fact.name") >>`. Run `python3 render_docs.py` to refresh the `.md` files, and `python3 -m pytest` to confirm the guards stay green.

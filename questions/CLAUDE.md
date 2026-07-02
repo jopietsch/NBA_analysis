@@ -4,14 +4,12 @@ Writing rules that apply to all prose in this project (FINDINGS, SUMMARY, STATS_
 
 ## The target: clear and lively, not inflated and not flat
 
-The target is a clear, lively magazine feature. There are two ways to miss it, and most of the rules below only guard against one of them:
+The target is a clear, lively magazine feature. Two ways to miss it, and most rules below guard only against the first:
 
-- **Inflated** — filler, drama, jargon, rhetorical buildup. The "No drama", "Don't overstate", and "Write like a person" rules all remove this.
-- **Flat** — every sentence the same length, findings stated with no concrete number or example, an opening that defines instead of hooks, a whole stretch of short subject-verb declaratives. Almost nothing else here guards against this, so it is the easy trap: dry prose breaks no rule and scores zero violations. That is exactly how clean prose ends up lifeless.
+- **Inflated** — filler, drama, jargon, buildup. "No drama", "Don't overstate", and "Write like a person" remove this.
+- **Flat** — every sentence the same length, findings with no concrete number, an opening that defines instead of hooks. Almost nothing else here guards against this, so it is the easy trap: dry prose breaks no rule and scores zero violations. "Reach for these" is the counterweight.
 
-The prohibitions remove inflation. They are not a license for flatness. If cutting a filler word also kills the pace, recast the sentence; don't just delete. The "Reach for these" section below is the positive counterweight: use it, don't only avoid the bad.
-
-**Filler vs. texture.** The test for whether a word earns its place is *not* "is it strictly necessary" — that test yields dryness, because almost nothing is strictly necessary. The test is: **does removing it lose meaning, pace, or clarity?** "It is worth noting that" loses nothing, so cut it. A short punchy sentence isn't strictly necessary either, but it carries pace, so keep it.
+The prohibitions are not a license for flatness: if cutting a filler word kills the pace, recast the sentence instead of deleting. The test for a word is not "is it strictly necessary" (almost nothing is) but **does removing it lose meaning, pace, or clarity?** "It is worth noting that" loses nothing; a short punchy sentence carries pace.
 
 ## No em-dashes
 
@@ -40,10 +38,6 @@ Only claim what the analysis can actually establish. Specifically:
 - Graphs show patterns; regressions establish direction and size; neither establishes mechanism unless the design supports it.
 - Hypotheses offered as explanations must be labeled as such: "one plausible explanation is…" or "the data is consistent with…" not "this happened because…"
 - Don't round up uncertainty. If a playoff result is consistent with the regular-season story but not independently established, say so.
-
-## Write for regular readers
-
-When editing or adding prose to any FINDINGS doc, write like a sports-magazine editor for regular readers. Replace statistical jargon with plain language. Keep the voice concise and clear. Avoid redundancy; repeated information usually confuses rather than reinforces.
 
 ## Audience tiers: who each doc is written for
 
@@ -85,10 +79,11 @@ Avoid patterns that make prose sound generated rather than written:
 - No summarizing closing sentences that restate what was just said ("The result is what X looks like", "This is consistent with the pattern above").
 - Vary sentence length deliberately, and replace vague or abstract phrases with concrete ones: not "the advantage significantly diminished" but "the gap fell from 1.2 to 0.25 fouls per game"; not "situational factors" but "off-court explanations" or the specific things (rest, travel, altitude). These two are the positive counterpart to the filler rules above; "Reach for these" is where they live as techniques to lead with, not just defects to avoid.
 - No jargon substituting for plain explanation: name what happened, don't label the process ("information diffusion", "structural instability").
+- No redundancy: repeated information usually confuses rather than reinforces.
 
 ## Reach for these (the positive moves)
 
-The rules above are mostly prohibitions; on their own they pull prose toward the flat failure mode. These are the additive moves that make a doc lively without inflating it. Reach for them. Several already appear in the shipped docs, so they are house style, not a stretch:
+The rules above are mostly prohibitions; on their own they pull prose toward flatness. These are the additive moves that make a doc lively without inflating it; several already appear in the shipped docs, so they are house style, not a stretch:
 
 - **Open with the hook, not the definition.** Lead a doc or section with the finding that earns attention, not a sentence that defines the topic. ("In the 1980s a weaker team playing at home won 65% of those games. Today that number is 49%." beats "This section examines home win rates.")
 - **Lead with curiosity, then answer in the same breath.** The reader walked in with a question; voice it as one and resolve it immediately. ("First question: has home court really shrunk, and by how much? Yes, and the shape of the decline tells you more than the headline number.") A `##` section can re-pose its own question this way to re-engage a reader deep in a long report. This is the question-shaped form of the hook above, not a tease: the answer lands in the next clause, never a paragraph later (see "Cut the tease, keep the hook"). Open with the reader's own assumptions where it fits ("We all assume home court matters. And maybe it isn't what it used to be. Is that right?"), then hand them the answer.
@@ -179,139 +174,8 @@ Cascade rules: when a file changes, update its dependents before closing the tas
 - Any standalone markdown doc changes: regenerate its PDF
 - The analysis pipeline re-ran and the numbers moved (`<project>_results.md` / `*_facts.json` changed): the guard tests (`test_facts_match_results.py`, `test_prose_claims.py`) only protect templated numbers and qualitative/direction claims. A magnitude word that stays directionally true but goes stale (e.g. "nearly vanished" after a gap shrinks less than before) is caught only by a human pass. So after any data change that moves the numbers, re-run `/review-all` on the affected docs: the guard tests catch direction, the voice pass (reading the rendered `.md`) re-judges stale magnitude words.
 
-## Standard commands
+## The analysis pipeline (load the `pipeline` skill)
 
-Run all commands from the project root.
+The pipeline mechanics live in the **`pipeline` skill**, not here, so they don't load on every session: the four-module architecture (`_data`/`_plots`/`_analysis`/`_facts.py` plus the orchestrator and report generators), the shell commands to run the pipeline and build reports, the directory layout and shared cache, the facts/guards test pattern, and the nba_api endpoint quirks.
 
-```bash
-# Run the full analysis pipeline (generates SVGs, runs analysis, writes docs/<project>_results.md
-# and docs/<project>_facts.json + _guards.json)
-MPLBACKEND=Agg python3 <project>.py
-
-# Render .md.j2 templates → .md (run after the pipeline, before building PDFs)
-python3 render_docs.py
-
-# Generate the main PDF + HTML report (renders templates first)
-python3 generate_report.py
-
-# Regenerate any standalone doc PDF + HTML
-python3 ../generate_doc_pdf.py docs/<project>_findings.md
-python3 ../generate_doc_pdf.py docs/<project>_summary.md
-python3 ../generate_doc_pdf.py docs/<project>_stats_explainer.md
-
-# Write the facts reference table (dev helper while authoring templates)
-python3 render_docs.py --reference
-
-# Run all tests (includes guard tests: test_facts_match_results.py, test_prose_claims.py)
-python3 -m pytest
-
-# Install dependencies
-pip install -r ../requirements.txt
-```
-
-Always use `MPLBACKEND=Agg` when running the analysis script to suppress display windows. Chart images land in `generated/images/` (gitignored); PDFs and HTML reports land in `generated/`. `docs/<project>_results.md` is the exception — it is committed. Image references in `docs/` use `../generated/images/<chart>.svg`.
-
-## Standard directory layout
-
-```
-<project>/
-├── docs/          — prose files (FINDINGS, SUMMARY, STATS_EXPLAINER, <project>_results.md)
-├── tests/         — test files; test fixture CSVs go in tests/data/
-└── generated/     — PDFs and HTML reports (gitignored)
-    └── images/    — all chart SVGs/PNGs (gitignored)
-```
-
-Fetched data CSVs are **not** cached per project. They live in the shared
-monorepo cache at the repo root (`nba_analysis/cache/`, gitignored), resolved via
-`nbakit.default_cache_dir()` and overridable with the `NBA_CACHE_DIR` env var, so
-every project reuses the same fetched data.
-
-## Standard architecture
-
-Each project follows a four-module pipeline plus two report generators plus the facts system:
-
-- **`<project>_data.py`** — all constants, data fetching, and computation; no matplotlib dependency. All fetched data is cached as CSVs in the shared monorepo cache (`nba_analysis/cache/` at the repo root, resolved via `nbakit.default_cache_dir()`; override with `NBA_CACHE_DIR`), not in a per-project directory. This is the only module that calls external APIs.
-- **`<project>_plots.py`** — all visualization; imports the data module and holds no data logic of its own. Each `plot_*` function saves an SVG to `generated/images/`.
-- **`<project>_analysis.py`** — statistical/comparative analysis; `run()` prints all output to stdout, which is captured into `docs/<project>_results.md`. Use the box-drawing header convention: `print("─── SECTION TITLE " + "─" * 50)`. Register named facts with `FACTS.set()` next to each `print()` call that emits a cited number. Register qualitative claims with `FACTS.guard()`. At the end of `run()`, call `FACTS.dump(_FACTS_PATH)` and `FACTS.dump_guards(_GUARDS_PATH)`.
-- **`<project>_facts.py`** — a thin shim over `nbakit.facts`: re-exports the shared `Fact`/`Facts`/`load_displays`/`load_guards` model, instantiates the project's `FACTS` singleton, and pins the `_FACTS_PATH`/`_GUARDS_PATH` constants. The `Fact`/`Facts` class itself lives in `nbakit/nbakit/facts.py` (one copy, shared across projects); `Fact.display` renders a number with `fmt`+`unit` or passes a plain-language string through unchanged.
-- **`<project>.py`** (or `<project>_<name>.py`) — pipeline orchestration only; sequences data → plots → analysis; imports the analysis module inside `main()` to avoid circular imports.
-- **`render_docs.py`** — a thin shim over `nbakit.docs`: pins the project's facts.json path and reference-table title, then delegates to the shared render engine. Renders `docs/*.md.j2` templates to `docs/*.md` using the facts JSON. Template delimiter: `<< f("fact.name") >>`. Run after the pipeline (which writes facts.json) and before building PDFs. `generate_report.py` calls `render_all()` automatically. Before rendering, `render_all` normalizes each template to one sentence per source line via `nbakit.sentence_split` (idempotent and render-neutral; see "One sentence per source line" above). The render engine itself lives in `nbakit/nbakit/docs.py` (one copy, shared across projects).
-- **`generate_report.py`** — calls `render_all()` first, then assembles `docs/<project>_findings.md` prose and charts into the PDF; iterates `##` sections in document order with no hardcoded list; TOC auto-generated.
-- **`../generate_doc_pdf.py`** — shared Markdown-to-PDF renderer for standalone docs (headings, lists, tables, code fences, images, `--appendix` flag); lives at `questions/` level, not per-project.
-- **`../render_stats_tutorial.py`** — the `render_docs.py` shim for `stats_tutorial.md.j2`, which lives at `questions/` level because it's a cross-project doc (cites both `home_court` and `player_rating_overview` facts). No single project's `render_docs.py`/`generate_report.py` renders it; run this script (then `../generate_doc_pdf.py`) directly when the template or either project's facts change.
-
-Test pattern:
-- `tests/test_<project>.py` — correctness unit tests for the data/computation layer using synthetic DataFrames; never make live API calls.
-- `tests/test_<project>_plots.py` — no-raise smoke tests for each `plot_*`; no pixel or image comparison (brittle across font and library versions).
-- The `Fact`/`Facts` class and the render engine are tested canonically in `nbakit/tests/test_facts.py` and `nbakit/tests/test_docs.py` (formatting, string passthrough, dump/load roundtrip, unknown-name `KeyError`; `--reference` table, annotate mode, `render_all` writes `.annotated.md` without clobbering `.md`). Projects no longer carry their own copies of these unit tests; they keep only the data-driven `test_facts_match_results.py` and `test_prose_claims.py` below.
-- `tests/test_facts_match_results.py` — for each numeric fact, searches `results.md` for the value at several precisions; fails if a fact's value is absent from `results.md` (catches `FACTS.set()` drifting from its sibling `print()`). No-ops gracefully when facts.json is `{}`.
-- `tests/test_prose_claims.py` — loads `*_guards.json`, asserts every guard is `"ok": true`. Skips when guards.json is `{}`.
-
-Adding a new analysis always follows this order: data → plot → analysis (with FACTS.set/guard calls) → tests → `.md.j2` template updates → run pipeline → `python3 render_docs.py` → update findings prose from the results doc.
-
-## nba_api quirks
-
-- `LeagueGameFinder` uses `season_nullable=` and `season_type_nullable=` (not the bare `season=` or `per_mode_*` that other endpoints take). Pass `league_id_nullable="00"` to restrict to the NBA. It returns one row per team per game; `MATCHUP` is `'TEAM vs. OPP'` for home and `'TEAM @ OPP'` for away; `WL` is `'W'` or `'L'`.
-- Game IDs from cached CSVs come back as integers and must be zero-padded to 10 digits for any endpoint that takes a game ID: `f"{int(float(gid)):010d}"`.
-- `LeagueDashTeamShotLocations` uses `season=` (not `season_nullable=`) and `per_mode_detailed=` (not `per_mode_simple=`). Returns a MultiIndex DataFrame; flatten to flat column names before caching.
-- `BoxScoreSummaryV3` `data_sets[3]` contains officials: 4 rows per game (crew chief + 2 refs + replay center).
-
-## Prerequisites
-
-[Quarto](https://quarto.org) must be installed (`brew install --cask quarto`). PDF and HTML are generated via Quarto/Typst, no LaTeX required.
-
-## Think Before Coding
-
-**Don't assume. Don't hide confusion. Surface tradeoffs.**
-
-Before implementing:
-- State your assumptions explicitly. If uncertain, ask.
-- If multiple interpretations exist, present them — don't pick silently.
-- If a simpler approach exists, say so. Push back when warranted.
-- If something is unclear, stop. Name what's confusing. Ask.
-
-## Simplicity First
-
-**Minimum code that solves the problem. Nothing speculative.**
-
-- No features beyond what was asked.
-- No abstractions for single-use code.
-- No "flexibility" or "configurability" that wasn't requested.
-- No error handling for impossible scenarios.
-- If you write 200 lines and it could be 50, rewrite it.
-
-Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
-
-## Surgical Changes
-
-**Touch only what you must. Clean up only your own mess.**
-
-When editing existing code:
-- Don't "improve" adjacent code, comments, or formatting.
-- Don't refactor things that aren't broken.
-- Match existing style, even if you'd do it differently.
-- If you notice unrelated dead code, mention it — don't delete it.
-
-When your changes create orphans:
-- Remove imports/variables/functions that YOUR changes made unused.
-- Don't remove pre-existing dead code unless asked.
-
-The test: Every changed line should trace directly to the user's request.
-
-## Goal-Driven Execution
-
-**Define success criteria. Loop until verified.**
-
-Transform tasks into verifiable goals:
-- "Add validation" → "Write tests for invalid inputs, then make them pass"
-- "Fix the bug" → "Write a test that reproduces it, then make it pass"
-- "Refactor X" → "Ensure tests pass before and after"
-
-For multi-step tasks, state a brief plan:
-```
-1. [Step] → verify: [check]
-2. [Step] → verify: [check]
-3. [Step] → verify: [check]
-```
-
-Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+**Load the `pipeline` skill before** scaffolding a new question, running or extending the pipeline, adding an analysis, editing a `plot_*` function, or fetching NBA data. The "Standard document workflow" above (naming, facts sourcing, cascade rules) stays here because prose edits depend on it.
