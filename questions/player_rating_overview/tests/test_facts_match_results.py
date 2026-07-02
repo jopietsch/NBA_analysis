@@ -21,18 +21,16 @@ ALLOW_ABSENT: set[str] = {
     # the underlying proportion (e.g. "0.78"), so the percent never appears.
     "ipanel.RAPM.describe_mean_pct",
     "ipanel.RAPM.forecast_mean_pct",
+    "ipanel.RAPM_MY.forecast_mean_pct",
+    "ipanel.forecast_top.mean_pct",
     "nextretro.PER.r2_pct",
+    "nextretro.top.r2_pct",
     # Count of systems clearing the power-law R² threshold: derived from the
     # per-system "-> power law" verdict lines, never printed as a number.
     "powerlaw.n_systems",
     # Count of systems in the impact-era panel: the table lists the systems
     # themselves; the count is never printed as a number.
     "ipanel.n_systems",
-    # Known-inconsistent while the pipeline rerun regenerates this project's
-    # docs (fixed on main, where *_median_pct facts replace these);
-    # re-validate and drop these entries once the regenerated docs land.
-    "ipanel.PER.forecast_mean_pct",
-    "panel.PER.forecast_mean_pct",
 }
 
 # Documented fallback tier: the value is present, but only as a bare table
