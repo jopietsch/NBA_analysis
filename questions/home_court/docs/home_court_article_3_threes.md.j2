@@ -87,7 +87,7 @@ In the playoffs the same comparison is too thin on games to read clearly; only t
 
 ## An independent check
 
-Sparkle Technologies published its own analysis of the same question, and most of the numbers the two pipelines share match.
+Sparkle Technologies published [its own analysis](https://sparkletechnologies.com/blog/nba-disappearing-home-court-advantage) of the same question, and most of the numbers the two pipelines share match.
 Where they agree: the overall decline, the foul-call story, and the irrelevance of travel and pace.
 Sparkle's home-court figures for the two altitude teams, Denver and Utah, even land within a tenth of a point of mine, a sign both pipelines are measuring the same thing.
 
