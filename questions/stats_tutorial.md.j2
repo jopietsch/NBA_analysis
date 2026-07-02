@@ -40,8 +40,8 @@ You do not have to read in order, but Part 0 (Foundations) underlies everything 
   shift-share decomposition; a non-parametric (gradient boosting + SHAP)
   cross-check; sensitivity to an unmeasured confounder.
 - **Part 5, Looking beyond the average:** quantile regression and polarization.
-- **Part 6, Ranking noisy things fairly:** variance decomposition and
-  empirical-Bayes shrinkage.
+- **Part 6, Ranking noisy things fairly:** variance decomposition,
+  empirical-Bayes shrinkage, and split-half reliability.
 - **Part 7, Avoiding the classic traps:** confounders and controls; spurious
   correlation from shared trends (and how detrending fixes it); reverse
   causality and the leave-one-out trick; interaction terms; detecting structural
@@ -152,8 +152,8 @@ Same picture, different license to speak.
 
 | object | section | what it lets you say |
 |---|---|---|
-| QLR p-value | §7.5 | "a break this strong is unlikely if the slope never changed" |
-| bootstrap CI 1993–2002 | §7.5 | a frequentist range for where the break sits |
+| QLR (Quandt Likelihood Ratio) p-value | §7.5 | "a break this strong is unlikely if the slope never changed" |
+| bootstrap CI 1993–2002 | §7.5 | a frequentist range (from re-running the fit on resampled data) for where the break sits |
 | posterior + HPD 1992–2003 | §7.12 | "given the data, the break most probably sits in here" |
 
 All three point at the same late-1990s bend, but only the last one licenses "most probably 1999."
@@ -292,7 +292,7 @@ The model estimates both from the data with the **Kalman filter** (a forward swe
 To forecast, it lets the latest level and slope drift forward; because every future step adds fresh noise, the prediction interval (the "fan") widens with the horizon.
 
 **The mechanics (lightly).** Two equations: an *observation* equation (`observed % = level + noise`) and a *state* equation (`next level = level + slope
-+ noise`, `next slope = slope + noise`). Fit by maximum likelihood; forecast by
++ noise`, `next slope = slope + noise`). Fit by **maximum likelihood** (the parameter values that make the observed data most probable); forecast by
 iterating the state equation forward.
 
 **A worked example.** Regular season: the smoothed current level is **<< f("forecast.rs_current_level") >>** (a denoised read of where the series sits now, not the raw last season), sliding about -0.3 pp/yr.
@@ -453,7 +453,7 @@ Run *47* tests, one per playoff referee, and you'd expect about **two** to clear
 Naively counting "significant" referees over-counts.
 
 **The fix.** The **Benjamini-Hochberg (BH)** procedure controls the **false discovery rate**: it adjusts the threshold so that, among the tests you *call* significant, only ~5% are expected to be false alarms.
-It's less brutal than the old Bonferroni "divide by the number of tests" rule, which keeps useful power when you have real effects.
+It's less brutal than the old Bonferroni "divide by the number of tests" rule, which keeps useful **statistical power** (the chance a test detects a real effect when one truly exists) when you have real effects.
 
 **Why it's the punchline of the referee section, not a footnote.** A raw leaderboard of 47 noisy referee means *will* manufacture a "most biased ref" headline.
 BH is what lets the results doc say something trustworthy: **<< f("ref.n_significant") >> of << f("ref.n_total") >> officials are individually significant, and all << f("ref.n_significant") >> survive BH correction.** That "survives correction" is the signature of a *real, widespread* effect rather than a few lucky draws, exactly the universal (not a-few-bad-apples) home-foul bias the analysis concludes.
@@ -584,7 +584,7 @@ Read: the regular-season shares are reliable; the playoff trend shares should be
 
 **Validating the decomposition: out-of-sample forecasting.** Fitting a model and testing it on the same data risks overfitting; the model might have memorized historical noise rather than a real mechanism.
 The out-of-sample forecast in the results doc guards against this by freezing the four-channel LPM on the training seasons (1984–<< f("oos.train_end") >>) and asking it to predict each *held-out* season (2014–2026) from that season's actual box-score edges.
-The frozen model reaches << f("oos.rmse_channel","{:.2f}") >> pp RMSE on the 13 held-out regular seasons, beating a naive trend extrapolation (1.45 pp) and a flat-mean forecast (<< f("oos.rmse_naive","{:.2f}") >> pp). The channel model beats the trend extrapolation because it responds to the *actual* edges in each season: when foul differentials and rebounding gaps compressed in 2020–22, the frozen coefficients correctly predicted lower home win rates.
+The frozen model reaches << f("oos.rmse_channel","{:.2f}") >> pp RMSE (root mean squared error, roughly the typical size of a season's forecast miss) on the 13 held-out regular seasons, beating a naive trend extrapolation (1.45 pp) and a flat-mean forecast (<< f("oos.rmse_naive","{:.2f}") >> pp). The channel model beats the trend extrapolation because it responds to the *actual* edges in each season: when foul differentials and rebounding gaps compressed in 2020–22, the frozen coefficients correctly predicted lower home win rates.
 A model that had just memorized the trend would miss those season-to-season moves.
 The out-of-sample win is the cleanest evidence that the mechanism in the decomposition is real and stable, not a product of fitting all 43 seasons simultaneously.
 
@@ -752,7 +752,7 @@ Subtract it from the observed spread and what's left is an estimate of the **tru
 
 **Two worked examples that reach opposite conclusions:**
 
-- **Regular-season franchises:** observed SD = 4.9 pp; sampling noise accounts for
+- **Regular-season franchises:** observed SD (standard deviation) = 4.9 pp; sampling noise accounts for
   only **30%**; estimated true SD ~**4.1 pp**. (Check: 4.9^2 = 24.0,
   4.1^2 = 16.8, so noise = 7.2 = 30% of 24.0.) Real differences exist: Denver
   and Utah genuinely have stronger home court (the altitude finding).
@@ -985,6 +985,7 @@ The "top 5 candidate break years" table shows where the F was largest: a cluster
 
 **Connecting the break to a cause: using two tests together.**
 
+This supremum Chow F procedure is the **Quandt Likelihood Ratio (QLR)** test, which the rest of the tutorial calls the QLR.
 The QLR answers *when* the pace of decline shifted.
 It says nothing about *why*.
 To get from "when" to a plausible cause, you need a second test (the LR test for era dummies, §4.1), and you need to be honest about the gap between "this is consistent with cause X" and "this proves cause X."
@@ -1269,7 +1270,7 @@ The output is a posterior probability on each k, and for k=1 a full probability 
 **The mechanics (lightly).** Each model is fit by weighted least squares (game counts as weights).
 For a given k, every valid break placement (outer 15% trimmed) is scored by its **BIC**, which trades fit against the number of parameters; the BIC scores combine into an approximate marginal likelihood for that k.
 A uniform prior over k and over break locations turns those into posterior probabilities and **Bayes factors** (how many times more probable one model is than another).
-For k=1, the per-year BIC scores give a posterior over the break year: the highest is the **MAP** year, and the narrowest band holding 95% of the mass is the **95% HPD interval**.
+For k=1, the per-year BIC scores give a posterior over the break year: the highest is the **MAP** (maximum a posteriori, the single most probable) year, and the narrowest band holding 95% of the mass is the **95% HPD interval**.
 
 **Worked example.** Regular season, 43 seasons:
 
@@ -1552,7 +1553,7 @@ The convention here calls a system a power law when R² ≥ **0.95**; below that
 
 **A worked example.** Win Shares fits a power law with α = **<< f("powerlaw.WS.alpha") >>** (R² = << f("powerlaw.WS.r2") >>); VORP is steeper at α = **<< f("powerlaw.VORP.alpha") >>** (R² = << f("powerlaw.VORP.r2") >>).
 What does α = << f("powerlaw.VORP.alpha") >> mean concretely?
-Value drops by a factor of 10^<< f("powerlaw.VORP.alpha") >> ≈ **2.3** from rank 1 to rank 10, so the tenth-best player in VORP holds about **43%** of the leader's value; under Win Shares' shallower α = << f("powerlaw.WS.alpha") >> the factor is 10^<< f("powerlaw.WS.alpha") >> ≈ 1.7, so #10 keeps about **59%**.
+Value drops by a factor of 10^<< f("powerlaw.VORP.alpha") >> ≈ **2.3** from rank 1 to rank 10, so the tenth-best player in VORP holds about **43%** of the leader's value; under Win Shares' shallower α = << f("powerlaw.WS.alpha") >> the factor is 10^<< f("powerlaw.WS.alpha") >> ≈ 1.7, so #10 keeps about **60%**.
 A few *rate* metrics bend instead of holding a straight line: << f("powerlaw.non_systems") >> fall below the 0.95 cutoff, because a rate like "points above average per 100 possessions" has a natural size, so its best player is not a runaway.
 
 **Why α and not Gini.** α is the honest cross-system steepness measure because it doesn't depend on where zero sits, unlike Gini (§9.4).
@@ -1599,7 +1600,7 @@ Read the grouping and the order of α, not the label on any single borderline sy
 | step test across candidate years (placebo) | is one boundary uniquely significant? | §7.8 |
 | ADF test, I(0)/I(1) | is this series drifting without end, or stable? | §7.9 |
 | Engle-Granger cointegration | is a season-level r a genuine link or two parallel trends? | §7.9 |
-| Granger causality, F-test on VAR | does one series lead the other in time? | §7.10 |
+| Granger causality, F-test on VAR (vector autoregression) | does one series lead the other in time? | §7.10 |
 | BH FDR across all primary tests | are the main findings robust to multiplicity? | §3.4 |
 | team fixed effects (franchise dummies) | is the era decline an artifact of which teams host games? | §7.1 |
 | empty-arena (2020-21) dose-response | a natural experiment isolating cause | §7.11 |

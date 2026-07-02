@@ -40,8 +40,8 @@ You do not have to read in order, but Part 0 (Foundations) underlies everything 
   shift-share decomposition; a non-parametric (gradient boosting + SHAP)
   cross-check; sensitivity to an unmeasured confounder.
 - **Part 5, Looking beyond the average:** quantile regression and polarization.
-- **Part 6, Ranking noisy things fairly:** variance decomposition and
-  empirical-Bayes shrinkage.
+- **Part 6, Ranking noisy things fairly:** variance decomposition,
+  empirical-Bayes shrinkage, and split-half reliability.
 - **Part 7, Avoiding the classic traps:** confounders and controls; spurious
   correlation from shared trends (and how detrending fixes it); reverse
   causality and the leave-one-out trick; interaction terms; detecting structural
@@ -152,8 +152,8 @@ Same picture, different license to speak.
 
 | object | section | what it lets you say |
 |---|---|---|
-| QLR p-value | §7.5 | "a break this strong is unlikely if the slope never changed" |
-| bootstrap CI 1993–2002 | §7.5 | a frequentist range for where the break sits |
+| QLR (Quandt Likelihood Ratio) p-value | §7.5 | "a break this strong is unlikely if the slope never changed" |
+| bootstrap CI 1993–2002 | §7.5 | a frequentist range (from re-running the fit on resampled data) for where the break sits |
 | posterior + HPD 1992–2003 | §7.12 | "given the data, the break most probably sits in here" |
 
 All three point at the same late-1990s bend, but only the last one licenses "most probably 1999."
@@ -292,7 +292,7 @@ The model estimates both from the data with the **Kalman filter** (a forward swe
 To forecast, it lets the latest level and slope drift forward; because every future step adds fresh noise, the prediction interval (the "fan") widens with the horizon.
 
 **The mechanics (lightly).** Two equations: an *observation* equation (`observed % = level + noise`) and a *state* equation (`next level = level + slope
-+ noise`, `next slope = slope + noise`). Fit by maximum likelihood; forecast by
++ noise`, `next slope = slope + noise`). Fit by **maximum likelihood** (the parameter values that make the observed data most probable); forecast by
 iterating the state equation forward.
 
 **A worked example.** Regular season: the smoothed current level is **54.9%** (a denoised read of where the series sits now, not the raw last season), sliding about -0.3 pp/yr.
@@ -453,7 +453,7 @@ Run *47* tests, one per playoff referee, and you'd expect about **two** to clear
 Naively counting "significant" referees over-counts.
 
 **The fix.** The **Benjamini-Hochberg (BH)** procedure controls the **false discovery rate**: it adjusts the threshold so that, among the tests you *call* significant, only ~5% are expected to be false alarms.
-It's less brutal than the old Bonferroni "divide by the number of tests" rule, which keeps useful power when you have real effects.
+It's less brutal than the old Bonferroni "divide by the number of tests" rule, which keeps useful **statistical power** (the chance a test detects a real effect when one truly exists) when you have real effects.
 
 **Why it's the punchline of the referee section, not a footnote.** A raw leaderboard of 47 noisy referee means *will* manufacture a "most biased ref" headline.
 BH is what lets the results doc say something trustworthy: **29 of 47 officials are individually significant, and all 29 survive BH correction.** That "survives correction" is the signature of a *real, widespread* effect rather than a few lucky draws, exactly the universal (not a-few-bad-apples) home-foul bias the analysis concludes.
@@ -584,7 +584,7 @@ Read: the regular-season shares are reliable; the playoff trend shares should be
 
 **Validating the decomposition: out-of-sample forecasting.** Fitting a model and testing it on the same data risks overfitting; the model might have memorized historical noise rather than a real mechanism.
 The out-of-sample forecast in the results doc guards against this by freezing the four-channel LPM on the training seasons (1984–2013) and asking it to predict each *held-out* season (2014–2026) from that season's actual box-score edges.
-The frozen model reaches 0.95 pp RMSE on the 13 held-out regular seasons, beating a naive trend extrapolation (1.45 pp) and a flat-mean forecast (5.48 pp). The channel model beats the trend extrapolation because it responds to the *actual* edges in each season: when foul differentials and rebounding gaps compressed in 2020–22, the frozen coefficients correctly predicted lower home win rates.
+The frozen model reaches 0.95 pp RMSE (root mean squared error, roughly the typical size of a season's forecast miss) on the 13 held-out regular seasons, beating a naive trend extrapolation (1.45 pp) and a flat-mean forecast (5.48 pp). The channel model beats the trend extrapolation because it responds to the *actual* edges in each season: when foul differentials and rebounding gaps compressed in 2020–22, the frozen coefficients correctly predicted lower home win rates.
 A model that had just memorized the trend would miss those season-to-season moves.
 The out-of-sample win is the cleanest evidence that the mechanism in the decomposition is real and stable, not a product of fitting all 43 seasons simultaneously.
 
@@ -752,7 +752,7 @@ Subtract it from the observed spread and what's left is an estimate of the **tru
 
 **Two worked examples that reach opposite conclusions:**
 
-- **Regular-season franchises:** observed SD = 4.9 pp; sampling noise accounts for
+- **Regular-season franchises:** observed SD (standard deviation) = 4.9 pp; sampling noise accounts for
   only **30%**; estimated true SD ~**4.1 pp**. (Check: 4.9^2 = 24.0,
   4.1^2 = 16.8, so noise = 7.2 = 30% of 24.0.) Real differences exist: Denver
   and Utah genuinely have stronger home court (the altitude finding).
@@ -985,6 +985,7 @@ The "top 5 candidate break years" table shows where the F was largest: a cluster
 
 **Connecting the break to a cause: using two tests together.**
 
+This supremum Chow F procedure is the **Quandt Likelihood Ratio (QLR)** test, which the rest of the tutorial calls the QLR.
 The QLR answers *when* the pace of decline shifted.
 It says nothing about *why*.
 To get from "when" to a plausible cause, you need a second test (the LR test for era dummies, §4.1), and you need to be honest about the gap between "this is consistent with cause X" and "this proves cause X."
@@ -1269,7 +1270,7 @@ The output is a posterior probability on each k, and for k=1 a full probability 
 **The mechanics (lightly).** Each model is fit by weighted least squares (game counts as weights).
 For a given k, every valid break placement (outer 15% trimmed) is scored by its **BIC**, which trades fit against the number of parameters; the BIC scores combine into an approximate marginal likelihood for that k.
 A uniform prior over k and over break locations turns those into posterior probabilities and **Bayes factors** (how many times more probable one model is than another).
-For k=1, the per-year BIC scores give a posterior over the break year: the highest is the **MAP** year, and the narrowest band holding 95% of the mass is the **95% HPD interval**.
+For k=1, the per-year BIC scores give a posterior over the break year: the highest is the **MAP** (maximum a posteriori, the single most probable) year, and the narrowest band holding 95% of the mass is the **95% HPD interval**.
 
 **Worked example.** Regular season, 43 seasons:
 
@@ -1464,9 +1465,9 @@ Now the systems can be averaged.
 The **consensus rating** is the simple average of a player's z-scores across every system that has data for them (a player missing from one system just has it left out of their average).
 Equal weight, no system privileged.
 
-**A worked example.** Nikola Jokić tops the 2025-26 consensus at **z = 4.00**: averaged across systems he sits four standard deviations above the league.
-Shai Gilgeous-Alexander follows at 3.31, Giannis Antetokounmpo at 2.74.
-Because the scale is now "SD above average," you can read 4.00 directly, and the clear gap down to Shai Gilgeous-Alexander is real separation, not a rounding artifact.
+**A worked example.** Nikola Jokić tops the 2025-26 consensus at **z = 3.95**: averaged across systems he sits four standard deviations above the league.
+Shai Gilgeous-Alexander follows at 3.35, Victor Wembanyama at 2.81.
+Because the scale is now "SD above average," you can read 3.95 directly, and the clear gap down to Shai Gilgeous-Alexander is real separation, not a rounding artifact.
 
 **The trap it avoids, and its own limit.** Averaging raw ratings would let a wide-scale system like PER (SD ≈ 4.31) swamp a compressed one like VORP (SD ≈ 1.24); z-scoring fixes that.
 But equal weighting has its own bias: if most of the systems are box-score cousins and only one is an impact metric, the consensus quietly *over-weights the box score*, because the redundant systems vote together.
@@ -1487,10 +1488,10 @@ The penalty λ (here **5.0**) pulls every weight toward zero, so the model can't
 It trades a little bias for a large cut in variance, a good deal on 30 noisy rows.
 The price: the weights are *directional evidence, not precise estimates*, so read which systems get more weight, not the exact coefficient.
 
-**A worked example.** The wins-predictive top three overlap heavily with the consensus: Nikola Jokić (4.37), Shai Gilgeous-Alexander (4.21), Victor Wembanyama (3.95), and the two ratings rank players almost identically (Spearman **0.963**).
-The disagreements are the interesting part: the wins-predictive rating lifts Victor Wembanyama (+1.27 versus his consensus), Kawhi Leonard (+0.90), and Shai Gilgeous-Alexander (+0.90), whose teams won more than the box-score average expects.
+**A worked example.** The wins-predictive top three overlap heavily with the consensus: Nikola Jokić (4.54), Shai Gilgeous-Alexander (4.20), Giannis Antetokounmpo (3.64), and the two ratings rank players almost identically (Spearman **0.982**).
+The disagreements are the interesting part: the wins-predictive rating lifts Giannis Antetokounmpo (+0.95 versus his consensus), Shai Gilgeous-Alexander (+0.85), and Kawhi Leonard (+0.83), whose teams won more than the box-score average expects.
 
-**How to read it.** When the wins-predictive and consensus lists agree at 0.963, the headline ranking is robust to *how* you combine the systems.
+**How to read it.** When the wins-predictive and consensus lists agree at 0.982, the headline ranking is robust to *how* you combine the systems.
 Read the per-player gaps, not the order, for where "what helps your team win" parts from "what the box score likes."
 
 **The trap.** With only 30 teams this is thin data, and λ was not tuned by cross-validation.
@@ -1501,7 +1502,7 @@ Until then the weights are a plausibility check, not a verdict on which system i
 
 A companion check: regress each system on *all the others* (OLS) and read the R², here its **overlap R²** (each system's own algebraic kin, e.g. BPM's own OBPM/DBPM halves, are held out so a metric can't reconstruct itself).
 A high overlap R² means the others rebuild it almost perfectly, so the system is largely redundant; a low one means it carries something the rest miss.
-The field splits: the all-in-one box scores overlap most (PER **0.947**, BPM **0.937**), while WS/48 and the bare single-season RAPM carry the most of their own (WS/48 **0.596**, O-RAPM **0.602**).
+The field splits: the all-in-one box scores overlap most (PER **0.946**, BPM **0.935**), while WS/48 and the bare single-season RAPM carry the most of their own (WS/48 **0.665**, O-RAPM **0.602**).
 This is the formal version of the §9.1 worry about double-counting: BPM and VORP correlate at 0.964, so each adds little beyond the other, and a consensus that includes both is really giving that one idea two votes.
 One caveat: an approximate recompute can look independent simply because its *noise* correlates with nothing, so a low overlap is not by itself proof of unique signal.
 
@@ -1530,12 +1531,12 @@ Most cross-system disagreements about mid-tier players sit inside those bands; t
 
 **The intuition.** The **Gini coefficient** is the standard one-number inequality score, borrowed from economics.
 0 means everyone is rated identically; 1 means one player holds all the value.
-Win Shares posts a Gini of **0.362** and VORP **0.611**: VORP is more top-heavy, because it multiplies a per-possession rate by minutes, so stars who are both efficient and durable pull away.
+Win Shares posts a Gini of **0.353** and VORP **0.611**: VORP is more top-heavy, because it multiplies a per-possession rate by minutes, so stars who are both efficient and durable pull away.
 
 **The trap, and it is a real one here.** Gini is trustworthy only for metrics that *accumulate a quantity that can't go below zero* (Win Shares, VORP).
 The metrics centered on zero (the BPM family, and the consensus and wins-predictive ratings) have many negative values, and the implementation clips them to zero before computing Gini.
 That counts every below-average player as a flat zero and **inflates** the score.
-The consensus rating shows a Gini of **0.753**, which would rank it as more top-heavy than Win Shares (0.362), an ordering that is an artifact of the clipping, not a fact about basketball.
+The consensus rating shows a Gini of **0.752**, which would rank it as more top-heavy than Win Shares (0.353), an ordering that is an artifact of the clipping, not a fact about basketball.
 For 0-centered metrics, ignore Gini and use the power-law exponent (§9.5), which doesn't care where zero sits.
 
 ## 9.5 Power laws and the log-log fit
@@ -1550,13 +1551,13 @@ The single number that captures it is the exponent **α**, the steepness: bigger
 A power law becomes a **straight line** there, and a straight line is easy to fit: run OLS (§1.1) on log(value) versus log(rank); the slope is −α, and the fit's **R²** says how straight the points actually are.
 The convention here calls a system a power law when R² ≥ **0.95**; below that the curve "bends," meaning the top player sits lower than a straight extrapolation predicts, a natural ceiling rather than a runaway leader.
 
-**A worked example.** Win Shares fits a power law with α = **0.23** (R² = 0.99); VORP is steeper at α = **0.37** (R² = 0.98).
+**A worked example.** Win Shares fits a power law with α = **0.22** (R² = 0.98); VORP is steeper at α = **0.37** (R² = 0.98).
 What does α = 0.37 mean concretely?
-Value drops by a factor of 10^0.37 ≈ **2.3** from rank 1 to rank 10, so the tenth-best player in VORP holds about **43%** of the leader's value; under Win Shares' shallower α = 0.23 the factor is 10^0.23 ≈ 1.7, so #10 keeps about **59%**.
+Value drops by a factor of 10^0.37 ≈ **2.3** from rank 1 to rank 10, so the tenth-best player in VORP holds about **43%** of the leader's value; under Win Shares' shallower α = 0.22 the factor is 10^0.22 ≈ 1.7, so #10 keeps about **60%**.
 A few *rate* metrics bend instead of holding a straight line: WS/48, O-RAPM, D-RAPM+prior fall below the 0.95 cutoff, because a rate like "points above average per 100 possessions" has a natural size, so its best player is not a runaway.
 
 **Why α and not Gini.** α is the honest cross-system steepness measure because it doesn't depend on where zero sits, unlike Gini (§9.4).
-On α the two combined ratings sit toward the steep end: consensus **0.37** matches VORP (0.37), and wins-predictive is steeper still at **0.43**, well above flat PER (0.14).
+On α the two combined ratings sit toward the steep end: consensus **0.38** matches VORP (0.37), and wins-predictive is steeper still at **0.42**, well above flat PER (0.14).
 
 **The trap.** The 0.95 cutoff is a convention, not a hypothesis test, and this describes 50 players in one season, not a proven law.
 Systems sitting right at the line are really the same shape: single-season O-RAPM just misses at R² = 0.949 while PER just clears at 0.958.
@@ -1599,7 +1600,7 @@ Read the grouping and the order of α, not the label on any single borderline sy
 | step test across candidate years (placebo) | is one boundary uniquely significant? | §7.8 |
 | ADF test, I(0)/I(1) | is this series drifting without end, or stable? | §7.9 |
 | Engle-Granger cointegration | is a season-level r a genuine link or two parallel trends? | §7.9 |
-| Granger causality, F-test on VAR | does one series lead the other in time? | §7.10 |
+| Granger causality, F-test on VAR (vector autoregression) | does one series lead the other in time? | §7.10 |
 | BH FDR across all primary tests | are the main findings robust to multiplicity? | §3.4 |
 | team fixed effects (franchise dummies) | is the era decline an artifact of which teams host games? | §7.1 |
 | empty-arena (2020-21) dose-response | a natural experiment isolating cause | §7.11 |
