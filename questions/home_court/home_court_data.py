@@ -22,6 +22,8 @@ from nba_api.stats.endpoints import leaguegamefinder
 from nba_api.stats.library.parameters import SeasonType
 
 import nbakit.data as _nbakit
+from nbakit.data import normalize_game_id
+from nbakit.stats import possessions as _possessions
 from nbakit.teams import ALTITUDE_TEAMS, TEAM_TIMEZONES, ARENA_COORDS, haversine
 from nbakit import bbr as _bbr
 
@@ -596,7 +598,7 @@ def compute_league_pace_stats(
         if not {"FGA", "OREB", "TOV", "FTA", "MIN"}.issubset(df.columns):
             continue
         df = df.copy()
-        poss = df["FGA"] - df["OREB"] + df["TOV"] + 0.44 * df["FTA"]
+        poss = _possessions(df)
         pace = poss * 240.0 / df["MIN"].replace(0, np.nan)
         avg_pace = float(pace.dropna().mean())
         if np.isnan(avg_pace):
@@ -759,10 +761,8 @@ def fetch_net_rating_data(end_year: int, season_type: str) -> pd.DataFrame | Non
                  "TOV_home", "TOV_away", "FTA_home", "FTA_away", "PLUS_MINUS_home"}
     if not pace_cols.issubset(merged.columns):
         return None
-    home_poss = (merged["FGA_home"] - merged["OREB_home"]
-                 + merged["TOV_home"] + 0.44 * merged["FTA_home"])
-    away_poss = (merged["FGA_away"] - merged["OREB_away"]
-                 + merged["TOV_away"] + 0.44 * merged["FTA_away"])
+    home_poss = _possessions(merged, suffix="_home")
+    away_poss = _possessions(merged, suffix="_away")
     pace_avg = (home_poss + away_poss) / 2
     net_rating = merged["PLUS_MINUS_home"] / pace_avg.replace(0, np.nan) * 100
     result = pd.DataFrame({"net_rating": net_rating})
@@ -824,8 +824,10 @@ def fetch_series_data(end_year: int) -> pd.DataFrame | None:
     if home.empty:
         return None
 
-    # GAME_ID may be int64 in cache; str(int(float(x))) handles int, float, str
-    game_id = home["GAME_ID"].apply(lambda x: str(int(float(x))))
+    # GAME_ID may be int64/float/str in cache; normalize to the zero-padded
+    # 10-char form. The series-position parse below reads only trailing digits
+    # (game-in-series and series key), which leading-zero padding leaves intact.
+    game_id = home["GAME_ID"].apply(normalize_game_id)
     home = home.copy()
     home["game_in_series"] = game_id.str[-1].astype(int)
     home["series_key"]     = game_id.str[-3:-1]
@@ -1120,9 +1122,6 @@ def compute_referee_bias_stats(
       {personId, name, n_games, mean_foul_diff, era_means: {era_label: mean}}
     Officials with fewer than min_games games are excluded.
     """
-    def _norm(gid) -> str:
-        return f"{int(float(gid)):010d}"
-
     foul_chunks: list[pd.DataFrame] = []
     for year in range(start_year, end_year + 1):
         if year in skip_years:
@@ -1138,7 +1137,7 @@ def compute_referee_bias_stats(
         )
         diffs = _compute_box_differentials(merged)
         foul_chunks.append(pd.DataFrame({
-            "GAME_ID":    merged["GAME_ID"].apply(_norm),
+            "GAME_ID":    merged["GAME_ID"].apply(normalize_game_id),
             "foul_diff":  diffs["foul_diff"].values,
             "era":        era_label,
         }))
@@ -1149,7 +1148,7 @@ def compute_referee_bias_stats(
     foul_data = pd.concat(foul_chunks, ignore_index=True)
 
     ref = ref_df.copy()
-    ref["GAME_ID"] = ref["GAME_ID"].apply(_norm)
+    ref["GAME_ID"] = ref["GAME_ID"].apply(normalize_game_id)
     joined = ref.merge(foul_data, on="GAME_ID", how="inner")
 
     result: list[dict] = []

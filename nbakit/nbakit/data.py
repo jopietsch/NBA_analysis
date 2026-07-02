@@ -61,6 +61,36 @@ def label_to_year(lbl: str) -> int:
     return (2000 + suffix) if suffix < 50 else (1900 + suffix)
 
 
+# ── Game-ID normalization ───────────────────────────────────────────────────────
+
+def normalize_game_id(x) -> str:
+    """Canonical zero-padded 10-character NBA game ID as a string.
+
+    The cache may store GAME_ID as int64, float, or text, so ``21500001``,
+    ``21500001.0`` and ``'0021500001'`` all normalize to ``'0021500001'``.
+    Raises ``ValueError`` on a missing/non-numeric value — game IDs are always
+    present where this is used (callers ``dropna`` first). For the tolerant
+    0-on-error conversion of team/person IDs, use ``_safe_int``.
+    """
+    return f"{int(float(x)):010d}"
+
+
+def _safe_int(val) -> int:
+    """Tolerant int conversion: 0 on NaN, blank, or any parse error.
+
+    For play-by-play teamId/personId fields, where a missing/blank/NaN value
+    means "no team/player" (→ 0) rather than an error — e.g. V3 team rebounds
+    carry ``teamId=0``. Any positive ID round-trips unchanged.
+    """
+    try:
+        f = float(val)
+    except (ValueError, TypeError):
+        return 0
+    if f != f:  # NaN
+        return 0
+    return int(f)
+
+
 # ── Period bucketing ────────────────────────────────────────────────────────────
 # Periods are lists of tuples whose first three positions are
 # (label, start_year, end_year); any further positions (e.g. a description) are
@@ -179,6 +209,38 @@ def cache_glob(pattern: str) -> list[str]:
     return list(seen)
 
 
+def iter_cached_seasons(start_year: int, end_year: int, path_fns, *,
+                        cache_dir: str | None = None,
+                        skipped: list | None = None):
+    """Iterate seasons whose every cached CSV is present, yielding the read frames.
+
+    For each ``year`` in ``range(start_year, end_year + 1)``:
+      * build one logical ``.csv`` path per callable in ``path_fns`` — each is
+        called as ``fn(year, cache_dir) -> str``;
+      * SKIP the season (do not yield) if ANY of those paths is missing from the
+        cache (``cache_exists`` is False for it);
+      * otherwise ``yield (year, [cache_read_csv(p) for p in paths])`` — the
+        frames in the same order as ``path_fns``.
+
+    Skip policy (made visible on purpose): a season with an incomplete set of
+    cached files is silently skipped, exactly as the inline call sites did. That
+    silence can hide a genuinely missing season, so pass ``skipped=[]`` to collect
+    the skipped years — each is appended to that list — and inspect it after
+    iterating. With ``skipped=None`` (the default) the skip is silent, preserving
+    the original call-site behavior byte-for-byte.
+
+    A single-entry ``path_fns`` still yields a 1-element list; unpack with
+    ``for year, (df,) in iter_cached_seasons(...):``.
+    """
+    for year in range(start_year, end_year + 1):
+        paths = [fn(year, cache_dir) for fn in path_fns]
+        if not all(cache_exists(p) for p in paths):
+            if skipped is not None:
+                skipped.append(year)
+            continue
+        yield year, [cache_read_csv(p) for p in paths]
+
+
 # ── Per-game cache sharding ───────────────────────────────────────────────────
 # The play-by-play and boxscore caches are one file per game (tens of thousands
 # of them). They are sharded into <kind>/<season>/<gid>.csv so the cache stays
@@ -191,7 +253,7 @@ def season_of_game_id(gid) -> str:
     Digits 3-4 are the season's start-year (YY); the game-type digit (2=regular,
     4=playoffs, ...) is ignored, so playoff and regular-season IDs shard together.
     """
-    g = f"{int(float(gid)):010d}"
+    g = normalize_game_id(gid)
     yy = int(g[3:5])
     start = 1900 + yy if yy >= 60 else 2000 + yy
     return f"{start}-{(start + 1) % 100:02d}"
@@ -203,7 +265,7 @@ def game_cache_path(cache_dir: str, kind: str, gid, *, sharded: bool = True) -> 
     sharded=True → <cache_dir>/<kind>/<season>/<gid>.csv (the current layout);
     sharded=False → <cache_dir>/<kind>_<gid>.csv (the legacy flat layout).
     """
-    g = f"{int(float(gid)):010d}"
+    g = normalize_game_id(gid)
     if sharded:
         return os.path.join(cache_dir, kind, season_of_game_id(g), f"{g}.csv")
     return os.path.join(cache_dir, f"{kind}_{g}.csv")
@@ -284,6 +346,33 @@ def add_rest_days(df: pd.DataFrame) -> pd.DataFrame:
 
 # ── Fetchers ───────────────────────────────────────────────────────────────────
 
+def _fetch_endpoint_cached(path: str, build_df, *,
+                           sleep: float = SLEEP_SEC) -> pd.DataFrame:
+    """Cache-or-fetch skeleton shared by the season-level endpoint fetchers.
+
+    On a cache HIT returns ``cache_read_csv(path)``. On a MISS: ensures the
+    parent directory exists, calls ``build_df()`` (which hits the nba_api
+    endpoint and returns a DataFrame), writes it to the cache, sleeps ``sleep``
+    seconds to throttle the API, and returns the fetched frame.
+
+    Empty-response policy (UNCHANGED by this refactor — documented, not altered):
+    whatever ``build_df()`` returns is cached and returned as-is. Unlike
+    ``fetch_cached_csv`` / ``fetch_shot_zones``, an empty result gets NO special
+    "genuine miss" handling here — it is written to the cache like any other
+    frame, so a later call reads it back and raises ``EmptyDataError`` per the
+    ``cache_read_csv`` contract. These six endpoints return full league tables
+    that are effectively never empty, so this path has never triggered; it is
+    called out here rather than changed.
+    """
+    if cache_exists(path):
+        return cache_read_csv(path)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    df = build_df()
+    cache_write_csv(df, path)
+    time.sleep(sleep)
+    return df
+
+
 def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,
                     cache_dir: str | None = None) -> pd.DataFrame:
     """Fetch game logs for one season/type; cache as CSV.
@@ -295,18 +384,16 @@ def fetch_game_logs(end_year: int, season_type: str = PLAYOFFS,
     not the bare season= other endpoints take.
     """
     path = cache_path(end_year, season_type, cache_dir)
-    if cache_exists(path):
-        return cache_read_csv(path)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    from nba_api.stats.endpoints import leaguegamefinder
-    df = leaguegamefinder.LeagueGameFinder(
-        season_nullable=season_str(end_year),
-        season_type_nullable=season_type,
-        league_id_nullable="00",
-    ).get_data_frames()[0]
-    cache_write_csv(df, path)
-    time.sleep(SLEEP_SEC)
-    return df
+
+    def _build() -> pd.DataFrame:
+        from nba_api.stats.endpoints import leaguegamefinder
+        return leaguegamefinder.LeagueGameFinder(
+            season_nullable=season_str(end_year),
+            season_type_nullable=season_type,
+            league_id_nullable="00",
+        ).get_data_frames()[0]
+
+    return _fetch_endpoint_cached(path, _build)
 
 
 def fetch_player_game_logs(end_year: int, season_type: str = PLAYOFFS,
@@ -319,19 +406,17 @@ def fetch_player_game_logs(end_year: int, season_type: str = PLAYOFFS,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"{season_str(end_year)}_{slug}_players.csv")
-    if cache_exists(path):
-        return cache_read_csv(path)
-    os.makedirs(d, exist_ok=True)
-    from nba_api.stats.endpoints import leaguegamefinder
-    df = leaguegamefinder.LeagueGameFinder(
-        player_or_team_abbreviation="P",
-        season_nullable=season_str(end_year),
-        season_type_nullable=season_type,
-        league_id_nullable="00",
-    ).get_data_frames()[0]
-    cache_write_csv(df, path)
-    time.sleep(SLEEP_SEC)
-    return df
+
+    def _build() -> pd.DataFrame:
+        from nba_api.stats.endpoints import leaguegamefinder
+        return leaguegamefinder.LeagueGameFinder(
+            player_or_team_abbreviation="P",
+            season_nullable=season_str(end_year),
+            season_type_nullable=season_type,
+            league_id_nullable="00",
+        ).get_data_frames()[0]
+
+    return _fetch_endpoint_cached(path, _build)
 
 
 def parse_min(val) -> float:
@@ -360,18 +445,16 @@ def fetch_standings(end_year: int,
     """
     d = cache_dir or default_cache_dir()
     path = os.path.join(d, f"{season_str(end_year)}_standings.csv")
-    if cache_exists(path):
-        return cache_read_csv(path)
-    os.makedirs(d, exist_ok=True)
-    from nba_api.stats.endpoints import leaguestandingsv3
-    df = leaguestandingsv3.LeagueStandingsV3(
-        league_id_nullable="00",
-        season=season_str(end_year),
-        season_type="Regular Season",
-    ).get_data_frames()[0]
-    cache_write_csv(df, path)
-    time.sleep(SLEEP_SEC)
-    return df
+
+    def _build() -> pd.DataFrame:
+        from nba_api.stats.endpoints import leaguestandingsv3
+        return leaguestandingsv3.LeagueStandingsV3(
+            league_id_nullable="00",
+            season=season_str(end_year),
+            season_type="Regular Season",
+        ).get_data_frames()[0]
+
+    return _fetch_endpoint_cached(path, _build)
 
 
 # ── SRS ────────────────────────────────────────────────────────────────────────
@@ -541,21 +624,19 @@ def fetch_player_season_totals(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"player_totals_{season_str(end_year)}_{slug}.csv")
-    if cache_exists(path):
-        return cache_read_csv(path)
-    os.makedirs(d, exist_ok=True)
-    from nba_api.stats.endpoints import leaguedashplayerstats
-    df = leaguedashplayerstats.LeagueDashPlayerStats(
-        season=season_str(end_year),
-        season_type_all_star=season_type,
-        per_mode_detailed="Totals",
-        measure_type_detailed_defense="Base",
-        league_id_nullable="00",
-        timeout=60,
-    ).get_data_frames()[0]
-    cache_write_csv(df, path)
-    time.sleep(SLEEP_SEC)
-    return df
+
+    def _build() -> pd.DataFrame:
+        from nba_api.stats.endpoints import leaguedashplayerstats
+        return leaguedashplayerstats.LeagueDashPlayerStats(
+            season=season_str(end_year),
+            season_type_all_star=season_type,
+            per_mode_detailed="Totals",
+            measure_type_detailed_defense="Base",
+            league_id_nullable="00",
+            timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_endpoint_cached(path, _build)
 
 
 def fetch_player_season_per100(end_year: int,
@@ -568,21 +649,19 @@ def fetch_player_season_per100(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"player_per100_{season_str(end_year)}_{slug}.csv")
-    if cache_exists(path):
-        return cache_read_csv(path)
-    os.makedirs(d, exist_ok=True)
-    from nba_api.stats.endpoints import leaguedashplayerstats
-    df = leaguedashplayerstats.LeagueDashPlayerStats(
-        season=season_str(end_year),
-        season_type_all_star=season_type,
-        per_mode_detailed="Per100Possessions",
-        measure_type_detailed_defense="Base",
-        league_id_nullable="00",
-        timeout=60,
-    ).get_data_frames()[0]
-    cache_write_csv(df, path)
-    time.sleep(SLEEP_SEC)
-    return df
+
+    def _build() -> pd.DataFrame:
+        from nba_api.stats.endpoints import leaguedashplayerstats
+        return leaguedashplayerstats.LeagueDashPlayerStats(
+            season=season_str(end_year),
+            season_type_all_star=season_type,
+            per_mode_detailed="Per100Possessions",
+            measure_type_detailed_defense="Base",
+            league_id_nullable="00",
+            timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_endpoint_cached(path, _build)
 
 
 def fetch_team_season_totals(end_year: int,
@@ -596,21 +675,19 @@ def fetch_team_season_totals(end_year: int,
     d = cache_dir or default_cache_dir()
     slug = season_type.replace(" ", "_")
     path = os.path.join(d, f"team_totals_{season_str(end_year)}_{slug}.csv")
-    if cache_exists(path):
-        return cache_read_csv(path)
-    os.makedirs(d, exist_ok=True)
-    from nba_api.stats.endpoints import leaguedashteamstats
-    df = leaguedashteamstats.LeagueDashTeamStats(
-        season=season_str(end_year),
-        season_type_all_star=season_type,
-        per_mode_detailed="Totals",
-        measure_type_detailed_defense="Base",
-        league_id_nullable="00",
-        timeout=60,
-    ).get_data_frames()[0]
-    cache_write_csv(df, path)
-    time.sleep(SLEEP_SEC)
-    return df
+
+    def _build() -> pd.DataFrame:
+        from nba_api.stats.endpoints import leaguedashteamstats
+        return leaguedashteamstats.LeagueDashTeamStats(
+            season=season_str(end_year),
+            season_type_all_star=season_type,
+            per_mode_detailed="Totals",
+            measure_type_detailed_defense="Base",
+            league_id_nullable="00",
+            timeout=60,
+        ).get_data_frames()[0]
+
+    return _fetch_endpoint_cached(path, _build)
 
 
 def fetch_league_averages(end_year: int,
@@ -740,7 +817,7 @@ def fetch_referees(end_year: int, season_type: str, *,
     print(f"  Fetching referee data: {season_str(end_year)} {season_type} "
           f"({len(game_ids)} games)...", flush=True)
     for i, gid in enumerate(game_ids, 1):
-        gid_str = f"{int(float(gid)):010d}"
+        gid_str = normalize_game_id(gid)
         try:
             b = boxscoresummaryv3.BoxScoreSummaryV3(game_id=gid_str, timeout=60)
             for _, row in b.data_sets[3].get_data_frame().iterrows():
@@ -805,7 +882,7 @@ def fetch_pbp_players(end_year: int, season_type: str = REGULAR_SEASON, *,
 
     all_records: list[dict] = []
     for gid in game_ids:
-        gid_str = f"{int(float(gid)):010d}"
+        gid_str = normalize_game_id(gid)
         if game_cache_exists(d, "boxscore_trad", gid_str):
             try:
                 df = game_cache_read_csv(d, "boxscore_trad", gid_str)
@@ -1007,7 +1084,7 @@ def _build_name_lookup(game_pbp: pd.DataFrame,
     obs = game_pbp[(game_pbp["personId"].fillna(0).astype(float) > 0) &
                    (game_pbp["actionType"] != "Substitution")]
     for _, r in obs.iterrows():
-        tid = int(float(r["teamId"])) if float(str(r["teamId"]).replace("nan", "0") or 0) > 0 else 0
+        tid = _safe_int(r["teamId"])
         _add(tid, str(r.get("playerName", "")), int(float(r["personId"])))
     # Source 2: box-score roster (covers players who took no stat actions)
     if game_players is not None and not game_players.empty:
@@ -1108,8 +1185,8 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
         name_lookup = _build_name_lookup(game_pbp, gp)
 
         # Identify the two teams
-        team_ids = [int(float(t)) for t in game_pbp["teamId"].dropna().unique()
-                    if float(str(t).replace("nan", "0") or 0) > 0]
+        team_ids = [_safe_int(t) for t in game_pbp["teamId"].dropna().unique()
+                    if _safe_int(t) > 0]
         team_ids = sorted(set(team_ids))
         if len(team_ids) < 2:
             warnings.warn(f"Game {game_id_str}: found {len(team_ids)} teams, skipping.")
@@ -1192,11 +1269,8 @@ def reconstruct_possessions(pbp_df: pd.DataFrame,
                 subtype = str(ev.get("subType", ""))
                 tid_raw = ev.get("teamId", 0)
                 pid_raw = ev.get("personId", 0)
-                try:
-                    tid = int(float(tid_raw)) if float(str(tid_raw).replace("nan","0") or 0) > 0 else 0
-                    pid = int(float(pid_raw)) if float(str(pid_raw).replace("nan","0") or 0) > 0 else 0
-                except (ValueError, TypeError):
-                    tid = pid = 0
+                tid = _safe_int(tid_raw)
+                pid = _safe_int(pid_raw)
 
                 if action == "period":
                     if subtype == "end":

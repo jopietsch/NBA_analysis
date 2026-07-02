@@ -21,11 +21,14 @@ from nbakit.data import (
     iter_game_pairs,
     label_to_year,
     merge_home_away_rows,
+    normalize_game_id,
     season_range_label,
     season_str,
     short_label,
     team_conference_map,
+    iter_cached_seasons,
 )
+from nbakit.data import _safe_int, _fetch_endpoint_cached
 
 
 # ── Season helpers ─────────────────────────────────────────────────────────────
@@ -279,3 +282,123 @@ def test_fetch_cached_csv_does_not_cache_on_exception(tmp_path):
     out = fetch_cached_csv(path, lambda: 1 / 0, ["A"], sleep_sec=0)
     assert out is None
     assert not os.path.exists(path)  # not cached, so a later run retries
+
+
+# ── Game-ID normalization ─────────────────────────────────────────────────────
+
+def test_normalize_game_id_pads_to_ten():
+    assert normalize_game_id("0021500001") == "0021500001"
+    assert normalize_game_id(21500001) == "0021500001"      # int, leading 00 lost
+    assert normalize_game_id(21500001.0) == "0021500001"    # float from CSV
+    assert normalize_game_id("21500001") == "0021500001"
+
+
+def test_normalize_game_id_playoff_last_digits():
+    # last digit (game-in-series) and series key survive padding
+    gid = normalize_game_id(41500401)
+    assert gid == "0041500401"
+    assert gid[-1] == "1"
+    assert gid[-3:-1] == "40"
+
+
+def test_normalize_game_id_raises_on_bad_value():
+    with pytest.raises((ValueError, TypeError)):
+        normalize_game_id("")
+    with pytest.raises((ValueError, TypeError)):
+        normalize_game_id(float("nan"))
+
+
+def test_safe_int():
+    assert _safe_int(1610612752) == 1610612752
+    assert _safe_int(1610612752.0) == 1610612752
+    assert _safe_int("1610612752") == 1610612752
+    assert _safe_int(0) == 0
+    assert _safe_int(float("nan")) == 0
+    assert _safe_int("") == 0
+    assert _safe_int(None) == 0
+    assert _safe_int("nan") == 0
+    assert _safe_int("abc") == 0
+
+
+# ── iter_cached_seasons ───────────────────────────────────────────────────────
+
+def _write(path, df):
+    from nbakit.data import cache_write_csv
+    cache_write_csv(df, path)
+
+
+def test_iter_cached_seasons_yields_present(tmp_path):
+    cache_dir = str(tmp_path)
+
+    def rs_path(y, cd):
+        return os.path.join(cd, f"{y}_rs.csv")
+
+    _write(rs_path(2001, cache_dir), pd.DataFrame([{"A": 1}]))
+    _write(rs_path(2003, cache_dir), pd.DataFrame([{"A": 3}]))
+    # 2002 intentionally missing
+
+    years = []
+    frames = []
+    for year, (df,) in iter_cached_seasons(2001, 2003, [rs_path],
+                                           cache_dir=cache_dir):
+        years.append(year)
+        frames.append(df.iloc[0]["A"])
+    assert years == [2001, 2003]
+    assert frames == [1, 3]
+
+
+def test_iter_cached_seasons_skips_when_any_path_missing(tmp_path):
+    cache_dir = str(tmp_path)
+
+    def po_path(y, cd):
+        return os.path.join(cd, f"{y}_po.csv")
+
+    def rs_path(y, cd):
+        return os.path.join(cd, f"{y}_rs.csv")
+
+    # 2001: both present; 2002: only rs present -> skipped
+    _write(po_path(2001, cache_dir), pd.DataFrame([{"P": 1}]))
+    _write(rs_path(2001, cache_dir), pd.DataFrame([{"R": 1}]))
+    _write(rs_path(2002, cache_dir), pd.DataFrame([{"R": 2}]))
+
+    skipped: list = []
+    seen = [year for year, _ in iter_cached_seasons(
+        2001, 2002, [po_path, rs_path], cache_dir=cache_dir, skipped=skipped)]
+    assert seen == [2001]
+    assert skipped == [2002]   # skip made visible
+
+
+def test_iter_cached_seasons_preserves_order(tmp_path):
+    cache_dir = str(tmp_path)
+
+    def po_path(y, cd):
+        return os.path.join(cd, f"{y}_po.csv")
+
+    def rs_path(y, cd):
+        return os.path.join(cd, f"{y}_rs.csv")
+
+    _write(po_path(2001, cache_dir), pd.DataFrame([{"tag": "po"}]))
+    _write(rs_path(2001, cache_dir), pd.DataFrame([{"tag": "rs"}]))
+    (_, (po, rs)), = list(iter_cached_seasons(
+        2001, 2001, [po_path, rs_path], cache_dir=cache_dir))
+    assert po.iloc[0]["tag"] == "po"
+    assert rs.iloc[0]["tag"] == "rs"
+
+
+# ── _fetch_endpoint_cached ────────────────────────────────────────────────────
+
+def test_fetch_endpoint_cached_builds_then_caches(tmp_path):
+    path = str(tmp_path / "sub" / "e.csv")   # parent dir does not exist yet
+    calls = []
+
+    def build():
+        calls.append(1)
+        return pd.DataFrame([{"TEAM_ID": 1, "PTS": 100}])
+
+    out = _fetch_endpoint_cached(path, build, sleep=0)
+    assert out.iloc[0]["PTS"] == 100
+    assert cache_exists(path)
+    # Second call hits the cache; build is not re-invoked.
+    out2 = _fetch_endpoint_cached(path, build, sleep=0)
+    assert len(calls) == 1
+    assert out2.iloc[0]["PTS"] == 100

@@ -17,7 +17,7 @@ import numpy as np
 
 import nbakit.data as _nba
 from nbakit import espn as _espn
-from nbakit.stats import t_interval
+from nbakit.stats import t_interval, possessions as _possessions
 from nbakit.espn import parse_vegas_line as _parse_vegas_line  # noqa: F401  (used in tests)
 
 # Re-export shared helpers so callers import from one place
@@ -42,7 +42,23 @@ from nbakit.data import (
     merge_home_away_rows,
     team_conference_map,
     iter_game_pairs,
+    iter_cached_seasons,
 )
+
+
+# ── Cached-season path builders (for iter_cached_seasons) ─────────────────────
+
+def _po_path(year: int, cache_dir: str | None) -> str:
+    return cache_path(year, PLAYOFFS, cache_dir)
+
+
+def _rs_path(year: int, cache_dir: str | None) -> str:
+    return cache_path(year, REGULAR_SEASON, cache_dir)
+
+
+def _standings_path(year: int, cache_dir: str | None) -> str:
+    return os.path.join(cache_dir or _nba.default_cache_dir(),
+                        f"{season_str(year)}_standings.csv")
 
 # ── Knicks-specific config ────────────────────────────────────────────────────
 KNICKS_TEAM_ID = 1610612752   # New York Knicks franchise id
@@ -581,9 +597,7 @@ def compute_possessions_per_game(reg_logs: pd.DataFrame) -> float:
     needed = {"FGA", "OREB", "TOV", "FTA"}
     if not needed.issubset(reg_logs.columns):
         return float("nan")
-    poss = (reg_logs["FGA"] - reg_logs["OREB"]
-            + reg_logs["TOV"] + 0.44 * reg_logs["FTA"])
-    return float(poss.mean())
+    return float(_possessions(reg_logs).mean())
 
 
 def compute_per100_margin(raw_margin: float, season_poss_per_game: float) -> float:
@@ -607,11 +621,8 @@ def build_possession_table(start_year: int = START_YEAR,
     Columns: year, poss_per_game.
     """
     rows = []
-    for year in range(start_year, end_year + 1):
-        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not cache_exists(rs_path):
-            continue
-        rs = cache_read_csv(rs_path)
+    for year, (rs,) in iter_cached_seasons(start_year, end_year, [_rs_path],
+                                           cache_dir=cache_dir):
         rows.append({"year": year, "poss_per_game": compute_possessions_per_game(rs)})
     return pd.DataFrame(rows)
 
@@ -1082,13 +1093,10 @@ def build_champions_table(start_year: int = START_YEAR,
     first for all seasons you care about.
     """
     rows = []
-    for year in range(start_year, end_year + 1):
-        po_path = cache_path(year, PLAYOFFS, cache_dir)
-        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not cache_exists(po_path) or not cache_exists(rs_path):
-            continue
-        po = _nba.fill_plus_minus(cache_read_csv(po_path))
-        rs = cache_read_csv(rs_path)
+    for year, (po_raw, rs) in iter_cached_seasons(start_year, end_year,
+                                                  [_po_path, _rs_path],
+                                                  cache_dir=cache_dir):
+        po = _nba.fill_plus_minus(po_raw)
 
         champ = identify_champion(po)
         srs = compute_srs(rs)
@@ -1167,16 +1175,9 @@ def build_conference_gap_table(start_year: int = START_YEAR,
     Columns: year, east_srs, west_srs, srs_gap, east_h2h_wr.
     """
     rows = []
-    for year in range(start_year, end_year + 1):
-        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        st_path = os.path.join(
-            cache_dir or _nba.default_cache_dir(),
-            f"{season_str(year)}_standings.csv",
-        )
-        if not cache_exists(rs_path) or not cache_exists(st_path):
-            continue
-        rs = cache_read_csv(rs_path)
-        standings = cache_read_csv(st_path)
+    for year, (rs, standings) in iter_cached_seasons(
+            start_year, end_year, [_rs_path, _standings_path],
+            cache_dir=cache_dir):
         srs = compute_srs(rs)
         conf_avgs = compute_conference_avg_srs(srs, standings)
         gap = compute_srs_gap(conf_avgs)
@@ -1343,13 +1344,10 @@ def build_alt_rating_adjusted_table(rating_fn,
     Columns: year, champion_id, avg_margin, avg_opp_rating, adj_margin.
     """
     rows = []
-    for year in range(start_year, end_year + 1):
-        po_path = cache_path(year, PLAYOFFS, cache_dir)
-        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not cache_exists(po_path) or not cache_exists(rs_path):
-            continue
-        po = _nba.fill_plus_minus(cache_read_csv(po_path))
-        rs = cache_read_csv(rs_path)
+    for year, (po_raw, rs) in iter_cached_seasons(start_year, end_year,
+                                                  [_po_path, _rs_path],
+                                                  cache_dir=cache_dir):
+        po = _nba.fill_plus_minus(po_raw)
         champ = identify_champion(po)
         rating = rating_fn(rs)
         margin = compute_playoff_margin(po, champ)
@@ -1574,13 +1572,10 @@ def build_adjusted_margin_samples(start_year: int = START_YEAR,
     model can also express each champion's dominance in z-score terms.
     """
     rows = []
-    for year in range(start_year, end_year + 1):
-        po_path = cache_path(year, PLAYOFFS, cache_dir)
-        rs_path = cache_path(year, REGULAR_SEASON, cache_dir)
-        if not cache_exists(po_path) or not cache_exists(rs_path):
-            continue
-        po = _nba.fill_plus_minus(cache_read_csv(po_path))
-        rs = cache_read_csv(rs_path)
+    for year, (po_raw, rs) in iter_cached_seasons(start_year, end_year,
+                                                  [_po_path, _rs_path],
+                                                  cache_dir=cache_dir):
+        po = _nba.fill_plus_minus(po_raw)
         champ = identify_champion(po)
         srs = compute_srs(rs)
         g = per_game_adjusted_margins(po, srs, champ)

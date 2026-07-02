@@ -24,7 +24,8 @@ from statsmodels.tools import sm_exceptions
 from nba_api.stats.library.parameters import SeasonType
 
 from nbakit.textfmt import section as _section_str, stars as _stars, p_value as _fmt_p
-from nbakit.stats import shrink_to_mean
+from nbakit.stats import shrink_to_mean, possessions as _possessions
+from nbakit.data import normalize_game_id
 
 import home_court_data as nba
 from home_court_facts import FACTS
@@ -155,10 +156,8 @@ def build_game_dataset() -> pd.DataFrame:
 
             pace_cols = {"OREB_home", "OREB_away", "TOV_home", "TOV_away"}
             if pace_cols.issubset(merged.columns):
-                home_poss = (merged["FGA_home"] - merged["OREB_home"]
-                             + merged["TOV_home"] + 0.44 * merged["FTA_home"])
-                away_poss = (merged["FGA_away"] - merged["OREB_away"]
-                             + merged["TOV_away"] + 0.44 * merged["FTA_away"])
+                home_poss = _possessions(merged, suffix="_home")
+                away_poss = _possessions(merged, suffix="_away")
                 merged["pace_avg"] = (home_poss + away_poss) / 2.0
 
                 # Expected pace: leave-one-out per-team mean so realized pace
@@ -189,7 +188,9 @@ def build_game_dataset() -> pd.DataFrame:
                 merged["expected_pace"] = np.nan
 
             if is_playoff:
-                gid_str = merged["GAME_ID"].apply(lambda x: str(int(float(x))))
+                # Only the trailing digit (game-in-series) is read, so the
+                # zero-padded canonical form is interchangeable here.
+                gid_str = merged["GAME_ID"].apply(normalize_game_id)
                 merged["game_in_series"] = gid_str.str[-1].astype(int).astype(float)
             else:
                 merged["game_in_series"] = np.nan

@@ -8,6 +8,29 @@ as a second project reaches for them.
 import numpy as np
 
 
+def possessions(df, suffix: str = ""):
+    """Estimated basketball possessions per row via the box-score estimator.
+
+    ``poss = FGA - OREB + TOV + 0.44*FTA`` — the standard possession estimate
+    applied to a team-game or team-season row. This is basketball-specific (the
+    0.44 free-throw weight and offensive-rebound term are hoops conventions);
+    the name says so. ``suffix`` is appended to each column name so a merged
+    home/away frame works, e.g. ``possessions(merged, suffix="_home")`` reads
+    ``FGA_home / OREB_home / TOV_home / FTA_home``.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame with FGA{suffix}, OREB{suffix}, TOV{suffix}, FTA{suffix}.
+    suffix : column-name suffix (default "" for un-suffixed columns).
+
+    Returns
+    -------
+    pandas.Series aligned to ``df``'s index.
+    """
+    return (df[f"FGA{suffix}"] - df[f"OREB{suffix}"]
+            + df[f"TOV{suffix}"] + 0.44 * df[f"FTA{suffix}"])
+
+
 def shrink_to_mean(values, sampling_vars):
     """Empirical-Bayes shrinkage of estimates toward their grand mean.
 
