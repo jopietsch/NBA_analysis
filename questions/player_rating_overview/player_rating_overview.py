@@ -18,14 +18,28 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--year", type=int, default=2026,
                         help="Season end year (default: 2026 = 2025-26 season)")
+    parser.add_argument("--jobs", type=int, default=4,
+                        help="Worker processes for building missing season "
+                             "caches (default 4, like the test suite's "
+                             "pytest-xdist -n 4; use 1 for serial)")
     args = parser.parse_args()
     end_year = args.year
 
     print(f"=== Player Rating Overview pipeline: {end_year - 1}–{str(end_year)[-2:]} ===")
 
-    # 1. Data
-    print("\n[1/3] Building unified ratings table...")
-    from player_rating_overview_data import load_unified_ratings
+    # 1. Data — the headline season plus every panel season. Missing seasons
+    # build in parallel: the expensive path is per-season possession
+    # reconstruction + RAPM, and seasons are independent of each other.
+    print("\n[1/3] Building unified ratings tables...")
+    from player_rating_overview_data import (load_unified_ratings,
+                                             prebuild_unified_ratings)
+    from player_rating_overview_analysis import (PANEL_START_YEAR,
+                                                 PANEL_END_YEAR)
+    panel_years = sorted(set(range(PANEL_START_YEAR, PANEL_END_YEAR + 1))
+                         | {end_year, end_year - 1})
+    built = prebuild_unified_ratings(panel_years, jobs=args.jobs)
+    if built:
+        print(f"  built {len(built)} season table(s); the rest were cached")
     df = load_unified_ratings(end_year)
     print(f"  {len(df)} players loaded")
 

@@ -722,3 +722,31 @@ def test_pool_possessions_wrong_weights_length_raises(monkeypatch):
 
     with pytest.raises(ValueError, match="weights"):
         D.pool_possessions(2025, n_seasons=2, weights=[0.5])
+
+
+# ── Parallel season pre-build ─────────────────────────────────────────────────
+
+def test_prebuild_builds_only_missing_seasons(monkeypatch, tmp_path):
+    """prebuild_unified_ratings skips seasons whose unified cache exists and
+    builds exactly the missing ones (serial path; the parallel path differs
+    only in the executor)."""
+    import player_rating_overview_data as D
+    monkeypatch.setattr(D, "CACHE_DIR", str(tmp_path))
+    # 2019-20 cached, 2020-21 missing.
+    (tmp_path / "unified_ratings_2019-20.csv").write_text("player_id\n1\n")
+    calls = []
+    monkeypatch.setattr(D, "_prebuild_one_season",
+                        lambda y: (calls.append(y), (y, 0))[1])
+    built = D.prebuild_unified_ratings([2020, 2021], jobs=1)
+    assert built == [2021]
+    assert calls == [2021]
+
+
+def test_prebuild_noop_when_all_cached(monkeypatch, tmp_path):
+    import player_rating_overview_data as D
+    monkeypatch.setattr(D, "CACHE_DIR", str(tmp_path))
+    for label in ("2019-20", "2020-21"):
+        (tmp_path / f"unified_ratings_{label}.csv").write_text("player_id\n1\n")
+    monkeypatch.setattr(D, "_prebuild_one_season",
+                        lambda y: pytest.fail("should not build"))
+    assert D.prebuild_unified_ratings([2020, 2021]) == []

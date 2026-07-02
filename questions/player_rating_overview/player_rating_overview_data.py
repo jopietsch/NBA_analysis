@@ -1150,6 +1150,73 @@ def _load_rapm_snapshot(end_year: int) -> pd.DataFrame | None:
 
 # ── Unified ratings table ─────────────────────────────────────────────────────
 
+def unified_ratings_cache_path(end_year: int) -> str:
+    """Cache path for one season's unified ratings table."""
+    return _cache(f"unified_ratings_{season_str(end_year)}.csv")
+
+
+def _limit_worker_blas() -> None:
+    """Initializer for prebuild workers: cap BLAS threads so several season
+    builds don't oversubscribe the machine (mirrors conftest's xdist cap)."""
+    for var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
+                "VECLIB_MAXIMUM_THREADS"):
+        os.environ.setdefault(var, "2")
+
+
+def _prebuild_one_season(end_year: int) -> tuple[int, int]:
+    """Build (or load) one season's unified table in a worker process."""
+    df = load_unified_ratings(end_year)
+    return end_year, len(df)
+
+
+def prebuild_unified_ratings(years, jobs: int = 4) -> list[int]:
+    """Build any missing unified-ratings season caches, in parallel by default.
+
+    Season builds are independent (possessions -> RAPM -> merged table, all
+    written atomically), so missing seasons are built in ``jobs`` worker
+    processes — the same default parallelism as the test suite's pytest-xdist
+    ``-n 4``. Already-cached seasons are skipped entirely, so with a warm cache
+    this is a no-op. ``jobs=1`` builds serially in-process (the pre-parallel
+    behavior).
+
+    Boundary note: the multi-year RAPM for season Y also builds possessions
+    for Y-1/Y-2 when missing, so adjacent workers can race on a shared
+    possessions file; cache writes are atomic (tmp + os.replace), so the race
+    is safe — both compute, one file wins, contents identical.
+
+    Politeness note: if the RAW season caches (game logs, box scores, pbp) are
+    also missing, workers will fetch them from nba_api concurrently,
+    multiplying the request rate. For a first-ever fetch of many seasons, run
+    with jobs=1.
+
+    Returns the list of years that were (re)built.
+    """
+    missing = [y for y in years
+               if not cache_exists(unified_ratings_cache_path(y))]
+    if not missing:
+        return []
+    jobs = max(1, min(int(jobs), len(missing)))
+    if jobs == 1:
+        for y in missing:
+            _, n = _prebuild_one_season(y)
+            print(f"  built {season_str(y)}: {n} players", flush=True)
+        return missing
+
+    from concurrent.futures import ProcessPoolExecutor, as_completed
+    print(f"  building {len(missing)} missing seasons with {jobs} workers...",
+          flush=True)
+    done = 0
+    with ProcessPoolExecutor(max_workers=jobs,
+                             initializer=_limit_worker_blas) as pool:
+        futures = {pool.submit(_prebuild_one_season, y): y for y in missing}
+        for fut in as_completed(futures):
+            y, n = fut.result()  # a worker failure re-raises, like serial
+            done += 1
+            print(f"  [{done}/{len(missing)}] {season_str(y)}: {n} players",
+                  flush=True)
+    return missing
+
+
 def load_unified_ratings(end_year: int, *,
                           force_rebuild: bool = False) -> pd.DataFrame:
     """Return the unified ratings table for one season.
@@ -1157,7 +1224,7 @@ def load_unified_ratings(end_year: int, *,
     Cached at cache/unified_ratings_{season}.csv. Set force_rebuild=True to
     re-run even if the cache exists.
     """
-    path = _cache(f"unified_ratings_{season_str(end_year)}.csv")
+    path = unified_ratings_cache_path(end_year)
     if cache_exists(path) and not force_rebuild:
         return cache_read_csv(path)
 
